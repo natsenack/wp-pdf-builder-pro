@@ -2587,32 +2587,51 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // En-têtes du tableau - Ligne simple et minimale
+        // Choisir aléatoirement entre 2 styles de tableaux
+        const tableStyleChoice = Math.random() < 0.5 ? 'minimal' : 'striped';
+
+        // En-têtes du tableau - 2 styles possibles
         if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
           const headerHeight = 24;
 
-          // Fond de l'en-tête avec gradient subtil pour plus de profondeur
-          const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
-          headerGradient.addColorStop(0, tableStyleData.header_bg ? `rgb(${tableStyleData.header_bg.join(',')})` : '#f8fafc');
-          headerGradient.addColorStop(1, tableStyleData.header_bg ? `rgba(${tableStyleData.header_bg.join(',')}, 0.95)` : '#f0f4f8');
-          ctx.fillStyle = headerGradient;
-          ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
+          // STYLE 1: MINIMAL LIGHT - Très épuré, fond léger gris
+          if (tableStyleChoice === 'minimal') {
+            // Fond simple gris très léger
+            ctx.fillStyle = '#f9f9f9';
+            ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-          // Bordure supérieure plus visible et moderne
-          ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#cbd5e1';
-          ctx.lineWidth = 1.5; // Plus visible
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY);
-          ctx.lineTo(tableX + tableWidth, currentY);
-          ctx.stroke();
+            // Bordure inférieure simple et fine
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + headerHeight - 0.5);
+            ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
+            ctx.stroke();
+          }
+          // STYLE 2: STRIPED MODERN - Avec dégradé et bordures
+          else {
+            const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
+            headerGradient.addColorStop(0, '#f0f0f0');
+            headerGradient.addColorStop(1, '#e8e8e8');
+            ctx.fillStyle = headerGradient;
+            ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-          // Bordure inférieure de l'en-tête - plus prononcée
-          ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#cbd5e1';
-          ctx.lineWidth = 2; // Plus prononcée pour délimiter clairement
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY + headerHeight - 0.5);
-          ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
-          ctx.stroke();
+            // Bordure supérieure
+            ctx.strokeStyle = '#bbb';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY);
+            ctx.lineTo(tableX + tableWidth, currentY);
+            ctx.stroke();
+
+            // Bordure inférieure
+            ctx.strokeStyle = '#bbb';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + headerHeight - 0.5);
+            ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
+            ctx.stroke();
+          }
 
           // Texte des en-têtes avec style moderne
           ctx.fillStyle = tableStyleData.headerTextColor || '#1e293b'; // Couleur plus foncée et moderne
@@ -2680,42 +2699,44 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += headerHeight;
         }
 
-        // Lignes de données - Design moderne et aéré
+        // Lignes de données - 2 styles possibles
         ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`; // Poids normal pour les données
 
         tableData.rows.forEach((row, rowIndex) => {
-          const rowHeight = 26; // Augmenté de 22 à 26 pour plus d'espace
+          const rowHeight = 20; // Compact pour les 2 styles
           const isEvenRow = rowIndex % 2 === 0;
 
-          // Fond alterné moderne - plus subtil mais toujours visible
-          let bgColor;
-          if (element.evenRowBg && element.oddRowBg) {
-            // Utiliser les couleurs configurées depuis PropertiesPanel
-            bgColor = isEvenRow ? element.evenRowBg : element.oddRowBg;
-          } else {
-            // Alternance très subtile par défaut - encore plus légère
-            bgColor = isEvenRow ? 'rgba(248, 250, 252, 0.5)' : '#ffffff';
-          }
+          // STYLE 1: MINIMAL LIGHT - Fond très léger, alternance subtile
+          if (tableStyleChoice === 'minimal') {
+            const bgColor = isEvenRow ? '#ffffff' : '#f9f9f9';
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
 
-          // Fond uni sans dégradé
-          ctx.fillStyle = bgColor;
-          ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
-
-          // Bordure horizontale très fine et moderne entre les lignes
-          if (element.showBorders !== false) {
-            ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)'; // Très subtle
-            ctx.lineWidth = 0.5; // Très fine
+            // Bordure simple fine
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 0.5;
             ctx.beginPath();
-            ctx.moveTo(tableX + 4, currentY + rowHeight);
-            ctx.lineTo(tableX + tableWidth - 4, currentY + rowHeight);
+            ctx.moveTo(tableX, currentY + rowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
+            ctx.stroke();
+          }
+          // STYLE 2: STRIPED MODERN - Alternance plus visible avec gris
+          else {
+            const bgColor = isEvenRow ? '#ffffff' : '#f5f5f5';
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
+
+            // Bordure fine grise
+            ctx.strokeStyle = '#e5e5e5';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + rowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
             ctx.stroke();
           }
 
-          // Couleur du texte des cellules (configurable mais moderne)
-          const rowTextColor = isEvenRow && element.evenRowTextColor ?
-            element.evenRowTextColor :
-            (!isEvenRow && element.oddRowTextColor ? element.oddRowTextColor : '#334155'); // Gris moderne
-          ctx.fillStyle = rowTextColor;
+          // Couleur du texte des cellules
+          ctx.fillStyle = '#333333';
           ctx.textAlign = 'center';
 
           row.forEach((cell, cellIndex) => {
@@ -2793,70 +2814,48 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Lignes de totaux - Design épuré et professionnel
         const totals = tableData.totals;
         if (Object.keys(totals).length > 0) {
-          currentY += 6; // Espace réduit avant les totaux
+          currentY += 8; // Espace avant les totaux
+
+          // Séparateur avant les totaux
+          if (tableStyleChoice === 'minimal') {
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+          } else {
+            ctx.strokeStyle = '#bbb';
+            ctx.lineWidth = 1.5;
+          }
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY);
+          ctx.lineTo(tableX + tableWidth, currentY);
+          ctx.stroke();
+
+          currentY += 6; // Espace après le séparateur
 
           Object.entries(totals).forEach(([key, value]) => {
-            const totalHeight = 20; // Compact pour un look professionnel
-
-            // Fond sobre pour les totaux (sans dégradé)
+            const totalHeight = 18; // Compact
             const isTotalRow = key === 'total';
-            if (isTotalRow) {
-              // Fond légèrement plus foncé pour le total final
-              ctx.fillStyle = tableStyleData.header_bg ?
-                `rgb(${tableStyleData.header_bg.map(c => Math.max(0, c - 10)).join(',')})` :
-                '#f3f4f6';
+
+            // Fond des totaux
+            if (tableStyleChoice === 'minimal') {
+              ctx.fillStyle = isTotalRow ? '#f9f9f9' : '#ffffff';
             } else {
-              // Fond normal pour les autres totaux
-              ctx.fillStyle = tableStyleData.header_bg ?
-                `rgb(${tableStyleData.header_bg.join(',')})` :
-                '#f9fafb';
+              ctx.fillStyle = isTotalRow ? '#f0f0f0' : '#ffffff';
             }
+            ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
 
-            // Trouver l'index de la colonne Prix et Total
-            const priceColumnIndex = tableData.headers.indexOf('Prix');
-            const totalColumnIndex = tableData.headers.indexOf('Total');
+            // Texte du total
+            ctx.font = `${fontStyle}${isTotalRow ? '700' : '500'} ${rowFontSize}px ${fontFamily}`;
+            ctx.fillStyle = isTotalRow ? '#1a1a1a' : '#555555';
+            ctx.textAlign = 'right';
 
-            // Calculer la position et largeur pour le fond des totaux (seulement colonnes Prix et Total)
-            const labelColumnIndex = priceColumnIndex !== -1 ? priceColumnIndex : 0;
-            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : tableData.headers.length - 1;
+            // Libellé du total
+            let label = key === 'subtotal' ? 'Sous-total :' :
+                       key === 'shipping' ? 'Frais de port :' :
+                       key === 'tax' ? 'TVA :' :
+                       key === 'discount' ? 'Remise :' :
+                       key === 'total' ? 'TOTAL :' : key + ' :';
 
-            // Position X de départ du fond (début de la colonne du libellé)
-            let totalBgX;
-            if (labelColumnIndex === 0) {
-              totalBgX = tableX;
-            } else {
-              totalBgX = tableX + columnWidths.slice(0, labelColumnIndex).reduce((sum, w) => sum + w, 0);
-            }
-
-            // Largeur du fond (de la colonne du libellé à la colonne de la valeur)
-            const totalBgWidth = columnWidths.slice(labelColumnIndex, valueColumnIndex - labelColumnIndex + 1).reduce((sum, w) => sum + w, 0);
-
-            // Fond uni sans coins arrondis pour un look professionnel
-            ctx.fillRect(totalBgX, currentY, totalBgWidth, totalHeight);
-
-            // Bordure subtile autour du fond des totaux
-            if (element.showBorders !== false) {
-              ctx.strokeStyle = tableStyleData.header_border ?
-                `rgb(${tableStyleData.header_border.join(',')})` :
-                '#d1d5db';
-              ctx.lineWidth = 0.8; // Bordure plus visible
-              ctx.strokeRect(totalBgX, currentY, totalBgWidth, totalHeight);
-            }
-
-            // Style de texte professionnel pour les totaux
-            const totalFontWeight = isTotalRow ? '600' : '500'; // Semi-bold pour hiérarchie
-            const totalFontSize = isTotalRow ? headerFontSize : rowFontSize;
-            ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
-            ctx.fillStyle = isTotalRow ? '#1f2937' : '#374151'; // Texte plus foncé pour le total final
-
-            // Libellé du total (dans la colonne Prix si elle existe, sinon première colonne)
-            let label = key === 'subtotal' ? 'Sous-total' :
-                       key === 'shipping' ? 'Frais de port' :
-                       key === 'tax' ? 'TVA' :
-                       key === 'discount' ? 'Remise' :
-                       key === 'total' ? 'TOTAL' : key;
-
-            // Appliquer la transformation de texte au libellé
+            // Appliquer la transformation de texte
             if (textTransform === 'uppercase') {
               label = label.toUpperCase();
             } else if (textTransform === 'lowercase') {
@@ -2865,31 +2864,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               label = label.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Positionner le libellé dans la colonne Prix (ou première colonne si Prix n'existe pas)
-            let labelX;
-            if (labelColumnIndex === 0) {
-              labelX = tableX + (columnWidths[0] / 2);
-            } else {
-              const previousWidth = columnWidths.slice(0, labelColumnIndex).reduce((sum, w) => sum + w, 0);
-              labelX = tableX + previousWidth + (columnWidths[labelColumnIndex] / 2);
-            }
-            const labelY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
-            ctx.textAlign = 'center';
+            // Positionner le label à 70% de la largeur
+            const labelX = tableX + (tableWidth * 0.65);
+            const totalY = currentY + totalHeight / 2 + (rowFontSize * 0.35);
+            ctx.fillText(label, labelX, totalY);
 
-            if (letterSpacing > 0) {
-              let charX = labelX - (label.length * letterSpacing) / 2;
-              for (let i = 0; i < label.length; i++) {
-                ctx.fillText(label[i], charX, labelY);
-                charX += ctx.measureText(label[i]).width + letterSpacing;
-              }
-            } else {
-              ctx.fillText(label, labelX, labelY);
-            }
-
-            // Valeur du total (dans la colonne Total si elle existe, sinon dernière colonne)
+            // Valeur du total
             let valueText = String(value);
 
-            // Appliquer la transformation de texte à la valeur
+            // Appliquer la transformation de texte
             if (textTransform === 'uppercase') {
               valueText = valueText.toUpperCase();
             } else if (textTransform === 'lowercase') {
@@ -2898,41 +2881,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Positionner la valeur dans la colonne Total (ou dernière colonne si Total n'existe pas)
-            let valueX;
-            if (valueColumnIndex === 0) {
-              valueX = tableX + (columnWidths[0] / 2);
-            } else {
-              const previousWidth = columnWidths.slice(0, valueColumnIndex).reduce((sum, w) => sum + w, 0);
-              valueX = tableX + previousWidth + (columnWidths[valueColumnIndex] / 2);
-            }
-            const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
-            ctx.textAlign = 'center';
-
-            if (letterSpacing > 0) {
-              let charX = valueX - (valueText.length * letterSpacing) / 2;
-              for (let i = 0; i < valueText.length; i++) {
-                ctx.fillText(valueText[i], charX, valueY);
-                charX += ctx.measureText(valueText[i]).width + letterSpacing;
-              }
-            } else {
-              ctx.fillText(valueText, valueX, valueY);
-            }
-
-            // Lignes verticales entre les colonnes pour les totaux (seulement entre les colonnes pertinentes)
-            if (element.showBorders !== false) {
-              ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
-              ctx.lineWidth = 0.8; // Bordure plus visible
-
-              // Dessiner seulement les lignes verticales entre les colonnes du libellé et de la valeur
-              for (let i = labelColumnIndex; i < valueColumnIndex; i++) {
-                const lineX = tableX + columnWidths.slice(0, i + 1).reduce((sum, w) => sum + w, 0);
-                ctx.beginPath();
-                ctx.moveTo(lineX, currentY);
-                ctx.lineTo(lineX, currentY + totalHeight);
-                ctx.stroke();
-              }
-            }
+            // Positionner la valeur à droite
+            const valueX = tableX + tableWidth - 12;
+            ctx.fillText(valueText, valueX, totalY);
 
             currentY += totalHeight;
           });

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Nouveaux Designs - Approche Système</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 0.95em;
+        }
+
+        .designs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .design-card {
+            background: rgba(20, 25, 45, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .design-card:hover {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(20, 25, 45, 0.8);
+        }
+
+        .design-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .design-subtitle {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        .btn-select {
+            display: block;
+            width: 100%;
+            margin-top: 24px;
+            padding: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        /* ==================== OPTION 13: BANKING ==================== */
+        .table-13 {
+            width: 100%;
+            background: white;
+            color: #1a1a1a;
+        }
+
+        .table-13-header {
+            background: #f8f9fa;
+            border-bottom: 3px solid #1a1a1a;
+            display: flex;
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #1a1a1a;
+            gap: 12px;
+        }
+
+        .table-13-header-cell {
+            flex: 1;
+        }
+
+        .table-13-header-cell:last-child {
+            text-align: right;
+        }
+
+        .table-13-row {
+            display: flex;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            gap: 12px;
+            color: #1a1a1a;
+        }
+
+        .table-13-cell {
+            flex: 1;
+            font-size: 0.9em;
+        }
+
+        .table-13-cell:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .table-13-totals {
+            border-top: 2px solid #1a1a1a;
+            background: #f8f9fa;
+        }
+
+        .table-13-total-row {
+            display: flex;
+            padding: 12px 16px;
+            gap: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #1a1a1a;
+            font-size: 0.9em;
+        }
+
+        .table-13-total-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-13-grand-total {
+            display: flex;
+            padding: 14px 16px;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1em;
+            color: #1a1a1a;
+        }
+
+        .table-13-grand-total-label {
+            flex: 1;
+        }
+
+        .table-13-grand-total-value {
+            text-align: right;
+        }
+
+        /* ==================== OPTION 14: COLORFUL BLOCKS ==================== */
+        .table-14 {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .table-14-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            padding: 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .table-14-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(51, 65, 85, 0.6));
+            border-radius: 6px;
+            color: #ddd;
+            transition: all 0.2s ease;
+        }
+
+        .table-14-row:hover {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 1), rgba(51, 65, 85, 0.8));
+            transform: translateY(-2px);
+        }
+
+        .table-14-totals {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .table-14-total-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.5), rgba(100, 116, 139, 0.3));
+            border-radius: 6px;
+            color: #bbb;
+            font-size: 0.9em;
+        }
+
+        .table-14-grand-total {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 14px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 6px;
+            font-weight: 700;
+            color: white;
+            font-size: 1em;
+        }
+
+        /* ==================== OPTION 15: BAUHAUS ==================== */
+        .table-15 {
+            width: 100%;
+            color: #1a1a1a;
+            background: #fff;
+            border: 3px solid #1a1a1a;
+        }
+
+        .table-15-header {
+            background: #1a1a1a;
+            color: #fff;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 0;
+            padding: 0;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .table-15-header-cell {
+            padding: 12px 14px;
+            border-right: 2px solid #fff;
+        }
+
+        .table-15-header-cell:last-child {
+            border-right: none;
+        }
+
+        .table-15-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .table-15-cell {
+            padding: 12px 14px;
+            border-right: 1px solid #1a1a1a;
+        }
+
+        .table-15-cell:last-child {
+            border-right: none;
+        }
+
+        .table-15-totals {
+            border-top: 2px solid #1a1a1a;
+        }
+
+        .table-15-total-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .table-15-total-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-15-total-cell {
+            padding: 12px 14px;
+            border-right: 1px solid #1a1a1a;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .table-15-total-cell:last-child {
+            border-right: none;
+        }
+
+        .table-15-grand-total {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 0;
+            background: #f3f4f6;
+            font-weight: 700;
+            font-size: 1em;
+        }
+
+        .table-15-grand-total-cell {
+            padding: 12px 14px;
+            border-right: 1px solid #1a1a1a;
+        }
+
+        .table-15-grand-total-cell:last-child {
+            border-right: none;
+        }
+
+        /* ==================== OPTION 16: NEON ACCENT ==================== */
+        .table-16 {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .table-16-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 14px;
+            background: #1a1f3a;
+            border-bottom: 3px solid #00ff88;
+            font-weight: 700;
+            color: #00ff88;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-16-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            color: #ccc;
+        }
+
+        .table-16-row:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .table-16-totals {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 2px solid #00ff88;
+            padding-top: 0;
+        }
+
+        .table-16-total-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .table-16-grand-total {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 14px;
+            font-weight: 700;
+            color: #00ff88;
+            font-size: 1.05em;
+            background: rgba(0, 255, 136, 0.1);
+            border-top: 2px solid #00ff88;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .info-box {
+            background: rgba(20, 25, 45, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #6366f1;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .info-box p {
+            color: #aaa;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .info-box li {
+            color: #888;
+            font-size: 0.85em;
+            margin: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #6366f1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 4 Designs Système Design</h1>
+        <p class="subtitle">Approches complètement différentes</p>
+
+        <div class="designs">
+            <!-- OPTION 13: BANKING -->
+            <div class="design-card">
+                <div class="design-title">1️⃣3️⃣ Banking</div>
+                <div class="design-subtitle">Professionnel blanc avec lignes</div>
+
+                <div class="table-13">
+                    <div class="table-13-header">
+                        <div class="table-13-header-cell">Produit</div>
+                        <div class="table-13-header-cell">Qté</div>
+                        <div class="table-13-header-cell">Prix</div>
+                        <div class="table-13-header-cell">Total</div>
+                    </div>
+                    <div class="table-13-row">
+                        <div class="table-13-cell">Article 1</div>
+                        <div class="table-13-cell">1</div>
+                        <div class="table-13-cell">10€</div>
+                        <div class="table-13-cell">10€</div>
+                    </div>
+                    <div class="table-13-row">
+                        <div class="table-13-cell">Article 2</div>
+                        <div class="table-13-cell">2</div>
+                        <div class="table-13-cell">15€</div>
+                        <div class="table-13-cell">30€</div>
+                    </div>
+                    <div class="table-13-row">
+                        <div class="table-13-cell">Article 3</div>
+                        <div class="table-13-cell">1</div>
+                        <div class="table-13-cell">20€</div>
+                        <div class="table-13-cell">20€</div>
+                    </div>
+                    <div class="table-13-totals">
+                        <div class="table-13-total-row">
+                            <div style="flex: 1;">Sous-total</div>
+                            <div style="flex: 1;"></div>
+                            <div style="flex: 1;"></div>
+                            <div style="text-align: right; flex: 1;">60€</div>
+                        </div>
+                        <div class="table-13-total-row">
+                            <div style="flex: 1;">TVA</div>
+                            <div style="flex: 1;"></div>
+                            <div style="flex: 1;"></div>
+                            <div style="text-align: right; flex: 1;">12€</div>
+                        </div>
+                        <div class="table-13-grand-total">
+                            <div class="table-13-grand-total-label">TOTAL</div>
+                            <div style="flex: 1;"></div>
+                            <div style="flex: 1;"></div>
+                            <div class="table-13-grand-total-value">77€</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-select">Choisir cette option</button>
+            </div>
+
+            <!-- OPTION 14: COLORFUL BLOCKS -->
+            <div class="design-card">
+                <div class="design-title">1️⃣4️⃣ Colorful Blocks</div>
+                <div class="design-subtitle">Blocs colorés avec gradients</div>
+
+                <div class="table-14">
+                    <div class="table-14-header">
+                        <div>Produit</div>
+                        <div>Qté</div>
+                        <div>Prix</div>
+                        <div>Total</div>
+                    </div>
+                    <div class="table-14-row">
+                        <div>Article 1</div>
+                        <div>1</div>
+                        <div>10€</div>
+                        <div>10€</div>
+                    </div>
+                    <div class="table-14-row">
+                        <div>Article 2</div>
+                        <div>2</div>
+                        <div>15€</div>
+                        <div>30€</div>
+                    </div>
+                    <div class="table-14-row">
+                        <div>Article 3</div>
+                        <div>1</div>
+                        <div>20€</div>
+                        <div>20€</div>
+                    </div>
+                    <div class="table-14-totals">
+                        <div class="table-14-total-row">
+                            <div>Sous-total</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">60€</div>
+                        </div>
+                        <div class="table-14-total-row">
+                            <div>TVA</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">12€</div>
+                        </div>
+                        <div class="table-14-grand-total">
+                            <div>TOTAL</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">77€</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-select">Choisir cette option</button>
+            </div>
+
+            <!-- OPTION 15: BAUHAUS -->
+            <div class="design-card">
+                <div class="design-title">1️⃣5️⃣ Bauhaus</div>
+                <div class="design-subtitle">Géométrique noir & blanc</div>
+
+                <div class="table-15">
+                    <div class="table-15-header">
+                        <div class="table-15-header-cell">Produit</div>
+                        <div class="table-15-header-cell">Qté</div>
+                        <div class="table-15-header-cell">Prix</div>
+                        <div class="table-15-header-cell">Total</div>
+                    </div>
+                    <div class="table-15-row">
+                        <div class="table-15-cell">Article 1</div>
+                        <div class="table-15-cell">1</div>
+                        <div class="table-15-cell">10€</div>
+                        <div class="table-15-cell">10€</div>
+                    </div>
+                    <div class="table-15-row">
+                        <div class="table-15-cell">Article 2</div>
+                        <div class="table-15-cell">2</div>
+                        <div class="table-15-cell">15€</div>
+                        <div class="table-15-cell">30€</div>
+                    </div>
+                    <div class="table-15-row">
+                        <div class="table-15-cell">Article 3</div>
+                        <div class="table-15-cell">1</div>
+                        <div class="table-15-cell">20€</div>
+                        <div class="table-15-cell">20€</div>
+                    </div>
+                    <div class="table-15-totals">
+                        <div class="table-15-total-row">
+                            <div class="table-15-total-cell">Sous-total</div>
+                            <div class="table-15-total-cell"></div>
+                            <div class="table-15-total-cell"></div>
+                            <div class="table-15-total-cell" style="text-align: right;">60€</div>
+                        </div>
+                        <div class="table-15-total-row">
+                            <div class="table-15-total-cell">TVA</div>
+                            <div class="table-15-total-cell"></div>
+                            <div class="table-15-total-cell"></div>
+                            <div class="table-15-total-cell" style="text-align: right;">12€</div>
+                        </div>
+                        <div class="table-15-grand-total">
+                            <div class="table-15-grand-total-cell">TOTAL</div>
+                            <div class="table-15-grand-total-cell"></div>
+                            <div class="table-15-grand-total-cell"></div>
+                            <div class="table-15-grand-total-cell" style="text-align: right;">77€</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-select">Choisir cette option</button>
+            </div>
+
+            <!-- OPTION 16: NEON ACCENT -->
+            <div class="design-card">
+                <div class="design-title">1️⃣6️⃣ Neon Accent</div>
+                <div class="design-subtitle">Cyberpunk avec neon vert</div>
+
+                <div class="table-16">
+                    <div class="table-16-header">
+                        <div>Produit</div>
+                        <div>Qté</div>
+                        <div>Prix</div>
+                        <div>Total</div>
+                    </div>
+                    <div class="table-16-row">
+                        <div>Article 1</div>
+                        <div>1</div>
+                        <div>10€</div>
+                        <div>10€</div>
+                    </div>
+                    <div class="table-16-row">
+                        <div>Article 2</div>
+                        <div>2</div>
+                        <div>15€</div>
+                        <div>30€</div>
+                    </div>
+                    <div class="table-16-row">
+                        <div>Article 3</div>
+                        <div>1</div>
+                        <div>20€</div>
+                        <div>20€</div>
+                    </div>
+                    <div class="table-16-totals">
+                        <div class="table-16-total-row">
+                            <div>Sous-total</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">60€</div>
+                        </div>
+                        <div class="table-16-total-row">
+                            <div>TVA</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">12€</div>
+                        </div>
+                        <div class="table-16-grand-total">
+                            <div>TOTAL</div>
+                            <div></div>
+                            <div></div>
+                            <div style="text-align: right;">77€</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-select">Choisir cette option</button>
+            </div>
+        </div>
+
+        <div style="margin: 40px 0;">
+            <h2 style="color: #fff; margin-bottom: 20px; font-size: 1.5em;">Résumé des options</h2>
+            <div class="info">
+                <div class="info-box">
+                    <h3>1️⃣3️⃣ Banking</h3>
+                    <p>Classique & intemporel</p>
+                    <ul>
+                        <li>Fond blanc</li>
+                        <li>Lignes noires</li>
+                        <li>Style financier</li>
+                        <li>Très lisible</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>1️⃣4️⃣ Colorful Blocks</h3>
+                    <p>Moderne & énergique</p>
+                    <ul>
+                        <li>Blocs arrondis</li>
+                        <li>Gradients chauds</li>
+                        <li>Très visuel</li>
+                        <li>Hover dynamiques</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>1️⃣5️⃣ Bauhaus</h3>
+                    <p>Géométrique & strict</p>
+                    <ul>
+                        <li>Noir & blanc</li>
+                        <li>Grille géométrique</li>
+                        <li>Très formel</li>
+                        <li>Parfait pour print</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>1️⃣6️⃣ Neon Accent</h3>
+                    <p>Futuriste & moderne</p>
+                    <ul>
+                        <li>Fond sombre</li>
+                        <li>Accents neon</li>
+                        <li>Tech-focused</li>
+                        <li>Très distinctif</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.btn-select').forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                const options = ['Banking', 'Colorful Blocks', 'Bauhaus', 'Neon Accent'];
+                alert(`Option ${index + 13} (${options[index]}) sélectionnée!\n\nJe vais l'implémenter.`);
+            });
+        });
+    </script>
+</body>
+</html>
