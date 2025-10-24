@@ -198,6 +198,30 @@ const getTableStyles = (tableStyle = 'default') => {
 };
 
 /**
+ * Ajuste la luminosité d'une couleur hex
+ * @param {string} color - Couleur en hex (#rrggbb)
+ * @param {number} amount - Montant à ajuster (-100 à 100)
+ * @returns {string} Couleur hex ajustée
+ */
+const adjustColor = (color, amount) => {
+  // Convertir hex en RGB
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Ajuster la luminosité
+  const adjusted = (val) => Math.max(0, Math.min(255, val + amount));
+
+  // Convertir back en hex
+  const rr = adjusted(r).toString(16).padStart(2, '0');
+  const gg = adjusted(g).toString(16).padStart(2, '0');
+  const bb = adjusted(b).toString(16).padStart(2, '0');
+
+  return `#${rr}${gg}${bb}`;
+};
+
+/**
  * PDFEditor - Éditeur principal complet avec éléments et propriétés
  * Phase 2.2.4.1 - Implémentation complète du système d'éléments
  */
@@ -2590,18 +2614,24 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Choisir aléatoirement entre 2 styles de tableaux
         const tableStyleChoice = Math.random() < 0.5 ? 'minimal' : 'striped';
 
+        // Récupérer les couleurs thème ou utiliser les défauts
+        const primaryColor = element.tablePrimaryColor || '#667eea';
+        const secondaryColor = element.tableSecondaryColor || '#f5f5f5';
+
         // En-têtes du tableau - 2 styles possibles
         if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
           const headerHeight = 24;
 
           // STYLE 1: MINIMAL LIGHT - Très épuré, fond léger gris
           if (tableStyleChoice === 'minimal') {
-            // Fond simple gris très léger
-            ctx.fillStyle = '#f9f9f9';
+            // Fond simple avec couleur secondaire très légère
+            ctx.fillStyle = secondaryColor;
+            ctx.globalAlpha = 0.4;
             ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
+            ctx.globalAlpha = 1;
 
-            // Bordure inférieure simple et fine
-            ctx.strokeStyle = '#ddd';
+            // Bordure inférieure avec couleur primaire
+            ctx.strokeStyle = primaryColor;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + headerHeight - 0.5);
@@ -2611,13 +2641,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // STYLE 2: STRIPED MODERN - Avec dégradé et bordures
           else {
             const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
-            headerGradient.addColorStop(0, '#f0f0f0');
-            headerGradient.addColorStop(1, '#e8e8e8');
+            headerGradient.addColorStop(0, primaryColor);
+            headerGradient.addColorStop(1, adjustColor(primaryColor, -20));
             ctx.fillStyle = headerGradient;
             ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-            // Bordure supérieure
-            ctx.strokeStyle = '#bbb';
+            // Bordure supérieure avec couleur primaire
+            ctx.strokeStyle = primaryColor;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY);
@@ -2625,7 +2655,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.stroke();
 
             // Bordure inférieure
-            ctx.strokeStyle = '#bbb';
+            ctx.strokeStyle = primaryColor;
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + headerHeight - 0.5);
@@ -2633,8 +2663,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.stroke();
           }
 
-          // Texte des en-têtes avec style moderne
-          ctx.fillStyle = tableStyleData.headerTextColor || '#1e293b'; // Couleur plus foncée et moderne
+          // Texte des en-têtes - blanc pour contraste avec couleur primaire en mode striped
+          const headerTextColor = tableStyleChoice === 'striped' ? '#ffffff' : '#1a1a1a';
+          ctx.fillStyle = headerTextColor;
           ctx.font = `700 ${headerFontSize}px ${fontFamily}`; // Bold au lieu de semi-bold
           ctx.textAlign = 'center';
 
@@ -2708,31 +2739,40 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // STYLE 1: MINIMAL LIGHT - Fond très léger, alternance subtile
           if (tableStyleChoice === 'minimal') {
-            const bgColor = isEvenRow ? '#ffffff' : '#f9f9f9';
+            // Utiliser la couleur secondaire avec très peu d'opacité
+            const bgColor = isEvenRow ? '#ffffff' : secondaryColor;
             ctx.fillStyle = bgColor;
+            if (!isEvenRow) {
+              ctx.globalAlpha = 0.3;
+            }
             ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
+            ctx.globalAlpha = 1;
 
-            // Bordure simple fine
-            ctx.strokeStyle = '#f0f0f0';
+            // Bordure simple fine avec couleur primaire très légère
+            ctx.strokeStyle = primaryColor;
+            ctx.globalAlpha = 0.2;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + rowHeight);
             ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
             ctx.stroke();
+            ctx.globalAlpha = 1;
           }
-          // STYLE 2: STRIPED MODERN - Alternance plus visible avec gris
+          // STYLE 2: STRIPED MODERN - Alternance plus visible avec couleur secondaire
           else {
-            const bgColor = isEvenRow ? '#ffffff' : '#f5f5f5';
+            const bgColor = isEvenRow ? '#ffffff' : secondaryColor;
             ctx.fillStyle = bgColor;
             ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
 
-            // Bordure fine grise
-            ctx.strokeStyle = '#e5e5e5';
+            // Bordure fine avec couleur primaire très légère
+            ctx.strokeStyle = primaryColor;
+            ctx.globalAlpha = 0.2;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + rowHeight);
             ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
             ctx.stroke();
+            ctx.globalAlpha = 1;
           }
 
           // Couleur du texte des cellules
@@ -2816,18 +2856,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         if (Object.keys(totals).length > 0) {
           currentY += 8; // Espace avant les totaux
 
-          // Séparateur avant les totaux
+          // Séparateur avant les totaux avec couleur primaire
           if (tableStyleChoice === 'minimal') {
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = primaryColor;
+            ctx.globalAlpha = 0.3;
             ctx.lineWidth = 1;
           } else {
-            ctx.strokeStyle = '#bbb';
+            ctx.strokeStyle = primaryColor;
             ctx.lineWidth = 1.5;
           }
           ctx.beginPath();
           ctx.moveTo(tableX, currentY);
           ctx.lineTo(tableX + tableWidth, currentY);
           ctx.stroke();
+          ctx.globalAlpha = 1;
 
           currentY += 6; // Espace après le séparateur
 
@@ -2835,17 +2877,24 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             const totalHeight = 18; // Compact
             const isTotalRow = key === 'total';
 
-            // Fond des totaux
+            // Fond des totaux avec couleur secondaire pour le total
             if (tableStyleChoice === 'minimal') {
-              ctx.fillStyle = isTotalRow ? '#f9f9f9' : '#ffffff';
+              ctx.fillStyle = isTotalRow ? secondaryColor : '#ffffff';
+              if (isTotalRow) {
+                ctx.globalAlpha = 0.4;
+              }
             } else {
-              ctx.fillStyle = isTotalRow ? '#f0f0f0' : '#ffffff';
+              ctx.fillStyle = isTotalRow ? secondaryColor : '#ffffff';
+              if (isTotalRow) {
+                ctx.globalAlpha = 0.5;
+              }
             }
             ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+            ctx.globalAlpha = 1;
 
             // Texte du total
             ctx.font = `${fontStyle}${isTotalRow ? '700' : '500'} ${rowFontSize}px ${fontFamily}`;
-            ctx.fillStyle = isTotalRow ? '#1a1a1a' : '#555555';
+            ctx.fillStyle = isTotalRow ? primaryColor : '#666666';
             ctx.textAlign = 'right';
 
             // Libellé du total

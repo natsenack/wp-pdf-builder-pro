@@ -880,9 +880,43 @@ const PropertiesPanel = memo(({
                   </div>
                 </div>
 
+                {/* Couleurs thème (primaire & secondaire) */}
+                <div className="table-section">
+                  <div className="section-title">🎨 Couleurs thème</div>
+                  <div className="colors-compact">
+                    <div className="color-row">
+                      <span className="color-label">Primaire:</span>
+                      <input
+                        type="color"
+                        value={localProperties.tablePrimaryColor || '#667eea'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tablePrimaryColor', e.target.value)}
+                        title="Couleur primaire (en-têtes, bordures, totaux)"
+                      />
+                      <span className="color-hint" style={{ fontSize: '0.75em', color: '#666' }}>
+                        En-têtes & bordures
+                      </span>
+                    </div>
+                    <div className="color-row">
+                      <span className="color-label">Secondaire:</span>
+                      <input
+                        type="color"
+                        value={localProperties.tableSecondaryColor || '#f5f5f5'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableSecondaryColor', e.target.value)}
+                        title="Couleur secondaire (lignes paires, fonds)"
+                      />
+                      <span className="color-hint" style={{ fontSize: '0.75em', color: '#666' }}>
+                        Fonds alternés
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Couleurs individuelles (compact) */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Couleurs lignes</div>
+                  <div className="section-title">🎨 Couleurs personnalisées</div>
+                  <p style={{ fontSize: '0.85em', color: '#999', marginBottom: '12px' }}>
+                    ⚠️ Surcharge les couleurs thème si définies
+                  </p>
                   <div className="colors-compact">
                     <div className="color-row">
                       <span className="color-label">Pairs:</span>
@@ -954,6 +988,10 @@ const PropertiesPanel = memo(({
                       handlePropertyChange(selectedElement.id, 'evenRowTextColor', '#000000');
                       handlePropertyChange(selectedElement.id, 'oddRowBg', '#f9fafb');
                       handlePropertyChange(selectedElement.id, 'oddRowTextColor', '#000000');
+
+                      // Réinitialiser les couleurs thème
+                      handlePropertyChange(selectedElement.id, 'tablePrimaryColor', '#667eea');
+                      handlePropertyChange(selectedElement.id, 'tableSecondaryColor', '#f5f5f5');
                     }}
                     title="Réinitialiser toutes les propriétés du tableau aux valeurs par défaut"
                     style={{

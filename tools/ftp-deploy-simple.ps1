@@ -527,14 +527,28 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
         }
     }
 
-    # Attendre que tous les jobs se terminent
+    # Attendre que tous les jobs FTP se terminent (avec timeout de 60 secondes)
     Write-Host "   Attente de la fin des uploads..." -ForegroundColor Gray
-    $remainingJobs = Get-Job
-    if ($remainingJobs.Count -gt 0) {
-        $remainingJobs | Wait-Job | ForEach-Object {
-            $jobResult = Receive-Job $_
-            $jobResults += $jobResult
-            Remove-Job $_
+    $remainingJobs = Get-Job -Name "FTP_Upload_*" -ErrorAction SilentlyContinue
+    if ($remainingJobs -and $remainingJobs.Count -gt 0) {
+        $timeout = New-TimeSpan -Seconds 60
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        
+        while ($stopwatch.Elapsed -lt $timeout) {
+            $stillRunning = Get-Job -Name "FTP_Upload_*" -State Running -ErrorAction SilentlyContinue
+            if (-not $stillRunning -or $stillRunning.Count -eq 0) {
+                break
+            }
+            Start-Sleep -Milliseconds 100
+        }
+        
+        # Récupérer les résultats de tous les jobs FTP
+        Get-Job -Name "FTP_Upload_*" -ErrorAction SilentlyContinue | ForEach-Object {
+            $jobResult = Receive-Job $_ -ErrorAction SilentlyContinue
+            if ($jobResult) {
+                $jobResults += $jobResult
+            }
+            Remove-Job $_ -ErrorAction SilentlyContinue
         }
     }
 
