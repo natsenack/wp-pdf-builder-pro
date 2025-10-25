@@ -402,6 +402,7 @@ body.wp-admin .pdf-builder-container {
 
     // CHARGER LE SCRIPT DE TEST ADAPTATIF TEMPORAIREMENT
     // À SUPPRIMER APRÈS LES TESTS
+    ?>
     <script type="text/javascript">
     (function() {
         'use strict';
