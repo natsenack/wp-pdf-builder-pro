@@ -360,6 +360,7 @@ body.wp-admin .pdf-builder-container {
                 console.log('📋 pdfBuilderPro disponible:', typeof window.pdfBuilderPro);
                 console.log('📋 pdfBuilderPro.init disponible:', typeof window.pdfBuilderPro?.init);
 
+                console.log('🚀 Appel de pdfBuilderPro.init()...');
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
                     templateName: <?php
@@ -378,23 +379,35 @@ body.wp-admin .pdf-builder-container {
                     snapToGrid: true,
                     maxHistorySize: 50
                 });
-            } catch (error) {
-                isInitialized = false; // Reset on error
-
-                // Afficher l'erreur dans l'interface
-                var container = document.getElementById('invoice-quote-builder-container');
-                if (container) {
-                    container.innerHTML =
-                        '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
-                            '<h3>Erreur d\'initialisation</h3>' +
-                            '<p>Une erreur s\'est produite lors du chargement de l\'éditeur.</p>' +
-                            '<p>Vérifiez la console pour plus de détails.</p>' +
-                            '<button onclick="location.reload()">Recharger la page</button>' +
-                        '</div>';
+                console.log('✅ pdfBuilderPro.init() terminé');
+                } catch (error) {
+                    console.error('❌ Erreur lors de l\'appel à pdfBuilderPro.init():', error);
+                    console.error('Stack trace:', error.stack);
+                    
+                    // Afficher l'erreur dans l'interface
+                    var container = document.getElementById('invoice-quote-builder-container');
+                    if (container) {
+                        container.innerHTML =
+                            '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
+                                '<h3>Erreur d\'initialisation</h3>' +
+                                '<p>Une erreur s\'est produite lors du chargement de l\'éditeur.</p>' +
+                                '<p>Vérifiez la console pour plus de détails.</p>' +
+                                '<button onclick="location.reload()">Recharger la page</button>' +
+                            '</div>';
+                    }
                 }
-            }
-        } else {
-        }
+                    // Afficher l'erreur dans l'interface
+                    var container = document.getElementById('invoice-quote-builder-container');
+                    if (container) {
+                        container.innerHTML =
+                            '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
+                                '<h3>Erreur d\'initialisation</h3>' +
+                                '<p>Une erreur s\'est produite lors du chargement de l\'éditeur.</p>' +
+                                '<p>Vérifiez la console pour plus de détails.</p>' +
+                                '<button onclick="location.reload()">Recharger la page</button>' +
+                            '</div>';
+                    }
+                }
     };
 
     // Attendre que tous les scripts soient chargés avant d'initialiser
