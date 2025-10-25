@@ -2434,19 +2434,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - STRIPED MODERN COMPLET ===
-        // Avec barre latérale, bordures verticales, padding, alternance
+        // === TABLEAU DE PRODUITS - DÉMO EXACT ===
+        // Comme dans demo-tableaux.html : Produit | Quantité | Prix | Total
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
-        const cellHeight = 26;
-        const headerHeight = 30;
-        const totalHeight = 26;
-        const sideBarWidth = 4;
-        const cellPaddingH = 10; // Padding horizontal
-        const cellPaddingV = 4;  // Padding vertical
-        const lineWidth = 0.5;
+        const cellHeight = 24;
+        const headerHeight = 28;
+        const totalHeight = 24;
+        const sideBarWidth = 12;  // Barre latérale plus visible
+        const cellPaddingH = 12; // Padding horizontal
+        const cellPaddingV = 6;  // Padding vertical
+        const lineWidth = 1;
 
         // Couleurs
         const borderColor = element.tableColorPrimary || '#0ea5e9';
@@ -2460,24 +2460,22 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
-        // ===== COLONNES ACTIVES =====
-        const activeColumns = [];
-        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', width: 0.08, align: 'center' });
-        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', width: 0.38, align: 'left' });
-        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', width: 0.16, align: 'left' });
-        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', width: 0.12, align: 'right' });
-        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', width: 0.13, align: 'right' });
-        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', width: 0.13, align: 'right' });
+        // ===== COLONNES FIXES (Produit, Quantité, Prix, Total) =====
+        const activeColumns = [
+          { key: 'name', label: 'Produit', width: 0.40, align: 'left' },
+          { key: 'quantity', label: 'Quantité', width: 0.20, align: 'center' },
+          { key: 'price', label: 'Prix', width: 0.20, align: 'right' },
+          { key: 'total', label: 'Total', width: 0.20, align: 'right' }
+        ];
 
-        // Normaliser les largeurs
-        let totalWidth = activeColumns.reduce((sum, col) => sum + col.width, 0);
-        const columnWidths = activeColumns.map(col => (col.width / totalWidth) * (tableWidth - sideBarWidth));
+        // Calculer les largeurs des colonnes
+        const columnWidths = activeColumns.map(col => col.width * (tableWidth - sideBarWidth));
 
         // Données d'exemple
         const rows = [
-          { image: '📦', name: 'Produit A - Description', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
-          { image: '📦', name: 'Produit B', sku: 'SKU-002', quantity: '1', price: '25,50 €', total: '25,50 €' },
-          { image: '📦', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
+          { name: 'Article 1', quantity: '1', price: '10€', total: '10€' },
+          { name: 'Article 2', quantity: '2', price: '15€', total: '30€' },
+          { name: 'Article 3', quantity: '1', price: '20€', total: '20€' }
         ];
 
         // ===== HELPER: Dessiner une rangée avec cellules =====
@@ -2486,34 +2484,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
 
-          // Barre latérale
+          // Barre latérale bleue
           if (showBorders) {
             ctx.fillStyle = borderColor;
             ctx.fillRect(tableX, currentY, sideBarWidth, cellHeight);
           }
 
           // Texte et bordures verticales
-          ctx.font = isHeader ? 'bold 11px Arial' : (isTotalRow ? 'bold 11px Arial' : '9px Arial');
+          ctx.font = isHeader ? 'bold 11px Arial' : (isTotalRow ? 'bold 11px Arial' : '10px Arial');
           ctx.fillStyle = textColor;
 
           let colX = tableX + sideBarWidth;
           activeColumns.forEach((col, colIdx) => {
             const colWidth = columnWidths[colIdx];
 
-            // Bordure verticale droite de la colonne
-            if (showBorders && colIdx < activeColumns.length - 1) {
-              ctx.strokeStyle = borderColor;
-              ctx.lineWidth = lineWidth;
-              ctx.beginPath();
-              ctx.moveTo(colX + colWidth, currentY);
-              ctx.lineTo(colX + colWidth, currentY + cellHeight);
-              ctx.stroke();
-            }
-
             // Texte dans la cellule
             let value = rowData[col.key] || '';
             if (isHeader) value = col.label;
             
+            // Positionner le texte avec padding
             ctx.textAlign = col.align;
             let textX;
             if (col.align === 'left') {
@@ -2524,20 +2513,28 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               textX = colX + colWidth / 2;
             }
 
-            const maxLength = col.key === 'name' ? 35 : 20;
-            // Texte centré verticalement avec padding
             const textY = currentY + cellHeight / 2 + 4;
-            ctx.fillText(value.toString().slice(0, maxLength), textX, textY);
+            ctx.fillText(value.toString(), textX, textY);
+
+            // Bordure verticale à droite de la colonne (sauf dernière)
+            if (showBorders && colIdx < activeColumns.length - 1) {
+              ctx.strokeStyle = '#e0e0e0';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(colX + colWidth, currentY);
+              ctx.lineTo(colX + colWidth, currentY + cellHeight);
+              ctx.stroke();
+            }
 
             colX += colWidth;
           });
 
           // Bordure horizontale du bas
           if (showBorders) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(tableX, currentY + cellHeight);
+            ctx.moveTo(tableX + sideBarWidth, currentY + cellHeight);
             ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
             ctx.stroke();
           }
@@ -2556,7 +2553,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Texte en-têtes
-        ctx.font = 'bold 12px Arial';
+        ctx.font = 'bold 11px Arial';
         ctx.fillStyle = textColor;
         let colX = tableX + sideBarWidth;
         activeColumns.forEach((col, colIdx) => {
@@ -2564,8 +2561,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Bordure verticale
           if (showBorders && colIdx < activeColumns.length - 1) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(colX + colWidth, currentY);
             ctx.lineTo(colX + colWidth, currentY + headerHeight);
@@ -2588,12 +2585,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           colX += colWidth;
         });
 
-        // Bordure bas en-tête
+        // Bordure bas en-tête (épaisse)
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.moveTo(tableX, currentY + headerHeight);
+          ctx.moveTo(tableX + sideBarWidth, currentY + headerHeight);
           ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
           ctx.stroke();
         }
@@ -2620,14 +2617,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Bordures verticales des colonnes
-          ctx.font = isFinal ? 'bold 12px Arial' : '11px Arial';
+          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
           ctx.fillStyle = textColor;
 
           let colX = tableX + sideBarWidth;
           activeColumns.forEach((col, colIdx) => {
             if (showBorders && colIdx < activeColumns.length - 1) {
-              ctx.strokeStyle = borderColor;
-              ctx.lineWidth = lineWidth;
+              ctx.strokeStyle = '#e0e0e0';
+              ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.moveTo(colX + columnWidths[colIdx], currentY);
               ctx.lineTo(colX + columnWidths[colIdx], currentY + totalHeight);
@@ -2645,10 +2642,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Bordure du bas
           if (showBorders) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = isFinal ? 2 : lineWidth;
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = isFinal ? 2 : 1;
             ctx.beginPath();
-            ctx.moveTo(tableX, currentY + totalHeight);
+            ctx.moveTo(tableX + sideBarWidth, currentY + totalHeight);
             ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
             ctx.stroke();
           }
