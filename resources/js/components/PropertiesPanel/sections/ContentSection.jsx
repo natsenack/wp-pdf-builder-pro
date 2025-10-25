@@ -3,6 +3,8 @@ import Accordion from '../Accordion';
 import ColorPicker from '../ColorPicker';
 import TableStylePreview from '../TableStylePreview';
 import { safeParseInt } from '../utils/helpers';
+import { AdaptiveControl } from '../utils/AdaptiveLayout';
+import '../utils/AdaptiveLayout.css';
 
 const renderContentSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
   const renderContentControls = () => {
@@ -93,8 +95,12 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
       case 'product_table':
         return (
           <>
-            <div className="property-row">
-              <label>Colonnes:</label>
+            {/* EXEMPLE: Contrôle adaptatif pour les colonnes */}
+            <AdaptiveControl
+              label="Configuration des colonnes:"
+              minWidth={400}
+              className="adaptive-compact"
+            >
               <input
                 type="text"
                 value={localProperties.columns || 'name,price,quantity'}
@@ -102,31 +108,42 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
                 placeholder="name,price,quantity..."
                 className="text-input"
               />
-            </div>
-            <div className="property-row">
-              <label>Afficher en-têtes:</label>
-              <input
-                type="checkbox"
-                checked={localProperties.showHeaders ?? true}
-                onChange={(e) => handlePropertyChange(selectedElement.id, 'showHeaders', e.target.checked)}
-              />
-            </div>
-            <div className="property-row">
-              <label>Afficher bordures:</label>
-              <input
-                type="checkbox"
-                checked={localProperties.showBorders ?? true}
-                onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
-              />
-            </div>
-            <div className="property-row">
-              <label>Afficher sous-total:</label>
-              <input
-                type="checkbox"
-                checked={localProperties.showSubtotal ?? true}
-                onChange={(e) => handlePropertyChange(selectedElement.id, 'showSubtotal', e.target.checked)}
-              />
-            </div>
+            </AdaptiveControl>
+
+            {/* EXEMPLE: Groupe de contrôles adaptatifs pour les affichages */}
+            <AdaptiveControl
+              label="Options d'affichage:"
+              minWidth={350}
+              forceVertical={true}
+              className="adaptive-spacious"
+            >
+              <div className="checkbox-group">
+                <div className="property-row">
+                  <label>Afficher en-têtes:</label>
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showHeaders ?? true}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showHeaders', e.target.checked)}
+                  />
+                </div>
+                <div className="property-row">
+                  <label>Afficher bordures:</label>
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showBorders ?? true}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
+                  />
+                </div>
+                <div className="property-row">
+                  <label>Afficher sous-total:</label>
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showSubtotal ?? true}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showSubtotal', e.target.checked)}
+                  />
+                </div>
+              </div>
+            </AdaptiveControl>
             <div className="property-row">
               <label>Afficher frais de port:</label>
               <input
