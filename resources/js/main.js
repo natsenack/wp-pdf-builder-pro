@@ -8,7 +8,17 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
 const init = (containerId, options = {}) => {
-  console.log('🚀 PDF Builder Pro: init() appelée avec', { containerId, options });
+  console.log('🚀🚀🚀 NOUVELLE VERSION PDF Builder Pro: init() appelée avec', { containerId, options });
+  
+  // Vérifier React et ReactDOM
+  console.log('🔍 Vérification React global:', typeof window.React);
+  console.log('🔍 Vérification ReactDOM global:', typeof window.ReactDOM);
+  console.log('🔍 React.createElement disponible:', typeof window.React?.createElement);
+  console.log('🔍 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
+  
+  // Vérifier les imports locaux (devraient être undefined maintenant)
+  console.log('🔍 React importé (devrait être undefined):', typeof React);
+  console.log('🔍 ReactDOM importé (devrait être undefined):', typeof ReactDOM);
   console.log('🚀 React disponible:', typeof React);
   console.log('🚀 ReactDOM disponible:', typeof ReactDOM);
   console.log('🚀 ReactDOM.createRoot disponible:', typeof ReactDOM?.createRoot);
@@ -27,14 +37,31 @@ const init = (containerId, options = {}) => {
   container.innerHTML = '';
 
   console.log('🚀 Tentative de création du root React...');
+  
+  // Vérifications supplémentaires avant utilisation
+  if (!window.React) {
+    console.error('❌ React n\'est pas disponible globalement');
+    return;
+  }
+  if (!window.ReactDOM) {
+    console.error('❌ ReactDOM n\'est pas disponible globalement');
+    return;
+  }
+  if (!window.ReactDOM.createRoot) {
+    console.error('❌ ReactDOM.createRoot n\'est pas disponible');
+    return;
+  }
+  
+  console.log('✅ Toutes les dépendances React sont disponibles');
+  
   // Create React 18 root and render
-  const root = ReactDOM.createRoot(container);
+  const root = window.ReactDOM.createRoot(container);
   console.log('✅ Root React créé:', !!root);
   
   try {
     console.log('🚀 Tentative de rendu du composant PDFCanvasEditor...');
     root.render(
-      React.createElement(PDFCanvasEditor, {
+      window.React.createElement(PDFCanvasEditor, {
         options: options
       })
     );

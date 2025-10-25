@@ -60,9 +60,9 @@ module.exports = {
     ]
   },
   externals: {
-    // Temporairement désactiver les externals pour inclure React dans le bundle
-    // 'react': 'React',
-    // 'react-dom': 'ReactDOM'
+    // Utiliser React et ReactDOM depuis WordPress pour éviter les conflits de version
+    'react': 'React',
+    'react-dom': 'ReactDOM'
   },
   plugins: [
     // Plugin de compression pour les assets
