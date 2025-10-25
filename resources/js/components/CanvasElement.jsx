@@ -35,40 +35,40 @@ export const CanvasElement = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Effacer le canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Dimensions natives (sans zoom pour éviter le flou)
+    const nativeWidth = element.width || 100;
+    const nativeHeight = element.height || 50;
 
-    // Appliquer le zoom aux dimensions du canvas
-    const scaledWidth = element.width * zoom;
-    const scaledHeight = element.height * zoom;
+    // Ajuster la taille du canvas (dimensions natives)
+    canvas.width = nativeWidth;
+    canvas.height = nativeHeight;
 
-    // Ajuster la taille du canvas
-    canvas.width = scaledWidth;
-    canvas.height = scaledHeight;
+    // Effacer le canvas avec un fond transparent
+    ctx.clearRect(0, 0, nativeWidth, nativeHeight);
 
     // Sauvegarder le contexte
     ctx.save();
 
-    // Appliquer les transformations
+    // Appliquer les transformations (rotation uniquement, pas de scale)
     if (element.rotation) {
-      ctx.translate(scaledWidth / 2, scaledHeight / 2);
+      ctx.translate(nativeWidth / 2, nativeHeight / 2);
       ctx.rotate((element.rotation * Math.PI) / 180);
-      ctx.translate(-scaledWidth / 2, -scaledHeight / 2);
+      ctx.translate(-nativeWidth / 2, -nativeHeight / 2);
     }
 
-    // Rendre selon le type d'élément
-    renderElementContent(ctx, element, scaledWidth, scaledHeight);
+    // Rendre selon le type d'élément avec dimensions natives
+    renderElementContent(ctx, element, nativeWidth, nativeHeight);
 
-    // Bordure de sélection
+    // Bordure de sélection (en dimensions natives)
     if (isSelected) {
       ctx.strokeStyle = '#007cba';
       ctx.lineWidth = 2;
-      ctx.strokeRect(1, 1, scaledWidth - 2, scaledHeight - 2);
+      ctx.strokeRect(1, 1, nativeWidth - 2, nativeHeight - 2);
     }
 
     // Restaurer le contexte
     ctx.restore();
-  }, [element, zoom, isSelected]);
+  }, [element, isSelected]);
 
   // Fonction de rendu du contenu selon le type
   const renderElementContent = (ctx, element, width, height) => {
@@ -91,7 +91,7 @@ export const CanvasElement = ({
     switch (type) {
       case 'text':
         renderTextElement(ctx, content, width, height, {
-          fontSize: fontSize * zoom,
+          fontSize,
           fontFamily,
           color,
           textAlign,
@@ -103,8 +103,8 @@ export const CanvasElement = ({
         renderRectangleElement(ctx, width, height, {
           backgroundColor,
           borderColor,
-          borderWidth: borderWidth * zoom,
-          borderRadius: borderRadius * zoom
+          borderWidth,
+          borderRadius
         });
         break;
 
@@ -122,7 +122,7 @@ export const CanvasElement = ({
 
       default:
         renderDefaultElement(ctx, type, content, width, height, {
-          fontSize: fontSize * zoom,
+          fontSize,
           color
         });
     }
@@ -174,9 +174,39 @@ export const CanvasElement = ({
   const renderImageElement = (ctx, width, height, src, alt) => {
     if (src) {
       const img = new Image();
+      img.crossOrigin = 'anonymous'; // Pour éviter les problèmes CORS
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, width, height);
-        renderToCanvas(); // Re-rendre après chargement de l'image
+        // Calculer les dimensions pour maintenir le ratio d'aspect
+        const imgAspect = img.width / img.height;
+        const canvasAspect = width / height;
+
+        let drawWidth, drawHeight, drawX, drawY;
+
+        if (imgAspect > canvasAspect) {
+          // Image plus large que le canvas
+          drawWidth = width;
+          drawHeight = width / imgAspect;
+          drawX = 0;
+          drawY = (height - drawHeight) / 2;
+        } else {
+          // Image plus haute que le canvas
+          drawHeight = height;
+          drawWidth = height * imgAspect;
+          drawX = (width - drawWidth) / 2;
+          drawY = 0;
+        }
+
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+        // Forcer un re-rendu du composant parent si nécessaire
+      };
+      img.onerror = () => {
+        // En cas d'erreur, afficher le placeholder
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = '#666666';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(alt || '📷 Image', width / 2, height / 2);
       };
       img.src = src;
     } else {
@@ -184,7 +214,7 @@ export const CanvasElement = ({
       ctx.fillStyle = '#f0f0f0';
       ctx.fillRect(0, 0, width, height);
       ctx.fillStyle = '#666666';
-      ctx.font = `${12 * zoom}px Arial`;
+      ctx.font = '12px Arial';
       ctx.textAlign = 'center';
       ctx.fillText(alt || '📷 Image', width / 2, height / 2);
     }
@@ -193,7 +223,7 @@ export const CanvasElement = ({
   // Rendu code-barres
   const renderBarcodeElement = (ctx, content, width, height) => {
     ctx.fillStyle = '#000000';
-    ctx.font = `${10 * zoom}px monospace`;
+    ctx.font = '10px monospace';
     ctx.textAlign = 'center';
     ctx.fillText(content ? `📊 ${content}` : '📊 Code-barres', width / 2, height / 2);
   };
@@ -201,7 +231,7 @@ export const CanvasElement = ({
   // Rendu QR code
   const renderQRCodeElement = (ctx, content, width, height) => {
     ctx.fillStyle = '#000000';
-    ctx.font = `${10 * zoom}px Arial`;
+    ctx.font = '10px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(content ? `📱 ${content}` : '📱 QR Code', width / 2, height / 2);
   };
@@ -229,10 +259,19 @@ export const CanvasElement = ({
     ctx.closePath();
   };
 
-  // Effet pour rendre le canvas
+  // Effet pour rendre le canvas au montage et quand les propriétés changent
+  useEffect(() => {
+    // Petit délai pour s'assurer que le canvas est prêt
+    const timer = setTimeout(() => {
+      renderToCanvas();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [renderToCanvas]);
+
+  // Effet supplémentaire pour forcer le re-rendu quand l'élément change
   useEffect(() => {
     renderToCanvas();
-  }, [renderToCanvas]);
+  }, [element.content, element.backgroundColor, element.borderColor, element.borderWidth, element.color, element.fontSize, element.src]);
 
   const containerStyle = {
     position: 'absolute',
