@@ -15,7 +15,7 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 if (!defined('PDF_BUILDER_PLUGIN_URL')) {
-    define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('PDF_BUILDER_PLUGIN_URL', plugins_url('/', __FILE__));
 }
 
 if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
