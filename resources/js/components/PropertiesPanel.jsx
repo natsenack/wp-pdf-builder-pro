@@ -12,6 +12,7 @@ import renderFontSection from './PropertiesPanel/sections/FontSection';
 import renderBordersSection from './PropertiesPanel/sections/BordersSection';
 import renderLayoutSection from './PropertiesPanel/sections/LayoutSection';
 import renderContentSection from './PropertiesPanel/sections/ContentSection';
+import renderTableAppearanceSection from './PropertiesPanel/sections/TableAppearanceSection';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
@@ -228,6 +229,9 @@ const PropertiesPanel = memo(({
       case 'appearance':
         return (
           <div className="tab-content">
+            {selectedElement.type === 'product_table' && (
+              renderTableAppearanceSection(selectedElement, localProperties, handlePropertyChange, activeTab)
+            )}
             {smartOrder.map(section => {
               switch (section) {
                 case 'colors':

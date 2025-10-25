@@ -200,9 +200,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Tableaux produits (propriétés complètes)
   product_table: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['table_appearance', 'colors', 'typography', 'font', 'borders', 'effects'],
       properties: {
-        colors: ['backgroundColor', 'evenRowBg', 'oddRowBg', 'evenRowTextColor', 'oddRowTextColor'],
+        table_appearance: ['tableStyle', 'evenRowBg', 'oddRowBg', 'evenRowTextColor', 'oddRowTextColor'],
+        colors: ['backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
         font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
@@ -221,7 +222,7 @@ export const ELEMENT_PROPERTY_PROFILES = {
     content: {
       sections: ['table'],
       properties: {
-        table: ['columns', 'showHeaders', 'showBorders', 'tableStyle', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal']
+        table: ['columns', 'showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal']
       }
     },
     effects: {

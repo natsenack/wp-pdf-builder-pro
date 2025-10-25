@@ -103,10 +103,6 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
                 className="text-input"
               />
             </div>
-            <TableStylePreview
-              selectedStyle={localProperties.tableStyle || 'default'}
-              onStyleSelect={(style) => handlePropertyChange(selectedElement.id, 'tableStyle', style)}
-            />
             <div className="property-row">
               <label>Afficher en-têtes:</label>
               <input
@@ -163,35 +159,6 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
                 onChange={(e) => handlePropertyChange(selectedElement.id, 'showTotal', e.target.checked)}
               />
             </div>
-
-            {/* Couleurs des lignes alternées */}
-            <ColorPicker
-              label="Fond lignes paires"
-              value={localProperties.evenRowBg || '#ffffff'}
-              onChange={(value) => handlePropertyChange(selectedElement.id, 'evenRowBg', value)}
-              presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0']}
-            />
-
-            <ColorPicker
-              label="Texte lignes paires"
-              value={localProperties.evenRowTextColor || '#000000'}
-              onChange={(value) => handlePropertyChange(selectedElement.id, 'evenRowTextColor', value)}
-              presets={['#000000', '#1e293b', '#334155', '#475569']}
-            />
-
-            <ColorPicker
-              label="Fond lignes impaires"
-              value={localProperties.oddRowBg || '#f8fafc'}
-              onChange={(value) => handlePropertyChange(selectedElement.id, 'oddRowBg', value)}
-              presets={['#f8fafc', '#f1f5f9', '#e2e8f0', '#ffffff']}
-            />
-
-            <ColorPicker
-              label="Texte lignes impaires"
-              value={localProperties.oddRowTextColor || '#000000'}
-              onChange={(value) => handlePropertyChange(selectedElement.id, 'oddRowTextColor', value)}
-              presets={['#000000', '#1e293b', '#334155', '#475569']}
-            />
           </>
         );
 
