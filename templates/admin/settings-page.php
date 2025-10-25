@@ -407,7 +407,15 @@ window.addEventListener('load', function() {
                 
                 // Special handling for Canvas tab - initialize sub-tabs
                 if (tabContents[i].id === 'canvas') {
-                    initializeCanvasSubTabs();
+                    // Delay initialization to ensure DOM is ready
+                    setTimeout(function() {
+                        initializeCanvasSubTabs();
+                        // Scroll to make sub-tabs visible
+                        var subNavWrapper = document.querySelector('.sub-nav-tab-wrapper');
+                        if (subNavWrapper) {
+                            subNavWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100);
                 }
             } else {
                 // This is not the target - hide it
@@ -429,14 +437,26 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
+        console.log('Initializing Canvas sub-tabs...');
+
         // Always attach click handlers for canvas sub-tabs, even if already initialized
         attachCanvasSubTabHandlers();
+
+        // Check if canvas tab is currently visible
+        var canvasTab = document.getElementById('canvas');
+        if (!canvasTab || canvasTab.style.display === 'none' || !canvasTab.classList.contains('active')) {
+            console.log('Canvas tab not visible, skipping sub-tab initialization');
+            return;
+        }
 
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
+            console.log('Canvas sub-tabs already initialized');
             return; // Already initialized, but handlers are attached
         }
+
+        console.log('Setting up Canvas sub-tabs...');
 
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
@@ -454,12 +474,18 @@ window.addEventListener('load', function() {
         var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
         if (firstSubTabContent) {
             firstSubTabContent.classList.add('sub-tab-active');
+            console.log('Activated first sub-tab content:', firstSubTabContent.id);
+        } else {
+            console.log('No sub-tab content found!');
         }
 
         // Activate first sub-nav tab
         var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
         if (firstSubNavTab) {
             firstSubNavTab.classList.add('sub-nav-tab-active');
+            console.log('Activated first sub-nav tab:', firstSubNavTab.textContent);
+        } else {
+            console.log('No sub-nav tab found!');
         }
     }
 
@@ -525,6 +551,9 @@ window.addEventListener('load', function() {
         if (canvasTab && canvasTab.classList.contains('nav-tab-active')) {
             initializeCanvasSubTabs();
         }
+
+        // Always attach canvas sub-tab handlers on page load to ensure they work
+        attachCanvasSubTabHandlers();
 
         // Handle range inputs with value display
         var rangeInputs = document.querySelectorAll('input[type="range"]');
@@ -2545,64 +2574,74 @@ echo '<style>
     border-color: #b32d2e;
 }
 
-/* Styles for sub-tabs in Canvas tab - HIGHLY VISIBLE VERSION */
+/* Styles for sub-tabs in Canvas tab - ULTRA VISIBLE VERSION */
 .sub-nav-tab-wrapper {
-    margin: 20px 0 30px 0;
-    border-bottom: 2px solid #007cba;
-    padding-bottom: 10px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 8px rgba(0, 123, 186, 0.1);
+    margin: 30px 0 40px 0;
+    border-bottom: 4px solid #007cba;
+    padding-bottom: 20px;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 123, 186, 0.2);
+    border: 3px solid #007cba;
+    position: sticky;
+    top: 32px;
+    z-index: 10;
 }
 
 .sub-nav-tab {
     display: inline-block;
-    padding: 12px 20px;
-    margin-right: 8px;
+    padding: 18px 30px;
+    margin-right: 15px;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     color: #007cba;
     text-decoration: none;
-    border: 2px solid #007cba;
+    border: 4px solid #007cba;
     border-bottom: none;
-    border-radius: 8px 8px 0 0;
+    border-radius: 12px 12px 0 0;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    font-size: 13px;
+    font-weight: 700;
+    font-size: 15px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     position: relative;
-    box-shadow: 0 2px 4px rgba(0, 123, 186, 0.2);
-    min-width: 120px;
+    box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
+    min-width: 160px;
     text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .sub-nav-tab:hover {
     background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     color: #005a87;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 123, 186, 0.5);
+    border-color: #005a87;
 }
 
 .sub-nav-tab-active {
     background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
-    border-bottom: 2px solid #ffffff !important;
+    border-bottom: 4px solid #ffffff !important;
     color: #ffffff !important;
     position: relative;
-    top: 1px;
-    box-shadow: 0 4px 16px rgba(0, 123, 186, 0.4);
-    transform: translateY(-1px);
+    top: 2px;
+    box-shadow: 0 8px 30px rgba(0, 123, 186, 0.6);
+    transform: translateY(-3px) scale(1.08);
+    border-color: #005a87 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 11;
 }
 
 .sub-nav-tab-active::after {
     content: "";
     position: absolute;
-    bottom: -2px;
+    bottom: -4px;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 4px;
     background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .sub-tab-content {
