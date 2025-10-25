@@ -339,14 +339,13 @@ body.wp-admin .pdf-builder-container {
                 // Afficher l'erreur dans l'interface
                 const container = document.getElementById('invoice-quote-builder-container');
                 if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #dc3545;">
-                            <h3>Erreur d'initialisation</h3>
-                            <p>Une erreur s'est produite lors du chargement de l'éditeur.</p>
-                            <p>Vérifiez la console pour plus de détails.</p>
-                            <button onclick="location.reload()">Recharger la page</button>
-                        </div>
-                    `;
+                    container.innerHTML =
+                        '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
+                            '<h3>Erreur d\'initialisation</h3>' +
+                            '<p>Une erreur s\'est produite lors du chargement de l\'éditeur.</p>' +
+                            '<p>Vérifiez la console pour plus de détails.</p>' +
+                            '<button onclick="location.reload()">Recharger la page</button>' +
+                        '</div>';
                 }
             }
         } else {
@@ -383,14 +382,13 @@ body.wp-admin .pdf-builder-container {
             // Afficher un message d'erreur à l'utilisateur
             const container = document.getElementById('invoice-quote-builder-container');
             if (container) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #dc3545;">
-                        <h3>Erreur de chargement</h3>
-                        <p>Les scripts de l'éditeur PDF n'ont pas pu être chargés.</p>
-                        <p>Vérifiez la console pour plus de détails.</p>
-                        <button onclick="location.reload()">Recharger la page</button>
-                    </div>
-                `;
+                container.innerHTML =
+                    '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
+                        '<h3>Erreur de chargement</h3>' +
+                        '<p>Les scripts de l\'éditeur PDF n\'ont pas pu être chargés.</p>' +
+                        '<p>Vérifiez la console pour plus de détails.</p>' +
+                        '<button onclick="location.reload()">Recharger la page</button>' +
+                    '</div>';
             }
         }
     };
