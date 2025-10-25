@@ -2434,46 +2434,50 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - RENDU FONCTIONNEL ===
+        // === TABLEAU DE PRODUITS - RENDU AMÉLIORÉ ===
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
-        const cellHeight = 18;
-        const headerHeight = 22;
-        const totalHeight = 18;
+        const cellHeight = 16;
+        const headerHeight = 20;
+        const totalHeight = 16;
+        const padding = 6;
 
-        // Couleurs personnalisables
+        // Couleurs
         const borderColor = element.tableColorPrimary || '#0ea5e9';
-        const secondaryColor = element.tableColorSecondary || '#e8ebff';
+        const totalBgColor = element.tableColorSecondary || '#e8ebff';
         const headerBg = '#f0f0f0';
         const textColor = '#333333';
+        const showBorders = element.showBorders !== false;
 
         // Opacité
         if (element.opacity !== undefined && element.opacity < 1) {
             ctx.globalAlpha = element.opacity;
         }
 
-        // ===== CONSTRUCTION DES EN-TÊTES =====
-        const headers = [];
-        if (element.columns?.image !== false) headers.push('Image');
-        if (element.columns?.name !== false) headers.push('Produit');
-        if (element.columns?.sku !== false) headers.push('SKU');
-        if (element.columns?.quantity !== false) headers.push('Qté');
-        if (element.columns?.price !== false) headers.push('Prix');
-        if (element.columns?.total !== false) headers.push('Total');
+        // ===== COLONNES ACTIVES =====
+        const activeColumns = [];
+        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', width: 0.10, align: 'center' });
+        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', width: 0.35, align: 'left' });
+        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', width: 0.15, align: 'left' });
+        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', width: 0.10, align: 'right' });
+        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', width: 0.15, align: 'right' });
+        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', width: 0.15, align: 'right' });
 
-        // Données d'exemple (à remplacer par les vraies données)
+        // Normaliser les largeurs
+        let totalWidth = activeColumns.reduce((sum, col) => sum + col.width, 0);
+        const columnWidths = activeColumns.map(col => (col.width / totalWidth) * tableWidth);
+
+        // Données d'exemple
         const rows = [
-          { image: '', name: 'Produit A', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
-          { image: '', name: 'Produit B', sku: 'SKU-002', quantity: '1', price: '25,50 €', total: '25,50 €' },
-          { image: '', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
+          { image: '📦', name: 'Produit A - Description longue', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
+          { image: '📦', name: 'Produit B', sku: 'SKU-002', quantity: '1', price: '25,50 €', total: '25,50 €' },
+          { image: '📦', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
         ];
 
-        const colWidth = tableWidth / headers.length;
-        const showBorders = element.showBorders !== false;
-
         // ===== EN-TÊTE =====
+        // Bordure du haut
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 3;
@@ -2483,21 +2487,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.stroke();
         }
 
-        // Fond de l'en-tête
+        // Fond en-tête
         ctx.fillStyle = headerBg;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
-        
+
         // Texte en-têtes
         ctx.fillStyle = textColor;
-        ctx.font = 'bold 11px Arial';
-        headers.forEach((header, idx) => {
-          const colX = tableX + idx * colWidth;
-          ctx.textAlign = idx === 0 ? 'left' : 'right';
-          const textX = idx === 0 ? colX + 8 : colX + colWidth - 8;
-          ctx.fillText(header, textX, currentY + headerHeight / 2 + 3);
+        ctx.font = 'bold 10px Arial';
+        let colX = tableX;
+        activeColumns.forEach((col, idx) => {
+          const colWidth = columnWidths[idx];
+          ctx.textAlign = col.align;
+          const textX = col.align === 'left' ? colX + padding : colX + colWidth - padding;
+          ctx.fillText(col.label, textX, currentY + headerHeight / 2 + 3);
+          colX += colWidth;
         });
 
-        // Bordure du bas de l'en-tête
+        // Bordure bas en-tête
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 2;
@@ -2510,13 +2516,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         currentY += headerHeight;
 
         // ===== LIGNES DE DONNÉES =====
-        ctx.font = '10px Arial';
+        ctx.font = '9px Arial';
         rows.forEach((row, rowIdx) => {
           // Fond blanc
           ctx.fillStyle = '#ffffff';
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
-          
-          // Bordure inférieure (si activée)
+
+          // Bordures (si activées)
           if (showBorders) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = 0.5;
@@ -2525,24 +2531,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
             ctx.stroke();
           }
-          
-          // Texte pour chaque colonne
+
+          // Contenu cellules
           ctx.fillStyle = textColor;
-          const columnValues = [
-            row.image, row.name, row.sku, row.quantity, row.price, row.total
-          ];
-          const activeColumns = ['image', 'name', 'sku', 'quantity', 'price', 'total'].filter(
-            (col, idx) => element.columns?.[col] !== false
-          );
-          
-          activeColumns.forEach((colName, idx) => {
-            const colX = tableX + idx * colWidth;
-            ctx.textAlign = (colName === 'name' || colName === 'image') ? 'left' : 'right';
-            const textX = ctx.textAlign === 'left' ? colX + 8 : colX + colWidth - 8;
-            const value = row[colName] || '';
-            ctx.fillText(value.toString().slice(0, 20), textX, currentY + cellHeight / 2 + 3);
+          colX = tableX;
+          activeColumns.forEach((col, idx) => {
+            const colWidth = columnWidths[idx];
+            ctx.textAlign = col.align;
+            const textX = col.align === 'left' ? colX + padding : colX + colWidth - padding;
+            const value = row[col.key] || '';
+            const maxLength = col.key === 'name' ? 30 : 15;
+            ctx.fillText(value.toString().slice(0, maxLength), textX, currentY + cellHeight / 2 + 2);
+            colX += colWidth;
           });
-          
+
           currentY += cellHeight;
         });
 
@@ -2550,7 +2552,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const drawTotalRow = (label, value, bgColor, isFinal = false) => {
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
-          
+
           if (showBorders) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = isFinal ? 2 : 0.5;
@@ -2559,35 +2561,35 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
             ctx.stroke();
           }
-          
+
           ctx.fillStyle = textColor;
-          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
+          ctx.font = isFinal ? 'bold 10px Arial' : '9px Arial';
           ctx.textAlign = 'left';
-          ctx.fillText(label, tableX + 8, currentY + totalHeight / 2 + 3);
+          ctx.fillText(label, tableX + padding, currentY + totalHeight / 2 + 2);
           ctx.textAlign = 'right';
-          ctx.fillText(value, tableX + tableWidth - 8, currentY + totalHeight / 2 + 3);
-          
+          ctx.fillText(value, tableX + tableWidth - padding, currentY + totalHeight / 2 + 2);
+
           currentY += totalHeight;
         };
 
-        // Afficher les totaux selon les propriétés
-        if (element.showSubtotal !== false) {
+        // Afficher totaux selon les propriétés
+        if (element.showSubtotal) {
           drawTotalRow('Sous-total :', '87,48 €', '#ffffff', false);
         }
-        if (element.showShipping !== false) {
+        if (element.showShipping) {
           drawTotalRow('Frais de port :', '10,00 €', '#ffffff', false);
         }
-        if (element.showTaxes !== false) {
+        if (element.showTaxes) {
           drawTotalRow('TVA :', '19,50 €', '#ffffff', false);
         }
-        if (element.showDiscount !== false) {
+        if (element.showDiscount) {
           drawTotalRow('Remise :', '-5,00 €', '#ffffff', false);
         }
-        if (element.showTotal !== false) {
-          drawTotalRow('TOTAL :', '116,98 €', secondaryColor, true);
+        if (element.showTotal) {
+          drawTotalRow('TOTAL :', '116,98 €', totalBgColor, true);
         }
 
-        // Restaurer l'opacité
+        // Restaurer opacité
         ctx.globalAlpha = 1;
 
         // Restaurer l'opacité

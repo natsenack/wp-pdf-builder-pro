@@ -13,28 +13,29 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       icon: '📋',
       description: 'Tableau des produits commandés',
       defaultProperties: {
+        x: 30,
+        y: 270,
+        width: 530,
+        height: 200,
         showHeaders: true,
-        showBorders: false,
-        headers: ['Produit', 'Qté', 'Prix'],
-        dataSource: 'order_items',
-        tableStyle: 'striped',
+        showBorders: true,
         tableFormat: 'full',
-        tableColorPrimary: '',
-        tableColorSecondary: '',
+        tableColorPrimary: '#0ea5e9',
+        tableColorSecondary: '#e8ebff',
         columns: {
-          image: true,
+          image: false,
           name: true,
           sku: false,
           quantity: true,
           price: true,
           total: true
         },
-        showSubtotal: false,
+        showSubtotal: true,
         showShipping: true,
         showTaxes: true,
         showDiscount: false,
-        showTotal: false,
-        showFees: true // Afficher les frais par défaut
+        showTotal: true,
+        showTableBorder: false
       }
     },
     {
