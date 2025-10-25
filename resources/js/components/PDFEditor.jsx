@@ -278,8 +278,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // État des éléments
   const [elements, setElements] = useState(() => {
+    // Traiter les données initiales (peuvent être un tableau direct ou un objet avec settings)
+    let initialData = initialElements;
+    if (Array.isArray(initialElements)) {
+      initialData = initialElements;
+    } else if (initialElements && typeof initialElements === 'object' && initialElements.elements) {
+      // Nouvelle structure avec settings
+      initialData = initialElements.elements;
+    } else {
+      initialData = [];
+    }
+
     // Réparer automatiquement les propriétés des éléments lors du chargement
-    const repairedElements = repairProductTableProperties(initialElements);
+    const repairedElements = repairProductTableProperties(initialData);
     return repairedElements;
   });
   const [selectedElementId, setSelectedElementId] = useState(null); // Maintenant c'est l'ID de l'élément
@@ -290,6 +301,41 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // État de l'historique
   const [history, setHistory] = useState([elements]);
   const [historyIndex, setHistoryIndex] = useState(0);
+
+  // Restaurer les paramètres UI depuis les données initiales
+  useEffect(() => {
+    if (initialElements && typeof initialElements === 'object' && initialElements.settings) {
+      const settings = initialElements.settings;
+      if (settings.zoom !== undefined) setZoom(settings.zoom);
+      if (settings.showGrid !== undefined) setShowGrid(settings.showGrid);
+      if (settings.snapToGrid !== undefined) setSnapToGrid(settings.snapToGrid);
+      if (settings.showElementLibrary !== undefined) setShowElementLibrary(settings.showElementLibrary);
+      if (settings.showPropertiesPanel !== undefined) setShowPropertiesPanel(settings.showPropertiesPanel);
+    }
+  }, [initialElements]);
+
+  // Mettre à jour les éléments quand initialElements change
+  useEffect(() => {
+    if (initialElements) {
+      let elementsData = initialElements;
+      if (Array.isArray(initialElements)) {
+        elementsData = initialElements;
+      } else if (initialElements && typeof initialElements === 'object' && initialElements.elements) {
+        elementsData = initialElements.elements;
+      }
+
+      if (elementsData && elementsData.length > 0) {
+        const repairedElements = repairProductTableProperties(elementsData);
+        setElements(repairedElements);
+        setHistory([repairedElements]);
+        setHistoryIndex(0);
+      } else {
+        setElements([]);
+        setHistory([[]]);
+        setHistoryIndex(0);
+      }
+    }
+  }, [initialElements]);
 
   // État de l'interface
   const [zoom, setZoom] = useState(1.0);
@@ -371,7 +417,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire de sauvegarde
   const handleSave = async () => {
     if (onSave) {
-      await onSave(elements);
+      // Inclure les paramètres UI avec les éléments
+      const templateData = {
+        elements: elements,
+        settings: {
+          zoom: zoom,
+          showGrid: showGrid,
+          snapToGrid: snapToGrid,
+          showElementLibrary: showElementLibrary,
+          showPropertiesPanel: showPropertiesPanel
+        }
+      };
+      await onSave(templateData);
     }
   };
 
