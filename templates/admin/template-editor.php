@@ -361,24 +361,31 @@ body.wp-admin .pdf-builder-container {
                 console.log('📋 pdfBuilderPro.init disponible:', typeof window.pdfBuilderPro?.init);
 
                 console.log('🚀 Appel de pdfBuilderPro.init()...');
-                pdfBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
-                    templateName: <?php
-                        try {
-                            echo $template_name ? json_encode($template_name) : 'null';
-                        } catch (Exception $e) {
-                            echo 'null';
-                        }
-                    ?>,
-                    isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    initialElements: initialData.elements,
-                    width: 595,
-                    height: 842,
-                    zoom: 1,
-                    gridSize: 10,
-                    snapToGrid: true,
-                    maxHistorySize: 50
-                });
+                try {
+                    pdfBuilderPro.init('invoice-quote-builder-container', {
+                        templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
+                        templateName: <?php
+                            try {
+                                echo $template_name ? json_encode($template_name) : 'null';
+                            } catch (Exception $e) {
+                                echo 'null';
+                            }
+                        ?>,
+                        isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                        initialElements: initialData.elements,
+                        width: 595,
+                        height: 842,
+                        zoom: 1,
+                        gridSize: 10,
+                        snapToGrid: true,
+                        maxHistorySize: 50
+                    });
+                    console.log('✅ pdfBuilderPro.init() terminé SANS ERREUR');
+                } catch (initError) {
+                    console.error('❌ ERREUR CAPTURÉE dans pdfBuilderPro.init():', initError);
+                    console.error('Stack trace complet:', initError.stack);
+                    throw initError; // Re-throw pour que le catch parent l'attrape
+                }
                 console.log('✅ pdfBuilderPro.init() terminé');
                 } catch (error) {
                     console.error('❌ Erreur lors de l\'appel à pdfBuilderPro.init():', error);
