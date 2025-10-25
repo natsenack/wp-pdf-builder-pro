@@ -10,7 +10,6 @@ import renderColorsSection from './PropertiesPanel/sections/ColorsSection';
 import renderTypographySection from './PropertiesPanel/sections/TypographySection';
 import renderFontSection from './PropertiesPanel/sections/FontSection';
 import renderBordersSection from './PropertiesPanel/sections/BordersSection';
-import renderEffectsSection from './PropertiesPanel/sections/EffectsSection';
 import renderLayoutSection from './PropertiesPanel/sections/LayoutSection';
 import renderContentSection from './PropertiesPanel/sections/ContentSection';
 import { useElementCustomization } from '../hooks/useElementCustomization';
@@ -201,12 +200,6 @@ const PropertiesPanel = memo(({
       >
         📝 Contenu
       </button>
-      <button
-        className={`tab-btn ${activeTab === 'effects' ? 'active' : ''}`}
-        onClick={() => setActiveTab('effects')}
-      >
-        ✨ Effets
-      </button>
     </div>
   ), [activeTab]);
 
@@ -247,9 +240,6 @@ const PropertiesPanel = memo(({
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
-                case 'effects':
-                  return allowedControls.includes('effects') ?
-                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
                 default:
                   return null;
               }
