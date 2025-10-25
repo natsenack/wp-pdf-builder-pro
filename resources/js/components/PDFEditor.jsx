@@ -2571,6 +2571,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             tableStyle: element.tableStyle || 'default'
           });
 
+          console.log('SampleDataProvider result:', tableData);
+
           const tableX = element.x || 10;
           const tableY = element.y || 10;
           const tableWidth = Math.max(200, element.width || 500);
