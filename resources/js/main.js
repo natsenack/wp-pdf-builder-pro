@@ -30,11 +30,19 @@ const init = (containerId, options = {}) => {
   // Create React 18 root and render
   const root = ReactDOM.createRoot(container);
   console.log('✅ Root React créé:', !!root);
-  root.render(
-    React.createElement(PDFCanvasEditor, {
-      options: options
-    })
-  );
+  
+  try {
+    console.log('🚀 Tentative de rendu du composant PDFCanvasEditor...');
+    root.render(
+      React.createElement(PDFCanvasEditor, {
+        options: options
+      })
+    );
+    console.log('✅ Composant rendu avec succès');
+  } catch (error) {
+    console.error('❌ Erreur lors du rendu du composant:', error);
+    console.error('❌ Stack trace:', error.stack);
+  }
 
   console.log('✅ PDF Builder Pro: Éditeur initialisé avec succès');
 };
