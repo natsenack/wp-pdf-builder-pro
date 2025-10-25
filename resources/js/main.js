@@ -35,6 +35,7 @@ if (typeof window !== 'undefined') {
   if (!window.pdfBuilderPro) {
     window.pdfBuilderPro = {};
   }
+  // Étendre l'objet existant avec la fonction init
   window.pdfBuilderPro.init = init;
 }
 
