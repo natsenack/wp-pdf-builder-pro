@@ -44,8 +44,10 @@ if (typeof window !== 'undefined') {
   if (!window.pdfBuilderPro) {
     window.pdfBuilderPro = {};
   }
-  // Étendre l'objet existant avec la fonction init
+  // Forcer l'assignation de la fonction init, même si pdfBuilderPro existe déjà
+  console.log('🔧 Assignation de pdfBuilderPro.init...');
   window.pdfBuilderPro.init = init;
+  console.log('✅ pdfBuilderPro.init assigné:', typeof window.pdfBuilderPro.init);
 }
 
 // Export for ES6 modules
