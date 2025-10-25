@@ -7,7 +7,7 @@ import ElementLibrary from './ElementLibrary.jsx';
 import PropertiesPanel from './PropertiesPanel.jsx';
 import TemplateHeader from './TemplateHeader.jsx';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider.jsx';
-import { repairProductTableProperties } from '../utils/elementRepairUtils';
+import { repairProductTableProperties } from '../utils/elementRepairUtils.js';
 import './PDFEditor.css';
 
 // Fonctions utilitaires pour manipuler les couleurs
