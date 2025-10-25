@@ -2826,6 +2826,323 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = 1;
 
+      } else if (element.type === 'product_table') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = element.shadowBlur || 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Générer les données du tableau avec SampleDataProvider
+        const sampleDataProvider = new SampleDataProvider();
+        
+        // Convertir les colonnes du format PropertiesPanel (string) vers le format SampleDataProvider (object)
+        let columnsConfig = {};
+        if (element.columns) {
+          if (typeof element.columns === 'string') {
+            // Format PropertiesPanel: "name,price,quantity"
+            const columnList = element.columns.split(',').map(col => col.trim());
+            // Mapping des noms courts vers les clés SampleDataProvider
+            const columnMapping = {
+              'image': 'image',
+              'name': 'name', 
+              'sku': 'sku',
+              'quantity': 'quantity',
+              'price': 'price',
+              'total': 'total',
+              'description': 'description',
+              'short_description': 'short_description',
+              'categories': 'categories',
+              'regular_price': 'regular_price',
+              'sale_price': 'sale_price',
+              'discount': 'discount',
+              'tax': 'tax',
+              'weight': 'weight',
+              'dimensions': 'dimensions',
+              'attributes': 'attributes',
+              'stock_quantity': 'stock_quantity',
+              'stock_status': 'stock_status'
+            };
+            columnList.forEach(col => {
+              const key = columnMapping[col] || col;
+              columnsConfig[key] = true;
+            });
+          } else if (typeof element.columns === 'object') {
+            // Format direct (object)
+            columnsConfig = element.columns;
+          }
+        }
+        
+        const tableData = sampleDataProvider.generateProductTableData({
+          columns: columnsConfig,
+          showSubtotal: element.showSubtotal ?? false,
+          showShipping: element.showShipping ?? true,
+          showTaxes: element.showTaxes ?? true,
+          showDiscount: element.showDiscount ?? true,
+          showTotal: element.showTotal ?? true,
+          tableStyle: element.tableStyle || 'default'
+        });
+
+        const tableX = element.x || 10;
+        let currentY = element.y || 10;
+        const tableWidth = element.width || 500;
+
+        // Configuration des styles depuis les données
+        const styleData = tableData.tableStyleData;
+        const headerBg = styleData.header_bg ? `rgb(${styleData.header_bg.join(',')})` : '#f8f9fa';
+        const headerBorder = styleData.header_border ? `rgb(${styleData.header_border.join(',')})` : '#e2e8f0';
+        const rowBorder = styleData.row_border ? `rgb(${styleData.row_border.join(',')})` : '#f1f5f9';
+        const altRowBg = styleData.alt_row_bg ? `rgb(${styleData.alt_row_bg.join(',')})` : '#fafbfc';
+        const headerTextColor = styleData.headerTextColor || '#000000';
+        const rowTextColor = styleData.rowTextColor || '#000000';
+        const borderWidth = styleData.border_width || 1;
+        const headerFontWeight = styleData.headerFontWeight || 'bold';
+        const headerFontSize = styleData.headerFontSize || 12;
+        const rowFontSize = styleData.rowFontSize || 11;
+
+        // Configuration des colonnes visibles et leurs largeurs
+        const visibleHeaders = [];
+        const headerMap = {
+          'Image': 'image',
+          'Produit': 'name',
+          'SKU': 'sku',
+          'Description': 'description',
+          'Description courte': 'short_description',
+          'Catégories': 'categories',
+          'Qté': 'quantity',
+          'Prix': 'price',
+          'Prix régulier': 'regular_price',
+          'Prix soldé': 'sale_price',
+          'Remise': 'discount',
+          'TVA': 'tax',
+          'Poids': 'weight',
+          'Dimensions': 'dimensions',
+          'Attributs': 'attributes',
+          'Stock': 'stock_quantity',
+          'Statut stock': 'stock_status',
+          'Total': 'total'
+        };
+
+        // Filtrer les colonnes visibles selon element.columns
+        tableData.headers.forEach((header, index) => {
+          const columnKey = headerMap[header] || header.toLowerCase();
+          if (columnsConfig[columnKey] !== false) {
+            visibleHeaders.push({ header, index });
+          }
+        });
+
+        // Calcul des largeurs de colonnes avec validation
+        const columnWidths = [];
+        const totalWidthUsed = 0;
+        let remainingWidth = tableWidth;
+        let remainingColumns = visibleHeaders.length;
+
+        // Largeur spéciale pour la colonne quantité
+        const quantityHeaderIndex = visibleHeaders.findIndex(item => item.header === 'Qté');
+        if (quantityHeaderIndex !== -1) {
+          const quantityWidth = Math.max(40, tableWidth / 10); // Min 40px, max 10% de la largeur
+          columnWidths[visibleHeaders[quantityHeaderIndex].index] = quantityWidth;
+          remainingWidth -= quantityWidth;
+          remainingColumns--;
+        }
+
+        // Largeur par défaut pour les autres colonnes
+        const defaultColumnWidth = Math.max(30, remainingWidth / remainingColumns); // Min 30px
+        visibleHeaders.forEach(item => {
+          if (columnWidths[item.index] === undefined) {
+            columnWidths[item.index] = defaultColumnWidth;
+          }
+        });
+
+        // Calcul des positions X des colonnes
+        const columnPositions = [];
+        let currentX = tableX;
+        visibleHeaders.forEach(item => {
+          columnPositions[item.index] = currentX;
+          currentX += columnWidths[item.index];
+        });
+
+        // Dimensions des lignes
+        const headerHeight = headerFontSize + 8;
+        const rowHeight = rowFontSize + 6;
+        const totalHeight = rowHeight;
+
+        // Calcul de la hauteur basée sur le contenu
+        let calculatedHeight = headerHeight; // En-tête
+        calculatedHeight += tableData.rows.length * rowHeight; // Lignes de données
+        if (Object.keys(tableData.totals).length > 0) {
+          calculatedHeight += Object.keys(tableData.totals).length * totalHeight + 6; // Lignes de totaux + séparation
+        }
+        
+        const tableHeight = Math.max(element.height || 100, calculatedHeight);
+
+        // Fond du tableau (propriété spéciale)
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX, currentY, tableWidth, tableHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(tableX, currentY, tableWidth, tableHeight);
+          }
+        }
+
+        // Bordure du tableau (propriété spéciale)
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX, currentY, tableWidth, tableHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
+          }
+        }
+
+        // Police pour les en-têtes
+        ctx.font = `${headerFontWeight} ${headerFontSize}px ${element.fontFamily || 'Arial'}`;
+        ctx.textBaseline = 'middle';
+
+        // Dessiner les en-têtes
+        visibleHeaders.forEach(item => {
+          const colX = columnPositions[item.index];
+          const colWidth = columnWidths[item.index];
+
+          // Fond de l'en-tête
+          ctx.fillStyle = headerBg;
+          ctx.fillRect(colX, currentY, colWidth, headerHeight);
+
+          // Bordure de l'en-tête
+          ctx.strokeStyle = headerBorder;
+          ctx.lineWidth = borderWidth;
+          ctx.strokeRect(colX, currentY, colWidth, headerHeight);
+
+          // Texte de l'en-tête
+          ctx.fillStyle = headerTextColor;
+          ctx.textAlign = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ? 'center' : 'left';
+          const textX = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ?
+            colX + colWidth / 2 : colX + 4;
+          const textY = currentY + headerHeight / 2;
+          ctx.fillText(item.header, textX, textY);
+        });
+
+        currentY += headerHeight;
+
+        // Police pour les lignes de données
+        ctx.font = `${rowFontSize}px ${element.fontFamily || 'Arial'}`;
+
+        // Dessiner les lignes de données
+        tableData.rows.forEach((row, rowIndex) => {
+          const isAltRow = rowIndex % 2 === 1;
+          const rowY = currentY;
+
+          visibleHeaders.forEach(item => {
+            const colX = columnPositions[item.index];
+            const colWidth = columnWidths[item.index];
+            const cellValue = row[item.index];
+
+            // Fond de la cellule
+            ctx.fillStyle = isAltRow ? altRowBg : '#ffffff';
+            ctx.fillRect(colX, rowY, colWidth, rowHeight);
+
+            // Bordure de la cellule
+            ctx.strokeStyle = rowBorder;
+            ctx.lineWidth = borderWidth;
+            ctx.strokeRect(colX, rowY, colWidth, rowHeight);
+
+            // Texte de la cellule
+            ctx.fillStyle = rowTextColor;
+            ctx.textAlign = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ? 'center' : 'left';
+            const textX = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ?
+              colX + colWidth / 2 : colX + 4;
+            const textY = rowY + rowHeight / 2;
+
+            // Gestion spéciale pour les images
+            if (item.header === 'Image' && cellValue && cellValue.startsWith('data:image')) {
+              // Placeholder pour l'image (rectangle gris)
+              ctx.fillStyle = '#e5e7eb';
+              ctx.fillRect(colX + 2, rowY + 2, colWidth - 4, rowHeight - 4);
+              ctx.strokeStyle = '#d1d5db';
+              ctx.lineWidth = 1;
+              ctx.strokeRect(colX + 2, rowY + 2, colWidth - 4, rowHeight - 4);
+            } else {
+              // Texte normal
+              const displayText = cellValue !== undefined && cellValue !== null ? cellValue.toString() : '';
+              ctx.fillText(displayText, textX, textY);
+            }
+          });
+
+          currentY += rowHeight;
+        });
+
+        // Dessiner les totaux si présents
+        if (Object.keys(tableData.totals).length > 0) {
+          // Ligne de séparation
+          ctx.strokeStyle = headerBorder;
+          ctx.lineWidth = borderWidth * 1.5;
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY);
+          ctx.lineTo(tableX + tableWidth, currentY);
+          ctx.stroke();
+
+          currentY += 2;
+
+          // Police pour les totaux
+          ctx.font = `bold ${rowFontSize}px ${element.fontFamily || 'Arial'}`;
+
+          Object.entries(tableData.totals).forEach(([key, value]) => {
+            const totalY = currentY;
+
+            visibleHeaders.forEach(item => {
+              const colX = columnPositions[item.index];
+              const colWidth = columnWidths[item.index];
+
+              // Fond du total
+              ctx.fillStyle = '#f0f9ff';
+              ctx.fillRect(colX, totalY, colWidth, totalHeight);
+
+              // Bordure du total
+              ctx.strokeStyle = rowBorder;
+              ctx.lineWidth = borderWidth;
+              ctx.strokeRect(colX, totalY, colWidth, totalHeight);
+
+              // Texte du total
+              ctx.fillStyle = '#0c4a6e';
+              if (item.header === 'Produit') {
+                ctx.textAlign = 'left';
+                const label = key === 'subtotal' ? 'Sous-total' :
+                             key === 'shipping' ? 'Livraison' :
+                             key === 'discount' ? 'Remise' :
+                             key === 'tax' ? 'TVA' :
+                             key === 'total' ? 'TOTAL' : key;
+                ctx.fillText(label, colX + 4, totalY + totalHeight / 2);
+              } else if (item.header === 'Total') {
+                ctx.textAlign = 'center';
+                ctx.fillText(value, colX + colWidth / 2, totalY + totalHeight / 2);
+              }
+            });
+
+            currentY += totalHeight;
+          });
+        }
+
+        // Restaurer l'état Canvas
+        ctx.textBaseline = 'alphabetic';
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
       } else {
         ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
         const genericX = element.x || 10;
