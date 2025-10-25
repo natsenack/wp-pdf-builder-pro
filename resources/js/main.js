@@ -1,6 +1,8 @@
 // Import global fallbacks first
 import './globalFallback.js';
 
+console.log('🔥 PDF BUILDER MAIN.JS CHARGÉ - VERSION DEBUG REACT');
+
 // Main application entry point that actually uses all components
 import React from 'react';
 import ReactDOM from 'react-dom/client';
