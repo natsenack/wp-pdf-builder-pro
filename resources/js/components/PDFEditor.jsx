@@ -2512,319 +2512,337 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - OPTION 2 STRIPED MODERN EXACT ===
-        // Entièrement dynamique selon les propriétés du sidebar
-        
-        const tableX = element.x || 30;
-        let currentY = element.y || 270;
-        const tableWidth = element.width || 530;
-        
-        // Dimensions optimisées pour une meilleure lisibilité (lignes très réduites)
-        const padding = 12;     // padding horizontal augmenté
-        const paddingV = 8;     // padding vertical réduit pour lignes plus compactes
-        const headerHeight = 20 + paddingV * 2;  // 36px - header réduit
-        const rowHeight = 12 + paddingV * 2;     // 28px - lignes de produits très réduites
-        const totalRowHeight = 14 + paddingV * 2; // 30px - totaux intermédiaires très réduits
-        const finalTotalRowHeight = 18 + paddingV * 2; // 34px - TOTAL final légèrement réduit
-        const colGap = 15;      // gap entre colonnes augmenté
-        const sideBarWidth = 4; // border-left 4px
-        
-        // Couleurs améliorées (moderne et contrastées)
-        const primaryColor = element.tableColorPrimary || '#2563eb';    // Bleu moderne plus foncé
-        const secondaryColor = element.tableColorSecondary || '#dbeafe'; // Bleu clair plus subtil
-        const headerBg = '#f0f0f0';
-        const totalsBg = '#f0f0f0';
-        const bgWhite = '#ffffff';
-        const bgGray = '#fafafa';
-        const textColor = '#333333';
-        const textMuted = '#666666';
-        const borderColor = '#e5e5e5';
-        const showBorders = element.showBorders !== false;
-        const showTableBorder = element.showTableBorder !== false;
-        
-        // Opacité
-        if (element.opacity !== undefined && element.opacity < 1) {
-            ctx.globalAlpha = element.opacity;
-        }
-
-        // Propriétés de texte pour le tableau
-        const tableFontSize = element.fontSize || 9;
-        const tableFontFamily = element.fontFamily || 'Segoe UI';
-        const tableFontWeight = element.fontWeight || 'normal';
-        const tableFontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
-        const tableLetterSpacing = element.letterSpacing || 0;
-
-        // Appliquer l'ombre du texte si définie
-        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
-          ctx.shadowColor = element.textShadowColor || '#000000';
-          ctx.shadowBlur = element.textShadowBlur || 0;
-          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
-          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
-        }
-
-        // Largeurs des colonnes (dynamiques selon les colonnes visibles)
-        const activeColumns = [];
-        
-        // Construire la liste des colonnes actives selon les propriétés
-        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: '', ratio: 0.06, align: 'center' });
-        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.40, align: 'left' });
-        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', ratio: 0.14, align: 'left' });
-        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', ratio: 0.12, align: 'center' });
-        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', ratio: 0.14, align: 'right' });
-        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', ratio: 0.14, align: 'right' });
-        
-        // Si aucune colonne visible, afficher au minimum le nom et le total
-        if (activeColumns.length === 0) {
-          activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.6, align: 'left' });
-          activeColumns.push({ key: 'total', label: 'Total', ratio: 0.4, align: 'right' });
-        }
-        
-        // Recalculer les ratios pour qu'ils s'adaptent aux colonnes actives
-        const totalRatio = activeColumns.reduce((sum, col) => sum + col.ratio, 0);
-        const normalizedRatios = activeColumns.map(col => col.ratio / totalRatio);
-        
-        const contentWidth = tableWidth - sideBarWidth;
-        const totalGaps = colGap * (activeColumns.length - 1);
-        const availableWidth = contentWidth - totalGaps;
-        const colWidths = normalizedRatios.map(ratio => availableWidth * ratio);
-        const colLabels = activeColumns.map(col => col.label);
-        const colAligns = activeColumns.map(col => col.align);
-        const colKeys = activeColumns.map(col => col.key);
-
-        // Données d'exemple / réelles
-        const defaultRows = [
-          { image: '📦', name: 'Article 1', sku: 'SKU-001', quantity: '1', price: '10€', total: '10€' },
-          { image: '📦', name: 'Article 2', sku: 'SKU-002', quantity: '2', price: '15€', total: '30€' },
-          { image: '📦', name: 'Article 3', sku: 'SKU-003', quantity: '1', price: '20€', total: '20€' }
-        ];
-        
-        // Utiliser les données de l'ordre si disponibles, sinon les données d'exemple
-        const rows = element.orderData?.lineItems && element.orderData.lineItems.length > 0 
-          ? element.orderData.lineItems.map(item => ({
-              image: '📦',
-              name: item.product_name || item.name || item.product_title || 'Produit sans nom',
-              sku: item.sku || item.product_sku || '',
-              quantity: item.quantity ? parseInt(item.quantity) : 1,
-              price: formatPrice(item.product_price || item.price || item.line_price || '0'),
-              total: formatPrice(item.total || item.line_total || '0')
-            }))
-          : defaultRows;
-        
-        // Helper pour formater les prix
-        const formatPrice = (price) => {
-          if (!price) return '0€';
-          const numPrice = typeof price === 'string' ? parseFloat(price.replace(/[^\d.,]/g, '').replace(',', '.')) : parseFloat(price);
-          return isNaN(numPrice) ? '0€' : `${numPrice.toFixed(2)}€`;
-        };
-        
-        // Helper pour tronquer le texte avec mesure précise
-        const truncateText = (text, maxWidth, isBold = false) => {
-          if (!text) return '';
-          
-          // Configurer la police pour mesurer
-          const fontWeight = isBold ? 'bold' : tableFontWeight;
-          ctx.font = `${tableFontStyle}${fontWeight} ${tableFontSize}px ${tableFontFamily}`;
-          
-          // Si le texte rentre, le retourner tel quel
-          if (ctx.measureText(text).width <= maxWidth) {
-            return text;
-          }
-          
-          // Tronquer progressivement jusqu'à ce que ça rentre
-          let truncated = text;
-          while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth) {
-            truncated = truncated.slice(0, -1);
-          }
-          
-          return truncated + (truncated.length < text.length ? '…' : '');
-        };
-        
-        // Construire rowValues en fonction des colonnes actives
-        const rowValues = rows.map(r => colKeys.map(key => r[key] || ''));
-
-        // Données des totaux (réelles si disponibles)
-        const subtotal = formatPrice(element.orderData?.subtotal || element.orderData?.cart_subtotal || '60');
-        const taxTotal = formatPrice(element.orderData?.tax_total || element.orderData?.total_tax || '12');
-        const discountTotal = formatPrice(element.orderData?.discount_total || '5');
-        const orderTotal = formatPrice(element.orderData?.total || element.orderData?.order_total || '77');
-
-        // Calculer la hauteur totale du tableau pour la bordure extérieure
-        // Note: totals array will be created below        // Helper pour dessiner une rangée
-        const drawTableRow = (values, bgColor, isBold = false) => {
-          // Fond
-          ctx.fillStyle = bgColor;
-          ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
-
-          // Barre latérale
-          if (showBorders) {
-            ctx.fillStyle = primaryColor;
-            ctx.fillRect(tableX, currentY, sideBarWidth, rowHeight);
+        try {
+          // Appliquer l'opacité si définie
+          if (element.opacity !== undefined && element.opacity < 1) {
+              ctx.globalAlpha = element.opacity;
           }
 
-          // Texte des colonnes
-          const fontWeight = isBold ? 'bold' : tableFontWeight;
-          ctx.font = `${tableFontStyle}${fontWeight} ${tableFontSize}px ${tableFontFamily}`;
-          ctx.fillStyle = textColor;
-          ctx.textBaseline = 'middle';
+          // Appliquer les ombres si définies
+          if (element.shadow) {
+            ctx.shadowColor = element.shadowColor || '#000000';
+            ctx.shadowBlur = element.shadowBlur || 5;
+            ctx.shadowOffsetX = element.shadowOffsetX || 2;
+            ctx.shadowOffsetY = element.shadowOffsetY || 2;
+          }
 
-          let colX = tableX + sideBarWidth + padding;
-          values.forEach((val, idx) => {
-            const colWidth = colWidths[idx];
-            ctx.textAlign = colAligns[idx];
-            let textX;
-            if (colAligns[idx] === 'left') {
-              textX = colX;
-            } else if (colAligns[idx] === 'right') {
-              textX = colX + colWidth - padding;
-            } else {
-              textX = colX + colWidth / 2;
+          // Générer les données du tableau avec SampleDataProvider
+          const sampleDataProvider = new SampleDataProvider();
+
+          // Convertir les colonnes du format PropertiesPanel (string) vers le format SampleDataProvider (object)
+          let columnsConfig = {};
+          if (element.columns) {
+            if (typeof element.columns === 'string') {
+              // Format PropertiesPanel: "name,price,quantity"
+              const columnList = element.columns.split(',').map(col => col.trim());
+              // Mapping des noms courts vers les clés SampleDataProvider
+              const columnMapping = {
+                'image': 'image',
+                'name': 'name',
+                'sku': 'sku',
+                'quantity': 'quantity',
+                'price': 'price',
+                'total': 'total',
+                'description': 'description',
+                'short_description': 'short_description',
+                'categories': 'categories',
+                'regular_price': 'regular_price',
+                'sale_price': 'sale_price',
+                'discount': 'discount',
+                'tax': 'tax',
+                'weight': 'weight',
+                'dimensions': 'dimensions',
+                'attributes': 'attributes',
+                'stock_quantity': 'stock_quantity',
+                'stock_status': 'stock_status'
+              };
+              columnList.forEach(col => {
+                const key = columnMapping[col] || col;
+                columnsConfig[key] = true;
+              });
+            } else if (typeof element.columns === 'object') {
+              // Format direct (object)
+              columnsConfig = element.columns;
             }
-            
-            // Tronquer le texte si nécessaire
-            const truncated = truncateText(val.toString(), colWidth - padding * 2, isBold);
-            ctx.fillText(truncated, textX, currentY + rowHeight / 2);
-            colX += colWidth + colGap;
+          }
+
+          const tableData = sampleDataProvider.generateProductTableData({
+            columns: columnsConfig,
+            showSubtotal: element.showSubtotal ?? false,
+            showShipping: element.showShipping ?? true,
+            showTaxes: element.showTaxes ?? true,
+            showDiscount: element.showDiscount ?? true,
+            showTotal: element.showTotal ?? true,
+            tableStyle: element.tableStyle || 'default'
           });
 
-          // Bordure basse
-          if (showBorders) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(tableX + sideBarWidth, currentY + rowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
-            ctx.stroke();
+          const tableX = element.x || 10;
+          let currentY = element.y || 10;
+          const tableWidth = element.width || 500;
+
+          // Configuration des styles depuis les données
+          const styleData = tableData.tableStyleData;
+          const headerBg = styleData.header_bg ? `rgb(${styleData.header_bg.join(',')})` : '#f8f9fa';
+          const headerBorder = styleData.header_border ? `rgb(${styleData.header_border.join(',')})` : '#e2e8f0';
+          const rowBorder = styleData.row_border ? `rgb(${styleData.row_border.join(',')})` : '#f1f5f9';
+          const altRowBg = styleData.alt_row_bg ? `rgb(${styleData.alt_row_bg.join(',')})` : '#fafbfc';
+          const headerTextColor = styleData.headerTextColor || '#000000';
+          const rowTextColor = styleData.rowTextColor || '#000000';
+          const borderWidth = styleData.border_width || 1;
+          const headerFontWeight = styleData.headerFontWeight || 'bold';
+          const headerFontSize = styleData.headerFontSize || 12;
+          const rowFontSize = styleData.rowFontSize || 11;
+
+          // Mapping des en-têtes pour filtrage
+          const headerMap = {
+            'Image': 'image',
+            'Produit': 'name',
+            'SKU': 'sku',
+            'Description': 'description',
+            'Description courte': 'short_description',
+            'Catégories': 'categories',
+            'Qté': 'quantity',
+            'Prix': 'price',
+            'Prix régulier': 'regular_price',
+            'Prix soldé': 'sale_price',
+            'Remise': 'discount',
+            'TVA': 'tax',
+            'Poids': 'weight',
+            'Dimensions': 'dimensions',
+            'Attributs': 'attributes',
+            'Stock': 'stock_quantity',
+            'Statut stock': 'stock_status',
+            'Total': 'total'
+          };
+
+          // Filtrer les colonnes visibles selon element.columns
+          const visibleHeaders = [];
+          tableData.headers.forEach((header, index) => {
+            const columnKey = headerMap[header] || header.toLowerCase();
+            if (columnsConfig[columnKey] !== false) {
+              visibleHeaders.push({ header, index });
+            }
+          });
+
+          // Si aucune colonne visible, afficher un message simple
+          if (visibleHeaders.length === 0) {
+            ctx.fillStyle = '#666666';
+            ctx.font = '12px Arial';
+            ctx.fillText('Aucune colonne visible', tableX, currentY + 20);
+            return;
           }
 
-          currentY += rowHeight;
-        };
+          // Calcul des largeurs de colonnes avec validation
+          const columnWidths = [];
+          const totalWidthUsed = 0;
+          let remainingWidth = tableWidth;
+          let remainingColumns = visibleHeaders.length;
 
-        // ===== EN-TÊTE =====
-        ctx.fillStyle = headerBg;
-        ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
-
-        // Barre latérale
-        if (showBorders) {
-          ctx.fillStyle = primaryColor;
-          ctx.fillRect(tableX, currentY, sideBarWidth, headerHeight);
-        }
-
-        // Texte en-têtes
-        ctx.font = `bold ${tableFontSize + 2}px ${tableFontFamily}`;
-        ctx.fillStyle = textColor;
-        ctx.textBaseline = 'middle';
-        let colX = tableX + sideBarWidth + padding;
-        colLabels.forEach((label, idx) => {
-          const colWidth = colWidths[idx];
-          ctx.textAlign = colAligns[idx];
-          let textX;
-          if (colAligns[idx] === 'left') {
-            textX = colX;
-          } else if (colAligns[idx] === 'right') {
-            textX = colX + colWidth - padding;
-          } else {
-            textX = colX + colWidth / 2;
-          }
-          ctx.fillText(label, textX, currentY + headerHeight / 2);
-          colX += colWidth + colGap;
-        });
-
-        // Bordure basse en-tête (2px, primaire)
-        if (showBorders) {
-          ctx.strokeStyle = primaryColor;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(tableX + sideBarWidth, currentY + headerHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
-          ctx.stroke();
-        }
-
-        currentY += headerHeight;
-
-        // ===== LIGNES DE DONNÉES =====
-        rowValues.forEach((values, idx) => {
-          const bgColor = idx % 2 === 0 ? bgWhite : bgGray;
-          drawTableRow(values, bgColor, false);
-        });
-
-        // ===== TOTAUX =====
-        const totals = [];
-        
-        if (element.showSubtotal) {
-          totals.push(['Sous-total :', subtotal]);
-        }
-        if (element.showShipping) {
-          const shipping = formatPrice(element.orderData?.shipping_total || element.orderData?.shipping_cost || '10');
-          totals.push(['Frais de port :', shipping]);
-        }
-        if (element.showTaxes) {
-          totals.push(['TVA :', taxTotal]);
-        }
-        if (element.showDiscount) {
-          totals.push(['Remise :', `-${discountTotal}`]);
-        }
-
-        // Calculer la hauteur totale du tableau pour la bordure extérieure (maintenant que totals est défini)
-        const totalRows = rows.length + (totals.length + (element.showTotal ? 1 : 0)) + 1; // +1 pour le header
-        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * totals.length) + (element.showTotal ? finalTotalRowHeight : 0);
-
-        // Bordure extérieure (optionnelle)
-        if (showTableBorder) {
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
-        }
-
-        // Helper pour dessiner une rangée de total
-        const drawTotalRow = (label, value, bgColor, isBold = false, isFinal = false) => {
-          const currentRowHeight = isFinal ? finalTotalRowHeight : totalRowHeight;
-          
-          // Fond
-          ctx.fillStyle = bgColor;
-          ctx.fillRect(tableX, currentY, tableWidth, currentRowHeight);
-
-          // Barre latérale
-          if (showBorders) {
-            ctx.fillStyle = primaryColor;
-            ctx.fillRect(tableX, currentY, sideBarWidth, currentRowHeight);
+          // Largeur spéciale pour la colonne quantité
+          const quantityHeaderIndex = visibleHeaders.findIndex(item => item.header === 'Qté');
+          if (quantityHeaderIndex !== -1) {
+            const quantityWidth = Math.max(40, tableWidth / 10); // Min 40px, max 10% de la largeur
+            columnWidths[visibleHeaders[quantityHeaderIndex].index] = quantityWidth;
+            remainingWidth -= quantityWidth;
+            remainingColumns--;
           }
 
-          // Texte (label gauche, valeur droite)
-          const fontWeight = isBold ? 'bold' : tableFontWeight;
-          ctx.font = `${tableFontStyle}${fontWeight} ${isBold ? tableFontSize + 1 : tableFontSize}px ${tableFontFamily}`;
-          ctx.fillStyle = isFinal ? textColor : textMuted;
+          // Largeur par défaut pour les autres colonnes
+          const defaultColumnWidth = Math.max(30, remainingWidth / remainingColumns); // Min 30px
+          visibleHeaders.forEach(item => {
+            if (columnWidths[item.index] === undefined) {
+              columnWidths[item.index] = defaultColumnWidth;
+            }
+          });
+
+          // Calcul des positions X des colonnes
+          const columnPositions = [];
+          let currentX = tableX;
+          visibleHeaders.forEach(item => {
+            columnPositions[item.index] = currentX;
+            currentX += columnWidths[item.index];
+          });
+
+          // Dimensions des lignes
+          const headerHeight = headerFontSize + 8;
+          const rowHeight = rowFontSize + 6;
+
+          // Calcul de la hauteur basée sur le contenu
+          let calculatedHeight = headerHeight; // En-tête
+          calculatedHeight += tableData.rows.length * rowHeight; // Lignes de données
+          if (Object.keys(tableData.totals).length > 0) {
+            calculatedHeight += Object.keys(tableData.totals).length * rowHeight + 6; // Lignes de totaux + séparation
+          }
+
+          const tableHeight = Math.max(element.height || 100, calculatedHeight);
+
+          // Fond du tableau (propriété spéciale)
+          if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+            ctx.fillStyle = element.backgroundColor;
+            if (element.borderRadius > 0) {
+              ctx.beginPath();
+              ctx.roundRect(tableX, currentY, tableWidth, tableHeight, element.borderRadius);
+              ctx.fill();
+            } else {
+              ctx.fillRect(tableX, currentY, tableWidth, tableHeight);
+            }
+          }
+
+          // Bordure du tableau (propriété spéciale)
+          if (element.borderWidth > 0) {
+            ctx.strokeStyle = element.borderColor || '#000000';
+            ctx.lineWidth = element.borderWidth || 1;
+            if (element.borderRadius > 0) {
+              ctx.beginPath();
+              ctx.roundRect(tableX, currentY, tableWidth, tableHeight, element.borderRadius);
+              ctx.stroke();
+            } else {
+              ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
+            }
+          }
+
+          // Police pour les en-têtes
+          ctx.font = `${headerFontWeight} ${headerFontSize}px ${element.fontFamily || 'Arial'}`;
           ctx.textBaseline = 'middle';
-          ctx.textAlign = 'left';
-          ctx.fillText(label, tableX + sideBarWidth + padding, currentY + currentRowHeight / 2);
-          ctx.textAlign = 'right';
-          ctx.fillText(value.toString(), tableX + tableWidth - padding, currentY + currentRowHeight / 2);
 
-          // Bordure basse (sauf pour le total final)
-          if (showBorders && !isFinal) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = 1;
+          // Dessiner les en-têtes
+          visibleHeaders.forEach(item => {
+            const colX = columnPositions[item.index];
+            const colWidth = columnWidths[item.index];
+
+            // Fond de l'en-tête
+            ctx.fillStyle = headerBg;
+            ctx.fillRect(colX, currentY, colWidth, headerHeight);
+
+            // Bordure de l'en-tête
+            ctx.strokeStyle = headerBorder;
+            ctx.lineWidth = borderWidth;
+            ctx.strokeRect(colX, currentY, colWidth, headerHeight);
+
+            // Texte de l'en-tête
+            ctx.fillStyle = headerTextColor;
+            ctx.textAlign = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ? 'center' : 'left';
+            const textX = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ?
+              colX + colWidth / 2 : colX + 4;
+            const textY = currentY + headerHeight / 2;
+            ctx.fillText(item.header, textX, textY);
+          });
+
+          currentY += headerHeight;
+
+          // Police pour les lignes de données
+          ctx.font = `${rowFontSize}px ${element.fontFamily || 'Arial'}`;
+
+          // Dessiner les lignes de données
+          tableData.rows.forEach((row, rowIndex) => {
+            const isAltRow = rowIndex % 2 === 1;
+            const rowY = currentY;
+
+            visibleHeaders.forEach(item => {
+              const colX = columnPositions[item.index];
+              const colWidth = columnWidths[item.index];
+              const cellValue = row[item.index];
+
+              // Fond de la cellule
+              ctx.fillStyle = isAltRow ? altRowBg : '#ffffff';
+              ctx.fillRect(colX, rowY, colWidth, rowHeight);
+
+              // Bordure de la cellule
+              ctx.strokeStyle = rowBorder;
+              ctx.lineWidth = borderWidth;
+              ctx.strokeRect(colX, rowY, colWidth, rowHeight);
+
+              // Texte de la cellule
+              ctx.fillStyle = rowTextColor;
+              ctx.textAlign = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ? 'center' : 'left';
+              const textX = item.header === 'Qté' || item.header === 'Prix' || item.header === 'Total' ?
+                colX + colWidth / 2 : colX + 4;
+              const textY = rowY + rowHeight / 2;
+
+              // Gestion spéciale pour les images
+              if (item.header === 'Image' && cellValue && cellValue.startsWith('data:image')) {
+                // Placeholder pour l'image (rectangle gris)
+                ctx.fillStyle = '#e5e7eb';
+                ctx.fillRect(colX + 2, rowY + 2, colWidth - 4, rowHeight - 4);
+                ctx.strokeStyle = '#d1d5db';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(colX + 2, rowY + 2, colWidth - 4, rowHeight - 4);
+              } else {
+                // Texte normal
+                const displayText = cellValue !== undefined && cellValue !== null ? cellValue.toString() : '';
+                ctx.fillText(displayText, textX, textY);
+              }
+            });
+
+            currentY += rowHeight;
+          });
+
+          // Dessiner les totaux si présents
+          if (Object.keys(tableData.totals).length > 0) {
+            // Ligne de séparation
+            ctx.strokeStyle = headerBorder;
+            ctx.lineWidth = borderWidth * 1.5;
             ctx.beginPath();
-            ctx.moveTo(tableX + sideBarWidth, currentY + currentRowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + currentRowHeight);
+            ctx.moveTo(tableX, currentY);
+            ctx.lineTo(tableX + tableWidth, currentY);
             ctx.stroke();
+
+            currentY += 2;
+
+            // Police pour les totaux
+            ctx.font = `bold ${rowFontSize}px ${element.fontFamily || 'Arial'}`;
+
+            Object.entries(tableData.totals).forEach(([key, value]) => {
+              const totalY = currentY;
+
+              visibleHeaders.forEach(item => {
+                const colX = columnPositions[item.index];
+                const colWidth = columnWidths[item.index];
+
+                // Fond du total
+                ctx.fillStyle = '#f0f9ff';
+                ctx.fillRect(colX, totalY, colWidth, rowHeight);
+
+                // Bordure du total
+                ctx.strokeStyle = rowBorder;
+                ctx.lineWidth = borderWidth;
+                ctx.strokeRect(colX, totalY, colWidth, rowHeight);
+
+                // Texte du total
+                ctx.fillStyle = '#0c4a6e';
+                if (item.header === 'Produit') {
+                  ctx.textAlign = 'left';
+                  const label = key === 'subtotal' ? 'Sous-total' :
+                               key === 'shipping' ? 'Livraison' :
+                               key === 'discount' ? 'Remise' :
+                               key === 'tax' ? 'TVA' :
+                               key === 'total' ? 'TOTAL' : key;
+                  ctx.fillText(label, colX + 4, totalY + rowHeight / 2);
+                } else if (item.header === 'Total') {
+                  ctx.textAlign = 'center';
+                  ctx.fillText(value, colX + colWidth / 2, totalY + rowHeight / 2);
+                }
+              });
+
+              currentY += rowHeight;
+            });
           }
 
-          currentY += currentRowHeight;
-        };
+          // Restaurer l'état Canvas
+          ctx.textBaseline = 'alphabetic';
+          ctx.globalAlpha = 1;
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
 
-        // Dessiner les totaux intermédiaires
-        totals.forEach(([label, value]) => {
-          drawTotalRow(label, value, totalsBg, false, false);
-        });
-
-        // ===== TOTAL FINAL =====
-        if (element.showTotal) {
-          drawTotalRow('TOTAL :', orderTotal, secondaryColor, true, true);
+        } catch (error) {
+          // En cas d'erreur, afficher un message simple
+          ctx.fillStyle = '#ff6b6b';
+          ctx.font = '12px Arial';
+          ctx.fillText(`Erreur product_table: ${error.message}`, element.x || 10, (element.y || 10) + 20);
+          console.error('Erreur lors du rendu de product_table:', error);
         }
-
-        // Restaurer l'état Canvas
-        ctx.textBaseline = 'alphabetic';
-        ctx.globalAlpha = 1;
 
       } else if (element.type === 'product_table') {
         // Appliquer l'opacité si définie
