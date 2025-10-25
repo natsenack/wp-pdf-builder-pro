@@ -90,7 +90,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   };
 
   const canvasState = useCanvasState({
-    initialElements: options.initialElements || [],
+    initialElements: Array.isArray(options.initialElements?.elements) ? options.initialElements.elements : [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
     canvasHeight: options.height || 842,
@@ -829,7 +829,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
               )}
 
               {/* Éléments normaux rendus comme composants interactifs */}
-              {canvasState.elements
+              {canvasState.getAllElements()
                 .filter(el => !el.type.startsWith('woocommerce-'))
                 .map(element => (
                   <CanvasElement
@@ -855,7 +855,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
                 ))}
 
               {/* Éléments WooCommerce superposés */}
-              {canvasState.elements
+              {canvasState.getAllElements()
                 .filter(el => el.type.startsWith('woocommerce-'))
                 .map(element => (
                   <WooCommerceElement
@@ -900,7 +900,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
                             borderRadius: '4px',
                             marginTop: '5px'
                           }}
-                          value={canvasState.elements.find(el => el.id === canvasState.selection.selectedElements[0])?.content || ''}
+                          value={canvasState.getAllElements().find(el => el.id === canvasState.selection.selectedElements[0])?.content || ''}
                           onChange={(e) => {
                             canvasState.updateElement(canvasState.selection.selectedElements[0], { content: e.target.value });
                           }}
@@ -944,7 +944,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
 
       {/* Indicateur d'état */}
       <footer className="editor-status">
-        <span>Éléments: {canvasState.elements.length}</span>
+        <span>Éléments: {canvasState.getAllElements().length}</span>
         <span>|</span>
         {globalSettings.settings.showZoomIndicator && (
           <>
