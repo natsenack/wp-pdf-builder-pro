@@ -234,6 +234,41 @@ export const ELEMENT_PROPERTY_PROFILES = {
       }
     }
   },
+  // Éléments texte statique
+  text: {
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['text'],
+      properties: {
+        text: ['text']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows', 'filters'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
+        filters: ['brightness', 'contrast', 'saturate']
+      }
+    }
+  },
   // Éléments d'informations client (accès aux couleurs et apparence)
   customer_info: {
     appearance: {
@@ -408,126 +443,6 @@ export const ELEMENT_PROPERTY_PROFILES = {
       properties: {
         opacity: ['opacity'],
         shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
-      }
-    }
-  },
-  // Éléments formes géométriques
-  rectangle: {
-    appearance: {
-      sections: ['colors', 'borders', 'effects'],
-      properties: {
-        colors: ['color', 'backgroundColor'],
-        borders: ['borderWidth', 'borderColor', 'borderRadius'],
-        effects: ['opacity', 'shadow']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: [],
-      properties: {}
-    },
-    effects: {
-      sections: ['opacity', 'shadows'],
-      properties: {
-        opacity: ['opacity'],
-        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
-      }
-    }
-  },
-  // Cercle (mêmes propriétés que rectangle)
-  circle: {
-    appearance: {
-      sections: ['colors', 'borders', 'effects'],
-      properties: {
-        colors: ['color', 'backgroundColor'],
-        borders: ['borderWidth', 'borderColor', 'borderRadius'],
-        effects: ['opacity', 'shadow']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: [],
-      properties: {}
-    },
-    effects: {
-      sections: ['opacity', 'shadows'],
-      properties: {
-        opacity: ['opacity'],
-        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
-      }
-    }
-  },
-  // Ligne
-  line: {
-    appearance: {
-      sections: ['colors', 'effects'],
-      properties: {
-        colors: ['color'],
-        effects: ['opacity']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: [],
-      properties: {}
-    },
-    effects: {
-      sections: ['opacity'],
-      properties: {
-        opacity: ['opacity']
-      }
-    }
-  },
-  // Flèche
-  arrow: {
-    appearance: {
-      sections: ['colors', 'effects'],
-      properties: {
-        colors: ['color'],
-        effects: ['opacity']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: [],
-      properties: {}
-    },
-    effects: {
-      sections: ['opacity'],
-      properties: {
-        opacity: ['opacity']
       }
     }
   },
