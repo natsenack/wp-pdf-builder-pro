@@ -359,11 +359,25 @@ body.wp-admin .pdf-builder-container {
                 if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
                     console.log('📋 PDF Builder init - Template ID:', <?php echo $template_id ?: 'null'; ?>, 'Initial Elements:', <?php echo json_encode($initial_elements); ?>, 'Count:', <?php echo count($initial_elements); ?>);
                 }
+                
+                // Récupérer les paramètres du backend
+                const backendSettings = <?php 
+                    $settings = get_option('pdf_builder_settings', []);
+                    echo json_encode([
+                        'show_grid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
+                        'snap_to_grid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
+                        'snap_to_elements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
+                    ]);
+                ?>;
+                
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    initialElements: <?php echo json_encode($initial_elements); ?>,
+                    initialElements: {
+                        elements: <?php echo json_encode($initial_elements); ?>,
+                        settings: backendSettings
+                    },
                     width: 595,
                     height: 842,
                     zoom: 1,

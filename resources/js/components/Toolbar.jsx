@@ -19,7 +19,8 @@ export const Toolbar = ({
 }) => {
   const [activeTab, setActiveTab] = React.useState('home');
   
-  // Récupérer les paramètres de grille et aimantation
+  // Récupérer les paramètres de grille et aimantation depuis le backend
+  // Les paramètres sont en snake_case du backend et correspondent aux paramètres généraux
   const isGridEnabled = settings.show_grid !== false;
   const isSnapEnabled = settings.snap_to_grid !== false;
   const areSnapsEnabled = settings.snap_to_elements !== false;
