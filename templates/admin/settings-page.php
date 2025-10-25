@@ -435,6 +435,14 @@ window.addEventListener('load', function() {
         // Always attach click handlers for canvas sub-tabs, even if already initialized
         attachCanvasSubTabHandlers();
 
+        // Temporary alert to confirm sub-tabs are there
+        setTimeout(function() {
+            var subNavWrapper = document.querySelector('#canvas .sub-nav-tab-wrapper');
+            if (subNavWrapper) {
+                alert('Sous-onglets Canvas trouvés ! Ils devraient être visibles au-dessus de "Paramètres Canvas".\n\nSi vous ne les voyez pas, ils pourraient être :\n- De la même couleur que le fond\n- Très petits\n- Derrière d\'autres éléments\n- Hors de la zone visible (scroll vers le bas)');
+            }
+        }, 1000);
+
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
