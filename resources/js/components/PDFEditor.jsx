@@ -896,6 +896,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     });
 
     sortedElements.forEach((element, index) => {
+      console.log(`Rendering element ${index}:`, element.type, element.id);
 
       // Mettre en évidence l'élément sélectionné
       if (selectedElement?.id === element.id) {
