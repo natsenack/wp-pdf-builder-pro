@@ -1478,14 +1478,16 @@ class PDF_Builder_Admin
         // wp_enqueue_script('react');
         // wp_enqueue_script('react-dom', ['react']);
 
+        // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
+        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time() . '_' . uniqid(), false);
+
         // Charger d'abord les vendors (React, etc.) - COMMENTÉ car webpack ne génère pas vendors.js séparé
         // wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
         wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time(), ['jquery'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
         error_log('PDF Builder: pdf-builder-admin-v3 script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
 // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed - TIMESTAMP: ' . time());
-// Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
-        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), false);
+// Script de correction de nonce - DÉPLACÉ PLUS HAUT
 // Variables JavaScript pour AJAX - VERSION FORCEE - CORRECTION: Localiser dans le script principal
         wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
