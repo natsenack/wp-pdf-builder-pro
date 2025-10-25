@@ -528,35 +528,40 @@
 
 .ribbon-toolbar .toolbar-content {
   background: #ffffff;
-  padding: 12px 16px;
-  max-height: 50px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  padding: 6px 8px;
+  height: 50px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
 .ribbon-toolbar .tab-content {
   display: flex;
-  gap: 24px;
-  align-items: flex-start;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100%;
 }
 
 .ribbon-toolbar .toolbar-group {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 120px;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  min-width: auto;
 }
 
 .ribbon-toolbar .toolbar-group h5 {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: #6c757d;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   text-align: center;
-  padding: 4px 0;
-  border-bottom: 1px solid #e9ecef;
+  padding: 0;
+  border: none;
+  display: none;
 }
 
 .ribbon-toolbar .group-buttons {
@@ -575,9 +580,9 @@
 }
 
 .ribbon-toolbar .tool-button {
-  min-width: 40px;
-  height: 40px;
-  padding: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 2px;
   border: 1px solid #dee2e6;
   background: #ffffff;
   border-radius: 4px;
@@ -586,9 +591,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
   transition: all 0.2s ease;
-  font-size: 12px;
+  font-size: 11px;
   color: #495057;
 }
 
