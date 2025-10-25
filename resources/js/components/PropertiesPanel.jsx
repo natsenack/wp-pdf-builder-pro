@@ -273,16 +273,16 @@ const PropertiesPanel = memo(({
             {smartOrder.map(section => {
               switch (section) {
                 case 'colors':
-                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, activeTab);
+                  return <div key={`section-${section}`}>{renderColorsSection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div>;
                 case 'typography':
                   return shouldShowSection('typography', selectedElement.type) ?
-                    renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
+                    <div key={`section-${section}`}>{renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div> : null;
                 case 'font':
                   return shouldShowSection('font', selectedElement.type) ?
-                    renderFontSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
+                    <div key={`section-${section}`}>{renderFontSection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div> : null;
                 case 'borders':
                   return allowedControls.includes('borders') ?
-                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
+                    <div key={`section-${section}`}>{renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab)}</div> : null;
                 default:
                   return null;
               }

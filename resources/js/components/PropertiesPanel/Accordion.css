@@ -29,8 +29,18 @@
   outline-offset: 2px;
 }
 
-.accordion-header:active {
-  background: #f1f5f9;
+.accordion-header:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* S'assurer que le contenu est correctement masqué/affiché */
+.accordion-content {
+  will-change: transform, opacity, max-height;
+}
+
+.accordion-content.open {
+  will-change: auto;
 }
 
 /* Améliorer la lisibilité du contenu */
@@ -67,14 +77,19 @@
 }
 
 .accordion-content {
-  max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  transform: scaleY(0);
+  transform-origin: top;
+  opacity: 0;
+  max-height: 0;
   padding: 0 16px;
 }
 
 .accordion-content.open {
-  max-height: 1000px; /* Réduit pour de meilleures performances */
+  transform: scaleY(1);
+  opacity: 1;
+  max-height: 2000px;
   padding: 16px;
 }
 

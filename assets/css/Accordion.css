@@ -49,14 +49,14 @@
 }
 
 .accordion-content {
-  max-height: 0;
+  height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
+  transition: height 0.3s ease;
   padding: 0 16px;
+  background: #ffffff;
 }
 
 .accordion-content.open {
-  max-height: 2000px;
   padding: 16px;
 }
 
@@ -76,5 +76,5 @@
 
 /* Animation fluide pour l'ouverture/fermeture */
 .accordion-content {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
