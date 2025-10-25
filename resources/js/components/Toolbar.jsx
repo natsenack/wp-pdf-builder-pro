@@ -12,9 +12,15 @@ export const Toolbar = ({
   onUndo,
   onRedo,
   canUndo,
-  canRedo
+  canRedo,
+  settings = {} // Paramètres du backend
 }) => {
   const [activeTab, setActiveTab] = React.useState('home');
+  
+  // Récupérer les paramètres de grille et aimantation
+  const isGridEnabled = settings.show_grid !== false;
+  const isSnapEnabled = settings.snap_to_grid !== false;
+  const areSnapsEnabled = settings.snap_to_elements !== false;
 
   const textTools = [
     { id: 'select', label: 'Sélection (V)', icon: '👆', shortcut: 'V' },
@@ -192,23 +198,47 @@ export const Toolbar = ({
               <h5>Affichage</h5>
               <div className="group-buttons">
                 <div className="display-options">
-                  <label className="toggle-label">
+                  <label 
+                    className={`toggle-label ${!isGridEnabled ? 'disabled' : ''}`}
+                    title={!isGridEnabled ? '❌ Grille désactivée dans les paramètres généraux' : 'Afficher/Masquer la grille (G)'}
+                    style={!isGridEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                  >
                     <input
                       type="checkbox"
-                      checked={showGrid}
-                      onChange={(e) => onShowGridChange(e.target.checked)}
+                      checked={isGridEnabled ? showGrid : false}
+                      onChange={(e) => isGridEnabled && onShowGridChange(e.target.checked)}
+                      disabled={!isGridEnabled}
                     />
                     <span className="toggle-text">Grille</span>
                     <span className="toggle-shortcut">(G)</span>
                   </label>
-                  <label className="toggle-label">
+                  <label 
+                    className={`toggle-label ${!isSnapEnabled ? 'disabled' : ''}`}
+                    title={!isSnapEnabled ? '❌ Aimantation à la grille désactivée dans les paramètres généraux' : 'Aimanter à la grille (X)'}
+                    style={!isSnapEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                  >
                     <input
                       type="checkbox"
-                      checked={snapToGrid}
-                      onChange={(e) => onSnapToGridChange(e.target.checked)}
+                      checked={isSnapEnabled ? snapToGrid : false}
+                      onChange={(e) => isSnapEnabled && onSnapToGridChange(e.target.checked)}
+                      disabled={!isSnapEnabled}
                     />
                     <span className="toggle-text">Aimantation</span>
-                    <span className="toggle-shortcut">(M)</span>
+                    <span className="toggle-shortcut">(X)</span>
+                  </label>
+                  <label 
+                    className={`toggle-label ${!areSnapsEnabled ? 'disabled' : ''}`}
+                    title={!areSnapsEnabled ? '❌ Aimantation aux éléments désactivée dans les paramètres généraux' : 'Aimanter aux éléments (Z)'}
+                    style={!areSnapsEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={areSnapsEnabled ? snapToElements : false}
+                      onChange={(e) => areSnapsEnabled && onSnapToElementsChange(e.target.checked)}
+                      disabled={!areSnapsEnabled}
+                    />
+                    <span className="toggle-text">Aimantation</span>
+                    <span className="toggle-shortcut">(Z)</span>
                   </label>
                 </div>
               </div>

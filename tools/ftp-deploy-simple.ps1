@@ -343,12 +343,6 @@ foreach ($file in $modifiedFiles) {
     $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt', 'composer.json', 'package.json')
     $skipPatterns = @('*.log', '*.tmp', '*.bak', '.git*', 'node_modules/*', '.DS_Store')
 
-    # Force deployment of PHP files in templates directory
-    if ($file.StartsWith('templates/') -and $file.EndsWith('.php')) {
-        $isEssential = $true
-        return
-    }
-
     $isEssential = $false
     $shouldSkip = $false
 

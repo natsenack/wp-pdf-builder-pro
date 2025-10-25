@@ -591,7 +591,7 @@ class PDF_Builder_Asset_Optimizer
      */
     private function log_optimization_results($results)
     {
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
 
         $total_savings = 0;
         $total_original = 0;

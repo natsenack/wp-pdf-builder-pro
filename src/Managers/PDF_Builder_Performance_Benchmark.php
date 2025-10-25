@@ -779,7 +779,7 @@ class PDF_Builder_Performance_Benchmark
      */
     private function log_benchmark_start($message)
     {
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log("Début: {$message}", 'info', 'performance_benchmark');
     }
 
@@ -788,7 +788,7 @@ class PDF_Builder_Performance_Benchmark
      */
     private function log_benchmark_end($message, $score = null)
     {
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $score_text = $score ? " (Score: {$score})" : '';
         $logger->log("Fin: {$message}{$score_text}", 'info', 'performance_benchmark');
     }
@@ -817,7 +817,7 @@ class PDF_Builder_Performance_Benchmark
         delete_option('pdf_builder_performance_baseline');
         delete_option('pdf_builder_latest_benchmark');
 
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Baseline de performance réinitialisée', 'info', 'performance_benchmark');
     }
 }

@@ -242,7 +242,7 @@ class PDF_Builder_Dual_PDF_Generator
      */
     private function log_generation($method, $pdf_path, $error = null)
     {
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $message = sprintf(
             'Génération PDF dual - Méthode: %s, Succès: %s%s',
             $method,

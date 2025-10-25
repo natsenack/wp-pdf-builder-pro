@@ -408,7 +408,7 @@ class PDF_Builder_Database_Query_Optimizer
             $wpdb->query($index_sql);
         }
 
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Index de performance créés pour PDF Builder', 'info', 'db_optimizer');
     }
 
@@ -500,7 +500,7 @@ class PDF_Builder_Database_Query_Optimizer
         wp_cache_delete('pdf_builder_query_cache');
         $this->initialize_query_cache();
 
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Cache des requêtes nettoyé', 'info', 'db_optimizer');
     }
 
@@ -527,7 +527,7 @@ class PDF_Builder_Database_Query_Optimizer
         // Créer les index de performance
         $this->create_performance_indexes();
 
-        $logger = new PDF_Builder_Logger();
+        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Base de données optimisée pour PDF Builder', 'info', 'db_optimizer');
     }
 }

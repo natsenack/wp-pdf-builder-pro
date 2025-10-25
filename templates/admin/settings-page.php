@@ -47,6 +47,7 @@ class TempConfig {
             'default_orientation' => 'portrait',
             'email_notifications_enabled' => false,
             'notification_events' => [],
+            // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => true,
             'canvas_border_width' => 1,
             'canvas_border_color' => '#007cba',
@@ -54,7 +55,77 @@ class TempConfig {
             'canvas_resize_handles_enabled' => true,
             'canvas_handle_size' => 8,
             'canvas_handle_color' => '#007cba',
-            'canvas_handle_hover_color' => '#005a87'
+            'canvas_handle_hover_color' => '#005a87',
+            // Paramètres Canvas - nouveaux (Général)
+            'default_canvas_width' => 210,
+            'default_canvas_height' => 297,
+            'default_canvas_unit' => 'mm',
+            'canvas_background_color' => '#ffffff',
+            'canvas_show_transparency' => false,
+            'container_background_color' => '#f8f9fa',
+            'container_show_transparency' => false,
+            'show_margins' => true,
+            'margin_top' => 10,
+            'margin_right' => 10,
+            'margin_bottom' => 10,
+            'margin_left' => 10,
+            // Paramètres Canvas - Grille & Aimants
+            'show_grid' => true,
+            'grid_size' => 10,
+            'grid_color' => '#e0e0e0',
+            'grid_opacity' => 30,
+            'snap_to_grid' => true,
+            'snap_to_elements' => true,
+            'snap_to_margins' => true,
+            'snap_tolerance' => 5,
+            'show_guides' => true,
+            'lock_guides' => false,
+            // Paramètres Canvas - Zoom & Navigation
+            'default_zoom' => '100',
+            'zoom_step' => 25,
+            'min_zoom' => 10,
+            'max_zoom' => 500,
+            'pan_with_mouse' => true,
+            'zoom_with_wheel' => true,
+            'smooth_zoom' => true,
+            'show_zoom_indicator' => true,
+            // Paramètres Canvas - Sélection & Manipulation
+            'show_resize_handles' => true,
+            'handle_size' => 8,
+            'handle_color' => '#007cba',
+            'enable_rotation' => true,
+            'rotation_step' => 15,
+            'rotation_snap' => true,
+            'multi_select' => true,
+            'select_all_shortcut' => true,
+            'show_selection_bounds' => true,
+            'copy_paste_enabled' => true,
+            'duplicate_on_drag' => false,
+            // Paramètres Canvas - Export & Qualité
+            'export_quality' => 'print',
+            'export_format' => 'pdf',
+            'compress_images' => true,
+            'image_quality' => 85,
+            'max_image_size' => 2048,
+            'include_metadata' => true,
+            'pdf_author' => get_bloginfo('name'),
+            'pdf_subject' => '',
+            'auto_crop' => false,
+            'embed_fonts' => true,
+            'optimize_for_web' => false,
+            // Paramètres Canvas - Avancé
+            'enable_hardware_acceleration' => true,
+            'limit_fps' => false,
+            'max_fps' => 60,
+            'auto_save_enabled' => true,
+            'auto_save_interval' => 30,
+            'auto_save_versions' => 10,
+            'undo_levels' => 50,
+            'redo_levels' => 50,
+            'enable_keyboard_shortcuts' => true,
+            'show_fps' => false,
+            'email_notifications' => false,
+            'admin_email' => get_option('admin_email')
         ];
 
         return isset($settings[$key]) ? $settings[$key] : ($defaults[$key] ?? $default);
@@ -405,17 +476,14 @@ window.addEventListener('load', function() {
                 tabContents[i].classList.add('active');
                 tabContents[i].style.cssText = 'display: block !important;';
                 
-                // Special handling for Canvas tab - initialize sub-tabs
+                // Special handling for Canvas tab
                 if (tabContents[i].id === 'canvas') {
-                    // Delay initialization to ensure DOM is ready
-                    setTimeout(function() {
-                        initializeCanvasSubTabs();
-                        // Scroll to make sub-tabs visible
-                        var subNavWrapper = document.querySelector('.sub-nav-tab-wrapper');
-                        if (subNavWrapper) {
-                            subNavWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }, 100);
+                    // Modern tabs are handled by the jQuery code below
+                    // Scroll to make tabs visible
+                    var tabsContainer = document.querySelector('.modern-tabs-container');
+                    if (tabsContainer) {
+                        tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
             } else {
                 // This is not the target - hide it
@@ -433,98 +501,6 @@ window.addEventListener('load', function() {
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
         }
-    }
-    
-    // Function to initialize Canvas sub-tabs
-    function initializeCanvasSubTabs() {
-        console.log('Initializing Canvas sub-tabs...');
-
-        // Always attach click handlers for canvas sub-tabs, even if already initialized
-        attachCanvasSubTabHandlers();
-
-        // Check if canvas tab is currently visible
-        var canvasTab = document.getElementById('canvas');
-        if (!canvasTab || canvasTab.style.display === 'none' || !canvasTab.classList.contains('active')) {
-            console.log('Canvas tab not visible, skipping sub-tab initialization');
-            return;
-        }
-
-        // Check if already initialized
-        var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
-        if (activeSubTab) {
-            console.log('Canvas sub-tabs already initialized');
-            return; // Already initialized, but handlers are attached
-        }
-
-        console.log('Setting up Canvas sub-tabs...');
-
-        // Hide all canvas sub-tab contents
-        var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
-        for (var j = 0; j < canvasSubTabContents.length; j++) {
-            canvasSubTabContents[j].classList.remove('sub-tab-active');
-        }
-
-        // Remove active class from all canvas sub-nav tabs
-        var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-        for (var j = 0; j < canvasSubNavTabs.length; j++) {
-            canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
-        }
-
-        // Show first sub-tab content
-        var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
-        if (firstSubTabContent) {
-            firstSubTabContent.classList.add('sub-tab-active');
-            console.log('Activated first sub-tab content:', firstSubTabContent.id);
-        } else {
-            console.log('No sub-tab content found!');
-        }
-
-        // Activate first sub-nav tab
-        var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
-        if (firstSubNavTab) {
-            firstSubNavTab.classList.add('sub-nav-tab-active');
-            console.log('Activated first sub-nav tab:', firstSubNavTab.textContent);
-        } else {
-            console.log('No sub-nav tab found!');
-        }
-    }
-
-    // Function to attach click handlers for canvas sub-tabs
-    function attachCanvasSubTabHandlers() {
-        var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-
-        for (var i = 0; i < subNavTabs.length; i++) {
-            // Remove existing listeners to avoid duplicates
-            subNavTabs[i].removeEventListener('click', handleSubTabClick);
-            subNavTabs[i].addEventListener('click', handleSubTabClick);
-        }
-    }
-
-    // Handler function for sub-tab clicks
-    function handleSubTabClick(e) {
-        e.preventDefault();
-        var targetId = this.getAttribute('href');
-
-        // Hide all canvas sub-tab contents
-        var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
-        for (var j = 0; j < canvasSubTabContents.length; j++) {
-            canvasSubTabContents[j].classList.remove('sub-tab-active');
-        }
-
-        // Remove active class from all canvas sub-nav tabs
-        var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-        for (var j = 0; j < canvasSubNavTabs.length; j++) {
-            canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
-        }
-
-        // Show target sub-tab content
-        var targetContent = document.querySelector(targetId);
-        if (targetContent) {
-            targetContent.classList.add('sub-tab-active');
-        }
-
-        // Add active class to clicked sub-nav tab
-        this.classList.add('sub-nav-tab-active');
     }
     
     // Attach click handlers when DOM is ready
@@ -545,15 +521,6 @@ window.addEventListener('load', function() {
             var firstHref = firstTab.getAttribute('href');
             simpleActivateTab(firstHref);
         }
-
-        // Initialize first sub-tab for Canvas when Canvas tab is active
-        var canvasTab = document.querySelector('.nav-tab[href="#canvas"]');
-        if (canvasTab && canvasTab.classList.contains('nav-tab-active')) {
-            initializeCanvasSubTabs();
-        }
-
-        // Always attach canvas sub-tab handlers on page load to ensure they work
-        attachCanvasSubTabHandlers();
 
         // Handle range inputs with value display
         var rangeInputs = document.querySelectorAll('input[type="range"]');
@@ -1123,7 +1090,9 @@ window.addEventListener('load', function() {
                         <p><?php _e('Cliquez sur le bouton ci-dessous pour sauvegarder les modifications apportées aux rôles et permissions.', 'pdf-builder-pro'); ?></p>
 
                         <p style="margin-top: 15px;">
-                            <input type="submit" name="submit_roles" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Rôles et Permissions', 'pdf-builder-pro'); ?>">
+                            <button type="button" class="button button-primary ajax-save-btn" data-section="roles" style="cursor: pointer;">
+                                <?php _e('Enregistrer les Rôles et Permissions', 'pdf-builder-pro'); ?>
+                            </button>
                             <span style="margin-left: 10px; color: #666;">
                                 <?php _e('💡 Vous pouvez aussi utiliser le bouton principal en bas de la page.', 'pdf-builder-pro'); ?>
                             </span>
@@ -1172,7 +1141,9 @@ window.addEventListener('load', function() {
                     <p><?php _e('Cliquez sur le bouton ci-dessous pour sauvegarder les modifications apportées aux paramètres de notifications.', 'pdf-builder-pro'); ?></p>
 
                     <p style="margin-top: 15px;">
-                        <input type="submit" name="submit_notifications" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Paramètres de Notifications', 'pdf-builder-pro'); ?>">
+                        <button type="button" class="button button-primary ajax-save-btn" data-section="notifications" style="cursor: pointer;">
+                            <?php _e('Enregistrer les Paramètres de Notifications', 'pdf-builder-pro'); ?>
+                        </button>
                         <span style="margin-left: 10px; color: #666;">
                             <?php _e('💡 Vous pouvez aussi utiliser le bouton principal en bas de la page.', 'pdf-builder-pro'); ?>
                         </span>
@@ -1184,19 +1155,44 @@ window.addEventListener('load', function() {
             <div id="canvas" class="tab-content">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
-                <!-- Sous-onglets pour l'organisation - CORRECTION 2025 -->
-                <div class="sub-nav-tab-wrapper">
-                    <a href="#canvas-general" class="sub-nav-tab sub-nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-grid" class="sub-nav-tab"><?php _e('Grille & Aimants', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-zoom" class="sub-nav-tab"><?php _e('Zoom & Navigation', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-selection" class="sub-nav-tab"><?php _e('Sélection & Manipulation', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-export" class="sub-nav-tab"><?php _e('Export & Qualité', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-advanced" class="sub-nav-tab"><?php _e('Avancé', 'pdf-builder-pro'); ?></a>
-                </div>
+                <!-- SYSTÈME D'ONGLETS MODERNE ET ROBUSTE -->
+                <div class="modern-tabs-container">
+                    <div class="modern-tabs-header">
+                        <button type="button" class="modern-tab-button active" data-tab="general">
+                            <?php _e('Général', 'pdf-builder-pro'); ?>
+                        </button>
+                        <button type="button" class="modern-tab-button" data-tab="grid">
+                            <?php _e('Grille & Aimants', 'pdf-builder-pro'); ?>
+                        </button>
+                        <button type="button" class="modern-tab-button" data-tab="zoom">
+                            <?php _e('Zoom & Navigation', 'pdf-builder-pro'); ?>
+                        </button>
+                        <button type="button" class="modern-tab-button" data-tab="selection">
+                            <?php _e('Sélection & Manipulation', 'pdf-builder-pro'); ?>
+                        </button>
+                        <button type="button" class="modern-tab-button" data-tab="export">
+                            <?php _e('Export & Qualité', 'pdf-builder-pro'); ?>
+                        </button>
+                        <button type="button" class="modern-tab-button" data-tab="advanced">
+                            <?php _e('Avancé', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
 
-                <!-- Sous-onglet Général -->
-                <div id="canvas-general" class="sub-tab-content sub-tab-active">
-                    <h3><?php _e('Paramètres Généraux du Canvas', 'pdf-builder-pro'); ?></h3>
+                    <div class="modern-tabs-content">
+                        <!-- Onglet Général -->
+                        <div class="modern-tab-panel active" data-tab="general">
+                            <h3><?php _e('Paramètres Généraux du Canvas', 'pdf-builder-pro'); ?></h3>
+
+                            <!-- DEBUG INFO -->
+                            <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; font-size: 12px;">
+                                <strong>DEBUG - Valeurs actuelles:</strong><br>
+                                Largeur: <?php echo $config->get('default_canvas_width', 210); ?><br>
+                                Hauteur: <?php echo $config->get('default_canvas_height', 297); ?><br>
+                                Unité: <?php echo $config->get('default_canvas_unit', 'mm'); ?><br>
+                                Fond canvas: <?php echo $config->get('canvas_background_color', '#ffffff'); ?><br>
+                                Transparence: <?php echo $config->get('canvas_show_transparency', false) ? 'Oui' : 'Non'; ?><br>
+                                Marges: <?php echo $config->get('show_margins', true) ? 'Oui' : 'Non'; ?>
+                            </div>
 
                     <table class="form-table">
                         <tr>
@@ -1319,555 +1315,461 @@ window.addEventListener('load', function() {
                             <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
                         </p>
                     </div>
-                </div>
+                        </div>
 
-                <!-- Sous-onglet Grille & Aimants -->
-                <?php $canvas_settings = get_option('pdf_builder_settings', []); ?>
-                <div id="canvas-grid" class="sub-tab-content">
-                    <h3><?php _e('Paramètres de Grille et Aimantation', 'pdf-builder-pro'); ?></h3>
+                        <!-- Onglet Grille & Aimants -->
+                        <div class="modern-tab-panel" data-tab="grid">
+                            <h3><?php _e('Paramètres de Grille et Aimantation', 'pdf-builder-pro'); ?></h3>
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php _e('Grille d\'Alignement', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="show_grid">
-                                        <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked($canvas_settings['show_grid'] ?? true); ?>>
-                                        <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr($canvas_settings['grid_size'] ?? 10); ?>" class="small-text" min="5" max="50" step="5"> px
-                                    </div>
-                                    <div>
-                                        <label for="grid_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_color" type="color" id="grid_color" value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>">
-                                    </div>
-                                    <div>
-                                        <label for="grid_opacity"><?php _e('Opacité:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_opacity" type="range" id="grid_opacity" min="10" max="100" value="<?php echo esc_attr($canvas_settings['grid_opacity'] ?? 30); ?>" style="width: 80px;">
-                                        <span id="grid_opacity_value"><?php echo esc_attr($canvas_settings['grid_opacity'] ?? 30); ?>%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Aimantation', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="snap_to_grid">
-                                        <input name="snap_to_grid" type="checkbox" id="snap_to_grid" value="1" <?php checked(get_option('pdf_builder_snap_to_grid', true)); ?>>
-                                        <?php _e('Activer l\'aimantation à la grille', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="snap_to_elements">
-                                        <input name="snap_to_elements" type="checkbox" id="snap_to_elements" value="1" <?php checked(get_option('pdf_builder_snap_to_elements', true)); ?>>
-                                        <?php _e('Activer l\'aimantation aux autres éléments', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="snap_to_margins">
-                                        <input name="snap_to_margins" type="checkbox" id="snap_to_margins" value="1" <?php checked(get_option('pdf_builder_snap_to_margins', true)); ?>>
-                                        <?php _e('Activer l\'aimantation aux marges de sécurité', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="margin-top: 10px;">
-                                    <label for="snap_tolerance"><?php _e('Tolérance d\'aimantation:', 'pdf-builder-pro'); ?></label>
-                                    <input name="snap_tolerance" type="number" id="snap_tolerance" value="<?php echo esc_attr(get_option('pdf_builder_snap_tolerance', 5)); ?>" class="small-text" min="1" max="20"> px
-                                    <p class="description"><?php _e('Distance maximale pour l\'aimantation automatique.', 'pdf-builder-pro'); ?></p>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Lignes Guides', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="show_guides">
-                                        <input name="show_guides" type="checkbox" id="show_guides" value="1" <?php checked(get_option('pdf_builder_show_guides', true)); ?>>
-                                        <?php _e('Afficher les lignes guides personnalisables', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="lock_guides">
-                                        <input name="lock_guides" type="checkbox" id="lock_guides" value="1" <?php checked(get_option('pdf_builder_lock_guides', false)); ?>>
-                                        <?php _e('Verrouiller les guides (empêcher le déplacement accidentel)', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                    </table>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Grille d\'Alignement', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="show_grid">
+                                                <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked($config->get('show_grid', true)); ?>>
+                                                <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="display: flex; gap: 20px; align-items: center;">
+                                            <div>
+                                                <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
+                                                <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr($config->get('grid_size', 10)); ?>" class="small-text" min="5" max="50" step="5"> px
+                                            </div>
+                                            <div>
+                                                <label for="grid_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
+                                                <input name="grid_color" type="color" id="grid_color" value="<?php echo esc_attr($config->get('grid_color', '#e0e0e0')); ?>">
+                                            </div>
+                                            <div>
+                                                <label for="grid_opacity"><?php _e('Opacité:', 'pdf-builder-pro'); ?></label>
+                                                <input name="grid_opacity" type="range" id="grid_opacity" min="10" max="100" value="<?php echo esc_attr($config->get('grid_opacity', 30)); ?>" style="width: 80px;">
+                                                <span id="grid_opacity_value"><?php echo esc_attr($config->get('grid_opacity', 30)); ?>%</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Aimantation', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="snap_to_grid">
+                                                <input name="snap_to_grid" type="checkbox" id="snap_to_grid" value="1" <?php checked($config->get('snap_to_grid', true)); ?>>
+                                                <?php _e('Activer l\'aimantation à la grille', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="snap_to_elements">
+                                                <input name="snap_to_elements" type="checkbox" id="snap_to_elements" value="1" <?php checked($config->get('snap_to_elements', true)); ?>>
+                                                <?php _e('Activer l\'aimantation aux autres éléments', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="snap_to_margins">
+                                                <input name="snap_to_margins" type="checkbox" id="snap_to_margins" value="1" <?php checked($config->get('snap_to_margins', true)); ?>>
+                                                <?php _e('Activer l\'aimantation aux marges de sécurité', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="margin-top: 10px;">
+                                            <label for="snap_tolerance"><?php _e('Tolérance d\'aimantation:', 'pdf-builder-pro'); ?></label>
+                                            <input name="snap_tolerance" type="number" id="snap_tolerance" value="<?php echo esc_attr($config->get('snap_tolerance', 5)); ?>" class="small-text" min="1" max="20"> px
+                                            <p class="description"><?php _e('Distance maximale pour l\'aimantation automatique.', 'pdf-builder-pro'); ?></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Guides', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="show_guides">
+                                                <input name="show_guides" type="checkbox" id="show_guides" value="1" <?php checked($config->get('show_guides', true)); ?>>
+                                                <?php _e('Afficher les lignes guides personnalisables', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="lock_guides">
+                                                <input name="lock_guides" type="checkbox" id="lock_guides" value="1" <?php checked($config->get('lock_guides', false)); ?>>
+                                                <?php _e('Verrouiller les guides (empêcher le déplacement accidentel)', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
 
-                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
-                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('Une grille de 10px est idéale pour l\'alignement précis des éléments', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Activez l\'aimantation aux éléments pour un alignement automatique', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Les guides peuvent être déplacés et verrouillés pour des références permanentes', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Une tolérance de 5px offre un bon équilibre entre précision et facilité d\'usage', 'pdf-builder-pro'); ?></li>
-                        </ul>
-                    </div>
+                            <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                                <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                                <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                                    <li><?php _e('Une grille de 10px est idéale pour l\'alignement précis des éléments', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Activez l\'aimantation aux éléments pour un alignement automatique', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Les guides peuvent être déplacés et verrouillés pour des références permanentes', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Une tolérance de 5px offre un bon équilibre entre précision et facilité d\'usage', 'pdf-builder-pro'); ?></li>
+                                </ul>
+                            </div>
 
-                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
-                        <p style="margin: 0; color: #2d5a2d;">
-                            <strong><?php _e('💾 Sauvegarder les paramètres de grille', 'pdf-builder-pro'); ?></strong><br>
-                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
-                        </p>
-                    </div>
-                </div>
+                            <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                                <p style="margin: 0; color: #2d5a2d;">
+                                    <strong><?php _e('💾 Sauvegarder les paramètres de grille', 'pdf-builder-pro'); ?></strong><br>
+                                    <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                                </p>
+                            </div>
+                        </div>
 
-                <!-- Sous-onglet Zoom & Navigation -->
-                <div id="canvas-zoom" class="sub-tab-content">
-                    <h3><?php _e('Paramètres de Zoom et Navigation', 'pdf-builder-pro'); ?></h3>
+                        <!-- Onglet Zoom & Navigation -->
+                        <div class="modern-tab-panel" data-tab="zoom">
+                            <h3><?php _e('Paramètres de Zoom et Navigation', 'pdf-builder-pro'); ?></h3>
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php _e('Zoom par Défaut', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="default_zoom"><?php _e('Niveau de zoom initial:', 'pdf-builder-pro'); ?></label>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Zoom par Défaut', 'pdf-builder-pro'); ?></th>
+                                    <td>
                                         <select name="default_zoom" id="default_zoom">
-                                            <option value="25" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '25'); ?>>25%</option>
-                                            <option value="50" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '50'); ?>>50%</option>
-                                            <option value="75" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '75'); ?>>75%</option>
-                                            <option value="100" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '100'); ?>>100%</option>
-                                            <option value="125" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '125'); ?>>125%</option>
-                                            <option value="150" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '150'); ?>>150%</option>
-                                            <option value="200" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '200'); ?>>200%</option>
-                                            <option value="fit" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), 'fit'); ?>>Ajuster à la page</option>
+                                            <option value="25" <?php selected($config->get('default_zoom', '100'), '25'); ?>>25%</option>
+                                            <option value="50" <?php selected($config->get('default_zoom', '100'), '50'); ?>>50%</option>
+                                            <option value="75" <?php selected($config->get('default_zoom', '100'), '75'); ?>>75%</option>
+                                            <option value="100" <?php selected($config->get('default_zoom', '100'), '100'); ?>>100%</option>
+                                            <option value="125" <?php selected($config->get('default_zoom', '100'), '125'); ?>>125%</option>
+                                            <option value="150" <?php selected($config->get('default_zoom', '100'), '150'); ?>>150%</option>
+                                            <option value="200" <?php selected($config->get('default_zoom', '100'), '200'); ?>>200%</option>
                                         </select>
-                                    </div>
-                                    <div>
-                                        <label for="zoom_step"><?php _e('Pas de zoom:', 'pdf-builder-pro'); ?></label>
-                                        <input name="zoom_step" type="number" id="zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_zoom_step', 25)); ?>" class="small-text" min="5" max="50" step="5"> %
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Limites de Zoom', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="min_zoom"><?php _e('Zoom minimum:', 'pdf-builder-pro'); ?></label>
-                                        <input name="min_zoom" type="number" id="min_zoom" value="<?php echo esc_attr(get_option('pdf_builder_min_zoom', 10)); ?>" class="small-text" min="5" max="50"> %
-                                    </div>
-                                    <div>
-                                        <label for="max_zoom"><?php _e('Zoom maximum:', 'pdf-builder-pro'); ?></label>
-                                        <input name="max_zoom" type="number" id="max_zoom" value="<?php echo esc_attr(get_option('pdf_builder_max_zoom', 500)); ?>" class="small-text" min="100" max="1000"> %
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Navigation', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="pan_with_mouse">
-                                        <input name="pan_with_mouse" type="checkbox" id="pan_with_mouse" value="1" <?php checked($settings['pan_with_mouse'] ?? true); ?>>
-                                        <?php _e('Activer le panoramique avec le bouton central de la souris', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="smooth_zoom">
-                                        <input name="smooth_zoom" type="checkbox" id="smooth_zoom" value="1" <?php checked($settings['smooth_zoom'] ?? true); ?>>
-                                        <?php _e('Activer le zoom fluide (animation)', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="show_zoom_indicator">
-                                        <input name="show_zoom_indicator" type="checkbox" id="show_zoom_indicator" value="1" <?php checked($settings['show_zoom_indicator'] ?? true); ?>>
-                                        <?php _e('Afficher l\'indicateur de niveau de zoom', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Raccourcis Zoom', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="zoom_with_wheel">
-                                        <input name="zoom_with_wheel" type="checkbox" id="zoom_with_wheel" value="1" <?php checked($settings['zoom_with_wheel'] ?? true); ?>>
-                                        <?php _e('Zoom avec la molette de la souris (Ctrl+molette)', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="zoom_to_selection">
-                                        <input name="zoom_to_selection" type="checkbox" id="zoom_to_selection" value="1" <?php checked($settings['zoom_to_selection'] ?? true); ?>>
-                                        <?php _e('Double-clic pour zoomer sur la sélection', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                    </table>
+                                        <p class="description"><?php _e('Niveau de zoom affiché lors de l\'ouverture d\'un document.', 'pdf-builder-pro'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Limites de Zoom', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <div style="display: flex; gap: 20px; align-items: center;">
+                                            <div>
+                                                <label for="min_zoom"><?php _e('Minimum:', 'pdf-builder-pro'); ?></label>
+                                                <input name="min_zoom" type="number" id="min_zoom" value="<?php echo esc_attr($config->get('min_zoom', 10)); ?>" class="small-text" min="5" max="50"> %
+                                            </div>
+                                            <div>
+                                                <label for="max_zoom"><?php _e('Maximum:', 'pdf-builder-pro'); ?></label>
+                                                <input name="max_zoom" type="number" id="max_zoom" value="<?php echo esc_attr($config->get('max_zoom', 500)); ?>" class="small-text" min="100" max="1000"> %
+                                            </div>
+                                            <div>
+                                                <label for="zoom_step"><?php _e('Pas:', 'pdf-builder-pro'); ?></label>
+                                                <input name="zoom_step" type="number" id="zoom_step" value="<?php echo esc_attr($config->get('zoom_step', 25)); ?>" class="small-text" min="5" max="50"> %
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Contrôles de Navigation', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="pan_with_mouse">
+                                                <input name="pan_with_mouse" type="checkbox" id="pan_with_mouse" value="1" <?php checked($config->get('pan_with_mouse', true)); ?>>
+                                                <?php _e('Déplacer la vue avec le bouton central de la souris', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="zoom_with_wheel">
+                                                <input name="zoom_with_wheel" type="checkbox" id="zoom_with_wheel" value="1" <?php checked($config->get('zoom_with_wheel', true)); ?>>
+                                                <?php _e('Zoomer avec la molette de la souris', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="smooth_zoom">
+                                                <input name="smooth_zoom" type="checkbox" id="smooth_zoom" value="1" <?php checked($config->get('smooth_zoom', true)); ?>>
+                                                <?php _e('Animation fluide lors du zoom', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="show_zoom_indicator">
+                                                <input name="show_zoom_indicator" type="checkbox" id="show_zoom_indicator" value="1" <?php checked($config->get('show_zoom_indicator', true)); ?>>
+                                                <?php _e('Afficher l\'indicateur de niveau de zoom', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
-                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('"Ajuster à la page" offre la meilleure vue d\'ensemble lors de l\'ouverture', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Le panoramique avec le bouton central facilite la navigation dans les grands documents', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Ctrl+molette permet un zoom rapide et intuitif', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Le double-clic pour zoomer sur la sélection améliore la productivité', 'pdf-builder-pro'); ?></li>
-                        </ul>
-                    </div>
+                        <!-- Onglet Sélection & Manipulation -->
+                        <div class="modern-tab-panel" data-tab="selection">
+                            <h3><?php _e('Paramètres de Sélection et Manipulation', 'pdf-builder-pro'); ?></h3>
 
-                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
-                        <p style="margin: 0; color: #2d5a2d;">
-                            <strong><?php _e('💾 Sauvegarder les paramètres de zoom', 'pdf-builder-pro'); ?></strong><br>
-                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
-                        </p>
-                    </div>
-                </div>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="show_resize_handles">
+                                                <input name="show_resize_handles" type="checkbox" id="show_resize_handles" value="1" <?php checked($config->get('show_resize_handles', true)); ?>>
+                                                <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                                            <div>
+                                                <label for="handle_size"><?php _e('Taille des poignées:', 'pdf-builder-pro'); ?></label>
+                                                <input name="handle_size" type="number" id="handle_size" value="<?php echo esc_attr($config->get('handle_size', 8)); ?>" class="small-text" min="4" max="20"> px
+                                            </div>
+                                            <div>
+                                                <label for="handle_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
+                                                <input name="handle_color" type="color" id="handle_color" value="<?php echo esc_attr($config->get('handle_color', '#007cba')); ?>">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Rotation', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="enable_rotation">
+                                                <input name="enable_rotation" type="checkbox" id="enable_rotation" value="1" <?php checked($config->get('enable_rotation', true)); ?>>
+                                                <?php _e('Autoriser la rotation des éléments', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                                            <div>
+                                                <label for="rotation_step"><?php _e('Pas de rotation:', 'pdf-builder-pro'); ?></label>
+                                                <input name="rotation_step" type="number" id="rotation_step" value="<?php echo esc_attr($config->get('rotation_step', 15)); ?>" class="small-text" min="1" max="45"> °
+                                            </div>
+                                            <fieldset style="margin: 0;">
+                                                <label for="rotation_snap">
+                                                    <input name="rotation_snap" type="checkbox" id="rotation_snap" value="1" <?php checked($config->get('rotation_snap', true)); ?>>
+                                                    <?php _e('Aimantation angulaire', 'pdf-builder-pro'); ?>
+                                                </label>
+                                            </fieldset>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Sélection Multiple', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="multi_select">
+                                                <input name="multi_select" type="checkbox" id="multi_select" value="1" <?php checked($config->get('multi_select', true)); ?>>
+                                                <?php _e('Autoriser la sélection de plusieurs éléments', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="select_all_shortcut">
+                                                <input name="select_all_shortcut" type="checkbox" id="select_all_shortcut" value="1" <?php checked($config->get('select_all_shortcut', true)); ?>>
+                                                <?php _e('Raccourci Ctrl+A pour tout sélectionner', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="show_selection_bounds">
+                                                <input name="show_selection_bounds" type="checkbox" id="show_selection_bounds" value="1" <?php checked($config->get('show_selection_bounds', true)); ?>>
+                                                <?php _e('Afficher les limites de la sélection multiple', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Copier-Coller', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="copy_paste_enabled">
+                                                <input name="copy_paste_enabled" type="checkbox" id="copy_paste_enabled" value="1" <?php checked($config->get('copy_paste_enabled', true)); ?>>
+                                                <?php _e('Activer les fonctions copier-coller', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <fieldset>
+                                            <label for="duplicate_on_drag">
+                                                <input name="duplicate_on_drag" type="checkbox" id="duplicate_on_drag" value="1" <?php checked($config->get('duplicate_on_drag', false)); ?>>
+                                                <?php _e('Dupliquer l\'élément lors du glisser avec Ctrl', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-                <!-- Sous-onglet Sélection & Manipulation -->
-                <div id="canvas-selection" class="sub-tab-content">
-                    <h3><?php _e('Paramètres de Sélection et Manipulation', 'pdf-builder-pro'); ?></h3>
+                        <!-- Onglet Export & Qualité -->
+                        <div class="modern-tab-panel" data-tab="export">
+                            <h3><?php _e('Paramètres d\'Export et Qualité', 'pdf-builder-pro'); ?></h3>
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="show_resize_handles">
-                                        <input name="show_resize_handles" type="checkbox" id="show_resize_handles" value="1" <?php checked(get_option('pdf_builder_show_resize_handles', true)); ?>>
-                                        <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="handle_size"><?php _e('Taille des poignées:', 'pdf-builder-pro'); ?></label>
-                                        <input name="handle_size" type="number" id="handle_size" value="<?php echo esc_attr(get_option('pdf_builder_handle_size', 8)); ?>" class="small-text" min="4" max="20"> px
-                                    </div>
-                                    <div>
-                                        <label for="handle_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="handle_color" type="color" id="handle_color" value="<?php echo esc_attr(get_option('pdf_builder_handle_color', '#007cba')); ?>">
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Rotation', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="enable_rotation">
-                                        <input name="enable_rotation" type="checkbox" id="enable_rotation" value="1" <?php checked($settings['enable_rotation'] ?? true); ?>>
-                                        <?php _e('Activer la rotation des éléments', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="rotation_step"><?php _e('Pas de rotation:', 'pdf-builder-pro'); ?></label>
-                                        <input name="rotation_step" type="number" id="rotation_step" value="<?php echo esc_attr($settings['rotation_step'] ?? 15); ?>" class="small-text" min="1" max="45"> °
-                                    </div>
-                                    <div>
-                                        <label for="rotation_snap"><?php _e('Aimantation angulaire:', 'pdf-builder-pro'); ?></label>
-                                        <input name="rotation_snap" type="checkbox" id="rotation_snap" value="1" <?php checked($settings['rotation_snap'] ?? true); ?>>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Sélection Multiple', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="multi_select">
-                                        <input name="multi_select" type="checkbox" id="multi_select" value="1" <?php checked(get_option('pdf_builder_multi_select', true)); ?>>
-                                        <?php _e('Activer la sélection multiple (Ctrl+Clic)', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="select_all_shortcut">
-                                        <input name="select_all_shortcut" type="checkbox" id="select_all_shortcut" value="1" <?php checked(get_option('pdf_builder_select_all_shortcut', true)); ?>>
-                                        <?php _e('Activer Ctrl+A pour tout sélectionner', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="show_selection_bounds">
-                                        <input name="show_selection_bounds" type="checkbox" id="show_selection_bounds" value="1" <?php checked(get_option('pdf_builder_show_selection_bounds', true)); ?>>
-                                        <?php _e('Afficher le cadre de sélection pour les groupes', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Copier-Coller', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="copy_paste_enabled">
-                                        <input name="copy_paste_enabled" type="checkbox" id="copy_paste_enabled" value="1" <?php checked(get_option('pdf_builder_copy_paste_enabled', true)); ?>>
-                                        <?php _e('Activer les fonctions copier-coller', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="duplicate_on_drag">
-                                        <input name="duplicate_on_drag" type="checkbox" id="duplicate_on_drag" value="1" <?php checked(get_option('pdf_builder_duplicate_on_drag', false)); ?>>
-                                        <?php _e('Dupliquer l\'élément lors du glisser avec Alt', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
-                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('Les poignées de 8px offrent un bon équilibre entre visibilité et précision', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('La rotation par pas de 15° permet un contrôle précis des orientations', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Ctrl+Clic permet de sélectionner plusieurs éléments simultanément', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Alt+glisser duplique automatiquement l\'élément sélectionné', 'pdf-builder-pro'); ?></li>
-                        </ul>
-                    </div>
-
-                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
-                        <p style="margin: 0; color: #2d5a2d;">
-                            <strong><?php _e('💾 Sauvegarder les paramètres de sélection', 'pdf-builder-pro'); ?></strong><br>
-                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Sous-onglet Export & Qualité -->
-                <div id="canvas-export" class="sub-tab-content">
-                    <h3><?php _e('Paramètres d\'Export et Qualité', 'pdf-builder-pro'); ?></h3>
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php _e('Qualité d\'Export', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="export_quality"><?php _e('Qualité PDF:', 'pdf-builder-pro'); ?></label>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Qualité d\'Export', 'pdf-builder-pro'); ?></th>
+                                    <td>
                                         <select name="export_quality" id="export_quality">
-                                            <option value="screen" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'screen'); ?>>Écran (72 DPI)</option>
-                                            <option value="ebook" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'ebook'); ?>>E-book (150 DPI)</option>
-                                            <option value="printer" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'printer'); ?>>Imprimante (300 DPI)</option>
-                                            <option value="print" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'print'); ?>>Haute qualité (600 DPI)</option>
+                                            <option value="draft" <?php selected($config->get('export_quality', 'print'), 'draft'); ?>>Brouillon (rapide)</option>
+                                            <option value="standard" <?php selected($config->get('export_quality', 'print'), 'standard'); ?>>Standard</option>
+                                            <option value="print" <?php selected($config->get('export_quality', 'print'), 'print'); ?>>Impression (recommandé)</option>
+                                            <option value="high" <?php selected($config->get('export_quality', 'print'), 'high'); ?>>Haute qualité</option>
                                         </select>
-                                    </div>
-                                    <div>
-                                        <label for="export_format"><?php _e('Format d\'export:', 'pdf-builder-pro'); ?></label>
+                                        <p class="description"><?php _e('Qualité du PDF généré. Une qualité plus élevée produit des fichiers plus volumineux.', 'pdf-builder-pro'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Format d\'Export', 'pdf-builder-pro'); ?></th>
+                                    <td>
                                         <select name="export_format" id="export_format">
-                                            <option value="pdf" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'pdf'); ?>>PDF</option>
-                                            <option value="png" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'png'); ?>>PNG</option>
-                                            <option value="jpg" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'jpg'); ?>>JPEG</option>
-                                            <option value="svg" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'svg'); ?>>SVG</option>
+                                            <option value="pdf" <?php selected($config->get('export_format', 'pdf'), 'pdf'); ?>>PDF</option>
+                                            <option value="png" <?php selected($config->get('export_format', 'pdf'), 'png'); ?>>PNG (image)</option>
+                                            <option value="jpg" <?php selected($config->get('export_format', 'pdf'), 'jpg'); ?>>JPG (image)</option>
                                         </select>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Compression', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="compress_images">
-                                        <input name="compress_images" type="checkbox" id="compress_images" value="1" <?php checked(get_option('pdf_builder_compress_images', true)); ?>>
-                                        <?php _e('Compresser automatiquement les images', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="image_quality"><?php _e('Qualité des images:', 'pdf-builder-pro'); ?></label>
-                                        <input name="image_quality" type="range" id="image_quality" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_image_quality', 85)); ?>" style="width: 100px;">
-                                        <span id="image_quality_value"><?php echo esc_attr(get_option('pdf_builder_image_quality', 85)); ?>%</span>
-                                    </div>
-                                    <div>
-                                        <label for="max_image_size"><?php _e('Taille max des images:', 'pdf-builder-pro'); ?></label>
-                                        <input name="max_image_size" type="number" id="max_image_size" value="<?php echo esc_attr(get_option('pdf_builder_max_image_size', 2048)); ?>" class="small-text" min="512" max="8192" step="512"> px
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Métadonnées PDF', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="include_metadata">
-                                        <input name="include_metadata" type="checkbox" id="include_metadata" value="1" <?php checked(get_option('pdf_builder_include_metadata', true)); ?>>
-                                        <?php _e('Inclure les métadonnées dans le PDF', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="margin-top: 10px;">
-                                    <label for="pdf_author"><?php _e('Auteur par défaut:', 'pdf-builder-pro'); ?></label>
-                                    <input name="pdf_author" type="text" id="pdf_author" value="<?php echo esc_attr(get_option('pdf_builder_pdf_author', get_bloginfo('name'))); ?>" class="regular-text">
-                                    <br>
-                                    <label for="pdf_subject"><?php _e('Sujet par défaut:', 'pdf-builder-pro'); ?></label>
-                                    <input name="pdf_subject" type="text" id="pdf_subject" value="<?php echo esc_attr(get_option('pdf_builder_pdf_subject', '')); ?>" class="regular-text">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Options d\'Export', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="auto_crop">
-                                        <input name="auto_crop" type="checkbox" id="auto_crop" value="1" <?php checked(get_option('pdf_builder_auto_crop', false)); ?>>
-                                        <?php _e('Rogner automatiquement les espaces vides', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="embed_fonts">
-                                        <input name="embed_fonts" type="checkbox" id="embed_fonts" value="1" <?php checked(get_option('pdf_builder_embed_fonts', true)); ?>>
-                                        <?php _e('Intégrer les polices dans le PDF', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="optimize_for_web">
-                                        <input name="optimize_for_web" type="checkbox" id="optimize_for_web" value="1" <?php checked(get_option('pdf_builder_optimize_for_web', true)); ?>>
-                                        <?php _e('Optimiser pour l\'affichage web', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                            </td>
-                        </tr>
-                    </table>
+                                        <p class="description"><?php _e('Format de fichier pour l\'export.', 'pdf-builder-pro'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Compression d\'Images', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="compress_images">
+                                                <input name="compress_images" type="checkbox" id="compress_images" value="1" <?php checked($config->get('compress_images', true)); ?>>
+                                                <?php _e('Compresser les images pour réduire la taille du fichier', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="margin-top: 10px;">
+                                            <label for="image_quality"><?php _e('Qualité des images:', 'pdf-builder-pro'); ?></label>
+                                            <input name="image_quality" type="range" id="image_quality" min="50" max="100" value="<?php echo esc_attr($config->get('image_quality', 85)); ?>" style="width: 150px;">
+                                            <span id="image_quality_value"><?php echo esc_attr($config->get('image_quality', 85)); ?>%</span>
+                                            <p class="description"><?php _e('Qualité de compression des images (plus élevé = meilleure qualité, fichier plus volumineux).', 'pdf-builder-pro'); ?></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Métadonnées PDF', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <div style="display: flex; gap: 20px; align-items: center;">
+                                            <div>
+                                                <label for="pdf_author"><?php _e('Auteur:', 'pdf-builder-pro'); ?></label>
+                                                <input name="pdf_author" type="text" id="pdf_author" value="<?php echo esc_attr($config->get('pdf_author', get_bloginfo('name'))); ?>" style="width: 200px;">
+                                            </div>
+                                            <div>
+                                                <label for="pdf_subject"><?php _e('Sujet:', 'pdf-builder-pro'); ?></label>
+                                                <input name="pdf_subject" type="text" id="pdf_subject" value="<?php echo esc_attr($config->get('pdf_subject', '')); ?>" style="width: 200px;">
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <fieldset>
+                                            <label for="include_metadata">
+                                                <input name="include_metadata" type="checkbox" id="include_metadata" value="1" <?php checked($config->get('include_metadata', true)); ?>>
+                                                <?php _e('Inclure les métadonnées dans le PDF', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
-                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('Haute qualité (600 DPI) est recommandée pour l\'impression professionnelle', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Une qualité d\'image de 85% offre le meilleur équilibre taille/qualité', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('L\'intégration des polices garantit l\'affichage correct sur tous les appareils', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('L\'optimisation web réduit la taille du fichier pour un chargement plus rapide', 'pdf-builder-pro'); ?></li>
-                        </ul>
-                    </div>
+                        <!-- Onglet Avancé -->
+                        <div class="modern-tab-panel" data-tab="advanced">
+                            <h3><?php _e('Paramètres Avancés', 'pdf-builder-pro'); ?></h3>
 
-                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
-                        <p style="margin: 0; color: #2d5a2d;">
-                            <strong><?php _e('💾 Sauvegarder les paramètres d\'export', 'pdf-builder-pro'); ?></strong><br>
-                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Sous-onglet Avancé -->
-                <div id="canvas-advanced" class="sub-tab-content">
-                    <h3><?php _e('Paramètres Avancés du Canvas', 'pdf-builder-pro'); ?></h3>
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php _e('Performance', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="enable_hardware_acceleration">
-                                        <input name="enable_hardware_acceleration" type="checkbox" id="enable_hardware_acceleration" value="1" <?php checked(get_option('pdf_builder_enable_hardware_acceleration', true)); ?>>
-                                        <?php _e('Activer l\'accélération matérielle (GPU)', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <label for="limit_fps">
-                                        <input name="limit_fps" type="checkbox" id="limit_fps" value="1" <?php checked(get_option('pdf_builder_limit_fps', true)); ?>>
-                                        <?php _e('Limiter les FPS pour économiser les ressources', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="margin-top: 10px;">
-                                    <label for="max_fps"><?php _e('FPS maximum:', 'pdf-builder-pro'); ?></label>
-                                    <input name="max_fps" type="number" id="max_fps" value="<?php echo esc_attr(get_option('pdf_builder_max_fps', 60)); ?>" class="small-text" min="15" max="120"> FPS
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Sauvegarde Automatique', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="auto_save_enabled">
-                                        <input name="auto_save_enabled" type="checkbox" id="auto_save_enabled" value="1" <?php checked(get_option('pdf_builder_auto_save_enabled', true)); ?>>
-                                        <?php _e('Activer la sauvegarde automatique', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="auto_save_interval"><?php _e('Intervalle:', 'pdf-builder-pro'); ?></label>
-                                        <input name="auto_save_interval" type="number" id="auto_save_interval" value="<?php echo esc_attr(get_option('pdf_builder_auto_save_interval', 30)); ?>" class="small-text" min="10" max="300" step="10"> secondes
-                                    </div>
-                                    <div>
-                                        <label for="auto_save_versions"><?php _e('Versions à conserver:', 'pdf-builder-pro'); ?></label>
-                                        <input name="auto_save_versions" type="number" id="auto_save_versions" value="<?php echo esc_attr(get_option('pdf_builder_auto_save_versions', 10)); ?>" class="small-text" min="1" max="50">
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Historique d\'Actions', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div>
-                                        <label for="undo_levels"><?php _e('Niveaux d\'annulation:', 'pdf-builder-pro'); ?></label>
-                                        <input name="undo_levels" type="number" id="undo_levels" value="<?php echo esc_attr(get_option('pdf_builder_undo_levels', 50)); ?>" class="small-text" min="10" max="200" step="10">
-                                    </div>
-                                    <div>
-                                        <label for="redo_levels"><?php _e('Niveaux de rétablissement:', 'pdf-builder-pro'); ?></label>
-                                        <input name="redo_levels" type="number" id="redo_levels" value="<?php echo esc_attr(get_option('pdf_builder_redo_levels', 50)); ?>" class="small-text" min="10" max="200" step="10">
-                                    </div>
-                                </div>
-                                <p class="description"><?php _e('Nombre maximum d\'actions annulables/rétablissables.', 'pdf-builder-pro'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php _e('Raccourcis Clavier', 'pdf-builder-pro'); ?></th>
-                            <td>
-                                <fieldset>
-                                    <label for="enable_keyboard_shortcuts">
-                                        <input name="enable_keyboard_shortcuts" type="checkbox" id="enable_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_enable_keyboard_shortcuts', true)); ?>>
-                                        <?php _e('Activer les raccourcis clavier personnalisables', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </fieldset>
-                                <br>
-                                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
-                                    <p style="margin: 0; font-weight: bold;"><?php _e('Raccourcis par défaut:', 'pdf-builder-pro'); ?></p>
-                                    <ul style="margin: 5px 0; padding-left: 20px;">
-                                        <li>Ctrl+Z: Annuler</li>
-                                        <li>Ctrl+Y: Rétablir</li>
-                                        <li>Ctrl+A: Tout sélectionner</li>
-                                        <li>Ctrl+C: Copier</li>
-                                        <li>Ctrl+V: Coller</li>
-                                        <li>Ctrl+D: Dupliquer</li>
-                                        <li>Suppr: Supprimer</li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
-                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('L\'accélération GPU améliore considérablement les performances sur les machines récentes', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('La sauvegarde automatique toutes les 30 secondes protège contre la perte de travail', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('50 niveaux d\'annulation offrent une grande flexibilité dans l\'édition', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('Le mode débogage aide au développement mais peut ralentir l\'interface', 'pdf-builder-pro'); ?></li>
-                        </ul>
-                    </div>
-
-                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
-                        <p style="margin: 0; color: #2d5a2d;">
-                            <strong><?php _e('💾 Sauvegarder les paramètres avancés', 'pdf-builder-pro'); ?></strong><br>
-                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
-                        </p>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Performance', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="enable_hardware_acceleration">
+                                                <input name="enable_hardware_acceleration" type="checkbox" id="enable_hardware_acceleration" value="1" <?php checked($config->get('enable_hardware_acceleration', true)); ?>>
+                                                <?php _e('Activer l\'accélération matérielle (GPU)', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="margin-top: 10px;">
+                                            <label for="max_fps"><?php _e('FPS maximum:', 'pdf-builder-pro'); ?></label>
+                                            <input name="max_fps" type="number" id="max_fps" value="<?php echo esc_attr($config->get('max_fps', 60)); ?>" class="small-text" min="30" max="120">
+                                            <span><?php _e('images par seconde', 'pdf-builder-pro'); ?></span>
+                                            <p class="description"><?php _e('Limite la fréquence d\'images pour économiser les ressources.', 'pdf-builder-pro'); ?></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Sauvegarde Automatique', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="auto_save_enabled">
+                                                <input name="auto_save_enabled" type="checkbox" id="auto_save_enabled" value="1" <?php checked($config->get('auto_save_enabled', true)); ?>>
+                                                <?php _e('Activer la sauvegarde automatique', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <br>
+                                        <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                                            <div>
+                                                <label for="auto_save_interval"><?php _e('Intervalle:', 'pdf-builder-pro'); ?></label>
+                                                <input name="auto_save_interval" type="number" id="auto_save_interval" value="<?php echo esc_attr($config->get('auto_save_interval', 30)); ?>" class="small-text" min="5" max="300"> sec
+                                            </div>
+                                            <div>
+                                                <label for="auto_save_versions"><?php _e('Versions max:', 'pdf-builder-pro'); ?></label>
+                                                <input name="auto_save_versions" type="number" id="auto_save_versions" value="<?php echo esc_attr($config->get('auto_save_versions', 10)); ?>" class="small-text" min="1" max="50">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Historique d\'Actions', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <div style="display: flex; gap: 20px; align-items: center;">
+                                            <div>
+                                                <label for="undo_levels"><?php _e('Niveaux d\'annulation:', 'pdf-builder-pro'); ?></label>
+                                                <input name="undo_levels" type="number" id="undo_levels" value="<?php echo esc_attr($config->get('undo_levels', 50)); ?>" class="small-text" min="10" max="200">
+                                            </div>
+                                            <div>
+                                                <label for="redo_levels"><?php _e('Niveaux de rétablissement:', 'pdf-builder-pro'); ?></label>
+                                                <input name="redo_levels" type="number" id="redo_levels" value="<?php echo esc_attr($config->get('redo_levels', 50)); ?>" class="small-text" min="10" max="200">
+                                            </div>
+                                        </div>
+                                        <p class="description"><?php _e('Nombre maximum d\'actions annulables/rétablissables.', 'pdf-builder-pro'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('Raccourcis Clavier', 'pdf-builder-pro'); ?></th>
+                                    <td>
+                                        <fieldset>
+                                            <label for="enable_keyboard_shortcuts">
+                                                <input name="enable_keyboard_shortcuts" type="checkbox" id="enable_keyboard_shortcuts" value="1" <?php checked($config->get('enable_keyboard_shortcuts', true)); ?>>
+                                                <?php _e('Activer les raccourcis clavier personnalisés', 'pdf-builder-pro'); ?>
+                                            </label>
+                                        </fieldset>
+                                        <p class="description"><?php _e('Permet d\'utiliser des raccourcis clavier pour accélérer le travail.', 'pdf-builder-pro'); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
+                <!-- JAVASCRIPT ULTRA SIMPLE POUR LES ONGLES -->
+                <script>
+                jQuery(document).ready(function($) {
+                    console.log('=== ULTRA SIMPLE TABS INIT ===');
+
+                    // Cacher tous les panneaux sauf le premier
+                    $('.modern-tab-panel').not(':first').hide();
+                    $('.modern-tab-panel:first').show();
+
+                    // Gérer les clics sur les onglets
+                    $('.modern-tab-button').on('click', function(e) {
+                        e.preventDefault();
+
+                        var tabName = $(this).data('tab');
+                        console.log('Clicked tab:', tabName);
+
+                        // Retirer active de tous les onglets
+                        $('.modern-tab-button').removeClass('active');
+                        // Ajouter active à l'onglet cliqué
+                        $(this).addClass('active');
+
+                        // Cacher tous les panneaux
+                        $('.modern-tab-panel').hide();
+                        // Montrer le panneau correspondant
+                        $('.modern-tab-panel[data-tab="' + tabName + '"]').show();
+
+                        console.log('Switched to panel:', tabName);
+                    });
+
+                    console.log('=== ULTRA SIMPLE TABS READY ===');
+                });
+                </script>
             </div>
 
             <!-- Onglet Templates -->
@@ -1981,7 +1883,9 @@ window.addEventListener('load', function() {
                 </table>
 
                 <p class="submit">
-                    <input type="submit" name="submit_templates" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Templates', 'pdf-builder-pro'); ?>">
+                    <button type="button" class="button button-primary ajax-save-btn" data-section="templates" style="cursor: pointer;">
+                        <?php _e('Enregistrer les Templates', 'pdf-builder-pro'); ?>
+                    </button>
                 </p>
             </div>
 
@@ -2053,100 +1957,142 @@ window.addEventListener('load', function() {
     </form>
 </div>
 
-<!-- Debug script to check form submission -->
+<!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
     // Définir les variables globales nécessaires
-    window.ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-    window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
-    window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
-    // Définir les nonces en variables JavaScript (globales)
     window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
     window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
     
-    // Écouter les clics sur le bouton submit
+    // Récupérer les éléments
     var submitBtn = document.getElementById('submit');
     var form = document.querySelector('form[method="post"]');
+    var originalButtonValue = submitBtn ? submitBtn.value : '';
     
+    // Créer un conteneur de notification
+    var notificationContainer = document.createElement('div');
+    notificationContainer.id = 'pdf-builder-notification';
+    notificationContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px; min-width: 300px; padding: 0;';
+    document.body.appendChild(notificationContainer);
+    
+    // Fonction pour afficher une notification
+    function showNotification(message, type) {
+        var icon = type === 'success' ? '✓' : '✗';
+        var bgColor = type === 'success' ? '#d4edda' : '#f8d7da';
+        var borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
+        var textColor = type === 'success' ? '#155724' : '#721c24';
+        
+        var notification = document.createElement('div');
+        notification.style.cssText = 'background: ' + bgColor + '; border: 1px solid ' + borderColor + '; border-radius: 4px; padding: 12px 16px; margin-bottom: 10px; color: ' + textColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out;';
+        notification.innerHTML = '<strong>' + icon + ' ' + message + '</strong>';
+        
+        notificationContainer.insertBefore(notification, notificationContainer.firstChild);
+        
+        // Supprimer la notification après 5 secondes
+        setTimeout(function() {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(function() {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
+    
+    // Ajouter les styles d'animation
+    var style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Gérer le clic du bouton submit
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // Empêcher la soumission normale
-            
-            // Soumission AJAX
+            e.preventDefault();
             submitFormAjax();
         });
-    } else {
-        // Bouton submit non trouvé - ne rien faire
     }
     
     // Fonction pour soumettre le formulaire en AJAX
     function submitFormAjax() {
         if (!form) {
+            showNotification('Erreur: Formulaire non trouvé', 'error');
             return;
         }
         
         // Collecter les données du formulaire
         var formData = new FormData(form);
         
-        // Afficher un indicateur de chargement
-        submitBtn.disabled = true;
-        submitBtn.value = 'Enregistrement...';
+        // Afficher l'état de chargement
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.value = '⏳ Enregistrement...';
+        }
         
-        // Faire la requête AJAX vers l'endpoint WordPress
-        fetch(ajaxurl + '?action=pdf_builder_save_settings', {
+        // Convertir FormData en URLSearchParams
+        var params = new URLSearchParams();
+        for (var pair of formData.entries()) {
+            params.append(pair[0], pair[1]);
+        }
+        params.append('action', 'pdf_builder_save_settings');
+        params.append('nonce', window.pdfBuilderSettingsNonce);
+        
+        // Faire la requête AJAX
+        fetch(ajaxurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
             },
-            body: new URLSearchParams({
-                ...Object.fromEntries(formData),
-                nonce: pdfBuilderSettingsNonce
-            })
+            body: params.toString()
         })
         .then(function(response) {
-            return response.text();
+            return response.json().catch(function() {
+                return response.text();
+            });
         })
         .then(function(data) {
             // Réactiver le bouton
-            submitBtn.disabled = false;
-            submitBtn.value = 'Enregistrer les paramètres';
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.value = originalButtonValue;
+            }
             
-            try {
-                // Essayer de parser comme JSON
-                var jsonResponse = JSON.parse(data);
-                if (jsonResponse.success) {
-                    showNotification(jsonResponse.data || 'Paramètres sauvegardés avec succès !', 'success');
-                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
-                    refreshGlobalSettings();
+            // Traiter la réponse
+            if (typeof data === 'object') {
+                if (data.success) {
+                    showNotification(data.data || 'Paramètres sauvegardés avec succès !', 'success');
                 } else {
-                    showNotification(jsonResponse.data || 'Erreur lors de la sauvegarde.', 'error');
+                    showNotification(data.data || 'Erreur lors de la sauvegarde', 'error');
                 }
-            } catch (e) {
-                // Si ce n'est pas du JSON, vérifier le contenu HTML
-                if (data.includes('Paramètres sauvegardés avec succès') || data.includes('notice-success')) {
+            } else {
+                // Réponse textuelle
+                if (data.includes('success')) {
                     showNotification('Paramètres sauvegardés avec succès !', 'success');
-                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
-                    refreshGlobalSettings();
-                } else if (data.includes('notice-error') || data.includes('Erreur')) {
-                    showNotification('Erreur lors de la sauvegarde.', 'error');
                 } else {
                     showNotification('Paramètres sauvegardés.', 'success');
-                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
-                    refreshGlobalSettings();
                 }
             }
         })
         .catch(function(error) {
-            submitBtn.disabled = false;
-            submitBtn.value = 'Enregistrer les paramètres';
-            showNotification('Erreur de connexion.', 'error');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.value = originalButtonValue;
+            }
+            showNotification('Erreur de connexion: ' + error.message, 'error');
         });
     }
     
     // Fonction pour rafraîchir les paramètres globaux en temps réel
     function refreshGlobalSettings() {
         // Faire un appel AJAX pour récupérer les paramètres mis à jour
-        fetch(ajaxurl + '?action=pdf_builder_get_settings&nonce=' + pdfBuilderSettingsNonce, {
+        fetch(ajaxurl + '?action=pdf_builder_get_settings&nonce=' + window.pdfBuilderSettingsNonce, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -2225,6 +2171,149 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, 3000);
     }
+    
+    // Gestionnaire pour les boutons AJAX spécifiques par section
+    var ajaxSaveBtns = document.querySelectorAll('.ajax-save-btn');
+    ajaxSaveBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var section = this.getAttribute('data-section');
+            var originalText = this.textContent;
+            
+            // Désactiver le bouton et changer le texte
+            this.disabled = true;
+            this.textContent = '⏳ Enregistrement...';
+            
+            // Préparer les données avec le bon submit name
+            var params = new URLSearchParams();
+            
+            // Ajouter tous les champs du formulaire
+            var formData = new FormData(form);
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            
+            // Ajouter le submit spécifique
+            params.append('submit_' + section, 'on');
+            params.append('action', 'pdf_builder_save_settings');
+            params.append('nonce', window.pdfBuilderSettingsNonce);
+            
+            // Faire la requête AJAX
+            fetch(ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: params.toString()
+            })
+            .then(function(response) {
+                return response.json().catch(function() {
+                    return response.text();
+                });
+            })
+            .then(function(data) {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.textContent = originalText;
+                
+                // Afficher la notification de succès
+                showNotification('Paramètres de ' + section + ' enregistrés avec succès !', 'success');
+            }.bind(this))
+            .catch(function(error) {
+                this.disabled = false;
+                this.textContent = originalText;
+                showNotification('Erreur: ' + error.message, 'error');
+            }.bind(this));
+        });
+    });
+    
+    // ============================================================================
+    // GESTION DES DÉPENDANCES ENTRE CHECKBOXES (Désactiver les enfants)
+    // ============================================================================
+    
+    // Mapping des dépendances: checkbox parent -> liste des champs enfants
+    var dependencyMap = {
+        'show_grid': ['grid_size', 'grid_color', 'grid_opacity'],
+        'snap_to_grid': [],
+        'snap_to_elements': [],
+        'snap_to_margins': [],
+        'show_guides': ['lock_guides'],
+        'enable_rotation': ['rotation_step', 'rotation_snap'],
+        'multi_select': ['select_all_shortcut', 'show_selection_bounds'],
+        'copy_paste_enabled': ['duplicate_on_drag'],
+        'compress_images': ['image_quality', 'max_image_size'],
+        'include_metadata': ['pdf_author', 'pdf_subject'],
+        'auto_save_enabled': ['auto_save_interval', 'auto_save_versions'],
+        'limit_fps': ['max_fps'],
+        'enable_hardware_acceleration': [],
+        'enable_keyboard_shortcuts': []
+    };
+    
+    // Fonction pour mettre à jour l'état des champs dépendants
+    function updateDependentFields(parentCheckboxId) {
+        var parentCheckbox = document.getElementById(parentCheckboxId);
+        if (!parentCheckbox) return;
+        
+        var isChecked = parentCheckbox.checked;
+        var dependentFields = dependencyMap[parentCheckboxId];
+        
+        if (!dependentFields) return;
+        
+        dependentFields.forEach(function(fieldId) {
+            var field = document.getElementById(fieldId);
+            if (field) {
+                // Désactiver/activer le champ
+                field.disabled = !isChecked;
+                
+                // Appliquer un style visuel
+                if (!isChecked) {
+                    field.style.opacity = '0.5';
+                    field.style.pointerEvents = 'none';
+                } else {
+                    field.style.opacity = '1';
+                    field.style.pointerEvents = 'auto';
+                }
+            }
+            
+            // Aussi chercher les labels associés
+            var label = document.querySelector('label[for="' + fieldId + '"]');
+            if (label) {
+                if (!isChecked) {
+                    label.style.opacity = '0.5';
+                    label.style.color = '#999';
+                } else {
+                    label.style.opacity = '1';
+                    label.style.color = 'inherit';
+                }
+            }
+            
+            // Chercher les divs conteneurs
+            var parentDiv = field ? field.closest('div') : null;
+            if (parentDiv) {
+                if (!isChecked) {
+                    parentDiv.style.opacity = '0.5';
+                } else {
+                    parentDiv.style.opacity = '1';
+                }
+            }
+        });
+    }
+    
+    // Initialiser les dépendances au chargement
+    Object.keys(dependencyMap).forEach(function(parentId) {
+        updateDependentFields(parentId);
+    });
+    
+    // Ajouter les event listeners
+    Object.keys(dependencyMap).forEach(function(parentId) {
+        var checkbox = document.getElementById(parentId);
+        if (checkbox) {
+            checkbox.addEventListener('change', function() {
+                updateDependentFields(parentId);
+            });
+        }
+    });
 });
 </script>
 
@@ -2574,82 +2663,111 @@ echo '<style>
     border-color: #b32d2e;
 }
 
-/* Styles for sub-tabs in Canvas tab - ULTRA VISIBLE VERSION */
-.sub-nav-tab-wrapper {
-    margin: 30px 0 40px 0;
-    border-bottom: 4px solid #007cba;
-    padding-bottom: 20px;
-    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #ffffff 100%);
+/* MODERN TABS SYSTEM - NEW AND IMPROVED */
+.modern-tabs-container {
+    margin: 30px 0;
+    background: #ffffff;
     border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 6px 20px rgba(0, 123, 186, 0.2);
-    border: 3px solid #007cba;
-    position: sticky;
-    top: 32px;
-    z-index: 10;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
-.sub-nav-tab {
-    display: inline-block;
-    padding: 18px 30px;
-    margin-right: 15px;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    color: #007cba;
-    text-decoration: none;
-    border: 4px solid #007cba;
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
+.modern-tabs-header {
+    display: flex;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+    flex-wrap: wrap;
+}
+
+.modern-tab-button {
+    flex: 1;
+    min-width: 160px;
+    padding: 16px 24px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid #dee2e6;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 700;
-    font-size: 15px;
+    position: relative;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    position: relative;
+    letter-spacing: 0.5px;
+}
+
+.modern-tab-button:last-child {
+    border-right: none;
+}
+
+.modern-tab-button:hover {
+    background: rgba(0, 123, 186, 0.05);
+    color: #007cba;
+    transform: translateY(-2px);
+}
+
+.modern-tab-button.active {
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    color: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
-    min-width: 160px;
-    text-align: center;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
-.sub-nav-tab:hover {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    color: #005a87;
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 123, 186, 0.5);
-    border-color: #005a87;
-}
-
-.sub-nav-tab-active {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
-    border-bottom: 4px solid #ffffff !important;
-    color: #ffffff !important;
-    position: relative;
-    top: 2px;
-    box-shadow: 0 8px 30px rgba(0, 123, 186, 0.6);
-    transform: translateY(-3px) scale(1.08);
-    border-color: #005a87 !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    z-index: 11;
-}
-
-.sub-nav-tab-active::after {
+.modern-tab-button.active::after {
     content: "";
     position: absolute;
-    bottom: -4px;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px;
     background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.sub-tab-content {
+.modern-tabs-content {
+    padding: 0;
+}
+
+.modern-tab-panel {
     display: none;
+    padding: 30px;
+    background: #ffffff;
 }
 
-.sub-tab-active {
+.modern-tab-panel:first-child {
     display: block;
+}
+
+.modern-tab-panel h3 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 20px;
+    font-weight: 700;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .modern-tabs-header {
+        flex-direction: column;
+    }
+
+    .modern-tab-button {
+        flex: 1 1 100%;
+        min-width: auto;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modern-tab-button:last-child {
+        border-bottom: none;
+    }
+
+    .modern-tab-panel {
+        padding: 20px;
+    }
 }
 
 /* Fix footer positioning */

@@ -306,6 +306,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   useEffect(() => {
     if (initialElements && typeof initialElements === 'object' && initialElements.settings) {
       const settings = initialElements.settings;
+      setBackendSettings(settings);
       if (settings.zoom !== undefined) setZoom(settings.zoom);
       if (settings.showGrid !== undefined) setShowGrid(settings.showGrid);
       if (settings.snapToGrid !== undefined) setSnapToGrid(settings.snapToGrid);
@@ -344,6 +345,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [selectedTool, setSelectedTool] = useState('select');
   const [showElementLibrary, setShowElementLibrary] = useState(true);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
+  
+  // Paramètres du backend pour synchronisation avec la toolbar
+  const [backendSettings, setBackendSettings] = useState(() => {
+    if (initialElements && typeof initialElements === 'object' && initialElements.settings) {
+      return initialElements.settings;
+    }
+    return {};
+  });
 
   // Synchroniser selectedElement avec elements - REMOVED car on utilise maintenant selectedElementId
 
@@ -3054,6 +3063,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onRedo={handleRedo}
         canUndo={canUndo}
         canRedo={canRedo}
+        settings={backendSettings}
       />
 
       {/* Zone de travail principale */}
