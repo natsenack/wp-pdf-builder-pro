@@ -24,8 +24,26 @@
   transition: background-color 0.2s ease;
 }
 
-.accordion-header:hover {
-  background: #f8fafc;
+.accordion-header:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.accordion-header:active {
+  background: #f1f5f9;
+}
+
+/* Améliorer la lisibilité du contenu */
+.accordion-content {
+  line-height: 1.5;
+}
+
+.accordion-content > * {
+  margin-bottom: 12px;
+}
+
+.accordion-content > *:last-child {
+  margin-bottom: 0;
 }
 
 .accordion-title {
@@ -41,7 +59,7 @@
 .accordion-arrow {
   font-size: 12px;
   color: #94a3b8;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease-in-out;
 }
 
 .accordion-arrow.open {
@@ -51,18 +69,13 @@
 .accordion-content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.4s ease;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
   padding: 0 16px;
-  opacity: 0;
-  visibility: hidden;
 }
 
 .accordion-content.open {
-  max-height: 2000px;
+  max-height: 1000px; /* Réduit pour de meilleures performances */
   padding: 16px;
-  opacity: 1;
-  visibility: visible;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s ease;
 }
 
 .properties-accordion .accordion-content {
@@ -70,16 +83,44 @@
   padding-right: 16px;
 }
 
-/* Styles spécifiques pour les accordéons dans le panneau de propriétés */
-.properties-panel .accordion {
-  margin-bottom: 12px;
+/* Styles pour les éléments dans les accordéons */
+.accordion-content .property-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.properties-panel .accordion:last-child {
+.accordion-content .property-row:last-child {
+  border-bottom: none;
   margin-bottom: 0;
+}
+
+.accordion-content .property-row label {
+  font-weight: 500;
+  color: #475569;
+  margin-right: 12px;
+}
+
+.accordion-content .property-row input,
+.accordion-content .property-row select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.accordion-content .property-row input:focus,
+.accordion-content .property-row select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Animation fluide pour l'ouverture/fermeture */
 .accordion-content {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease-in-out;
 }

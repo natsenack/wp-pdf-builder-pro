@@ -31,7 +31,7 @@ const Accordion = memo(({ title, icon, children, defaultOpen = false, className 
           {title}
         </span>
         <span className={`accordion-arrow ${isOpen ? 'open' : ''}`}>
-          ▼
+          ▶
         </span>
       </button>
       <div
