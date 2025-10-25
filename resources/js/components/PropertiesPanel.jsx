@@ -11,6 +11,8 @@ import renderTypographySection from './PropertiesPanel/sections/TypographySectio
 import renderFontSection from './PropertiesPanel/sections/FontSection';
 import renderBordersSection from './PropertiesPanel/sections/BordersSection';
 import renderEffectsSection from './PropertiesPanel/sections/EffectsSection';
+import renderLayoutSection from './PropertiesPanel/sections/LayoutSection';
+import renderContentSection from './PropertiesPanel/sections/ContentSection';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
@@ -1868,6 +1870,13 @@ const PropertiesPanel = memo(({
                 </div>
               </Accordion>
             )}
+          </div>
+        );
+
+      case 'content':
+        return (
+          <div className="tab-content">
+            {renderContentSection(selectedElement, localProperties, handlePropertyChange, activeTab)}
           </div>
         );
 

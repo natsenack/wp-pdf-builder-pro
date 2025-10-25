@@ -880,8 +880,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
     }
 
-    // Dessiner les éléments (order_number en dernier pour qu'ils apparaissent au-dessus)
+    // Dessiner les éléments (tri par zIndex, puis order_number en dernier pour qu'ils apparaissent au-dessus)
     const sortedElements = [...elements].sort((a, b) => {
+      // D'abord trier par zIndex (plus haut = devant)
+      const zIndexA = a.zIndex || 0;
+      const zIndexB = b.zIndex || 0;
+      if (zIndexA !== zIndexB) {
+        return zIndexA - zIndexB;
+      }
+
+      // Ensuite, order_number toujours au-dessus des autres
       if (a.type === 'order_number' && b.type !== 'order_number') return 1;
       if (b.type === 'order_number' && a.type !== 'order_number') return -1;
       return 0;
@@ -965,6 +973,27 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       // Dessiner l'élément
 
+      // Appliquer les transformations (rotation, scale)
+      ctx.save();
+      if (element.rotation || element.scaleX !== undefined || element.scaleY !== undefined) {
+        const centerX = element.x + (element.width || 100) / 2;
+        const centerY = element.y + (element.height || 50) / 2;
+
+        ctx.translate(centerX, centerY);
+
+        if (element.rotation) {
+          ctx.rotate((element.rotation * Math.PI) / 180);
+        }
+
+        if (element.scaleX !== undefined || element.scaleY !== undefined) {
+          const scaleX = element.scaleX !== undefined ? element.scaleX : 1;
+          const scaleY = element.scaleY !== undefined ? element.scaleY : 1;
+          ctx.scale(scaleX, scaleY);
+        }
+
+        ctx.translate(-centerX, -centerY);
+      }
+
       if (element.type === 'text') {
         // Appliquer l'opacité si définie
         if (element.opacity !== undefined && element.opacity < 1) {
@@ -1019,6 +1048,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Appliquer l'alignement du texte
         ctx.textAlign = element.textAlign || 'left';
+
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        } else {
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        }
 
         ctx.fillText(element.text || 'Texte', textX, textY + (element.fontSize || 16) * 0.8);
       } else if (element.type === 'rectangle') {
@@ -1125,8 +1167,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           const contrast = element.contrast !== undefined ? element.contrast / 100 : 1;
           const saturate = element.saturate !== undefined ? element.saturate / 100 : 1;
 
-          if (brightness !== 1) {
-            ctx.filter = `brightness(${brightness})`;
+          const filters = [];
+          if (brightness !== 1) filters.push(`brightness(${brightness})`);
+          if (contrast !== 1) filters.push(`contrast(${contrast})`);
+          if (saturate !== 1) filters.push(`saturate(${saturate})`);
+
+          if (filters.length > 0) {
+            ctx.filter = filters.join(' ');
           }
         }
 
@@ -1323,6 +1370,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.textAlign = element.textAlign || 'left';
 
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
+
         // Générer le contenu du texte dynamique
         let displayText = element.text || 'Texte dynamique';
 
@@ -1495,6 +1550,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const textDecoration = element.textDecoration;
 
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
+
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
 
         // Calculer les dimensions pour le positionnement
         // Positionner le texte avec une marge pour éviter les superpositions lors du redimensionnement
@@ -1697,6 +1760,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = `${fontWeight} ${element.fontSize || 18}px ${element.fontFamily || 'Arial'}`;
         ctx.textAlign = element.textAlign || 'center';
 
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
+
         const textX = element.x || 10;
         const textY = element.y || 30;
         const displayText = 'FACTURE';
@@ -1843,6 +1914,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
         ctx.textAlign = element.textAlign || 'center';
 
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
+
         const parts = [];
         if (element.showEmail) parts.push('email@company.com');
         if (element.showPhone) parts.push('+33 1 23 45 67 89');
@@ -1940,6 +2019,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.textAlign = 'left';
+
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
 
         // Icônes pour chaque type de champ
         const fieldIcons = {
@@ -2469,6 +2556,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
+        // Propriétés de texte pour le tableau
+        const tableFontSize = element.fontSize || 9;
+        const tableFontFamily = element.fontFamily || 'Segoe UI';
+        const tableFontWeight = element.fontWeight || 'normal';
+        const tableFontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const tableLetterSpacing = element.letterSpacing || 0;
+
+        // Appliquer l'ombre du texte si définie
+        if (element.textShadowBlur > 0 || element.textShadowOffsetX !== 0 || element.textShadowOffsetY !== 0) {
+          ctx.shadowColor = element.textShadowColor || '#000000';
+          ctx.shadowBlur = element.textShadowBlur || 0;
+          ctx.shadowOffsetX = element.textShadowOffsetX || 0;
+          ctx.shadowOffsetY = element.textShadowOffsetY || 0;
+        }
+
         // Largeurs des colonnes (dynamiques selon les colonnes visibles)
         const activeColumns = [];
         
@@ -2525,11 +2627,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         };
         
         // Helper pour tronquer le texte avec mesure précise
-        const truncateText = (text, maxWidth, fontSize = 9, isBold = false) => {
+        const truncateText = (text, maxWidth, isBold = false) => {
           if (!text) return '';
           
           // Configurer la police pour mesurer
-          ctx.font = isBold ? `bold ${fontSize}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
+          const fontWeight = isBold ? 'bold' : tableFontWeight;
+          ctx.font = `${tableFontStyle}${fontWeight} ${tableFontSize}px ${tableFontFamily}`;
           
           // Si le texte rentre, le retourner tel quel
           if (ctx.measureText(text).width <= maxWidth) {
@@ -2556,7 +2659,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Calculer la hauteur totale du tableau pour la bordure extérieure
         // Note: totals array will be created below        // Helper pour dessiner une rangée
-        const drawTableRow = (values, bgColor, isBold = false, fontSize = 9) => {
+        const drawTableRow = (values, bgColor, isBold = false) => {
           // Fond
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
@@ -2568,7 +2671,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte des colonnes
-          ctx.font = isBold ? `bold ${fontSize + 1}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
+          const fontWeight = isBold ? 'bold' : tableFontWeight;
+          ctx.font = `${tableFontStyle}${fontWeight} ${tableFontSize}px ${tableFontFamily}`;
           ctx.fillStyle = textColor;
           ctx.textBaseline = 'middle';
 
@@ -2586,7 +2690,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
             
             // Tronquer le texte si nécessaire
-            const truncated = truncateText(val.toString(), colWidth - padding * 2, fontSize, isBold);
+            const truncated = truncateText(val.toString(), colWidth - padding * 2, isBold);
             ctx.fillText(truncated, textX, currentY + rowHeight / 2);
             colX += colWidth + colGap;
           });
@@ -2615,7 +2719,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Texte en-têtes
-        ctx.font = 'bold 11px "Segoe UI", Arial';
+        ctx.font = `bold ${tableFontSize + 2}px ${tableFontFamily}`;
         ctx.fillStyle = textColor;
         ctx.textBaseline = 'middle';
         let colX = tableX + sideBarWidth + padding;
@@ -2649,7 +2753,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // ===== LIGNES DE DONNÉES =====
         rowValues.forEach((values, idx) => {
           const bgColor = idx % 2 === 0 ? bgWhite : bgGray;
-          drawTableRow(values, bgColor, false, 9);
+          drawTableRow(values, bgColor, false);
         });
 
         // ===== TOTAUX =====
@@ -2695,7 +2799,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte (label gauche, valeur droite)
-          ctx.font = isBold ? `bold 10px "Segoe UI", Arial` : `9px "Segoe UI", Arial`;
+          const fontWeight = isBold ? 'bold' : tableFontWeight;
+          ctx.font = `${tableFontStyle}${fontWeight} ${isBold ? tableFontSize + 1 : tableFontSize}px ${tableFontFamily}`;
           ctx.fillStyle = isFinal ? textColor : textMuted;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'left';
@@ -2751,6 +2856,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = '12px Arial';
         ctx.fillText(element.type, genericX + 5, genericY + 20);
       }
+
+      // Restaurer les transformations
+      ctx.restore();
     });
   };
 

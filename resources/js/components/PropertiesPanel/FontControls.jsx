@@ -87,18 +87,54 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
     </div>
 
     <div className="property-row">
-      <label>Ombre texte:</label>
-      <div className="slider-container">
-        <input
-          type="range"
-          min="0"
-          max="5"
-          step="0.1"
-          value={properties.textShadowBlur ?? 0}
-          onChange={(e) => onPropertyChange(elementId, 'textShadowBlur', safeParseFloat(e.target.value, 0))}
-          className="slider"
-        />
-        <span className="slider-value">{properties.textShadowBlur ?? 0}px</span>
+      <label>Ombre du texte:</label>
+      <div className="shadow-controls">
+        <div className="shadow-color">
+          <input
+            type="color"
+            value={properties.textShadowColor || '#000000'}
+            onChange={(e) => onPropertyChange(elementId, 'textShadowColor', e.target.value)}
+            title="Couleur de l'ombre"
+          />
+        </div>
+        <div className="shadow-offsets">
+          <div className="slider-group">
+            <label>X:</label>
+            <input
+              type="range"
+              min="-20"
+              max="20"
+              step="1"
+              value={properties.textShadowOffsetX ?? 0}
+              onChange={(e) => onPropertyChange(elementId, 'textShadowOffsetX', safeParseFloat(e.target.value, 0))}
+            />
+            <span className="slider-value">{properties.textShadowOffsetX ?? 0}px</span>
+          </div>
+          <div className="slider-group">
+            <label>Y:</label>
+            <input
+              type="range"
+              min="-20"
+              max="20"
+              step="1"
+              value={properties.textShadowOffsetY ?? 0}
+              onChange={(e) => onPropertyChange(elementId, 'textShadowOffsetY', safeParseFloat(e.target.value, 0))}
+            />
+            <span className="slider-value">{properties.textShadowOffsetY ?? 0}px</span>
+          </div>
+        </div>
+        <div className="slider-group">
+          <label>Flou:</label>
+          <input
+            type="range"
+            min="0"
+            max="20"
+            step="1"
+            value={properties.textShadowBlur ?? 0}
+            onChange={(e) => onPropertyChange(elementId, 'textShadowBlur', safeParseFloat(e.target.value, 0))}
+          />
+          <span className="slider-value">{properties.textShadowBlur ?? 0}px</span>
+        </div>
       </div>
     </div>
 
@@ -166,6 +202,27 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
             title={label}
           >
             {icon}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Transformation:</label>
+      <div className="transform-buttons">
+        {[
+          { value: 'none', label: 'Aucune' },
+          { value: 'uppercase', label: 'MAJUSCULES' },
+          { value: 'lowercase', label: 'minuscules' },
+          { value: 'capitalize', label: 'Première Lettre' }
+        ].map(({ value, label }) => (
+          <button
+            key={value}
+            className={`transform-btn ${properties.textTransform === value ? 'active' : ''}`}
+            onClick={() => onPropertyChange(elementId, 'textTransform', value)}
+            title={label}
+          >
+            {label}
           </button>
         ))}
       </div>
