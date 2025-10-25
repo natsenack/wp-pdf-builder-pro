@@ -1,25 +1,36 @@
-// PDF Builder Pro - Correction de Nonce + Polyfill
-// Version: 1.0.6 - 2025-10-25 - Avec polyfill pour opérateur de chaînage optionnel
-// Ce fichier ajoute un polyfill pour la compatibilité avec les anciens navigateurs
+// PDF Builder Pro - Correction de Nonce + Gestion d'Erreurs Globales
+// Version: 1.7 - 2025-10-25 - Avec interception d'erreurs JavaScript
+// Ce fichier ajoute une gestion d'erreurs globale pour les scripts externes
 
-// Polyfill pour l'opérateur de chaînage optionnel (?.)
-// Nécessaire pour la compatibilité avec les anciens navigateurs
+// Intercepter les erreurs JavaScript globales pour éviter les crashes
 (function() {
     'use strict';
 
-    // Vérifier si l'opérateur de chaînage optionnel est supporté
-    if (!('optionalChaining' in window) && !window.hasOwnProperty('optionalChaining')) {
-        try {
-            // Test simple pour voir si ?. est supporté
-            eval('var test = {}; test?.prop;');
-            window.optionalChaining = true;
-        } catch (e) {
-            // L'opérateur n'est pas supporté, on ne peut pas ajouter de polyfill complet
-            // car eval ne peut pas parser la syntaxe moderne
-            console.warn('Optional chaining operator not supported. Some features may not work in older browsers.');
-            window.optionalChaining = false;
+    // Sauvegarder l'ancien gestionnaire d'erreurs s'il existe
+    var oldOnError = window.onerror;
+
+    // Nouveau gestionnaire d'erreurs
+    window.onerror = function(message, source, lineno, colno, error) {
+        // Vérifier si c'est une erreur de syntaxe avec "Unexpected token '?'"
+        if (message && message.indexOf("Unexpected token '?'") !== -1) {
+            console.warn('PDF Builder Pro: Interception d\'erreur de syntaxe (probablement script externe):', message);
+            console.warn('Source:', source, 'Ligne:', lineno);
+
+            // Essayer de continuer l'exécution malgré l'erreur
+            // Ne pas retourner true pour laisser l'erreur être traitée normalement
+            // mais au moins la logger
+            return false;
         }
-    }
+
+        // Pour les autres erreurs, utiliser l'ancien gestionnaire si disponible
+        if (oldOnError) {
+            return oldOnError(message, source, lineno, colno, error);
+        }
+
+        // Logger l'erreur mais ne pas crash la page
+        console.error('JavaScript Error:', message, source, lineno, colno, error);
+        return false; // Laisser l'erreur être traitée normalement
+    };
 
     // Attendre que le DOM soit chargé
     document.addEventListener('DOMContentLoaded', function() {
@@ -29,5 +40,8 @@
         } else {
             console.log('PDF Builder Pro: AJAX variables loaded successfully');
         }
+
+        // Ajouter un message dans la console pour confirmer que la gestion d'erreurs est active
+        console.log('PDF Builder Pro: Global error handling activated');
     });
 })();
