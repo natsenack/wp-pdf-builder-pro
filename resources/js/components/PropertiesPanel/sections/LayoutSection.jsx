@@ -9,7 +9,7 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
       <Accordion
         key="position"
         title="Position"
-        icon="�"
+        icon="📍"
         defaultOpen={true}
         className="properties-accordion"
       >

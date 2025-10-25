@@ -442,13 +442,13 @@ window.addEventListener('load', function() {
         }
 
         // Show first sub-tab content
-        var firstSubTabContent = document.querySelector('.sub-tab-content');
+        var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
         if (firstSubTabContent) {
             firstSubTabContent.classList.add('sub-tab-active');
         }
 
         // Activate first sub-nav tab
-        var firstSubNavTab = document.querySelector('.sub-nav-tab');
+        var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
         if (firstSubNavTab) {
             firstSubNavTab.classList.add('sub-nav-tab-active');
         }
@@ -503,10 +503,10 @@ window.addEventListener('load', function() {
             });
         }
 
-        // Initialize first sub-tab for Canvas
-        var firstSubTab = document.querySelector('.sub-nav-tab');
-        if (firstSubTab) {
-            firstSubTab.click();
+        // Initialize first sub-tab for Canvas when Canvas tab is active
+        var canvasTab = document.querySelector('.nav-tab[href="#canvas"]');
+        if (canvasTab && canvasTab.classList.contains('nav-tab-active')) {
+            initializeCanvasSubTabs();
         }
 
         // Handle range inputs with value display
