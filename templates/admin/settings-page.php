@@ -1184,7 +1184,7 @@ window.addEventListener('load', function() {
             <div id="canvas" class="tab-content">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
-                <!-- Sous-onglets pour l'organisation -->
+                <!-- Sous-onglets pour l'organisation - CORRECTION 2025 -->
                 <div class="sub-nav-tab-wrapper">
                     <a href="#canvas-general" class="sub-nav-tab sub-nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
                     <a href="#canvas-grid" class="sub-nav-tab"><?php _e('Grille & Aimants', 'pdf-builder-pro'); ?></a>
