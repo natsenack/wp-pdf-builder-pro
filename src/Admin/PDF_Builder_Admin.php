@@ -1486,7 +1486,7 @@ class PDF_Builder_Admin
 
         // Charger d'abord les vendors (React, etc.) - COMMENTÉ car webpack ne génère pas vendors.js séparé
         // wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time(), ['jquery', 'react', 'react-dom'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time(), ['jquery', 'react', 'react-dom', 'pdf-builder-script-loader'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
         error_log('PDF Builder: pdf-builder-admin-v3 script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
 // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed - TIMESTAMP: ' . time());
