@@ -431,11 +431,14 @@ window.addEventListener('load', function() {
     function initializeCanvasSubTabs() {
         console.log('Initializing Canvas sub-tabs...');
 
+        // Always attach click handlers for canvas sub-tabs, even if already initialized
+        attachCanvasSubTabHandlers();
+
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
             console.log('Canvas sub-tabs already initialized');
-            return; // Already initialized
+            return; // Already initialized, but handlers are attached
         }
 
         console.log('Setting up Canvas sub-tabs...');
@@ -471,18 +474,19 @@ window.addEventListener('load', function() {
         } else {
             console.log('No first sub-nav tab found');
         }
-
-        // Attach click handlers for canvas sub-tabs
-        attachCanvasSubTabHandlers();
     }
 
     // Function to attach click handlers for canvas sub-tabs
     function attachCanvasSubTabHandlers() {
+        console.log('Attaching canvas sub-tab handlers...');
         var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        console.log('Found', subNavTabs.length, 'sub-nav tabs to attach handlers to');
+
         for (var i = 0; i < subNavTabs.length; i++) {
             // Remove existing listeners to avoid duplicates
             subNavTabs[i].removeEventListener('click', handleSubTabClick);
             subNavTabs[i].addEventListener('click', handleSubTabClick);
+            console.log('Attached handler to:', subNavTabs[i].textContent.trim());
         }
     }
 
