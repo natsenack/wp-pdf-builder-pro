@@ -310,6 +310,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       if (settings.zoom !== undefined) setZoom(settings.zoom);
       if (settings.showGrid !== undefined) setShowGrid(settings.showGrid);
       if (settings.snapToGrid !== undefined) setSnapToGrid(settings.snapToGrid);
+      if (settings.snapToElements !== undefined) setSnapToElements(settings.snapToElements);
       if (settings.showElementLibrary !== undefined) setShowElementLibrary(settings.showElementLibrary);
       if (settings.showPropertiesPanel !== undefined) setShowPropertiesPanel(settings.showPropertiesPanel);
     }
@@ -440,6 +441,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           zoom: zoom,
           showGrid: showGrid,
           snapToGrid: snapToGrid,
+          snapToElements: snapToElements,
           showElementLibrary: showElementLibrary,
           showPropertiesPanel: showPropertiesPanel
         }
@@ -826,10 +828,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       let newX = dragElement.x + deltaX;
       let newY = dragElement.y + deltaY;
 
-      // Snap à la grille
-      const gridSize = 10;
-      newX = Math.round(newX / gridSize) * gridSize;
-      newY = Math.round(newY / gridSize) * gridSize;
+      // Snap à la grille si activé
+      if (snapToGrid) {
+        const gridSize = 10;
+        newX = Math.round(newX / gridSize) * gridSize;
+        newY = Math.round(newY / gridSize) * gridSize;
+      }
 
       // Respecter les limites du canvas
       newX = Math.max(0, Math.min(595 - (dragElement.width || 100), newX));
@@ -870,7 +874,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     );
 
     // Snap à la grille si activé
-    if (true) { // snapToGrid par défaut
+    if (snapToGrid) {
       const gridSize = 10;
       rect.x = Math.round(rect.x / gridSize) * gridSize;
       rect.y = Math.round(rect.y / gridSize) * gridSize;
