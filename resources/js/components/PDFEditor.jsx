@@ -7,6 +7,7 @@ import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
 import TemplateHeader from './TemplateHeader';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
+import { repairProductTableProperties } from '../utils/elementRepairUtils';
 import './PDFEditor.css';
 
 // Fonction helper pour obtenir les styles de tableau selon le style choisi
@@ -230,14 +231,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const { actions: { openPreview } } = usePreviewContext();
 
   // État des éléments
-  const [elements, setElements] = useState(initialElements);
+  const [elements, setElements] = useState(() => {
+    // Réparer automatiquement les propriétés des éléments lors du chargement
+    const repairedElements = repairProductTableProperties(initialElements);
+    console.log('[DEBUG] Elements repaired on load:', repairedElements.length, 'elements');
+    return repairedElements;
+  });
   const [selectedElementId, setSelectedElementId] = useState(null); // Maintenant c'est l'ID de l'élément
 
   // Fonction pour obtenir l'élément sélectionné
   const selectedElement = selectedElementId ? elements.find(el => el.id === selectedElementId) : null;
 
   // État de l'historique
-  const [history, setHistory] = useState([initialElements]);
+  const [history, setHistory] = useState([elements]);
   const [historyIndex, setHistoryIndex] = useState(0);
 
   // État de l'interface

@@ -17,24 +17,29 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         y: 270,
         width: 530,
         height: 200,
+        // Style du tableau
+        tableStyle: 'default',
+        // Colonnes à afficher
+        columns: 'name,price,quantity',
+        // Affichage des éléments
+        showHeaders: true,
         showBorders: true,
-        tableFormat: 'full',
-        tableColorPrimary: '#2563eb',    // Bleu moderne plus foncé
-        tableColorSecondary: '#dbeafe',  // Bleu clair plus subtil
-        columns: {
-          image: false,
-          name: true,
-          sku: false,
-          quantity: true,
-          price: true,
-          total: true
-        },
         showSubtotal: true,
         showShipping: true,
         showTaxes: true,
         showDiscount: false,
         showTotal: true,
-        showTableBorder: false
+        // Couleurs des lignes alternées
+        evenRowBg: '#ffffff',
+        evenRowTextColor: '#000000',
+        oddRowBg: '#f8fafc',
+        oddRowTextColor: '#000000',
+        // Propriétés de style de base
+        fontSize: 12,
+        fontFamily: 'Arial',
+        fontWeight: 'normal',
+        color: '#333333',
+        backgroundColor: 'transparent'
       }
     },
     {
