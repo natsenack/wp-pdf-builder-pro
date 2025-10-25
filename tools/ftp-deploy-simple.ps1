@@ -340,7 +340,7 @@ foreach ($file in $modifiedFiles) {
 
     # Filtres des fichiers essentiels
     $essentialDirs = @('src', 'templates', 'assets', 'core', 'config', 'resources', 'lib', 'languages')
-    $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt', 'composer.json', 'package.json')
+    $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt', 'composer.json', 'package.json', '*.php')  # Force PHP files
     $skipPatterns = @('*.log', '*.tmp', '*.bak', '.git*', 'node_modules/*', '.DS_Store')
 
     $isEssential = $false
