@@ -279,33 +279,33 @@ body.wp-admin .pdf-builder-container {
 }
 </style>
 
-<!-- Initialisation JavaScript -->
+<!-- Initialisation JavaScript - VERSION ES5 COMPATIBLE -->
 <!-- Note: Tous les styles essentiels pour l'éditeur ont été consolidés ci-dessus. -->
 <script>
 (function() {
     'use strict';
 
     // Initialisation principale avec protection contre les exécutions multiples
-    let isInitialized = false;
+    var isInitialized = false;
 
-    const initApp = function() {
+    var initApp = function() {
         if (isInitialized) {
             // console.log('PDF Builder already initialized, skipping...');
             return;
         }
 
         // Cacher l'état de chargement
-        const loadingElement = document.querySelector('.pdf-builder-loading');
+        var loadingElement = document.querySelector('.pdf-builder-loading');
         if (loadingElement) {
             loadingElement.style.display = 'none';
         }
 
         // console.log('Checking scripts loaded...');
 
-        const pdfBuilderProExists = typeof window.pdfBuilderPro !== 'undefined' && window.pdfBuilderPro !== null;
-        const pdfBuilderProRaw = window.pdfBuilderPro;
-        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
+        var pdfBuilderProExists = typeof window.pdfBuilderPro !== 'undefined' && window.pdfBuilderPro !== null;
+        var pdfBuilderProRaw = window.pdfBuilderPro;
+        var pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+        var initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
         if (pdfBuilderProExists && initExists) {
             try {
@@ -321,24 +321,24 @@ body.wp-admin .pdf-builder-container {
                 };
 
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
-                const pdfBuilderProRaw = window.pdfBuilderPro;
-                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-                
+                var pdfBuilderProRaw2 = window.pdfBuilderPro;
+                var pdfBuilderPro2 = pdfBuilderProRaw2.default ? pdfBuilderProRaw2.default : pdfBuilderProRaw2;
+
                 // Récupérer les paramètres du backend
-                const backendSettings = <?php 
+                var backendSettings = <?php
                     $settings = get_option('pdf_builder_settings', []);
                     echo json_encode([
                         'showGrid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
                         'snapToGrid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
                         'snapToElements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
                     ]);
-                ?>;                
+                ?>;
                 // Structurer les données d'initialisation avec les éléments et les paramètres
-                const initialData = {
+                var initialData = {
                     elements: <?php echo json_encode($initial_elements); ?>,
                     settings: backendSettings
                 };
-                
+
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
@@ -355,7 +355,7 @@ body.wp-admin .pdf-builder-container {
                 isInitialized = false; // Reset on error
 
                 // Afficher l'erreur dans l'interface
-                const container = document.getElementById('invoice-quote-builder-container');
+                var container = document.getElementById('invoice-quote-builder-container');
                 if (container) {
                     container.innerHTML =
                         '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
@@ -371,25 +371,25 @@ body.wp-admin .pdf-builder-container {
     };
 
     // Attendre que tous les scripts soient chargés avant d'initialiser
-    let scriptCheckAttempts = 0;
-    const maxScriptCheckAttempts = 50; // 5 secondes maximum
+    var scriptCheckAttempts = 0;
+    var maxScriptCheckAttempts = 50; // 5 secondes maximum
 
-    const checkScriptsLoaded = function() {
+    var checkScriptsLoaded = function() {
         scriptCheckAttempts++;
 
         // Vérifier que tous les chunks sont chargés avec le code splitting
-        const pdfBuilderProRaw = window.pdfBuilderPro; // Utiliser la version minuscule (principale)
-        const pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
+        var pdfBuilderProRaw = window.pdfBuilderPro; // Utiliser la version minuscule (principale)
+        var pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
 
         // Gérer le cas où webpack expose le module avec une propriété 'default'
-        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
+        var pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+        var initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
         // Avec le code splitting, vérifier aussi que React est disponible - COMMENTÉ car React est maintenant bundlé
-        // const reactExists = typeof window.React !== 'undefined';
-        // const reactDomExists = typeof window.ReactDOM !== 'undefined';
-        const reactExists = true; // React est bundlé dans PDFBuilderPro
-        const reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
+        // var reactExists = typeof window.React !== 'undefined';
+        // var reactDomExists = typeof window.ReactDOM !== 'undefined';
+        var reactExists = true; // React est bundlé dans PDFBuilderPro
+        var reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
 
         if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
             initApp();
@@ -398,7 +398,7 @@ body.wp-admin .pdf-builder-container {
             setTimeout(checkScriptsLoaded, 100);
         } else {
             // Afficher un message d'erreur à l'utilisateur
-            const container = document.getElementById('invoice-quote-builder-container');
+            var container = document.getElementById('invoice-quote-builder-container');
             if (container) {
                 container.innerHTML =
                     '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
@@ -418,94 +418,7 @@ body.wp-admin .pdf-builder-container {
         checkScriptsLoaded();
     }
 
-    // CHARGER LE SCRIPT DE TEST ADAPTATIF TEMPORAIREMENT
-    // À SUPPRIMER APRÈS LES TESTS
-    ?>
-    <script type="text/javascript">
-    (function() {
-        'use strict';
-
-        // Attendre que le DOM soit chargé
-        document.addEventListener('DOMContentLoaded', function() {
-            // Créer un panneau de contrôle pour tester le redimensionnement
-            var testPanel = document.createElement('div');
-            testPanel.id = 'adaptive-test-panel';
-            testPanel.innerHTML =
-                '<div style="position: fixed; top: 20px; right: 20px; background: #1f2937; color: white; padding: 15px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 10000; font-family: monospace; font-size: 12px; min-width: 200px;">' +
-                    '<h4 style="margin: 0 0 10px 0; color: #60a5fa;">🧪 Test Layout Adaptatif</h4>' +
-                    '<div style="margin-bottom: 10px;">' +
-                        '<label>Largeur sidebar: <span id="sidebar-width">auto</span>px</label>' +
-                    '</div>' +
-                    '<div style="margin-bottom: 10px;">' +
-                        '<input type="range" id="width-slider" min="200" max="600" value="350" step="10" style="width: 100%; margin: 5px 0;">' +
-                    '</div>' +
-                    '<div style="display: flex; gap: 5px;">' +
-                        '<button id="btn-narrow" style="flex: 1; padding: 5px; background: #dc2626; border: none; border-radius: 4px; color: white; cursor: pointer;">Étroit</button>' +
-                        '<button id="btn-normal" style="flex: 1; padding: 5px; background: #059669; border: none; border-radius: 4px; color: white; cursor: pointer;">Normal</button>' +
-                        '<button id="btn-wide" style="flex: 1; padding: 5px; background: #7c3aed; border: none; border-radius: 4px; color: white; cursor: pointer;">Large</button>' +
-                    '</div>' +
-                    '<div style="margin-top: 10px;">' +
-                        '<button id="btn-close" style="width: 100%; padding: 5px; background: #6b7280; border: none; border-radius: 4px; color: white; cursor: pointer;">Fermer test</button>' +
-                    '</div>' +
-                '</div>';
-
-            document.body.appendChild(testPanel);
-
-            // Trouver le sidebar
-            var sidebar = document.querySelector('.properties-panel') ||
-                         document.querySelector('[class*="sidebar"]') ||
-                         document.querySelector('#properties-panel');
-
-            if (!sidebar) {
-                console.warn('Sidebar non trouvé pour le test adaptatif');
-                return;
-            }
-
-            var widthDisplay = document.getElementById('sidebar-width');
-            var widthSlider = document.getElementById('width-slider');
-
-            // Fonction pour mettre à jour la largeur
-            function updateSidebarWidth(width) {
-                if (width === 'auto') {
-                    sidebar.style.width = '';
-                    sidebar.style.minWidth = '';
-                    sidebar.style.maxWidth = '';
-                } else {
-                    sidebar.style.width = width + 'px';
-                    sidebar.style.minWidth = width + 'px';
-                    sidebar.style.maxWidth = width + 'px';
-                }
-                widthDisplay.textContent = width;
-
-                // Forcer un redessinement pour déclencher ResizeObserver
-                setTimeout(function() {
-                    window.dispatchEvent(new Event('resize'));
-                }, 100);
-            }
-
-            // Événements des boutons
-            document.getElementById('btn-narrow').addEventListener('click', function() { updateSidebarWidth(250); });
-            document.getElementById('btn-normal').addEventListener('click', function() { updateSidebarWidth(350); });
-            document.getElementById('btn-wide').addEventListener('click', function() { updateSidebarWidth(500); });
-            document.getElementById('btn-close').addEventListener('click', function() {
-                document.body.removeChild(testPanel);
-                updateSidebarWidth('auto'); // Restaurer la largeur normale
-            });
-
-            // Slider pour contrôle fin
-            widthSlider.addEventListener('input', function(e) {
-                updateSidebarWidth(parseInt(e.target.value));
-            });
-
-            // Afficher la largeur initiale
-            var initialWidth = sidebar.offsetWidth;
-            widthDisplay.textContent = initialWidth;
-            widthSlider.value = initialWidth;
-
-            console.log('🧪 Test du layout adaptatif activé. Utilisez le panneau en haut à droite pour redimensionner le sidebar.');
-        });
-    })();
-    </script>
-    <?php
+    // SCRIPT DE TEST ADAPTATIF SUPPRIMÉ TEMPORAIREMENT POUR DIAGNOSTIC
+    // <?php
 // Fin du template
 ?>
