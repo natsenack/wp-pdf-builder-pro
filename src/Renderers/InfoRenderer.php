@@ -132,10 +132,27 @@ class InfoRenderer {
      * @return array Résultat du rendu
      */
     private function renderCustomerInfo(array $properties, array $context): array {
-        // Récupération des données client
-        $customerData = $this->getCustomerData($context);
+        // Vérifier si les propriétés individuelles sont définies (contrôle UI)
+        $useIndividualProperties = isset($properties['customerName']) ||
+                                   isset($properties['customerEmail']) ||
+                                   isset($properties['customerAddress']) ||
+                                   isset($properties['customerPhone']);
 
-        if (empty($customerData)) {
+        if ($useIndividualProperties) {
+            // Utiliser les propriétés individuelles définies dans l'UI
+            $customerData = [
+                'first_name' => $properties['customerName'] ?? '',
+                'last_name' => '',
+                'email' => $properties['customerEmail'] ?? '',
+                'phone' => $properties['customerPhone'] ?? '',
+                'address' => $properties['customerAddress'] ?? ''
+            ];
+        } else {
+            // Récupération automatique des données client depuis le contexte
+            $customerData = $this->getCustomerData($context);
+        }
+
+        if (empty($customerData) || (empty($customerData['first_name']) && empty($customerData['email']) && empty($customerData['phone']) && empty($customerData['address']))) {
             return [
                 'html' => '<div class="customer-info-placeholder">Informations client non disponibles</div>',
                 'css' => '.customer-info-placeholder { padding: 10px; color: #999; font-style: italic; }',

@@ -392,10 +392,26 @@ class TableRenderer {
         $css[] = '  font-size: 11px;';
         $css[] = '}';
 
-        // Styles des lignes alternées
-        if ($properties['alternate_rows'] ?? false) {
-            $css[] = '.pdf-product-table tbody tr:nth-child(even) {';
-            $css[] = '  background-color: #f9f9f9;';
+        // Styles des lignes alternées avec couleurs personnalisées
+        $evenRowBg = $properties['evenRowBg'] ?? '#f9f9f9';
+        $evenRowTextColor = $properties['evenRowTextColor'] ?? '#000000';
+        $oddRowBg = $properties['oddRowBg'] ?? '#ffffff';
+        $oddRowTextColor = $properties['oddRowTextColor'] ?? '#000000';
+
+        $css[] = '.pdf-product-table tbody tr:nth-child(even) {';
+        $css[] = '  background-color: ' . $this->sanitizeColor($evenRowBg) . ';';
+        $css[] = '  color: ' . $this->sanitizeColor($evenRowTextColor) . ';';
+        $css[] = '}';
+
+        $css[] = '.pdf-product-table tbody tr:nth-child(odd) {';
+        $css[] = '  background-color: ' . $this->sanitizeColor($oddRowBg) . ';';
+        $css[] = '  color: ' . $this->sanitizeColor($oddRowTextColor) . ';';
+        $css[] = '}';
+
+        // Styles conditionnels pour les en-têtes
+        if (($properties['showHeaders'] ?? true) === false) {
+            $css[] = '.pdf-product-table th {';
+            $css[] = '  display: none;';
             $css[] = '}';
         }
 
@@ -412,5 +428,31 @@ class TableRenderer {
         $css[] = '}';
 
         return implode("\n", $css);
+    }
+
+    /**
+     * Nettoie et valide une valeur de couleur CSS
+     *
+     * @param string $color Valeur de couleur
+     * @return string Couleur validée
+     */
+    private function sanitizeColor(string $color): string {
+        // Si c'est déjà une couleur hex valide
+        if (preg_match('/^#[a-fA-F0-9]{3,8}$/', $color)) {
+            return $color;
+        }
+
+        // Si c'est une couleur nommée CSS valide
+        $namedColors = [
+            'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta',
+            'gray', 'grey', 'maroon', 'olive', 'purple', 'teal', 'navy', 'silver'
+        ];
+
+        if (in_array(strtolower($color), $namedColors)) {
+            return $color;
+        }
+
+        // Valeur par défaut si invalide
+        return '#000000';
     }
 }

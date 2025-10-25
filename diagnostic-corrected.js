@@ -91,29 +91,43 @@ uiComponents.forEach(componentPath => {
   }
 });
 
-// Analyser le rendu Canvas
-const canvasFile = 'resources/js/components/PDFEditor.jsx';
+// Analyser le rendu Canvas (JS et PHP)
+const canvasFiles = [
+  'resources/js/components/PDFEditor.jsx',
+  'src/Renderers/TextRenderer.php',
+  'src/Renderers/InfoRenderer.php',
+  'src/Renderers/ImageRenderer.php',
+  'src/Renderers/TableRenderer.php',
+  'src/Renderers/ShapeRenderer.php',
+  'src/Renderers/PreviewRenderer.php'
+];
 const canvasImplementedProperties = new Set();
 
-if (fs.existsSync(canvasFile)) {
-  const content = fs.readFileSync(canvasFile, 'utf8');
+canvasFiles.forEach(canvasFile => {
+  if (fs.existsSync(canvasFile)) {
+    const content = fs.readFileSync(canvasFile, 'utf8');
 
-  // Chercher les propriétés utilisées dans le rendu
-  allDefinedProperties.forEach(prop => {
-    const patterns = [
-      new RegExp(`element\\.${prop}`, 'g'),
-      new RegExp(`properties\\.${prop}`, 'g'),
-      new RegExp(`props\\.${prop}`, 'g'),
-      new RegExp(`\\b${prop}\\b`, 'g')
-    ];
+    // Chercher les propriétés utilisées dans le rendu
+    allDefinedProperties.forEach(prop => {
+      const patterns = [
+        new RegExp(`element\\.${prop}`, 'g'),
+        new RegExp(`properties\\.${prop}`, 'g'),
+        new RegExp(`props\\.${prop}`, 'g'),
+        new RegExp(`\\b${prop}\\b`, 'g'),
+        new RegExp(`\\$properties\\['${prop}'\\]`, 'g'),
+        new RegExp(`\\$properties\\["${prop}"\\]`, 'g'),
+        new RegExp(`\$element\\['${prop}'\\]`, 'g'),
+        new RegExp(`\$element\\["${prop}"\\]`, 'g')
+      ];
 
-    patterns.forEach(pattern => {
-      if (pattern.test(content)) {
-        canvasImplementedProperties.add(prop);
-      }
+      patterns.forEach(pattern => {
+        if (pattern.test(content)) {
+          canvasImplementedProperties.add(prop);
+        }
+      });
     });
-  });
-}
+  }
+});
 
 console.log('🔍 DIAGNOSTIC COMPLET CORRIGÉ - IMPLÉMENTATION PAR PROPRIÉTÉ\n');
 
