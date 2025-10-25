@@ -1379,7 +1379,7 @@ export const CanvasElement = ({
               height: '100%'
             }}>
               {/* Nom */}
-              {element.fields?.includes('name') && (
+              {(element.fields && element.fields.includes('name') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1408,7 +1408,7 @@ export const CanvasElement = ({
               )}
 
               {/* Email */}
-              {element.fields?.includes('email') && (
+              {(element.fields && element.fields.includes('email') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1436,7 +1436,7 @@ export const CanvasElement = ({
               )}
 
               {/* Téléphone */}
-              {element.fields?.includes('phone') && (
+              {(element.fields && element.fields.includes('phone') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1464,7 +1464,7 @@ export const CanvasElement = ({
               )}
 
               {/* Adresse */}
-              {element.fields?.includes('address') && (
+              {(element.fields && element.fields.includes('address') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1494,7 +1494,7 @@ export const CanvasElement = ({
               )}
 
               {/* Société */}
-              {element.fields?.includes('company') && (
+              {(element.fields && element.fields.includes('company') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1523,7 +1523,7 @@ export const CanvasElement = ({
               )}
 
               {/* TVA */}
-              {element.fields?.includes('vat') && (
+              {(element.fields && element.fields.includes('vat') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1551,7 +1551,7 @@ export const CanvasElement = ({
               )}
 
               {/* SIRET */}
-              {element.fields?.includes('siret') && (
+              {(element.fields && element.fields.includes('siret') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1778,7 +1778,7 @@ export const CanvasElement = ({
               height: '100%'
             }}>
               {/* Nom de l'entreprise */}
-              {element.fields?.includes('name') && (
+              {(element.fields && element.fields.includes('name') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1807,7 +1807,7 @@ export const CanvasElement = ({
               )}
 
               {/* Adresse */}
-              {element.fields?.includes('address') && (
+              {(element.fields && element.fields.includes('address') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1846,7 +1846,7 @@ export const CanvasElement = ({
               )}
 
               {/* Téléphone */}
-              {element.fields?.includes('phone') && (
+              {(element.fields && element.fields.includes('phone') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1874,7 +1874,7 @@ export const CanvasElement = ({
               )}
 
               {/* Email */}
-              {element.fields?.includes('email') && (
+              {(element.fields && element.fields.includes('email') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1902,7 +1902,7 @@ export const CanvasElement = ({
               )}
 
               {/* Site web */}
-              {element.fields?.includes('website') && (
+              {(element.fields && element.fields.includes('website') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1930,7 +1930,7 @@ export const CanvasElement = ({
               )}
 
               {/* TVA */}
-              {element.fields?.includes('vat') && (
+              {(element.fields && element.fields.includes('vat') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1958,7 +1958,7 @@ export const CanvasElement = ({
               )}
 
               {/* RCS */}
-              {element.fields?.includes('rcs') && (
+              {(element.fields && element.fields.includes('rcs') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1986,7 +1986,7 @@ export const CanvasElement = ({
               )}
 
               {/* SIRET */}
-              {element.fields?.includes('siret') && (
+              {(element.fields && element.fields.includes('siret') && (
                 <div style={{
                   display: 'flex',
                   flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -2125,7 +2125,7 @@ export const CanvasElement = ({
                   className="resize-handle nw"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'nw', {
                       x: element.x,
@@ -2141,7 +2141,7 @@ export const CanvasElement = ({
                   className="resize-handle ne"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'ne', {
                       x: element.x,
@@ -2157,7 +2157,7 @@ export const CanvasElement = ({
                   className="resize-handle sw"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'sw', {
                       x: element.x,
@@ -2175,7 +2175,7 @@ export const CanvasElement = ({
               className="resize-handle se"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'se', {
                   x: element.x,
@@ -2195,7 +2195,7 @@ export const CanvasElement = ({
                   className="resize-handle n"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'n', {
                       x: element.x,
@@ -2211,7 +2211,7 @@ export const CanvasElement = ({
                   className="resize-handle s"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 's', {
                       x: element.x,
@@ -2229,7 +2229,7 @@ export const CanvasElement = ({
               className="resize-handle w"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'w', {
                   x: element.x,
@@ -2245,7 +2245,7 @@ export const CanvasElement = ({
               className="resize-handle e"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvas = (elementRef.current && elementRef.current.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'e', {
                   x: element.x,

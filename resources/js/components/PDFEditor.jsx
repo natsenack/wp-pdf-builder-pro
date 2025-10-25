@@ -633,7 +633,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     // Vérifier d'abord si on clique sur une poignée de redimensionnement
     if (selectedElement) {
-      const element = elements.find(el => el.id === selectedElement?.id);
+      const element = elements.find(el => el.id === (selectedElement && selectedElement.id));
       if (element) {
         const handle = getResizeHandleAtPosition(element, x, y);
         if (handle) {
@@ -719,7 +719,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     const y = (event.clientY - rect.top) / zoom;
 
     if (isResizing && selectedElement && resizeHandle) {
-      const element = elements.find(el => el.id === selectedElement?.id);
+      const element = elements.find(el => el.id === (selectedElement && selectedElement.id));
       if (element) {
         let newWidth = resizeStart.width;
         let newHeight = resizeStart.height;
@@ -1018,7 +1018,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     sortedElements.forEach((element, index) => {
       // Mettre en évidence l'élément sélectionné
-      if (selectedElement?.id === element.id) {
+      if ((selectedElement && selectedElement.id) === element.id) {
         ctx.strokeStyle = '#007cba';
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
@@ -1053,7 +1053,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Dessiner les poignées de redimensionnement si l'élément est sélectionné
-      if (selectedElement?.id === element.id && (element.type === 'rectangle' || element.type === 'circle' ||
+      if ((selectedElement && selectedElement.id) === element.id && (element.type === 'rectangle' || element.type === 'circle' ||
           element.type === 'company_logo' || element.type === 'dynamic-text' || element.type === 'order_number' ||
           element.type === 'document_type' || element.type === 'customer_info' || element.type === 'company_info' ||
           element.type === 'product_table' || element.type === 'mentions' || element.type === 'line')) {

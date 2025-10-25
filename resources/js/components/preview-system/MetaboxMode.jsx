@@ -166,7 +166,7 @@ function MetaboxMode({
 
       {/* Badge Phase 8 - Indicateur visuel du nouveau système */}
       <div className="phase8-badge">
-        🚀 Phase 8 Active - {templateElements?.length || 0} éléments
+        🚀 Phase 8 Active - {(templateElements && templateElements.length) || 0} éléments
       </div>
 
       {/* En-tête avec onglets */}
@@ -201,7 +201,7 @@ function MetaboxMode({
           </button>
           {/* Métriques Phase 8 */}
           <div className="phase8-metrics">
-            ⚡ {templateElements?.length || 0} éléments
+            ⚡ {(templateElements && templateElements.length) || 0} éléments
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@ function MetaboxMode({
           <div className="metabox-preview">
             {/* Zone d'aperçu compact */}
             <div className="metabox-preview-canvas">
-              {previewData?.elements?.map((element) => {
+              {(previewData && previewData.elements && previewData.elements.map)((element) => {
                 switch (element.type) {
                   case 'pdf':
                     return (

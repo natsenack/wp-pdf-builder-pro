@@ -5,7 +5,7 @@
 export class RealDataProvider {
   constructor() {
     this.ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-    this.nonce = window.pdfBuilderPro?.nonce || window.pdfBuilderAjax?.nonce || '';
+    this.nonce = (window.pdfBuilderPro && window.pdfBuilderPro.nonce) || (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || '';
     this.variablesCache = new Map(); // Cache des variables par commande
   }
 
@@ -20,7 +20,7 @@ export class RealDataProvider {
     });
 
     if (!response.success) {
-      throw new Error(response.data?.message || 'Erreur lors du chargement des données de commande');
+      throw new Error((response.data && response.data.message) || 'Erreur lors du chargement des données de commande');
     }
 
     return response.data.order;
@@ -41,7 +41,7 @@ export class RealDataProvider {
     });
 
     if (!response.success) {
-      throw new Error(response.data?.message || 'Erreur lors du chargement des variables d\'aperçu');
+      throw new Error((response.data && response.data.message) || 'Erreur lors du chargement des variables d\'aperçu');
     }
 
     const variables = response.data.variables;
@@ -60,7 +60,7 @@ export class RealDataProvider {
     });
 
     if (!response.success) {
-      throw new Error(response.data?.message || 'Accès non autorisé à cette commande');
+      throw new Error((response.data && response.data.message) || 'Accès non autorisé à cette commande');
     }
   }
 
@@ -155,27 +155,27 @@ export class RealDataProvider {
     fields.forEach(field => {
       switch (field) {
         case 'name':
-          data.name = orderData.billing?.first_name && orderData.billing?.last_name
+          data.name = (orderData.billing && orderData.billing.first_name) && (orderData.billing && orderData.billing.last_name)
             ? `${orderData.billing.first_name} ${orderData.billing.last_name}`
             : '';
           break;
         case 'email':
-          data.email = orderData.billing?.email || '';
+          data.email = (orderData.billing && orderData.billing.email) || '';
           break;
         case 'phone':
-          data.phone = orderData.billing?.phone || '';
+          data.phone = (orderData.billing && orderData.billing.phone) || '';
           break;
         case 'address':
           data.address = this.formatAddress(orderData.billing);
           break;
         case 'company':
-          data.company = orderData.billing?.company || '';
+          data.company = (orderData.billing && orderData.billing.company) || '';
           break;
         case 'vat':
-          data.vat = orderData.billing?.vat || '';
+          data.vat = (orderData.billing && orderData.billing.vat) || '';
           break;
         case 'siret':
-          data.siret = orderData.billing?.siret || '';
+          data.siret = (orderData.billing && orderData.billing.siret) || '';
           break;
       }
     });
@@ -205,7 +205,7 @@ export class RealDataProvider {
       // Récupérer les données entreprise via AJAX
       const response = await this.makeAjaxRequest('pdf_builder_get_company_data');
 
-      if (!response.success || !response.data?.company) {
+      if (!response.success || !(response.data && response.data.company)) {
         // Fallback vers des données vides en cas d'erreur
         const data = {};
         fields.forEach(field => {
@@ -289,7 +289,7 @@ export class RealDataProvider {
 
     // Charger les variables mappées depuis le VariableMapper PHP
     try {
-      const variables = await this.loadVariables(orderData.id || orderData.order?.id);
+      const variables = await this.loadVariables(orderData.id || (orderData.order && orderData.order.id));
 
       // Remplacer les variables avec les vraies données du VariableMapper
       content = this.replaceVariablesWithMapper(content, variables);
@@ -373,11 +373,11 @@ export class RealDataProvider {
       '{{order_date}}': orderData.date_created || '',
       '{{order_total}}': orderData.total || '0 €',
       '{{order_status}}': orderData.status || '',
-      '{{customer_name}}': orderData.billing?.first_name && orderData.billing?.last_name
+      '{{customer_name}}': (orderData.billing && orderData.billing.first_name) && (orderData.billing && orderData.billing.last_name)
         ? `${orderData.billing.first_name} ${orderData.billing.last_name}`
         : '',
-      '{{customer_email}}': orderData.billing?.email || '',
-      '{{customer_phone}}': orderData.billing?.phone || '',
+      '{{customer_email}}': (orderData.billing && orderData.billing.email) || '',
+      '{{customer_phone}}': (orderData.billing && orderData.billing.phone) || '',
       '{{billing_address}}': this.formatAddress(orderData.billing),
       '{{shipping_address}}': this.formatAddress(orderData.shipping),
       '{{payment_method}}': orderData.payment_method_title || '',

@@ -137,14 +137,14 @@ const PropertiesPanel = memo(({
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
     // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
-    const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
+    const isBackgroundAllowed = (selectedElement && selectedElement.type) ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
     if (!isBackgroundAllowed) {
       return;
     }
 
     if (checked) {
       // Sauvegarder la couleur actuelle avant de la désactiver
-      if (selectedElement?.backgroundColor && selectedElement.backgroundColor !== 'transparent') {
+      if ((selectedElement && selectedElement.backgroundColor) && selectedElement.backgroundColor !== 'transparent') {
         setPreviousBackgroundColor(selectedElement.backgroundColor);
       } else if (!previousBackgroundColor) {
         // Si pas de couleur précédente sauvegardée, utiliser la valeur par défaut
@@ -156,14 +156,14 @@ const PropertiesPanel = memo(({
       const colorToRestore = previousBackgroundColor || '#ffffff';
       handlePropertyChange(elementId, 'backgroundColor', colorToRestore);
     }
-  }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange, selectedElement?.type]);
+  }, [(selectedElement && selectedElement.backgroundColor), previousBackgroundColor, handlePropertyChange, (selectedElement && selectedElement.type)]);
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
 
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
-      if (selectedElement?.borderWidth && selectedElement.borderWidth > 0) {
+      if ((selectedElement && selectedElement.borderWidth) && selectedElement.borderWidth > 0) {
         setPreviousBorderWidth(selectedElement.borderWidth);
       } else {
         // Si pas de bordure ou bordure = 0, sauvegarder 2 comme valeur par défaut (plus visible)
@@ -175,7 +175,7 @@ const PropertiesPanel = memo(({
       const widthToRestore = Math.max(previousBorderWidth || 2, 2);
       handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
-  }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
+  }, [(selectedElement && selectedElement.borderWidth), previousBorderWidth, handlePropertyChange]);
 
   // Rendu des onglets
   const renderTabs = useCallback(() => (

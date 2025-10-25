@@ -88,7 +88,7 @@ function previewReducer(state, action) {
       return {
         ...state,
         data: action.payload,
-        totalPages: action.payload?.totalPages || 1
+        totalPages: (action.payload && action.payload.totalPages) || 1
       };
 
     case PREVIEW_ACTIONS.SET_ROTATION:

@@ -31,7 +31,7 @@ const TableStylePreview = ({ selectedStyle, onStyleSelect }) => {
           boxShadow: style.shadowBlur > 0 ? `0 1px ${style.shadowBlur * 0.3}px ${style.shadowColor}` : 'none'
         }}
         onClick={() => onStyleSelect(styleKey)}
-        title={`${tableStyles.find(s => s.key === styleKey)?.name || styleKey} - ${tableStyles.find(s => s.key === styleKey)?.description || ''}`}
+        title={`${(tableStyles.find(s => s.key === styleKey) && tableStyles.find(s => s.key === styleKey).name) || styleKey} - ${(tableStyles.find(s => s.key === styleKey) && tableStyles.find(s => s.key === styleKey).description) || ''}`}
       >
         {/* Header */}
         <div
