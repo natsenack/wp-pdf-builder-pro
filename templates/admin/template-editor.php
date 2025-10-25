@@ -37,10 +37,9 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
         wp_enqueue_script('jquery');
     }
 
-    // Charger directement les scripts PDF Builder
-    $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
-
-    // React sera inclus dans le bundle webpack
+    // CHARGER LE SCRIPT DE GESTION D'ERREURS EN PREMIER - AVANT TOUT
+    $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js?v=' . time() . '_' . uniqid();
+    echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
 
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid();
