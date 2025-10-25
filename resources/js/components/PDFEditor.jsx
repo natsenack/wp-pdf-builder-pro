@@ -2441,13 +2441,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
         
-        // Dimensions optimisées
-        const padding = 10;     // padding horizontal
-        const paddingV = 8;     // padding vertical
-        const headerHeight = 20 + paddingV * 2;  // 36px
-        const rowHeight = 16 + paddingV * 2;     // 32px
-        const totalRowHeight = 16 + paddingV * 2; // 32px
-        const colGap = 12;      // gap entre colonnes
+        // Dimensions optimisées pour une meilleure lisibilité
+        const padding = 12;     // padding horizontal augmenté
+        const paddingV = 10;    // padding vertical augmenté
+        const headerHeight = 22 + paddingV * 2;  // 42px - header plus haut
+        const rowHeight = 18 + paddingV * 2;     // 38px - lignes plus hautes
+        const totalRowHeight = 20 + paddingV * 2; // 40px - totaux plus hauts
+        const colGap = 15;      // gap entre colonnes augmenté
         const sideBarWidth = 4; // border-left 4px
         
         // Couleurs (depuis les propriétés)
@@ -2466,6 +2466,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Opacité
         if (element.opacity !== undefined && element.opacity < 1) {
             ctx.globalAlpha = element.opacity;
+        }
+
+        // Calculer la hauteur totale du tableau pour la bordure extérieure
+        const totalRows = rows.length + (totals.length + (element.showTotal ? 1 : 0)) + 1; // +1 pour le header
+        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * (totals.length + (element.showTotal ? 1 : 0)));
+
+        // Bordure extérieure (optionnelle)
+        if (showTableBorder) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
         }
 
         // Largeurs des colonnes (dynamiques selon les colonnes visibles)
@@ -2508,30 +2519,50 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const rows = element.orderData?.lineItems && element.orderData.lineItems.length > 0 
           ? element.orderData.lineItems.map(item => ({
               image: '📦',
-              name: item.product_name || item.name || 'Produit',
-              sku: item.sku || '',
-              quantity: item.quantity || '1',
-              price: item.product_price || item.price || '0€',
-              total: item.total || item.line_total || '0€'
+              name: item.product_name || item.name || item.product_title || 'Produit sans nom',
+              sku: item.sku || item.product_sku || '',
+              quantity: item.quantity ? parseInt(item.quantity) : 1,
+              price: formatPrice(item.product_price || item.price || item.line_price || '0'),
+              total: formatPrice(item.total || item.line_total || '0')
             }))
           : defaultRows;
+
+        // Helper pour formater les prix
+        const formatPrice = (price) => {
+          if (!price) return '0€';
+          const numPrice = typeof price === 'string' ? parseFloat(price.replace(/[^\d.,]/g, '').replace(',', '.')) : parseFloat(price);
+          return isNaN(numPrice) ? '0€' : `${numPrice.toFixed(2)}€`;
+        };
         
-        // Helper pour tronquer le texte
-        const truncateText = (text, maxWidth, fontSize = 9) => {
+        // Helper pour tronquer le texte avec mesure précise
+        const truncateText = (text, maxWidth, fontSize = 9, isBold = false) => {
           if (!text) return '';
-          const charWidth = fontSize * 0.6; // Approximation
-          const maxChars = Math.floor(maxWidth / charWidth);
-          return text.length > maxChars ? text.substring(0, maxChars - 1) + '…' : text;
+          
+          // Configurer la police pour mesurer
+          ctx.font = isBold ? `bold ${fontSize}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
+          
+          // Si le texte rentre, le retourner tel quel
+          if (ctx.measureText(text).width <= maxWidth) {
+            return text;
+          }
+          
+          // Tronquer progressivement jusqu'à ce que ça rentre
+          let truncated = text;
+          while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth) {
+            truncated = truncated.slice(0, -1);
+          }
+          
+          return truncated + (truncated.length < text.length ? '…' : '');
         };
         
         // Construire rowValues en fonction des colonnes actives
         const rowValues = rows.map(r => colKeys.map(key => r[key] || ''));
 
         // Données des totaux (réelles si disponibles)
-        const subtotal = element.orderData?.subtotal || '60€';
-        const taxTotal = element.orderData?.tax_total || '12€';
-        const discountTotal = element.orderData?.discount_total || '5€';
-        const orderTotal = element.orderData?.total || '77€';
+        const subtotal = formatPrice(element.orderData?.subtotal || element.orderData?.cart_subtotal || '60');
+        const taxTotal = formatPrice(element.orderData?.tax_total || element.orderData?.total_tax || '12');
+        const discountTotal = formatPrice(element.orderData?.discount_total || '5');
+        const orderTotal = formatPrice(element.orderData?.total || element.orderData?.order_total || '77');
 
         // Helper pour dessiner une rangée
         const drawTableRow = (values, bgColor, isBold = false, fontSize = 9) => {
@@ -2546,7 +2577,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte des colonnes
-          ctx.font = isBold ? `bold ${fontSize}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
+          ctx.font = isBold ? `bold ${fontSize + 1}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
           ctx.fillStyle = textColor;
           ctx.textBaseline = 'middle';
 
@@ -2564,7 +2595,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
             
             // Tronquer le texte si nécessaire
-            const truncated = truncateText(val.toString(), colWidth - padding * 2, fontSize);
+            const truncated = truncateText(val.toString(), colWidth - padding * 2, fontSize, isBold);
             ctx.fillText(truncated, textX, currentY + rowHeight / 2);
             colX += colWidth + colGap;
           });
@@ -2593,7 +2624,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Texte en-têtes
-        ctx.font = 'bold 10px "Segoe UI", Arial';
+        ctx.font = 'bold 11px "Segoe UI", Arial';
         ctx.fillStyle = textColor;
         ctx.textBaseline = 'middle';
         let colX = tableX + sideBarWidth + padding;
@@ -2637,7 +2668,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           totals.push(['Sous-total :', subtotal]);
         }
         if (element.showShipping) {
-          const shipping = element.orderData?.shipping_total || '10€';
+          const shipping = formatPrice(element.orderData?.shipping_total || element.orderData?.shipping_cost || '10');
           totals.push(['Frais de port :', shipping]);
         }
         if (element.showTaxes) {
@@ -2647,17 +2678,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           totals.push(['Remise :', `-${discountTotal}`]);
         }
 
-        // Fond des totaux (sauf pour le grand total)
-        ctx.fillStyle = totalsBg;
-        totals.forEach(() => {
+        // Helper pour dessiner une rangée de total
+        const drawTotalRow = (label, value, bgColor, isBold = false, isFinal = false) => {
+          // Fond
+          ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
-          currentY += totalRowHeight;
-        });
 
-        // Re-positioner pour dessiner le texte des totaux
-        currentY -= totalRowHeight * totals.length;
-
-        totals.forEach((total, idx) => {
           // Barre latérale
           if (showBorders) {
             ctx.fillStyle = primaryColor;
@@ -2665,16 +2691,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte (label gauche, valeur droite)
-          ctx.font = '9px "Segoe UI", Arial';
-          ctx.fillStyle = textMuted;
+          ctx.font = isBold ? `bold 10px "Segoe UI", Arial` : `9px "Segoe UI", Arial`;
+          ctx.fillStyle = isFinal ? textColor : textMuted;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'left';
-          ctx.fillText(total[0], tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
+          ctx.fillText(label, tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
           ctx.textAlign = 'right';
-          ctx.fillText(total[1].toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
+          ctx.fillText(value.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
 
-          // Bordure basse
-          if (showBorders) {
+          // Bordure basse (sauf pour le total final)
+          if (showBorders && !isFinal) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -2684,31 +2710,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           currentY += totalRowHeight;
+        };
+
+        // Dessiner les totaux intermédiaires
+        totals.forEach(([label, value]) => {
+          drawTotalRow(label, value, totalsBg, false, false);
         });
 
         // ===== TOTAL FINAL =====
         if (element.showTotal) {
-          // Fond (couleur secondaire)
-          ctx.fillStyle = secondaryColor;
-          ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
-
-          // Barre latérale
-          if (showBorders) {
-            ctx.fillStyle = primaryColor;
-            ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
-          }
-
-          // Texte (label gauche, valeur droite)
-          ctx.font = 'bold 10px "Segoe UI", Arial';
-          ctx.fillStyle = textColor;
-          ctx.textBaseline = 'middle';
-          ctx.textAlign = 'left';
-          ctx.fillText('TOTAL :', tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
-          ctx.textAlign = 'right';
-          ctx.fillText(orderTotal.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
-
-          // Pas de bordure basse pour le total final
-          currentY += totalRowHeight;
+          drawTotalRow('TOTAL :', orderTotal, secondaryColor, true, true);
         }
 
         // Restaurer l'état Canvas
