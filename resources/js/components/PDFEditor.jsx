@@ -342,6 +342,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [zoom, setZoom] = useState(1.0);
   const [showGrid, setShowGrid] = useState(true);
   const [snapToGrid, setSnapToGrid] = useState(true);
+  const [snapToElements, setSnapToElements] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
   const [showElementLibrary, setShowElementLibrary] = useState(true);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
@@ -406,6 +407,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   const handleSnapToGridChange = (snap) => {
     setSnapToGrid(snap);
+  };
+
+  const handleSnapToElementsChange = (snap) => {
+    setSnapToElements(snap);
   };
 
   // Gestionnaire d'historique
@@ -3059,6 +3064,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onShowGridChange={handleShowGridChange}
         snapToGrid={snapToGrid}
         onSnapToGridChange={handleSnapToGridChange}
+        snapToElements={snapToElements}
+        onSnapToElementsChange={handleSnapToElementsChange}
         onUndo={handleUndo}
         onRedo={handleRedo}
         canUndo={canUndo}

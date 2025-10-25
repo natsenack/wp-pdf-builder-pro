@@ -9,6 +9,8 @@ export const Toolbar = ({
   onShowGridChange,
   snapToGrid,
   onSnapToGridChange,
+  snapToElements,
+  onSnapToElementsChange,
   onUndo,
   onRedo,
   canUndo,
