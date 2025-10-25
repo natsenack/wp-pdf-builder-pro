@@ -2554,31 +2554,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const orderTotal = formatPrice(element.orderData?.total || element.orderData?.order_total || '77');
 
         // Calculer la hauteur totale du tableau pour la bordure extérieure
-        const totals = [];
-        
-        if (element.showSubtotal) {
-          totals.push(['Sous-total :', subtotal]);
-        }
-        if (element.showShipping) {
-          const shipping = formatPrice(element.orderData?.shipping_total || element.orderData?.shipping_cost || '10');
-          totals.push(['Frais de port :', shipping]);
-        }
-        if (element.showTaxes) {
-          totals.push(['TVA :', taxTotal]);
-        }
-        if (element.showDiscount) {
-          totals.push(['Remise :', `-${discountTotal}`]);
-        }
-
-        const totalRows = rows.length + (totals.length + (element.showTotal ? 1 : 0)) + 1; // +1 pour le header
-        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * (totals.length + (element.showTotal ? 1 : 0)));
-
-        // Bordure extérieure (optionnelle)
-        if (showTableBorder) {
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
-        }        // Helper pour dessiner une rangée
+        // Note: totals array will be created below        // Helper pour dessiner une rangée
         const drawTableRow = (values, bgColor, isBold = false, fontSize = 9) => {
           // Fond
           ctx.fillStyle = bgColor;
@@ -2676,7 +2652,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         });
 
         // ===== TOTAUX =====
-        // totals array is already defined above for height calculation
+        const totals = [];
         
         if (element.showSubtotal) {
           totals.push(['Sous-total :', subtotal]);
@@ -2690,6 +2666,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
         if (element.showDiscount) {
           totals.push(['Remise :', `-${discountTotal}`]);
+        }
+
+        // Calculer la hauteur totale du tableau pour la bordure extérieure (maintenant que totals est défini)
+        const totalRows = rows.length + (totals.length + (element.showTotal ? 1 : 0)) + 1; // +1 pour le header
+        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * (totals.length + (element.showTotal ? 1 : 0)));
+
+        // Bordure extérieure (optionnelle)
+        if (showTableBorder) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(tableX, currentY, tableWidth, tableHeight);
         }
 
         // Helper pour dessiner une rangée de total
