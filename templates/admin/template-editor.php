@@ -295,7 +295,7 @@ body.wp-admin .pdf-builder-container {
 
                 // Définir les données globales pour le JavaScript
                 window.pdfBuilderData = {
-                    templateId: <?php echo $template_id ?: 'null'; ?>,
+                    templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     ajaxurl: ajaxurl,
@@ -322,7 +322,7 @@ body.wp-admin .pdf-builder-container {
                 };
                 
                 pdfBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: <?php echo $template_id ?: 'null'; ?>,
+                    templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     initialElements: initialData,
