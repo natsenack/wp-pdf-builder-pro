@@ -2515,16 +2515,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        console.log('🎯 STARTING product_table rendering for element:', element.id);
-        console.log('Canvas context valid:', !!ctx);
-        console.log('Element properties:', {
-          x: element.x,
-          y: element.y,
-          width: element.width,
-          height: element.height,
-          tableStyle: element.tableStyle
-        });
-
         try {
           // Utiliser SampleDataProvider pour des données cohérentes
           const sampleDataProvider = new SampleDataProvider();
@@ -2587,38 +2577,26 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           const tableWidth = Math.max(200, element.width || 500);
           const tableHeight = Math.max(100, element.height || 200);
 
-          console.log('Table dimensions:', { tableX, tableY, tableWidth, tableHeight });
-
           // Obtenir les styles du tableau
           const tableStyles = getTableStyles(element.tableStyle || 'default');
-          console.log('Using table styles:', tableStyles);
 
           // Fond du tableau avec style
           ctx.fillStyle = tableStyles.rowBg || '#f8f9fa';
           ctx.fillRect(tableX, tableY, tableWidth, tableHeight);
-          console.log('✅ Drew table background');
 
           // Bordure avec style
           ctx.strokeStyle = tableStyles.rowBorder || '#dee2e6';
           ctx.lineWidth = tableStyles.borderWidth || 1;
           ctx.strokeRect(tableX, tableY, tableWidth, tableHeight);
-          console.log('✅ Drew table border');
 
           // Titre avec style
           ctx.fillStyle = tableStyles.headerTextColor || '#333333';
           ctx.font = `${tableStyles.headerFontWeight || 'bold'} ${tableStyles.headerFontSize || '14px'} Arial`;
           ctx.textAlign = 'left';
           ctx.fillText('TABLEAU DE PRODUITS', tableX + 10, tableY + 25);
-          console.log('✅ Drew table title');
 
           // Vérifier que nous avons des données valides
           if (tableData && tableData.headers && tableData.rows) {
-            console.log('✅ Data validation passed:', {
-              headersCount: tableData.headers.length,
-              rowsCount: tableData.rows.length,
-              hasTotals: !!tableData.totals
-            });
-
             // En-têtes des colonnes avec style
             ctx.font = `${tableStyles.headerFontWeight || 'bold'} ${tableStyles.headerFontSize || '12px'} Arial`;
             ctx.fillStyle = tableStyles.headerTextColor || '#666666';
@@ -2630,7 +2608,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 const colX = tableX + (index * colWidth) + 10;
                 const truncatedHeader = header && header.length > 10 ? header.substring(0, 10) + '...' : header;
                 ctx.fillText(truncatedHeader || '', colX, tableY + 45);
-                console.log(`✅ Drew header ${index}: ${truncatedHeader}`);
               } catch (headerError) {
                 console.warn('Erreur lors du rendu de l\'en-tête:', headerError);
               }
@@ -2641,14 +2618,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.fillStyle = tableStyles.rowTextColor || '#333333';
 
             const maxRows = Math.min(3, tableData.rows.length);
-            console.log(`Rendering ${maxRows} rows out of ${tableData.rows.length}`);
-
             for (let rowIndex = 0; rowIndex < maxRows; rowIndex++) {
               const row = tableData.rows[rowIndex];
               if (Array.isArray(row)) {
                 const rowY = tableY + 65 + (rowIndex * 20);
-                console.log(`Processing row ${rowIndex}:`, row);
-
                 // Fond alternatif pour les lignes
                 if (rowIndex % 2 === 1 && tableStyles.altRowBg !== 'transparent') {
                   ctx.fillStyle = tableStyles.altRowBg;
@@ -2662,7 +2635,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                     const displayText = cell !== undefined && cell !== null ? cell.toString() : '';
                     const truncatedText = displayText.length > 15 ? displayText.substring(0, 15) + '...' : displayText;
                     ctx.fillText(truncatedText, colX, rowY);
-                    console.log(`✅ Drew cell [${rowIndex},${colIndex}]: ${truncatedText}`);
                   } catch (cellError) {
                     console.warn('Erreur lors du rendu de la cellule:', cellError);
                   }
@@ -2685,7 +2657,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                                key === 'discount' ? 'Remise' : key;
                   const displayValue = value !== undefined && value !== null ? value.toString() : '0';
                   ctx.fillText(`${label}: ${displayValue}`, tableX + 10, totalY);
-                  console.log(`Drew total: ${label}: ${displayValue}`);
                   totalY += 15;
                 } catch (totalError) {
                   console.warn('Erreur lors du rendu du total:', totalError);
@@ -2697,12 +2668,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.fillStyle = tableStyles.rowTextColor || '#666666';
             ctx.font = `${tableStyles.rowFontSize || '12px'} Arial`;
             ctx.fillText('Aucune donnée disponible', tableX + 10, tableY + tableHeight / 2);
-            console.log('Drew no data message');
           }
 
           // Restaurer l'état Canvas
           ctx.textAlign = 'left';
-          console.log('🎯 FINISHED product_table rendering successfully');
 
         } catch (error) {
           // En cas d'erreur, afficher un message simple
