@@ -30,6 +30,9 @@ module.exports = {
   plugins: [
     // ProvidePlugin retiré - on utilise l'import direct
   ],
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+  },
   module: {
     rules: [
       {

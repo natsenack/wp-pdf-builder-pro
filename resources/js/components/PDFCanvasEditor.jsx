@@ -11,7 +11,7 @@ import { FPSCounter } from './FPSCounter.jsx';
 import ContextMenu from './ContextMenu.jsx';
 import WooCommerceElement from './WooCommerceElements.jsx';
 import ElementLibrary from './ElementLibrary.jsx';
-// import PropertiesPanel from './PropertiesPanel.jsx'; // Temporairement désactivé à cause des erreurs d'import
+import PropertiesPanel from './PropertiesPanel.jsx';
 import NewTemplateModal from './NewTemplateModal.jsx';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
