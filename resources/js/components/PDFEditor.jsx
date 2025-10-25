@@ -2513,7 +2513,27 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
         try {
-          // Version simplifiée pour le débogage
+          // Utiliser SampleDataProvider pour des données cohérentes
+          const sampleDataProvider = new SampleDataProvider();
+
+          // Configuration simple des colonnes
+          const columnsConfig = element.columns || {
+            name: true,
+            quantity: true,
+            price: true,
+            total: true
+          };
+
+          const tableData = sampleDataProvider.generateProductTableData({
+            columns: columnsConfig,
+            showSubtotal: element.showSubtotal ?? false,
+            showShipping: element.showShipping ?? true,
+            showTaxes: element.showTaxes ?? true,
+            showDiscount: element.showDiscount ?? true,
+            showTotal: element.showTotal ?? true,
+            tableStyle: element.tableStyle || 'default'
+          });
+
           const tableX = element.x || 10;
           const tableY = element.y || 10;
           const tableWidth = element.width || 500;
@@ -2534,24 +2554,46 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.textAlign = 'left';
           ctx.fillText('TABLEAU DE PRODUITS', tableX + 10, tableY + 25);
 
-          // Lignes d'exemple
-          ctx.font = '12px Arial';
+          // En-têtes des colonnes
+          ctx.font = 'bold 12px Arial';
           ctx.fillStyle = '#666666';
+          const headers = tableData.headers;
+          const colWidth = tableWidth / headers.length;
 
-          const sampleProducts = [
-            'Produit 1 - 10,00 € - Qté: 1',
-            'Produit 2 - 15,50 € - Qté: 2',
-            'Produit 3 - 8,75 € - Qté: 1'
-          ];
-
-          sampleProducts.forEach((product, index) => {
-            ctx.fillText(product, tableX + 10, tableY + 50 + (index * 20));
+          headers.forEach((header, index) => {
+            const colX = tableX + (index * colWidth) + 10;
+            ctx.fillText(header, colX, tableY + 45);
           });
 
-          // Total
-          ctx.fillStyle = '#000000';
-          ctx.font = 'bold 12px Arial';
-          ctx.fillText('Total: 44,25 €', tableX + 10, tableY + tableHeight - 20);
+          // Lignes de données
+          ctx.font = '12px Arial';
+          ctx.fillStyle = '#333333';
+
+          tableData.rows.slice(0, 3).forEach((row, rowIndex) => {
+            const rowY = tableY + 65 + (rowIndex * 20);
+            row.forEach((cell, colIndex) => {
+              const colX = tableX + (colIndex * colWidth) + 10;
+              const displayText = cell !== undefined && cell !== null ? cell.toString() : '';
+              ctx.fillText(displayText, colX, rowY);
+            });
+          });
+
+          // Totaux
+          if (Object.keys(tableData.totals).length > 0) {
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = '#000000';
+
+            let totalY = tableY + tableHeight - 40;
+            Object.entries(tableData.totals).forEach(([key, value]) => {
+              const label = key === 'total' ? 'TOTAL' :
+                           key === 'subtotal' ? 'Sous-total' :
+                           key === 'shipping' ? 'Livraison' :
+                           key === 'tax' ? 'TVA' :
+                           key === 'discount' ? 'Remise' : key;
+              ctx.fillText(`${label}: ${value}`, tableX + 10, totalY);
+              totalY += 15;
+            });
+          }
 
           // Restaurer l'état Canvas
           ctx.textAlign = 'left';
