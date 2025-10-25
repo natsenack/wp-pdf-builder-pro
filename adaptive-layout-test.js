@@ -1,4 +1,5 @@
 // Test temporaire du système adaptatif - À supprimer après test
+// Version: 1.1 - Correction du chemin
 (function() {
     'use strict';
 
