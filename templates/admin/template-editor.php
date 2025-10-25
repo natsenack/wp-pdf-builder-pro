@@ -381,6 +381,16 @@ body.wp-admin .pdf-builder-container {
                         maxHistorySize: 50
                     });
                     console.log('✅ pdfBuilderPro.init() terminé SANS ERREUR');
+                    
+                    // Forcer l'affichage d'un message de succès
+                    setTimeout(() => {
+                        console.log('🎉 SUCCESS: PDF Builder initialized successfully!');
+                        const container = document.getElementById('invoice-quote-builder-container');
+                        if (container) {
+                            container.innerHTML = '<div style="color: green; padding: 20px; border: 2px solid green;"><h3>✅ SUCCÈS !</h3><p>L\'éditeur PDF a été chargé avec succès.</p><p>Timestamp: ' + new Date().toISOString() + '</p></div>';
+                        }
+                    }, 100);
+                    
                 } catch (initError) {
                     console.error('❌ ERREUR CAPTURÉE dans pdfBuilderPro.init():', initError);
                     console.error('Stack trace complet:', initError.stack);

@@ -14,7 +14,7 @@ module.exports = {
     filename: (chunkData) => {
       // Utiliser des noms fixes pour les entry points principaux
       const name = chunkData.chunk.name;
-      if (name === 'pdf-builder-admin' || name === 'pdf-builder-nonce-fix') {
+      if (name === 'pdf-builder-admin' || name === 'pdf-builder-admin-debug' || name === 'pdf-builder-nonce-fix') {
         return '[name].js';
       }
       // Pour le script-loader, ne pas inclure le runtime chunk
