@@ -45,6 +45,29 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js?v=' . time() . '_' . uniqid();
     echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
 
+    // TEMPORAIREMENT DÉSACTIVER TOUS LES AUTRES SCRIPTS POUR DIAGNOSTIC
+    echo '<script type="text/javascript">
+        (function() {
+            // Sauvegarder la fonction originale
+            var originalCreateElement = document.createElement;
+            document.createElement = function(tagName) {
+                var element = originalCreateElement.call(document, tagName);
+                if (tagName.toLowerCase() === "script" && element.src) {
+                    // Bloquer tous les scripts externes sauf les nôtres
+                    if (element.src.indexOf("pdf-builder") === -1 &&
+                        element.src.indexOf("jquery") === -1 &&
+                        element.src.indexOf("load-scripts.php") === -1) {
+                        console.warn("🚫 BLOCKED SCRIPT:", element.src);
+                        element.src = ""; // Désactiver le script
+                        return element;
+                    }
+                }
+                return element;
+            };
+            console.log("🛡️ Script blocker activated - only PDF Builder and core scripts allowed");
+        })();
+    </script>';
+
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid();
     echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
