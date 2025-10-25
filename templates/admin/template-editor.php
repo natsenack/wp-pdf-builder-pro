@@ -506,6 +506,3 @@ body.wp-admin .pdf-builder-container {
     })();
     </script>
     <?php
-
-})();
-</script>
