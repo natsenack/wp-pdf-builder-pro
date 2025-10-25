@@ -850,6 +850,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     if (elements.length > 0) {
     }
 
+    console.log('Rendering canvas with', elements.length, 'elements');
+
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -2512,6 +2514,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
+        console.log('Rendering product_table element:', element);
         try {
           // Utiliser SampleDataProvider pour des données cohérentes
           const sampleDataProvider = new SampleDataProvider();
@@ -3007,6 +3010,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Re-rendre à chaque changement
   useEffect(() => {
+    console.log('useEffect renderCanvas triggered:', { elementsCount: elements.length, zoom, showGrid, selectedElement });
     renderCanvas();
   }, [elements, zoom, showGrid, selectedElement]);
 
