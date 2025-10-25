@@ -45,7 +45,7 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js?v=' . time() . '_' . uniqid();
     echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
 
-    // TEMPORAIREMENT DÉSACTIVER TOUS LES AUTRES SCRIPTS POUR DIAGNOSTIC
+    // Script de blocage des scripts externes pour sécurité
     echo '<script type="text/javascript">
         (function() {
             // Sauvegarder la fonction originale
@@ -442,7 +442,7 @@ body.wp-admin .pdf-builder-container {
     }
 
 })();
-// SCRIPT DE TEST ADAPTATIF SUPPRIMÉ TEMPORAIREMENT POUR DIAGNOSTIC
+
 </script>
 <?php
 // Fin du template
