@@ -33,8 +33,8 @@ export const safeParseInt = (value, defaultValue = 0) => {
 export const shouldShowSection = (sectionName, elementType) => {
   // Sections à cacher selon le type d'élément
   const hiddenSections = {
-    // Pour les tableaux : pas de typographie (trop complexe)
-    product_table: ['typography']
+    // Pour les tableaux : pas de typographie (trop complexe), pas de couleurs/bordures (géré par TableAppearanceSection)
+    product_table: ['typography', 'colors', 'borders', 'font']
   };
 
   const elementHiddenSections = hiddenSections[elementType] || [];

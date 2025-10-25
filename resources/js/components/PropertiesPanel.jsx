@@ -4,11 +4,9 @@ import './PropertiesPanel/Accordion.css';
 import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';
 import Accordion from './PropertiesPanel/Accordion.jsx';
 import ColorPicker from './PropertiesPanel/ColorPicker.jsx';
-import FontControls from './PropertiesPanel/FontControls.jsx';
 import { shouldShowSection, safeParseFloat, safeParseInt, getSmartPropertyOrder } from './PropertiesPanel/utils/helpers.js';
 import renderColorsSection from './PropertiesPanel/sections/ColorsSection.jsx';
 import renderTypographySection from './PropertiesPanel/sections/TypographySection.jsx';
-import renderFontSection from './PropertiesPanel/sections/FontSection.jsx';
 import renderBordersSection from './PropertiesPanel/sections/BordersSection.jsx';
 import renderLayoutSection from './PropertiesPanel/sections/LayoutSection.jsx';
 import renderContentSection from './PropertiesPanel/sections/ContentSection.jsx';
@@ -43,8 +41,7 @@ const PropertiesPanel = memo(({
   onPropertyChange,
   onBatchUpdate
 }) => {
-  // États pour mémoriser les valeurs précédentes
-  const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
+  // États pour mémoriser les valeurs précédentes (utilisés dans BordersSection)
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
   const [previousBorderColor, setPreviousBorderColor] = useState('#000000');
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
@@ -73,8 +70,6 @@ const PropertiesPanel = memo(({
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
     if (selectedElement) {
-      // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
-      setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
@@ -134,49 +129,6 @@ const PropertiesPanel = memo(({
       syncImmediate(elementId, property, validatedValue);
     }
   }, [customizationChange, syncImmediate]);
-
-  // Gestionnaire pour le toggle "Aucun fond"
-  const handleNoBackgroundToggle = useCallback((elementId, checked) => {
-    // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
-    const isBackgroundAllowed = true; // Temporairement autorisé pour tous les éléments
-    if (!isBackgroundAllowed) {
-      return;
-    }
-
-    if (checked) {
-      // Sauvegarder la couleur actuelle avant de la désactiver
-      if ((selectedElement && selectedElement.backgroundColor) && selectedElement.backgroundColor !== 'transparent') {
-        setPreviousBackgroundColor(selectedElement.backgroundColor);
-      } else if (!previousBackgroundColor) {
-        // Si pas de couleur précédente sauvegardée, utiliser la valeur par défaut
-        setPreviousBackgroundColor('#ffffff');
-      }
-      handlePropertyChange(elementId, 'backgroundColor', 'transparent');
-    } else {
-      // Restaurer la couleur précédente (avec fallback)
-      const colorToRestore = previousBackgroundColor || '#ffffff';
-      handlePropertyChange(elementId, 'backgroundColor', colorToRestore);
-    }
-  }, [(selectedElement && selectedElement.backgroundColor), previousBackgroundColor, handlePropertyChange, (selectedElement && selectedElement.type)]);
-
-  // Gestionnaire pour le toggle "Aucune bordure"
-  const handleNoBorderToggle = useCallback((elementId, checked) => {
-
-    if (checked) {
-      // Sauvegarder l'épaisseur actuelle avant de la désactiver
-      if ((selectedElement && selectedElement.borderWidth) && selectedElement.borderWidth > 0) {
-        setPreviousBorderWidth(selectedElement.borderWidth);
-      } else {
-        // Si pas de bordure ou bordure = 0, sauvegarder 2 comme valeur par défaut (plus visible)
-        setPreviousBorderWidth(2);
-      }
-      handlePropertyChange(elementId, 'borderWidth', 0);
-    } else {
-      // Restaurer l'épaisseur précédente, au minimum 2
-      const widthToRestore = Math.max(previousBorderWidth || 2, 2);
-      handlePropertyChange(elementId, 'borderWidth', widthToRestore);
-    }
-  }, [(selectedElement && selectedElement.borderWidth), previousBorderWidth, handlePropertyChange]);
 
   // Fonction pour obtenir le nom formaté de l'élément
   const getElementDisplayName = useCallback((element) => {
@@ -277,9 +229,6 @@ const PropertiesPanel = memo(({
                 case 'typography':
                   return shouldShowSection('typography', selectedElement.type) ?
                     <div key={`section-${section}`}>{renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div> : null;
-                case 'font':
-                  return shouldShowSection('font', selectedElement.type) ?
-                    <div key={`section-${section}`}>{renderFontSection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div> : null;
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     <div key={`section-${section}`}>{renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab)}</div> : null;
