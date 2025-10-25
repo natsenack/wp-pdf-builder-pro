@@ -494,11 +494,20 @@ window.addEventListener('load', function() {
         var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
         console.log('Found', subNavTabs.length, 'sub-nav tabs to attach handlers to');
 
-        for (var i = 0; i < subNavTabs.length; i++) {
-            // Remove existing listeners to avoid duplicates
-            subNavTabs[i].removeEventListener('click', handleSubTabClick);
-            subNavTabs[i].addEventListener('click', handleSubTabClick);
-            console.log('Attached handler to:', subNavTabs[i].textContent.trim());
+        // Check visibility of sub-nav tabs
+        var subNavWrapper = document.querySelector('#canvas .sub-nav-tab-wrapper');
+        if (subNavWrapper) {
+            console.log('Sub-nav wrapper found, display:', getComputedStyle(subNavWrapper).display);
+            console.log('Sub-nav wrapper visibility:', getComputedStyle(subNavWrapper).visibility);
+        } else {
+            console.log('Sub-nav wrapper NOT found!');
+        }
+
+        // Check sub-tab contents
+        var subTabContents = document.querySelectorAll('#canvas .sub-tab-content');
+        console.log('Found', subTabContents.length, 'sub-tab contents');
+        for (var i = 0; i < subTabContents.length; i++) {
+            console.log('Sub-tab content', i, 'id:', subTabContents[i].id, 'display:', getComputedStyle(subTabContents[i]).display, 'classes:', subTabContents[i].className);
         }
     }
 
