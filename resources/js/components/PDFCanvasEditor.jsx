@@ -16,6 +16,11 @@ import NewTemplateModal from './NewTemplateModal.jsx';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   console.log('🎨 PDFCanvasEditor: Composant INSTANCIÉ avec options:', options);
+  
+  // Log immédiat pour confirmer que le composant démarre
+    console.log('🎨 PDFCanvasEditor: Avant le return JSX...');
+
+  try {
 
   const [tool, setTool] = useState('select');
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
@@ -954,7 +959,27 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       <FPSCounter showFps={globalSettings.settings.showFps} />
     </div>
   );
-});
+    } catch (renderError) {
+      console.error('❌ ERREUR DE RENDU dans PDFCanvasEditor:', renderError);
+      console.error('Stack trace complet:', renderError.stack);
+      
+      // Retourner un composant d'erreur simple
+      return (
+        <div style={{ padding: '20px', color: 'red', border: '2px solid red', margin: '20px' }}>
+          <h3>Erreur de rendu du composant PDFCanvasEditor</h3>
+          <p>Une erreur s'est produite lors du rendu de l'éditeur.</p>
+          <details>
+            <summary>Voir les détails de l'erreur</summary>
+            <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+              {renderError.toString()}
+              {'\n\n'}
+              {renderError.stack}
+            </pre>
+          </details>
+        </div>
+      );
+    }
+  });
 
 // Optimisation : éviter les re-renders inutiles
 PDFCanvasEditor.displayName = 'PDFCanvasEditor';
