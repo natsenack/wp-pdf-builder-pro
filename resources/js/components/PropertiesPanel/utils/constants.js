@@ -164,77 +164,6 @@ export const TEMPLATE_PRESETS = {
 };
 
 export const ELEMENT_PROPERTY_PROFILES = {
-  // Éléments texte
-  text: {
-    appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
-      properties: {
-        colors: ['color', 'backgroundColor'],
-        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
-        borders: ['borderWidth', 'borderColor', 'borderRadius'],
-        effects: ['opacity', 'shadow']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: ['text', 'variables'],
-      properties: {
-        text: ['text'],
-        variables: ['variables']
-      }
-    },
-    effects: {
-      sections: ['opacity', 'shadows', 'filters'],
-      properties: {
-        opacity: ['opacity'],
-        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
-        filters: ['brightness', 'contrast', 'saturate']
-      }
-    }
-  },
-  // Éléments image/logo (pas de propriétés texte)
-  logo: {
-    appearance: {
-      sections: ['colors', 'borders', 'effects'],
-      properties: {
-        colors: ['backgroundColor'], // seulement le fond, pas de couleur texte
-        borders: ['borderWidth', 'borderColor', 'borderRadius'],
-        effects: ['opacity', 'shadow']
-      }
-    },
-    layout: {
-      sections: ['position', 'dimensions', 'transform', 'layers'],
-      properties: {
-        position: ['x', 'y'],
-        dimensions: ['width', 'height'],
-        transform: ['rotation'],
-        layers: ['zIndex']
-      }
-    },
-    content: {
-      sections: ['image'],
-      properties: {
-        image: ['imageUrl', 'alt', 'objectFit']
-      }
-    },
-    effects: {
-      sections: ['opacity', 'shadows'],
-      properties: {
-        opacity: ['opacity'],
-        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
-        // pas de filters pour les images
-      }
-    }
-  },
   // Logo entreprise (même propriétés que logo)
   company_logo: {
     appearance: {
@@ -408,6 +337,196 @@ export const ELEMENT_PROPERTY_PROFILES = {
       properties: {
         opacity: ['opacity'],
         shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Éléments d'informations société
+  company_info: {
+    appearance: {
+      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
+        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['company_info'],
+      properties: {
+        company_info: ['template']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Éléments de mentions légales
+  mentions: {
+    appearance: {
+      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
+        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['mentions'],
+      properties: {
+        mentions: ['type']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Éléments formes géométriques
+  rectangle: {
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Cercle (mêmes propriétés que rectangle)
+  circle: {
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Ligne
+  line: {
+    appearance: {
+      sections: ['colors', 'effects'],
+      properties: {
+        colors: ['color'],
+        effects: ['opacity']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity'],
+      properties: {
+        opacity: ['opacity']
+      }
+    }
+  },
+  // Flèche
+  arrow: {
+    appearance: {
+      sections: ['colors', 'effects'],
+      properties: {
+        colors: ['color'],
+        effects: ['opacity']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity'],
+      properties: {
+        opacity: ['opacity']
       }
     }
   },
