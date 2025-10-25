@@ -2434,8 +2434,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - STRIPED MODERN ===
-        // Design: Bordures horizontales uniquement (SANS barre latérale)
+        // === TABLEAU DE PRODUITS - RENDU FONCTIONNEL ===
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
@@ -2444,52 +2443,52 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const headerHeight = 22;
         const totalHeight = 18;
 
-        // Thème STRIPED MODERN
-        const theme = { 
-          border: '#0ea5e9',         // Bleu pour les bordures
-          headerBg: '#f0f0f0',       // Gris clair en-tête
-          rowBg: '#ffffff',          // Blanc pur pour les données
-          text: '#333333',
-          borderLine: '#0ea5e9',     // Bordure bleu
-          totalsBg: '#ffffff',       // Blanc pour totaux
-          totalsBgHighlight: '#e8ebff' // Bleu clair pour TOTAL
-        };
-
-        // Surcharges de couleur optionnelles
-        const borderColor = element.tableColorPrimary || theme.border;
-        const headerBg = theme.headerBg;
-        const text = theme.text;
-
-        // Données d'exemple
-        const headers = ['Produit', 'Qté', 'Prix', 'Total'];
-        const rows = [
-          ['Produit A', '2', '15,99 €', '31,98 €'],
-          ['Produit B', '1', '25,50 €', '25,50 €'],
-          ['Produit C', '3', '10,00 €', '30,00 €']
-        ];
+        // Couleurs personnalisables
+        const borderColor = element.tableColorPrimary || '#0ea5e9';
+        const secondaryColor = element.tableColorSecondary || '#e8ebff';
+        const headerBg = '#f0f0f0';
+        const textColor = '#333333';
 
         // Opacité
         if (element.opacity !== undefined && element.opacity < 1) {
             ctx.globalAlpha = element.opacity;
         }
 
+        // ===== CONSTRUCTION DES EN-TÊTES =====
+        const headers = [];
+        if (element.columns?.image !== false) headers.push('Image');
+        if (element.columns?.name !== false) headers.push('Produit');
+        if (element.columns?.sku !== false) headers.push('SKU');
+        if (element.columns?.quantity !== false) headers.push('Qté');
+        if (element.columns?.price !== false) headers.push('Prix');
+        if (element.columns?.total !== false) headers.push('Total');
+
+        // Données d'exemple (à remplacer par les vraies données)
+        const rows = [
+          { image: '', name: 'Produit A', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
+          { image: '', name: 'Produit B', sku: 'SKU-002', quantity: '1', price: '25,50 €', total: '25,50 €' },
+          { image: '', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
+        ];
+
         const colWidth = tableWidth / headers.length;
+        const showBorders = element.showBorders !== false;
 
         // ===== EN-TÊTE =====
-        // Bordure ÉPAISSE du haut
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(tableX, currentY);
-        ctx.lineTo(tableX + tableWidth, currentY);
-        ctx.stroke();
+        if (showBorders) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY);
+          ctx.lineTo(tableX + tableWidth, currentY);
+          ctx.stroke();
+        }
 
         // Fond de l'en-tête
         ctx.fillStyle = headerBg;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
         
         // Texte en-têtes
-        ctx.fillStyle = text;
+        ctx.fillStyle = textColor;
         ctx.font = 'bold 11px Arial';
         headers.forEach((header, idx) => {
           const colX = tableX + idx * colWidth;
@@ -2499,70 +2498,70 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         });
 
         // Bordure du bas de l'en-tête
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(tableX, currentY + headerHeight);
-        ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
-        ctx.stroke();
+        if (showBorders) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY + headerHeight);
+          ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
+          ctx.stroke();
+        }
 
         currentY += headerHeight;
 
         // ===== LIGNES DE DONNÉES =====
         ctx.font = '10px Arial';
         rows.forEach((row, rowIdx) => {
-          // Fond blanc pur (pas d'alternance)
-          ctx.fillStyle = theme.rowBg;
+          // Fond blanc
+          ctx.fillStyle = '#ffffff';
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
           
-          // Bordure inférieure très fine
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY + cellHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
-          ctx.stroke();
+          // Bordure inférieure (si activée)
+          if (showBorders) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + cellHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
+            ctx.stroke();
+          }
           
-          // Texte
-          ctx.fillStyle = text;
-          row.forEach((cell, cellIdx) => {
-            const colX = tableX + cellIdx * colWidth;
-            ctx.textAlign = cellIdx === 0 ? 'left' : 'right';
-            const textX = cellIdx === 0 ? colX + 8 : colX + colWidth - 8;
-            ctx.fillText(cell, textX, currentY + cellHeight / 2 + 3);
+          // Texte pour chaque colonne
+          ctx.fillStyle = textColor;
+          const columnValues = [
+            row.image, row.name, row.sku, row.quantity, row.price, row.total
+          ];
+          const activeColumns = ['image', 'name', 'sku', 'quantity', 'price', 'total'].filter(
+            (col, idx) => element.columns?.[col] !== false
+          );
+          
+          activeColumns.forEach((colName, idx) => {
+            const colX = tableX + idx * colWidth;
+            ctx.textAlign = (colName === 'name' || colName === 'image') ? 'left' : 'right';
+            const textX = ctx.textAlign === 'left' ? colX + 8 : colX + colWidth - 8;
+            const value = row[colName] || '';
+            ctx.fillText(value.toString().slice(0, 20), textX, currentY + cellHeight / 2 + 3);
           });
           
           currentY += cellHeight;
         });
 
         // ===== TOTAUX =====
-        // Fonction pour afficher une ligne de total
-        const drawTotalRow = (label, value, bgColor, hasTopBorder = false, hasBottomBorder = false) => {
-          // Bordure du haut si nécessaire
-          if (hasTopBorder) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY);
-            ctx.lineTo(tableX + tableWidth, currentY);
-            ctx.stroke();
-          }
-
-          // Fond
+        const drawTotalRow = (label, value, bgColor, isFinal = false) => {
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
           
-          // Bordure du bas (toujours)
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = hasBottomBorder ? 2 : 0.5;
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY + totalHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
-          ctx.stroke();
+          if (showBorders) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = isFinal ? 2 : 0.5;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + totalHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
+            ctx.stroke();
+          }
           
-          // Texte
-          ctx.fillStyle = text;
-          ctx.font = hasBottomBorder ? 'bold 11px Arial' : '10px Arial';
+          ctx.fillStyle = textColor;
+          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
           ctx.textAlign = 'left';
           ctx.fillText(label, tableX + 8, currentY + totalHeight / 2 + 3);
           ctx.textAlign = 'right';
@@ -2571,13 +2570,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += totalHeight;
         };
 
-        // Lignes de totaux (sans bordure du haut)
-        drawTotalRow('Sous-total :', '87,48 €', theme.totalsBg, false, false);
-        drawTotalRow('Frais de port :', '10,00 €', theme.totalsBg, false, false);
-        drawTotalRow('TVA (20%) :', '19,50 €', theme.totalsBg, false, false);
-        
-        // TOTAL (bordure épaisse haut ET bas)
-        drawTotalRow('TOTAL :', '116,98 €', theme.totalsBgHighlight, false, true);
+        // Afficher les totaux selon les propriétés
+        if (element.showSubtotal !== false) {
+          drawTotalRow('Sous-total :', '87,48 €', '#ffffff', false);
+        }
+        if (element.showShipping !== false) {
+          drawTotalRow('Frais de port :', '10,00 €', '#ffffff', false);
+        }
+        if (element.showTaxes !== false) {
+          drawTotalRow('TVA :', '19,50 €', '#ffffff', false);
+        }
+        if (element.showDiscount !== false) {
+          drawTotalRow('Remise :', '-5,00 €', '#ffffff', false);
+        }
+        if (element.showTotal !== false) {
+          drawTotalRow('TOTAL :', '116,98 €', secondaryColor, true);
+        }
+
+        // Restaurer l'opacité
+        ctx.globalAlpha = 1;
 
         // Restaurer l'opacité
         ctx.globalAlpha = 1;
