@@ -2443,7 +2443,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const cellHeight = 24;
         const headerHeight = 28;
         const totalHeight = 24;
-        const sideBarWidth = 12;  // Barre latérale plus visible
+        const sideBarWidth = 4;  // Barre latérale plus visible
         const cellPaddingH = 12; // Padding horizontal
         const cellPaddingV = 6;  // Padding vertical
         const lineWidth = 1;
@@ -2604,10 +2604,22 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           drawRow(row, bgColor, false, false);
         });
 
+        // ===== SÉPARATION PRODUITS/TOTAUX =====
+        // Ajouter une bordure épaisse pour bien séparer les produits des totaux
+        if (showBorders) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(tableX + sideBarWidth, currentY);
+          ctx.lineTo(tableX + tableWidth, currentY);
+          ctx.stroke();
+        }
+
         // ===== TOTAUX =====
         const drawTotalRow = (label, value, bgColor, isFinal = false) => {
-          // Fond
-          ctx.fillStyle = bgColor;
+          // Fond (toujours blanc/gris clair pour les totaux)
+          const totalRowBg = isFinal ? totalBgColor : '#ffffff';
+          ctx.fillStyle = totalRowBg;
           ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
 
           // Barre latérale
@@ -2617,13 +2629,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Bordures verticales des colonnes
-          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
+          ctx.font = isFinal ? 'bold 12px Arial' : '10px Arial';
           ctx.fillStyle = textColor;
 
           let colX = tableX + sideBarWidth;
           activeColumns.forEach((col, colIdx) => {
             if (showBorders && colIdx < activeColumns.length - 1) {
-              ctx.strokeStyle = '#e0e0e0';
+              ctx.strokeStyle = '#d0d0d0';
               ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.moveTo(colX + columnWidths[colIdx], currentY);
@@ -2642,7 +2654,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Bordure du bas
           if (showBorders) {
-            ctx.strokeStyle = '#e0e0e0';
+            ctx.strokeStyle = isFinal ? borderColor : '#d0d0d0';
             ctx.lineWidth = isFinal ? 2 : 1;
             ctx.beginPath();
             ctx.moveTo(tableX + sideBarWidth, currentY + totalHeight);
