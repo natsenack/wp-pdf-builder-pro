@@ -418,7 +418,8 @@ body.wp-admin .pdf-builder-container {
         checkScriptsLoaded();
     }
 
-    // SCRIPT DE TEST ADAPTATIF SUPPRIMÉ TEMPORAIREMENT POUR DIAGNOSTIC
-    // <?php
+})();
+// SCRIPT DE TEST ADAPTATIF SUPPRIMÉ TEMPORAIREMENT POUR DIAGNOSTIC
+<?php
 // Fin du template
 ?>
