@@ -429,6 +429,12 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
+        // Check if already initialized
+        var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
+        if (activeSubTab) {
+            return; // Already initialized
+        }
+
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
         for (var j = 0; j < canvasSubTabContents.length; j++) {
@@ -452,6 +458,46 @@ window.addEventListener('load', function() {
         if (firstSubNavTab) {
             firstSubNavTab.classList.add('sub-nav-tab-active');
         }
+
+        // Attach click handlers for canvas sub-tabs
+        attachCanvasSubTabHandlers();
+    }
+
+    // Function to attach click handlers for canvas sub-tabs
+    function attachCanvasSubTabHandlers() {
+        var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        for (var i = 0; i < subNavTabs.length; i++) {
+            // Remove existing listeners to avoid duplicates
+            subNavTabs[i].removeEventListener('click', handleSubTabClick);
+            subNavTabs[i].addEventListener('click', handleSubTabClick);
+        }
+    }
+
+    // Handler function for sub-tab clicks
+    function handleSubTabClick(e) {
+        e.preventDefault();
+        var targetId = this.getAttribute('href');
+
+        // Hide all canvas sub-tab contents
+        var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
+        for (var j = 0; j < canvasSubTabContents.length; j++) {
+            canvasSubTabContents[j].classList.remove('sub-tab-active');
+        }
+
+        // Remove active class from all canvas sub-nav tabs
+        var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        for (var j = 0; j < canvasSubNavTabs.length; j++) {
+            canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
+        }
+
+        // Show target sub-tab content
+        var targetContent = document.querySelector(targetId);
+        if (targetContent) {
+            targetContent.classList.add('sub-tab-active');
+        }
+
+        // Add active class to clicked sub-nav tab
+        this.classList.add('sub-nav-tab-active');
     }
     
     // Attach click handlers when DOM is ready
@@ -471,36 +517,6 @@ window.addEventListener('load', function() {
         if (firstTab) {
             var firstHref = firstTab.getAttribute('href');
             simpleActivateTab(firstHref);
-        }
-
-        // Handle sub-tabs for Canvas tab
-        var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-        for (var i = 0; i < subNavTabs.length; i++) {
-            subNavTabs[i].addEventListener('click', function(e) {
-                e.preventDefault();
-                var targetId = this.getAttribute('href');
-
-                // Hide all canvas sub-tab contents
-                var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
-                for (var j = 0; j < canvasSubTabContents.length; j++) {
-                    canvasSubTabContents[j].classList.remove('sub-tab-active');
-                }
-
-                // Remove active class from all canvas sub-nav tabs
-                var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-                for (var j = 0; j < canvasSubNavTabs.length; j++) {
-                    canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
-                }
-
-                // Show target sub-tab content
-                var targetContent = document.querySelector(targetId);
-                if (targetContent) {
-                    targetContent.classList.add('sub-tab-active');
-                }
-
-                // Add active class to clicked sub-nav tab
-                this.classList.add('sub-nav-tab-active');
-            });
         }
 
         // Initialize first sub-tab for Canvas when Canvas tab is active
