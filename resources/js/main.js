@@ -1,7 +1,7 @@
 // Import global fallbacks first
 import './globalFallback.js';
 
-console.log('🔥 PDF BUILDER MAIN.JS CHARGÉ - VERSION DEBUG REACT');
+console.log('�🔴🔴 PDF BUILDER MAIN.JS CHARGÉ - TIMESTAMP:', Date.now(), '- VERSION AVEC REACT EXTERNALS');
 
 // Main application entry point that actually uses all components
 import React from 'react';
@@ -10,7 +10,7 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
 const init = (containerId, options = {}) => {
-  console.log('🚀🚀🚀 NOUVELLE VERSION PDF Builder Pro: init() appelée avec', { containerId, options });
+  console.log('🚀🚀🚀 NOUVELLE VERSION PDF Builder Pro: init() appelée avec', { containerId, options, timestamp: Date.now() });
   
   // Vérifier React et ReactDOM
   console.log('🔍 Vérification React global:', typeof window.React);
@@ -73,7 +73,14 @@ const init = (containerId, options = {}) => {
     console.error('❌ Stack trace:', error.stack);
   }
 
-  console.log('✅ PDF Builder Pro: Éditeur initialisé avec succès');
+  console.log('✅ PDF Builder Pro: Éditeur initialisé avec succès - TIMESTAMP:', Date.now());
+  
+  // Ajouter un indicateur visible que les scripts sont chargés
+  const indicator = document.createElement('div');
+  indicator.id = 'pdf-builder-debug-indicator';
+  indicator.style.cssText = 'position:fixed;top:10px;right:10px;background:red;color:white;padding:5px;font-size:12px;z-index:999999;border-radius:3px;';
+  indicator.textContent = 'PDF Builder Scripts Chargés - ' + new Date().toLocaleTimeString();
+  document.body.appendChild(indicator);
 };
 
 // Make it globally available
