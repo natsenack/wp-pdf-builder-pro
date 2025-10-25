@@ -335,7 +335,7 @@ body.wp-admin .pdf-builder-container {
                 ?>;
                 // Structurer les données d'initialisation avec les éléments et les paramètres
                 var initialData = {
-                    elements: <?php echo json_encode($initial_elements); ?>,
+                    elements: [], // TEST: Tableau vide pour diagnostiquer l'erreur JSON
                     settings: backendSettings
                 };
 
