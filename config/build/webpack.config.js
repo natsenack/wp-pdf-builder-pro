@@ -6,7 +6,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
   entry: {
     'pdf-builder-script-loader': './resources/js/script-loader.js',
-    'pdf-builder-admin': './resources/js/main.js',
+    'pdf-builder-admin-debug': './resources/js/main.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
