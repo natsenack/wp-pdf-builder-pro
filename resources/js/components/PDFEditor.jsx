@@ -2983,16 +2983,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
-    if (initialElements && initialElements.length > 0) {
-      setElements(initialElements);
-      setHistory([initialElements]);
-      setHistoryIndex(0);
-    } else {
-      // Si pas d'éléments initiaux, initialiser avec un tableau vide
-      setElements([]);
-      setHistory([[]]);
-      setHistoryIndex(0);
-    }
+    // Ce useEffect met à jour aussi les éléments - à éviter les doublons!
+    // C'est déjà géré par le premier useEffect après le state, donc on le désactive
+    // Voir la ligne ~320 pour le premier useEffect qui fait la même chose
   }, [initialElements]);
 
   // Écouter les événements globaux pour le bouton aperçu du header
