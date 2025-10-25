@@ -404,7 +404,6 @@ body.wp-admin .pdf-builder-container {
 
     // CHARGER LE SCRIPT DE TEST ADAPTATIF TEMPORAIREMENT
     // À SUPPRIMER APRÈS LES TESTS
-    ?>
     <script type="text/javascript">
     (function() {
         'use strict';
@@ -412,7 +411,7 @@ body.wp-admin .pdf-builder-container {
         // Attendre que le DOM soit chargé
         document.addEventListener('DOMContentLoaded', function() {
             // Créer un panneau de contrôle pour tester le redimensionnement
-            const testPanel = document.createElement('div');
+            var testPanel = document.createElement('div');
             testPanel.id = 'adaptive-test-panel';
             testPanel.innerHTML = `
                 <div style="
@@ -451,17 +450,17 @@ body.wp-admin .pdf-builder-container {
             document.body.appendChild(testPanel);
 
             // Trouver le sidebar
-            const sidebar = document.querySelector('.properties-panel') ||
-                           document.querySelector('[class*="sidebar"]') ||
-                           document.querySelector('#properties-panel');
+            var sidebar = document.querySelector('.properties-panel') ||
+                         document.querySelector('[class*="sidebar"]') ||
+                         document.querySelector('#properties-panel');
 
             if (!sidebar) {
                 console.warn('Sidebar non trouvé pour le test adaptatif');
                 return;
             }
 
-            const widthDisplay = document.getElementById('sidebar-width');
-            const widthSlider = document.getElementById('width-slider');
+            var widthDisplay = document.getElementById('sidebar-width');
+            var widthSlider = document.getElementById('width-slider');
 
             // Fonction pour mettre à jour la largeur
             function updateSidebarWidth(width) {
@@ -477,27 +476,27 @@ body.wp-admin .pdf-builder-container {
                 widthDisplay.textContent = width;
 
                 // Forcer un redessinement pour déclencher ResizeObserver
-                setTimeout(() => {
+                setTimeout(function() {
                     window.dispatchEvent(new Event('resize'));
                 }, 100);
             }
 
             // Événements des boutons
-            document.getElementById('btn-narrow').addEventListener('click', () => updateSidebarWidth(250));
-            document.getElementById('btn-normal').addEventListener('click', () => updateSidebarWidth(350));
-            document.getElementById('btn-wide').addEventListener('click', () => updateSidebarWidth(500));
-            document.getElementById('btn-close').addEventListener('click', () => {
+            document.getElementById('btn-narrow').addEventListener('click', function() { updateSidebarWidth(250); });
+            document.getElementById('btn-normal').addEventListener('click', function() { updateSidebarWidth(350); });
+            document.getElementById('btn-wide').addEventListener('click', function() { updateSidebarWidth(500); });
+            document.getElementById('btn-close').addEventListener('click', function() {
                 document.body.removeChild(testPanel);
                 updateSidebarWidth('auto'); // Restaurer la largeur normale
             });
 
             // Slider pour contrôle fin
-            widthSlider.addEventListener('input', (e) => {
+            widthSlider.addEventListener('input', function(e) {
                 updateSidebarWidth(parseInt(e.target.value));
             });
 
             // Afficher la largeur initiale
-            const initialWidth = sidebar.offsetWidth;
+            var initialWidth = sidebar.offsetWidth;
             widthDisplay.textContent = initialWidth;
             widthSlider.value = initialWidth;
 
@@ -506,3 +505,5 @@ body.wp-admin .pdf-builder-container {
     })();
     </script>
     <?php
+// Fin du template
+?>
