@@ -6,7 +6,7 @@ import { safeParseInt } from '../utils/helpers';
 const renderContentSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
   const renderContentControls = () => {
     switch (selectedElement.type) {
-      case 'TEXT':
+      case 'text':
         return (
           <>
             <div className="property-row">
@@ -22,7 +22,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
           </>
         );
 
-      case 'DYNAMIC-TEXT':
+      case 'dynamic-text':
         return (
           <>
             <div className="property-row">
@@ -49,8 +49,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
           </>
         );
 
-      case 'LOGO':
-      case 'COMPANY_LOGO':
+      case 'company_logo':
         return (
           <>
             <div className="property-row">
@@ -90,7 +89,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
           </>
         );
 
-      case 'PRODUCT_TABLE':
+      case 'product_table':
         return (
           <>
             <div className="property-row">
@@ -204,7 +203,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
           </>
         );
 
-      case 'ORDER_NUMBER':
+      case 'order_number':
         return (
           <>
             <div className="property-row">
@@ -282,7 +281,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
           </>
         );
 
-      case 'CUSTOMER_INFO':
+      case 'customer_info':
         return (
           <>
             <div className="property-row">
@@ -326,6 +325,52 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
               />
             </div>
           </>
+        );
+
+      case 'company_info':
+        return (
+          <>
+            <div className="property-row">
+              <label>Template:</label>
+              <select
+                value={localProperties.template || 'default'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'template', e.target.value)}
+                className="select-input"
+              >
+                <option value="default">Par défaut</option>
+                <option value="commercial">Commercial</option>
+              </select>
+            </div>
+          </>
+        );
+
+      case 'mentions':
+        return (
+          <>
+            <div className="property-row">
+              <label>Type de mentions:</label>
+              <select
+                value={localProperties.type || 'legal'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'type', e.target.value)}
+                className="select-input"
+              >
+                <option value="legal">Mentions légales</option>
+                <option value="warranty">Garantie</option>
+                <option value="custom">Personnalisé</option>
+              </select>
+            </div>
+          </>
+        );
+
+      case 'rectangle':
+      case 'circle':
+      case 'line':
+      case 'arrow':
+        // Ces éléments n'ont pas de contenu spécifique à configurer
+        return (
+          <div className="property-row">
+            <span className="info-text">Cet élément n'a pas de propriétés de contenu spécifiques.</span>
+          </div>
         );
 
       default:
