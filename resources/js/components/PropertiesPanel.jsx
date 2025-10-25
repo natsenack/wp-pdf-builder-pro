@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 // Import styles for the accordion component so webpack bundles them
-import '../../scss/styles/Accordion.css';
+import './PropertiesPanel/Accordion.css';
 import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';
 import Accordion from './PropertiesPanel/Accordion.jsx';
 import ColorPicker from './PropertiesPanel/ColorPicker.jsx';
@@ -138,7 +138,7 @@ const PropertiesPanel = memo(({
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
     // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
-    const isBackgroundAllowed = (selectedElement && selectedElement.type) ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
+    const isBackgroundAllowed = true; // Temporairement autorisé pour tous les éléments
     if (!isBackgroundAllowed) {
       return;
     }
