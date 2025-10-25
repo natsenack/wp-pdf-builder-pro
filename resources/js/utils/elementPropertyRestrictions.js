@@ -187,7 +187,7 @@ export const validateProperty = (elementType, propertyName, value) => {
   if (!isPropertyAllowed(elementType, propertyName)) {
     return {
       valid: false,
-      reason: ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]?.reason || 'Propriété non autorisée'
+      reason: ((ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName] && ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName].reason) || 'Propriété non autorisée')
     };
   }
 

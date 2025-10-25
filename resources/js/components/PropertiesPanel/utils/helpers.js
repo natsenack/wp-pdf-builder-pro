@@ -103,5 +103,5 @@ export const getSmartPropertyOrder = (elementType, tab) => {
     }
   };
 
-  return orders[tab]?.[elementType] || orders[tab]?.default || [];
+  return (orders[tab] && orders[tab][elementType]) || (orders[tab] && orders[tab].default) || [];
 };

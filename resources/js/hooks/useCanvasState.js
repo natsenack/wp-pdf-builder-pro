@@ -142,7 +142,7 @@ export const useCanvasState = ({
     onSelectionChange: useCallback((selectedIds) => {
       // Callback pour les changements de sélection
     }, []),
-    multiSelect: globalSettings?.multiSelect ?? true
+    multiSelect: (globalSettings && globalSettings.multiSelect) || true
   });
 
   // Synchronisation parfaite des refs avec useLatest
@@ -231,7 +231,7 @@ export const useCanvasState = ({
 
     if (validatedElements && validatedElements.length > 0) {
       const maxId = Math.max(...validatedElements.map(el => {
-        const idParts = el.id?.split('_') || [];
+        const idParts = (el.id && el.id.split('_')) || [];
         return parseInt(idParts[1] || 0);
       }));
       setNextId(maxId + 1);
@@ -990,11 +990,11 @@ export const useCanvasState = ({
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_save_template');
       formData.append('template_data', jsonString);
-      formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
-      formData.append('template_id', window.pdfBuilderData?.templateId || '0');
+      formData.append('template_name', (window.pdfBuilderData && window.pdfBuilderData.templateName) || `Template ${(window.pdfBuilderData && window.pdfBuilderData.templateId) || 'New'}`);
+      formData.append('template_id', (window.pdfBuilderData && window.pdfBuilderData.templateId) || '0');
       // Obtenir un nonce frais avant la sauvegarde
       try {
-        const nonceResponse = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+        const nonceResponse = await fetch((window.pdfBuilderAjax && window.pdfBuilderAjax.ajaxurl) || '/wp-admin/admin-ajax.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -1009,13 +1009,13 @@ export const useCanvasState = ({
           if (nonceData.success) {
             formData.append('nonce', nonceData.data.nonce);
           } else {
-            formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+            formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
           }
         } else {
-          formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+          formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
         }
       } catch (error) {
-        formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+        formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
       }
 
       // console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
@@ -1026,7 +1026,7 @@ export const useCanvasState = ({
       //   jsonLength: jsonString.length
       // });
 
-      const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+      const response = await fetch((window.pdfBuilderAjax && window.pdfBuilderAjax.ajaxurl) || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         body: formData
       });
