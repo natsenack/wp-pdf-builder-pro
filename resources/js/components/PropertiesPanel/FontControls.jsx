@@ -1,15 +1,21 @@
 import React from 'react';
 import { safeParseFloat, safeParseInt } from './utils/helpers';
+import { AdaptiveControl } from './utils/AdaptiveLayout';
+import './utils/AdaptiveLayout.css';
 
 const FontControls = ({ elementId, properties, onPropertyChange }) => (
   <div className="properties-group">
     <h4>🎨 Police & Style</h4>
 
-    <div className="property-row">
-      <label>Famille:</label>
+    <AdaptiveControl
+      label="Famille de police:"
+      minWidth={320}
+      className="adaptive-compact"
+    >
       <select
         value={properties.fontFamily || 'Inter'}
         onChange={(e) => onPropertyChange(elementId, 'fontFamily', e.target.value)}
+        className="styled-select"
       >
         <option value="Inter">Inter</option>
         <option value="Arial">Arial</option>
@@ -21,10 +27,13 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
         <option value="Roboto">Roboto</option>
         <option value="Open Sans">Open Sans</option>
       </select>
-    </div>
+    </AdaptiveControl>
 
-    <div className="property-row">
-      <label>Taille:</label>
+    <AdaptiveControl
+      label="Taille de police:"
+      minWidth={300}
+      className="adaptive-compact"
+    >
       <div className="slider-container">
         <input
           type="range"
@@ -36,10 +45,13 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
         />
         <span className="slider-value">{properties.fontSize ?? 14}px</span>
       </div>
-    </div>
+    </AdaptiveControl>
 
-    <div className="property-row">
-      <label>Interligne:</label>
+    <AdaptiveControl
+      label="Interligne:"
+      minWidth={300}
+      className="adaptive-compact"
+    >
       <div className="slider-container">
         <input
           type="range"
@@ -52,7 +64,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
         />
         <span className="slider-value">{properties.lineHeight ?? 1.2}</span>
       </div>
-    </div>
+    </AdaptiveControl>
 
     <div className="property-row">
       <label>Espacement lettres:</label>

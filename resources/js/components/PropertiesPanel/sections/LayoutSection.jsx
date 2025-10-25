@@ -1,6 +1,8 @@
 import React from 'react';
 import Accordion from '../Accordion';
 import { safeParseInt, safeParseFloat } from '../utils/helpers';
+import { AdaptiveControl } from '../utils/AdaptiveLayout';
+import '../utils/AdaptiveLayout.css';
 
 const renderLayoutSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
   return (
@@ -13,8 +15,11 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
         defaultOpen={true}
         className="properties-accordion"
       >
-        <div className="property-row">
-          <label>Position X:</label>
+        <AdaptiveControl
+          label="Position X:"
+          minWidth={280}
+          className="adaptive-compact"
+        >
           <div className="slider-container">
             <input
               type="range"
@@ -26,10 +31,13 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
             />
             <span className="slider-value">{localProperties.x ?? 0}px</span>
           </div>
-        </div>
+        </AdaptiveControl>
 
-        <div className="property-row">
-          <label>Position Y:</label>
+        <AdaptiveControl
+          label="Position Y:"
+          minWidth={280}
+          className="adaptive-compact"
+        >
           <div className="slider-container">
             <input
               type="range"
@@ -41,7 +49,7 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
             />
             <span className="slider-value">{localProperties.y ?? 0}px</span>
           </div>
-        </div>
+        </AdaptiveControl>
       </Accordion>
 
       {/* Dimensions */}
@@ -52,8 +60,11 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
         defaultOpen={false}
         className="properties-accordion"
       >
-        <div className="property-row">
-          <label>Largeur:</label>
+        <AdaptiveControl
+          label="Largeur:"
+          minWidth={280}
+          className="adaptive-compact"
+        >
           <div className="slider-container">
             <input
               type="range"
@@ -65,10 +76,13 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
             />
             <span className="slider-value">{localProperties.width ?? 200}px</span>
           </div>
-        </div>
+        </AdaptiveControl>
 
-        <div className="property-row">
-          <label>Hauteur:</label>
+        <AdaptiveControl
+          label="Hauteur:"
+          minWidth={280}
+          className="adaptive-compact"
+        >
           <div className="slider-container">
             <input
               type="range"
@@ -80,7 +94,7 @@ const renderLayoutSection = (selectedElement, localProperties, handlePropertyCha
             />
             <span className="slider-value">{localProperties.height ?? 100}px</span>
           </div>
-        </div>
+        </AdaptiveControl>
       </Accordion>
 
       {/* Transformations */}
