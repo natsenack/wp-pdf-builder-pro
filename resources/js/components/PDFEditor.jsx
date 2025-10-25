@@ -10,53 +10,87 @@ import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
 import './PDFEditor.css';
 
+// Fonctions utilitaires pour manipuler les couleurs
+const lightenColor = (color, percent) => {
+  // Convertir hex vers RGB
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Éclaircir
+  const newR = Math.min(255, Math.floor(r + (255 - r) * percent));
+  const newG = Math.min(255, Math.floor(g + (255 - g) * percent));
+  const newB = Math.min(255, Math.floor(b + (255 - b) * percent));
+
+  return `rgb(${newR}, ${newG}, ${newB})`;
+};
+
+const darkenColor = (color, percent) => {
+  // Convertir hex vers RGB
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Assombrir
+  const newR = Math.max(0, Math.floor(r * (1 - percent)));
+  const newG = Math.max(0, Math.floor(g * (1 - percent)));
+  const newB = Math.max(0, Math.floor(b * (1 - percent)));
+
+  return `rgb(${newR}, ${newG}, ${newB})`;
+};
+
 // Fonction helper pour obtenir les styles de tableau selon le style choisi
 const getTableStyles = (tableStyle = 'default') => {
   const baseStyles = {
     default: {
       headerBg: '#f8fafc',
       headerBorder: '#e2e8f0',
-      rowBorder: '#000000',
-      rowBg: 'transparent',
+      rowBorder: '#f1f5f9',
+      rowBg: '#ffffff',
       altRowBg: '#fafbfc',
-      borderWidth: 2,
+      borderWidth: 1,
       headerTextColor: '#334155',
-      rowTextColor: '#334155',
+      rowTextColor: '#374151',
       headerFontWeight: '600',
-      headerFontSize: '11px',
-      rowFontSize: '10px',
-      shadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-      borderRadius: '4px'
+      headerFontSize: 12,
+      rowFontSize: 11,
+      shadowColor: 'rgba(0, 0, 0, 0.08)',
+      shadowBlur: 6,
+      borderRadius: 6
     },
     classic: {
       headerBg: '#1e293b',
       headerBorder: '#334155',
-      rowBorder: '#334155',
-      rowBg: 'transparent',
-      altRowBg: '#ffffff',
+      rowBorder: '#e2e8f0',
+      rowBg: '#ffffff',
+      altRowBg: '#f8fafc',
       borderWidth: 1.5,
       headerTextColor: '#ffffff',
       rowTextColor: '#1e293b',
       headerFontWeight: '700',
-      headerFontSize: '11px',
-      rowFontSize: '10px',
-      shadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-      borderRadius: '0px'
+      headerFontSize: 12,
+      rowFontSize: 11,
+      shadowColor: 'rgba(0, 0, 0, 0.15)',
+      shadowBlur: 8,
+      borderRadius: 0
     },
     striped: {
       headerBg: '#e0f2fe',
       headerBorder: '#0ea5e9',
       rowBorder: '#f0f9ff',
-      rowBg: 'transparent',
+      rowBg: '#ffffff',
       altRowBg: '#f8fafc',
       borderWidth: 1,
       headerTextColor: '#0c4a6e',
-      rowTextColor: '#334155',
+      rowTextColor: '#374151',
       headerFontWeight: '600',
-      headerFontSize: '11px',
-      rowFontSize: '10px',
-      shadow: '0 1px 4px rgba(59, 130, 246, 0.2)',
-      borderRadius: '6px'
+      headerFontSize: 12,
+      rowFontSize: 11,
+      shadowColor: 'rgba(59, 130, 246, 0.2)',
+      shadowBlur: 8,
+      borderRadius: 8
     },
     bordered: {
       headerBg: '#f8fafc',
@@ -2580,61 +2614,173 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // Obtenir les styles du tableau
           const tableStyles = getTableStyles(element.tableStyle || 'default');
 
-          // Fond du tableau avec style
-          ctx.fillStyle = tableStyles.rowBg || '#f8f9fa';
-          ctx.fillRect(tableX, tableY, tableWidth, tableHeight);
+          // Configuration améliorée du rendu
+          const padding = 12;
+          const headerHeight = 35;
+          const rowHeight = 28;
+          const borderRadius = tableStyles.borderRadius || 6;
+          const shadowBlur = tableStyles.shadow ? (tableStyles.shadowBlur || 8) : 0;
 
-          // Bordure avec style
-          ctx.strokeStyle = tableStyles.rowBorder || '#dee2e6';
+          // Fond du tableau avec ombre et coins arrondis
+          ctx.save();
+          if (shadowBlur > 0) {
+            ctx.shadowColor = tableStyles.shadowColor || 'rgba(0, 0, 0, 0.1)';
+            ctx.shadowBlur = shadowBlur;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+          }
+
+          // Fond principal avec coins arrondis
+          ctx.fillStyle = tableStyles.rowBg || '#ffffff';
+          if (borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX, tableY, tableWidth, tableHeight, borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(tableX, tableY, tableWidth, tableHeight);
+          }
+
+          // Réinitialiser l'ombre pour les autres éléments
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Bordure principale avec style
+          ctx.strokeStyle = tableStyles.rowBorder || '#e2e8f0';
           ctx.lineWidth = tableStyles.borderWidth || 1;
-          ctx.strokeRect(tableX, tableY, tableWidth, tableHeight);
+          if (borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX, tableY, tableWidth, tableHeight, borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(tableX, tableY, tableWidth, tableHeight);
+          }
 
-          // Titre avec style
-          ctx.fillStyle = tableStyles.headerTextColor || '#333333';
-          ctx.font = `${tableStyles.headerFontWeight || 'bold'} ${tableStyles.headerFontSize || '14px'} Arial`;
+          // Titre amélioré avec style
+          ctx.fillStyle = tableStyles.headerTextColor || '#1e293b';
+          ctx.font = `${tableStyles.headerFontWeight || '600'} ${Math.max(14, tableStyles.headerFontSize || 14)}px Arial`;
           ctx.textAlign = 'left';
-          ctx.fillText('TABLEAU DE PRODUITS', tableX + 10, tableY + 25);
+          ctx.fillText('TABLEAU DES PRODUITS', tableX + padding, tableY + padding + 8);
 
           // Vérifier que nous avons des données valides
           if (tableData && tableData.headers && tableData.rows) {
-            // En-têtes des colonnes avec style
-            ctx.font = `${tableStyles.headerFontWeight || 'bold'} ${tableStyles.headerFontSize || '12px'} Arial`;
-            ctx.fillStyle = tableStyles.headerTextColor || '#666666';
             const headers = tableData.headers;
-            const colWidth = Math.max(50, tableWidth / Math.max(1, headers.length));
+            const numColumns = headers.length;
+            const availableWidth = tableWidth - (padding * 2);
+            const columnWidth = availableWidth / numColumns;
+
+            // Fond des en-têtes avec dégradé
+            const headerY = tableY + padding + 20;
+            const headerGradient = ctx.createLinearGradient(tableX + padding, headerY, tableX + padding, headerY + headerHeight);
+            headerGradient.addColorStop(0, tableStyles.headerBg || '#f8fafc');
+            headerGradient.addColorStop(1, tableStyles.headerBg ? lightenColor(tableStyles.headerBg, 0.1) : '#ffffff');
+
+            ctx.fillStyle = headerGradient;
+            ctx.fillRect(tableX + padding, headerY, availableWidth, headerHeight);
+
+            // Bordure des en-têtes
+            ctx.strokeStyle = tableStyles.headerBorder || '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(tableX + padding, headerY, availableWidth, headerHeight);
+
+            // Ligne de séparation sous les en-têtes
+            ctx.strokeStyle = tableStyles.headerBorder || '#cbd5e1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(tableX + padding, headerY + headerHeight);
+            ctx.lineTo(tableX + padding + availableWidth, headerY + headerHeight);
+            ctx.stroke();
+
+            // En-têtes des colonnes avec alignement amélioré
+            ctx.font = `${tableStyles.headerFontWeight || '600'} ${tableStyles.headerFontSize || 12}px Arial`;
+            ctx.fillStyle = tableStyles.headerTextColor || '#374151';
+            ctx.textBaseline = 'middle';
 
             headers.forEach((header, index) => {
               try {
-                const colX = tableX + (index * colWidth) + 10;
-                const truncatedHeader = header && header.length > 10 ? header.substring(0, 10) + '...' : header;
-                ctx.fillText(truncatedHeader || '', colX, tableY + 45);
+                const colX = tableX + padding + (index * columnWidth);
+                const centerX = colX + columnWidth / 2;
+
+                // Alignement selon le type de colonne
+                const isNumericColumn = header === 'Qté' || header === 'Prix' || header === 'Total';
+                ctx.textAlign = isNumericColumn ? 'center' : 'left';
+                const textX = isNumericColumn ? centerX : colX + 8;
+                const textY = headerY + headerHeight / 2;
+
+                ctx.fillText(header, textX, textY);
+
+                // Ligne verticale de séparation entre colonnes (sauf dernière)
+                if (index < headers.length - 1) {
+                  ctx.strokeStyle = tableStyles.headerBorder || '#e5e7eb';
+                  ctx.lineWidth = 1;
+                  ctx.beginPath();
+                  ctx.moveTo(colX + columnWidth, headerY);
+                  ctx.lineTo(colX + columnWidth, headerY + headerHeight);
+                  ctx.stroke();
+                }
               } catch (headerError) {
                 console.warn('Erreur lors du rendu de l\'en-tête:', headerError);
               }
             });
 
-            // Lignes de données avec style
-            ctx.font = `${tableStyles.rowFontSize || '12px'} Arial`;
-            ctx.fillStyle = tableStyles.rowTextColor || '#333333';
+            // Lignes de données avec style amélioré
+            ctx.font = `${tableStyles.rowFontSize || 11}px Arial`;
+            ctx.textBaseline = 'middle';
 
-            const maxRows = Math.min(3, tableData.rows.length);
+            const maxRows = Math.min(5, tableData.rows.length); // Augmenté à 5 lignes
+            const dataStartY = headerY + headerHeight + 8;
+
             for (let rowIndex = 0; rowIndex < maxRows; rowIndex++) {
               const row = tableData.rows[rowIndex];
               if (Array.isArray(row)) {
-                const rowY = tableY + 65 + (rowIndex * 20);
-                // Fond alternatif pour les lignes
-                if (rowIndex % 2 === 1 && tableStyles.altRowBg !== 'transparent') {
+                const rowY = dataStartY + (rowIndex * rowHeight);
+                const isAlternateRow = rowIndex % 2 === 1;
+
+                // Fond alternatif subtil pour les lignes paires
+                if (isAlternateRow && tableStyles.altRowBg && tableStyles.altRowBg !== 'transparent') {
                   ctx.fillStyle = tableStyles.altRowBg;
-                  ctx.fillRect(tableX, rowY - 15, tableWidth, 20);
+                  ctx.fillRect(tableX + padding, rowY, availableWidth, rowHeight);
                 }
-                ctx.fillStyle = tableStyles.rowTextColor || '#333333';
-                
+
+                // Ligne de séparation horizontale subtile
+                ctx.strokeStyle = tableStyles.rowBorder || '#f1f5f9';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(tableX + padding, rowY + rowHeight);
+                ctx.lineTo(tableX + padding + availableWidth, rowY + rowHeight);
+                ctx.stroke();
+
+                // Contenu des cellules avec alignement amélioré
+                ctx.fillStyle = tableStyles.rowTextColor || '#374151';
+
                 row.forEach((cell, colIndex) => {
                   try {
-                    const colX = tableX + (colIndex * colWidth) + 10;
+                    const colX = tableX + padding + (colIndex * columnWidth);
+                    const centerX = colX + columnWidth / 2;
+                    const headerText = headers[colIndex];
+
+                    // Alignement selon le type de colonne
+                    const isNumericColumn = headerText === 'Qté' || headerText === 'Prix' || headerText === 'Total';
+                    ctx.textAlign = isNumericColumn ? 'center' : 'left';
+                    const textX = isNumericColumn ? centerX : colX + 8;
+                    const textY = rowY + rowHeight / 2;
+
                     const displayText = cell !== undefined && cell !== null ? cell.toString() : '';
-                    const truncatedText = displayText.length > 15 ? displayText.substring(0, 15) + '...' : displayText;
-                    ctx.fillText(truncatedText, colX, rowY);
+                    const maxLength = isNumericColumn ? 12 : 18;
+                    const truncatedText = displayText.length > maxLength ? displayText.substring(0, maxLength) + '...' : displayText;
+
+                    ctx.fillText(truncatedText, textX, textY);
+
+                    // Ligne verticale de séparation entre colonnes
+                    if (colIndex < headers.length - 1) {
+                      ctx.strokeStyle = tableStyles.rowBorder || '#f1f5f9';
+                      ctx.lineWidth = 0.5;
+                      ctx.beginPath();
+                      ctx.moveTo(colX + columnWidth, rowY);
+                      ctx.lineTo(colX + columnWidth, rowY + rowHeight);
+                      ctx.stroke();
+                    }
                   } catch (cellError) {
                     console.warn('Erreur lors du rendu de la cellule:', cellError);
                   }
@@ -2642,12 +2788,30 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               }
             }
 
-            // Totaux avec style
+            // Totaux avec style amélioré
             if (tableData.totals && Object.keys(tableData.totals).length > 0) {
-              ctx.font = `${tableStyles.headerFontWeight || 'bold'} ${tableStyles.rowFontSize || '12px'} Arial`;
-              ctx.fillStyle = tableStyles.headerTextColor || '#000000';
+              const totalsY = dataStartY + (maxRows * rowHeight) + 15;
 
-              let totalY = tableY + tableHeight - 40;
+              // Fond des totaux avec style distinctif
+              const totalsHeight = Object.keys(tableData.totals).length * 24 + 16;
+              const totalsGradient = ctx.createLinearGradient(tableX + padding, totalsY, tableX + padding, totalsY + totalsHeight);
+              totalsGradient.addColorStop(0, tableStyles.headerBg ? darkenColor(tableStyles.headerBg, 0.1) : '#f1f5f9');
+              totalsGradient.addColorStop(1, tableStyles.headerBg || '#f8fafc');
+
+              ctx.fillStyle = totalsGradient;
+              ctx.fillRect(tableX + padding, totalsY, availableWidth, totalsHeight);
+
+              // Bordure des totaux
+              ctx.strokeStyle = tableStyles.headerBorder || '#cbd5e1';
+              ctx.lineWidth = 1.5;
+              ctx.strokeRect(tableX + padding, totalsY, availableWidth, totalsHeight);
+
+              // Contenu des totaux
+              ctx.font = `${tableStyles.headerFontWeight || '600'} ${Math.max(11, tableStyles.rowFontSize || 11)}px Arial`;
+              ctx.fillStyle = tableStyles.headerTextColor || '#1e293b';
+              ctx.textBaseline = 'middle';
+
+              let currentTotalY = totalsY + 12;
               Object.entries(tableData.totals).forEach(([key, value]) => {
                 try {
                   const label = key === 'total' ? 'TOTAL' :
@@ -2656,8 +2820,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                                key === 'tax' ? 'TVA' :
                                key === 'discount' ? 'Remise' : key;
                   const displayValue = value !== undefined && value !== null ? value.toString() : '0';
-                  ctx.fillText(`${label}: ${displayValue}`, tableX + 10, totalY);
-                  totalY += 15;
+
+                  // Label à gauche
+                  ctx.textAlign = 'left';
+                  ctx.fillText(label + ':', tableX + padding + 8, currentTotalY);
+
+                  // Valeur à droite
+                  ctx.textAlign = 'right';
+                  ctx.fillText(displayValue, tableX + padding + availableWidth - 8, currentTotalY);
+
+                  currentTotalY += 24;
                 } catch (totalError) {
                   console.warn('Erreur lors du rendu du total:', totalError);
                 }
