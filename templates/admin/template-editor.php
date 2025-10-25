@@ -313,7 +313,7 @@ body.wp-admin .pdf-builder-container {
 
                 // Définir les données globales pour le JavaScript
                 window.pdfBuilderData = {
-                    templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
+                    templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
                     templateName: <?php
                         try {
                             echo $template_name ? json_encode($template_name) : 'null';
@@ -357,7 +357,7 @@ body.wp-admin .pdf-builder-container {
                 };
 
                 pdfBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
+                    templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
                     templateName: <?php
                         try {
                             echo $template_name ? json_encode($template_name) : 'null';
@@ -443,6 +443,7 @@ body.wp-admin .pdf-builder-container {
 
 })();
 // SCRIPT DE TEST ADAPTATIF SUPPRIMÉ TEMPORAIREMENT POUR DIAGNOSTIC
+</script>
 <?php
 // Fin du template
 ?>
