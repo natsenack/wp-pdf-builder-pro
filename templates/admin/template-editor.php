@@ -326,16 +326,21 @@ body.wp-admin .pdf-builder-container {
 
                 // Récupérer les paramètres du backend
                 var backendSettings = <?php
-                    $settings = get_option('pdf_builder_settings', []);
-                    echo json_encode([
-                        'showGrid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
-                        'snapToGrid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
-                        'snapToElements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
-                    ]);
+                    try {
+                        $settings = get_option('pdf_builder_settings', []);
+                        $encoded = json_encode([
+                            'showGrid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
+                            'snapToGrid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
+                            'snapToElements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
+                        ]);
+                        echo $encoded ? $encoded : '{}';
+                    } catch (Exception $e) {
+                        echo '{}';
+                    }
                 ?>;
                 // Structurer les données d'initialisation avec les éléments et les paramètres
                 var initialData = {
-                    elements: [], // TEST: Tableau vide pour diagnostiquer l'erreur JSON
+                    elements: <?php echo json_encode($initial_elements); ?>,
                     settings: backendSettings
                 };
 
