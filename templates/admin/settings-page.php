@@ -407,7 +407,6 @@ window.addEventListener('load', function() {
                 
                 // Special handling for Canvas tab - initialize sub-tabs
                 if (tabContents[i].id === 'canvas') {
-                    console.log('Canvas tab activated, initializing sub-tabs...');
                     initializeCanvasSubTabs();
                 }
             } else {
@@ -430,38 +429,23 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
-        console.log('Initializing Canvas sub-tabs...');
-
         // Always attach click handlers for canvas sub-tabs, even if already initialized
         attachCanvasSubTabHandlers();
-
-        // Temporary alert to confirm sub-tabs are there
-        setTimeout(function() {
-            var subNavWrapper = document.querySelector('#canvas .sub-nav-tab-wrapper');
-            if (subNavWrapper) {
-                alert('Sous-onglets Canvas trouvés ! Ils devraient être visibles au-dessus de "Paramètres Canvas".\n\nSi vous ne les voyez pas, ils pourraient être :\n- De la même couleur que le fond\n- Très petits\n- Derrière d\'autres éléments\n- Hors de la zone visible (scroll vers le bas)');
-            }
-        }, 1000);
 
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
-            console.log('Canvas sub-tabs already initialized');
             return; // Already initialized, but handlers are attached
         }
 
-        console.log('Setting up Canvas sub-tabs...');
-
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
-        console.log('Found', canvasSubTabContents.length, 'canvas sub-tab contents');
         for (var j = 0; j < canvasSubTabContents.length; j++) {
             canvasSubTabContents[j].classList.remove('sub-tab-active');
         }
 
         // Remove active class from all canvas sub-nav tabs
         var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-        console.log('Found', canvasSubNavTabs.length, 'canvas sub-nav tabs');
         for (var j = 0; j < canvasSubNavTabs.length; j++) {
             canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
         }
@@ -469,45 +453,24 @@ window.addEventListener('load', function() {
         // Show first sub-tab content
         var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
         if (firstSubTabContent) {
-            console.log('Activating first sub-tab content:', firstSubTabContent.id);
             firstSubTabContent.classList.add('sub-tab-active');
-        } else {
-            console.log('No first sub-tab content found');
         }
 
         // Activate first sub-nav tab
         var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
         if (firstSubNavTab) {
-            console.log('Activating first sub-nav tab:', firstSubNavTab.textContent);
             firstSubNavTab.classList.add('sub-nav-tab-active');
-        } else {
-            console.log('No first sub-nav tab found');
         }
     }
 
     // Function to attach click handlers for canvas sub-tabs
     function attachCanvasSubTabHandlers() {
-        console.log('Attaching canvas sub-tab handlers...');
-
-        // Check if canvas tab is visible
-        var canvasTab = document.getElementById('canvas');
-        if (canvasTab) {
-            console.log('Canvas tab element found, display:', getComputedStyle(canvasTab).display);
-            console.log('Canvas tab classes:', canvasTab.className);
-        } else {
-            console.log('Canvas tab element NOT found!');
-            return;
-        }
-
         var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
-        console.log('Found', subNavTabs.length, 'sub-nav tabs to attach handlers to');
 
         for (var i = 0; i < subNavTabs.length; i++) {
-            console.log('Sub-nav tab', i, 'text:', subNavTabs[i].textContent.trim(), 'display:', getComputedStyle(subNavTabs[i]).display, 'visibility:', getComputedStyle(subNavTabs[i]).visibility);
             // Remove existing listeners to avoid duplicates
             subNavTabs[i].removeEventListener('click', handleSubTabClick);
             subNavTabs[i].addEventListener('click', handleSubTabClick);
-            console.log('Attached handler to:', subNavTabs[i].textContent.trim());
         }
     }
 
@@ -515,7 +478,6 @@ window.addEventListener('load', function() {
     function handleSubTabClick(e) {
         e.preventDefault();
         var targetId = this.getAttribute('href');
-        console.log('Sub-tab clicked:', this.textContent, 'target:', targetId);
 
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
@@ -532,10 +494,7 @@ window.addEventListener('load', function() {
         // Show target sub-tab content
         var targetContent = document.querySelector(targetId);
         if (targetContent) {
-            console.log('Activating target content:', targetId);
             targetContent.classList.add('sub-tab-active');
-        } else {
-            console.log('Target content not found:', targetId);
         }
 
         // Add active class to clicked sub-nav tab
