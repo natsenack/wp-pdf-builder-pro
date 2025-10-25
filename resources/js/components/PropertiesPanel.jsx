@@ -13,6 +13,7 @@ import renderBordersSection from './PropertiesPanel/sections/BordersSection.jsx'
 import renderLayoutSection from './PropertiesPanel/sections/LayoutSection.jsx';
 import renderContentSection from './PropertiesPanel/sections/ContentSection.jsx';
 import renderTableAppearanceSection from './PropertiesPanel/sections/TableAppearanceSection.jsx';
+import renderEffectsSection from './PropertiesPanel/sections/EffectsSection.jsx';
 import { useElementCustomization } from '../hooks/useElementCustomization.js';
 import { useElementSynchronization } from '../hooks/useElementSynchronization.js';
 import { elementCustomizationService } from '../services/ElementCustomizationService.js';
@@ -177,6 +178,37 @@ const PropertiesPanel = memo(({
     }
   }, [(selectedElement && selectedElement.borderWidth), previousBorderWidth, handlePropertyChange]);
 
+  // Fonction pour obtenir le nom formaté de l'élément
+  const getElementDisplayName = useCallback((element) => {
+    if (!element) return '';
+
+    const typeNames = {
+      'text': 'Texte',
+      'image': 'Image',
+      'rectangle': 'Rectangle',
+      'shape-rectangle': 'Rectangle',
+      'shape-circle': 'Cercle',
+      'shape-line': 'Ligne',
+      'shape-arrow': 'Flèche',
+      'shape-triangle': 'Triangle',
+      'shape-star': 'Étoile',
+      'product_table': 'Tableau Produits',
+      'customer_info': 'Info Client',
+      'company_info': 'Info Société',
+      'company_logo': 'Logo Société',
+      'order_number': 'Numéro Commande',
+      'document_type': 'Type Document',
+      'progress-bar': 'Barre Progression',
+      'layout-header': 'En-tête',
+      'layout-footer': 'Pied de Page',
+      'layout-sidebar': 'Barre Latérale',
+      'layout-section': 'Section',
+      'layout-container': 'Conteneur'
+    };
+
+    return typeNames[element.type] || element.type || 'Élément';
+  }, []);
+
   // Rendu des onglets
   const renderTabs = useCallback(() => (
     <div className="properties-tabs">
@@ -197,6 +229,12 @@ const PropertiesPanel = memo(({
         onClick={() => setActiveTab('content')}
       >
         📝 Contenu
+      </button>
+      <button
+        className={`tab-btn ${activeTab === 'effects' ? 'active' : ''}`}
+        onClick={() => setActiveTab('effects')}
+      >
+        ✨ Effets
       </button>
     </div>
   ), [activeTab]);
@@ -239,6 +277,9 @@ const PropertiesPanel = memo(({
                 case 'typography':
                   return shouldShowSection('typography', selectedElement.type) ?
                     renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
+                case 'font':
+                  return shouldShowSection('font', selectedElement.type) ?
+                    renderFontSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
@@ -264,6 +305,19 @@ const PropertiesPanel = memo(({
           </div>
         );
 
+      case 'effects':
+        return (
+          <div className="tab-content">
+            {renderEffectsSection && shouldShowSection('effects', selectedElement.type) ? (
+              renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab)
+            ) : (
+              <div className="no-effects">
+                <p>Aucun effet disponible pour cet élément</p>
+              </div>
+            )}
+          </div>
+        );
+
       default:
         return null;
     }
@@ -275,8 +329,11 @@ const PropertiesPanel = memo(({
         <h3>Propriétés</h3>
         {selectedElement && (
           <div className="element-info">
-            <span className="element-type">{selectedElement.type}</span>
-            <span className="element-id">#{selectedElement.id}</span>
+            <div className="element-name">{getElementDisplayName(selectedElement)}</div>
+            <div className="element-details">
+              <span className="element-type">{selectedElement.type}</span>
+              <span className="element-id">#{selectedElement.id}</span>
+            </div>
           </div>
         )}
       </div>
