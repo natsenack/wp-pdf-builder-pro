@@ -83,3 +83,97 @@
 .accordion-content {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Styles spécifiques pour les sections de layout */
+.layout-sections .accordion {
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.layout-sections .accordion:hover {
+  border-color: #007cba;
+  box-shadow: 0 2px 6px rgba(0, 123, 186, 0.15);
+}
+
+.layout-sections .accordion-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #e1e5e9;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.layout-sections .accordion-header:hover {
+  background: linear-gradient(135deg, #f1f3f4 0%, #ffffff 100%);
+}
+
+.layout-sections .accordion-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  transition: transform 0.2s ease;
+}
+
+.layout-sections .accordion-toggle {
+  font-size: 14px;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.layout-sections .accordion.open .accordion-toggle {
+  transform: rotate(180deg);
+}
+
+.layout-sections .accordion-content {
+  padding: 16px;
+  background: #fafbfc;
+  border-radius: 0 0 6px 6px;
+}
+
+.layout-sections .property-group {
+  margin-bottom: 16px;
+}
+
+.layout-sections .property-group:last-child {
+  margin-bottom: 0;
+}
+
+.layout-sections .property-label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.layout-sections .property-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.layout-sections .property-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.layout-sections .property-input:focus {
+  outline: none;
+  border-color: #007cba;
+  box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.2);
+}
+
+.layout-sections .property-unit {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+}
