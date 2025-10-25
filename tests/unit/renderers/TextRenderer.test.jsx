@@ -17,7 +17,6 @@ describe('TextRenderer', () => {
   // Skip tous les tests si le module n'existe pas
   beforeAll(() => {
     if (!TextRenderer) {
-      console.warn('TextRenderer module not found - skipping tests (will be implemented in Phase 3)');
     }
   });
 

@@ -17,7 +17,6 @@ describe('RectangleRenderer', () => {
   // Skip tous les tests si le module n'existe pas
   beforeAll(() => {
     if (!RectangleRenderer) {
-      console.warn('RectangleRenderer module not found - skipping tests (will be implemented in Phase 3)');
     }
   });
 

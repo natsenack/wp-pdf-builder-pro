@@ -101,11 +101,9 @@ const PropertiesPanel = memo(({
       try {
         validatedValue = elementCustomizationService.validateProperty(property, value);
         if (validatedValue === undefined || validatedValue === null) {
-          console.warn(`Propriété invalide: ${property} = ${value}`);
           return;
         }
       } catch (error) {
-        console.warn(`Erreur de validation pour ${property}:`, error);
         return;
       }
     }
@@ -115,7 +113,7 @@ const PropertiesPanel = memo(({
 
     // DEBUG: Log temporaire pour tracer les changements de template
     if (property === 'template') {
-      console.log('[DEBUG] Template changé:', { elementId, oldValue: localProperties.template, newValue: validatedValue });
+      // Template changé
     }
 
     // Synchronisation immédiate pour les changements critiques et de style
@@ -140,7 +138,6 @@ const PropertiesPanel = memo(({
     // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
     const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
     if (!isBackgroundAllowed) {
-      console.warn('Fond non contrôlable pour ce type d\'élément');
       return;
     }
 

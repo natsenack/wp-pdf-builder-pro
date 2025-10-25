@@ -16,7 +16,6 @@ const PreviewModal = (props) => {
 
     return <PreviewModalWithContext legacyProps={props} />;
   } catch (error) {
-    console.error('🎭 PreviewModal: Erreur dans PreviewModal:', error);
     return false;
   }
 };
@@ -43,7 +42,6 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
                 previewData = await CanvasMode.loadData(initialData, null, legacyProps.templateData || {});
               }
             } catch (error) {
-              console.error('Erreur lors du chargement des données d\'aperçu:', error);
             }
           }
 

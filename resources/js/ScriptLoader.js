@@ -55,8 +55,6 @@ class ScriptLoader {
         if (finalConfig.preloadCritical) {
             this.preloadCriticalResources();
         }
-
-        console.log('ScriptLoader initialisé avec configuration:', finalConfig);
     }
 
     /**
@@ -74,8 +72,6 @@ class ScriptLoader {
                 nonCriticalScripts.push(script);
             }
         });
-
-        console.log(`Optimisation: ${nonCriticalScripts.length} scripts non critiques identifiés`);
 
         // Différer le chargement des scripts non critiques
         nonCriticalScripts.forEach(script => {
@@ -112,10 +108,8 @@ class ScriptLoader {
             .then(() => {
                 // Restaurer le script à sa position originale
                 originalParent.replaceChild(script, placeholder);
-                console.log(`Script différé chargé: ${src}`);
             })
             .catch(error => {
-                console.warn(`Échec du chargement différé pour: ${src}`, error);
                 // Restaurer le script original en cas d'erreur
                 originalParent.replaceChild(script, placeholder);
             });
@@ -204,8 +198,6 @@ class ScriptLoader {
                 document.head.appendChild(link.cloneNode());
             }
         });
-
-        console.log('Ressources critiques préchargées');
     }
 
     /**
@@ -306,7 +298,6 @@ class ScriptLoader {
         this.loadingScripts.clear();
         this.loadedScripts.clear();
         this.dependencyQueues.clear();
-        console.log('ScriptLoader nettoyé');
     }
 }
 

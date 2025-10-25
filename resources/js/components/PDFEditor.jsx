@@ -234,7 +234,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [elements, setElements] = useState(() => {
     // Réparer automatiquement les propriétés des éléments lors du chargement
     const repairedElements = repairProductTableProperties(initialElements);
-    console.log('[DEBUG] Elements repaired on load:', repairedElements.length, 'elements');
     return repairedElements;
   });
   const [selectedElementId, setSelectedElementId] = useState(null); // Maintenant c'est l'ID de l'élément
@@ -341,7 +340,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire de création d'un nouveau template
   const handleCreateNew = (templateData) => {
     // Pour l'instant, on peut juste afficher un message ou rediriger
-    console.log('Création d\'un nouveau template:', templateData);
     // Ici on pourrait rediriger vers une nouvelle page ou ouvrir un nouvel éditeur
     alert(`Nouveau template "${templateData.name}" créé avec succès!\nDimensions: ${templateData.width}x${templateData.height}px (${templateData.orientation})`);
   };
@@ -371,12 +369,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Gestionnaire de mise à jour des propriétés d'un élément
   const handleElementUpdate = (elementId, newProperties) => {
-    console.log('[DEBUG] handleElementUpdate called:', { elementId, newProperties, template: newProperties.template });
     setElements(prevElements => {
       const newElements = prevElements.map(element =>
         element.id === elementId ? { ...element, ...newProperties } : element
       );
-      console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
       // Update history
       const newHistory = history.slice(0, historyIndex + 1);
       newHistory.push(newElements);
@@ -397,13 +393,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Gestionnaire de sauvegarde des éléments
   const handleElementsChange = (newElements) => {
-    console.log('[DEBUG] handleElementsChange called with newElements length:', newElements.length);
     const newHistory = history.slice(0, historyIndex + 1);
     newHistory.push(newElements);
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
     setElements(newElements);
-    console.log('[DEBUG] setElements called');
   };
 
   // Gestionnaire de drag over
@@ -441,7 +435,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         setSelectedElementId(newElement.id);
       }
     } catch (error) {
-      console.error('Erreur lors du drop:', error);
+      // Erreur lors du drop ignorée en production
     }
   };
 
@@ -848,10 +842,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction de rendu du canvas
   const renderCanvas = () => {
-    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElementId:', selectedElementId, 'selectedElement.template:', selectedElement?.template);
     const canvas = canvasRef.current;
     if (!canvas) {
-      console.log('PDFEditor renderCanvas: No canvas ref');
       return;
     }
 
@@ -1396,13 +1388,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             variables: element.variables || {}
           });
           displayText = templateData.content;
-          console.log('[DEBUG] PDFEditor renderCanvas dynamic-text:', {
-            id: element.id,
-            template: element.template,
-            customContent: element.customContent,
-            displayText: displayText,
-            timestamp: Date.now()
-          });
         } else if (element.customContent) {
           displayText = element.customContent;
         }
@@ -2842,9 +2827,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.globalAlpha = 1;
 
       } else {
-        console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
-        console.log(`PDFEditor: Detailed properties for ${element.type}:`, JSON.stringify(element, null, 2));
-
         ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
         const genericX = element.x || 10;
         const genericY = element.y || 10;

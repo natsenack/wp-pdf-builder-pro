@@ -17,7 +17,6 @@ describe('ImageRenderer', () => {
   // Skip tous les tests si le module n'existe pas
   beforeAll(() => {
     if (!ImageRenderer) {
-      console.warn('ImageRenderer module not found - skipping tests (will be implemented in Phase 3)');
     }
   });
 

@@ -110,7 +110,6 @@ describe('Webpack Bundle Optimization', () => {
 
     // Lister les fichiers dans le répertoire dist
     const files = fs.readdirSync(distPath);
-    console.log('Fichiers dans dist:', files);
 
     // Vérifier l'existence des chunks principaux (noms dynamiques avec hash)
     const hasReactVendor = files.some(file => file.startsWith('react-vendor') && file.endsWith('.js'));

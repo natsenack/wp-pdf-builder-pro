@@ -64,8 +64,6 @@ export const CanvasElement = ({
   guides = { horizontal: [], vertical: [] },
   snapToGuides = true
 }) => {
-  // DEBUG: Log général pour voir si le composant se re-render
-  console.log('[DEBUG] CanvasElement render:', { id: element.id, type: element.type, template: element.template });
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
 
@@ -995,8 +993,6 @@ export const CanvasElement = ({
            };
 
            const content = getTemplateContent(element.template, element.customContent);
-           // DEBUG: Log temporaire pour tracer le rendu du template
-           console.log('[DEBUG] CanvasElement rendu dynamic-text:', { template: element.template, customContent: element.customContent, content: content });
            // Remplacement basique pour le rendu canvas
            return content
              .replace(/\{\{order_total\}\}/g, '125.99 €')
@@ -1709,7 +1705,6 @@ export const CanvasElement = ({
                   }}
                   onError={(e) => {
                     // Fallback si l'image ne charge pas
-                    console.warn('Erreur de chargement du logo entreprise:', imageSource);
                   }}
                 />
               ) : imageSource && !formatValidation.isValid ? (
@@ -2045,7 +2040,6 @@ export const CanvasElement = ({
                 .replace(/{order_month}/g, data.order_month || 'N/A')
                 .replace(/{order_day}/g, data.order_day || 'N/A');
             } catch (error) {
-              console.warn('Erreur de formatage order_number:', error);
               return `Commande #${data.order_number || 'N/A'}`;
             }
           };

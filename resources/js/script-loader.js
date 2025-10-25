@@ -16,12 +16,10 @@
 
       init: function(containerId, options) {
         options = options || {};
-        console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
 
         try {
           // Attendre que React soit disponible (chargé par le bundle webpack)
           if (!this.React || !this.ReactDOM) {
-            console.warn('React not yet available, waiting...');
             var self = this;
             setTimeout(function() { self.init(containerId, options); }, 100);
             return false;
@@ -38,13 +36,11 @@
           return true;
 
         } catch (error) {
-          console.error('PDF Builder Pro init failed:', error);
           return false;
         }
       },
 
       destroy: function(containerId) {
-        console.log('PDF Builder Pro destroy called for', containerId);
       },
 
       getData: function(containerId) {

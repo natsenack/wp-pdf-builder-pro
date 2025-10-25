@@ -536,17 +536,7 @@ export const useCanvasState = ({
   }, [history, selection]);
 
   const saveTemplate = useCallback(async () => {
-    // console.log('🔄 PDF Builder SAVE - Bouton "modifier" cliqué');
-    // console.log('📊 PDF Builder SAVE - État actuel:', {
-    //   templateId,
-    //   elementsCount: elements.length,
-    //   isSaving: loadingStates.saving,
-    //   canvasWidth,
-    //   canvasHeight
-    // });
-
     if (loadingStates.saving) {
-      // console.log('⚠️ PDF Builder SAVE - Sauvegarde déjà en cours, annulation');
       return;
     }
 
@@ -918,9 +908,7 @@ export const useCanvasState = ({
           const hasElement = element && typeof element === 'object';
           const hasId = element && element.id;
           const hasType = element && element.type;
-          // console.log(`📋 Élément ${index} - valide: ${hasElement}, id: ${hasId ? element.id : 'MISSING'}, type: ${hasType ? element.type : 'MISSING'}`);
           if (!hasElement || !hasId || !hasType) {
-            // console.log(`❌ Élément ${index} sera filtré:`, element);
           }
         });
 
@@ -942,14 +930,7 @@ export const useCanvasState = ({
       // Log détaillé des propriétés de chaque élément (mode développement uniquement)
       if (isDevelopment) {
         elements.forEach((element, index) => {
-          // console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
           if (element.type === 'product_table') {
-            // console.log(`Tableau ${index} - paramètres:`, {
-            //   showHeaders: element.showHeaders,
-            //   showBorders: element.showBorders,
-            //   columns: element.columns,
-            //   tableStyle: element.tableStyle,
-            //   showSubtotal: element.showSubtotal,
             //   showShipping: element.showShipping,
             //   showTaxes: element.showTaxes,
             //   showDiscount: element.showDiscount,
@@ -957,8 +938,6 @@ export const useCanvasState = ({
             // });
           }
         });
-
-        // console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
       }
 
       const templateData = {
@@ -1001,9 +980,6 @@ export const useCanvasState = ({
         //   canvasWidth: testParse.canvasWidth,
         //   canvasHeight: testParse.canvasHeight
         // });
-
-        // Log des données brutes envoyées au serveur pour debug
-        // console.log('PDF Builder SAVE - Données JSON brutes envoyées au serveur (premiers 500 chars):', jsonString.substring(0, 500));
 
       } catch (jsonError) {
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
@@ -1050,7 +1026,6 @@ export const useCanvasState = ({
       //   jsonLength: jsonString.length
       // });
 
-      // console.log('🌐 PDF Builder SAVE - Envoi de la requête AJAX...');
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         body: formData
@@ -1083,7 +1058,6 @@ export const useCanvasState = ({
 
       throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
     } finally {
-      // console.log('🏁 PDF Builder SAVE - Fin du processus de sauvegarde');
       setLoadingStates(prev => ({ ...prev, saving: false }));
     }
   }, [elements, canvasWidth, canvasHeight, isSaving, templateId]);
