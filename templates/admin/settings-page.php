@@ -429,16 +429,16 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
-        // Hide all sub-tab contents
-        var subTabContents = document.querySelectorAll('.sub-tab-content');
-        for (var j = 0; j < subTabContents.length; j++) {
-            subTabContents[j].classList.remove('sub-tab-active');
+        // Hide all canvas sub-tab contents
+        var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
+        for (var j = 0; j < canvasSubTabContents.length; j++) {
+            canvasSubTabContents[j].classList.remove('sub-tab-active');
         }
 
-        // Remove active class from all sub-nav tabs
-        var allSubNavTabs = document.querySelectorAll('.sub-nav-tab');
-        for (var j = 0; j < allSubNavTabs.length; j++) {
-            allSubNavTabs[j].classList.remove('sub-nav-tab-active');
+        // Remove active class from all canvas sub-nav tabs
+        var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        for (var j = 0; j < canvasSubNavTabs.length; j++) {
+            canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
         }
 
         // Show first sub-tab content
@@ -474,22 +474,22 @@ window.addEventListener('load', function() {
         }
 
         // Handle sub-tabs for Canvas tab
-        var subNavTabs = document.querySelectorAll('.sub-nav-tab');
+        var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
         for (var i = 0; i < subNavTabs.length; i++) {
             subNavTabs[i].addEventListener('click', function(e) {
                 e.preventDefault();
                 var targetId = this.getAttribute('href');
 
-                // Hide all sub-tab contents
-                var subTabContents = document.querySelectorAll('.sub-tab-content');
-                for (var j = 0; j < subTabContents.length; j++) {
-                    subTabContents[j].classList.remove('sub-tab-active');
+                // Hide all canvas sub-tab contents
+                var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
+                for (var j = 0; j < canvasSubTabContents.length; j++) {
+                    canvasSubTabContents[j].classList.remove('sub-tab-active');
                 }
 
-                // Remove active class from all sub-nav tabs
-                var allSubNavTabs = document.querySelectorAll('.sub-nav-tab');
-                for (var j = 0; j < allSubNavTabs.length; j++) {
-                    allSubNavTabs[j].classList.remove('sub-nav-tab-active');
+                // Remove active class from all canvas sub-nav tabs
+                var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+                for (var j = 0; j < canvasSubNavTabs.length; j++) {
+                    canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
                 }
 
                 // Show target sub-tab content
