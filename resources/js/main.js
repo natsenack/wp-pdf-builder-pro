@@ -3,7 +3,7 @@ import './globalFallback.js';
 
 // Main application entry point that actually uses all components
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
@@ -19,12 +19,12 @@ const init = (containerId, options = {}) => {
   // Clear any existing content
   container.innerHTML = '';
 
-  // Render the PDF Canvas Editor
-  ReactDOM.render(
+  // Create React 18 root and render
+  const root = ReactDOM.createRoot(container);
+  root.render(
     React.createElement(PDFCanvasEditor, {
       options: options
-    }),
-    container
+    })
   );
 
   console.log('PDF Builder Pro: Éditeur initialisé avec succès');
