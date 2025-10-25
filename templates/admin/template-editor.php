@@ -274,11 +274,7 @@ body.wp-admin .pdf-builder-container {
             loadingElement.style.display = 'none';
         }
 
-        // console.log('Checking scripts loaded...', {
-        //     PDFBuilderPro: typeof window.PDFBuilderPro,
-        //     pdfBuilderPro: typeof window.pdfBuilderPro,
-        //     init: typeof window.pdfBuilderPro?.init
-        // });
+        // console.log('Checking scripts loaded...');
 
         const pdfBuilderProExists = typeof window.pdfBuilderPro !== 'undefined' && window.pdfBuilderPro !== null;
         const pdfBuilderProRaw = window.pdfBuilderPro;
