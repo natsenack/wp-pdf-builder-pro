@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Toolbar } from './Toolbar';
-import PreviewModal from './preview-system/components/PreviewModal';
-import { PreviewProvider } from './preview-system/context/PreviewProvider';
-import { usePreviewContext } from './preview-system/context/PreviewContext';
-import ElementLibrary from './ElementLibrary';
-import PropertiesPanel from './PropertiesPanel';
-import TemplateHeader from './TemplateHeader';
-import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
+import { Toolbar } from './Toolbar.jsx';
+import PreviewModal from './preview-system/components/PreviewModal.jsx';
+import { PreviewProvider } from './preview-system/context/PreviewProvider.jsx';
+import { usePreviewContext } from './preview-system/context/PreviewContext.jsx';
+import ElementLibrary from './ElementLibrary.jsx';
+import PropertiesPanel from './PropertiesPanel.jsx';
+import TemplateHeader from './TemplateHeader.jsx';
+import { SampleDataProvider } from './preview-system/data/SampleDataProvider.jsx';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
 import './PDFEditor.css';
 

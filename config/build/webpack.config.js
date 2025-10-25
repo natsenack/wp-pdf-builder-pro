@@ -33,65 +33,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: {
-                    browsers: ['> 0.5%', 'last 2 versions', 'Firefox ESR', 'not dead', 'IE 11'],
-                  },
-                  modules: false,
-                  useBuiltIns: 'usage',
-                  corejs: 3,
-                },
-              ],
-              '@babel/preset-react',
-            ],
-          },
-        },
-      },
-    ],
-  },
-  // React est partagé entre les chunks
-  mode: 'production',
-  optimization: {
-    runtimeChunk: false, // Désactiver complètement le runtime chunk pour éviter les opérateurs ES6+
-    usedExports: false, // DÉSACTIVÉ pour éviter la suppression des exports globaux
-    sideEffects: false,  // DÉSACTIVÉ pour éviter la suppression des effets secondaires
-    minimize: true,     // Garder la minification
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          ecma: 5, // Générer du code ES5
-          compress: {
-            drop_console: false, // NE PAS supprimer les console.log pour le debug
-            drop_debugger: true,
-            pure_funcs: [] // NE PAS supprimer les fonctions console
-          },
-          mangle: {
-            safari10: true
-          },
-          output: {
-            ecma: 5, // Sortie ES5
-            comments: false
-          }
-        }
-      })
-    ],
-    // Code splitting DÉSACTIVÉ pour éviter les problèmes de runtime ES6+
-    splitChunks: false
-  },
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
-  },
-  module: {
-    rules: [
-      {
         test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
