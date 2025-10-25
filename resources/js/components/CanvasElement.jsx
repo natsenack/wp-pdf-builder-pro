@@ -220,7 +220,12 @@ export const CanvasElement = ({
         altRowBg: '#f9fafb',
         borderWidth: 1.5,
         headerTextColor: '#ffffff',
-        rowTextColor: '#374151'
+        rowTextColor: '#374151',
+        headerFontWeight: '600',
+        headerFontSize: '11px',
+        rowFontSize: '10px',
+        shadow: '0 2px 8px rgba(55, 65, 81, 0.2)',
+        borderRadius: '4px'
       },
       coral: {
         headerBg: '#fef2f2',
@@ -245,7 +250,12 @@ export const CanvasElement = ({
         altRowBg: '#f0fdfa',
         borderWidth: 1,
         headerTextColor: '#0f766e',
-        rowTextColor: '#0f766e'
+        rowTextColor: '#0f766e',
+        headerFontWeight: '600',
+        headerFontSize: '11px',
+        rowFontSize: '10px',
+        shadow: '0 2px 8px rgba(13, 148, 136, 0.2)',
+        borderRadius: '6px'
       },
       indigo: {
         headerBg: '#eef2ff',
@@ -255,7 +265,12 @@ export const CanvasElement = ({
         altRowBg: '#eef2ff',
         borderWidth: 1,
         headerTextColor: '#3730a3',
-        rowTextColor: '#3730a3'
+        rowTextColor: '#3730a3',
+        headerFontWeight: '600',
+        headerFontSize: '11px',
+        rowFontSize: '10px',
+        shadow: '0 2px 8px rgba(99, 102, 241, 0.2)',
+        borderRadius: '6px'
       },
       amber: {
         headerBg: '#fef3c7',
@@ -265,7 +280,12 @@ export const CanvasElement = ({
         altRowBg: '#fef3c7',
         borderWidth: 1,
         headerTextColor: '#92400e',
-        rowTextColor: '#92400e'
+        rowTextColor: '#92400e',
+        headerFontWeight: '600',
+        headerFontSize: '11px',
+        rowFontSize: '10px',
+        shadow: '0 2px 8px rgba(245, 158, 11, 0.2)',
+        borderRadius: '6px'
       },
       // Styles supplémentaires synchronisés avec SampleDataProvider
       light: {
