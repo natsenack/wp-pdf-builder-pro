@@ -90,7 +90,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   };
 
   const canvasState = useCanvasState({
-    initialElements: Array.isArray(options.initialElements?.elements) ? options.initialElements.elements : [],
+    initialElements: options.initialElements || [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
     canvasHeight: options.height || 842,
@@ -379,7 +379,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     // Récupérer l'élément actuel pour connaître les valeurs existantes
     const currentElement = canvasState.getElementById(elementId);
     if (!currentElement) return;
-
+    
     // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
     const updates = {};
     if (property.includes('.')) {
@@ -388,11 +388,11 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       const updateNestedProperty = (existingObj, path, val) => {
         const keys = path.split('.');
         const lastKey = keys.pop();
-
+        
         // Commencer avec une copie complète de l'objet existant
         const result = { ...existingObj };
         let current = result;
-
+        
         // Naviguer jusqu'à l'avant-dernier niveau en préservant les objets existants
         for (let i = 0; i < keys.length - 1; i++) {
           const key = keys[i];
@@ -403,7 +403,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
           }
           current = current[key];
         }
-
+        
         // Pour le dernier niveau (avant la propriété finale)
         const parentKey = keys[keys.length - 1];
         if (parentKey) {
@@ -417,7 +417,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
           // Propriété directement sur l'objet racine
           current[lastKey] = val;
         }
-
+        
         return result;
       };
 
@@ -829,7 +829,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
               )}
 
               {/* Éléments normaux rendus comme composants interactifs */}
-              {canvasState.getAllElements()
+              {canvasState.elements
                 .filter(el => !el.type.startsWith('woocommerce-'))
                 .map(element => (
                   <CanvasElement
@@ -855,7 +855,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
                 ))}
 
               {/* Éléments WooCommerce superposés */}
-              {canvasState.getAllElements()
+              {canvasState.elements
                 .filter(el => el.type.startsWith('woocommerce-'))
                 .map(element => (
                   <WooCommerceElement
@@ -880,38 +880,15 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
           </div>
         </section>
 
-        {/* Panneau de propriétés - Temporairement remplacé par un panneau simple */}
+        {/* Panneau de propriétés */}
         <aside className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
             {!isPropertiesCollapsed && (
-              <div style={{ padding: '20px', backgroundColor: '#f8fafc', height: '100%', overflowY: 'auto' }}>
-                <h3 style={{ marginTop: 0, color: '#374151' }}>Propriétés</h3>
-                {canvasState.selection.selectedElements.length > 0 ? (
-                  <div>
-                    <p><strong>Élément sélectionné:</strong> {canvasState.selection.selectedElements[0]}</p>
-                    <div style={{ marginTop: '20px' }}>
-                      <label style={{ display: 'block', marginBottom: '5px' }}>
-                        Contenu:
-                        <input
-                          type="text"
-                          style={{
-                            width: '100%',
-                            padding: '8px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            marginTop: '5px'
-                          }}
-                          value={canvasState.getAllElements().find(el => el.id === canvasState.selection.selectedElements[0])?.content || ''}
-                          onChange={(e) => {
-                            canvasState.updateElement(canvasState.selection.selectedElements[0], { content: e.target.value });
-                          }}
-                        />
-                      </label>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={{ color: '#6b7280' }}>Sélectionnez un élément pour modifier ses propriétés</p>
-                )}
-              </div>
+              <PropertiesPanel
+                selectedElements={canvasState.selection.selectedElements}
+                elements={canvasState.elements}
+                onPropertyChange={handlePropertyChange}
+                onBatchUpdate={handleBatchUpdate}
+              />
             )}
           </aside>
       </main>
@@ -944,7 +921,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
 
       {/* Indicateur d'état */}
       <footer className="editor-status">
-        <span>Éléments: {canvasState.getAllElements().length}</span>
+        <span>Éléments: {canvasState.elements.length}</span>
         <span>|</span>
         {globalSettings.settings.showZoomIndicator && (
           <>
@@ -975,4 +952,4 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
 });
 
 // Optimisation : éviter les re-renders inutiles
-export default React.memo(forwardRef(PDFCanvasEditor));
+PDFCanvasEditor.displayName = 'PDFCanvasEditor';
