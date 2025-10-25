@@ -48,46 +48,7 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
 
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
-    echo '<script type="text/javascript">if (window.pdfBuilderDebug || window.location.hostname === "localhost") { console.log("Tentative de chargement du script principal:", "' . esc_url($script_url) . '"); }</script>';
-    echo '<script type="text/javascript" src="' . esc_url($script_url) . '" onload="if (window.pdfBuilderDebug || window.location.hostname === \'localhost\') { console.log(\'Script principal chargé\'); }" onerror="console.error(\'Erreur de chargement du script principal\')"></script>';
-
-    // SCRIPT DE TEST - Vérifier si les variables globales sont définies
-    echo '<script type="text/javascript">
-        if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
-            console.log("=== PDF Builder Script Execution Test ===");
-            console.log("Script loaded at:", new Date().toISOString());
-            console.log("window.PDFBuilderPro:", typeof window.PDFBuilderPro, window.PDFBuilderPro ? "defined" : "undefined");
-            console.log("window.pdfBuilderPro:", typeof window.pdfBuilderPro, window.pdfBuilderPro ? "defined" : "undefined");
-            console.log("window.React:", typeof window.React, window.React ? "defined" : "undefined");
-            console.log("window.ReactDOM:", typeof window.ReactDOM, window.ReactDOM ? "defined" : "undefined");
-
-            // Test d\'exécution du script
-            if (typeof window.pdfBuilderPro !== "undefined") {
-                console.log("✓ pdfBuilderPro is available globally");
-                try {
-                    console.log("pdfBuilderPro instance:", window.pdfBuilderPro);
-                    console.log("pdfBuilderPro version:", window.pdfBuilderPro.version || "unknown");
-                } catch(e) {
-                    console.error("Error accessing pdfBuilderPro:", e);
-                }
-            } else {
-                console.error("✗ pdfBuilderPro is NOT available globally");
-            }
-
-            if (typeof window.React !== "undefined") {
-                console.log("✓ React is available globally");
-            } else {
-                console.error("✗ React is NOT available globally");
-            }
-
-            if (typeof window.ReactDOM !== "undefined") {
-                console.log("✓ ReactDOM is available globally");
-            } else {
-                console.error("✗ ReactDOM is NOT available globally");
-            }
-            console.log("=== End Script Execution Test ===");
-        }
-    </script>';
+    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
 
     // Variables AJAX - AJOUTER DIRECTEMENT
     $ajax_vars = [
@@ -141,7 +102,6 @@ if (!$is_new && $template_id > 0) {
 
     if ($template) {
         $template_name = $template['name'];
-        echo "<!-- DEBUG: Template trouvé en base - Nom: {$template_name} -->";
 
         // Décoder et préparer les données du template
         $template_data_raw = $template['template_data'];
@@ -149,13 +109,11 @@ if (!$is_new && $template_id > 0) {
             $decoded_data = json_decode($template_data_raw, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
                 $template_data = $decoded_data;
-                echo "<!-- DEBUG: JSON décodé avec succès -->";
 
                 // Extraire les éléments initiaux depuis la structure du template
                 // Structure actuelle : { elements: [...], canvasWidth, canvasHeight, version }
                 if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     $initial_elements = $decoded_data['elements'];
-                    echo "<!-- DEBUG: " . count($initial_elements) . " éléments trouvés dans 'elements' -->";
 
                     // Corriger les positions des éléments hors canvas
                     $canvas_width = 595;  // Largeur A4 en pixels à 72 DPI
@@ -187,26 +145,18 @@ if (!$is_new && $template_id > 0) {
                     }
                     unset($element); // Libérer la référence
 
-                    echo "<!-- DEBUG: Positions des éléments corrigées pour le canvas {$canvas_width}x{$canvas_height} -->";
-
                 } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
                     // Fallback pour l'ancienne structure (si elle existe)
                     $first_page = $decoded_data['pages'][0];
                     if (isset($first_page['elements']) && is_array($first_page['elements'])) {
                         $initial_elements = $first_page['elements'];
-                        echo "<!-- DEBUG: " . count($initial_elements) . " éléments trouvés dans 'pages[0].elements' -->";
                     }
-                } else {
-                    echo "<!-- DEBUG: Aucune structure d'éléments trouvée dans les données JSON -->";
                 }
-            } else {
-                echo "<!-- DEBUG: Erreur de décodage JSON: " . json_last_error_msg() . " -->";
             }
         } else {
-            echo "<!-- DEBUG: template_data_raw est vide -->";
+        echo "        } else {
         }
-    } else {
-        echo "<!-- DEBUG: Template ID {$template_id} non trouvé en base de données -->";
+    } else {";
     }
 }
 ?>
@@ -356,33 +306,21 @@ body.wp-admin .pdf-builder-container {
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
                 const pdfBuilderProRaw = window.pdfBuilderPro;
                 const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-                if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
-                    console.log('📋 PDF Builder init - Template ID:', <?php echo $template_id ?: 'null'; ?>, 'Initial Elements:', <?php echo json_encode($initial_elements); ?>, 'Count:', <?php echo count($initial_elements); ?>);
-                }
                 
                 // Récupérer les paramètres du backend
                 const backendSettings = <?php 
                     $settings = get_option('pdf_builder_settings', []);
                     echo json_encode([
-                        'show_grid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
-                        'snap_to_grid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
-                        'snap_to_elements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
+                        'showGrid' => isset($settings['show_grid']) ? (bool)$settings['show_grid'] : true,
+                        'snapToGrid' => isset($settings['snap_to_grid']) ? (bool)$settings['snap_to_grid'] : true,
+                        'snapToElements' => isset($settings['snap_to_elements']) ? (bool)$settings['snap_to_elements'] : true
                     ]);
-                ?>;
-                
+                ?>;                
                 // Structurer les données d'initialisation avec les éléments et les paramètres
                 const initialData = {
                     elements: <?php echo json_encode($initial_elements); ?>,
                     settings: backendSettings
                 };
-                
-                if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
-                    console.log('📦 Initial Data Structure:', {
-                        elementsCount: initialData.elements ? initialData.elements.length : 0,
-                        elements: initialData.elements,
-                        settings: initialData.settings
-                    });
-                }
                 
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
@@ -436,23 +374,6 @@ body.wp-admin .pdf-builder-container {
         // const reactDomExists = typeof window.ReactDOM !== 'undefined';
         const reactExists = true; // React est bundlé dans PDFBuilderPro
         const reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
-
-        // LOGS DÉTAILLÉS À CHAQUE VÉRIFICATION
-        if ((scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) && (window.pdfBuilderDebug || window.location.hostname === "localhost")) {
-            console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50 - DETAILED`);
-            console.log('- pdfBuilderProExists:', pdfBuilderProExists);
-            console.log('- initExists:', initExists);
-            console.log('- reactExists: (bundled in PDFBuilderPro)', reactExists);
-            console.log('- reactDomExists: (bundled in PDFBuilderPro)', reactDomExists);
-            if (pdfBuilderProExists) {
-                console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
-                console.log('- Has default property:', 'default' in pdfBuilderProRaw);
-                console.log('- Using default:', !!pdfBuilderProRaw.default);
-                console.log('- Final PDFBuilderPro keys:', Object.keys(pdfBuilderPro));
-                console.log('- Final has init:', 'init' in pdfBuilderPro);
-                console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
-            }
-        }
 
         if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
             initApp();

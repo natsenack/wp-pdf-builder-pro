@@ -254,23 +254,13 @@ class VariablesFormatValidator
 if (basename(__FILE__) === basename($_SERVER['PHP_SELF'] ?? __FILE__)) {
     $results = VariablesFormatValidator::runTests();
 
-    echo "\n=== Tests d'intégration des variables WooCommerce ===\n";
-    echo "Total: {$results['total']} tests\n";
-    echo "Passed: {$results['passed']}\n";
-    echo "Failed: {$results['failed']}\n\n";
-
     foreach ($results['results'] as $test => $result) {
         $status = $result['status'] === 'PASS' ? '✅' : '❌';
-        echo "$status $test: {$result['message']}\n";
     }
 
-    echo "\n" . str_repeat("=", 50) . "\n";
-
     if ($results['failed'] === 0) {
-        echo "🎉 Tous les tests de format sont passés!\n";
         exit(0);
     } else {
-        echo "⚠️  Certains tests ont échoué\n";
         exit(1);
     }
 }

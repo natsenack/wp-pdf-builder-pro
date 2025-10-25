@@ -325,16 +325,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         elementsData = initialElements.elements;
       }
 
-      if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
-        console.log('🔄 PDFEditor useEffect - Updating elements:', {
-          initialElementsType: typeof initialElements,
-          isArray: Array.isArray(initialElements),
-          hasElements: initialElements && typeof initialElements === 'object' && initialElements.elements ? true : false,
-          elementsDataLength: elementsData ? elementsData.length : 0,
-          elementsData: elementsData
-        });
-      }
-
       if (elementsData && elementsData.length > 0) {
         const repairedElements = repairProductTableProperties(elementsData);
         setElements(repairedElements);
@@ -979,8 +969,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     if (elements.length > 0) {
     }
 
-    console.log('Rendering canvas with', elements.length, 'elements');
-
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1025,8 +1013,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     });
 
     sortedElements.forEach((element, index) => {
-      console.log(`Rendering element ${index}:`, element.type, element.id);
-
       // Mettre en évidence l'élément sélectionné
       if (selectedElement?.id === element.id) {
         ctx.strokeStyle = '#007cba';
@@ -2684,7 +2670,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               }
             }
           } catch (colError) {
-            console.warn('Erreur lors du traitement des colonnes:', colError);
             columnsConfig = { name: true, quantity: true, price: true, total: true };
           }
 
@@ -2698,8 +2683,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             showTotal: element.showTotal ?? true,
             tableStyle: element.tableStyle || 'default'
           });
-
-          console.log('SampleDataProvider result:', tableData);
 
           const tableX = element.x || 10;
           const tableY = element.y || 10;
@@ -2815,7 +2798,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                   ctx.stroke();
                 }
               } catch (headerError) {
-                console.warn('Erreur lors du rendu de l\'en-tête:', headerError);
               }
             });
 
@@ -2877,7 +2859,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                       ctx.stroke();
                     }
                   } catch (cellError) {
-                    console.warn('Erreur lors du rendu de la cellule:', cellError);
                   }
                 });
               }
@@ -2926,7 +2907,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
                   currentTotalY += 24;
                 } catch (totalError) {
-                  console.warn('Erreur lors du rendu du total:', totalError);
                 }
               });
             }
@@ -2945,7 +2925,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.fillStyle = '#ff6b6b';
           ctx.font = '12px Arial';
           ctx.fillText(`Erreur product_table: ${error.message}`, element.x || 10, (element.y || 10) + 20);
-          console.error('❌ ERREUR lors du rendu de product_table:', error);
         }      } else {
         ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
         const genericX = element.x || 10;
@@ -2972,7 +2951,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Re-rendre à chaque changement
   useEffect(() => {
-    console.log('useEffect renderCanvas triggered:', { elementsCount: elements.length, zoom, showGrid, selectedElement });
     renderCanvas();
   }, [elements, zoom, showGrid, selectedElement]);
 

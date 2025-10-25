@@ -109,9 +109,6 @@ class PreviewRenderer {
 
         // État initial
         $this->initialized = false;
-
-        // Log d'initialisation
-        error_log('PreviewRenderer: Instance créée avec mode=' . $this->mode . ', zoom=' . $this->zoomLevel . '%');
     }
 
     /**
@@ -135,12 +132,9 @@ class PreviewRenderer {
             // Marquer comme initialisé
             $this->initialized = true;
 
-            error_log('PreviewRenderer: Initialisation réussie (mode=' . $this->mode . ', dimensions=' . $this->dimensions['width'] . 'x' . $this->dimensions['height'] . ')');
-
             return true;
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur d\'initialisation - ' . $e->getMessage());
             $this->initialized = false;
             return false;
         }
@@ -166,9 +160,6 @@ class PreviewRenderer {
                 throw new \Exception('Type d\'élément manquant');
             }
 
-            // Log du rendu
-            error_log('PreviewRenderer: Rendu élément ' . $elementData['type'] . ' en mode ' . $this->mode);
-
             // TODO: Implémentation du rendu spécifique selon le type d'élément
             // Pour l'instant, retourner true (sera implémenté dans les renderers spécialisés)
 
@@ -192,12 +183,9 @@ class PreviewRenderer {
             $this->options = null;
             $this->initialized = false;
 
-            error_log('PreviewRenderer: Destruction réussie');
-
             return true;
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur de destruction - ' . $e->getMessage());
             return false;
         }
     }
@@ -243,7 +231,6 @@ class PreviewRenderer {
             }
 
             if ($closest !== null) {
-                error_log('PreviewRenderer: Zoom ' . $zoom . '% ajusté au niveau autorisé le plus proche: ' . $closest . '%');
                 return $closest;
             }
 
@@ -395,13 +382,11 @@ class PreviewRenderer {
 
             if ($validatedZoom !== $this->zoomLevel) {
                 $this->zoomLevel = $validatedZoom;
-                error_log('PreviewRenderer: Zoom défini à ' . $this->zoomLevel . '%');
             }
 
             return true;
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur lors de la définition du zoom - ' . $e->getMessage());
             return false;
         }
     }

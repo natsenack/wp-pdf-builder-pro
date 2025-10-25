@@ -50,8 +50,6 @@ class LazyLoader {
 
         // Observer toutes les images avec data-src
         this.observeImages();
-
-        console.log('LazyLoader initialisé avec configuration:', finalConfig);
     }
 
     /**
@@ -138,7 +136,6 @@ class LazyLoader {
                     detail: { success: false, src: img.dataset.src }
                 }));
 
-                console.warn('Erreur de chargement lazy pour:', img.dataset.src);
             };
 
             // Ajouter la classe de chargement
@@ -148,7 +145,6 @@ class LazyLoader {
             tempImg.src = img.dataset.src;
 
         } catch (error) {
-            console.error('Erreur lors du lazy loading:', error);
             this.loadingImages.delete(img);
             this.observer.unobserve(img);
         }
@@ -178,8 +174,6 @@ class LazyLoader {
         lazyImages.forEach(img => {
             img.removeAttribute('data-lazy-observed');
         });
-
-        console.log('LazyLoader détruit');
     }
 
     /**
