@@ -2440,9 +2440,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const tableX = element.x || 30;
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
-        const cellHeight = 18;
-        const headerHeight = 22;
-        const totalHeight = 18;
+        const cellHeight = 26;
+        const headerHeight = 30;
+        const totalHeight = 26;
         const sideBarWidth = 4;
         const cellPaddingH = 10; // Padding horizontal
         const cellPaddingV = 4;  // Padding vertical
@@ -2493,7 +2493,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte et bordures verticales
-          ctx.font = isHeader ? 'bold 10px Arial' : (isTotalRow ? 'bold 10px Arial' : '9px Arial');
+          ctx.font = isHeader ? 'bold 11px Arial' : (isTotalRow ? 'bold 11px Arial' : '9px Arial');
           ctx.fillStyle = textColor;
 
           let colX = tableX + sideBarWidth;
@@ -2525,7 +2525,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             const maxLength = col.key === 'name' ? 35 : 20;
-            ctx.fillText(value.toString().slice(0, maxLength), textX, currentY + cellHeight / 2 + 3);
+            // Texte centré verticalement avec padding
+            const textY = currentY + cellHeight / 2 + 4;
+            ctx.fillText(value.toString().slice(0, maxLength), textX, textY);
 
             colX += colWidth;
           });
@@ -2554,7 +2556,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Texte en-têtes
-        ctx.font = 'bold 11px Arial';
+        ctx.font = 'bold 12px Arial';
         ctx.fillStyle = textColor;
         let colX = tableX + sideBarWidth;
         activeColumns.forEach((col, colIdx) => {
@@ -2580,7 +2582,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           } else {
             textX = colX + colWidth / 2;
           }
-          ctx.fillText(col.label, textX, currentY + headerHeight / 2 + 3);
+          const textY = currentY + headerHeight / 2 + 4;
+          ctx.fillText(col.label, textX, textY);
 
           colX += colWidth;
         });
@@ -2617,7 +2620,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Bordures verticales des colonnes
-          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
+          ctx.font = isFinal ? 'bold 12px Arial' : '11px Arial';
           ctx.fillStyle = textColor;
 
           let colX = tableX + sideBarWidth;
@@ -2634,10 +2637,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           });
 
           // Texte (label à gauche, value à droite)
+          const textY = currentY + totalHeight / 2 + 4;
           ctx.textAlign = 'left';
-          ctx.fillText(label, tableX + sideBarWidth + cellPaddingH, currentY + totalHeight / 2 + 3);
+          ctx.fillText(label, tableX + sideBarWidth + cellPaddingH, textY);
           ctx.textAlign = 'right';
-          ctx.fillText(value, tableX + tableWidth - cellPaddingH, currentY + totalHeight / 2 + 3);
+          ctx.fillText(value, tableX + tableWidth - cellPaddingH, textY);
 
           // Bordure du bas
           if (showBorders) {
