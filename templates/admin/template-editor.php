@@ -287,7 +287,7 @@ body.wp-admin .pdf-builder-container {
         const pdfBuilderProExists = typeof window.pdfBuilderPro !== 'undefined' && window.pdfBuilderPro !== null;
         const pdfBuilderProRaw = window.pdfBuilderPro;
         const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
+        const initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
         if (pdfBuilderProExists && initExists) {
             try {
@@ -299,7 +299,7 @@ body.wp-admin .pdf-builder-container {
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     ajaxurl: ajaxurl,
-                    nonce: window.pdfBuilderAjax?.nonce || ''
+                    nonce: (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || ''
                 };
 
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
@@ -365,7 +365,7 @@ body.wp-admin .pdf-builder-container {
 
         // Gérer le cas où webpack expose le module avec une propriété 'default'
         const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
+        const initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
         // Avec le code splitting, vérifier aussi que React est disponible - COMMENTÉ car React est maintenant bundlé
         // const reactExists = typeof window.React !== 'undefined';
