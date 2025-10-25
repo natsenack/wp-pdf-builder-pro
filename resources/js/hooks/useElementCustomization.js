@@ -40,6 +40,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         textAlign: 'left',
         lineHeight: 1.2,
         letterSpacing: 0,
+        tableStyle: 'default',
       };
 
       // Appliquer les restrictions selon le type d'élément
