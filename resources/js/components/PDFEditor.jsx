@@ -2434,7 +2434,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - RENDU AMÉLIORÉ ===
+        // === TABLEAU DE PRODUITS - STRIPED MODERN ===
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
@@ -2458,12 +2458,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // ===== COLONNES ACTIVES =====
         const activeColumns = [];
-        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', width: 0.10, align: 'center' });
-        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', width: 0.35, align: 'left' });
-        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', width: 0.15, align: 'left' });
-        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', width: 0.10, align: 'right' });
-        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', width: 0.15, align: 'right' });
-        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', width: 0.15, align: 'right' });
+        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', width: 0.08, align: 'center' });
+        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', width: 0.38, align: 'left' });
+        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', width: 0.16, align: 'left' });
+        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', width: 0.12, align: 'right' });
+        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', width: 0.13, align: 'right' });
+        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', width: 0.13, align: 'right' });
 
         // Normaliser les largeurs
         let totalWidth = activeColumns.reduce((sum, col) => sum + col.width, 0);
@@ -2471,13 +2471,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Données d'exemple
         const rows = [
-          { image: '📦', name: 'Produit A - Description longue', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
+          { image: '📦', name: 'Produit A - Description', sku: 'SKU-001', quantity: '2', price: '15,99 €', total: '31,98 €' },
           { image: '📦', name: 'Produit B', sku: 'SKU-002', quantity: '1', price: '25,50 €', total: '25,50 €' },
           { image: '📦', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
         ];
 
         // ===== EN-TÊTE =====
-        // Bordure du haut
+        // Bordure ÉPAISSE du haut
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 3;
@@ -2487,11 +2487,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.stroke();
         }
 
-        // Fond en-tête
+        // Fond en-tête gris
         ctx.fillStyle = headerBg;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-        // Texte en-têtes
+        // Texte en-têtes BOLD
         ctx.fillStyle = textColor;
         ctx.font = 'bold 10px Arial';
         let colX = tableX;
@@ -2503,7 +2503,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           colX += colWidth;
         });
 
-        // Bordure bas en-tête
+        // Bordure ÉPAISSE bas en-tête
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 2;
@@ -2515,14 +2515,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         currentY += headerHeight;
 
-        // ===== LIGNES DE DONNÉES =====
+        // ===== LIGNES DE DONNÉES - ALTERNANCE BLANCHE/GRIS =====
         ctx.font = '9px Arial';
         rows.forEach((row, rowIdx) => {
-          // Fond blanc
-          ctx.fillStyle = '#ffffff';
+          // Alternance: pairs blanc, impairs gris clair
+          const isEvenRow = rowIdx % 2 === 0;
+          ctx.fillStyle = isEvenRow ? '#ffffff' : '#fafafa';
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
 
-          // Bordures (si activées)
+          // Bordures fines (si activées)
           if (showBorders) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = 0.5;
