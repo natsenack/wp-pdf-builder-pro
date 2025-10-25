@@ -68,9 +68,9 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
         })();
     </script>';
 
-    // Script principal - CHARGER ENSUITE avec les composants React
-    $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid();
-    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
+    // Script principal - CHARGÉ VIA WORDPRESS wp_enqueue_script (pas directement)
+    // $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid();
+    // echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
 
     // Variables AJAX - AJOUTER DIRECTEMENT
     $ajax_vars = [
