@@ -100,6 +100,7 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
               label="Configuration des colonnes:"
               minWidth={400}
               className="adaptive-compact"
+              demoMode={true} // Mode démo pour montrer les indicateurs
             >
               <input
                 type="text"

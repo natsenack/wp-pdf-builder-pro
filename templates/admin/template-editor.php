@@ -402,5 +402,14 @@ body.wp-admin .pdf-builder-container {
         checkScriptsLoaded();
     }
 
+    // CHARGER LE SCRIPT DE TEST ADAPTATIF TEMPORAIREMENT
+    // À SUPPRIMER APRÈS LES TESTS
+    const testScript = document.createElement('script');
+    testScript.src = '<?php echo plugins_url('adaptive-layout-test.js', dirname(__FILE__, 2)); ?>';
+    testScript.onload = function() {
+        console.log('🧪 Script de test adaptatif chargé');
+    };
+    document.head.appendChild(testScript);
+
 })();
 </script>
