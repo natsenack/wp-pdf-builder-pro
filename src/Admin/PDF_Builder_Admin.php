@@ -1474,9 +1474,9 @@ class PDF_Builder_Admin
             }
         ');
 // Scripts JavaScript - VERSION ULTRA FORCEE
-        // React et ReactDOM sont maintenant bundlés dans le script principal
-        // wp_enqueue_script('react');
-        // wp_enqueue_script('react-dom', ['react']);
+        // React et ReactDOM doivent être chargés avant le script principal
+        wp_enqueue_script('react');
+        wp_enqueue_script('react-dom', ['react']);
 
         // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time() . '_' . uniqid(), false);
