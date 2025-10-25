@@ -314,7 +314,13 @@ body.wp-admin .pdf-builder-container {
                 // Définir les données globales pour le JavaScript
                 window.pdfBuilderData = {
                     templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                    templateName: <?php
+                        try {
+                            echo $template_name ? json_encode($template_name) : 'null';
+                        } catch (Exception $e) {
+                            echo 'null';
+                        }
+                    ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     ajaxurl: ajaxurl,
                     nonce: (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || ''
@@ -340,13 +346,25 @@ body.wp-admin .pdf-builder-container {
                 ?>;
                 // Structurer les données d'initialisation avec les éléments et les paramètres
                 var initialData = {
-                    elements: <?php echo json_encode($initial_elements); ?>,
+                    elements: <?php
+                        try {
+                            echo json_encode($initial_elements);
+                        } catch (Exception $e) {
+                            echo '[]';
+                        }
+                    ?>,
                     settings: backendSettings
                 };
 
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                    templateName: <?php
+                        try {
+                            echo $template_name ? json_encode($template_name) : 'null';
+                        } catch (Exception $e) {
+                            echo 'null';
+                        }
+                    ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     initialElements: initialData,
                     width: 595,
