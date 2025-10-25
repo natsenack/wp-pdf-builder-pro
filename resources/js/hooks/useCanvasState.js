@@ -824,12 +824,12 @@ export const useCanvasState = ({
           if (key === 'columns') {
             if (typeof value === 'object' && value !== null) {
               validatedValue = {
-                image: value.image ?? true,
-                name: value.name ?? true,
-                sku: value.sku ?? false,
-                quantity: value.quantity ?? true,
-                price: value.price ?? true,
-                total: value.total ?? true
+                image: value.image !== undefined ? value.image : true,
+                name: value.name !== undefined ? value.name : true,
+                sku: value.sku !== undefined ? value.sku : false,
+                quantity: value.quantity !== undefined ? value.quantity : true,
+                price: value.price !== undefined ? value.price : true,
+                total: value.total !== undefined ? value.total : true
               };
             } else {
               validatedValue = {
@@ -1034,7 +1034,7 @@ export const useCanvasState = ({
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
+        throw new Error((result.data && result.data.message) || 'Erreur lors de la sauvegarde');
       }
 
       // Notification de succès pour les templates existants

@@ -107,7 +107,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     } else {
       setLocalProperties({});
     }
-  }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément pour éviter les conflits avec les changements locaux
+  }, [selectedElement && selectedElement.id]); // Ne dépendre que de l'ID de l'élément pour éviter les conflits avec les changements locaux
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {

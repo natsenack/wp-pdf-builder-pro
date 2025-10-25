@@ -15,23 +15,23 @@ export const useSelection = ({
           ? prev.filter(id => id !== elementId)
           : [...prev, elementId];
 
-        onSelectionChange?.(newSelection);
+        onSelectionChange && onSelectionChange(newSelection);
         return newSelection;
       });
     } else {
       setSelectedElements([elementId]);
-      onSelectionChange?.([elementId]);
+      onSelectionChange && onSelectionChange([elementId]);
     }
   }, [multiSelect, onSelectionChange]);
 
   const selectAll = useCallback((elementIds) => {
     setSelectedElements(elementIds);
-    onSelectionChange?.(elementIds);
+    onSelectionChange && onSelectionChange(elementIds);
   }, [onSelectionChange]);
 
   const clearSelection = useCallback(() => {
     setSelectedElements([]);
-    onSelectionChange?.([]);
+    onSelectionChange && onSelectionChange([]);
   }, [onSelectionChange]);
 
   const isSelected = useCallback((elementId) => {
@@ -76,12 +76,12 @@ export const useSelection = ({
       if (multiSelect) {
         setSelectedElements(prev => {
           const newSelection = [...new Set([...prev, ...selectedInBox])];
-          onSelectionChange?.(newSelection);
+          onSelectionChange && onSelectionChange(newSelection);
           return newSelection;
         });
       } else {
         setSelectedElements(selectedInBox);
-        onSelectionChange?.(selectedInBox);
+        onSelectionChange && onSelectionChange(selectedInBox);
       }
     }
 

@@ -38,11 +38,11 @@ export function initializePreviewSystem(config = {}) {
 
   // Validation de la configuration
   const validatedConfig = {
-    enablePerformanceMonitoring: config.enablePerformanceMonitoring ?? true,
-    enableLazyLoading: config.enableLazyLoading ?? true,
-    enableSecurityValidation: config.enableSecurityValidation ?? true,
-    maxConcurrentRenders: config.maxConcurrentRenders ?? 3,
-    defaultMode: config.defaultMode ?? 'canvas',
+    enablePerformanceMonitoring: config.enablePerformanceMonitoring !== undefined ? config.enablePerformanceMonitoring : true,
+    enableLazyLoading: config.enableLazyLoading !== undefined ? config.enableLazyLoading : true,
+    enableSecurityValidation: config.enableSecurityValidation !== undefined ? config.enableSecurityValidation : true,
+    maxConcurrentRenders: config.maxConcurrentRenders !== undefined ? config.maxConcurrentRenders : 3,
+    defaultMode: config.defaultMode !== undefined ? config.defaultMode : 'canvas',
     ...config
   };
 
