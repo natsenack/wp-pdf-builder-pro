@@ -19,8 +19,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         height: 200,
         showBorders: true,
         tableFormat: 'full',
-        tableColorPrimary: '#667eea',
-        tableColorSecondary: '#e8ebff',
+        tableColorPrimary: '#2563eb',    // Bleu moderne plus foncé
+        tableColorSecondary: '#dbeafe',  // Bleu clair plus subtil
         columns: {
           image: false,
           name: true,

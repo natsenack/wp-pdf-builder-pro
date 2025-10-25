@@ -2441,19 +2441,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
         
-        // Dimensions optimisées pour une meilleure lisibilité (lignes réduites)
+        // Dimensions optimisées pour une meilleure lisibilité (lignes très réduites)
         const padding = 12;     // padding horizontal augmenté
-        const paddingV = 10;    // padding vertical augmenté
-        const headerHeight = 22 + paddingV * 2;  // 42px - header plus haut
-        const rowHeight = 14 + paddingV * 2;     // 34px - lignes de produits réduites
-        const totalRowHeight = 16 + paddingV * 2; // 36px - totaux intermédiaires réduits
-        const finalTotalRowHeight = 20 + paddingV * 2; // 40px - TOTAL final garde la taille originale
+        const paddingV = 8;     // padding vertical réduit pour lignes plus compactes
+        const headerHeight = 20 + paddingV * 2;  // 36px - header réduit
+        const rowHeight = 12 + paddingV * 2;     // 28px - lignes de produits très réduites
+        const totalRowHeight = 14 + paddingV * 2; // 30px - totaux intermédiaires très réduits
+        const finalTotalRowHeight = 18 + paddingV * 2; // 34px - TOTAL final légèrement réduit
         const colGap = 15;      // gap entre colonnes augmenté
         const sideBarWidth = 4; // border-left 4px
         
-        // Couleurs (depuis les propriétés)
-        const primaryColor = element.tableColorPrimary || '#667eea';
-        const secondaryColor = element.tableColorSecondary || '#e8ebff';
+        // Couleurs améliorées (moderne et contrastées)
+        const primaryColor = element.tableColorPrimary || '#2563eb';    // Bleu moderne plus foncé
+        const secondaryColor = element.tableColorSecondary || '#dbeafe'; // Bleu clair plus subtil
         const headerBg = '#f0f0f0';
         const totalsBg = '#f0f0f0';
         const bgWhite = '#ffffff';
