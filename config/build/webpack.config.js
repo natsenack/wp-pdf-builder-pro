@@ -30,10 +30,37 @@ module.exports = {
   plugins: [
     // ProvidePlugin retiré - on utilise l'import direct
   ],
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: ['> 0.5%', 'last 2 versions', 'Firefox ESR', 'not dead', 'IE 11'],
+                  },
+                  modules: false,
+                  useBuiltIns: 'usage',
+                  corejs: 3,
+                },
+              ],
+              '@babel/preset-react',
+            ],
+          },
+        },
+      },
+    ],
+  },
   // React est partagé entre les chunks
   mode: 'production',
   optimization: {
-    runtimeChunk: 'single', // Créer un seul runtime chunk partagé
+    runtimeChunk: false, // Désactiver complètement le runtime chunk pour éviter les opérateurs ES6+
     usedExports: false, // DÉSACTIVÉ pour éviter la suppression des exports globaux
     sideEffects: false,  // DÉSACTIVÉ pour éviter la suppression des effets secondaires
     minimize: true,     // Garder la minification

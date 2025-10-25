@@ -42,10 +42,6 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
 
     // React sera inclus dans le bundle webpack
 
-    // Charger le runtime webpack avant le script principal
-    $runtime_url = $assets_url . 'js/dist/runtime.fd1e176f059237da70e0.js?v=' . time();
-    echo '<script type="text/javascript" src="' . esc_url($runtime_url) . '"></script>';
-
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
     echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
