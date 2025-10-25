@@ -227,7 +227,7 @@ export const Toolbar = ({
                       onChange={(e) => isSnapEnabled && onSnapToGridChange(e.target.checked)}
                       disabled={!isSnapEnabled}
                     />
-                    <span className="toggle-text">Aimantation</span>
+                    <span className="toggle-text">Snap Grille</span>
                     <span className="toggle-shortcut">(X)</span>
                     {!isSnapEnabled && <span className="tooltip-hint">❌ Aimantation à la grille désactivée dans les paramètres généraux</span>}
                   </label>
@@ -242,7 +242,7 @@ export const Toolbar = ({
                       onChange={(e) => areSnapsEnabled && onSnapToElementsChange(e.target.checked)}
                       disabled={!areSnapsEnabled}
                     />
-                    <span className="toggle-text">Aimantation</span>
+                    <span className="toggle-text">Snap Éléments</span>
                     <span className="toggle-shortcut">(Z)</span>
                     {!areSnapsEnabled && <span className="tooltip-hint">❌ Aimantation aux éléments désactivée dans les paramètres généraux</span>}
                   </label>
