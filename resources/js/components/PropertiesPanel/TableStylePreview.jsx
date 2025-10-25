@@ -1,5 +1,5 @@
 import React from 'react';
-import { getTableStyles } from '../../PDFEditor';
+import { getTableStyles } from '../PDFEditor';
 import './TableStylePreview.css';
 
 const TableStylePreview = ({ selectedStyle, onStyleSelect }) => {

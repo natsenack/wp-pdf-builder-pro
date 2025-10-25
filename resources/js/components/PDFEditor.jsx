@@ -241,6 +241,9 @@ const getTableStyles = (tableStyle = 'default') => {
   return baseStyles[tableStyle] || baseStyles.default;
 };
 
+// Export de la fonction pour utilisation externe
+export { getTableStyles };
+
 /**
  * Ajuste la luminosité d'une couleur hex
  * @param {string} color - Couleur en hex (#rrggbb)
