@@ -1481,9 +1481,12 @@ class PDF_Builder_Admin
         // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time() . '_' . uniqid(), false);
 
+        // Script loader pour définir l'API globale - CHARGER AVANT LE SCRIPT PRINCIPAL
+        wp_enqueue_script('pdf-builder-script-loader', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.js', [], '3.0.0_force_' . time(), false);
+
         // Charger d'abord les vendors (React, etc.) - COMMENTÉ car webpack ne génère pas vendors.js séparé
         // wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time(), ['jquery', 'react', 'react-dom'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time(), ['jquery', 'react', 'react-dom', 'pdf-builder-script-loader'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
         error_log('PDF Builder: pdf-builder-admin-v3 script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
 // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed - TIMESTAMP: ' . time());
