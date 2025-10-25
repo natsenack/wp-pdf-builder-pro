@@ -9,6 +9,7 @@ module.exports = {
     'pdf-builder-admin': './resources/js/index.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
   },
+  target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
   output: {
     filename: (chunkData) => {
       // Utiliser des noms fixes pour les entry points principaux
@@ -39,6 +40,7 @@ module.exports = {
     minimizer: [
       new TerserPlugin({
         terserOptions: {
+          ecma: 5, // Générer du code ES5
           compress: {
             drop_console: false, // NE PAS supprimer les console.log pour le debug
             drop_debugger: true,
@@ -46,6 +48,10 @@ module.exports = {
           },
           mangle: {
             safari10: true
+          },
+          output: {
+            ecma: 5, // Sortie ES5
+            comments: false
           }
         }
       })

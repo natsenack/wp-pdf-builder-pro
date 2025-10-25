@@ -1,1 +1,1 @@
-(self.webpackChunkwp_pdf_builder_pro=self.webpackChunkwp_pdf_builder_pro||[]).push([[709],{8893:()=>{document.addEventListener("DOMContentLoaded",function(){})}},e=>{var d;d=8893,e(e.s=d)}]);
+(self.webpackChunkwp_pdf_builder_pro=self.webpackChunkwp_pdf_builder_pro||[]).push([[709],{8893:function(){document.addEventListener("DOMContentLoaded",function(){})}},function(n){var e;e=8893,n(n.s=e)}]);
