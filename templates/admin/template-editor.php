@@ -370,14 +370,25 @@ body.wp-admin .pdf-builder-container {
                     ]);
                 ?>;
                 
+                // Structurer les données d'initialisation avec les éléments et les paramètres
+                const initialData = {
+                    elements: <?php echo json_encode($initial_elements); ?>,
+                    settings: backendSettings
+                };
+                
+                if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
+                    console.log('📦 Initial Data Structure:', {
+                        elementsCount: initialData.elements ? initialData.elements.length : 0,
+                        elements: initialData.elements,
+                        settings: initialData.settings
+                    });
+                }
+                
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    initialElements: {
-                        elements: <?php echo json_encode($initial_elements); ?>,
-                        settings: backendSettings
-                    },
+                    initialElements: initialData,
                     width: 595,
                     height: 842,
                     zoom: 1,
