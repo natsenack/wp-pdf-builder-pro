@@ -2434,15 +2434,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === TABLEAU DE PRODUITS - STRIPED MODERN ===
+        // === TABLEAU DE PRODUITS - STRIPED MODERN COMPLET ===
+        // Avec barre latérale, bordures verticales, padding, alternance
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
-        const cellHeight = 16;
-        const headerHeight = 20;
-        const totalHeight = 16;
-        const padding = 6;
+        const cellHeight = 18;
+        const headerHeight = 22;
+        const totalHeight = 18;
+        const sideBarWidth = 4;
+        const cellPaddingH = 10; // Padding horizontal
+        const cellPaddingV = 4;  // Padding vertical
+        const lineWidth = 0.5;
 
         // Couleurs
         const borderColor = element.tableColorPrimary || '#0ea5e9';
@@ -2467,7 +2471,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Normaliser les largeurs
         let totalWidth = activeColumns.reduce((sum, col) => sum + col.width, 0);
-        const columnWidths = activeColumns.map(col => (col.width / totalWidth) * tableWidth);
+        const columnWidths = activeColumns.map(col => (col.width / totalWidth) * (tableWidth - sideBarWidth));
 
         // Données d'exemple
         const rows = [
@@ -2476,34 +2480,112 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           { image: '📦', name: 'Produit C', sku: 'SKU-003', quantity: '3', price: '10,00 €', total: '30,00 €' }
         ];
 
-        // ===== EN-TÊTE =====
-        // Bordure ÉPAISSE du haut
-        if (showBorders) {
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY);
-          ctx.lineTo(tableX + tableWidth, currentY);
-          ctx.stroke();
-        }
+        // ===== HELPER: Dessiner une rangée avec cellules =====
+        const drawRow = (rowData, bgColor, isHeader = false, isTotalRow = false) => {
+          // Fond de la rangée
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
 
-        // Fond en-tête gris
+          // Barre latérale
+          if (showBorders) {
+            ctx.fillStyle = borderColor;
+            ctx.fillRect(tableX, currentY, sideBarWidth, cellHeight);
+          }
+
+          // Texte et bordures verticales
+          ctx.font = isHeader ? 'bold 10px Arial' : (isTotalRow ? 'bold 10px Arial' : '9px Arial');
+          ctx.fillStyle = textColor;
+
+          let colX = tableX + sideBarWidth;
+          activeColumns.forEach((col, colIdx) => {
+            const colWidth = columnWidths[colIdx];
+
+            // Bordure verticale droite de la colonne
+            if (showBorders && colIdx < activeColumns.length - 1) {
+              ctx.strokeStyle = borderColor;
+              ctx.lineWidth = lineWidth;
+              ctx.beginPath();
+              ctx.moveTo(colX + colWidth, currentY);
+              ctx.lineTo(colX + colWidth, currentY + cellHeight);
+              ctx.stroke();
+            }
+
+            // Texte dans la cellule
+            let value = rowData[col.key] || '';
+            if (isHeader) value = col.label;
+            
+            ctx.textAlign = col.align;
+            let textX;
+            if (col.align === 'left') {
+              textX = colX + cellPaddingH;
+            } else if (col.align === 'right') {
+              textX = colX + colWidth - cellPaddingH;
+            } else {
+              textX = colX + colWidth / 2;
+            }
+
+            const maxLength = col.key === 'name' ? 35 : 20;
+            ctx.fillText(value.toString().slice(0, maxLength), textX, currentY + cellHeight / 2 + 3);
+
+            colX += colWidth;
+          });
+
+          // Bordure horizontale du bas
+          if (showBorders) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY + cellHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
+            ctx.stroke();
+          }
+
+          currentY += cellHeight;
+        };
+
+        // ===== EN-TÊTE =====
         ctx.fillStyle = headerBg;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-        // Texte en-têtes BOLD
+        // Barre latérale en-tête
+        if (showBorders) {
+          ctx.fillStyle = borderColor;
+          ctx.fillRect(tableX, currentY, sideBarWidth, headerHeight);
+        }
+
+        // Texte en-têtes
+        ctx.font = 'bold 11px Arial';
         ctx.fillStyle = textColor;
-        ctx.font = 'bold 10px Arial';
-        let colX = tableX;
-        activeColumns.forEach((col, idx) => {
-          const colWidth = columnWidths[idx];
+        let colX = tableX + sideBarWidth;
+        activeColumns.forEach((col, colIdx) => {
+          const colWidth = columnWidths[colIdx];
+
+          // Bordure verticale
+          if (showBorders && colIdx < activeColumns.length - 1) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(colX + colWidth, currentY);
+            ctx.lineTo(colX + colWidth, currentY + headerHeight);
+            ctx.stroke();
+          }
+
+          // Texte
           ctx.textAlign = col.align;
-          const textX = col.align === 'left' ? colX + padding : colX + colWidth - padding;
+          let textX;
+          if (col.align === 'left') {
+            textX = colX + cellPaddingH;
+          } else if (col.align === 'right') {
+            textX = colX + colWidth - cellPaddingH;
+          } else {
+            textX = colX + colWidth / 2;
+          }
           ctx.fillText(col.label, textX, currentY + headerHeight / 2 + 3);
+
           colX += colWidth;
         });
 
-        // Bordure ÉPAISSE bas en-tête
+        // Bordure bas en-tête
         if (showBorders) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 2;
@@ -2515,60 +2597,57 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         currentY += headerHeight;
 
-        // ===== LIGNES DE DONNÉES - ALTERNANCE BLANCHE/GRIS =====
-        ctx.font = '9px Arial';
+        // ===== LIGNES DE DONNÉES =====
         rows.forEach((row, rowIdx) => {
-          // Alternance: pairs blanc, impairs gris clair
           const isEvenRow = rowIdx % 2 === 0;
-          ctx.fillStyle = isEvenRow ? '#ffffff' : '#fafafa';
-          ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
-
-          // Bordures fines (si activées)
-          if (showBorders) {
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY + cellHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
-            ctx.stroke();
-          }
-
-          // Contenu cellules
-          ctx.fillStyle = textColor;
-          colX = tableX;
-          activeColumns.forEach((col, idx) => {
-            const colWidth = columnWidths[idx];
-            ctx.textAlign = col.align;
-            const textX = col.align === 'left' ? colX + padding : colX + colWidth - padding;
-            const value = row[col.key] || '';
-            const maxLength = col.key === 'name' ? 30 : 15;
-            ctx.fillText(value.toString().slice(0, maxLength), textX, currentY + cellHeight / 2 + 2);
-            colX += colWidth;
-          });
-
-          currentY += cellHeight;
+          const bgColor = isEvenRow ? '#ffffff' : '#fafafa';
+          drawRow(row, bgColor, false, false);
         });
 
         // ===== TOTAUX =====
         const drawTotalRow = (label, value, bgColor, isFinal = false) => {
+          // Fond
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
 
+          // Barre latérale
+          if (showBorders) {
+            ctx.fillStyle = borderColor;
+            ctx.fillRect(tableX, currentY, sideBarWidth, totalHeight);
+          }
+
+          // Bordures verticales des colonnes
+          ctx.font = isFinal ? 'bold 11px Arial' : '10px Arial';
+          ctx.fillStyle = textColor;
+
+          let colX = tableX + sideBarWidth;
+          activeColumns.forEach((col, colIdx) => {
+            if (showBorders && colIdx < activeColumns.length - 1) {
+              ctx.strokeStyle = borderColor;
+              ctx.lineWidth = lineWidth;
+              ctx.beginPath();
+              ctx.moveTo(colX + columnWidths[colIdx], currentY);
+              ctx.lineTo(colX + columnWidths[colIdx], currentY + totalHeight);
+              ctx.stroke();
+            }
+            colX += columnWidths[colIdx];
+          });
+
+          // Texte (label à gauche, value à droite)
+          ctx.textAlign = 'left';
+          ctx.fillText(label, tableX + sideBarWidth + cellPaddingH, currentY + totalHeight / 2 + 3);
+          ctx.textAlign = 'right';
+          ctx.fillText(value, tableX + tableWidth - cellPaddingH, currentY + totalHeight / 2 + 3);
+
+          // Bordure du bas
           if (showBorders) {
             ctx.strokeStyle = borderColor;
-            ctx.lineWidth = isFinal ? 2 : 0.5;
+            ctx.lineWidth = isFinal ? 2 : lineWidth;
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + totalHeight);
             ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
             ctx.stroke();
           }
-
-          ctx.fillStyle = textColor;
-          ctx.font = isFinal ? 'bold 10px Arial' : '9px Arial';
-          ctx.textAlign = 'left';
-          ctx.fillText(label, tableX + padding, currentY + totalHeight / 2 + 2);
-          ctx.textAlign = 'right';
-          ctx.fillText(value, tableX + tableWidth - padding, currentY + totalHeight / 2 + 2);
 
           currentY += totalHeight;
         };
