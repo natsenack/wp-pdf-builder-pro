@@ -721,7 +721,7 @@ export const CanvasElement = ({
       case 'rectangle':
         return {
           backgroundColor: element.backgroundColor || 'transparent',
-          borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
         };
 
       case 'image':
@@ -746,7 +746,8 @@ export const CanvasElement = ({
         return {
           borderTop: `${element.lineWidth || element.strokeWidth || 1}px solid ${element.lineColor || element.strokeColor || '#6b7280'}`,
           height: `${Math.max(element.lineWidth || element.strokeWidth || 1, 12)}px`, // Hauteur augmentée à 12px minimum pour faciliter le clic
-          width: '100%',
+          left: 0, // Les lignes s'étendent toujours sur toute la largeur du canvas
+          width: `${canvasWidth}px`,
           cursor: 'pointer',
           backgroundColor: 'transparent' // S'assurer qu'il n'y a pas de fond qui cache
         };
@@ -902,13 +903,15 @@ export const CanvasElement = ({
     ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
       // Styles de base communs à tous les éléments non-spéciaux
       backgroundColor: element.backgroundOpacity && element.backgroundColor && element.backgroundColor !== 'transparent' ?
-        element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') :
+        (element.backgroundColor.startsWith('#') ? 
+          element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') :
+          element.backgroundColor) :
         (element.backgroundColor || 'transparent'),
       border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
     }),
     borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
     opacity: (element.opacity || 100) / 100,
-    transform: `${dragAndDrop.draggedElementId === element.id ? `translate(${dragAndDrop.dragOffset.x * zoom}px, ${dragAndDrop.dragOffset.y * zoom}px) ` : ''}rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
+    transform: `${dragAndDrop.draggedElementId === element.id && dragAndDrop.dragOffset ? `translate(${dragAndDrop.dragOffset.x * zoom}px, ${dragAndDrop.dragOffset.y * zoom}px) ` : ''}rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
     filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
     boxShadow: element.boxShadowColor ?
       `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` :
@@ -922,7 +925,7 @@ export const CanvasElement = ({
     element.opacity, element.brightness, element.contrast, element.saturate,
     element.boxShadowColor, element.boxShadowSpread, element.boxShadowBlur, element.shadow, element.shadowOffsetX, element.shadowOffsetY, element.shadowColor,
     element.color, element.fontSize, element.fontFamily, element.fontWeight, element.fontStyle, element.textAlign, element.textDecoration, element.lineHeight,
-    element.type, elementPadding, zoom, isSelected, dragAndDrop.isDragging, dragAndDrop.draggedElementId, dragAndDrop.dragOffset
+    element.type, element.padding, zoom, isSelected, dragAndDrop.isDragging, dragAndDrop.draggedElementId, dragAndDrop.dragOffset
   ]);
 
   return (
@@ -1674,7 +1677,7 @@ export const CanvasElement = ({
                     maxWidth: element.autoResize ? `${element.width || 150}px` : 'none',
                     maxHeight: element.autoResize ? `${element.height || 80}px` : 'none',
                     objectFit: element.fit || 'contain',
-                    borderRadius: element.borderRadius || 0,
+                    borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0',
                     border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none')
                   }}
                   onLoad={(e) => {
@@ -1716,7 +1719,7 @@ export const CanvasElement = ({
                   height: `${element.height || 80}px`,
                   backgroundColor: '#fee2e2',
                   border: '2px solid #fca5a5',
-                  borderRadius: element.borderRadius || '4px',
+                  borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -1739,7 +1742,7 @@ export const CanvasElement = ({
                   height: `${element.height || 80}px`,
                   backgroundColor: '#f5f5f5',
                   border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none'),
-                  borderRadius: element.borderRadius || '4px',
+                  borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
