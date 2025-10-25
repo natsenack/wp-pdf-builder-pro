@@ -217,9 +217,9 @@ class PDF_Builder_Core
             // Différer le chargement du script principal (lourd)
             wp_enqueue_script(
                 'pdf-builder-admin-core',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid(),
                 array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
+                PDF_BUILDER_PRO_VERSION . '_force_' . microtime(true),
                 true // Garder en footer mais avec defer logique
             );
 
