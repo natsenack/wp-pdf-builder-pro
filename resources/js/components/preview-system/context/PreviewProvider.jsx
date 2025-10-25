@@ -1,5 +1,5 @@
 import React, { useReducer, useCallback, useMemo } from 'react';
-import { PreviewContext, previewReducer, initialState, PREVIEW_ACTIONS } from './PreviewContext';
+import { PreviewContext, previewReducer, initialState, PREVIEW_ACTIONS } from './PreviewContext.jsx';
 
 /**
  * Preview Provider - Fournisseur d'état global pour le système d'aperçu

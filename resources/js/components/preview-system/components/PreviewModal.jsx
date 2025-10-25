@@ -1,13 +1,13 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { usePreviewContext } from '../context/PreviewContext';
-import ModalSkeleton from './ModalSkeleton';
-import NavigationControls from '../NavigationControls';
+import { usePreviewContext } from '../context/PreviewContext.jsx';
+import ModalSkeleton from './ModalSkeleton.jsx';
+import NavigationControls from '../NavigationControls.jsx';
 
 // Lazy loading des modes pour optimisation performance
 // CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
-const CanvasMode = lazy(() => import('../modes/CanvasMode'));
+const CanvasMode = lazy(() => import('../modes/CanvasMode.jsx'));
 // Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
-const MetaboxMode = lazy(() => import('../MetaboxMode'));
+const MetaboxMode = lazy(() => import('../MetaboxMode.jsx'));
 
 /**
  * PreviewModal - Composant principal du système d'aperçu modal

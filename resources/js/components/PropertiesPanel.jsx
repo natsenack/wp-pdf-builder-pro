@@ -1,21 +1,21 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 // Import styles for the accordion component so webpack bundles them
 import '../../scss/styles/Accordion.css';
-import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants';
-import Accordion from './PropertiesPanel/Accordion';
-import ColorPicker from './PropertiesPanel/ColorPicker';
-import FontControls from './PropertiesPanel/FontControls';
-import { shouldShowSection, safeParseFloat, safeParseInt, getSmartPropertyOrder } from './PropertiesPanel/utils/helpers';
-import renderColorsSection from './PropertiesPanel/sections/ColorsSection';
-import renderTypographySection from './PropertiesPanel/sections/TypographySection';
-import renderFontSection from './PropertiesPanel/sections/FontSection';
-import renderBordersSection from './PropertiesPanel/sections/BordersSection';
-import renderLayoutSection from './PropertiesPanel/sections/LayoutSection';
-import renderContentSection from './PropertiesPanel/sections/ContentSection';
-import renderTableAppearanceSection from './PropertiesPanel/sections/TableAppearanceSection';
-import { useElementCustomization } from '../hooks/useElementCustomization';
-import { useElementSynchronization } from '../hooks/useElementSynchronization';
-import { elementCustomizationService } from '../services/ElementCustomizationService';
+import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';
+import Accordion from './PropertiesPanel/Accordion.jsx';
+import ColorPicker from './PropertiesPanel/ColorPicker.jsx';
+import FontControls from './PropertiesPanel/FontControls.jsx';
+import { shouldShowSection, safeParseFloat, safeParseInt, getSmartPropertyOrder } from './PropertiesPanel/utils/helpers.js';
+import renderColorsSection from './PropertiesPanel/sections/ColorsSection.jsx';
+import renderTypographySection from './PropertiesPanel/sections/TypographySection.jsx';
+import renderFontSection from './PropertiesPanel/sections/FontSection.jsx';
+import renderBordersSection from './PropertiesPanel/sections/BordersSection.jsx';
+import renderLayoutSection from './PropertiesPanel/sections/LayoutSection.jsx';
+import renderContentSection from './PropertiesPanel/sections/ContentSection.jsx';
+import renderTableAppearanceSection from './PropertiesPanel/sections/TableAppearanceSection.jsx';
+import { useElementCustomization } from '../hooks/useElementCustomization.js';
+import { useElementSynchronization } from '../hooks/useElementSynchronization.js';
+import { elementCustomizationService } from '../services/ElementCustomizationService.js';
 
 // TEMPLATE_PRESETS moved to ./PropertiesPanel/utils/constants.js
 // ELEMENT_PROPERTY_PROFILES moved to ./PropertiesPanel/utils/constants.js
