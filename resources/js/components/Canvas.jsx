@@ -582,7 +582,7 @@ const Canvas = ({
     const { x, y } = getMouseCoordinates(e);
     const clickedElement = findElementAtPosition(x, y);
 
-    if (onContextMenu && clickedElement?.id) {
+    if (onContextMenu && clickedElement && clickedElement.id) {
       onContextMenu(e, clickedElement.id);
     }
   }, [getMouseCoordinates, findElementAtPosition, onContextMenu]);

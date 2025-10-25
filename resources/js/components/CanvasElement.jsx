@@ -1057,7 +1057,7 @@ export const CanvasElement = ({
           const getLastVisibleColumn = () => {
             const columns = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
             for (let i = columns.length - 1; i >= 0; i--) {
-              if (element.columns?.[columns[i]] !== false) {
+              if (element.columns && element.columns[columns[i]] !== false) {
                 return columns[i];
               }
             }
@@ -1099,7 +1099,7 @@ export const CanvasElement = ({
                   textTransform: 'uppercase',
                   letterSpacing: '0.025em'
                 }}>
-                {(element.columns?.image !== false) && (
+                {(element.columns && element.columns.image !== false) && (
                   <div key="header-image" style={{
                     flex: '0 0 40px',
                     padding: `${8 * zoom}px ${6 * zoom}px`,
@@ -1111,7 +1111,7 @@ export const CanvasElement = ({
                     Img
                   </div>
                 )}
-                {(element.columns?.name !== false) && (
+                {(element.columns && element.columns.name !== false) && (
                   <div key="header-name" style={{
                     flex: 1,
                     padding: `${8 * zoom}px ${10 * zoom}px`,
@@ -1122,7 +1122,7 @@ export const CanvasElement = ({
                     Produit
                   </div>
                 )}
-                {(element.columns?.sku !== false) && (
+                {(element.columns && element.columns.sku !== false) && (
                   <div key="header-sku" style={{
                     flex: '0 0 80px',
                     padding: `${8 * zoom}px ${10 * zoom}px`,
@@ -1133,7 +1133,7 @@ export const CanvasElement = ({
                     SKU
                   </div>
                 )}
-                {(element.columns?.quantity !== false) && (
+                {(element.columns && element.columns.quantity !== false) && (
                   <div key="header-quantity" style={{
                     flex: '0 0 40px',
                     padding: `${8 * zoom}px ${10 * zoom}px`,
@@ -1144,7 +1144,7 @@ export const CanvasElement = ({
                     Qté
                   </div>
                 )}
-                {(element.columns?.price !== false) && (
+                {(element.columns && element.columns.price !== false) && (
                   <div key="header-price" style={{
                     flex: '0 0 80px',
                     padding: `${8 * zoom}px ${10 * zoom}px`,
@@ -1155,7 +1155,7 @@ export const CanvasElement = ({
                     Prix
                   </div>
                 )}
-                {(element.columns?.total !== false) && (
+                {(element.columns && element.columns.total !== false) && (
                   <div key="header-total" style={{
                     flex: '0 0 80px',
                     padding: `${6 * zoom}px ${8 * zoom}px`,
@@ -1183,7 +1183,7 @@ export const CanvasElement = ({
                   fontSize: `${tableStyles.rowFontSize * zoom}px`,
                   transition: 'background-color 0.15s ease'
                 }}>
-                  {(element.columns?.image !== false) && (
+                  {(element.columns && element.columns.image !== false) && (
                     <div style={{
                       flex: '0 0 40px',
                       padding: `${7 * zoom}px ${6 * zoom}px`,
@@ -1196,7 +1196,7 @@ export const CanvasElement = ({
                       📷
                     </div>
                   )}
-                  {(element.columns?.name !== false) && (
+                  {(element.columns && element.columns.name !== false) && (
                     <div style={{
                       flex: 1,
                       padding: `${7 * zoom}px ${10 * zoom}px`,
@@ -1208,7 +1208,7 @@ export const CanvasElement = ({
                       {product.name}
                     </div>
                   )}
-                  {(element.columns?.sku !== false) && (
+                  {(element.columns && element.columns.sku !== false) && (
                     <div style={{
                       flex: '0 0 80px',
                       padding: `${7 * zoom}px ${10 * zoom}px`,
@@ -1221,7 +1221,7 @@ export const CanvasElement = ({
                       {product.sku}
                     </div>
                   )}
-                  {(element.columns?.quantity !== false) && (
+                  {(element.columns && element.columns.quantity !== false) && (
                     <div style={{
                       flex: '0 0 40px',
                       padding: `${7 * zoom}px ${10 * zoom}px`,
@@ -1233,7 +1233,7 @@ export const CanvasElement = ({
                       {product.quantity}
                     </div>
                   )}
-                  {(element.columns?.price !== false) && (
+                  {(element.columns && element.columns.price !== false) && (
                     <div style={{
                       flex: '0 0 80px',
                       padding: `${7 * zoom}px ${10 * zoom}px`,
@@ -1246,7 +1246,7 @@ export const CanvasElement = ({
                       {product.price.toFixed(2)}€
                     </div>
                   )}
-                  {(element.columns?.total !== false) && (
+                  {(element.columns && element.columns.total !== false) && (
                     <div style={{
                       flex: '0 0 80px',
                       padding: `${7 * zoom}px ${10 * zoom}px`,
@@ -1274,12 +1274,12 @@ export const CanvasElement = ({
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
-                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Sous-total:</div>}
-                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{subtotal.toFixed(2)}€</div>}
+                    {(element.columns && element.columns.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Sous-total:</div>}
+                    {(element.columns && element.columns.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{subtotal.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showShipping && (
@@ -1290,12 +1290,12 @@ export const CanvasElement = ({
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
-                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Port:</div>}
-                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{shipping.toFixed(2)}€</div>}
+                    {(element.columns && element.columns.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Port:</div>}
+                    {(element.columns && element.columns.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{shipping.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showTaxes && (
@@ -1306,12 +1306,12 @@ export const CanvasElement = ({
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
-                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TVA:</div>}
-                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{tax.toFixed(2)}€</div>}
+                    {(element.columns && element.columns.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TVA:</div>}
+                    {(element.columns && element.columns.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{tax.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showDiscount && (
@@ -1322,12 +1322,12 @@ export const CanvasElement = ({
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
-                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Remise:</div>}
-                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{Math.abs(discount).toFixed(2)}€</div>}
+                    {(element.columns && element.columns.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Remise:</div>}
+                    {(element.columns && element.columns.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{Math.abs(discount).toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showTotal && (
@@ -1340,12 +1340,12 @@ export const CanvasElement = ({
                     boxShadow: tableStyles.shadowBlur > 0 ? `0 2px ${tableStyles.shadowBlur}px ${tableStyles.shadowColor}` : 'none'
                   }}>
                     {/* Colonnes vides pour l'alignement */}
-                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TOTAL:</div>}
-                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
-                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
-                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{total.toFixed(2)}€</div>}
+                    {(element.columns && element.columns.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TOTAL:</div>}
+                    {(element.columns && element.columns.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns && element.columns.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns && element.columns.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{total.toFixed(2)}€</div>}
                   </div>
                 )}
               </div>

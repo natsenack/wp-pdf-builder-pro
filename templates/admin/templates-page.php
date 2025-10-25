@@ -319,7 +319,7 @@ function saveTemplateSettings() {
             // Erreur
             saveButton.innerHTML = '❌ Erreur';
             saveButton.style.background = '#dc3545';
-            alert('Erreur lors de la sauvegarde: ' + (response.data?.message || 'Erreur inconnue'));
+            alert('Erreur lors de la sauvegarde: ' + ((response.data && response.data.message) || 'Erreur inconnue'));
 
             // Remettre le bouton normal après un délai
             setTimeout(() => {
@@ -367,7 +367,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
     const currentIcon = Array.from(document.querySelectorAll('.default-template-icon')).find(icon =>
         icon.onclick && icon.onclick.toString().includes(`toggleDefaultTemplate(${templateId}`)
     );
-    const isCurrentlyDefault = currentIcon?.style.opacity === '1';
+    const isCurrentlyDefault = currentIcon && currentIcon.style.opacity === '1';
 
     // Current icon found
 
@@ -423,7 +423,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
                 currentIcon.title = 'Définir comme template par défaut';
                 currentIcon.style.pointerEvents = 'auto';
             }
-            showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
+            showErrorMessage((response.data && response.data.message) || 'Erreur lors de la modification du statut par défaut');
         }
     }).fail(function(xhr, status, error) {
         // AJAX failed
