@@ -408,6 +408,13 @@ window.addEventListener('load', function() {
                 // Special handling for Canvas tab - initialize sub-tabs
                 if (tabContents[i].id === 'canvas') {
                     initializeCanvasSubTabs();
+                    // Scroll to top of canvas section to make sub-tabs visible
+                    setTimeout(function() {
+                        var canvasElement = document.getElementById('canvas');
+                        if (canvasElement) {
+                            canvasElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100);
                 }
             } else {
                 // This is not the target - hide it
@@ -429,12 +436,15 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
+        console.log('Initializing Canvas sub-tabs...');
+
         // Always attach click handlers for canvas sub-tabs, even if already initialized
         attachCanvasSubTabHandlers();
 
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
+            console.log('Canvas sub-tabs already initialized');
             return; // Already initialized, but handlers are attached
         }
 
@@ -454,23 +464,29 @@ window.addEventListener('load', function() {
         var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
         if (firstSubTabContent) {
             firstSubTabContent.classList.add('sub-tab-active');
+            console.log('Activated first sub-tab content:', firstSubTabContent.id);
         }
 
         // Activate first sub-nav tab
         var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
         if (firstSubNavTab) {
             firstSubNavTab.classList.add('sub-nav-tab-active');
+            console.log('Activated first sub-nav tab:', firstSubNavTab.textContent);
         }
+
+        console.log('Canvas sub-tabs initialization complete');
     }
 
     // Function to attach click handlers for canvas sub-tabs
     function attachCanvasSubTabHandlers() {
         var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        console.log('Attaching click handlers to', subNavTabs.length, 'sub-nav tabs');
 
         for (var i = 0; i < subNavTabs.length; i++) {
             // Remove existing listeners to avoid duplicates
             subNavTabs[i].removeEventListener('click', handleSubTabClick);
             subNavTabs[i].addEventListener('click', handleSubTabClick);
+            console.log('Attached handler to sub-nav tab:', subNavTabs[i].textContent);
         }
     }
 
@@ -478,6 +494,7 @@ window.addEventListener('load', function() {
     function handleSubTabClick(e) {
         e.preventDefault();
         var targetId = this.getAttribute('href');
+        console.log('Sub-tab clicked:', this.textContent, 'Target:', targetId);
 
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
@@ -495,10 +512,14 @@ window.addEventListener('load', function() {
         var targetContent = document.querySelector(targetId);
         if (targetContent) {
             targetContent.classList.add('sub-tab-active');
+            console.log('Activated sub-tab content:', targetId);
+        } else {
+            console.log('Target content not found:', targetId);
         }
 
         // Add active class to clicked sub-nav tab
         this.classList.add('sub-nav-tab-active');
+        console.log('Activated sub-nav tab:', this.textContent);
     }
     
     // Attach click handlers when DOM is ready
@@ -1156,7 +1177,7 @@ window.addEventListener('load', function() {
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
                 <!-- Sous-onglets pour l'organisation -->
-                <div class="sub-nav-tab-wrapper">
+                <div class="sub-nav-tab-wrapper" style="position: sticky; top: 32px; z-index: 10;">
                     <a href="#canvas-general" class="sub-nav-tab sub-nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
                     <a href="#canvas-grid" class="sub-nav-tab"><?php _e('Grille & Aimants', 'pdf-builder-pro'); ?></a>
                     <a href="#canvas-zoom" class="sub-nav-tab"><?php _e('Zoom & Navigation', 'pdf-builder-pro'); ?></a>
@@ -2545,38 +2566,70 @@ echo '<style>
     border-color: #b32d2e;
 }
 
-/* Styles for sub-tabs in Canvas tab */
+/* Styles for sub-tabs in Canvas tab - ULTRA VISIBLE VERSION */
 .sub-nav-tab-wrapper {
-    margin: 20px 0 30px 0;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+    margin: 30px 0 40px 0;
+    border-bottom: 3px solid #007cba;
+    padding-bottom: 15px;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 123, 186, 0.15);
+    border: 2px solid #007cba;
 }
 
 .sub-nav-tab {
     display: inline-block;
-    padding: 6px 12px;
-    margin-right: 4px;
-    background: #f7f7f7;
-    color: #666;
+    padding: 15px 25px;
+    margin-right: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    color: #007cba;
     text-decoration: none;
-    border: 1px solid #ddd;
+    border: 3px solid #007cba;
     border-bottom: none;
-    border-radius: 4px 4px 0 0;
+    border-radius: 12px 12px 0 0;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: relative;
+    box-shadow: 0 3px 8px rgba(0, 123, 186, 0.25);
+    min-width: 140px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .sub-nav-tab:hover {
-    background: #e9e9e9;
-    color: #333;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #005a87;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 123, 186, 0.4);
+    border-color: #005a87;
 }
 
 .sub-nav-tab-active {
-    background: #fff !important;
-    border-bottom: 1px solid #fff !important;
-    color: #000 !important;
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
+    border-bottom: 3px solid #ffffff !important;
+    color: #ffffff !important;
     position: relative;
     top: 1px;
+    box-shadow: 0 6px 24px rgba(0, 123, 186, 0.5);
+    transform: translateY(-2px) scale(1.05);
+    border-color: #005a87 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sub-nav-tab-active::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .sub-tab-content {
