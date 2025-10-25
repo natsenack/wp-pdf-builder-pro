@@ -5,7 +5,9 @@ import { CanvasElement } from './CanvasElement.jsx';
 export const PDFCanvasEditor = ({
   options = {}
 }) => {
-  const [elements, setElements] = useState(options.initialElements || []);
+  // initialElements is an object with { elements: [...], settings: {...} }
+  const initialElements = Array.isArray(options.initialElements?.elements) ? options.initialElements.elements : [];
+  const [elements, setElements] = useState(initialElements);
   const [selectedElement, setSelectedElement] = useState(null);
   const [selectedTool, setSelectedTool] = useState('select');
   const [zoom, setZoom] = useState(1);
