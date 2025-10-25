@@ -41,6 +41,19 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         lineHeight: 1.2,
         letterSpacing: 0,
         tableStyle: 'default',
+        // Propriétés spécifiques aux tableaux produits
+        columns: 'name,price,quantity',
+        showHeaders: true,
+        showBorders: true,
+        showSubtotal: true,
+        showShipping: true,
+        showTaxes: true,
+        showDiscount: false,
+        showTotal: true,
+        evenRowBg: '#ffffff',
+        evenRowTextColor: '#000000',
+        oddRowBg: '#f8fafc',
+        oddRowTextColor: '#000000',
       };
 
       // Appliquer les restrictions selon le type d'élément
