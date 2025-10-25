@@ -412,27 +412,13 @@ body.wp-admin .pdf-builder-container {
             var testPanel = document.createElement('div');
             testPanel.id = 'adaptive-test-panel';
             testPanel.innerHTML =
-                '<div style="' +
-                    'position: fixed;' +
-                    'top: 20px;' +
-                    'right: 20px;' +
-                    'background: #1f2937;' +
-                    'color: white;' +
-                    'padding: 15px;' +
-                    'border-radius: 8px;' +
-                    'box-shadow: 0 10px 25px rgba(0,0,0,0.3);' +
-                    'z-index: 10000;' +
-                    'font-family: monospace;' +
-                    'font-size: 12px;' +
-                    'min-width: 200px;' +
-                '">' +
+                '<div style="position: fixed; top: 20px; right: 20px; background: #1f2937; color: white; padding: 15px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 10000; font-family: monospace; font-size: 12px; min-width: 200px;">' +
                     '<h4 style="margin: 0 0 10px 0; color: #60a5fa;">🧪 Test Layout Adaptatif</h4>' +
                     '<div style="margin-bottom: 10px;">' +
                         '<label>Largeur sidebar: <span id="sidebar-width">auto</span>px</label>' +
                     '</div>' +
                     '<div style="margin-bottom: 10px;">' +
-                        '<input type="range" id="width-slider" min="200" max="600" value="350" step="10" ' +
-                               'style="width: 100%; margin: 5px 0;">' +
+                        '<input type="range" id="width-slider" min="200" max="600" value="350" step="10" style="width: 100%; margin: 5px 0;">' +
                     '</div>' +
                     '<div style="display: flex; gap: 5px;">' +
                         '<button id="btn-narrow" style="flex: 1; padding: 5px; background: #dc2626; border: none; border-radius: 4px; color: white; cursor: pointer;">Étroit</button>' +
