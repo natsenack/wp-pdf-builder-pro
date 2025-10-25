@@ -702,24 +702,28 @@
 
 .ribbon-toolbar .display-options {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .ribbon-toolbar .toggle-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   color: #495057;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .ribbon-toolbar .toggle-label input[type="checkbox"] {
   margin: 0;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
 }
 
 .ribbon-toolbar .toggle-text {
@@ -728,8 +732,9 @@
 
 .ribbon-toolbar .toggle-shortcut {
   color: #6c757d;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 400;
+  display: none;
 }
 
 /* États désactivés - Paramètres backend */
