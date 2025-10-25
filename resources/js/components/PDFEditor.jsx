@@ -325,16 +325,28 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         elementsData = initialElements.elements;
       }
 
+      if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+        console.log('🔄 PDFEditor useEffect - Updating elements:', {
+          initialElementsType: typeof initialElements,
+          isArray: Array.isArray(initialElements),
+          hasElements: initialElements && typeof initialElements === 'object' && initialElements.elements ? true : false,
+          elementsDataLength: elementsData ? elementsData.length : 0,
+          elementsData: elementsData
+        });
+      }
+
       if (elementsData && elementsData.length > 0) {
         const repairedElements = repairProductTableProperties(elementsData);
         setElements(repairedElements);
         setHistory([repairedElements]);
         setHistoryIndex(0);
-      } else {
+      } else if (Array.isArray(elementsData) && elementsData.length === 0) {
+        // Seulement vider si c'est un array vide explicite
         setElements([]);
         setHistory([[]]);
         setHistoryIndex(0);
       }
+      // Sinon ne rien faire pour ne pas perdre les éléments existants
     }
   }, [initialElements]);
 
