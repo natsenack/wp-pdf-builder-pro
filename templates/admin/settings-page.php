@@ -429,20 +429,27 @@ window.addEventListener('load', function() {
     
     // Function to initialize Canvas sub-tabs
     function initializeCanvasSubTabs() {
+        console.log('Initializing Canvas sub-tabs...');
+
         // Check if already initialized
         var activeSubTab = document.querySelector('#canvas .sub-nav-tab-active');
         if (activeSubTab) {
+            console.log('Canvas sub-tabs already initialized');
             return; // Already initialized
         }
 
+        console.log('Setting up Canvas sub-tabs...');
+
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
+        console.log('Found', canvasSubTabContents.length, 'canvas sub-tab contents');
         for (var j = 0; j < canvasSubTabContents.length; j++) {
             canvasSubTabContents[j].classList.remove('sub-tab-active');
         }
 
         // Remove active class from all canvas sub-nav tabs
         var canvasSubNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
+        console.log('Found', canvasSubNavTabs.length, 'canvas sub-nav tabs');
         for (var j = 0; j < canvasSubNavTabs.length; j++) {
             canvasSubNavTabs[j].classList.remove('sub-nav-tab-active');
         }
@@ -450,13 +457,19 @@ window.addEventListener('load', function() {
         // Show first sub-tab content
         var firstSubTabContent = document.querySelector('#canvas .sub-tab-content');
         if (firstSubTabContent) {
+            console.log('Activating first sub-tab content:', firstSubTabContent.id);
             firstSubTabContent.classList.add('sub-tab-active');
+        } else {
+            console.log('No first sub-tab content found');
         }
 
         // Activate first sub-nav tab
         var firstSubNavTab = document.querySelector('#canvas .sub-nav-tab');
         if (firstSubNavTab) {
+            console.log('Activating first sub-nav tab:', firstSubNavTab.textContent);
             firstSubNavTab.classList.add('sub-nav-tab-active');
+        } else {
+            console.log('No first sub-nav tab found');
         }
 
         // Attach click handlers for canvas sub-tabs
@@ -477,6 +490,7 @@ window.addEventListener('load', function() {
     function handleSubTabClick(e) {
         e.preventDefault();
         var targetId = this.getAttribute('href');
+        console.log('Sub-tab clicked:', this.textContent, 'target:', targetId);
 
         // Hide all canvas sub-tab contents
         var canvasSubTabContents = document.querySelectorAll('#canvas .sub-tab-content');
@@ -493,7 +507,10 @@ window.addEventListener('load', function() {
         // Show target sub-tab content
         var targetContent = document.querySelector(targetId);
         if (targetContent) {
+            console.log('Activating target content:', targetId);
             targetContent.classList.add('sub-tab-active');
+        } else {
+            console.log('Target content not found:', targetId);
         }
 
         // Add active class to clicked sub-nav tab
