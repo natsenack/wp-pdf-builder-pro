@@ -2516,14 +2516,47 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // Utiliser SampleDataProvider pour des données cohérentes
           const sampleDataProvider = new SampleDataProvider();
 
-          // Configuration simple des colonnes
-          const columnsConfig = element.columns || {
-            name: true,
-            quantity: true,
-            price: true,
-            total: true
-          };
+          // Configuration des colonnes avec gestion d'erreurs
+          let columnsConfig = {};
+          try {
+            if (element.columns) {
+              if (typeof element.columns === 'string') {
+                // Format PropertiesPanel: "name,price,quantity"
+                const columnList = element.columns.split(',').map(col => col.trim());
+                const columnMapping = {
+                  'image': 'image',
+                  'name': 'name',
+                  'sku': 'sku',
+                  'quantity': 'quantity',
+                  'price': 'price',
+                  'total': 'total',
+                  'description': 'description',
+                  'short_description': 'short_description',
+                  'categories': 'categories',
+                  'regular_price': 'regular_price',
+                  'sale_price': 'sale_price',
+                  'discount': 'discount',
+                  'tax': 'tax',
+                  'weight': 'weight',
+                  'dimensions': 'dimensions',
+                  'attributes': 'attributes',
+                  'stock_quantity': 'stock_quantity',
+                  'stock_status': 'stock_status'
+                };
+                columnList.forEach(col => {
+                  const key = columnMapping[col] || col;
+                  columnsConfig[key] = true;
+                });
+              } else if (typeof element.columns === 'object') {
+                columnsConfig = { ...element.columns };
+              }
+            }
+          } catch (colError) {
+            console.warn('Erreur lors du traitement des colonnes:', colError);
+            columnsConfig = { name: true, quantity: true, price: true, total: true };
+          }
 
+          // Générer les données du tableau
           const tableData = sampleDataProvider.generateProductTableData({
             columns: columnsConfig,
             showSubtotal: element.showSubtotal ?? false,
@@ -2536,8 +2569,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           const tableX = element.x || 10;
           const tableY = element.y || 10;
-          const tableWidth = element.width || 500;
-          const tableHeight = element.height || 200;
+          const tableWidth = Math.max(200, element.width || 500);
+          const tableHeight = Math.max(100, element.height || 200);
 
           // Fond du tableau
           ctx.fillStyle = element.backgroundColor || '#f8f9fa';
@@ -2554,45 +2587,72 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.textAlign = 'left';
           ctx.fillText('TABLEAU DE PRODUITS', tableX + 10, tableY + 25);
 
-          // En-têtes des colonnes
-          ctx.font = 'bold 12px Arial';
-          ctx.fillStyle = '#666666';
-          const headers = tableData.headers;
-          const colWidth = tableWidth / headers.length;
-
-          headers.forEach((header, index) => {
-            const colX = tableX + (index * colWidth) + 10;
-            ctx.fillText(header, colX, tableY + 45);
-          });
-
-          // Lignes de données
-          ctx.font = '12px Arial';
-          ctx.fillStyle = '#333333';
-
-          tableData.rows.slice(0, 3).forEach((row, rowIndex) => {
-            const rowY = tableY + 65 + (rowIndex * 20);
-            row.forEach((cell, colIndex) => {
-              const colX = tableX + (colIndex * colWidth) + 10;
-              const displayText = cell !== undefined && cell !== null ? cell.toString() : '';
-              ctx.fillText(displayText, colX, rowY);
-            });
-          });
-
-          // Totaux
-          if (Object.keys(tableData.totals).length > 0) {
+          // Vérifier que nous avons des données valides
+          if (tableData && tableData.headers && tableData.rows) {
+            // En-têtes des colonnes
             ctx.font = 'bold 12px Arial';
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = '#666666';
+            const headers = tableData.headers;
+            const colWidth = Math.max(50, tableWidth / Math.max(1, headers.length));
 
-            let totalY = tableY + tableHeight - 40;
-            Object.entries(tableData.totals).forEach(([key, value]) => {
-              const label = key === 'total' ? 'TOTAL' :
-                           key === 'subtotal' ? 'Sous-total' :
-                           key === 'shipping' ? 'Livraison' :
-                           key === 'tax' ? 'TVA' :
-                           key === 'discount' ? 'Remise' : key;
-              ctx.fillText(`${label}: ${value}`, tableX + 10, totalY);
-              totalY += 15;
+            headers.forEach((header, index) => {
+              try {
+                const colX = tableX + (index * colWidth) + 10;
+                const truncatedHeader = header && header.length > 10 ? header.substring(0, 10) + '...' : header;
+                ctx.fillText(truncatedHeader || '', colX, tableY + 45);
+              } catch (headerError) {
+                console.warn('Erreur lors du rendu de l\'en-tête:', headerError);
+              }
             });
+
+            // Lignes de données (limiter à 3 pour éviter le débordement)
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#333333';
+
+            const maxRows = Math.min(3, tableData.rows.length);
+            for (let rowIndex = 0; rowIndex < maxRows; rowIndex++) {
+              const row = tableData.rows[rowIndex];
+              if (Array.isArray(row)) {
+                const rowY = tableY + 65 + (rowIndex * 20);
+                row.forEach((cell, colIndex) => {
+                  try {
+                    const colX = tableX + (colIndex * colWidth) + 10;
+                    const displayText = cell !== undefined && cell !== null ? cell.toString() : '';
+                    const truncatedText = displayText.length > 15 ? displayText.substring(0, 15) + '...' : displayText;
+                    ctx.fillText(truncatedText, colX, rowY);
+                  } catch (cellError) {
+                    console.warn('Erreur lors du rendu de la cellule:', cellError);
+                  }
+                });
+              }
+            }
+
+            // Totaux
+            if (tableData.totals && Object.keys(tableData.totals).length > 0) {
+              ctx.font = 'bold 12px Arial';
+              ctx.fillStyle = '#000000';
+
+              let totalY = tableY + tableHeight - 40;
+              Object.entries(tableData.totals).forEach(([key, value]) => {
+                try {
+                  const label = key === 'total' ? 'TOTAL' :
+                               key === 'subtotal' ? 'Sous-total' :
+                               key === 'shipping' ? 'Livraison' :
+                               key === 'tax' ? 'TVA' :
+                               key === 'discount' ? 'Remise' : key;
+                  const displayValue = value !== undefined && value !== null ? value.toString() : '0';
+                  ctx.fillText(`${label}: ${displayValue}`, tableX + 10, totalY);
+                  totalY += 15;
+                } catch (totalError) {
+                  console.warn('Erreur lors du rendu du total:', totalError);
+                }
+              });
+            }
+          } else {
+            // Message si pas de données
+            ctx.fillStyle = '#666666';
+            ctx.font = '12px Arial';
+            ctx.fillText('Aucune donnée disponible', tableX + 10, tableY + tableHeight / 2);
           }
 
           // Restaurer l'état Canvas
