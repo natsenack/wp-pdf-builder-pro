@@ -2441,12 +2441,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
         
-        // Dimensions optimisées pour une meilleure lisibilité
+        // Dimensions optimisées pour une meilleure lisibilité (lignes réduites)
         const padding = 12;     // padding horizontal augmenté
         const paddingV = 10;    // padding vertical augmenté
         const headerHeight = 22 + paddingV * 2;  // 42px - header plus haut
-        const rowHeight = 18 + paddingV * 2;     // 38px - lignes plus hautes
-        const totalRowHeight = 20 + paddingV * 2; // 40px - totaux plus hauts
+        const rowHeight = 14 + paddingV * 2;     // 34px - lignes de produits réduites
+        const totalRowHeight = 16 + paddingV * 2; // 36px - totaux intermédiaires réduits
+        const finalTotalRowHeight = 20 + paddingV * 2; // 40px - TOTAL final garde la taille originale
         const colGap = 15;      // gap entre colonnes augmenté
         const sideBarWidth = 4; // border-left 4px
         
@@ -2670,7 +2671,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Calculer la hauteur totale du tableau pour la bordure extérieure (maintenant que totals est défini)
         const totalRows = rows.length + (totals.length + (element.showTotal ? 1 : 0)) + 1; // +1 pour le header
-        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * (totals.length + (element.showTotal ? 1 : 0)));
+        const tableHeight = headerHeight + (rowHeight * rows.length) + (totalRowHeight * totals.length) + (element.showTotal ? finalTotalRowHeight : 0);
 
         // Bordure extérieure (optionnelle)
         if (showTableBorder) {
@@ -2681,14 +2682,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Helper pour dessiner une rangée de total
         const drawTotalRow = (label, value, bgColor, isBold = false, isFinal = false) => {
+          const currentRowHeight = isFinal ? finalTotalRowHeight : totalRowHeight;
+          
           // Fond
           ctx.fillStyle = bgColor;
-          ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
+          ctx.fillRect(tableX, currentY, tableWidth, currentRowHeight);
 
           // Barre latérale
           if (showBorders) {
             ctx.fillStyle = primaryColor;
-            ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
+            ctx.fillRect(tableX, currentY, sideBarWidth, currentRowHeight);
           }
 
           // Texte (label gauche, valeur droite)
@@ -2696,21 +2699,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.fillStyle = isFinal ? textColor : textMuted;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'left';
-          ctx.fillText(label, tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
+          ctx.fillText(label, tableX + sideBarWidth + padding, currentY + currentRowHeight / 2);
           ctx.textAlign = 'right';
-          ctx.fillText(value.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
+          ctx.fillText(value.toString(), tableX + tableWidth - padding, currentY + currentRowHeight / 2);
 
           // Bordure basse (sauf pour le total final)
           if (showBorders && !isFinal) {
             ctx.strokeStyle = borderColor;
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(tableX + sideBarWidth, currentY + totalRowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + totalRowHeight);
+            ctx.moveTo(tableX + sideBarWidth, currentY + currentRowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + currentRowHeight);
             ctx.stroke();
           }
 
-          currentY += totalRowHeight;
+          currentY += currentRowHeight;
         };
 
         // Dessiner les totaux intermédiaires
