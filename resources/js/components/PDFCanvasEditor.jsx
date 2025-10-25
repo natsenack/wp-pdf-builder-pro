@@ -259,7 +259,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
 
       if (data.success) {
         // PDF généré avec succès
-        console.log('PDF généré avec succès');
+        // PDF généré avec succès
       } else {
         console.error('Erreur serveur:', data.data);
         throw new Error(data.data?.message || 'Erreur lors de la génération du PDF');

@@ -14,7 +14,7 @@ const rgbToCss = (rgbArray) => {
 
 export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   // DEBUG: Log que le TableRenderer est appelé
-  console.log('🔍 TableRenderer CALLED for element:', element.id, 'type:', element.dataSource || element.type);
+  // TableRenderer appelé pour l'élément
   const {
     x = 0,
     y = 0,
@@ -170,14 +170,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
     header.toLowerCase() === 'tva'
   );
 
-  // DEBUG: Afficher les headers et l'index trouvé
-  console.log('TableRenderer DEBUG:', {
-    elementId: element.id,
-    finalHeaders,
-    priceColumnIndex,
-    tableHeaders,
-    tableDataHeaders: tableData.headers
-  });
+  // DEBUG: Headers et index trouvés
 
   // Déterminer où placer les labels des totaux
   // Si la colonne prix existe et n'est pas la première colonne, utiliser la colonne précédente

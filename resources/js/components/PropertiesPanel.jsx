@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 // Import styles for the accordion component so webpack bundles them
 import './PropertiesPanel/Accordion.css';
-import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';
+import { ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';
 import Accordion from './PropertiesPanel/Accordion.jsx';
 import ColorPicker from './PropertiesPanel/ColorPicker.jsx';
 import { shouldShowSection, safeParseFloat, safeParseInt, getSmartPropertyOrder } from './PropertiesPanel/utils/helpers.js';
@@ -23,11 +23,7 @@ import { elementCustomizationService } from '../services/ElementCustomizationSer
 
 // ColorPicker moved to ./PropertiesPanel/ColorPicker.jsx
 
-// FontControls moved to ./PropertiesPanel/FontControls.jsx
-
 // renderColorsSection moved to ./PropertiesPanel/sections/ColorsSection.jsx
-
-// renderFontSection moved to ./PropertiesPanel/sections/FontSection.jsx
 
 // renderTypographySection moved to ./PropertiesPanel/sections/TypographySection.jsx
 
