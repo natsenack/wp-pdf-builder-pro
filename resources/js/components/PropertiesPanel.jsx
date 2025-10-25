@@ -232,6 +232,9 @@ const PropertiesPanel = memo(({
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     <div key={`section-${section}`}>{renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab)}</div> : null;
+                case 'effects':
+                  return allowedControls.includes('effects') ?
+                    <div key={`section-${section}`}>{renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab)}</div> : null;
                 default:
                   return null;
               }

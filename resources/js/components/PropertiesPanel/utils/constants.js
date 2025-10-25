@@ -200,12 +200,11 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Tableaux produits (propriétés complètes)
   product_table: {
     appearance: {
-      sections: ['table_appearance', 'colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['table_appearance', 'colors', 'typography', 'borders', 'effects'],
       properties: {
         table_appearance: ['tableStyle', 'evenRowBg', 'oddRowBg', 'evenRowTextColor', 'oddRowTextColor'],
         colors: ['backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -272,11 +271,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments d'informations client (accès aux couleurs et apparence)
   customer_info: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -307,11 +305,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments texte dynamique
   'dynamic-text': {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -344,11 +341,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments numéro de commande
   order_number: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -379,11 +375,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments d'informations société
   company_info: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -414,11 +409,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments de mentions légales
   mentions: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -449,11 +443,10 @@ export const ELEMENT_PROPERTY_PROFILES = {
   // Éléments par défaut (tous les autres types)
   default: {
     appearance: {
-      sections: ['colors', 'typography', 'font', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
         colors: ['color', 'backgroundColor'],
         typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
-        font: ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'opacity', 'textShadowBlur', 'textShadowColor', 'textShadowOffsetX', 'textShadowOffsetY'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
