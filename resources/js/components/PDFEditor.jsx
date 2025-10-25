@@ -2435,7 +2435,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
         // === TABLEAU DE PRODUITS - OPTION 2 STRIPED MODERN EXACT ===
-        // Reproduit le CSS de demo-tableaux.html Option 2
+        // Entièrement dynamique selon les propriétés du sidebar
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
@@ -2449,7 +2449,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const colGap = 15;      // gap 15px
         const sideBarWidth = 4; // border-left 4px
         
-        // Couleurs exactes
+        // Couleurs (depuis les propriétés)
         const primaryColor = element.tableColorPrimary || '#667eea';
         const secondaryColor = element.tableColorSecondary || '#e8ebff';
         const headerBg = '#f0f0f0';
@@ -2458,31 +2458,70 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const bgGray = '#fafafa';
         const textColor = '#333333';
         const borderColor = '#e5e5e5';
+        const showBorders = element.showBorders !== false;
+        const showTableBorder = element.showTableBorder !== false;
         
         // Opacité
         if (element.opacity !== undefined && element.opacity < 1) {
             ctx.globalAlpha = element.opacity;
         }
 
-        // Largeurs des colonnes (grid-template-columns: 2fr 1fr 1fr 1fr)
+        // Largeurs des colonnes (dynamiques selon les colonnes visibles)
+        // Le gap CSS ne compte pas dans la largeur totale, donc on l'ignore pour la distribution
+        const activeColumns = [];
+        
+        // Construire la liste des colonnes actives selon les propriétés
+        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', ratio: 0.08, align: 'center' });
+        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.38, align: 'left' });
+        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', ratio: 0.16, align: 'left' });
+        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Quantité', ratio: 0.12, align: 'center' });
+        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', ratio: 0.13, align: 'right' });
+        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', ratio: 0.13, align: 'right' });
+        
+        // Si aucune colonne visible, afficher au minimum le nom et le total
+        if (activeColumns.length === 0) {
+          activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.6, align: 'left' });
+          activeColumns.push({ key: 'total', label: 'Total', ratio: 0.4, align: 'right' });
+        }
+        
+        // Recalculer les ratios pour qu'ils s'adaptent aux colonnes actives
+        const totalRatio = activeColumns.reduce((sum, col) => sum + col.ratio, 0);
+        const normalizedRatios = activeColumns.map(col => col.ratio / totalRatio);
+        
         const contentWidth = tableWidth - sideBarWidth;
-        const colWidths = [
-          contentWidth * 0.4,  // Produit: 40%
-          contentWidth * 0.2,  // Quantité: 20%
-          contentWidth * 0.2,  // Prix: 20%
-          contentWidth * 0.2   // Total: 20%
-        ];
-        const colLabels = ['Produit', 'Quantité', 'Prix', 'Total'];
-        const colAligns = ['left', 'center', 'right', 'right'];
+        const totalGaps = colGap * (activeColumns.length - 1);  // gaps entre colonnes
+        const availableWidth = contentWidth - totalGaps;
+        const colWidths = normalizedRatios.map(ratio => availableWidth * ratio);
+        const colLabels = activeColumns.map(col => col.label);
+        const colAligns = activeColumns.map(col => col.align);
+        const colKeys = activeColumns.map(col => col.key);
 
-        // Données d'exemple
-        const rows = [
-          { name: 'Article 1', qty: '1', price: '10€', total: '10€' },
-          { name: 'Article 2', qty: '2', price: '15€', total: '30€' },
-          { name: 'Article 3', qty: '1', price: '20€', total: '20€' }
+        // Données d'exemple / réelles
+        // Récupérer les données du contexte WooCommerce si disponibles
+        const defaultRows = [
+          { name: 'Article 1', quantity: '1', price: '10€', total: '10€' },
+          { name: 'Article 2', quantity: '2', price: '15€', total: '30€' },
+          { name: 'Article 3', quantity: '1', price: '20€', total: '20€' }
         ];
         
-        const rowValues = rows.map(r => [r.name, r.qty, r.price, r.total]);
+        // Utiliser les données de l'ordre si disponibles, sinon les données d'exemple
+        const rows = element.orderData?.lineItems && element.orderData.lineItems.length > 0 
+          ? element.orderData.lineItems.map(item => ({
+              name: item.product_name || item.name || 'Produit',
+              quantity: item.quantity || '1',
+              price: item.product_price || item.price || '0€',
+              total: item.total || item.line_total || '0€'
+            }))
+          : defaultRows;
+        
+        // Construire rowValues en fonction des colonnes actives
+        const rowValues = rows.map(r => colKeys.map(key => r[key] || ''));
+
+        // Données des totaux (réelles si disponibles)
+        const subtotal = element.orderData?.subtotal || '60€';
+        const taxTotal = element.orderData?.tax_total || '12€';
+        const discountTotal = element.orderData?.discount_total || '5€';
+        const orderTotal = element.orderData?.total || '77€';
 
         // Helper pour dessiner une rangée
         const drawTableRow = (values, bgColor, isBold = false, fontSize = 9) => {
@@ -2491,8 +2530,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
 
           // Barre latérale
-          ctx.fillStyle = primaryColor;
-          ctx.fillRect(tableX, currentY, sideBarWidth, rowHeight);
+          if (showBorders) {
+            ctx.fillStyle = primaryColor;
+            ctx.fillRect(tableX, currentY, sideBarWidth, rowHeight);
+          }
 
           // Texte des colonnes
           ctx.font = isBold ? `bold ${fontSize}px Arial` : `${fontSize}px Arial`;
@@ -2505,21 +2546,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (colAligns[idx] === 'left') {
               textX = colX;
             } else if (colAligns[idx] === 'right') {
-              textX = colX + colWidths[idx] - padding - colGap / 2;
+              textX = colX + colWidths[idx] - padding;
             } else {
-              textX = colX + colWidths[idx] / 2 - colGap / 2;
+              textX = colX + colWidths[idx] / 2;
             }
             ctx.fillText(val.toString(), textX, currentY + rowHeight / 2 + 3);
             colX += colWidths[idx] + colGap;
           });
 
           // Bordure basse
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(tableX + sideBarWidth, currentY + rowHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
-          ctx.stroke();
+          if (showBorders) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX + sideBarWidth, currentY + rowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
+            ctx.stroke();
+          }
 
           currentY += rowHeight;
         };
@@ -2529,8 +2572,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
         // Barre latérale
-        ctx.fillStyle = primaryColor;
-        ctx.fillRect(tableX, currentY, sideBarWidth, headerHeight);
+        if (showBorders) {
+          ctx.fillStyle = primaryColor;
+          ctx.fillRect(tableX, currentY, sideBarWidth, headerHeight);
+        }
 
         // Texte en-têtes
         ctx.font = 'bold 10px Arial';
@@ -2542,19 +2587,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           if (colAligns[idx] === 'left') {
             textX = colX;
           } else if (colAligns[idx] === 'right') {
-            textX = colX + colWidths[idx] - padding - colGap / 2;
+            textX = colX + colWidths[idx] - padding;
           } else {
-            textX = colX + colWidths[idx] / 2 - colGap / 2;
+            textX = colX + colWidths[idx] / 2;
           }
           ctx.fillText(label, textX, currentY + headerHeight / 2 + 3);
           colX += colWidths[idx] + colGap;
         });
 
         // Bordure basse en-tête (2px, primaire)
-        ctx.strokeStyle = primaryColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(tableX + sideBarWidth, currentY + headerHeight);
+        if (showBorders) {
+          ctx.strokeStyle = primaryColor;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(tableX + sideBarWidth, currentY + headerHeight);
+          ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
+          ctx.stroke();
+        }
         ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
         ctx.stroke();
 
@@ -2567,13 +2616,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         });
 
         // ===== TOTAUX =====
-        const totals = [
-          ['Sous-total :', '60€'],
-          ['TVA :', '12€'],
-          ['Remise :', '-5€']
-        ];
+        const totals = [];
+        
+        if (element.showSubtotal) {
+          totals.push(['Sous-total :', subtotal]);
+        }
+        if (element.showShipping) {
+          const shipping = element.orderData?.shipping_total || '10€';
+          totals.push(['Frais de port :', shipping]);
+        }
+        if (element.showTaxes) {
+          totals.push(['TVA :', taxTotal]);
+        }
+        if (element.showDiscount) {
+          totals.push(['Remise :', `-${discountTotal}`]);
+        }
 
-        // Fond des totaux
+        // Fond des totaux (sauf pour le grand total)
         ctx.fillStyle = totalsBg;
         totals.forEach(() => {
           ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
@@ -2585,8 +2644,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         totals.forEach((total, idx) => {
           // Barre latérale
-          ctx.fillStyle = primaryColor;
-          ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
+          if (showBorders) {
+            ctx.fillStyle = primaryColor;
+            ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
+          }
 
           // Texte (label gauche, valeur droite)
           ctx.font = '9px Arial';
@@ -2594,37 +2655,44 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.textAlign = 'left';
           ctx.fillText(total[0], tableX + sideBarWidth + padding, currentY + totalRowHeight / 2 + 3);
           ctx.textAlign = 'right';
-          ctx.fillText(total[1], tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
+          ctx.fillText(total[1].toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
 
           // Bordure basse
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(tableX + sideBarWidth, currentY + totalRowHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + totalRowHeight);
-          ctx.stroke();
+          if (showBorders) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX + sideBarWidth, currentY + totalRowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + totalRowHeight);
+            ctx.stroke();
+          }
 
           currentY += totalRowHeight;
         });
 
         // ===== TOTAL FINAL =====
-        // Fond (couleur secondaire)
-        ctx.fillStyle = secondaryColor;
-        ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
+        if (element.showTotal) {
+          // Fond (couleur secondaire)
+          ctx.fillStyle = secondaryColor;
+          ctx.fillRect(tableX, currentY, tableWidth, totalRowHeight);
 
-        // Barre latérale
-        ctx.fillStyle = primaryColor;
-        ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
+          // Barre latérale
+          if (showBorders) {
+            ctx.fillStyle = primaryColor;
+            ctx.fillRect(tableX, currentY, sideBarWidth, totalRowHeight);
+          }
 
-        // Texte (label gauche, valeur droite)
-        ctx.font = 'bold 11px Arial';
-        ctx.fillStyle = textColor;
-        ctx.textAlign = 'left';
-        ctx.fillText('TOTAL :', tableX + sideBarWidth + padding, currentY + totalRowHeight / 2 + 3);
-        ctx.textAlign = 'right';
-        ctx.fillText('77€', tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
+          // Texte (label gauche, valeur droite)
+          ctx.font = 'bold 11px Arial';
+          ctx.fillStyle = textColor;
+          ctx.textAlign = 'left';
+          ctx.fillText('TOTAL :', tableX + sideBarWidth + padding, currentY + totalRowHeight / 2 + 3);
+          ctx.textAlign = 'right';
+          ctx.fillText(orderTotal.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
 
-        // Pas de bordure basse pour le total final (selon CSS: last-child border: none)
+          // Pas de bordure basse pour le total final (selon CSS: last-child border: none)
+          currentY += totalRowHeight;
+        }
 
         // Restaurer opacité
         ctx.globalAlpha = 1;

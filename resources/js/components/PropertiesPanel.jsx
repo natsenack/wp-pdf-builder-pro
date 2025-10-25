@@ -713,7 +713,7 @@ const PropertiesPanel = memo(({
                   <div className="colors-compact">
                     <div className="color-row">
                       <span className="color-label">Principale:</span>
-                      <input type="color" value={localProperties.tableColorPrimary || '#0ea5e9'} onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorPrimary', e.target.value)} />
+                      <input type="color" value={localProperties.tableColorPrimary || '#667eea'} onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorPrimary', e.target.value)} />
                       <button onClick={() => handlePropertyChange(selectedElement.id, 'tableColorPrimary', '')} style={{ padding: '2px 8px', fontSize: '11px' }}>✕</button>
                     </div>
                     <div className="color-row">

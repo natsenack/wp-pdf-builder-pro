@@ -17,10 +17,9 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         y: 270,
         width: 530,
         height: 200,
-        showHeaders: true,
         showBorders: true,
         tableFormat: 'full',
-        tableColorPrimary: '#0ea5e9',
+        tableColorPrimary: '#667eea',
         tableColorSecondary: '#e8ebff',
         columns: {
           image: false,
