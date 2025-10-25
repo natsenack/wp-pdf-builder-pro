@@ -366,7 +366,7 @@ body.wp-admin .pdf-builder-container {
                         }
                     ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    initialElements: initialData,
+                    initialElements: initialData.elements,
                     width: 595,
                     height: 842,
                     zoom: 1,
