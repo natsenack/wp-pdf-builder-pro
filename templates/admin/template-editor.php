@@ -266,7 +266,7 @@ body.wp-admin .pdf-builder-container {
     // Initialisation principale avec protection contre les exécutions multiples
     let isInitialized = false;
 
-    const initApp = () => {
+    const initApp = function() {
         if (isInitialized) {
             // console.log('PDF Builder already initialized, skipping...');
             return;
@@ -356,7 +356,7 @@ body.wp-admin .pdf-builder-container {
     let scriptCheckAttempts = 0;
     const maxScriptCheckAttempts = 50; // 5 secondes maximum
 
-    const checkScriptsLoaded = () => {
+    const checkScriptsLoaded = function() {
         scriptCheckAttempts++;
 
         // Vérifier que tous les chunks sont chargés avec le code splitting
