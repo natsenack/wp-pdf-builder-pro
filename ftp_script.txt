@@ -1,0 +1,8 @@
+open 65.108.242.181
+nats
+iZ6vU3zV2y
+cd /wp-content/plugins/wp-pdf-builder-pro/assets/js/dist/
+put assets/js/dist/pdf-builder-admin.js
+put assets/js/dist/338.dfcff9c4196dc98cb244.js
+put assets/js/dist/runtime.5a3a6b88d4542257f277.js
+quit

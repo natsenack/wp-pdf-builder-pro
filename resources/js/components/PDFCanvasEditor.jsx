@@ -15,6 +15,8 @@ import PropertiesPanel from './PropertiesPanel.jsx';
 import NewTemplateModal from './NewTemplateModal.jsx';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
+  console.log('🎨 PDFCanvasEditor: Composant rendu avec options:', options);
+
   const [tool, setTool] = useState('select');
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);

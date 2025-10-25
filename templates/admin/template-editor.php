@@ -356,6 +356,10 @@ body.wp-admin .pdf-builder-container {
                     settings: backendSettings
                 };
 
+                console.log('📋 Initialisation de l\'éditeur PDF...');
+                console.log('📋 pdfBuilderPro disponible:', typeof window.pdfBuilderPro);
+                console.log('📋 pdfBuilderPro.init disponible:', typeof window.pdfBuilderPro?.init);
+
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
                     templateName: <?php

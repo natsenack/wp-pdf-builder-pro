@@ -52,12 +52,15 @@
       }
     };
 
-    // Définir les variables globales immédiatement
+  // Définir les variables globales immédiatement
     window.pdfBuilderPro = pdfBuilderPro;
     window.PDFBuilderPro = pdfBuilderPro; // Alias avec majuscule pour compatibilité
     window.initializePDFBuilderPro = function() {
       return pdfBuilderPro;
     };
+
+    console.log('🔧 PDF Builder Pro: Script-loader chargé avec succès');
+    console.log('🔧 API disponible:', typeof window.pdfBuilderPro.init);
 
   }
 

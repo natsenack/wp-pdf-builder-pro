@@ -8,13 +8,15 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
 const init = (containerId, options = {}) => {
-  console.log('PDF Builder Pro: Initialisation de l\'éditeur', { containerId, options });
+  console.log('🚀 PDF Builder Pro: Initialisation de l\'éditeur', { containerId, options });
 
   const container = document.getElementById(containerId);
   if (!container) {
-    console.error('PDF Builder Pro: Container non trouvé', containerId);
+    console.error('❌ PDF Builder Pro: Container non trouvé', containerId);
     return;
   }
+
+  console.log('✅ PDF Builder Pro: Container trouvé', container);
 
   // Clear any existing content
   container.innerHTML = '';
@@ -27,7 +29,7 @@ const init = (containerId, options = {}) => {
     })
   );
 
-  console.log('PDF Builder Pro: Éditeur initialisé avec succès');
+  console.log('✅ PDF Builder Pro: Éditeur initialisé avec succès');
 };
 
 // Make it globally available
