@@ -154,9 +154,8 @@ if (!$is_new && $template_id > 0) {
                 }
             }
         } else {
-        echo "        } else {
         }
-    } else {";
+    } else {
     }
 }
 ?>
