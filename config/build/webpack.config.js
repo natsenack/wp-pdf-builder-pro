@@ -21,7 +21,11 @@ module.exports = {
       if (name === 'pdf-builder-script-loader') {
         return '[name].js';
       }
-      // Utiliser des content hashes pour les chunks dynamiques
+      // Pour les chunks dynamiques, utiliser des noms numériques
+      if (name && !isNaN(name)) {
+        return '[id].js';
+      }
+      // Utiliser des content hashes pour les autres chunks
       return '[name].[contenthash].js';
     },
     path: path.resolve(__dirname, '../../assets/js/dist'),
@@ -69,6 +73,35 @@ module.exports = {
       minRatio: 0.8
     })
   ],
+  optimization: {
+    // Séparation des chunks pour l'optimisation
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Chunk pour les vendors (bibliothèques externes) - nom numérique
+        vendor: {
+          name: false, // Utiliser des noms automatiques (numériques)
+          test: /[\\/]node_modules[\\/]/,
+          chunks: 'all',
+          priority: 10,
+          minSize: 30000, // 30KB minimum
+          enforce: true
+        },
+        // Chunk pour les utilitaires partagés - nom numérique
+        common: {
+          name: false, // Utiliser des noms automatiques (numériques)
+          minChunks: 2,
+          chunks: 'all',
+          minSize: 10000, // 10KB minimum
+          enforce: true
+        }
+      }
+    },
+    // Configuration du runtime chunk
+    runtimeChunk: {
+      name: 'runtime'
+    }
+  },
   // Configuration de performance
   performance: {
     hints: 'warning',

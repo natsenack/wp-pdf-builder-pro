@@ -89,13 +89,16 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     ]
   };
 
-  const canvasState = useCanvasState({
+  // Stabiliser les paramètres pour useCanvasState pour éviter les violations des règles des hooks
+  const canvasStateParams = useMemo(() => ({
     initialElements: options.initialElements || [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
     canvasHeight: options.height || 842,
     globalSettings: globalSettings.settings
-  });
+  }), [options.initialElements, options.templateId, options.width, options.height, globalSettings.settings]);
+
+  const canvasState = useCanvasState(canvasStateParams);
 
   // Hook pour l'historique Undo/Redo - REMOVED: utilise maintenant canvasState.history
   // const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });

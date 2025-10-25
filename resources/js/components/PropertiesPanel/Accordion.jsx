@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 
 // Composant Accordion pour organiser les propriétés
 const Accordion = memo(({ title, icon, children, defaultOpen = false, className = '' }) => {

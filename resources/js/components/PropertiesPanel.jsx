@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 // Import styles for the accordion component so webpack bundles them
 import './PropertiesPanel/Accordion.css';
 import { TEMPLATE_PRESETS, ELEMENT_PROPERTY_PROFILES } from './PropertiesPanel/utils/constants.js';

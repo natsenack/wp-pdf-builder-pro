@@ -1121,6 +1121,10 @@ export const useCanvasState = ({
   // 1 point = 1/72 pouce, 1 pixel = 1/96 pouce → pixels = points × (96/72) = points × 1.333...
   const pointsToPixels = (points) => Math.round(points * (96 / 72));
 
+  // Utilitaires
+  const getAllElements = useCallback(() => elements, [elements]);
+  const getElementById = useCallback((id) => elements.find(el => el.id === id), [elements]);
+
   return useMemo(() => ({
     // État
     elements,
@@ -1166,8 +1170,8 @@ export const useCanvasState = ({
     showContextMenu,
 
     // Utilitaires
-    getAllElements: useCallback(() => elements, [elements]),
-    getElementById: useCallback((id) => elements.find(el => el.id === id), [elements])
+    getAllElements,
+    getElementById
   }), [
     elements,
     canvasWidth,
@@ -1189,7 +1193,9 @@ export const useCanvasState = ({
     history,
     showContextMenu,
     zoomToSelection,
-    saveTemplate
+    saveTemplate,
+    getAllElements,
+    getElementById
   ]);
 
   // Nettoyage mémoire au démontage

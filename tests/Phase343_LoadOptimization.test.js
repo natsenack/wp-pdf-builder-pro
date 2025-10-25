@@ -114,7 +114,7 @@ describe('Webpack Bundle Optimization', () => {
     // Vérifier l'existence des chunks principaux (noms réels des fichiers)
     const hasRuntime = files.some(file => file.includes('runtime') && file.endsWith('.js'));
     const hasScriptLoader = files.some(file => file.includes('pdf-builder-script-loader') && file.endsWith('.js'));
-    const hasMainBundle = files.some(file => file.match(/^\d+\.js$/) && file.endsWith('.js'));
+    const hasMainBundle = files.some(file => file.includes('pdf-builder-admin') && file.endsWith('.js'));
 
     expect(hasRuntime).toBe(true);
     expect(hasScriptLoader).toBe(true);
