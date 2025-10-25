@@ -1649,7 +1649,9 @@ export const CanvasElement = ({
           const formatValidation = validateImageFormat(imageSource);
 
           return (
-            <div style={{
+            <div 
+              onMouseDown={handleMouseDown}
+              style={{
               width: '100%',
               height: '100%',
               display: 'flex',
