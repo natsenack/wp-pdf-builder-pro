@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const ContextMenu = ({ menu, onAction, isAnimating = false, onClose }) => {
   const menuRef = useRef(null);
