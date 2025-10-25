@@ -37,6 +37,10 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
         wp_enqueue_script('jquery');
     }
 
+    // Charger directement les scripts PDF Builder
+    // CORRECTION HTTPS: Utiliser plugins_url() au lieu de plugin_dir_url() pour garantir HTTPS
+    $assets_url = plugins_url('assets/', dirname(dirname(__FILE__))) . '/';
+
     // CHARGER LE SCRIPT DE GESTION D'ERREURS EN PREMIER - AVANT TOUT
     $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js?v=' . time() . '_' . uniqid();
     echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
