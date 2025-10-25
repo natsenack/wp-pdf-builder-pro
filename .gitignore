@@ -1,11 +1,57 @@
+# Dependencies
+node_modules/
+vendor/
+composer.lock
+
+# Build outputs
+assets/js/dist/
+assets/css/dist/
+*.min.js
+*.min.css
+
+# Development files
+debug-*.js
+diagnostic-*.js
+analyze-*.js
+fix_*.js
+fix_*.py
+demo-*.html
+*-diagnostic.js
+*-repair.js
+
+# Tools and deployment
+/tools/
+/deploy-ftp.ps1
+/ftp-config.env
+/optimize-tcpdf.ps1
+/wp-pdf-builder-pro-deploy.zip
+
+# WordPress
 /.htaccess
 /archive
-/build-tools
-/deploy-ftp.ps1
-/dev-tools
-/ftp-config.env
-/node_modules
-/optimize-tcpdf.ps1
-/tools
-/vendor
-/wp-pdf-builder-pro-deploy.zip
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+pdf-builder-logs/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Documentation reports (keep main docs)
+/docs/reports/phase*.json
+/docs/reports/phase*.js
