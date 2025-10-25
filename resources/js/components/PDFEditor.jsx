@@ -2441,12 +2441,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
         
-        // Dimensions exactes CSS
-        const padding = 12;     // padding 12px
-        const headerHeight = 24 + padding * 2;  // ~48px
-        const rowHeight = 18 + padding * 2;     // ~42px
-        const totalRowHeight = 18 + padding * 2; // ~42px
-        const colGap = 15;      // gap 15px
+        // Dimensions optimisées
+        const padding = 10;     // padding horizontal
+        const paddingV = 8;     // padding vertical
+        const headerHeight = 20 + paddingV * 2;  // 36px
+        const rowHeight = 16 + paddingV * 2;     // 32px
+        const totalRowHeight = 16 + paddingV * 2; // 32px
+        const colGap = 12;      // gap entre colonnes
         const sideBarWidth = 4; // border-left 4px
         
         // Couleurs (depuis les propriétés)
@@ -2457,6 +2458,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const bgWhite = '#ffffff';
         const bgGray = '#fafafa';
         const textColor = '#333333';
+        const textMuted = '#666666';
         const borderColor = '#e5e5e5';
         const showBorders = element.showBorders !== false;
         const showTableBorder = element.showTableBorder !== false;
@@ -2467,16 +2469,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Largeurs des colonnes (dynamiques selon les colonnes visibles)
-        // Le gap CSS ne compte pas dans la largeur totale, donc on l'ignore pour la distribution
         const activeColumns = [];
         
         // Construire la liste des colonnes actives selon les propriétés
-        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: 'Image', ratio: 0.08, align: 'center' });
-        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.38, align: 'left' });
-        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', ratio: 0.16, align: 'left' });
-        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Quantité', ratio: 0.12, align: 'center' });
-        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', ratio: 0.13, align: 'right' });
-        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', ratio: 0.13, align: 'right' });
+        if (element.columns?.image !== false) activeColumns.push({ key: 'image', label: '', ratio: 0.06, align: 'center' });
+        if (element.columns?.name !== false) activeColumns.push({ key: 'name', label: 'Produit', ratio: 0.40, align: 'left' });
+        if (element.columns?.sku !== false) activeColumns.push({ key: 'sku', label: 'SKU', ratio: 0.14, align: 'left' });
+        if (element.columns?.quantity !== false) activeColumns.push({ key: 'quantity', label: 'Qté', ratio: 0.12, align: 'center' });
+        if (element.columns?.price !== false) activeColumns.push({ key: 'price', label: 'Prix', ratio: 0.14, align: 'right' });
+        if (element.columns?.total !== false) activeColumns.push({ key: 'total', label: 'Total', ratio: 0.14, align: 'right' });
         
         // Si aucune colonne visible, afficher au minimum le nom et le total
         if (activeColumns.length === 0) {
@@ -2489,7 +2490,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const normalizedRatios = activeColumns.map(col => col.ratio / totalRatio);
         
         const contentWidth = tableWidth - sideBarWidth;
-        const totalGaps = colGap * (activeColumns.length - 1);  // gaps entre colonnes
+        const totalGaps = colGap * (activeColumns.length - 1);
         const availableWidth = contentWidth - totalGaps;
         const colWidths = normalizedRatios.map(ratio => availableWidth * ratio);
         const colLabels = activeColumns.map(col => col.label);
@@ -2497,22 +2498,31 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const colKeys = activeColumns.map(col => col.key);
 
         // Données d'exemple / réelles
-        // Récupérer les données du contexte WooCommerce si disponibles
         const defaultRows = [
-          { name: 'Article 1', quantity: '1', price: '10€', total: '10€' },
-          { name: 'Article 2', quantity: '2', price: '15€', total: '30€' },
-          { name: 'Article 3', quantity: '1', price: '20€', total: '20€' }
+          { image: '📦', name: 'Article 1', sku: 'SKU-001', quantity: '1', price: '10€', total: '10€' },
+          { image: '📦', name: 'Article 2', sku: 'SKU-002', quantity: '2', price: '15€', total: '30€' },
+          { image: '📦', name: 'Article 3', sku: 'SKU-003', quantity: '1', price: '20€', total: '20€' }
         ];
         
         // Utiliser les données de l'ordre si disponibles, sinon les données d'exemple
         const rows = element.orderData?.lineItems && element.orderData.lineItems.length > 0 
           ? element.orderData.lineItems.map(item => ({
+              image: '📦',
               name: item.product_name || item.name || 'Produit',
+              sku: item.sku || '',
               quantity: item.quantity || '1',
               price: item.product_price || item.price || '0€',
               total: item.total || item.line_total || '0€'
             }))
           : defaultRows;
+        
+        // Helper pour tronquer le texte
+        const truncateText = (text, maxWidth, fontSize = 9) => {
+          if (!text) return '';
+          const charWidth = fontSize * 0.6; // Approximation
+          const maxChars = Math.floor(maxWidth / charWidth);
+          return text.length > maxChars ? text.substring(0, maxChars - 1) + '…' : text;
+        };
         
         // Construire rowValues en fonction des colonnes actives
         const rowValues = rows.map(r => colKeys.map(key => r[key] || ''));
@@ -2536,22 +2546,27 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte des colonnes
-          ctx.font = isBold ? `bold ${fontSize}px Arial` : `${fontSize}px Arial`;
+          ctx.font = isBold ? `bold ${fontSize}px 'Segoe UI', Arial` : `${fontSize}px 'Segoe UI', Arial`;
           ctx.fillStyle = textColor;
+          ctx.textBaseline = 'middle';
 
           let colX = tableX + sideBarWidth + padding;
           values.forEach((val, idx) => {
+            const colWidth = colWidths[idx];
             ctx.textAlign = colAligns[idx];
             let textX;
             if (colAligns[idx] === 'left') {
               textX = colX;
             } else if (colAligns[idx] === 'right') {
-              textX = colX + colWidths[idx] - padding;
+              textX = colX + colWidth - padding;
             } else {
-              textX = colX + colWidths[idx] / 2;
+              textX = colX + colWidth / 2;
             }
-            ctx.fillText(val.toString(), textX, currentY + rowHeight / 2 + 3);
-            colX += colWidths[idx] + colGap;
+            
+            // Tronquer le texte si nécessaire
+            const truncated = truncateText(val.toString(), colWidth - padding * 2, fontSize);
+            ctx.fillText(truncated, textX, currentY + rowHeight / 2);
+            colX += colWidth + colGap;
           });
 
           // Bordure basse
@@ -2578,21 +2593,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Texte en-têtes
-        ctx.font = 'bold 10px Arial';
+        ctx.font = 'bold 10px "Segoe UI", Arial';
         ctx.fillStyle = textColor;
+        ctx.textBaseline = 'middle';
         let colX = tableX + sideBarWidth + padding;
         colLabels.forEach((label, idx) => {
+          const colWidth = colWidths[idx];
           ctx.textAlign = colAligns[idx];
           let textX;
           if (colAligns[idx] === 'left') {
             textX = colX;
           } else if (colAligns[idx] === 'right') {
-            textX = colX + colWidths[idx] - padding;
+            textX = colX + colWidth - padding;
           } else {
-            textX = colX + colWidths[idx] / 2;
+            textX = colX + colWidth / 2;
           }
-          ctx.fillText(label, textX, currentY + headerHeight / 2 + 3);
-          colX += colWidths[idx] + colGap;
+          ctx.fillText(label, textX, currentY + headerHeight / 2);
+          colX += colWidth + colGap;
         });
 
         // Bordure basse en-tête (2px, primaire)
@@ -2604,8 +2621,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
           ctx.stroke();
         }
-        ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
-        ctx.stroke();
 
         currentY += headerHeight;
 
@@ -2650,12 +2665,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte (label gauche, valeur droite)
-          ctx.font = '9px Arial';
-          ctx.fillStyle = textColor;
+          ctx.font = '9px "Segoe UI", Arial';
+          ctx.fillStyle = textMuted;
+          ctx.textBaseline = 'middle';
           ctx.textAlign = 'left';
-          ctx.fillText(total[0], tableX + sideBarWidth + padding, currentY + totalRowHeight / 2 + 3);
+          ctx.fillText(total[0], tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
           ctx.textAlign = 'right';
-          ctx.fillText(total[1].toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
+          ctx.fillText(total[1].toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
 
           // Bordure basse
           if (showBorders) {
@@ -2683,18 +2699,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           // Texte (label gauche, valeur droite)
-          ctx.font = 'bold 11px Arial';
+          ctx.font = 'bold 10px "Segoe UI", Arial';
           ctx.fillStyle = textColor;
+          ctx.textBaseline = 'middle';
           ctx.textAlign = 'left';
-          ctx.fillText('TOTAL :', tableX + sideBarWidth + padding, currentY + totalRowHeight / 2 + 3);
+          ctx.fillText('TOTAL :', tableX + sideBarWidth + padding, currentY + totalRowHeight / 2);
           ctx.textAlign = 'right';
-          ctx.fillText(orderTotal.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2 + 3);
+          ctx.fillText(orderTotal.toString(), tableX + tableWidth - padding, currentY + totalRowHeight / 2);
 
-          // Pas de bordure basse pour le total final (selon CSS: last-child border: none)
+          // Pas de bordure basse pour le total final
           currentY += totalRowHeight;
         }
 
-        // Restaurer opacité
+        // Restaurer l'état Canvas
+        ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = 1;
 
       } else {
