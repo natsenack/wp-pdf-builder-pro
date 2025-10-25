@@ -56,9 +56,9 @@ module.exports = {
     ]
   },
   externals: {
-    // Temporairement désactivé pour résoudre les problèmes de hooks React
-    // 'react': 'React',
-    // 'react-dom': 'ReactDOM'
+    // React fourni par WordPress
+    'react': 'React',
+    'react-dom': 'ReactDOM'
   },
   plugins: [
     // Plugin de compression pour les assets
