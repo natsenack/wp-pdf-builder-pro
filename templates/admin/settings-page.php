@@ -407,6 +407,7 @@ window.addEventListener('load', function() {
                 
                 // Special handling for Canvas tab - initialize sub-tabs
                 if (tabContents[i].id === 'canvas') {
+                    console.log('Canvas tab activated, initializing sub-tabs...');
                     initializeCanvasSubTabs();
                 }
             } else {
@@ -479,6 +480,17 @@ window.addEventListener('load', function() {
     // Function to attach click handlers for canvas sub-tabs
     function attachCanvasSubTabHandlers() {
         console.log('Attaching canvas sub-tab handlers...');
+
+        // Check if canvas tab is visible
+        var canvasTab = document.getElementById('canvas');
+        if (canvasTab) {
+            console.log('Canvas tab element found, display:', getComputedStyle(canvasTab).display);
+            console.log('Canvas tab classes:', canvasTab.className);
+        } else {
+            console.log('Canvas tab element NOT found!');
+            return;
+        }
+
         var subNavTabs = document.querySelectorAll('#canvas .sub-nav-tab');
         console.log('Found', subNavTabs.length, 'sub-nav tabs to attach handlers to');
 
