@@ -7,7 +7,7 @@ import { render } from '@testing-library/react';
 // Vérifier si le module ImageRenderer existe avant de l'importer
 let ImageRenderer;
 try {
-  ImageRenderer = require('../../../src/renderers/ImageRenderer').ImageRenderer;
+  ImageRenderer = require('../../../src/Renderers/ImageRenderer').ImageRendererComponent;
 } catch (error) {
   // Module pas encore créé - tests seront skipped
   ImageRenderer = null;

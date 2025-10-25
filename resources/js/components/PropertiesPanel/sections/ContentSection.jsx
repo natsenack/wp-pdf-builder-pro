@@ -1,6 +1,7 @@
 import React from 'react';
 import Accordion from '../Accordion';
 import ColorPicker from '../ColorPicker';
+import TableStylePreview from '../TableStylePreview';
 import { safeParseInt } from '../utils/helpers';
 
 const renderContentSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
@@ -102,32 +103,10 @@ const renderContentSection = (selectedElement, localProperties, handlePropertyCh
                 className="text-input"
               />
             </div>
-            <div className="property-row">
-              <label>Style tableau:</label>
-              <select
-                value={localProperties.tableStyle || 'default'}
-                onChange={(e) => handlePropertyChange(selectedElement.id, 'tableStyle', e.target.value)}
-                className="styled-select"
-              >
-                <option value="default">Défaut</option>
-                <option value="classic">Classique</option>
-                <option value="modern">Moderne</option>
-                <option value="minimal">Minimal</option>
-                <option value="bordered">Avec bordures</option>
-                <option value="striped">Rayé</option>
-                <option value="light">Clair</option>
-                <option value="slate_gray">Gris ardoise</option>
-                <option value="coral">Corail</option>
-                <option value="teal">Sarcelle</option>
-                <option value="indigo">Indigo</option>
-                <option value="amber">Ambre</option>
-                <option value="emerald_forest">Forêt d'émeraude</option>
-                <option value="blue_ocean">Océan bleu</option>
-                <option value="crimson_red">Rouge cramoisi</option>
-                <option value="sunset_orange">Orange coucher de soleil</option>
-                <option value="royal_purple">Violet royal</option>
-              </select>
-            </div>
+            <TableStylePreview
+              selectedStyle={localProperties.tableStyle || 'default'}
+              onStyleSelect={(style) => handlePropertyChange(selectedElement.id, 'tableStyle', style)}
+            />
             <div className="property-row">
               <label>Afficher en-têtes:</label>
               <input

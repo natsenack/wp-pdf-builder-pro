@@ -1082,7 +1082,7 @@ export const CanvasElement = ({
               // Assurer que le background ne cache pas les bordures
               backgroundColor: element.backgroundColor || 'transparent',
               boxSizing: 'border-box',
-              boxShadow: tableStyles.shadow,
+              boxShadow: tableStyles.shadowBlur > 0 ? `0 2px ${tableStyles.shadowBlur}px ${tableStyles.shadowColor}` : 'none',
               // Améliorer la lisibilité globale
               lineHeight: '1.4',
               color: tableStyles.rowTextColor
@@ -1337,7 +1337,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     background: tableStyles.gradient || tableStyles.headerBg,
                     color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
-                    boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
+                    boxShadow: tableStyles.shadowBlur > 0 ? `0 2px ${tableStyles.shadowBlur}px ${tableStyles.shadowColor}` : 'none'
                   }}>
                     {/* Colonnes vides pour l'alignement */}
                     {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}

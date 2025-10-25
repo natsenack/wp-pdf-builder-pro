@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react';
 // Vérifier si le module TextRenderer existe avant de l'importer
 let TextRenderer;
 try {
-  TextRenderer = require('../../../src/renderers/TextRenderer').TextRenderer;
+  TextRenderer = require('../../../src/renderers/TextRenderer').TextRendererComponent;
 } catch (error) {
   // Module pas encore créé - tests seront skipped
   TextRenderer = null;
@@ -88,7 +88,7 @@ describe('TextRenderer', () => {
     );
     
     const element = container.querySelector('.pdf-text-element');
-    expect(element.style.color).toBe('#333333');
+    expect(element.style.color === '#333333' || element.style.color === 'rgb(51, 51, 51)').toBe(true);
     expect(element.style.backgroundColor).toBe('transparent');
   });
 

@@ -1,0 +1,71 @@
+.table-style-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.table-style-preview-item {
+  text-align: center;
+}
+
+.table-style-preview-container {
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 4px;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.table-style-preview-container:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.table-style-preview-container.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.table-style-preview-thumbnail {
+  width: 100%;
+  height: 60px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.table-style-preview-thumbnail:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-style-selection-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.table-style-name {
+  font-size: 10px;
+  color: #6b7280;
+  margin-top: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
