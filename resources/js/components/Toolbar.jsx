@@ -203,7 +203,7 @@ export const Toolbar = ({
                   <label 
                     className={`toggle-label ${!isGridEnabled ? 'disabled' : ''}`}
                     title={!isGridEnabled ? '❌ Grille désactivée dans les paramètres généraux' : 'Afficher/Masquer la grille (G)'}
-                    style={!isGridEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                    style={!isGridEnabled ? { opacity: 0.5, cursor: 'not-allowed', position: 'relative' } : { position: 'relative' }}
                   >
                     <input
                       type="checkbox"
@@ -213,11 +213,12 @@ export const Toolbar = ({
                     />
                     <span className="toggle-text">Grille</span>
                     <span className="toggle-shortcut">(G)</span>
+                    {!isGridEnabled && <span className="tooltip-hint">❌ Grille désactivée dans les paramètres généraux</span>}
                   </label>
                   <label 
                     className={`toggle-label ${!isSnapEnabled ? 'disabled' : ''}`}
                     title={!isSnapEnabled ? '❌ Aimantation à la grille désactivée dans les paramètres généraux' : 'Aimanter à la grille (X)'}
-                    style={!isSnapEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                    style={!isSnapEnabled ? { opacity: 0.5, cursor: 'not-allowed', position: 'relative' } : { position: 'relative' }}
                   >
                     <input
                       type="checkbox"
@@ -227,11 +228,12 @@ export const Toolbar = ({
                     />
                     <span className="toggle-text">Aimantation</span>
                     <span className="toggle-shortcut">(X)</span>
+                    {!isSnapEnabled && <span className="tooltip-hint">❌ Aimantation à la grille désactivée dans les paramètres généraux</span>}
                   </label>
                   <label 
                     className={`toggle-label ${!areSnapsEnabled ? 'disabled' : ''}`}
                     title={!areSnapsEnabled ? '❌ Aimantation aux éléments désactivée dans les paramètres généraux' : 'Aimanter aux éléments (Z)'}
-                    style={!areSnapsEnabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                    style={!areSnapsEnabled ? { opacity: 0.5, cursor: 'not-allowed', position: 'relative' } : { position: 'relative' }}
                   >
                     <input
                       type="checkbox"
@@ -241,6 +243,7 @@ export const Toolbar = ({
                     />
                     <span className="toggle-text">Aimantation</span>
                     <span className="toggle-shortcut">(Z)</span>
+                    {!areSnapsEnabled && <span className="tooltip-hint">❌ Aimantation aux éléments désactivée dans les paramètres généraux</span>}
                   </label>
                 </div>
               </div>
