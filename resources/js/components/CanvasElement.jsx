@@ -1270,7 +1270,7 @@ export const CanvasElement = ({
                     display: 'flex',
                     padding: `${6 * zoom}px ${8 * zoom}px`,
                     fontWeight: 'bold',
-                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    backgroundColor: 'transparent',
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
@@ -1286,7 +1286,7 @@ export const CanvasElement = ({
                   <div style={{
                     display: 'flex',
                     padding: `${6 * zoom}px ${8 * zoom}px`,
-                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    backgroundColor: 'transparent',
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
@@ -1302,7 +1302,7 @@ export const CanvasElement = ({
                   <div style={{
                     display: 'flex',
                     padding: `${6 * zoom}px ${8 * zoom}px`,
-                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    backgroundColor: 'transparent',
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
@@ -1318,7 +1318,7 @@ export const CanvasElement = ({
                   <div style={{
                     display: 'flex',
                     padding: `${6 * zoom}px ${8 * zoom}px`,
-                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    backgroundColor: 'transparent',
                     color: tableStyles.rowTextColor
                   }}>
                     {/* Colonnes vides pour l'alignement */}
