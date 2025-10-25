@@ -236,7 +236,8 @@ const PropertiesPanel = memo(({
                 case 'colors':
                   return renderColorsSection(selectedElement, localProperties, handlePropertyChange, activeTab);
                 case 'typography':
-                  return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
+                  return shouldShowSection('typography', selectedElement.type) ?
+                    renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;

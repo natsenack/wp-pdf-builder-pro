@@ -33,9 +33,6 @@ export const safeParseInt = (value, defaultValue = 0) => {
 export const shouldShowSection = (sectionName, elementType) => {
   // Sections à cacher selon le type d'élément
   const hiddenSections = {
-    // Pour les logos : pas de typographie
-    logo: ['typography'],
-    company_logo: ['typography'],
     // Pour les tableaux : pas de typographie (trop complexe)
     product_table: ['typography']
   };
@@ -62,14 +59,14 @@ export const getSmartPropertyOrder = (elementType, tab) => {
       'layout-section': ['colors', 'typography', 'borders', 'effects'],
 
       // Éléments image : couleur de fond et bordures en premier
-      logo: ['colors', 'borders', 'effects'],
-      company_logo: ['colors', 'borders', 'effects'],
+      logo: ['colors', 'typography', 'borders', 'effects'],
+      company_logo: ['colors', 'typography', 'borders', 'effects'],
 
       // Éléments tableau : couleurs spéciales en premier
-      product_table: ['colors', 'borders', 'effects'],
+      product_table: ['colors', 'typography', 'borders', 'effects'],
 
       // Éléments par défaut
-      default: ['colors', 'borders', 'effects']
+      default: ['colors', 'typography', 'borders', 'effects']
     },
 
     // Ordre pour l'onglet Mise en page
