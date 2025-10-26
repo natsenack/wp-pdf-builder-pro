@@ -37,19 +37,18 @@ module.exports = {
     // ProvidePlugin retiré - on utilise l'import direct
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+    extensions: ['.js', '.ts', '.json']
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx)$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
             presets: [
               '@babel/preset-env',
-              '@babel/preset-react',
               '@babel/preset-typescript'
             ]
           }
@@ -60,11 +59,6 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       }
     ]
-  },
-  externals: {
-    // Temporairement désactiver les externals pour React pour éviter les conflits de version
-    // 'react': 'React',
-    // 'react-dom': 'ReactDOM'
   },
   plugins: [
     // Copier seulement le script-loader sans traitement webpack (il utilise les globals directement)

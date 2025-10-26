@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 /**
  * Template Editor Page - PDF Builder Pro
- * React/TypeScript Canvas Editor
+ * Vanilla JavaScript + Canvas API Editor
  */
 
 // Permissions are checked by WordPress via add_submenu_page capability parameter
@@ -18,7 +18,6 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 // Plus besoin d'enqueues ici car ils sont déjà faits avant wp_head()
 
     // CHARGEMENT DIRECT DES SCRIPTS ESSENTIELS UNIQUEMENT
-    $script_loader_url = plugins_url('assets/js/dist/pdf-builder-script-loader.js', dirname(dirname(__FILE__)));
     $main_bundle_url = plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__)));
 
     // Get template ID from URL (défini tôt pour le diagnostic)
@@ -27,21 +26,18 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
     echo '<div style="background: lightgreen; padding: 10px; margin: 10px; border: 1px solid green; font-size: 12px;">';
     echo '<h4>📦 Chargement des scripts PDF Builder</h4>';
-    echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
-    echo '<script type="text/javascript" src="' . esc_url(plugins_url('bundle-diagnostic.js', dirname(__FILE__))) . '"></script>';
 
     // Code temporaire de diagnostic
     echo '<script>
     console.log("🔍 DIAGNOSTIC IMMÉDIAT:");
-    console.log("📦 Script loader URL:", "' . esc_url($script_loader_url) . '");
     console.log("📦 Main bundle URL:", "' . esc_url($main_bundle_url) . '");
 
     // Vérifier immédiatement après le chargement des scripts
     setTimeout(function() {
         console.log("🔍 APRÈS 500ms:");
         console.log("📦 pdfBuilderPro:", typeof window.pdfBuilderPro);
-        console.log("📦 pdfBuilderInitReact:", typeof window.pdfBuilderInitReact);
+        console.log("📦 pdfBuilderInitVanilla:", typeof window.pdfBuilderInitVanilla);
         
         // Tester l\'initialisation manuellement
         if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
@@ -67,7 +63,7 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script>
         setTimeout(function() {
             console.log("🔍 VÉRIFICATION BUNDLE PRINCIPAL...");
-            console.log("🔍 pdfBuilderInitReact:", typeof window.pdfBuilderInitReact);
+            console.log("🔍 pdfBuilderInitVanilla:", typeof window.pdfBuilderInitVanilla);
             console.log("🔍 pdfBuilderPro:", typeof window.pdfBuilderPro);
             if (window.pdfBuilderPro) {
                 console.log("🔍 pdfBuilderPro.init:", typeof window.pdfBuilderPro.init);
@@ -404,13 +400,10 @@ body.wp-admin .pdf-builder-container {
         var pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
         var initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
-        // Avec le code splitting, vérifier aussi que React est disponible - COMMENTÉ car React est maintenant bundlé
-        // var reactExists = typeof window.React !== 'undefined';
-        // var reactDomExists = typeof window.ReactDOM !== 'undefined';
-        var reactExists = true; // React est bundlé dans PDFBuilderPro
-        var reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
+        // Vérifications de disponibilité des modules (Vanilla JS - pas de dépendances externes)
+        var initExists = pdfBuilderProExists && pdfBuilderPro && typeof pdfBuilderPro.init === 'function';
 
-        if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
+        if (pdfBuilderProExists && initExists) {
             initApp();
         } else if (scriptCheckAttempts < maxScriptCheckAttempts) {
             // Réessayer dans 100ms
