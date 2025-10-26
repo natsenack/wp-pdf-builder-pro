@@ -1431,11 +1431,13 @@ class PDF_Builder_Admin
             // 'pdf-builder-pro_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
             'pdf-builder-pro_page_pdf-builder-developer'
         ];
-// Temporairement désactiver la vérification des hooks pour debug
+
+        // Temporairement désactiver la vérification des hooks pour debug
         // if (!in_array($hook, $allowed_hooks)) {
         //     return;
         // }
 
+        error_log('PDF Builder: Hook validation passed, loading scripts...');
 
         $this->load_admin_scripts($hook);
     }
@@ -1481,8 +1483,9 @@ class PDF_Builder_Admin
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
-        error_log('PDF Builder: Enqueuing script: ' . $script_url);
+        error_log('PDF Builder: About to enqueue script: ' . $script_url);
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        error_log('PDF Builder: Script enqueued successfully');
 
         // Variables JavaScript pour AJAX - VERSION VANILLA JS
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
