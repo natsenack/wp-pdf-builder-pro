@@ -64,7 +64,7 @@ if (!$is_new && $template_id > 0) {
         function waitForScripts() {
             return new Promise((resolve) => {
                 const checkScripts = () => {
-                    // Vérifier que les classes Vanilla JS sont disponibles (v1.0.1)
+                    // Vérifier que les classes Vanilla JS sont disponibles (v1.0.2)
                     if (typeof PDFCanvasVanilla !== 'undefined' &&
                         typeof PDFCanvasRenderer !== 'undefined' &&
                         typeof PDFCanvasEventManager !== 'undefined') {
