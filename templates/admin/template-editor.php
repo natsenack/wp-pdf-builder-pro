@@ -41,6 +41,7 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<h3>🚨 CHARGEMENT DIRECT DES SCRIPTS 🚨</h3>';
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($react_test_url) . '"></script>';
+    echo '<script type="text/javascript" src="' . esc_url(plugins_url('react-test.js', dirname(dirname(__FILE__)))) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($bundle_test_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url(plugins_url('react-diagnostic.js', dirname(dirname(__FILE__)))) . '"></script>';
@@ -62,13 +63,20 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
     // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
-        // Intercepter les erreurs JavaScript globales
+        // Capturer automatiquement les erreurs JavaScript
+        window.consoleErrors = [];
+        window.originalConsoleError = console.error;
+        console.error = function(...args) {
+            window.consoleErrors.push({message: args.join(" "), timestamp: Date.now()});
+            window.originalConsoleError.apply(console, args);
+        };
+
+        // Intercepter les erreurs globales
         window.addEventListener("error", function(e) {
-            console.error("🚨 ERREUR JAVASCRIPT GLOBALE:", e.error);
-            console.error("Message:", e.message);
-            console.error("Fichier:", e.filename);
-            console.error("Ligne:", e.lineno);
-            console.error("Stack:", e.error ? e.error.stack : "No stack");
+            console.error("🚨 ERREUR GLOBALE:", e.error ? e.error.message : e.message, "dans", e.filename, "ligne", e.lineno);
+            if (e.error && e.error.stack) {
+                console.error("Stack:", e.error.stack);
+            }
         });
 
         // Intercepter les erreurs de chargement de script
