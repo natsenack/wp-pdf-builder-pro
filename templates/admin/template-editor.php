@@ -22,6 +22,30 @@ if ($template_id > 0) {
     if ($template) {
         $template_data = json_decode($template->template_data, true);
         $template_name = $template->name;
+
+        // Sanitize template data to prevent JavaScript injection
+        if (is_array($template_data)) {
+            $template_data = sanitize_template_data_recursive($template_data);
+        }
+    }
+}
+
+// Function to recursively sanitize template data
+function sanitize_template_data_recursive($data) {
+    if (is_array($data)) {
+        $sanitized = array();
+        foreach ($data as $key => $value) {
+            $sanitized[$key] = sanitize_template_data_recursive($value);
+        }
+        return $sanitized;
+    } elseif (is_string($data)) {
+        // Remove any HTML tags and encode special characters
+        $data = wp_strip_all_tags($data);
+        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        return $data;
+    } else {
+        // For numbers, booleans, null, return as-is
+        return $data;
     }
 }
 
@@ -37,19 +61,22 @@ if (empty($template_data)) {
     );
 }
 
-// Localize script data
-wp_localize_script("pdf-builder-vanilla-bundle", "pdfBuilderData", array(
-    "templateData" => $template_data,
-    "templateId" => $template_id,
-    "ajaxUrl" => admin_url("admin-ajax.php"),
-    "nonce" => wp_create_nonce("pdf_builder_nonce"),
-    "strings" => array(
-        "loading" => __("Loading PDF Editor...", "pdf-builder-pro"),
-        "error" => __("Error loading editor", "pdf-builder-pro"),
-        "save" => __("Save Template", "pdf-builder-pro"),
-        "preview" => __("Preview PDF", "pdf-builder-pro")
-    )
-));
+// Localize script data - moved to after DOM elements to ensure script is registered
+// Use wp_add_inline_script instead of wp_localize_script to avoid JSON encoding issues
+wp_add_inline_script('pdf-builder-vanilla-bundle', '
+    window.pdfBuilderData = ' . wp_json_encode(array(
+        "templateData" => $template_data,
+        "templateId" => $template_id,
+        "ajaxUrl" => admin_url("admin-ajax.php"),
+        "nonce" => wp_create_nonce("pdf_builder_nonce"),
+        "strings" => array(
+            "loading" => __("Loading PDF Editor...", "pdf-builder-pro"),
+            "error" => __("Error loading editor", "pdf-builder-pro"),
+            "save" => __("Save Template", "pdf-builder-pro"),
+            "preview" => __("Preview PDF", "pdf-builder-pro")
+        )
+    )) . ';
+', 'before');
 ?>
 
 <div class="wrap">
