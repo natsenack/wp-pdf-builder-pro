@@ -1,17 +1,19 @@
 // Import global fallbacks first
 import './globalFallback.js';
 
+// Import React and ReactDOM since they're now bundled
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+
 console.log('🚨🚨🚨 MAIN.JS CHARGÉ ET EXÉCUTÉ - TOP LEVEL 🚨🚨🚨');
 
 // Vérifier immédiatement React
-console.log('REACT CHECK - window.React:', typeof window.React);
-console.log('REACT CHECK - window.ReactDOM:', typeof window.ReactDOM);
-console.log('REACT CHECK - React.createElement:', typeof window.React?.createElement);
-console.log('REACT CHECK - ReactDOM.createRoot:', typeof window.ReactDOM?.createRoot);
+console.log('REACT CHECK - React:', typeof React);
+console.log('REACT CHECK - ReactDOM:', typeof ReactDOM);
+console.log('REACT CHECK - React.createElement:', typeof React?.createElement);
+console.log('REACT CHECK - ReactDOM.createRoot:', typeof ReactDOM?.createRoot);
 
 // Main application entry point that actually uses all components
-// REMOVED: import React from 'react';
-// REMOVED: import ReactDOM from 'react-dom/client';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
@@ -19,15 +21,14 @@ const init = (containerId, options = {}) => {
   console.log('🚀🚀🚀 NOUVELLE VERSION PDF Builder Pro: init() appelée avec', { containerId, options, timestamp: Date.now() });
   
   // Vérifier React et ReactDOM
-  console.log('🔍 Vérification React global:', typeof window.React);
-  console.log('🔍 Vérification ReactDOM global:', typeof window.ReactDOM);
-  console.log('🔍 React.createElement disponible:', typeof window.React?.createElement);
-  console.log('🔍 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
+  console.log('🔍 Vérification React:', typeof React);
+  console.log('🔍 Vérification ReactDOM:', typeof ReactDOM);
+  console.log('🔍 React.createElement disponible:', typeof React?.createElement);
+  console.log('🔍 ReactDOM.createRoot disponible:', typeof ReactDOM?.createRoot);
   
-  // REMOVED: Vérifier les imports locaux (plus d'imports locaux)
-  console.log('🚀 React disponible:', typeof window.React);
-  console.log('🚀 ReactDOM disponible:', typeof window.ReactDOM);
-  console.log('🚀 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
+  console.log('🚀 React disponible:', typeof React);
+  console.log('🚀 ReactDOM disponible:', typeof ReactDOM);
+  console.log('🚀 ReactDOM.createRoot disponible:', typeof ReactDOM?.createRoot);
 
   const container = document.getElementById(containerId);
   console.log('🚀 Container recherché:', containerId, 'trouvé:', !!container);
@@ -42,18 +43,17 @@ const init = (containerId, options = {}) => {
   // Clear any existing content
   container.innerHTML = '';
 
-  console.log('🚀 Tentative de création du root React...');
-  
   // Vérifications supplémentaires avant utilisation
-  if (!window.React) {
-    console.error('❌ React n\'est pas disponible globalement');
+  if (!React) {
+    console.error('❌ React n\'est pas disponible');
     return;
   }
-  if (!window.ReactDOM) {
-    console.error('❌ ReactDOM n\'est pas disponible globalement');
+
+  if (!ReactDOM) {
+    console.error('❌ ReactDOM n\'est pas disponible');
     return;
   }
-  if (!window.ReactDOM.createRoot) {
+  if (!ReactDOM.createRoot) {
     console.error('❌ ReactDOM.createRoot n\'est pas disponible');
     return;
   }
@@ -61,18 +61,18 @@ const init = (containerId, options = {}) => {
   console.log('✅ Toutes les dépendances React sont disponibles');
   
   // Create React 18 root and render
-  const root = window.ReactDOM.createRoot(container);
+  const root = ReactDOM.createRoot(container);
   console.log('✅ Root React créé:', !!root);
   
   try {
-    console.log('�🚨🚨 MAIN.JS: TENTATIVE DE RENDU REACT 🚨🚨🚨');
-    console.log('� PDFCanvasEditor importé:', typeof PDFCanvasEditor);
-    console.log('� window.React.createElement:', typeof window.React?.createElement);
+    console.log('🚨🚨 MAIN.JS: TENTATIVE DE RENDU REACT 🚨🚨🚨');
+    console.log('📦 PDFCanvasEditor importé:', typeof PDFCanvasEditor);
+    console.log('📦 React.createElement:', typeof React?.createElement);
     
-    const element = window.React.createElement(PDFCanvasEditor, {
+    const element = React.createElement(PDFCanvasEditor, {
       options: options
     });
-    console.log('� ELEMENT REACT CRÉÉ:', !!element);
+    console.log('📦 ELEMENT REACT CRÉÉ:', !!element);
     console.log('🚨 TYPE ELEMENT:', element?.constructor?.name);
     
     console.log('🚨 AVANT ROOT.RENDER');
