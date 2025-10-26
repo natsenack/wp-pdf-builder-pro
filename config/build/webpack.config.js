@@ -67,17 +67,14 @@ module.exports = {
     'react-dom': 'ReactDOM'
   },
   plugins: [
-    // Copier le script-loader et le main bundle directement sans traitement webpack
+    // Copier seulement le script-loader sans traitement webpack (il utilise les globals directement)
     new CopyPlugin({
       patterns: [
         {
           from: path.resolve(__dirname, '../../resources/js/script-loader.js'),
           to: path.resolve(__dirname, '../../assets/js/dist/pdf-builder-script-loader.js')
-        },
-        {
-          from: path.resolve(__dirname, '../../resources/js/main.js'),
-          to: path.resolve(__dirname, '../../assets/js/dist/pdf-builder-admin-debug.js')
         }
+        // REMOVED: main.js is now processed by webpack as entry point
       ]
     }),
     // Plugin de compression pour les assets
