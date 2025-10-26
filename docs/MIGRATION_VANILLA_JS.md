@@ -215,8 +215,11 @@ Puisque 80% de l'architecture fonctionnait déjà, on garde tout ce qui est bon 
 #### **Étape 2.4 : Tests Interface**
 - ✅ Test HTML fonctionnel avec chargement template
 - ✅ Bundle compilé 155 KiB (objectif 127-160 KiB)
-- ✅ Déploiement FTP réussi (4 fichiers uploadés)
+- ✅ Déploiement FTP réussi (4 fichiers JS + corrections PHP)
 - ✅ Commit Git automatique et push vers dev
+- ✅ Correction boucle infinie dans initialisation JavaScript
+- ✅ Correction hook WordPress admin_enqueue_scripts
+- ✅ Timeout 10s avec debug pour chargement script
 - [ ] Tests d'interface utilisateur
 - [ ] Tests cross-browser (IE11+)
 - [ ] Tests responsive
@@ -247,8 +250,13 @@ Puisque 80% de l'architecture fonctionnait déjà, on garde tout ce qui est bon 
 ### **Déploiements Réussis**
 - **26 octobre 2025** : Corrections Phase 2 - 4 fichiers déployés (155 KiB)
   - pdf-canvas-vanilla.js, pdf-canvas-renderer.js, pdf-canvas-events.js, pdf-canvas-optimizer.js
-  - Temps: 3.67s | Vitesse: 21.6 KB/s | Mode: Parallèle (8 jobs)
+  - Temps: 3.67s | Vitesse: 21.6 KB/s | Mode: Parallèle
   - Commit: a067e01 | Branch: dev
+- **26 octobre 2025** : Corrections JavaScript/PHP - 2 fichiers déployés (3.02 MB)
+  - PDF_Builder_Admin.php (correction hook admin_enqueue_scripts)
+  - template-editor.php (correction initialisation + timeout)
+  - Temps: 3.05s | Vitesse: 1009.8 KB/s | Mode: Parallèle
+  - Commit: 2e64298 | Branch: dev
 
 ## 🏗️ Architecture Cible
 
