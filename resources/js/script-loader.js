@@ -20,15 +20,7 @@ console.log('🚨🚨🚨 SCRIPT-LOADER.JS CHARGÉ ET EXÉCUTÉ - VERSION FINALE
         options = options || {};
 
         try {
-          // Vérifier que React est disponible
-          if (!window.React || !window.ReactDOM) {
-            console.log('SCRIPT-LOADER: React pas encore disponible, retry dans 100ms');
-            var self = this;
-            setTimeout(function() { self.init(containerId, options); }, 100);
-            return false;
-          }
-
-          console.log('SCRIPT-LOADER: React disponible, initialisation...');
+          console.log('SCRIPT-LOADER: Initialisation (React bundlé)...');
           var container = document.getElementById(containerId);
           if (!container) {
             throw new Error('Container element \'' + containerId + '\' not found');
