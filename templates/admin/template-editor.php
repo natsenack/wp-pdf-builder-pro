@@ -34,12 +34,14 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     // CHARGER DIRECTEMENT LES SCRIPTS AVEC LES BONNES URLS
     $script_loader_url = plugins_url('assets/js/dist/pdf-builder-script-loader.js', dirname(dirname(__FILE__)));
     $main_bundle_url = plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__)));
+    $bundle_test_url = plugins_url('assets/js/dist/bundle-test.js', dirname(dirname(__FILE__)));
     $react_test_url = plugins_url('assets/js/dist/react-test.js', dirname(dirname(__FILE__)));
 
     echo '<div style="background: lightgreen; padding: 20px; margin: 20px; border: 2px solid green;">';
     echo '<h3>🚨 CHARGEMENT DIRECT DES SCRIPTS 🚨</h3>';
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($react_test_url) . '"></script>';
+    echo '<script type="text/javascript" src="' . esc_url($bundle_test_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<p>Scripts chargés directement avec plugins_url()</p>';
 
