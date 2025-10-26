@@ -755,7 +755,25 @@ Write-Host "   • Taille totale : $([math]::Round($totalSize / 1MB, 2)) MB" -Fo
 $excludePatterns = @()
 switch ($Mode) {
     "plugin" {
-        # Pour le plugin, on garde tout car c'est déjà filtré
+        # Exclure les gros dossiers inutiles pour le plugin WordPress
+        $excludePatterns = @(
+            "vendor",                    # Composer dependencies (énorme!)
+            "node_modules",              # NPM dependencies (énorme!)
+            ".git",                      # Git files
+            ".vscode",                   # VS Code config
+            "*.log",                     # Log files
+            "temp",                      # Temp files
+            "*.tmp",                     # Temp files
+            "build/backups",             # Backups locaux
+            "build/logs",                # Logs locaux
+            ".gitignore",                # Git config
+            ".env",                      # Environment files
+            "package-lock.json",         # NPM lock
+            "composer.lock",             # Composer lock (énorme!)
+            "README.md",                 # Readme
+            "CHANGELOG.md",              # Changelog
+            "*.md"                       # Documentation
+        )
     }
     "full" {
         # Pour le déploiement complet, exclure les gros dossiers de développement
@@ -1098,9 +1116,9 @@ Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
 # Upload les fichiers en parallèle
 Write-Host "📤 Upload des fichiers..." -ForegroundColor Yellow
-Write-Host "   Configuration: 20 uploads simultanés (optimisé)" -ForegroundColor Gray
+Write-Host "   Configuration: 50 uploads simultanés (ultra-optimisé)" -ForegroundColor Gray
 
-$maxParallelJobs = 20
+$maxParallelJobs = 50
 $runningJobs = @()
 $processedFiles = 0
 $lastProgressUpdate = Get-Date
