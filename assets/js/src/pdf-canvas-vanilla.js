@@ -758,9 +758,15 @@ export class PDFCanvasVanilla {
         }
 
         // Dessiner tous les éléments en utilisant le renderer spécialisé
+        console.log('Canvas render - elements count:', this.elements.size);
         for (const element of this.elements.values()) {
             console.log('Rendering element:', element.type, element.properties);
-            this.renderer.renderElement(element, element.properties);
+            try {
+                this.renderer.renderElement(element, element.properties);
+                console.log('Element rendered successfully');
+            } catch (error) {
+                console.error('Error rendering element:', error);
+            }
         }
 
         // Dessiner la sélection et les transformations
