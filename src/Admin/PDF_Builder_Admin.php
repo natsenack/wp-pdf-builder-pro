@@ -1480,7 +1480,9 @@ class PDF_Builder_Admin
         ');
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
-        wp_enqueue_script('pdf-builder-vanilla-bundle', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
+        error_log('PDF Builder: Enqueuing script: ' . $script_url);
+        wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
         // Variables JavaScript pour AJAX - VERSION VANILLA JS
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
