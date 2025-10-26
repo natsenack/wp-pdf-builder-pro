@@ -1,0 +1,3 @@
+open ftp://wp-pdf-builder-pro:pdfbuilder2024!@ftp.cluster031.hosting.ovh.net/
+put assets/js/dist/bundle-test.js /www/wp-content/plugins/wp-pdf-builder-pro/assets/js/dist/bundle-test.js
+exit

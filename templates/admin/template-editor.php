@@ -100,41 +100,6 @@ if (!is_user_logged_in() || !current_user_can('read')) {
         }, 1000);
     </script>';
 
-    // TEST ALTERNATIF: Charger dynamiquement avec gestion d'erreurs
-    echo '<script>
-        setTimeout(function() {
-            console.log("🔄 TEST ALTERNATIF - CHARGEMENT DYNAMIQUE...");
-
-            // Vérifier d\'abord la disponibilité de React
-            console.log("🔍 VÉRIFICATION REACT AVANT CHARGEMENT:");
-            console.log("🔍 window.React:", typeof window.React);
-            console.log("🔍 window.ReactDOM:", typeof window.ReactDOM);
-            console.log("🔍 window.React.createElement:", typeof window.React?.createElement);
-            console.log("🔍 window.ReactDOM.render:", typeof window.ReactDOM?.render);
-
-            // Tester le chargement dynamique du script-loader
-            var scriptLoaderTest = document.createElement("script");
-            scriptLoaderTest.src = "' . esc_url($script_loader_url) . '";
-            scriptLoaderTest.onload = function() {
-                console.log("✅ Script-loader chargé dynamiquement");
-                console.log("🔍 window.pdfBuilderPro après chargement dynamique:", typeof window.pdfBuilderPro);
-
-                // Tester immédiatement après le chargement
-                setTimeout(function() {
-                    console.log("🔍 RETEST après 500ms:");
-                    console.log("🔍 window.pdfBuilderPro:", typeof window.pdfBuilderPro);
-                    console.log("🔍 window.pdfBuilderPro.init:", typeof window.pdfBuilderPro?.init);
-                }, 500);
-            };
-            scriptLoaderTest.onerror = function(e) {
-                console.error("❌ Échec chargement dynamique script-loader:", e);
-            };
-
-            document.head.appendChild(scriptLoaderTest);
-        }, 2000);
-    </script>';
-    echo '</div>';
-
     // TEST DES URLS
     echo '<div style="background: lightblue; padding: 20px; margin: 20px; border: 2px solid blue;">';
     echo '<h3>🚨 TEST DES URLS 🚨</h3>';
