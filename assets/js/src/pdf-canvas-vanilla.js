@@ -150,6 +150,28 @@ export class PDFCanvasVanilla {
             throw new Error(`Container with id "${this.containerId}" not found`);
         }
 
+        // Vérifier si un canvas existant doit être utilisé
+        if (this.options.canvasElementId) {
+            this.canvas = document.getElementById(this.options.canvasElementId);
+            if (this.canvas) {
+                console.log('Using existing canvas element:', this.options.canvasElementId);
+                this.ctx = this.canvas.getContext('2d');
+                if (!this.ctx) {
+                    throw new Error('Failed to get 2D context from existing canvas');
+                }
+                // Mettre à jour les dimensions si nécessaire
+                if (this.canvas.width !== this.options.width) {
+                    this.canvas.width = this.options.width;
+                }
+                if (this.canvas.height !== this.options.height) {
+                    this.canvas.height = this.options.height;
+                }
+                return;
+            } else {
+                console.warn('Canvas element with id "' + this.options.canvasElementId + '" not found, creating new canvas');
+            }
+        }
+
         // Vider le conteneur
         container.innerHTML = '';
 
@@ -1199,12 +1221,27 @@ export class PDFCanvasVanilla {
 export default PDFCanvasVanilla;
 
 // Fonction d'initialisation globale pour WordPress
-window.pdfBuilderInitVanilla = function(containerId, options = {}) {
+window.pdfBuilderInitVanilla = function(containerIdOrOptions, options = {}) {
     console.log('🚀 Initialisation Vanilla JS PDF Builder...');
+
+    let containerId, canvasOptions;
+
+    // Gérer les deux signatures possibles
+    if (typeof containerIdOrOptions === 'string') {
+        // Signature: init(containerId, options)
+        containerId = containerIdOrOptions;
+        canvasOptions = options;
+    } else if (typeof containerIdOrOptions === 'object') {
+        // Signature: init(options) - utiliser canvasElementId comme container
+        canvasOptions = containerIdOrOptions;
+        containerId = canvasOptions.canvasElementId || canvasOptions.containerId || 'pdf-canvas-container';
+    } else {
+        throw new Error('Invalid parameters for pdfBuilderInitVanilla');
+    }
 
     try {
         // Créer l'instance principale
-        const pdfCanvas = new PDFCanvasVanilla(containerId, options);
+        const pdfCanvas = new PDFCanvasVanilla(containerId, canvasOptions);
 
         // Attendre que le DOM soit prêt
         if (document.readyState === 'loading') {

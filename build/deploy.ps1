@@ -1,3 +1,4 @@
+# Commande pour déployer le plugin : cd d:\wp-pdf-builder-pro\build; .\deploy.ps1 -Mode plugin
 <#
 .SYNOPSIS
     Script unifié de déploiement FTP pour PDF Builder Pro
