@@ -634,8 +634,9 @@ function initializeCanvas() {
     try {
         // Initialiser le canvas
         if (window.PDFBuilderPro.init && typeof window.PDFBuilderPro.init === 'function') {
-            console.log('[INIT] Appel de PDFBuilderPro.init()');
-            window.PDFBuilderPro.init(canvasOptions);
+            console.log('[INIT] Appel de PDFBuilderPro.init() avec containerId: "pdf-canvas-container"');
+            // ✅ CORRECTION: Passer l'ID du conteneur en STRING, pas l'objet entier!
+            window.PDFBuilderPro.init('pdf-canvas-container', canvasOptions);
             window.pdfCanvasInstance = window.PDFBuilderPro;
         } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
             console.log('[INIT] Utilisation de PDFCanvasVanilla');
