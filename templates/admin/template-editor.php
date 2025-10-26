@@ -40,6 +40,17 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<p>Scripts chargés directement avec plugins_url()</p>';
+
+    // DEBUG: Vérifier que les scripts sont dans le DOM
+    echo '<script>
+        setTimeout(function() {
+            var scripts = document.querySelectorAll("script[src*=\'pdf-builder\']");
+            console.log("🔍 SCRIPTS PDF-BUILDER TROUVÉS DANS LE DOM:", scripts.length);
+            scripts.forEach(function(script, index) {
+                console.log("🔍 Script " + index + ":", script.src);
+            });
+        }, 500);
+    </script>';
     echo '</div>';
 
     // TEST DES URLS
@@ -124,26 +135,11 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js';
     echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
 
-    // Script de blocage des scripts externes pour sécurité
+    // Script de blocage des scripts externes pour sécurité - TEMPORAIREMENT DÉSACTIVÉ
     echo '<script type="text/javascript">
         (function() {
-            // Sauvegarder la fonction originale
-            var originalCreateElement = document.createElement;
-            document.createElement = function(tagName) {
-                var element = originalCreateElement.call(document, tagName);
-                if (tagName.toLowerCase() === "script" && element.src) {
-                    // Bloquer tous les scripts externes sauf les nôtres
-                    if (element.src.indexOf("pdf-builder") === -1 &&
-                        element.src.indexOf("jquery") === -1 &&
-                        element.src.indexOf("load-scripts.php") === -1) {
-                        console.warn("🚫 BLOCKED SCRIPT:", element.src);
-                        element.src = ""; // Désactiver le script
-                        return element;
-                    }
-                }
-                return element;
-            };
-            console.log("🛡️ Script blocker activated - only PDF Builder and core scripts allowed");
+            console.log("🛡️ Script blocker TEMPORAIREMENT DÉSACTIVÉ for debugging");
+            // Script blocker désactivé pour permettre le débogage
         })();
     </script>';
 
