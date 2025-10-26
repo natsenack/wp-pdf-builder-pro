@@ -94,6 +94,7 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
                         event.clientY >= canvasRect.top &&
                         event.clientY <= canvasRect.bottom;
 
+    console.log('🔍🔍🔍 DEBUGGING CANVAS DETECTION 🔍🔍🔍');
     console.log('[DRAG] Canvas rect:', {
         left: canvasRect.left,
         right: canvasRect.right,
@@ -108,6 +109,7 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
         yInRange: event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom,
         isOverCanvas: isOverCanvas
     });
+    console.log('🔍🔍🔍 END DEBUGGING 🔍🔍🔍');
 
     console.log('[DRAG] DragOver - Position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
 
