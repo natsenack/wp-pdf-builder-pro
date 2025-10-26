@@ -2,7 +2,38 @@
 if (!current_user_can('manage_options')) {
     wp_die('Unauthorized');
 }
+
+// LOG PHP - Vérifier que la page PHP est chargée
+error_log('[PHP] Template editor page loaded - PHP execution test');
+error_log('[PHP] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'unknown'));
+error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'none'));
+error_log('[PHP] User: ' . get_current_user_id());
 ?>
+<script>
+console.log('🚀 TEMPLATE EDITOR PAGE LOADED - JavaScript execution test');
+console.log('Current URL:', window.location.href);
+console.log('User Agent:', navigator.userAgent);
+console.log('DOMContentLoaded status:', document.readyState);
+
+// Test if jQuery is loaded
+if (typeof jQuery !== 'undefined') {
+    console.log('✅ jQuery is loaded, version:', jQuery.fn.jquery);
+} else {
+    console.log('❌ jQuery is NOT loaded');
+}
+
+// Test if our main script variables exist
+console.log('pdfBuilderAjax exists:', typeof pdfBuilderAjax !== 'undefined');
+console.log('pdfBuilderPro exists:', typeof pdfBuilderPro !== 'undefined');
+
+// Check if the canvas container exists
+var canvasContainer = document.getElementById('pdf-canvas-container');
+console.log('Canvas container exists:', !!canvasContainer);
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOMContentLoaded fired - page fully loaded');
+});
+</script>
 <div id="wpbody-content">
     <div class="pdf-builder-workspace">
         <!-- Header -->
@@ -14,10 +45,25 @@ if (!current_user_can('manage_options')) {
                         <?php
                         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
                         if ($template_id > 0) {
-                            // Ici vous pouvez ajouter la logique pour récupérer le nom du template
-                            echo '<span class="template-name">' . sprintf(__('Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
+                            // Récupérer les informations du template
+                            global $pdf_builder_pro;
+                            if ($pdf_builder_pro && method_exists($pdf_builder_pro, 'get_template_manager')) {
+                                $template_manager = $pdf_builder_pro->get_template_manager();
+                                if (method_exists($template_manager, 'load_template_robust')) {
+                                    $template_data = $template_manager->load_template_robust($template_id);
+                                    if ($template_data && isset($template_data['name'])) {
+                                        echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing: %s', 'pdf-builder-pro'), esc_html($template_data['name'])) . '</span>';
+                                    } else {
+                                        echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
+                                    }
+                                } else {
+                                    echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
+                                }
+                            } else {
+                                echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
+                            }
                         } else {
-                            echo '<span class="template-name">' . __('New Template', 'pdf-builder-pro') . '</span>';
+                            echo '<span class="template-name">' . __('📄 New Template', 'pdf-builder-pro') . '</span>';
                         }
                         ?>
                     </div>
@@ -202,150 +248,111 @@ if (!current_user_can('manage_options')) {
 }
 
 .header-left h1 {
-    margin: 0 0 4px 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: #1d2327;
+    margin: 0 0 5px 0;
+    font-size: 22px;
+    color: #1a1a1a;
 }
 
 .template-info {
-    font-size: 14px;
-    color: #646970;
+    font-size: 12px;
+    color: #666;
 }
 
 .template-name {
-    background-color: #f0f0f0;
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-weight: 500;
+    font-weight: 600;
+    color: #0073aa;
+}
+
+.editing-indicator {
+    color: #d97706;
 }
 
 .header-right {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
 }
 
-.header-right .button {
+.pdf-builder-editor {
     display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* Loading State */
-.pdf-builder-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
     flex: 1;
-    gap: 20px;
+    overflow: hidden;
 }
 
-.pdf-builder-loading p {
-    font-size: 16px;
-    color: #666;
-}
-
-/* Toolbar */
 .pdf-builder-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 12px 15px;
     background-color: white;
     border-bottom: 1px solid #e5e5e5;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 12px 20px;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .toolbar-group {
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
+    padding-right: 20px;
+    border-right: 1px solid #e5e5e5;
+}
+
+.toolbar-group:last-child {
+    border-right: none;
 }
 
 .toolbar-group h3 {
     margin: 0;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
+    color: #666;
     text-transform: uppercase;
-    color: #999;
-    margin-right: 8px;
+    white-space: nowrap;
 }
 
-.toolbar-group-right {
-    margin-left: auto;
-}
-
-/* Toolbar Buttons */
 .toolbar-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
     border: 1px solid #ddd;
-    border-radius: 3px;
+    padding: 6px 8px;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    color: #333;
+    border-radius: 3px;
     transition: all 0.2s ease;
+    font-size: 14px;
 }
 
-.tool-btn {
-    padding: 8px;
-    min-width: 36px;
-    justify-content: center;
+.toolbar-btn:hover {
+    background-color: #e5e5e5;
+    border-color: #999;
 }
 
-.tool-btn.active {
-    background-color: #2271b1;
+.toolbar-btn.active {
+    background-color: #0073aa;
     color: white;
-    border-color: #1e5aa8;
-}
-
-.tool-icon {
-    font-size: 16px;
-    line-height: 1;
-}
-
-.toolbar-btn:hover:not(:disabled):not(.active) {
-    background-color: #e8e8e8;
-    border-color: #ccc;
+    border-color: #0073aa;
 }
 
 .toolbar-btn-primary {
-    background-color: #2271b1;
+    background-color: #0073aa;
     color: white;
-    border-color: #1e5aa8;
+    border-color: #0073aa;
 }
 
-.toolbar-btn-primary:hover:not(:disabled) {
-    background-color: #1e5aa8;
-    border-color: #1a4d92;
+.toolbar-btn-primary:hover {
+    background-color: #005a87;
+    border-color: #005a87;
 }
 
-.toolbar-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.toolbar-group-right {
+    border-right: none;
+    margin-left: auto;
 }
 
-.toolbar-btn .dashicons {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-}
-
-/* Zoom Control */
 .zoom-control {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: #f0f0f0;
-    padding: 4px 8px;
-    border-radius: 3px;
-    border: 1px solid #ddd;
 }
 
 .zoom-level {
@@ -355,14 +362,6 @@ if (!current_user_can('manage_options')) {
     font-weight: 600;
 }
 
-/* Editor Content */
-.pdf-builder-editor {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-}
-
 .pdf-builder-content {
     display: flex;
     flex: 1;
@@ -370,147 +369,80 @@ if (!current_user_can('manage_options')) {
     gap: 0;
 }
 
-/* Canvas Area */
-.pdf-builder-canvas-area {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
-    background-color: #e8e8e8;
-    overflow: auto;
-}
-
-.pdf-canvas-container {
-    position: relative;
-    background-color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    cursor: crosshair;
-}
-
-#pdf-builder-canvas {
-    display: block;
-    background-color: white;
-}
-
-/* Properties Panel */
-.pdf-builder-properties {
-    width: 280px;
-    padding: 15px;
-    background-color: white;
-    border-left: 1px solid #e5e5e5;
-    overflow-y: auto;
-    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
-}
-
-.pdf-builder-properties h3 {
-    margin: 0 0 15px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #2271b1;
-    padding-bottom: 10px;
-}
-
-.properties-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.no-selection {
-    text-align: center;
-    color: #999;
-    font-size: 13px;
-    margin: 20px 0;
-}
-
-/* Elements Sidebar */
 .pdf-builder-elements-sidebar {
-    width: 280px;
-    padding: 15px;
+    width: 250px;
     background-color: white;
     border-right: 1px solid #e5e5e5;
-    overflow-y: auto;
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .pdf-builder-elements-sidebar h3 {
-    margin: 0 0 15px 0;
-    font-size: 14px;
+    margin: 15px 15px 10px 15px;
+    font-size: 12px;
     font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #2271b1;
-    padding-bottom: 10px;
+    color: #666;
+    text-transform: uppercase;
 }
 
 .elements-search {
-    margin-bottom: 15px;
+    padding: 0 15px 15px 15px;
 }
 
 .elements-search input {
     width: 100%;
-    padding: 8px 12px;
+    padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 13px;
-    box-sizing: border-box;
-}
-
-.elements-search input:focus {
-    outline: none;
-    border-color: #2271b1;
-    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.1);
+    border-radius: 3px;
+    font-size: 12px;
 }
 
 .elements-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px;
 }
 
 .element-category {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .element-category-title {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    text-transform: uppercase;
     color: #666;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #eee;
+    text-transform: uppercase;
+    padding: 8px 5px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .element-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    cursor: pointer;
+    gap: 8px;
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+    cursor: grab;
     transition: all 0.2s ease;
-    background-color: #fafafa;
 }
 
 .element-item:hover {
-    background-color: #f0f8ff;
-    border-color: #2271b1;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.15);
+    background-color: #f0f0f0;
+    border-color: #999;
 }
 
 .element-item.dragging {
     opacity: 0.5;
-    transform: rotate(5deg);
 }
 
 .element-icon {
-    font-size: 20px;
-    width: 24px;
-    text-align: center;
+    font-size: 16px;
+    min-width: 20px;
 }
 
 .element-info {
@@ -519,85 +451,118 @@ if (!current_user_can('manage_options')) {
 }
 
 .element-name {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #333;
-    margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .element-description {
-    font-size: 11px;
-    color: #666;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-size: 10px;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-builder-canvas-area {
+    flex: 1;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    position: relative;
+}
+
+.pdf-canvas-container {
+    position: relative;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-canvas-container canvas {
+    display: block;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+.pdf-canvas-container.drag-over canvas {
+    border: 2px dashed #0073aa;
+    background-color: #f0f7ff;
+}
+
+.pdf-builder-properties {
+    width: 280px;
+    background-color: white;
+    border-left: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
-/* Error State */
-.pdf-builder-error {
+.pdf-builder-properties h3 {
+    margin: 15px 15px 10px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.properties-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 15px 15px 15px;
+}
+
+.no-selection {
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.pdf-builder-loading {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: white;
+}
+
+.pdf-builder-loading .spinner {
+    margin-bottom: 20px;
+}
+
+.pdf-builder-loading p {
+    font-size: 14px;
+    color: #666;
+}
+
+.pdf-builder-error {
     flex: 1;
-    gap: 20px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fef2f2;
+    padding: 20px;
 }
 
 .pdf-builder-error h3 {
-    color: #d32f2f;
+    color: #dc2626;
     font-size: 18px;
-    margin: 0;
+    margin-bottom: 10px;
 }
 
 .pdf-builder-error p {
     color: #666;
+    margin-bottom: 20px;
+    text-align: center;
     max-width: 400px;
-}
-
-/* Responsive Design */
-@media (max-width: 1400px) {
-    .pdf-builder-elements-sidebar,
-    .pdf-builder-properties {
-        width: 250px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .pdf-builder-elements-sidebar,
-    .pdf-builder-properties {
-        width: 220px;
-    }
-}
-
-@media (max-width: 1000px) {
-    .pdf-builder-content {
-        flex-direction: column;
-        height: calc(100vh - 120px);
-    }
-
-    .pdf-builder-elements-sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e5e5e5;
-        max-height: 200px;
-    }
-
-    .pdf-builder-canvas-area {
-        flex: 1;
-    }
-
-    .pdf-builder-properties {
-        width: 100%;
-        border-left: none;
-        border-top: 1px solid #e5e5e5;
-        max-height: 250px;
-    }
 }
 
 @media (max-width: 768px) {
@@ -612,489 +577,199 @@ if (!current_user_can('manage_options')) {
 }
 </style>
 
+<!-- ===== INITIALISATION DU CANVAS EDITOR ===== -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎨 PDF Builder Editor Template Loaded');
+console.log('[INIT] 🚀 Initialisation du Canvas Editor - Début');
+
+// Attendre que PDFBuilderPro soit disponible
+function waitForPDFBuilder(maxRetries = 20) {
+    console.log('[INIT] Attente du chargement de PDFBuilderPro... (retries restants:', maxRetries, ')');
     
-    // Initialize editor when bundle is ready
     if (typeof window.PDFBuilderPro !== 'undefined') {
-        initializeEditor();
+        console.log('[INIT] ✅ PDFBuilderPro trouvé!', typeof window.PDFBuilderPro);
+        initializeCanvas();
+        return;
+    }
+    
+    if (maxRetries > 0) {
+        setTimeout(() => waitForPDFBuilder(maxRetries - 1), 250);
     } else {
-        // Wait for bundle to load (with timeout)
-        var timeout = setTimeout(function() {
-            console.error('❌ PDF Builder bundle failed to load');
-            showError('PDF Builder bundle failed to load. Please refresh the page.');
-        }, 10000);
-
-        // Listen for bundle load
-        var checkInterval = setInterval(function() {
-            if (typeof window.PDFBuilderPro !== 'undefined') {
-                clearTimeout(timeout);
-                clearInterval(checkInterval);
-                initializeEditor();
-            }
-        }, 100);
+        console.error('[INIT] ❌ PDFBuilderPro pas trouvé après attente');
+        showError('Impossible de charger le système PDF Builder');
     }
+}
 
-    function initializeEditor() {
-        try {
-            console.log('✅ Initializing PDF Canvas Editor');
-            
-            // Set up AJAX globals
-            if (typeof ajaxurl === 'undefined') {
-                ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
-            }
-            if (typeof window.pdfBuilderNonce === 'undefined') {
-                window.pdfBuilderNonce = '<?php echo wp_create_nonce('pdf_builder_templates'); ?>';
-            }
-            
-            // Get container
-            var container = document.getElementById('pdf-canvas-container');
-            if (!container) {
-                throw new Error('Canvas container not found');
-            }
-
-            // Initialize canvas editor
-            var editor = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-builder-canvas', {
-                width: 595,
-                height: 842,
-                templateId: <?php echo isset($_GET['template_id']) ? intval($_GET['template_id']) : '0'; ?>
-            });
-
-            // Initialize the editor
-            editor.init().then(function() {
-                // Initialize elements sidebar
-                initializeElementsSidebar(editor);
-
-                // Setup event listeners
-                setupToolbarEvents(editor);
-                setupCanvasEvents(editor);
-
-                // Initialize view controls state
-                initializeViewControls(editor);
-
-                // Show editor, hide loading
-                document.getElementById('pdf-builder-loading').style.display = 'none';
-                document.getElementById('pdf-builder-editor').style.display = 'flex';
-
-                console.log('✅ PDF Editor initialized successfully');
-            }).catch(function(error) {
-                console.error('❌ Error initializing editor:', error);
-                showError('Failed to initialize editor: ' + error.message);
-            });
-
-        } catch (error) {
-            console.error('❌ Error initializing editor:', error);
-            showError('Failed to initialize editor: ' + error.message);
+// Initialiser le canvas une fois PDFBuilderPro disponible
+function initializeCanvas() {
+    console.log('[INIT] Initialisation du Canvas...');
+    
+    // Masquer le loading, afficher l'éditeur
+    var loading = document.getElementById('pdf-builder-loading');
+    var editor = document.getElementById('pdf-builder-editor');
+    
+    if (loading) loading.style.display = 'none';
+    if (editor) editor.style.display = 'flex';
+    
+    // Récupérer l'ID du template depuis l'URL
+    var templateId = new URLSearchParams(window.location.search).get('template_id');
+    console.log('[INIT] Template ID:', templateId);
+    
+    // Options de configuration du canvas
+    var canvasOptions = {
+        containerId: 'pdf-canvas-container',
+        templateId: templateId || null,
+        width: 595,  // A4 largeur
+        height: 842, // A4 hauteur
+        zoom: 1,
+        gridEnabled: true,
+        snapToGrid: true,
+        gridSize: 10,
+        canvasElementId: 'pdf-builder-canvas',
+        elementsContainerId: 'elements-container',
+        propertiesPanelId: 'properties-content'
+    };
+    
+    console.log('[INIT] Options:', canvasOptions);
+    
+    try {
+        // Initialiser le canvas
+        if (window.PDFBuilderPro.init && typeof window.PDFBuilderPro.init === 'function') {
+            console.log('[INIT] Appel de PDFBuilderPro.init()');
+            window.PDFBuilderPro.init(canvasOptions);
+            window.pdfCanvasInstance = window.PDFBuilderPro;
+        } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
+            console.log('[INIT] Utilisation de PDFCanvasVanilla');
+            var canvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvasOptions);
+            window.pdfCanvasInstance = canvas;
+            canvas.init();
         }
+        
+        console.log('[INIT] ✅ Canvas initialisé avec succès');
+        
+        // Configurer le drag & drop de la bibliothèque
+        setupDragAndDrop();
+        
+        // Charger le template si fourni
+        if (templateId && window.pdfCanvasInstance && typeof window.pdfCanvasInstance.loadTemplate === 'function') {
+            console.log('[INIT] Chargement du template:', templateId);
+            window.pdfCanvasInstance.loadTemplate(templateId);
+        }
+        
+    } catch (error) {
+        console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
+        showError('Erreur lors de l\'initialisation du canvas: ' + error.message);
     }
+}
 
-    function setupToolbarEvents(editor) {
-        var currentTool = 'select';
-        var toolButtons = document.querySelectorAll('.tool-btn');
-
-        // Tool definitions matching the test specifications
-        var toolDefinitions = {
-            'select': { action: 'select', shortcut: 'V' },
-            'add-text': { action: 'add-text', shortcut: 'T' },
-            'add-text-title': { action: 'add-text-title', shortcut: 'H' },
-            'add-text-subtitle': { action: 'add-text-subtitle', shortcut: 'S' },
-            'add-rectangle': { action: 'add-rectangle', shortcut: 'R' },
-            'add-circle': { action: 'add-circle', shortcut: 'C' },
-            'add-line': { action: 'add-line', shortcut: 'L' },
-            'add-arrow': { action: 'add-arrow', shortcut: 'A' },
-            'add-triangle': { action: 'add-triangle', shortcut: '3' },
-            'add-star': { action: 'add-star', shortcut: '5' },
-            'add-divider': { action: 'add-divider', shortcut: 'D' },
-            'add-image': { action: 'add-image', shortcut: 'I' }
-        };
-
-        // Function to set active tool
-        function setActiveTool(toolId) {
-            // Remove active class from all tool buttons
-            toolButtons.forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-
-            // Add active class to selected tool
-            var activeBtn = document.getElementById('tool-' + toolId);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            currentTool = toolId;
-            console.log('🔧 Tool changed to:', toolId);
-
-            // Notify canvas about tool change
-            if (editor && typeof editor.setTool === 'function') {
-                editor.setTool(toolId);
-            }
-        }
-
-        // Function to handle tool action
-        function handleToolAction(toolId) {
-            var toolDef = toolDefinitions[toolId];
-            if (!toolDef) return;
-
-            if (toolId === 'select') {
-                setActiveTool('select');
-            } else if (toolId.startsWith('add-')) {
-                // Add element and keep tool active
-                addElementByTool(toolId);
-            }
-        }
-
-        // Function to add element based on tool
-        function addElementByTool(toolId) {
-            var elementType = toolId.replace('add-', '');
-            var defaultProps = {};
-
-            switch (elementType) {
-                case 'text':
-                    defaultProps = {
-                        x: 50,
-                        y: 50,
-                        text: '<?php esc_html_e('New Text', 'pdf-builder-pro'); ?>',
-                        fontSize: 14,
-                        color: '#000000'
-                    };
-                    break;
-                case 'text-title':
-                    defaultProps = {
-                        x: 50,
-                        y: 50,
-                        text: '<?php esc_html_e('Title', 'pdf-builder-pro'); ?>',
-                        fontSize: 24,
-                        color: '#000000',
-                        fontWeight: 'bold'
-                    };
-                    break;
-                case 'text-subtitle':
-                    defaultProps = {
-                        x: 50,
-                        y: 100,
-                        text: '<?php esc_html_e('Subtitle', 'pdf-builder-pro'); ?>',
-                        fontSize: 18,
-                        color: '#666666'
-                    };
-                    break;
-                case 'rectangle':
-                    defaultProps = {
-                        x: 100,
-                        y: 100,
-                        width: 100,
-                        height: 60,
-                        fillColor: '#cccccc',
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'circle':
-                    defaultProps = {
-                        x: 150,
-                        y: 150,
-                        width: 80,
-                        height: 80,
-                        fillColor: '#cccccc',
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'line':
-                    defaultProps = {
-                        x: 200,
-                        y: 200,
-                        width: 100,
-                        height: 2,
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'arrow':
-                    defaultProps = {
-                        x: 200,
-                        y: 200,
-                        width: 100,
-                        height: 20,
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'triangle':
-                    defaultProps = {
-                        x: 150,
-                        y: 150,
-                        width: 80,
-                        height: 80,
-                        fillColor: '#cccccc',
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'star':
-                    defaultProps = {
-                        x: 150,
-                        y: 150,
-                        width: 80,
-                        height: 80,
-                        fillColor: '#cccccc',
-                        strokeColor: '#000000'
-                    };
-                    break;
-                case 'divider':
-                    defaultProps = {
-                        x: 50,
-                        y: 200,
-                        width: 500,
-                        height: 2,
-                        strokeColor: '#cccccc'
-                    };
-                    break;
-                case 'image':
-                    defaultProps = {
-                        x: 100,
-                        y: 100,
-                        width: 150,
-                        height: 100,
-                        src: '' // Will need image picker
-                    };
-                    break;
-            }
-
-            editor.addElement(elementType, defaultProps);
-        }
-
-        // Add click handlers for tool buttons
-        toolButtons.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var toolId = this.dataset.tool;
-                handleToolAction(toolId);
-            });
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Only handle shortcuts when not typing in inputs
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                return;
-            }
-
-            var key = e.key.toUpperCase();
-            var toolId = null;
-
-            // Find tool by shortcut
-            for (var id in toolDefinitions) {
-                if (toolDefinitions[id].shortcut === key) {
-                    toolId = id;
-                    break;
-                }
-            }
-
-            if (toolId) {
-                e.preventDefault();
-                handleToolAction(toolId);
-            }
-        });
-
-        // Action buttons
-        document.getElementById('btn-save').addEventListener('click', function() {
-            console.log('💾 Saving template...');
-            alert('<?php esc_html_e('Save functionality coming soon', 'pdf-builder-pro'); ?>');
-        });
-
-        document.getElementById('btn-export-pdf').addEventListener('click', function() {
-            console.log('📄 Exporting PDF...');
-            alert('<?php esc_html_e('Export functionality coming soon', 'pdf-builder-pro'); ?>');
-        });
-
-        // View controls
-        document.getElementById('btn-toggle-grid').addEventListener('click', function() {
-            if (editor && editor.transformationsManager) {
-                var showGrid = !editor.options.showGrid;
-                editor.options.showGrid = showGrid;
-                this.classList.toggle('active', showGrid);
-                editor.render();
-                console.log('🔲 Grid toggled:', showGrid);
-            }
-        });
-
-        document.getElementById('btn-toggle-snap').addEventListener('click', function() {
-            if (editor && editor.transformationsManager) {
-                var snapToGrid = !editor.transformationsManager.snapToGrid;
-                editor.transformationsManager.snapToGrid = snapToGrid;
-                this.classList.toggle('active', snapToGrid);
-                console.log('📌 Snap to grid toggled:', snapToGrid);
-            }
-        });
-
-        // Zoom controls
-        var zoomLevel = 1;
-        document.getElementById('btn-zoom-in').addEventListener('click', function() {
-            zoomLevel = Math.min(zoomLevel + 0.1, 3);
-            updateZoom(zoomLevel);
-        });
-
-        document.getElementById('btn-zoom-out').addEventListener('click', function() {
-            zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
-            updateZoom(zoomLevel);
-        });
-
-        function updateZoom(level) {
-            var canvas = document.getElementById('pdf-builder-canvas');
-            canvas.style.transform = 'scale(' + level + ')';
-            canvas.style.transformOrigin = 'top center';
-            document.getElementById('zoom-level').textContent = Math.round(level * 100) + '%';
-        }
-
-        // Set initial tool
-        setActiveTool('select');
+// Configurer le drag & drop
+function setupDragAndDrop() {
+    console.log('[DRAGDROP] Configuration du Drag & Drop...');
+    
+    var elementsContainer = document.getElementById('elements-container');
+    var canvas = document.getElementById('pdf-canvas-container') || document.getElementById('pdf-builder-canvas');
+    
+    if (!canvas) {
+        console.warn('[DRAGDROP] Canvas non trouvé pour le drag & drop');
+        return;
     }
-
-    function initializeViewControls(editor) {
-        // Set initial state for grid button
-        var gridBtn = document.getElementById('btn-toggle-grid');
-        if (gridBtn && editor.options.showGrid) {
-            gridBtn.classList.add('active');
-        }
-
-        // Set initial state for snap button
-        var snapBtn = document.getElementById('btn-toggle-snap');
-        if (snapBtn && editor.transformationsManager && editor.transformationsManager.snapToGrid) {
-            snapBtn.classList.add('active');
-        }
+    
+    if (!elementsContainer) {
+        console.warn('[DRAGDROP] Elements container non trouvé');
+        return;
     }
-
-    // Header button handlers
-    document.getElementById('btn-preview').addEventListener('click', function() {
-        console.log('👁️ Opening preview...');
-        // TODO: Implement preview functionality
-        alert('<?php esc_html_e('Preview functionality coming soon', 'pdf-builder-pro'); ?>');
-    });
-
-    function setupCanvasEvents(editor) {
-        // Listen for element selection
-        editor.on('element-selected', function(elementId) {
-            console.log('🎯 Element selected:', elementId);
-            updatePropertiesPanel(elementId);
-        });
-
-        // Listen for element deselection
-        editor.on('selection-cleared', function() {
-            document.getElementById('properties-content').innerHTML = 
-                '<p class="no-selection"><?php esc_html_e('Select an element to edit properties', 'pdf-builder-pro'); ?></p>';
-        });
-    }
-
-    function updatePropertiesPanel(elementId) {
-        var content = document.getElementById('properties-content');
-        content.innerHTML = '<p><strong><?php esc_html_e('Element:', 'pdf-builder-pro'); ?></strong> ' + elementId + '</p>';
-        content.innerHTML += '<p><em><?php esc_html_e('Property editing coming soon', 'pdf-builder-pro'); ?></em></p>';
-    }
-
-    function initializeElementsSidebar(editor) {
-        var elementsContainer = document.getElementById('elements-container');
-        var searchInput = document.getElementById('elements-search');
-
-        // Get elements library
-        var elementLibrary = window.PDFBuilderPro.getAllElements();
-
-        // Function to render elements
-        function renderElements(elements) {
-            elementsContainer.innerHTML = '';
-
-            for (var category in elements) {
-                var categoryElements = elements[category];
-                if (categoryElements.length === 0) continue;
-
-                // Create category section
-                var categoryDiv = document.createElement('div');
-                categoryDiv.className = 'element-category';
-
-                var categoryTitle = document.createElement('div');
-                categoryTitle.className = 'element-category-title';
-                categoryTitle.textContent = getCategoryLabel(category);
-                categoryDiv.appendChild(categoryTitle);
-
-                // Add elements
-                categoryElements.forEach(function(element) {
-                    var elementDiv = document.createElement('div');
-                    elementDiv.className = 'element-item';
-                    elementDiv.draggable = true;
-                    elementDiv.setAttribute('data-element-type', element.type);
-
-                    elementDiv.innerHTML = `
-                        <div class="element-icon">${element.icon}</div>
-                        <div class="element-info">
-                            <div class="element-name">${element.label}</div>
-                            <div class="element-description">${element.description}</div>
-                        </div>
-                    `;
-
-                    // Add click handler
-                    elementDiv.addEventListener('click', function() {
-                        addElementToCanvas(editor, element);
-                    });
-
-                    // Remove drag handlers - let PDFCanvasDragDropManager handle drag
-                    // elementDiv.addEventListener('dragstart', function(e) {
-                    //     e.dataTransfer.setData('application/json', JSON.stringify(element));
-                    //     this.classList.add('dragging');
-                    // });
-
-                    // elementDiv.addEventListener('dragend', function() {
-                    //     this.classList.remove('dragging');
-                    // });
-
-                    categoryDiv.appendChild(elementDiv);
-                });
-
-                elementsContainer.appendChild(categoryDiv);
-            }
-        }
-
-        // Function to get category label
-        function getCategoryLabel(category) {
-            var labels = {
-                special: 'Éléments WooCommerce'
+    
+    console.log('[DRAGDROP] Canvas et container trouvés, configuration des événements...');
+    
+    // Événements de drag sur les éléments
+    elementsContainer.addEventListener('dragstart', function(e) {
+        console.log('[DRAGDROP] dragstart event, target:', e.target, 'classe:', e.target.className);
+        if (e.target.classList.contains('element-item')) {
+            var elementType = e.target.getAttribute('data-element-type');
+            var elementData = {
+                type: 'new-element',
+                elementType: elementType,
+                elementData: JSON.parse(e.target.dataset.element || '{}')
             };
-            return labels[category] || category;
+            console.log('[DRAGDROP] Début du drag:', elementType, 'data:', elementData);
+            e.dataTransfer.effectAllowed = 'copy';
+            e.dataTransfer.setData('application/json', JSON.stringify(elementData));
+            e.target.classList.add('dragging');
         }
-
-        // Function to add element to canvas
-        function addElementToCanvas(editor, element) {
-            var defaultProps = element.defaultProps || {};
-            editor.addElement(element.type, defaultProps);
+    });
+    
+    elementsContainer.addEventListener('dragend', function(e) {
+        console.log('[DRAGDROP] dragend event');
+        e.target.classList.remove('dragging');
+    });
+    
+    // Événements de drop sur le canvas
+    canvas.addEventListener('dragover', function(e) {
+        console.log('[DRAGDROP] dragover');
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        canvas.classList.add('drag-over');
+    });
+    
+    canvas.addEventListener('dragleave', function(e) {
+        console.log('[DRAGDROP] dragleave');
+        if (e.target === canvas) {
+            canvas.classList.remove('drag-over');
         }
-
-        // Initial render
-        renderElements(elementLibrary);
-
-        // Search functionality
-        searchInput.addEventListener('input', function() {
-            var query = this.value.trim();
-            if (query.length === 0) {
-                renderElements(elementLibrary);
-            } else {
-                var filteredElements = {};
-                for (var category in elementLibrary) {
-                    var categoryElements = elementLibrary[category];
-                    var filtered = categoryElements.filter(function(element) {
-                        return element.label.toLowerCase().includes(query.toLowerCase()) ||
-                               element.description.toLowerCase().includes(query.toLowerCase()) ||
-                               element.type.toLowerCase().includes(query.toLowerCase());
-                    });
-                    if (filtered.length > 0) {
-                        filteredElements[category] = filtered;
-                    }
+    });
+    
+    canvas.addEventListener('drop', function(e) {
+        console.log('[DRAGDROP] drop event');
+        e.preventDefault();
+        e.stopPropagation();
+        canvas.classList.remove('drag-over');
+        
+        try {
+            var data = JSON.parse(e.dataTransfer.getData('application/json'));
+            
+            if (data.type === 'new-element') {
+                var rect = canvas.getBoundingClientRect();
+                var zoom = (window.pdfCanvasInstance && window.pdfCanvasInstance.zoom) || 1;
+                var x = (e.clientX - rect.left) / zoom;
+                var y = (e.clientY - rect.top) / zoom;
+                
+                console.log('[DRAGDROP] Drop accepté:', data.elementType, 'à', { x, y });
+                
+                if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.addElement === 'function') {
+                    window.pdfCanvasInstance.addElement(data.elementType, { x, y, ...data.elementData });
                 }
-                renderElements(filteredElements);
             }
-        });
-    }
+        } catch (error) {
+            console.error('[DRAGDROP] ❌ Erreur:', error);
+        }
+    });
+    
+    console.log('[DRAGDROP] ✅ Drag & Drop configuré');
+}
 
-    function showError(message) {
-        document.getElementById('pdf-builder-loading').style.display = 'none';
-        document.getElementById('pdf-builder-error').style.display = 'flex';
-        document.getElementById('error-message').textContent = message;
+// Afficher message d'erreur
+function showError(message) {
+    console.error('[INIT] Erreur:', message);
+    document.getElementById('pdf-builder-loading').style.display = 'none';
+    document.getElementById('pdf-builder-error').style.display = 'flex';
+    document.getElementById('error-message').textContent = message;
 
-        document.getElementById('btn-retry').addEventListener('click', function() {
-            location.reload();
-        });
-    }
-});
+    document.getElementById('btn-retry').addEventListener('click', function() {
+        location.reload();
+    });
+}
+
+// Initialiser au chargement du DOM (système unique d'initialisation)
+console.log('[INIT] Script d\'initialisation du Canvas chargé');
+
+// Vérifier si DOM est déjà chargé
+if (document.readyState === 'loading') {
+    console.log('[INIT] DOM en cours de chargement, attente de DOMContentLoaded...');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[INIT] DOMContentLoaded - Démarrage waitForPDFBuilder');
+        waitForPDFBuilder();
+    });
+} else {
+    console.log('[INIT] DOM déjà chargé - Démarrage waitForPDFBuilder immédiatement');
+    waitForPDFBuilder();
+}
 </script>
