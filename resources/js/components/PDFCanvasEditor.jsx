@@ -16,13 +16,13 @@ import NewTemplateModal from './NewTemplateModal.jsx';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   console.log('🚨🚨🚨 REACT COMPONENT PDFCanvasEditor INSTANCIÉ 🚨🚨🚨');
-  console.log('🚨 REACT DISPONIBLE:', typeof window.React);
-  console.log('🚨 REACTDOM DISPONIBLE:', typeof window.ReactDOM);
+  console.log('🚨 REACT DISPONIBLE:', typeof React);
+  console.log('🚨 REACTDOM DISPONIBLE:', typeof ReactDOM);
   console.log('🚨 OPTIONS:', options);
 
   // Test immédiat de React
   try {
-    const testElement = window.React.createElement('div', null, 'TEST REACT');
+    const testElement = React.createElement('div', null, 'TEST REACT');
     console.log('🚨 REACT CREATE ELEMENT OK:', !!testElement);
   } catch (e) {
     console.error('🚨 ERREUR REACT CREATE ELEMENT:', e);
