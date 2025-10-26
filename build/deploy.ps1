@@ -633,6 +633,26 @@ function Get-FtpFileSize {
     }
 }
 
+function Test-FtpDirectoryEmpty {
+    param([string]$ftpHost, [string]$user, [string]$pass, [string]$path)
+    try {
+        $fileList = Get-FtpFileList -ftpHost $ftpHost -user $user -pass $pass -path $path
+        if ($null -eq $fileList) {
+            return $true  # Dossier n'existe pas ou est vide
+        }
+        
+        # Filtrer les entrées "." et ".."
+        $realFiles = $fileList | Where-Object { $_ -and $_ -notmatch '^\.$' -and $_ -notmatch '^\.\.$' }
+        
+        if ($realFiles.Count -eq 0) {
+            return $true  # Dossier vide
+        }
+        return $false  # Dossier contient des fichiers
+    } catch {
+        return $true  # En cas d'erreur, considérer comme vide pour sécurité
+    }
+}
+
 # Déterminer le chemin local selon le mode
 switch ($Mode) {
     "plugin" {
@@ -976,6 +996,23 @@ if (-not $IsTestMode) {
         if ($connectionTest) {
             Write-Host "✅ Connexion FTP réussie" -ForegroundColor Green
             Write-Host "📂 Dossier distant accessible : $FtpPath" -ForegroundColor Green
+            
+            # Vérifier si le dossier distant est vide
+            Write-Host "`n🔍 Analyse du contenu du serveur distant..." -ForegroundColor Yellow
+            $remoteIsEmpty = Test-FtpDirectoryEmpty -ftpHost $FtpHost -user $FtpUser -pass $FtpPass -path $FtpPath
+            
+            if ($remoteIsEmpty) {
+                Write-Host "📭 Le dossier distant est VIDE" -ForegroundColor Yellow
+                Write-Host "🚀 Activation du mode FULL SYNC (envoyer TOUS les fichiers)" -ForegroundColor Cyan
+                $FullSync = $true
+            } else {
+                Write-Host "📦 Le dossier distant CONTIENT DES FICHIERS" -ForegroundColor Cyan
+                if (-not $FullSync) {
+                    Write-Host "📝 Maintien du mode INCREMENTAL (fichiers modifiés uniquement)" -ForegroundColor White
+                } else {
+                    Write-Host "💪 Mode FULL SYNC activé (envoyer TOUS les fichiers)" -ForegroundColor Cyan
+                }
+            }
         } else {
             Write-Host "❌ Échec de connexion FTP" -ForegroundColor Red
             Write-Host "Détails : Impossible de se connecter au serveur FTP" -ForegroundColor Red

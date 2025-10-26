@@ -446,6 +446,7 @@ export class PDFCanvasVanilla {
         const transformHandle = this.transformationsManager.getHandleAtPoint(point, this.selectedElement);
         if (transformHandle) {
             this.transformationsManager.startTransform(point, transformHandle);
+            this.render();  // ✅ Rendre après démarrage de transformation
             return;
         }
 
@@ -459,6 +460,9 @@ export class PDFCanvasVanilla {
             // Démarrer une sélection par rectangle
             this.selectionManager.startSelection(point);
         }
+        
+        // ✅ IMPORTANT: Toujours rendre après une sélection/clic
+        this.render();
     }
 
     /**
