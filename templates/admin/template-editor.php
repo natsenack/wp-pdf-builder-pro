@@ -37,9 +37,17 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
     echo '<div style="background: lightgreen; padding: 20px; margin: 20px; border: 2px solid green;">';
     echo '<h3>🚨 CHARGEMENT DIRECT DES SCRIPTS 🚨</h3>';
-    echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
-    echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
-    echo '<p>Scripts chargés directement avec plugins_url()</p>';
+    // TEST SIMPLE: Script de test basique
+    echo '<script>
+        console.log("🧪 TEST SIMPLE - DÉBUT");
+        try {
+            window.testPDFBuilder = { version: "test", init: function() { console.log("test init called"); } };
+            console.log("🧪 window.testPDFBuilder défini:", typeof window.testPDFBuilder);
+        } catch (e) {
+            console.error("🧪 ERREUR dans test simple:", e);
+        }
+        console.log("🧪 TEST SIMPLE - FIN");
+    </script>';
 
     // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
@@ -87,12 +95,26 @@ if (!is_user_logged_in() || !current_user_can('read')) {
         setTimeout(function() {
             console.log("🔄 TEST ALTERNATIF - CHARGEMENT DYNAMIQUE...");
 
+            // Vérifier d\'abord la disponibilité de React
+            console.log("🔍 VÉRIFICATION REACT AVANT CHARGEMENT:");
+            console.log("🔍 window.React:", typeof window.React);
+            console.log("🔍 window.ReactDOM:", typeof window.ReactDOM);
+            console.log("🔍 window.React.createElement:", typeof window.React?.createElement);
+            console.log("🔍 window.ReactDOM.render:", typeof window.ReactDOM?.render);
+
             // Tester le chargement dynamique du script-loader
             var scriptLoaderTest = document.createElement("script");
             scriptLoaderTest.src = "' . esc_url($script_loader_url) . '";
             scriptLoaderTest.onload = function() {
                 console.log("✅ Script-loader chargé dynamiquement");
                 console.log("🔍 window.pdfBuilderPro après chargement dynamique:", typeof window.pdfBuilderPro);
+
+                // Tester immédiatement après le chargement
+                setTimeout(function() {
+                    console.log("🔍 RETEST après 500ms:");
+                    console.log("🔍 window.pdfBuilderPro:", typeof window.pdfBuilderPro);
+                    console.log("🔍 window.pdfBuilderPro.init:", typeof window.pdfBuilderPro?.init);
+                }, 500);
             };
             scriptLoaderTest.onerror = function(e) {
                 console.error("❌ Échec chargement dynamique script-loader:", e);
