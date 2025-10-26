@@ -120,31 +120,36 @@ wp_localize_script("pdf-builder-vanilla-bundle", "pdfBuilderData", array(
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM ready, initializing PDF Builder Vanilla JS...");
 
-    // Wait for bundle to load
-    if (typeof window.PDFBuilderPro === "undefined") {
-        console.error("PDFBuilderPro bundle not loaded");
-        showError();
-        return;
+    // Function to check if script is loaded
+    function checkScriptLoaded() {
+        if (typeof window.PDFBuilderPro === "undefined") {
+            console.log("PDFBuilderPro not yet loaded, waiting...");
+            setTimeout(checkScriptLoaded, 100);
+            return;
+        }
+
+        console.log("PDFBuilderPro bundle loaded:", window.PDFBuilderPro);
+
+        // Check if required classes are available
+        if (typeof window.PDFBuilderPro.PDFCanvasVanilla === "undefined") {
+            console.error("PDFCanvasVanilla class not found in bundle");
+            showError();
+            return;
+        }
+
+        console.log("All required classes found, initializing editor...");
+
+        try {
+            // Initialize the editor
+            initializePDFEditor();
+        } catch (error) {
+            console.error("Error initializing PDF editor:", error);
+            showError();
+        }
     }
 
-    console.log("PDFBuilderPro bundle loaded:", window.PDFBuilderPro);
-
-    // Check if required classes are available
-    if (typeof window.PDFBuilderPro.PDFCanvasVanilla === "undefined") {
-        console.error("PDFCanvasVanilla class not found in bundle");
-        showError();
-        return;
-    }
-
-    console.log("All required classes found, initializing editor...");
-
-    try {
-        // Initialize the editor
-        initializePDFEditor();
-    } catch (error) {
-        console.error("Error initializing PDF editor:", error);
-        showError();
-    }
+    // Start checking for script load
+    checkScriptLoaded();
 });
 
 function showError() {
