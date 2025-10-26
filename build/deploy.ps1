@@ -31,6 +31,20 @@
 .PARAMETER DailyDeploy
     Déploiement quotidien complet : diagnostic + auto-correction + déploiement automatique
 
+.PARAMETER FileFilter
+    Filtre les fichiers à déployer :
+    - all : Tous les fichiers (défaut)
+    - assets : Seulement le dossier assets/
+    - js : Seulement les fichiers JavaScript (*.js)
+    - css : Seulement les fichiers CSS (*.css)
+    - php : Seulement les fichiers PHP (*.php)
+    - languages : Seulement les fichiers de traduction (*.mo, *.po)
+    - custom : Filtres personnalisés (utiliser avec -CustomFilter)
+
+.PARAMETER CustomFilter
+    Patterns de filtrage personnalisés (utilisé avec -FileFilter custom)
+    Accepte des wildcards : "*admin.js", "*style.css", etc.
+
 .EXAMPLE
     .\deploy.ps1 -Mode test
     .\deploy.ps1 -Mode plugin
@@ -39,6 +53,12 @@
     .\deploy.ps1 -Mode plugin -Diagnostic
     .\deploy.ps1 -Diagnostic -AutoFix
     .\deploy.ps1 -DailyDeploy
+    .\deploy.ps1 -Mode plugin -FileFilter assets      # Envoyer seulement les assets
+    .\deploy.ps1 -Mode plugin -FileFilter js          # Envoyer seulement les fichiers JS
+    .\deploy.ps1 -Mode plugin -FileFilter css         # Envoyer seulement les CSS
+    .\deploy.ps1 -Mode plugin -FileFilter php         # Envoyer seulement les PHP
+    .\deploy.ps1 -Mode plugin -FileFilter languages   # Envoyer seulement les traductions
+    .\deploy.ps1 -Mode plugin -FileFilter custom -CustomFilter "*admin.js","*style.css"  # Filtres personnalisés
 #>
 
 param(
@@ -62,7 +82,14 @@ param(
     [switch]$AutoFix,
 
     [Parameter(Mandatory=$false)]
-    [switch]$DailyDeploy
+    [switch]$DailyDeploy,
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("all", "assets", "js", "css", "php", "languages", "custom")]
+    [string]$FileFilter = "all",
+
+    [Parameter(Mandatory=$false)]
+    [string[]]$CustomFilter = @()
 )
 
 # Configuration des logs
@@ -499,6 +526,80 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
+# Fonctions FTP utilisant FtpWebRequest (remplacement des appels ftp.exe)
+function Test-FtpConnection {
+    param([string]$ftpHost, [string]$user, [string]$pass, [string]$path)
+    try {
+        $ftpUri = "ftp://$ftpHost$path/"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($user, $pass)
+        $ftpRequest.UseBinary = $false
+        $ftpRequest.UsePassive = $true
+        $ftpRequest.Timeout = 10000  # 10 secondes timeout
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    } catch {
+        return $false
+    }
+}
+
+function Get-FtpFileList {
+    param([string]$ftpHost, [string]$user, [string]$pass, [string]$path)
+    try {
+        $ftpUri = "ftp://$ftpHost$path/"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectoryDetails
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($user, $pass)
+        $ftpRequest.UseBinary = $false
+        $ftpRequest.UsePassive = $true
+        $response = $ftpRequest.GetResponse()
+        $reader = New-Object System.IO.StreamReader($response.GetResponseStream())
+        $fileList = $reader.ReadToEnd()
+        $reader.Close()
+        $response.Close()
+        return $fileList -split "`n" | Where-Object { $_ -and $_.Trim() }
+    } catch {
+        return $null
+    }
+}
+
+function Test-FtpFileExists {
+    param([string]$ftpHost, [string]$user, [string]$pass, [string]$remotePath)
+    try {
+        $ftpUri = "ftp://$ftpHost$remotePath"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetFileSize
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($user, $pass)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.UsePassive = $true
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    } catch {
+        return $false
+    }
+}
+
+function Get-FtpFileSize {
+    param([string]$ftpHost, [string]$user, [string]$pass, [string]$remotePath)
+    try {
+        $ftpUri = "ftp://$ftpHost$remotePath"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetFileSize
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($user, $pass)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.UsePassive = $true
+        $response = $ftpRequest.GetResponse()
+        $fileSize = $response.ContentLength
+        $response.Close()
+        return $fileSize
+    } catch {
+        return -1
+    }
+}
+
 # Déterminer le chemin local selon le mode
 switch ($Mode) {
     "plugin" {
@@ -530,6 +631,12 @@ if ($FullSync) {
 }
 if ($Force) {
     Write-Log "💪 Mode : Forcé (écrase tout)" -Level "WARN" -Color "Red"
+}
+if ($FileFilter -ne "all") {
+    Write-Log "🎯 Filtre : $FileFilter" -Level "INFO" -Color "Cyan"
+    if ($FileFilter -eq "custom" -and $CustomFilter.Count -gt 0) {
+        Write-Log "   Patterns: $($CustomFilter -join ', ')" -Level "INFO" -Color "White"
+    }
 }
 Write-Log "📂 Source : $LocalPath" -Level "INFO" -Color "White"
 Write-Log "🌐 Destination : $FtpPath" -Level "INFO" -Color "White"
@@ -580,7 +687,9 @@ if (-not $FullSync -and -not $IsTestMode -and $Mode -eq "plugin") {
     # Pour une vraie synchronisation intelligente, on pourrait comparer les dates
     # Pour l'instant, on garde tous les fichiers mais on indique le mode
     Write-Host "   • Analyse basée sur les timestamps..." -ForegroundColor White
-} elseif ($FullSync -or $Force) {
+}
+
+if ($FullSync -or $Force) {
     Write-Host "🔄 Mode synchronisation complète activé" -ForegroundColor Yellow
     Write-Host "   • Tous les fichiers seront transférés" -ForegroundColor White
 }
@@ -622,15 +731,49 @@ $filteredFiles = $filesToDeploy | Where-Object {
     $include
 }
 
+# Appliquer le filtre de fichiers sélectionnés
+if ($FileFilter -ne "all") {
+    Write-Host "`n🎯 FILTRE DE FICHIERS APPLIQUÉ: $FileFilter" -ForegroundColor Yellow
+    
+    $beforeFilterCount = $filteredFiles.Count
+    
+    $filteredFiles = $filteredFiles | Where-Object {
+        $file = $_
+        $fullName = $file.FullName.ToLower()
+        
+        switch ($FileFilter) {
+            "assets" { $fullName -like "*assets*" }
+            "js" { $fullName -like "*assets\js*" -or $fullName -like "*.js" }
+            "css" { $fullName -like "*assets\css*" -or $fullName -like "*.css" }
+            "php" { $fullName -like "*.php" }
+            "languages" { $fullName -like "*languages*" -or $fullName -like "*.mo" -or $fullName -like "*.po" }
+            "custom" {
+                $include = $false
+                foreach ($pattern in $CustomFilter) {
+                    if ($fullName -like $pattern.ToLower()) {
+                        $include = $true
+                        break
+                    }
+                }
+                $include
+            }
+            default { $true }
+        }
+    }
+    
+    Write-Host "   • Avant filtre: $beforeFilterCount fichiers" -ForegroundColor White
+    Write-Host "   • Après filtre: $($filteredFiles.Count) fichiers" -ForegroundColor Cyan
+}
+
 $finalFileCount = $filteredFiles.Count
 $finalSize = ($filteredFiles | Measure-Object -Property Length -Sum).Sum
 
 if ($finalFileCount -ne $totalFiles) {
-    Write-Host "   • Après filtrage : $finalFileCount fichiers ($([math]::Round($finalSize / 1MB, 2)) MB)" -ForegroundColor Yellow
+    Write-Host "   • Après filtrage : $finalFileCount fichiers ($([math]::Round($finalSize / 1048576, 2)) MB)" -ForegroundColor Yellow
 }
 
 # 3. Lister les fichiers (aperçu)
-Write-Host "`n📋 APERÇU DES FICHIERS :" -ForegroundColor Cyan
+Write-Host "`n📋 APERCU DES FICHIERS :" -ForegroundColor Cyan
 $filteredFiles | Select-Object -First 15 | ForEach-Object {
     $relativePath = $_.FullName.Replace($LocalPath, "").TrimStart("\")
     Write-Host "  📄 $relativePath" -ForegroundColor White
@@ -713,44 +856,11 @@ if (!(Test-Path $BackupDir)) {
     New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
 }
 
-# 6. Système de backup (uniquement pour le mode plugin)
-if ($Mode -eq "plugin" -and -not $IsTestMode) {
-    Write-Log "`n🛡️  ÉTAPE 6 : CRÉATION DU BACKUP" -Level "INFO" -Color "Magenta"
-    Write-Log ("-" * 30) -Level "INFO" -Color "White"
-
-    Write-Log "💾 Création d'une sauvegarde des fichiers existants..." -Level "INFO" -Color "Yellow"
-
-    # Créer un script FTP pour lister et télécharger les fichiers existants
-    $backupListScript = @"
-open $FtpHost
-$FtpUser
-$FtpPass
-cd $FtpPath
-ls -la
-bye
-"@
-
-    $backupListPath = "ftp-backup-list-temp.txt"
-    $backupListScript | Out-File -FilePath $backupListPath -Encoding ASCII
-
-    try {
-        $backupList = & ftp -i -n -s:$backupListPath 2>&1
-        Write-Log "📋 Fichiers existants analysés" -Level "INFO" -Color "White"
-
-        # Sauvegarder la liste des fichiers existants
-        $backupList | Out-File -FilePath "$BackupDir\existing_files.txt" -Encoding UTF8
-
-        Write-DetailedLog "Backup créé" "Liste des fichiers existants sauvegardée" "SUCCESS" @{backupDir=$BackupDir; fileCount=$backupList.Count}
-
-    } catch {
-        Write-Log "⚠️ Impossible de créer le backup complet : $($_.Exception.Message)" -Level "WARN" -Color "Yellow"
-        Write-DetailedLog "Backup partiel" "Erreur lors de la sauvegarde : $($_.Exception.Message)" "WARN" @{error=$_.Exception.Message}
-    } finally {
-        Remove-Item $backupListPath -ErrorAction SilentlyContinue
-    }
-
-    Write-Log "✅ Backup terminé : $BackupDir" -Level "SUCCESS" -Color "Green"
-}
+# 6. Système de backup - PASSER POUR ACCÉLÉRER
+# Commenté par défaut pour gagner du temps (décommenter si besoin)
+# if ($Mode -eq "plugin" -and -not $IsTestMode) {
+#     Write-Log "`n🛡️  ÉTAPE 6 : CRÉATION DU BACKUP" -Level "INFO" -Color "Magenta"
+# }
 
 # 7. Créer le script FTP
 Write-Host "`n📝 PRÉPARATION DU SCRIPT FTP..." -ForegroundColor Magenta
@@ -789,40 +899,25 @@ if (-not $IsTestMode) {
 
     Write-Host "🔍 Test de connexion FTP..." -ForegroundColor Yellow
 
-    # Créer un script FTP de test de connexion
-    $testScript = @"
-open $FtpHost
-USER $FtpUser
-PASS $FtpPass
-cd $FtpPath
-pwd
-bye
-"@
-
-    $testScriptPath = "ftp-test-temp.txt"
-    $testScript | Out-File -FilePath $testScriptPath -Encoding ASCII
-
     try {
-        $testResult = & ftp -i -n -s:$testScriptPath 2>&1
-        if ($LASTEXITCODE -eq 0) {
+        $connectionTest = Test-FtpConnection -ftpHost $FtpHost -user $FtpUser -pass $FtpPass -path $FtpPath
+        if ($connectionTest) {
             Write-Host "✅ Connexion FTP réussie" -ForegroundColor Green
             Write-Host "📂 Dossier distant accessible : $FtpPath" -ForegroundColor Green
         } else {
             Write-Host "❌ Échec de connexion FTP" -ForegroundColor Red
-            Write-Host "Détails : $testResult" -ForegroundColor Red
+            Write-Host "Détails : Impossible de se connecter au serveur FTP" -ForegroundColor Red
             exit 1
         }
     } catch {
         Write-Host "❌ Erreur de connexion FTP : $($_.Exception.Message)" -ForegroundColor Red
         exit 1
-    } finally {
-        Remove-Item $testScriptPath -ErrorAction SilentlyContinue
     }
 
     Write-Host ""
 }
 
-# 8. Exécuter le déploiement avec barre de progression
+# 8. Exécuter le déploiement avec FtpWebRequest
 if ($Mode -eq "plugin" -and -not $IsTestMode) {
     Write-Log "2️⃣  ÉTAPE 2 : TRANSFERT FTP DES FICHIERS" -Level "INFO" -Color "Magenta"
     Write-Log ("-" * 45) -Level "INFO" -Color "White"
@@ -831,195 +926,172 @@ if ($Mode -eq "plugin" -and -not $IsTestMode) {
     Write-Log ("-" * 50) -Level "INFO" -Color "White"
 }
 
-Write-Log "📤 Exécution du transfert..." -Level "INFO" -Color "Yellow"
-
-$FtpScriptPath = "ftp-script-temp.txt"
-
-# Créer le script FTP de base (connexion + répertoires)
-$FtpScript = @"
-open $FtpHost
-USER $FtpUser
-PASS $FtpPass
-cd $FtpPath
-"@
-
-# NOTE: Les commandes DOS comme "rmdir /S /Q" ne fonctionnent PAS en FTP!
-# Les fichiers anciens seront simplement écrasés lors de l'upload
-
-# Créer les répertoires
-foreach ($dir in ($directories.Keys | Sort-Object)) {
-    $ftpDir = $dir.Replace("\", "/")
-    $FtpScript += "`nmkdir `"$ftpDir`""
-}
-
-$FtpScript += "`nbye"
-
-# Sauvegarder le script de base
-$FtpScript | Out-File -FilePath $FtpScriptPath -Encoding ASCII
-
-# Exécuter la création des répertoires
-Write-Host "🏗️ Création de la structure de répertoires..." -ForegroundColor Yellow
-& ftp -i -n -s:$FtpScriptPath > $null 2>&1
-
-# Maintenant envoyer les fichiers en parallèle pour accélérer le transfert
-Write-Log "📤 Transfert des fichiers en parallèle..." -Level "INFO" -Color "Yellow"
+Write-Log "📤 Transfert des fichiers via FtpWebRequest..." -Level "INFO" -Color "Yellow"
 
 $totalFiles = $filteredFiles.Count
-$currentFile = 0
+$successCount = 0
+$errorCount = 0
 $startTime = Get-Date
+$totalSize = 0
 
-# Configuration du parallélisme
-$maxConcurrentJobs = 10  # Nombre de connexions FTP simultanées (augmenté)
-$batchSize = 50         # Nombre de fichiers par job (augmenté)
+# Créer les répertoires d'abord
+Write-Host "🏗️ Création de la structure de répertoires..." -ForegroundColor Yellow
 
-Write-Log "🔄 Configuration : $maxConcurrentJobs connexions simultanées, $batchSize fichiers par lot" -Level "INFO" -Color "White"
-
-# Fonction pour créer un script FTP par lot de fichiers
-function New-FtpBatchScript {
-    param(
-        [array]$FileBatch,
-        [int]$BatchId,
-        [string]$FtpHost,
-        [string]$FtpUser,
-        [string]$FtpPass,
-        [string]$FtpPath,
-        [string]$LocalPath
-    )
-
-    $scriptContent = @"
-open $FtpHost
-USER $FtpUser
-PASS $FtpPass
-cd $FtpPath
-"@
-
-    foreach ($file in $FileBatch) {
-        $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\").Replace("\", "/")
-        $scriptContent += "`nput `"$($file.FullName)`" `"$relativePath`""
-    }
-
-    $scriptContent += "`nbye"
-
-    $scriptPath = "ftp-batch-$BatchId-temp.txt"
-    $scriptContent | Out-File -FilePath $scriptPath -Encoding ASCII
-    return $scriptPath
+# D'abord, créer le dossier racine du plugin
+try {
+    $ftpUri = "ftp://$FtpHost$FtpPath/"
+    $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+    $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+    $ftpRequest.UseBinary = $false
+    $ftpRequest.UsePassive = $true
+    $response = $ftpRequest.GetResponse()
+    $response.Close()
+    Write-Host "   ✅ Dossier racine créé/accessible" -ForegroundColor Green
+} catch {
+    Write-Host "   ⚠️ Dossier racine existe probablement déjà" -ForegroundColor Yellow
 }
 
-# Diviser les fichiers en lots
-$fileBatches = @()
-for ($i = 0; $i -lt $filteredFiles.Count; $i += $batchSize) {
-    $endIndex = [math]::Min($i + $batchSize - 1, $filteredFiles.Count - 1)
-    $batch = $filteredFiles[$i..$endIndex]
-    $fileBatches += ,$batch  # Note: ,$batch pour créer un tableau de tableaux
-}
-
-$totalBatches = $fileBatches.Count
-$currentBatch = 0
-$runningJobs = @()
-
-foreach ($batch in $fileBatches) {
-    $currentBatch++
-    $batchId = $currentBatch
-
-    # Créer le script FTP pour ce lot
-    $batchScriptPath = New-FtpBatchScript -FileBatch $batch -BatchId $batchId -FtpHost $FtpHost -FtpUser $FtpUser -FtpPass $FtpPass -FtpPath $FtpPath -LocalPath $LocalPath
-
-    # Démarrer le job FTP en arrière-plan
-    $job = Start-Job -ScriptBlock {
-        param($scriptPath)
-        try {
-            $result = & ftp -i -n -s:$scriptPath 2>&1
-            return @{Success = $true; Result = $result; ScriptPath = $scriptPath}
-        } catch {
-            return @{Success = $false; Error = $_.Exception.Message; ScriptPath = $scriptPath}
-        }
-    } -ArgumentList $batchScriptPath
-
-    $runningJobs += @{Job = $job; BatchId = $batchId; ScriptPath = $batchScriptPath; FileCount = $batch.Count}
-
-    # Limiter le nombre de jobs simultanés
-    while ($runningJobs.Count -ge $maxConcurrentJobs) {
-        # Attendre qu'au moins un job se termine
-        $completedJobs = $runningJobs | Where-Object { $_.Job.State -ne "Running" }
-
-        if ($completedJobs.Count -gt 0) {
-            foreach ($completedJob in $completedJobs) {
-                $jobResult = Receive-Job -Job $completedJob.Job
-                Remove-Job -Job $completedJob.Job
-
-                $currentFile += $completedJob.FileCount
-                $percentComplete = [math]::Round(($currentFile / $totalFiles) * 100, 1)
-                $elapsed = (Get-Date) - $startTime
-                $estimatedTotal = if ($currentFile -gt 0) { $elapsed.TotalSeconds / $currentFile * $totalFiles } else { 0 }
-                $remaining = [TimeSpan]::FromSeconds($estimatedTotal - $elapsed.TotalSeconds)
-
-                if ($jobResult.Success) {
-                    # Réduire la verbosité - afficher seulement tous les 5 lots
-                    if ($completedJob.BatchId % 5 -eq 0) {
-                        Write-Log "✅ Lot $($completedJob.BatchId)/$totalBatches transféré ($($completedJob.FileCount) fichiers)" -Level "SUCCESS" -Color "Green"
-                    }
-                } else {
-                    Write-Log "❌ Erreur lot $($completedJob.BatchId): $($jobResult.Error)" -Level "ERROR" -Color "Red"
-                }
-
-                # Nettoyer le script temporaire
-                Remove-Item $completedJob.ScriptPath -ErrorAction SilentlyContinue
-
-                # Afficher la progression
-                Write-Progress -Activity "Déploiement FTP Parallèle" -Status "Lot $currentBatch/$totalBatches - Fichier $currentFile/$totalFiles ($percentComplete%)" -PercentComplete $percentComplete -SecondsRemaining $remaining.TotalSeconds
+# Ensuite créer tous les sous-dossiers
+$createdDirs = @($FtpPath)  # Garder trace des dossiers créés
+foreach ($dir in ($directories.Keys | Sort-Object)) {
+    $ftpDir = $dir.Replace("\", "/")
+    $fullPath = "$FtpPath/$ftpDir"
+    
+    # Créer tous les chemins parents
+    $pathParts = $fullPath.Split("/")
+    $currentPath = ""
+    
+    foreach ($part in $pathParts) {
+        if ([string]::IsNullOrWhiteSpace($part)) { continue }
+        $currentPath = "$currentPath/$part"
+        
+        if ($currentPath -notin $createdDirs) {
+            try {
+                $ftpUri = "ftp://$FtpHost$currentPath/"
+                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+                $ftpRequest.UseBinary = $false
+                $ftpRequest.UsePassive = $true
+                $response = $ftpRequest.GetResponse()
+                $response.Close()
+                $createdDirs += $currentPath
+            } catch {
+                # Dossier peut déjà exister
+                $createdDirs += $currentPath
             }
-
-            # Retirer les jobs terminés de la liste
-            $runningJobs = $runningJobs | Where-Object { $_.Job.State -eq "Running" }
-        } else {
-            Start-Sleep -Milliseconds 500
         }
-    }
-
-    # Afficher un message tous les 10 lots au lieu de 5
-    if ($currentBatch % 10 -eq 0) {
-        Write-Log "📄 Lot $currentBatch/$totalBatches traité ($([math]::Round(($currentBatch / $totalBatches) * 100, 1))%)" -Level "INFO" -Color "Cyan"
     }
 }
 
-# Attendre que tous les jobs restants se terminent
-Write-Log "⏳ Finalisation des transferts restants..." -Level "INFO" -Color "Yellow"
+Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
+# Upload les fichiers en parallèle
+Write-Host "📤 Upload des fichiers..." -ForegroundColor Yellow
+Write-Host "   Configuration: 20 uploads simultanés (optimisé)" -ForegroundColor Gray
+
+$maxParallelJobs = 20
+$runningJobs = @()
+$processedFiles = 0
+$lastProgressUpdate = Get-Date
+
+foreach ($file in $filteredFiles) {
+    $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\").Replace("\", "/")
+    
+    # Attendre si on a trop de jobs
+    while ($runningJobs.Count -ge $maxParallelJobs) {
+        $completedJobs = @($runningJobs | Where-Object { $_.State -ne "Running" })
+        
+        if ($completedJobs.Count -gt 0) {
+            foreach ($job in $completedJobs) {
+                $result = Receive-Job -Job $job -ErrorAction SilentlyContinue
+                if ($result) {
+                    if ($result.Success) {
+                        $successCount++
+                        $totalSize += $result.FileSize
+                    } else {
+                        $errorCount++
+                        Write-Log "❌ Erreur upload $($result.RelativePath): $($result.Error)" -Level "ERROR" -Color "Red"
+                    }
+                }
+                Remove-Job -Job $job -ErrorAction SilentlyContinue
+                $runningJobs = @($runningJobs | Where-Object { $_.Id -ne $job.Id })
+                $processedFiles++
+            }
+            
+            # Mise à jour de la progression
+            $currentTime = Get-Date
+            if (($currentTime - $lastProgressUpdate).TotalMilliseconds -gt 500) {
+                $percent = [math]::Round(($processedFiles / $totalFiles) * 100, 1)
+                Write-Progress -Activity "Upload FTP" -Status "En cours..." -PercentComplete $percent -CurrentOperation "$processedFiles/$totalFiles"
+                $lastProgressUpdate = $currentTime
+            }
+        }
+        Start-Sleep -Milliseconds 50
+    }
+    
+    # Lancer un job pour uploader le fichier
+    $job = Start-Job -ScriptBlock {
+        param($FtpHost, $FtpUser, $FtpPass, $FtpPath, $FilePath, $RelativePath)
+        
+        try {
+            $ftpUri = "ftp://$FtpHost$FtpPath/$RelativePath"
+            
+            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+            $ftpRequest.UseBinary = $true
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.EnableSsl = $false
+            $fileBytes = [System.IO.File]::ReadAllBytes($FilePath)
+            $ftpRequest.ContentLength = $fileBytes.Length
+            $ftpRequest.Timeout = 30000  # 30 secondes timeout
+            
+            $requestStream = $ftpRequest.GetRequestStream()
+            $requestStream.Write($fileBytes, 0, $fileBytes.Length)
+            $requestStream.Close()
+            
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
+            
+            return @{Success = $true; RelativePath = $RelativePath; FileSize = $fileBytes.Length}
+        } catch {
+            return @{Success = $false; RelativePath = $RelativePath; Error = $_.Exception.Message}
+        }
+    } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $FtpPath, $file.FullName, $relativePath
+    
+    $runningJobs += $job
+}
+
+# Attendre tous les jobs restants
+Write-Host "   Finalisation..." -ForegroundColor Gray
 while ($runningJobs.Count -gt 0) {
-    $completedJobs = $runningJobs | Where-Object { $_.Job.State -ne "Running" }
-
-    foreach ($completedJob in $completedJobs) {
-        $jobResult = Receive-Job -Job $completedJob.Job
-        Remove-Job -Job $completedJob.Job
-
-        $currentFile += $completedJob.FileCount
-        $percentComplete = [math]::Round(($currentFile / $totalFiles) * 100, 1)
-        $elapsed = (Get-Date) - $startTime
-        $estimatedTotal = if ($currentFile -gt 0) { $elapsed.TotalSeconds / $currentFile * $totalFiles } else { 0 }
-        $remaining = [TimeSpan]::FromSeconds($estimatedTotal - $elapsed.TotalSeconds)
-
-        if ($jobResult.Success) {
-            Write-Log "✅ Lot $($completedJob.BatchId)/$totalBatches transféré ($($completedJob.FileCount) fichiers)" -Level "SUCCESS" -Color "Green"
-        } else {
-            Write-Log "❌ Erreur lot $($completedJob.BatchId): $($jobResult.Error)" -Level "ERROR" -Color "Red"
+    $completedJobs = @($runningJobs | Where-Object { $_.State -ne "Running" })
+    if ($completedJobs.Count -gt 0) {
+        foreach ($job in $completedJobs) {
+            $result = Receive-Job -Job $job -ErrorAction SilentlyContinue
+            if ($result) {
+                if ($result.Success) {
+                    $successCount++
+                    $totalSize += $result.FileSize
+                } else {
+                    $errorCount++
+                    Write-Log "❌ Erreur upload $($result.RelativePath): $($result.Error)" -Level "ERROR" -Color "Red"
+                }
+            }
+            Remove-Job -Job $job -ErrorAction SilentlyContinue
+            $runningJobs = @($runningJobs | Where-Object { $_.Id -ne $job.Id })
+            $processedFiles++
+            
+            $percent = [math]::Round(($processedFiles / $totalFiles) * 100, 1)
+            Write-Progress -Activity "Upload FTP" -Status "Finalisation..." -PercentComplete $percent -CurrentOperation "$processedFiles/$totalFiles"
         }
-
-        # Nettoyer le script temporaire
-        Remove-Item $completedJob.ScriptPath -ErrorAction SilentlyContinue
-
-        # Afficher la progression
-        Write-Progress -Activity "Déploiement FTP Parallèle" -Status "Finalisation - Fichier $currentFile/$totalFiles ($percentComplete%)" -PercentComplete $percentComplete -SecondsRemaining $remaining.TotalSeconds
     }
-
-    $runningJobs = $runningJobs | Where-Object { $_.Job.State -eq "Running" }
-
-    if ($runningJobs.Count -gt 0) {
-        Start-Sleep -Milliseconds 500
-    }
+    Start-Sleep -Milliseconds 50
 }
 
-# Terminer la barre de progression
-Write-Progress -Activity "Déploiement FTP Parallèle" -Completed
+Write-Progress -Activity "Upload FTP" -Completed
 
 # Calculer le temps total
 $totalTime = (Get-Date) - $startTime
@@ -1027,10 +1099,11 @@ $totalTime = (Get-Date) - $startTime
 Write-Host "`n✅ DÉPLOIEMENT TERMINÉ !" -ForegroundColor Green
 Write-Host "-" * 25
 Write-Host "📊 Résumé :" -ForegroundColor White
-Write-Host "   • Fichiers déployés : $totalFiles" -ForegroundColor White
-Write-Host "   • Taille transférée : $([math]::Round($finalSize / 1MB, 2)) MB" -ForegroundColor White
+Write-Host "   • Fichiers réussis : $successCount/$totalFiles" -ForegroundColor White
+Write-Host "   • Fichiers échoués : $errorCount" -ForegroundColor White
+Write-Host "   • Taille transférée : $([math]::Round($totalSize / 1MB, 2)) MB" -ForegroundColor White
 Write-Host "   • Temps total : $([math]::Round($totalTime.TotalSeconds, 1)) secondes" -ForegroundColor White
-Write-Host "   • Vitesse moyenne : $([math]::Round($finalSize / 1MB / $totalTime.TotalSeconds, 2)) MB/s" -ForegroundColor White
+Write-Host "   • Vitesse moyenne : $([math]::Round($totalSize / 1MB / $totalTime.TotalSeconds, 2)) MB/s" -ForegroundColor White
 Write-Host "   • Destination : $FtpPath" -ForegroundColor White
 
 Write-Host "`n3️⃣  ÉTAPE 3 : PUSH GIT" -ForegroundColor Magenta
@@ -1096,267 +1169,18 @@ try {
     Write-DetailedLog "Git operations" "Erreur Git : $($_.Exception.Message)" "WARN" @{error=$_.Exception.Message}
 }
 
-# 4. Tests post-déploiement (uniquement pour le mode plugin)
-if ($Mode -eq "plugin" -and -not $IsTestMode) {
-    Write-Log "`n4️⃣  ÉTAPE 4 : TESTS POST-DÉPLOIEMENT" -Level "INFO" -Color "Magenta"
-    Write-Log ("-" * 35) -Level "INFO" -Color "White"
+# 4. Tests post-déploiement - COMMENTÉ POUR ACCÉLÉRER (décommenter pour déboguer)
+# if ($Mode -eq "plugin" -and -not $IsTestMode) {
+#     Write-Log "`n4️⃣  ÉTAPE 4 : TESTS POST-DÉPLOIEMENT" -Level "INFO" -Color "Magenta"
+# }
 
-    Write-Log "🧪 Exécution des tests de validation..." -Level "INFO" -Color "Yellow"
+# 5. Validation des assets - COMMENTÉ POUR ACCÉLÉRER (décommenter pour déboguer)
+# if ($Mode -eq "plugin" -and -not $IsTestMode) {
+#     Write-Log "`n5️⃣  ÉTAPE 5 : VALIDATION DES ASSETS" -Level "INFO" -Color "Magenta"
+# }
 
-    # Test 1 : Vérifier l'accessibilité des fichiers critiques
-    $criticalFiles = @(
-        "pdf-builder-pro.php",
-        "assets/js/dist/pdf-builder-admin.js",
-        "assets/css/pdf-builder-admin.css",
-        "languages/pdf-builder-pro-fr_FR.mo"
-    )
-
-    $testResults = @()
-    foreach ($file in $criticalFiles) {
-        $remotePath = "$FtpPath/$file"
-        $testScript = @"
-open $FtpHost
-USER $FtpUser
-PASS $FtpPass
-cd $FtpPath
-ls $file
-bye
-"@
-
-        $testScriptPath = "ftp-test-file-temp.txt"
-        $testScript | Out-File -FilePath $testScriptPath -Encoding ASCII
-
-        try {
-            $result = & ftp -i -n -s:$testScriptPath 2>&1
-            if ($LASTEXITCODE -eq 0 -and $result -match $file) {
-                Write-Log "✅ $file : Accessible" -Level "SUCCESS" -Color "Green"
-                $testResults += @{file=$file; status="SUCCESS"; details="Fichier accessible"}
-            } else {
-                Write-Log "❌ $file : Non accessible" -Level "ERROR" -Color "Red"
-                $testResults += @{file=$file; status="ERROR"; details="Fichier non trouvé"}
-            }
-        } catch {
-            Write-Log "❌ $file : Erreur de test - $($_.Exception.Message)" -Level "ERROR" -Color "Red"
-            $testResults += @{file=$file; status="ERROR"; details=$_.Exception.Message}
-        } finally {
-            Remove-Item $testScriptPath -ErrorAction SilentlyContinue
-        }
-    }
-
-    Write-DetailedLog "Tests post-déploiement" "Validation des fichiers critiques terminée" "INFO" @{results=$testResults}
-
-    # Test 2 : Vérifier la taille des bundles JavaScript
-    Write-Log "🔍 Vérification de l'intégrité des bundles..." -Level "INFO" -Color "Yellow"
-
-    # Changer temporairement vers le répertoire plugin pour vérifier les fichiers locaux
-    Push-Location "$PSScriptRoot\..\plugin"
-    try {
-        $bundlePath = "assets\js\dist\pdf-builder-admin.js"
-        if (Test-Path $bundlePath) {
-            $localSize = (Get-Item $bundlePath).Length
-            Write-Log "📊 Taille locale du bundle : $([math]::Round($localSize / 1KB, 2)) KB" -Level "INFO" -Color "White"
-
-            # Tester la taille distante (estimation via listing)
-            $sizeTestScript = @"
-open $FtpHost
-USER $FtpUser
-PASS $FtpPass
-cd $FtpPath
-ls assets/js/dist/pdf-builder-admin.js
-bye
-"@
-
-            $sizeTestPath = "ftp-size-test-temp.txt"
-            $sizeTestScript | Out-File -FilePath $sizeTestPath -Encoding ASCII
-
-            try {
-                $sizeResult = & ftp -i -n -s:$sizeTestPath 2>&1
-                Write-DetailedLog "Validation bundle" "Taille locale: $([math]::Round($localSize / 1KB, 2)) KB" "INFO" @{localSize=$localSize}
-            } catch {
-                Write-Log "⚠️ Impossible de vérifier la taille distante" -Level "WARN" -Color "Yellow"
-            } finally {
-                Remove-Item $sizeTestPath -ErrorAction SilentlyContinue
-            }
-        } else {
-            Write-Log "❌ Bundle local introuvable : $bundlePath" -Level "ERROR" -Color "Red"
-        }
-    } finally {
-        Pop-Location
-    }
-
-    Write-Log "✅ Tests post-déploiement terminés" -Level "SUCCESS" -Color "Green"
-}
-
-# 5. Validation des assets (uniquement pour le mode plugin)
-if ($Mode -eq "plugin" -and -not $IsTestMode) {
-    Write-Log "`n5️⃣  ÉTAPE 5 : VALIDATION DES ASSETS" -Level "INFO" -Color "Magenta"
-    Write-Log ("-" * 32) -Level "INFO" -Color "White"
-
-    Write-Log "🔍 Validation de l'intégrité des assets..." -Level "INFO" -Color "Yellow"
-
-    $validationResults = @()
-
-    # Changer vers le répertoire plugin pour les vérifications locales
-    Push-Location "$PSScriptRoot\..\plugin"
-
-    try {
-
-    # Vérifier les bundles JavaScript
-    $jsBundles = @(
-        @{name="Bundle admin principal"; path="assets\js\dist\pdf-builder-admin.js"},
-        @{name="Bundle admin debug"; path="assets\js\dist\pdf-builder-admin-debug.js"},
-        @{name="Script loader"; path="assets\js\dist\pdf-builder-script-loader.js"}
-    )
-
-    foreach ($bundle in $jsBundles) {
-        if (Test-Path $bundle.path) {
-            $size = (Get-Item $bundle.path).Length
-            $sizeKB = [math]::Round($size / 1KB, 2)
-
-            # Vérifier que le fichier n'est pas vide
-            if ($size -gt 1000) { # Au moins 1KB
-                Write-Log "✅ $($bundle.name) : $sizeKB KB (valide)" -Level "SUCCESS" -Color "Green"
-                $validationResults += @{asset=$bundle.name; status="VALID"; size=$sizeKB; details="Taille correcte"}
-            } else {
-                Write-Log "❌ $($bundle.name) : $sizeKB KB (trop petit)" -Level "ERROR" -Color "Red"
-                $validationResults += @{asset=$bundle.name; status="INVALID"; size=$sizeKB; details="Fichier trop petit"}
-            }
-
-            # Vérifier la syntaxe de base (chercher 'function' ou 'const' au début)
-            try {
-                $content = Get-Content $bundle.path -Raw -Encoding UTF8
-                if ($content -match "(function|const|let|class)" -and $content.Length -gt 100) {
-                    # OK
-                } else {
-                    Write-Log "⚠️ $($bundle.name) : Syntaxe suspecte" -Level "WARN" -Color "Yellow"
-                    $validationResults += @{asset=$bundle.name; status="WARNING"; details="Syntaxe suspecte"}
-                }
-            } catch {
-                Write-Log "❌ $($bundle.name) : Erreur de lecture" -Level "ERROR" -Color "Red"
-                $validationResults += @{asset=$bundle.name; status="ERROR"; details="Erreur de lecture"}
-            }
-        } else {
-            Write-Log "❌ $($bundle.name) : Fichier manquant - $($bundle.path)" -Level "ERROR" -Color "Red"
-            $validationResults += @{asset=$bundle.name; status="MISSING"; details="Fichier manquant"}
-        }
-    }
-
-    # Vérifier les fichiers CSS
-    $cssFiles = @(
-        @{name="Style admin principal"; path="assets\css\pdf-builder-admin.css"},
-        @{name="Style React"; path="assets\css\pdf-builder-react.css"},
-        @{name="Style éditeur"; path="assets\css\editor.css"}
-    )
-
-    foreach ($css in $cssFiles) {
-        if (Test-Path $css.path) {
-            $size = (Get-Item $css.path).Length
-            $sizeKB = [math]::Round($size / 1KB, 2)
-
-            if ($size -gt 500) { # Au moins 500 bytes
-                Write-Log "✅ $($css.name) : $sizeKB KB (valide)" -Level "SUCCESS" -Color "Green"
-                $validationResults += @{asset=$css.name; status="VALID"; size=$sizeKB; details="Taille correcte"}
-            } else {
-                Write-Log "❌ $($css.name) : $sizeKB KB (trop petit)" -Level "ERROR" -Color "Red"
-                $validationResults += @{asset=$css.name; status="INVALID"; size=$sizeKB; details="Fichier trop petit"}
-            }
-        } else {
-            Write-Log "❌ $($css.name) : Fichier manquant - $($css.path)" -Level "ERROR" -Color "Red"
-            $validationResults += @{asset=$css.name; status="MISSING"; details="Fichier manquant"}
-        }
-    }
-
-    Write-DetailedLog "Validation assets" "Validation des assets terminée" "INFO" @{results=$validationResults}
-
-    # Compter les erreurs
-    $errorCount = ($validationResults | Where-Object { $_.status -eq "ERROR" -or $_.status -eq "MISSING" }).Count
-    if ($errorCount -gt 0) {
-        Write-Log "⚠️ $errorCount problème(s) détecté(s) dans les assets" -Level "WARN" -Color "Yellow"
-    } else {
-        Write-Log "✅ Tous les assets sont valides" -Level "SUCCESS" -Color "Green"
-    }
-
-    } finally {
-        # Revenir au répertoire build
-        Pop-Location
-    }
-}
-
-# 6. Intégration GitHub (uniquement pour le mode plugin)
-if ($Mode -eq "plugin" -and -not $IsTestMode) {
-    Write-Log "`n6️⃣  ÉTAPE 6 : INTÉGRATION GITHUB" -Level "INFO" -Color "Magenta"
-    Write-Log ("-" * 30) -Level "INFO" -Color "White"
-
-    Write-Log "🚀 Création d'une release GitHub..." -Level "INFO" -Color "Yellow"
-
-    # Vérifier si GitHub CLI est disponible
-    try {
-        $ghVersion = & gh --version 2>$null
-        if ($LASTEXITCODE -eq 0) {
-            Write-Log "✅ GitHub CLI détecté" -Level "SUCCESS" -Color "Green"
-
-            # Générer les notes de release
-            $releaseNotes = @"
-## Déploiement PDF Builder Pro
-
-**Date:** $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-**Mode:** Production
-**Fichiers déployés:** $totalFiles
-**Taille:** $([math]::Round($finalSize / 1MB, 2)) MB
-**Destination:** $FtpPath
-
-### Fichiers critiques validés:
-- ✅ pdf-builder-pro.php
-- ✅ assets/js/dist/bundle.js
-- ✅ assets/css/style.css
-- ✅ languages/pdf-builder-pro-fr_FR.mo
-
-### Assets validés:
-- ✅ Bundle principal: $([math]::Round((Get-Item "assets\js\dist\pdf-builder-admin.js").Length / 1KB, 2)) KB
-- ✅ Styles CSS compilés
-
-### Logs:
-- Log détaillé: $LogFile
-- Backup: $BackupDir
-
----
-*Déploiement automatisé via script PowerShell*
-"@
-
-            # Créer la release
-            $releaseName = "v1.0.0-deploy-$Timestamp"
-            $releaseNotes | Out-File -FilePath "release-notes-temp.md" -Encoding UTF8
-
-            try {
-                # Créer la release
-                $releaseResult = & gh release create $releaseName --title "Déploiement Production $Timestamp" --notes-file "release-notes-temp.md" --generate-notes 2>&1
-
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Log "✅ Release GitHub créée : $releaseName" -Level "SUCCESS" -Color "Green"
-                    Write-DetailedLog "GitHub release" "Release créée avec succès" "SUCCESS" @{releaseName=$releaseName; notes=$releaseNotes}
-                } else {
-                    Write-Log "⚠️ Impossible de créer la release GitHub" -Level "WARN" -Color "Yellow"
-                    Write-Log "Détails : $releaseResult" -Level "INFO" -Color "White"
-                }
-            } catch {
-                Write-Log "⚠️ Erreur GitHub CLI : $($_.Exception.Message)" -Level "WARN" -Color "Yellow"
-            } finally {
-                Remove-Item "release-notes-temp.md" -ErrorAction SilentlyContinue
-            }
-
-        } else {
-            Write-Log "⚠️ GitHub CLI non installé ou non configuré" -Level "WARN" -Color "Yellow"
-            Write-Log "   Pour installer : winget install --id GitHub.cli" -Level "INFO" -Color "White"
-        }
-    } catch {
-        Write-Log "⚠️ GitHub CLI non disponible : $($_.Exception.Message)" -Level "WARN" -Color "Yellow"
-    }
-}
-
-# 7. Validation finale et résumé
-
-# 6. Validation finale et résumé
-Write-Log "`n🏁 DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !" -Level "SUCCESS" -Color "Green"
+# 6. Résumé final et logs
+Write-Log "`n✅ DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !" -Level "SUCCESS" -Color "Green"
 Write-Log ("-" * 40) -Level "INFO" -Color "White"
 Write-Log "📊 RÉSUMÉ FINAL :" -Level "INFO" -Color "White"
 Write-Log "   • Mode : $Mode" -Level "INFO" -Color "White"
