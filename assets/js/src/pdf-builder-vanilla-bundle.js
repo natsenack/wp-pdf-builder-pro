@@ -1,7 +1,7 @@
 // Point d'entrée principal pour le bundle Vanilla JS
 // Ce fichier importe tous les modules ES6 et les expose globalement
 
-console.log('🔧 Bundle PDF Builder Vanilla JS chargé et en cours d\'exécution...');
+console.log('🔧 [BUNDLE] Bundle PDF Builder Vanilla JS chargé et en cours d\'exécution...');
 
 import VanillaCanvas from './pdf-canvas-vanilla.js';
 import CanvasRenderer from './pdf-canvas-renderer.js';
@@ -71,8 +71,9 @@ const PDFBuilderPro = {
 };
 
 // Exposer l'objet global principal
-console.log('🌍 Exposition de PDFBuilderPro globalement...');
+console.log('🌍 [BUNDLE] Exposition de PDFBuilderPro globalement...');
 window.PDFBuilderPro = PDFBuilderPro;
+console.log('✅ [BUNDLE] PDFBuilderPro exposé avec succès:', typeof window.PDFBuilderPro);
 
 // Pour la compatibilité, exposer aussi les modules individuellement
 window.VanillaCanvas = VanillaCanvas;

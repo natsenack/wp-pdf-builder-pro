@@ -14,25 +14,10 @@ if (!current_user_can('manage_options')) {
                         <?php
                         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
                         if ($template_id > 0) {
-                            // Récupérer les informations du template
-                            global $pdf_builder_pro;
-                            if ($pdf_builder_pro && method_exists($pdf_builder_pro, 'get_template_manager')) {
-                                $template_manager = $pdf_builder_pro->get_template_manager();
-                                if (method_exists($template_manager, 'load_template_robust')) {
-                                    $template_data = $template_manager->load_template_robust($template_id);
-                                    if ($template_data && isset($template_data['name'])) {
-                                        echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing: %s', 'pdf-builder-pro'), esc_html($template_data['name'])) . '</span>';
-                                    } else {
-                                        echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
-                                    }
-                                } else {
-                                    echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
-                                }
-                            } else {
-                                echo '<span class="template-name editing-indicator">' . sprintf(__('✏️ Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
-                            }
+                            // Ici vous pouvez ajouter la logique pour récupérer le nom du template
+                            echo '<span class="template-name">' . sprintf(__('Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
                         } else {
-                            echo '<span class="template-name">' . __('📄 New Template', 'pdf-builder-pro') . '</span>';
+                            echo '<span class="template-name">' . __('New Template', 'pdf-builder-pro') . '</span>';
                         }
                         ?>
                     </div>
@@ -628,9 +613,8 @@ if (!current_user_can('manage_options')) {
 </style>
 
 <script>
-console.log('🚀 [TEMPLATE] Template editor JavaScript starting...');
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎨 [TEMPLATE] PDF Builder Editor Template Loaded');
+    console.log('🎨 PDF Builder Editor Template Loaded');
     
     // Initialize editor when bundle is ready
     if (typeof window.PDFBuilderPro !== 'undefined') {
@@ -654,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initializeEditor() {
         try {
-            console.log('✅ [TEMPLATE] Initializing PDF Canvas Editor - PDFBuilderPro available:', typeof window.PDFBuilderPro);
+            console.log('✅ Initializing PDF Canvas Editor');
             
             // Set up AJAX globals
             if (typeof ajaxurl === 'undefined') {
@@ -671,18 +655,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Initialize canvas editor
-            console.log('🎯 [TEMPLATE] Creating PDFCanvasVanilla instance...');
             var editor = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-builder-canvas', {
                 width: 595,
                 height: 842,
                 templateId: <?php echo isset($_GET['template_id']) ? intval($_GET['template_id']) : '0'; ?>
             });
-            console.log('✅ [TEMPLATE] PDFCanvasVanilla instance created:', editor);
 
             // Initialize the editor
-            console.log('🚀 [TEMPLATE] Calling editor.init()...');
             editor.init().then(function() {
-                console.log('✅ [TEMPLATE] Editor initialized successfully');
                 // Initialize elements sidebar
                 initializeElementsSidebar(editor);
 
@@ -1050,8 +1030,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         addElementToCanvas(editor, element);
                     });
 
-                    // Note: Drag functionality is handled by PDFCanvasDragDropManager
-                    // No need for additional drag event listeners here
+                    // Remove drag handlers - let PDFCanvasDragDropManager handle drag
+                    // elementDiv.addEventListener('dragstart', function(e) {
+                    //     e.dataTransfer.setData('application/json', JSON.stringify(element));
+                    //     this.classList.add('dragging');
+                    // });
+
+                    // elementDiv.addEventListener('dragend', function() {
+                    //     this.classList.remove('dragging');
+                    // });
 
                     categoryDiv.appendChild(elementDiv);
                 });

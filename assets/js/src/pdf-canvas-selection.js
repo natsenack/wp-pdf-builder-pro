@@ -260,3 +260,7 @@ PDFCanvasSelectionManager.prototype.dispose = function() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PDFCanvasSelectionManager;
 }
+
+// Export ES6
+export { PDFCanvasSelectionManager };
+export default PDFCanvasSelectionManager;

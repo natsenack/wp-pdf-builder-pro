@@ -14,6 +14,7 @@ import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
 import { PDFCanvasPropertiesManager } from './pdf-canvas-properties.js';
 import { PDFCanvasLayersManager } from './pdf-canvas-layers.js';
 import { PDFCanvasExportManager } from './pdf-canvas-export.js';
+import { PDFCanvasPerformanceOptimizer } from './pdf-canvas-optimizer.js';
 import { PDFCanvasTransformationsManager } from './pdf-canvas-transformations.js';
 import { PDFCanvasHistoryManager } from './pdf-canvas-history.js';
 import { PDFCanvasDragDropManager } from './pdf-canvas-dragdrop.js';
@@ -900,8 +901,83 @@ export class PDFCanvasVanilla {
      * Rend un élément générique
      */
     renderGenericElement(element) {
+        const props = element.properties;
+
+        // Gestion spéciale pour les éléments WooCommerce
+        if (this.isWooCommerceElement(element.type)) {
+            this.renderWooCommerceElement(element);
+            return;
+        }
+
         // Rendu par défaut pour les éléments non reconnus
         this.renderRectangleElement(element);
+    }
+
+    /**
+     * Vérifie si un élément est de type WooCommerce
+     */
+    isWooCommerceElement(type) {
+        const wooCommerceTypes = [
+            'product_table', 'customer_info', 'company_info', 'company_logo',
+            'order_number', 'dynamic-text', 'mentions'
+        ];
+        return wooCommerceTypes.includes(type);
+    }
+
+    /**
+     * Rend un élément WooCommerce
+     */
+    renderWooCommerceElement(element) {
+        const props = element.properties;
+
+        // Fond avec couleur spécifique pour les éléments WooCommerce
+        this.ctx.fillStyle = props.backgroundColor || '#f8f9fa';
+        this.ctx.strokeStyle = props.borderColor || '#6c757d';
+        this.ctx.lineWidth = props.borderWidth || 1;
+
+        // Dessiner le rectangle de fond
+        this.roundRect(0, 0, props.width, props.height, 4);
+        this.ctx.fill();
+        if (props.showBorders !== false) {
+            this.ctx.stroke();
+        }
+
+        // Icône et texte pour identifier le type d'élément
+        this.ctx.fillStyle = '#495057';
+        this.ctx.font = '12px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
+        const centerX = props.width / 2;
+        const centerY = props.height / 2;
+
+        // Afficher le type d'élément
+        const displayName = this.getElementDisplayName(element.type);
+        this.ctx.fillText(displayName, centerX, centerY);
+
+        // Bordure distinctive pour les éléments WooCommerce
+        this.ctx.strokeStyle = '#007bff';
+        this.ctx.lineWidth = 2;
+        this.ctx.setLineDash([5, 5]);
+        this.roundRect(2, 2, props.width - 4, props.height - 4, 2);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+    }
+
+    /**
+     * Obtient le nom d'affichage pour un type d'élément
+     */
+    getElementDisplayName(type) {
+        const names = {
+            'product_table': '📋 Tableau Produits',
+            'customer_info': '👤 Infos Client',
+            'company_info': '🏢 Infos Entreprise',
+            'company_logo': '🖼️ Logo',
+            'order_number': '🔢 N° Commande',
+            'dynamic-text': '📝 Texte Dynamique',
+            'mentions': '📄 Mentions'
+        };
+        return names[type] || type;
     }
 
     /**

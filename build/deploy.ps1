@@ -27,6 +27,9 @@
 .PARAMETER AutoFix
     Tente de corriger automatiquement les erreurs détectées lors du diagnostic
 
+.PARAMETER DailyDeploy
+    Déploiement quotidien complet : diagnostic + auto-correction + déploiement automatique
+
 .EXAMPLE
     .\deploy.ps1 -Mode test
     .\deploy.ps1 -Mode plugin
@@ -34,7 +37,7 @@
     .\deploy.ps1 -Mode plugin -Force
     .\deploy.ps1 -Mode plugin -Diagnostic
     .\deploy.ps1 -Diagnostic -AutoFix
-    .\deploy.ps1 -Diagnostic
+    .\deploy.ps1 -DailyDeploy
 #>
 
 param(
@@ -55,7 +58,10 @@ param(
     [switch]$Diagnostic,
 
     [Parameter(Mandatory=$false)]
-    [switch]$AutoFix
+    [switch]$AutoFix,
+
+    [Parameter(Mandatory=$false)]
+    [switch]$DailyDeploy
 )
 
 # Configuration des logs
@@ -448,6 +454,40 @@ if ($Diagnostic) {
     }
 
     exit $(if ($diagnosticResult) { 0 } else { 1 })
+}
+
+# Mode déploiement quotidien
+if ($DailyDeploy) {
+    Write-Host "`n📅 MODE DÉPLOIEMENT QUOTIDIEN ACTIVÉ" -ForegroundColor Magenta
+    Write-Host "Exécution automatique : Diagnostic → Auto-correction → Déploiement" -ForegroundColor White
+    Write-Host ("=" * 70) -ForegroundColor Magenta
+
+    # Étape 1 : Diagnostic système
+    Write-Host "`n🔍 ÉTAPE 1/3 : DIAGNOSTIC SYSTÈME" -ForegroundColor Cyan
+    $diagnosticData = Start-SystemDiagnostic
+    $diagnosticResult = $diagnosticData.result
+
+    if (-not $diagnosticResult) {
+        Write-Host "`n❌ DIAGNOSTIC ÉCHOUÉ - Tentative de correction automatique..." -ForegroundColor Red
+
+        # Étape 2 : Auto-correction
+        Write-Host "`n🔧 ÉTAPE 2/3 : AUTO-CORRECTION" -ForegroundColor Yellow
+        $diagnosticResult = Start-SystemAutoFix -diagnosticResults $diagnosticData.details
+
+        if (-not $diagnosticResult) {
+            Write-Host "`n💀 AUTO-CORRECTION ÉCHOUÉ - Arrêt du déploiement quotidien" -ForegroundColor Red
+            Write-Host "Vérifiez les erreurs et corrigez-les manuellement avant de réessayer." -ForegroundColor Yellow
+            exit 1
+        } else {
+            Write-Host "`n✅ AUTO-CORRECTION RÉUSSIE - Continuation du déploiement" -ForegroundColor Green
+        }
+    } else {
+        Write-Host "`n✅ DIAGNOSTIC RÉUSSI - Passage direct au déploiement" -ForegroundColor Green
+    }
+
+    # Étape 3 : Déploiement
+    Write-Host "`n🚀 ÉTAPE 3/3 : DÉPLOIEMENT" -ForegroundColor Green
+    Write-Host "Début du déploiement automatique..." -ForegroundColor White
 }
 
 Write-Log "🚀 DÉBUT DU DÉPLOIEMENT - LOG: $LogFile" -Level "START" -Color "Cyan"

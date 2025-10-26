@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Drag & Drop - PDF Builder Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+        }
+
+        .canvas-area {
+            flex: 1;
+            padding: 20px;
+            position: relative;
+        }
+
+        .element-library {
+            margin-bottom: 20px;
+        }
+
+        .element-category h3 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .element-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .element-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+
+        .element-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .element-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        .element-info {
+            flex: 1;
+        }
+
+        .element-name {
+            font-weight: bold;
+            font-size: 12px;
+            color: #495057;
+            margin-bottom: 2px;
+        }
+
+        .element-description {
+            font-size: 11px;
+            color: #6c757d;
+            line-height: 1.3;
+        }
+
+        .canvas-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 4px;
+            background: #ffffff;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-builder-dragging {
+            cursor: grabbing !important;
+        }
+
+        .pdf-builder-dragging .element-item {
+            cursor: grabbing !important;
+        }
+
+        .test-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .test-info h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+
+        .test-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .test-info li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="header">
+            <h1>🧪 Test Drag & Drop - PDF Builder Pro</h1>
+            <p>Test du système de glisser-déposer des éléments vers le canvas</p>
+        </div>
+
+        <div class="content">
+            <!-- Sidebar avec la bibliothèque d'éléments -->
+            <div class="sidebar">
+                <div class="element-library">
+                    <div class="element-category">
+                        <h3>Éléments WooCommerce</h3>
+
+                        <div class="element-item" data-element-type="product_table" draggable="true">
+                            <div class="element-icon">📋</div>
+                            <div class="element-info">
+                                <div class="element-name">Tableau Produits</div>
+                                <div class="element-description">Tableau des produits commandés</div>
+                            </div>
+                        </div>
+
+                        <div class="element-item" data-element-type="customer_info" draggable="true">
+                            <div class="element-icon">👤</div>
+                            <div class="element-info">
+                                <div class="element-name">Fiche Client</div>
+                                <div class="element-description">Informations du client</div>
+                            </div>
+                        </div>
+
+                        <div class="element-item" data-element-type="company_info" draggable="true">
+                            <div class="element-icon">[D]</div>
+                            <div class="element-info">
+                                <div class="element-name">Infos Entreprise</div>
+                                <div class="element-description">Informations de l'entreprise</div>
+                            </div>
+                        </div>
+
+                        <div class="element-item" data-element-type="order_number" draggable="true">
+                            <div class="element-icon">🔢</div>
+                            <div class="element-info">
+                                <div class="element-name">Numéro Commande</div>
+                                <div class="element-description">Référence de commande</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-category">
+                        <h3>Éléments de Base</h3>
+
+                        <div class="element-item" data-element-type="text" draggable="true">
+                            <div class="element-icon">📝</div>
+                            <div class="element-info">
+                                <div class="element-name">Texte</div>
+                                <div class="element-description">Élément de texte simple</div>
+                            </div>
+                        </div>
+
+                        <div class="element-item" data-element-type="rectangle" draggable="true">
+                            <div class="element-icon">▭</div>
+                            <div class="element-info">
+                                <div class="element-name">Rectangle</div>
+                                <div class="element-description">Forme rectangulaire</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone du canvas -->
+            <div class="canvas-area">
+                <h3>Canvas de Test</h3>
+                <div class="canvas-container">
+                    <canvas id="pdf-canvas" width="800" height="500"></canvas>
+                </div>
+
+                <div class="test-info">
+                    <h4>📋 Instructions de test :</h4>
+                    <ul>
+                        <li><strong>Glisser-déposer :</strong> Faites glisser un élément de la bibliothèque vers le canvas</li>
+                        <li><strong>Éléments spéciaux :</strong> Les éléments WooCommerce ont un rendu distinctif avec une bordure bleue</li>
+                        <li><strong>Éléments de base :</strong> Les éléments standards (texte, rectangle) sont rendus normalement</li>
+                        <li><strong>Feedback visuel :</strong> Un aperçu apparaît pendant le glisser</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="plugin/assets/js/dist/pdf-builder-admin-debug.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initialisation du test Drag & Drop...');
+
+            // Attendre que PDFBuilderPro soit chargé
+            if (typeof PDFBuilderPro === 'undefined') {
+                console.error('❌ PDFBuilderPro n\'est pas chargé. Vérifiez le chemin du script.');
+                alert('Erreur: PDFBuilderPro n\'est pas chargé. Vérifiez le chemin du script.');
+                return;
+            }
+
+            console.log('✅ PDFBuilderPro chargé:', PDFBuilderPro);
+
+            try {
+                // Création du canvas
+                const canvas = new PDFBuilderPro.PDFCanvasVanilla('pdf-canvas', {
+                    width: 800,
+                    height: 500,
+                    backgroundColor: '#ffffff',
+                    showGrid: true,
+                    gridSize: 20
+                });
+
+                // Initialiser le canvas
+                canvas.init();
+
+                console.log('✅ Canvas initialisé avec succès');
+
+                // Écoute des événements pour le debug
+                canvas.on('element-dropped', function(data) {
+                    console.log('🎯 Élément déposé:', data);
+                    alert(`Élément "${data.elementType}" ajouté au canvas !`);
+                });
+
+                canvas.on('element-selected', function(elementId) {
+                    console.log('🎯 Élément sélectionné:', elementId);
+                });
+
+                // Message de confirmation
+                setTimeout(() => {
+                    console.log('🎉 Test Drag & Drop prêt ! Essayez de glisser un élément.');
+                }, 1000);
+
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation:', error);
+                alert('Erreur lors de l\'initialisation du canvas: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,7 +17,9 @@ function PDFCanvasDragDropManager(canvasInstance) {
  * Initialise le gestionnaire
  */
 PDFCanvasDragDropManager.prototype.init = function() {
+    console.log('[DRAG] Initialisation du PDFCanvasDragDropManager');
     this.setupGlobalListeners();
+    console.log('[DRAG] Gestionnaire initialisé avec succès');
 };
 
 /**
@@ -40,11 +42,15 @@ PDFCanvasDragDropManager.prototype.handleDragStart = function(event) {
     const elementType = target.getAttribute('data-element-type');
     if (!elementType) return;
 
+    console.log('[DRAG] Début du drag - Type:', elementType, 'Target:', target);
+
     this.isDragging = true;
     this.dragElement = {
         type: elementType,
         properties: this.getDefaultPropertiesForType(elementType)
     };
+
+    console.log('[DRAG] Élément drag créé:', this.dragElement);
 
     // Créer un feedback visuel
     event.dataTransfer.effectAllowed = 'copy';
@@ -58,19 +64,26 @@ PDFCanvasDragDropManager.prototype.handleDragStart = function(event) {
  * Gère la fin du glisser
  */
 PDFCanvasDragDropManager.prototype.handleDragEnd = function(event) {
+    console.log('[DRAG] Fin du drag - isDragging:', this.isDragging, 'dragElement:', this.dragElement);
+
     this.isDragging = false;
     this.dragElement = null;
     this.dragOffset = null;
 
     // Retirer la classe CSS
     document.body.classList.remove('pdf-builder-dragging');
+
+    console.log('[DRAG] Drag terminé, nettoyage effectué');
 };
 
 /**
  * Gère le survol pendant le glisser
  */
 PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
-    if (!this.isDragging) return;
+    if (!this.isDragging || !this.canvasInstance || !this.canvasInstance.canvas) {
+        console.log('[DRAG] DragOver ignoré - isDragging:', this.isDragging, 'canvasInstance:', !!this.canvasInstance);
+        return;
+    }
 
     // Vérifier si on survole le canvas
     const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
@@ -79,6 +92,8 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
                         event.clientY >= canvasRect.top &&
                         event.clientY <= canvasRect.bottom;
 
+    console.log('[DRAG] DragOver - Position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
+
     if (isOverCanvas) {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'copy';
@@ -86,6 +101,8 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
         // Calculer la position sur le canvas
         const point = this.canvasInstance.getMousePosition(event);
         this.dragOffset = point;
+
+        console.log('[DRAG] Position canvas calculée:', point);
 
         // Mettre à jour le rendu pour montrer le preview
         this.canvasInstance.render();
@@ -96,7 +113,12 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
  * Gère le dépôt
  */
 PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
-    if (!this.isDragging || !this.dragElement) return;
+    console.log('[DRAG] Drop détecté - isDragging:', this.isDragging, 'dragElement:', this.dragElement);
+
+    if (!this.isDragging || !this.dragElement || !this.canvasInstance || !this.canvasInstance.canvas) {
+        console.log('[DRAG] Drop ignoré - conditions non remplies');
+        return;
+    }
 
     // Vérifier si on dépose sur le canvas
     const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
@@ -105,19 +127,25 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
                         event.clientY >= canvasRect.top &&
                         event.clientY <= canvasRect.bottom;
 
+    console.log('[DRAG] Drop position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
+
     if (isOverCanvas) {
         event.preventDefault();
 
         // Calculer la position finale
         const point = this.canvasInstance.getMousePosition(event);
+        console.log('[DRAG] Position finale calculée:', point);
 
         // Ajuster la position pour centrer l'élément
         const finalProperties = Object.assign({}, this.dragElement.properties);
         finalProperties.x = point.x - (finalProperties.width || 100) / 2;
         finalProperties.y = point.y - (finalProperties.height || 50) / 2;
 
+        console.log('[DRAG] Propriétés finales:', finalProperties);
+
         // Ajouter l'élément au canvas
         const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
+        console.log('[DRAG] Élément ajouté avec ID:', elementId);
 
         // Sélectionner le nouvel élément
         this.canvasInstance.selectElement(elementId);
@@ -128,6 +156,10 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
             elementType: this.dragElement.type,
             position: point
         });
+
+        console.log('[DRAG] Drop terminé avec succès - Élément créé:', elementId);
+    } else {
+        console.log('[DRAG] Drop hors du canvas - ignoré');
     }
 };
 
@@ -167,6 +199,79 @@ PDFCanvasDragDropManager.prototype.getDefaultPropertiesForType = function(type) 
             src: '',
             width: 100,
             height: 100
+        },
+        // Éléments WooCommerce spéciaux
+        'product_table': {
+            x: 50,
+            y: 100,
+            width: 500,
+            height: 200,
+            showHeaders: true,
+            showBorders: true,
+            fontSize: 12,
+            backgroundColor: '#ffffff',
+            borderColor: '#e5e7eb',
+            borderWidth: 1
+        },
+        'customer_info': {
+            x: 50,
+            y: 50,
+            width: 250,
+            height: 120,
+            showHeaders: true,
+            showBorders: false,
+            fontSize: 12,
+            backgroundColor: 'transparent',
+            layout: 'vertical'
+        },
+        'company_info': {
+            x: 320,
+            y: 50,
+            width: 250,
+            height: 120,
+            showHeaders: true,
+            showBorders: false,
+            fontSize: 12,
+            backgroundColor: 'transparent',
+            layout: 'vertical'
+        },
+        'company_logo': {
+            x: 50,
+            y: 200,
+            width: 150,
+            height: 80,
+            fit: 'contain',
+            alignment: 'left'
+        },
+        'order_number': {
+            x: 450,
+            y: 20,
+            width: 100,
+            height: 30,
+            fontSize: 14,
+            fontFamily: 'Arial',
+            textAlign: 'right',
+            backgroundColor: 'transparent'
+        },
+        'dynamic-text': {
+            x: 50,
+            y: 320,
+            width: 200,
+            height: 40,
+            template: 'Commande #{order_number}',
+            fontSize: 14,
+            fontFamily: 'Arial',
+            backgroundColor: 'transparent'
+        },
+        'mentions': {
+            x: 50,
+            y: 380,
+            width: 500,
+            height: 60,
+            fontSize: 10,
+            fontFamily: 'Arial',
+            textAlign: 'left',
+            backgroundColor: 'transparent'
         }
     };
 
@@ -236,3 +341,7 @@ PDFCanvasDragDropManager.prototype.dispose = function() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PDFCanvasDragDropManager;
 }
+
+// Export ES6
+export { PDFCanvasDragDropManager };
+export default PDFCanvasDragDropManager;

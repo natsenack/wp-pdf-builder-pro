@@ -164,3 +164,7 @@ PDFCanvasHistoryManager.prototype.configure = function(options) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PDFCanvasHistoryManager;
 }
+
+// Export ES6
+export { PDFCanvasHistoryManager };
+export default PDFCanvasHistoryManager;
