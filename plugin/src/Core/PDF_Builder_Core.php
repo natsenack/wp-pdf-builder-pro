@@ -199,73 +199,10 @@ class PDF_Builder_Core
      */
     public function admin_enqueue_scripts($hook)
     {
-        // Charger les scripts sur toutes les pages du plugin SAUF l'éditeur
-        if (
-            ($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false)
-            || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor')
-        ) {
-            // Phase 3.4.3 - Optimisation du chargement initial
-            // Précharger le ScriptLoader en priorité (petit fichier d'optimisation)
-            wp_enqueue_script(
-                'pdf-builder-script-loader',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.a7f3092f8533c77194d1.js',
-                array(),
-                PDF_BUILDER_PRO_VERSION,
-                false // Charger dans le head pour optimiser le chargement
-            );
-
-            // Différer le chargement du script principal (lourd)
-            wp_enqueue_script(
-                'pdf-builder-admin-core',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?v=' . time() . '_' . uniqid(),
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION . '_force_' . microtime(true),
-                true // Garder en footer mais avec defer logique
-            );
-
-            // Styles critiques - préchargés
-            wp_enqueue_style(
-                'pdf-builder-admin-core',
-                PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
-                array(),
-                PDF_BUILDER_PRO_VERSION
-            );
-
-            // Charger le LazyLoader de manière optimisée
-            wp_enqueue_script(
-                'pdf-builder-lazy-loader',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/LazyLoader.js',
-                array(),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            // Localiser le script pour AJAX
-            wp_localize_script(
-                'pdf-builder-admin-core',
-                'pdfBuilderAjax',
-                array(
-                    'ajaxurl' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('pdf_builder_templates'),
-                    'strings' => array(
-                        'loading' => __('Loading...', 'pdf-builder-pro'),
-                        'error' => __('An error occurred', 'pdf-builder-pro'),
-                        'success' => __('Success', 'pdf-builder-pro')
-                    ),
-                    // Configuration du ScriptLoader
-                    'scriptLoader' => array(
-                        'criticalScripts' => array('jquery', 'jquery-core'),
-                        'deferThreshold' => 2000,
-                        'preloadCritical' => true,
-                        'enableIntersectionObserver' => true
-                    )
-                )
-            );
-
-            // Ajouter des attributs de performance aux scripts
-            add_filter('script_loader_tag', array($this, 'optimize_script_tags'), 10, 3);
-            add_filter('style_loader_tag', array($this, 'optimize_style_tags'), 10, 3);
-        }
+        // DEPRECATED: Script loading is now centralized in PDF_Builder_Admin::enqueue_admin_scripts()
+        // This method is kept for backward compatibility but does nothing
+        // All admin scripts are loaded through the single entry point in PDF_Builder_Admin class
+        // to avoid duplicate script loading and conflicts
     }
 
     /**
