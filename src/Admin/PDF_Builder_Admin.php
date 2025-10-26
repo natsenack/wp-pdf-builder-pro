@@ -1421,6 +1421,7 @@ class PDF_Builder_Admin
             'toplevel_page_pdf-builder-pro',
             'pdf-builder-pro_page_pdf-builder-templates',
             'pdf-builder-pro_page_pdf-builder-editor',
+            'pdf-builder-editor', // Hook direct pour l'éditeur
             'pdf-builder-pro_page_pdf-builder-settings',
             'pdf-builder-pro_page_pdf-builder-diagnostic',
             // 'pdf-builder-pro_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
