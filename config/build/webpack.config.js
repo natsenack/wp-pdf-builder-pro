@@ -62,9 +62,9 @@ module.exports = {
     ]
   },
   externals: {
-    // Utiliser React et ReactDOM depuis WordPress pour éviter les conflits de version
-    'react': 'React',
-    'react-dom': 'ReactDOM'
+    // Temporairement désactiver les externals pour React pour éviter les conflits de version
+    // 'react': 'React',
+    // 'react-dom': 'ReactDOM'
   },
   plugins: [
     // Copier seulement le script-loader sans traitement webpack (il utilise les globals directement)
