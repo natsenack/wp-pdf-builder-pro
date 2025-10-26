@@ -1,10 +1,12 @@
 // PDF Builder Pro - Script Loader (Standalone)
 // Définit les variables globales immédiatement - VERSION STANDALONE
 
-console.log('🚨🚨🚨 SCRIPT-LOADER.JS CHARGÉ ET EXÉCUTÉ 🚨🚨🚨');
+console.log('🚨🚨🚨 SCRIPT-LOADER.JS CHARGÉ ET EXÉCUTÉ - TOP LEVEL 🚨🚨🚨');
 
 (function() {
   'use strict';
+
+  console.log('🚨🚨🚨 SCRIPT-LOADER.JS FONCTION AUTO-EXÉCUTÉE 🚨🚨🚨');
 
   // Définir les variables globales immédiatement
   if (typeof window !== 'undefined') {

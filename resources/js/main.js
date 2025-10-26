@@ -1,7 +1,7 @@
 // Import global fallbacks first
 import './globalFallback.js';
 
-console.log('🚨🚨🚨 MAIN.JS CHARGÉ ET EXÉCUTÉ - DÉBUT 🚨🚨🚨');
+console.log('🚨🚨🚨 MAIN.JS CHARGÉ ET EXÉCUTÉ - TOP LEVEL 🚨🚨🚨');
 
 // Vérifier immédiatement React
 console.log('REACT CHECK - window.React:', typeof window.React);
