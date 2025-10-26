@@ -102,13 +102,16 @@ function checkTemplate() {
     if (fs.existsSync(templatePath)) {
         const content = fs.readFileSync(templatePath, 'utf8');
 
-        // Vérifier que le template charge le bon bundle
-        if (content.includes('pdf-builder-admin-debug.js')) {
-            console.log('✅ Template WordPress: Mis à jour pour Vanilla JS');
+        // Vérifier que le template utilise l'approche hybride Vanilla JS
+        // (attend que les scripts soient chargés par WordPress enqueue)
+        if (content.includes('pdfBuilderInitVanilla') &&
+            content.includes('waitForScripts') &&
+            content.includes('PDFCanvasVanilla')) {
+            console.log('✅ Template WordPress: Utilise l\'approche hybride Vanilla JS');
             checks.passed++;
             return true;
         } else {
-            console.log('❌ Template WordPress: Ne charge pas le bundle Vanilla JS');
+            console.log('❌ Template WordPress: N\'utilise pas l\'approche hybride Vanilla JS');
             checks.failed++;
             return false;
         }

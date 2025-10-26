@@ -1473,10 +1473,19 @@ class PDF_Builder_Admin
                 };
             }
         ');
-// Scripts JavaScript - VERSION ULTRA FORCEE
-        // React et ReactDOM doivent être chargés avant le script principal
-        wp_enqueue_script('react');
-        wp_enqueue_script('react-dom', ['react']);
+// Scripts JavaScript - VERSION VANILLA JS + CANVAS API
+        // Charger les modules ES6 Vanilla JS au lieu de React
+        wp_enqueue_script('pdf-canvas-vanilla', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-vanilla.js', [], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-renderer', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-renderer.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-events', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-events.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-selection', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-selection.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-properties', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-properties.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-layers', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-layers.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-export', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-export.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-woocommerce', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-woocommerce.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-customization', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-customization.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-optimizer', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-optimizer.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        wp_enqueue_script('pdf-canvas-tests', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-tests.js', ['pdf-canvas-vanilla'], '1.0.0', true);
 
         // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0', false);
@@ -1484,19 +1493,18 @@ class PDF_Builder_Admin
         // Script loader pour définir l'API globale - CHARGER AVANT LE SCRIPT PRINCIPAL
         wp_enqueue_script('pdf-builder-script-loader', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.js', [], '3.0.0', false);
 
-        // Charger d'abord les vendors (React, etc.) - COMMENTÉ car webpack ne génère pas vendors.js séparé
-        // wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-debug.js', ['jquery', 'react', 'react-dom', 'pdf-builder-script-loader'], '9.0.0', false);
-        error_log('PDF Builder: pdf-builder-admin-v3 script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
+        // Bundle optimisé pour les utilitaires partagés
+        wp_enqueue_script('pdf-builder-admin-vanilla', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-debug.js', ['jquery', 'pdf-builder-script-loader'], '10.0.0', false);
+        error_log('PDF Builder: Vanilla JS scripts enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-vanilla.js');
 // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed');
 // Script de correction de nonce - DÉPLACÉ PLUS HAUT
-// Variables JavaScript pour AJAX - VERSION FORCEE - CORRECTION: Localiser dans le script principal
-        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
+// Variables JavaScript pour AJAX - VERSION VANILLA JS
+        wp_localize_script('pdf-canvas-vanilla', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => '7.0.0',
-            'timestamp' => 0,
+            'version' => '10.0.0',
+            'timestamp' => time(),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),

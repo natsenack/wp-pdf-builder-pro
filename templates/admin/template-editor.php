@@ -14,65 +14,234 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
 }
 
-// Tous les scripts et styles sont maintenant chargés dans la classe admin via enqueue_admin_scripts
-// Plus besoin d'enqueues ici car ils sont déjà faits avant wp_head()
+// Get template ID from URL
+$template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+$is_new = $template_id === 0;
 
-    // CHARGEMENT DIRECT DES SCRIPTS ESSENTIELS UNIQUEMENT
-    $main_bundle_url = plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__)));
+// Récupérer les données du template si existant
+$template_name = '';
+$template_data = null;
+$initial_elements = [];
 
-    // Get template ID from URL (défini tôt pour le diagnostic)
-    $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-    $is_new = $template_id === 0;
+if (!$is_new && $template_id > 0) {
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    $template = $wpdb->get_row(
+        $wpdb->prepare("SELECT name, template_data FROM $table_templates WHERE id = %d", $template_id),
+        ARRAY_A
+    );
 
-    echo '<div style="background: lightgreen; padding: 10px; margin: 10px; border: 1px solid green; font-size: 12px;">';
-    echo '<h4>📦 Chargement des scripts PDF Builder Vanilla JS</h4>';
-    echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
-
-    // Code temporaire de diagnostic
-    echo '<script>
-    console.log("🔍 DIAGNOSTIC VANILLA JS:");
-    console.log("📦 Main bundle URL:", "' . esc_url($main_bundle_url) . '");
-
-    // Vérifier immédiatement après le chargement des scripts
-    setTimeout(function() {
-        console.log("🔍 APRÈS 500ms:");
-        console.log("📦 pdfBuilderPro:", typeof window.pdfBuilderPro);
-        console.log("📦 pdfBuilderInitVanilla:", typeof window.pdfBuilderInitVanilla);
-
-        // Tester l\'initialisation manuellement
-        if (window.pdfBuilderInitVanilla) {
-            console.log("🚀 TEST D\'INITIALISATION VANILLA JS...");
-            try {
-                window.pdfBuilderInitVanilla("invoice-quote-builder-container", {
-                    templateId: ' . intval($template_id) . ',
-                    isNew: ' . ($is_new ? 'true' : 'false') . ',
-                    initialElements: [],
-                    width: 595,
-                    height: 842
-                });
-                console.log("✅ INITIALISATION VANILLA JS RÉUSSIE");
-            } catch (error) {
-                console.error("❌ ERREUR INITIALISATION VANILLA JS:", error);
+    if ($template) {
+        $template_name = $template['name'];
+        $template_data_raw = $template['template_data'];
+        if (!empty($template_data_raw)) {
+            $decoded_data = json_decode($template_data_raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
+                $template_data = $decoded_data;
+                $initial_elements = isset($decoded_data['elements']) ? $decoded_data['elements'] : [];
             }
         }
-    }, 500);
-    </script>';
+    }
+}
+?>
 
-    echo '<p>Scripts essentiels chargés</p>';
-    echo '</div>';
-    echo '<script>
-        setTimeout(function() {
-            console.log("🔍 VÉRIFICATION BUNDLE PRINCIPAL...");
-            console.log("🔍 pdfBuilderInitVanilla:", typeof window.pdfBuilderInitVanilla);
-            console.log("🔍 pdfBuilderPro:", typeof window.pdfBuilderPro);
-            if (window.pdfBuilderPro) {
-                console.log("🔍 pdfBuilderPro.init:", typeof window.pdfBuilderPro.init);
+<div class="wrap">
+    <h1><?php echo $is_new ? __('Créer un nouveau template PDF', 'pdf-builder-pro') : __('Éditer le template PDF', 'pdf-builder-pro'); ?></h1>
+
+    <?php if (!$is_new && !empty($template_name)): ?>
+        <h2><?php echo esc_html($template_name); ?></h2>
+    <?php endif; ?>
+
+    <div id="pdf-builder-editor-container" style="width: 100%; height: 800px; border: 1px solid #ccc; background: #f9f9f9;">
+        <div style="padding: 20px; text-align: center; color: #666;">
+            <p>� Chargement de l'éditeur PDF Vanilla JS...</p>
+        </div>
+    </div>
+
+    <!-- Chargement des modules Vanilla JS ES6 -->
+    <script type="module">
+        // Attendre que tous les scripts soient chargés par WordPress
+        function waitForScripts() {
+            return new Promise((resolve) => {
+                const checkScripts = () => {
+                    // Vérifier que les classes Vanilla JS sont disponibles
+                    if (typeof PDFCanvasVanilla !== 'undefined' &&
+                        typeof PDFCanvasRenderer !== 'undefined' &&
+                        typeof PDFCanvasEventManager !== 'undefined') {
+                        resolve();
+                    } else {
+                        setTimeout(checkScripts, 100);
+                    }
+                };
+                checkScripts();
+            });
+        }
+
+        // Fonction d'initialisation globale
+        window.pdfBuilderInitVanilla = async function(containerId, options = {}) {
+            console.log('🚀 INITIALISATION PDF BUILDER VANILLA JS');
+
+            try {
+                // Attendre que les scripts soient chargés
+                await waitForScripts();
+                console.log('✅ Scripts Vanilla JS chargés');
+
+                // Créer l'instance principale
+                const canvas = document.createElement('canvas');
+                canvas.width = options.width || 595;
+                canvas.height = options.height || 842;
+                canvas.style.border = '1px solid #ccc';
+                canvas.style.background = 'white';
+
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    throw new Error(`Container ${containerId} non trouvé`);
+                }
+
+                container.innerHTML = '';
+                container.appendChild(canvas);
+
+                // Initialiser PDFCanvasVanilla
+                const pdfCanvas = new PDFCanvasVanilla(canvas, {
+                    templateId: options.templateId || 0,
+                    initialElements: options.initialElements || [],
+                    width: canvas.width,
+                    height: canvas.height
+                });
+
+                console.log('✅ PDFCanvasVanilla initialisé avec succès');
+                return pdfCanvas;
+
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation Vanilla JS:', error);
+                throw error;
             }
-        }, 1000);
-    </script>';
+        };
 
-    echo '<p>Scripts essentiels chargés</p>';
-    echo '</div>';
+        // Initialisation automatique quand le DOM est prêt
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM prêt, initialisation automatique...');
+
+            const container = document.getElementById('pdf-builder-editor-container');
+            if (container) {
+                try {
+                    window.pdfBuilderInitVanilla('pdf-builder-editor-container', {
+                        templateId: <?php echo intval($template_id); ?>,
+                        isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                        initialElements: <?php echo json_encode($initial_elements); ?>,
+                        width: 595,
+                        height: 842
+                    });
+                } catch (error) {
+                    console.error('❌ Erreur lors de l\'initialisation automatique:', error);
+                    container.innerHTML = `
+                        <div style="padding: 20px; background: #ffe6e6; border: 1px solid #ff9999; border-radius: 5px;">
+                            <h3>❌ Erreur de chargement</h3>
+                            <p>L'éditeur PDF n'a pas pu être chargé.</p>
+                            <p><strong>Erreur:</strong> ${error.message}</p>
+                            <p>Vérifiez la console du navigateur pour plus de détails.</p>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+
+        // Fonction d'initialisation globale
+        window.pdfBuilderInitVanilla = function(containerId, options = {}) {
+            console.log('🚀 INITIALISATION PDF BUILDER VANILLA JS');
+
+            try {
+                // Créer l'instance principale
+                const canvas = document.createElement('canvas');
+                canvas.width = options.width || 595;
+                canvas.height = options.height || 842;
+                canvas.style.border = '1px solid #ccc';
+                canvas.style.background = 'white';
+
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    throw new Error(`Container ${containerId} non trouvé`);
+                }
+
+                container.innerHTML = '';
+                container.appendChild(canvas);
+
+                // Initialiser PDFCanvasVanilla
+                const pdfCanvas = new PDFCanvasVanilla(canvas, {
+                    templateId: options.templateId || 0,
+                    initialElements: options.initialElements || [],
+                    width: canvas.width,
+                    height: canvas.height
+                });
+
+                console.log('✅ PDFCanvasVanilla initialisé avec succès');
+                return pdfCanvas;
+
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation Vanilla JS:', error);
+                throw error;
+            }
+        };
+
+        // Initialisation automatique quand le DOM est prêt
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('� DOM prêt, initialisation automatique...');
+
+            const container = document.getElementById('pdf-builder-editor-container');
+            if (container) {
+                try {
+                    window.pdfBuilderInitVanilla('pdf-builder-editor-container', {
+                        templateId: <?php echo intval($template_id); ?>,
+                        isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                        initialElements: <?php echo json_encode($initial_elements); ?>,
+                        width: 595,
+                        height: 842
+                    });
+                } catch (error) {
+                    console.error('❌ Erreur lors de l\'initialisation automatique:', error);
+                    container.innerHTML = `
+                        <div style="padding: 20px; background: #ffe6e6; border: 1px solid #ff9999; border-radius: 5px;">
+                            <h3>❌ Erreur de chargement</h3>
+                            <p>L'éditeur PDF n'a pas pu être chargé.</p>
+                            <p><strong>Erreur:</strong> ${error.message}</p>
+                            <p>Vérifiez la console du navigateur pour plus de détails.</p>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+
+    <!-- Styles CSS pour l'éditeur -->
+    <style>
+        #pdf-builder-editor-container {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        #pdf-builder-editor-container canvas {
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .pdf-canvas-toolbar {
+            background: #f5f5f5;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .pdf-canvas-properties {
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</div>
 
 // Récupérer les données complètes du template si c'est un template existant
 $template_name = '';
