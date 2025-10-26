@@ -7,8 +7,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'development', // CHANGÉ TEMPORAIREMENT pour le débogage
   entry: {
+    'pdf-builder-admin-debug': './resources/js/main.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
-    // script-loader and main bundle are copied directly without webpack processing
+    // script-loader is copied directly without webpack processing
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
   output: {

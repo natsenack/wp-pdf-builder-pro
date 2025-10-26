@@ -27,9 +27,9 @@ const init = (containerId, options = {}) => {
   // Vérifier les imports locaux (devraient être undefined maintenant)
   console.log('🔍 React importé (devrait être undefined):', typeof React);
   console.log('🔍 ReactDOM importé (devrait être undefined):', typeof ReactDOM);
-  console.log('🚀 React disponible:', typeof React);
-  console.log('🚀 ReactDOM disponible:', typeof ReactDOM);
-  console.log('🚀 ReactDOM.createRoot disponible:', typeof ReactDOM?.createRoot);
+  console.log('🚀 React disponible:', typeof window.React);
+  console.log('🚀 ReactDOM disponible:', typeof window.ReactDOM);
+  console.log('🚀 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
 
   const container = document.getElementById(containerId);
   console.log('🚀 Container recherché:', containerId, 'trouvé:', !!container);
@@ -71,7 +71,7 @@ const init = (containerId, options = {}) => {
     console.log('� PDFCanvasEditor importé:', typeof PDFCanvasEditor);
     console.log('� window.React.createElement:', typeof window.React?.createElement);
     
-    const element = window.React.createElement(PDFCanvasEditor, {
+    const element = React.createElement(PDFCanvasEditor, {
       options: options
     });
     console.log('� ELEMENT REACT CRÉÉ:', !!element);
