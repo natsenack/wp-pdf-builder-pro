@@ -1,6 +1,6 @@
 {
   "name": "wp-pdf-builder-pro",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
   "scripts": {
     "build": "webpack --config=config/build/webpack.config.js --mode=production",
@@ -18,7 +18,6 @@
     "@babel/preset-env": "^7.20.0",
     "@babel/preset-typescript": "^7.27.1",
     "@testing-library/jest-dom": "^6.1.4",
-    "artillery": "^2.0.26",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.1.0",
     "compression-webpack-plugin": "^11.1.0",
@@ -37,7 +36,6 @@
   "dependencies": {
     "@wordpress/element": "^6.32.0",
     "jsbarcode": "^3.12.1",
-    "puppeteer": "^21.11.0",
     "qrcode": "^1.5.4",
     "toastr": "^2.1.4"
   },

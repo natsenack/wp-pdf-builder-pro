@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: PDF Builder Pro
- * Plugin URI: https://github.com/your-repo/pdf-builder-pro
+ * Plugin URI: https://github.com/natsenack/wp-pdf-builder-pro
  * Description: Constructeur de PDF professionnel ultra-performant avec architecture modulaire avancée
- * Version: 1.1.0-beta
+ * Version: 1.1.0
  * Author: Natsenack
- * Author URI: https://github.com/your-profile
+ * Author URI: https://github.com/natsenack
  * License: GPL v2 or later
  * Text Domain: pdf-builder-pro
  * Domain Path: /languages

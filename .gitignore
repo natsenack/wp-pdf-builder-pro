@@ -19,6 +19,16 @@ demo-*.html
 *-diagnostic.js
 *-repair.js
 
+# Sécurité - Ne jamais commiter les credentials
+ftp-config.env
+.env.local
+.env
+temp/scripts/ftp-config.env
+wp-config-*.php
+*-secrets.*
+*.key
+*.pem
+
 # Tools and deployment
 /tools/
 /deploy-ftp.ps1

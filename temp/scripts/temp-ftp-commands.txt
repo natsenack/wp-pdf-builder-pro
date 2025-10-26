@@ -1,5 +1,0 @@
-open ftp://nats:iZ6vU3zV2y@65.108.242.181
-cd /wp-content/plugins/wp-pdf-builder-pro/assets/js/dist
-put assets/js/dist/bundle-test.js
-put assets/js/dist/react-test.js
-bye

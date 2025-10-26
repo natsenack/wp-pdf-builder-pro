@@ -23,7 +23,7 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
 }
 
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '1.0.2');
+    define('PDF_BUILDER_PRO_VERSION', '1.1.0');
 }
 
 // Fonction pour charger le core du plugin
