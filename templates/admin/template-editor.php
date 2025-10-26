@@ -76,28 +76,6 @@ if (!is_user_logged_in() || !current_user_can('read')) {
                 console.error("🚨 ERREUR CHARGEMENT SCRIPT:", e.target.src);
             }
         }, true);
-
-        setTimeout(function() {
-            console.log("🔍 TEST EXECUTION SCRIPTS...");
-
-            try {
-                // Tester si les scripts ont défini les variables globales
-                console.log("🔍 window.pdfBuilderPro:", typeof window.pdfBuilderPro);
-                console.log("🔍 window.pdfBuilderPro.init:", typeof window.pdfBuilderPro?.init);
-
-                if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
-                    console.log("✅ pdfBuilderPro.init trouvé, test d\'appel...");
-                    // Essayer un appel de test
-                    var testResult = window.pdfBuilderPro.init("test-container", {});
-                    console.log("✅ pdfBuilderPro.init test result:", testResult);
-                } else {
-                    console.log("❌ pdfBuilderPro.init NON trouvé");
-                }
-            } catch (error) {
-                console.error("❌ ERREUR lors du test d\'exécution:", error);
-                console.error("Stack:", error.stack);
-            }
-        }, 1000);
     </script>';
 
     // TEST DES URLS
