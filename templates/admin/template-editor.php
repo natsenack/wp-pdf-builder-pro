@@ -25,6 +25,7 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<h4>📦 Chargement des scripts PDF Builder</h4>';
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
+    echo '<script type="text/javascript" src="' . esc_url(plugins_url('bundle-diagnostic.js', dirname(__FILE__))) . '"></script>';
 
     // Vérification que le bundle principal s'exécute
     echo '<script>
