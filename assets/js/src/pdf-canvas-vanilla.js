@@ -196,9 +196,9 @@ export class PDFCanvasVanilla {
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvas.addEventListener('wheel', this.handleWheel.bind(this));
 
-        // Gestionnaires de drag & drop pour le canvas
-        this.canvas.addEventListener('dragover', this.handleDragOver.bind(this));
-        this.canvas.addEventListener('drop', this.handleDrop.bind(this));
+        // Gestionnaires de drag & drop - DOIVENT ÊTRE AU NIVEAU DU DOCUMENT
+        document.addEventListener('dragover', this.handleDragOver.bind(this));
+        document.addEventListener('drop', this.handleDrop.bind(this));
 
         // Gestionnaires de clavier
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
