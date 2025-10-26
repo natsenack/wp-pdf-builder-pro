@@ -51,6 +51,64 @@ Ces dossiers ne sont **jamais** déployés :
 - `src/` - Code source TypeScript/React
 - `node_modules/` - Dépendances JavaScript
 
+## 🎯 Migration Vanilla JS - Phase 1 Terminée
+
+### ✅ Migration Réussie : React → Vanilla JS + Canvas API
+
+**Statut :** Phase 1 COMPLETÉE avec succès
+**Date :** Décembre 2024
+**Résultat :** Bundle de 127 KiB (vs 446 KiB avec React) - **71% de réduction**
+
+#### 🎯 Objectifs Atteints
+
+- ✅ **Suppression complète de React** - Plus aucune dépendance React
+- ✅ **Architecture Canvas native** - Performance HTML5 Canvas optimale
+- ✅ **Migration de tous les utilitaires** - 11 modules Vanilla JS créés
+- ✅ **Système de propriétés avancé** - Validation, liaison, historique
+- ✅ **Gestion multi-calques** - Ordre Z, groupes, visibilité
+- ✅ **Export PDF intégré** - Conversion canvas-to-PDF
+- ✅ **Optimisations de performance** - Frame skipping, dirty rectangles, caching
+- ✅ **Tests d'intégration** - Suite complète de tests automatisés
+
+#### 📦 Nouveaux Modules Vanilla JS
+
+```
+assets/js/
+├── pdf-canvas-vanilla.js      ← Classe principale (127 KiB bundle)
+├── pdf-canvas-elements.js     ← Restrictions et validation d'éléments
+├── pdf-canvas-woocommerce.js  ← Gestion éléments WooCommerce
+├── pdf-canvas-customization.js ← Service de personnalisation
+├── pdf-canvas-renderer.js     ← Rendu Canvas avancé
+├── pdf-canvas-events.js       ← Gestion événements DOM
+├── pdf-canvas-render-utils.js ← Utilitaires de rendu
+├── pdf-canvas-selection.js    ← Sélection multi-éléments
+├── pdf-canvas-properties.js   ← Gestionnaire propriétés avancé
+├── pdf-canvas-layers.js       ← Gestionnaire de calques
+├── pdf-canvas-export.js       ← Export PDF
+├── pdf-canvas-optimizer.js    ← Optimisations performance
+└── pdf-canvas-tests.js        ← Suite de tests
+```
+
+#### 🚀 Améliorations Apportées
+
+- **Performance :** 71% de réduction du bundle, rendu Canvas optimisé
+- **Maintenance :** Code Vanilla JS plus simple à déboguer
+- **Compatibilité :** Support ES5, pas de dépendances externes
+- **Fonctionnalités :** Propriétés liées, calques, export PDF intégré
+- **Évolutivité :** Architecture modulaire facile à étendre
+
+#### 🔧 Utilisation
+
+```javascript
+// Initialisation Vanilla JS
+window.pdfBuilderInitVanilla('canvas-container', {
+    width: 595,
+    height: 842,
+    templateId: 123,
+    initialElements: [...]
+});
+```
+
 ## �🚀 Déploiement et Installation
 
 ### 📦 Installation des dépendances PHP

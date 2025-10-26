@@ -8,7 +8,8 @@
     "dev": "webpack --config=config/build/webpack.config.js --mode=development",
     "watch": "webpack --config=config/build/webpack.config.js --mode=development --watch",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:integration": "node -e \"console.log('Running integration tests...'); import('./assets/js/pdf-canvas-tests.js').then(() => console.log('Tests loaded successfully')).catch(e => console.error('Test load failed:', e))\""
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

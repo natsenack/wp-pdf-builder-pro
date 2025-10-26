@@ -25,12 +25,12 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     $is_new = $template_id === 0;
 
     echo '<div style="background: lightgreen; padding: 10px; margin: 10px; border: 1px solid green; font-size: 12px;">';
-    echo '<h4>📦 Chargement des scripts PDF Builder</h4>';
+    echo '<h4>📦 Chargement des scripts PDF Builder Vanilla JS</h4>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
 
     // Code temporaire de diagnostic
     echo '<script>
-    console.log("🔍 DIAGNOSTIC IMMÉDIAT:");
+    console.log("🔍 DIAGNOSTIC VANILLA JS:");
     console.log("📦 Main bundle URL:", "' . esc_url($main_bundle_url) . '");
 
     // Vérifier immédiatement après le chargement des scripts
@@ -38,21 +38,21 @@ if (!is_user_logged_in() || !current_user_can('read')) {
         console.log("🔍 APRÈS 500ms:");
         console.log("📦 pdfBuilderPro:", typeof window.pdfBuilderPro);
         console.log("📦 pdfBuilderInitVanilla:", typeof window.pdfBuilderInitVanilla);
-        
+
         // Tester l\'initialisation manuellement
-        if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
-            console.log("🚀 TEST D\'INITIALISATION MANUELLE...");
+        if (window.pdfBuilderInitVanilla) {
+            console.log("🚀 TEST D\'INITIALISATION VANILLA JS...");
             try {
-                window.pdfBuilderPro.init("invoice-quote-builder-container", {
+                window.pdfBuilderInitVanilla("invoice-quote-builder-container", {
                     templateId: ' . intval($template_id) . ',
                     isNew: ' . ($is_new ? 'true' : 'false') . ',
                     initialElements: [],
                     width: 595,
                     height: 842
                 });
-                console.log("✅ INITIALISATION MANUELLE RÉUSSIE");
+                console.log("✅ INITIALISATION VANILLA JS RÉUSSIE");
             } catch (error) {
-                console.error("❌ ERREUR INITIALISATION MANUELLE:", error);
+                console.error("❌ ERREUR INITIALISATION VANILLA JS:", error);
             }
         }
     }, 500);
@@ -152,10 +152,10 @@ if (!$is_new && $template_id > 0) {
         <!-- Loading state -->
         <div class="pdf-builder-loading">
             <div>
-                <div class="icon">📄</div>
+                <div class="icon">🎨</div>
                 <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
-                <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">Chargement des scripts JavaScript...</p>
+                <p><?php _e('Chargement de l\'éditeur Vanilla JS Canvas avancé...', 'pdf-builder-pro'); ?></p>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">Chargement des scripts JavaScript Vanilla...</p>
                 <div class="spinner"></div>
             </div>
         </div>

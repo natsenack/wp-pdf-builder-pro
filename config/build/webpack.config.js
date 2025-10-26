@@ -7,7 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'development', // CHANGÉ TEMPORAIREMENT pour le débogage
   entry: {
-    'pdf-builder-admin-debug': './resources/js/main.js',
+    'pdf-builder-admin-debug': './assets/js/pdf-canvas-vanilla.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
     // script-loader is copied directly without webpack processing
   },
@@ -31,7 +31,13 @@ module.exports = {
       return '[name].[contenthash].js';
     },
     path: path.resolve(__dirname, '../../assets/js/dist'),
-    clean: true // Nettoyer les anciens fichiers
+    clean: true, // Nettoyer les anciens fichiers
+    library: {
+      name: 'pdfBuilderPro',
+      type: 'umd',
+      export: 'default'
+    },
+    globalObject: 'this'
   },
   plugins: [
     // ProvidePlugin retiré - on utilise l'import direct
@@ -65,7 +71,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, '../../resources/js/script-loader.js'),
+          from: path.resolve(__dirname, '../../resources/js/ScriptLoader.js'),
           to: path.resolve(__dirname, '../../assets/js/dist/pdf-builder-script-loader.js')
         }
         // REMOVED: main.js is now processed by webpack as entry point

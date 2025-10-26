@@ -1,0 +1,926 @@
+/**
+ * PDF Canvas Vanilla - Classe principale pour le système Vanilla JS
+ * Remplace les composants React avec une implémentation Canvas HTML5
+ * Intègre les utilitaires migrés pour la gestion des éléments
+ */
+
+import { ELEMENT_PROPERTY_RESTRICTIONS, ELEMENT_TYPE_MAPPING, isPropertyAllowed, getPropertyDefault, validateProperty, fixInvalidProperty } from './pdf-canvas-elements.js';
+import { WooCommerceElementsManager, wooCommerceElementsManager } from './pdf-canvas-woocommerce.js';
+import { ElementCustomizationService, elementCustomizationService } from './pdf-canvas-customization.js';
+import { PDFCanvasRenderer } from './pdf-canvas-renderer.js';
+import { PDFCanvasEventManager } from './pdf-canvas-events.js';
+import { PDFCanvasRenderUtils } from './pdf-canvas-render-utils.js';
+import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
+import { PDFCanvasPropertiesManager } from './pdf-canvas-properties.js';
+import { PDFCanvasLayersManager } from './pdf-canvas-layers.js';
+import { PDFCanvasExportManager } from './pdf-canvas-export.js';
+import { PDFCanvasPerformanceOptimizer } from './pdf-canvas-optimizer.js';
+
+export class PDFCanvasVanilla {
+    constructor(containerId, options = {}) {
+        this.containerId = containerId;
+        this.options = {
+            width: options.width || 800,
+            height: options.height || 600,
+            backgroundColor: options.backgroundColor || '#ffffff',
+            gridSize: options.gridSize || 20,
+            showGrid: options.showGrid !== false,
+            zoom: options.zoom || 1,
+            ...options
+        };
+
+        // État du canvas
+        this.canvas = null;
+        this.ctx = null;
+        this.elements = new Map();
+        this.selectedElement = null;
+        this.dragState = null;
+        this.isInitialized = false;
+
+        // Gestionnaires d'événements
+        this.eventListeners = new Map();
+
+        // Services intégrés
+        this.wooCommerceManager = wooCommerceElementsManager;
+        this.customizationService = elementCustomizationService;
+
+        // Gestionnaires spécialisés
+        this.renderer = new PDFCanvasRenderer(this);
+        this.eventManager = new PDFCanvasEventManager(this);
+        this.selectionManager = new PDFCanvasSelectionManager(this);
+        this.propertiesManager = new PDFCanvasPropertiesManager(this);
+        this.layersManager = new PDFCanvasLayersManager(this);
+        this.exportManager = new PDFCanvasExportManager(this);
+        this.performanceOptimizer = new PDFCanvasPerformanceOptimizer(this);
+
+        // État d'interaction
+        this.mode = 'select'; // select, draw, text, etc.
+        this.tool = null;
+
+        // Historique pour undo/redo
+        this.history = [];
+        this.historyIndex = -1;
+    }
+
+    /**
+     * Initialise le canvas et les gestionnaires d'événements
+     */
+    async init() {
+        try {
+            // Créer le canvas
+            this.createCanvas();
+
+            // Configurer le contexte
+            this.setupContext();
+
+            // Attacher les gestionnaires d'événements
+            this.attachEventListeners();
+
+            // Charger les données WooCommerce si nécessaire
+            await this.loadInitialData();
+
+            // Premier rendu
+            this.render();
+
+            this.isInitialized = true;
+            console.log('PDFCanvasVanilla initialized successfully');
+
+        } catch (error) {
+            console.error('Failed to initialize PDFCanvasVanilla:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Crée l'élément canvas dans le conteneur
+     */
+    createCanvas() {
+        const container = document.getElementById(this.containerId);
+        if (!container) {
+            throw new Error(`Container with id "${this.containerId}" not found`);
+        }
+
+        // Vider le conteneur
+        container.innerHTML = '';
+
+        // Créer le canvas
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = this.options.width;
+        this.canvas.height = this.options.height;
+        this.canvas.style.border = '1px solid #ddd';
+        this.canvas.style.cursor = 'default';
+        this.canvas.style.backgroundColor = this.options.backgroundColor;
+
+        // Ajouter au conteneur
+        container.appendChild(this.canvas);
+
+        // Obtenir le contexte
+        this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx) {
+            throw new Error('Failed to get 2D context from canvas');
+        }
+    }
+
+    /**
+     * Configure le contexte de rendu
+     */
+    setupContext() {
+        // Configuration de base
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
+
+        // Configuration du texte
+        this.ctx.textBaseline = 'top';
+        this.ctx.font = '14px Arial, sans-serif';
+    }
+
+    /**
+     * Attache les gestionnaires d'événements DOM
+     */
+    attachEventListeners() {
+        // Gestionnaires de souris
+        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.canvas.addEventListener('wheel', this.handleWheel.bind(this));
+
+        // Gestionnaires de clavier
+        document.addEventListener('keydown', this.handleKeyDown.bind(this));
+        document.addEventListener('keyup', this.handleKeyUp.bind(this));
+
+        // Gestionnaire de redimensionnement
+        window.addEventListener('resize', this.handleResize.bind(this));
+    }
+
+    /**
+     * Charge les données initiales
+     */
+    async loadInitialData() {
+        // Charger les données WooCommerce en mode test
+        this.wooCommerceManager.setTestMode(true);
+        await this.wooCommerceManager.loadWooCommerceData();
+    }
+
+    /**
+     * Gestionnaire d'événement mouse down
+     */
+    handleMouseDown(event) {
+        const point = this.getMousePosition(event);
+
+        switch (this.mode) {
+            case 'select':
+                this.handleSelectMode(point);
+                break;
+            case 'draw':
+                this.handleDrawMode(point);
+                break;
+            case 'text':
+                this.handleTextMode(point);
+                break;
+        }
+    }
+
+    /**
+     * Gestionnaire d'événement mouse move
+     */
+    handleMouseMove(event) {
+        const point = this.getMousePosition(event);
+
+        if (this.dragState) {
+            this.handleDrag(point);
+        } else {
+            this.handleHover(point);
+        }
+    }
+
+    /**
+     * Gestionnaire d'événement mouse up
+     */
+    handleMouseUp(event) {
+        if (this.dragState) {
+            this.endDrag();
+        }
+    }
+
+    /**
+     * Gestionnaire de roulette de souris (zoom)
+     */
+    handleWheel(event) {
+        event.preventDefault();
+
+        const delta = event.deltaY > 0 ? 0.9 : 1.1;
+        this.setZoom(this.options.zoom * delta);
+    }
+
+    /**
+     * Gestionnaire de touches clavier
+     */
+    handleKeyDown(event) {
+        switch (event.key) {
+            case 'Delete':
+            case 'Backspace':
+                if (this.selectedElement) {
+                    this.deleteElement(this.selectedElement.id);
+                }
+                break;
+            case 'Escape':
+                this.deselectElement();
+                break;
+            case 'z':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                    this.undo();
+                }
+                break;
+            case 'y':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                    this.redo();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Gestionnaire de relâchement de touches
+     */
+    handleKeyUp(event) {
+        // Gérer les relâchements si nécessaire
+    }
+
+    /**
+     * Gestionnaire de redimensionnement de fenêtre
+     */
+    handleResize() {
+        // Ajuster la taille du canvas si nécessaire
+        this.render();
+    }
+
+    /**
+     * Obtient la position de la souris relative au canvas
+     */
+    getMousePosition(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: (event.clientX - rect.left) / this.options.zoom,
+            y: (event.clientY - rect.top) / this.options.zoom
+        };
+    }
+
+    /**
+     * Gère le mode sélection
+     */
+    handleSelectMode(point) {
+        const element = this.getElementAtPoint(point);
+
+        if (element) {
+            this.selectElement(element.id);
+            this.startDrag(point);
+        } else {
+            this.deselectElement();
+        }
+    }
+
+    /**
+     * Gère le mode dessin
+     */
+    handleDrawMode(point) {
+        // Implémentation du mode dessin
+        console.log('Draw mode at:', point);
+    }
+
+    /**
+     * Gère le mode texte
+     */
+    handleTextMode(point) {
+        // Implémentation du mode texte
+        console.log('Text mode at:', point);
+    }
+
+    /**
+     * Démarre un glisser-déposer
+     */
+    startDrag(point) {
+        if (!this.selectedElement) return;
+
+        this.dragState = {
+            startPoint: point,
+            elementStartPos: {
+                x: this.selectedElement.properties.x,
+                y: this.selectedElement.properties.y
+            }
+        };
+    }
+
+    /**
+     * Gère le glisser-déposer
+     */
+    handleDrag(point) {
+        if (!this.dragState || !this.selectedElement) return;
+
+        const deltaX = point.x - this.dragState.startPoint.x;
+        const deltaY = point.y - this.dragState.startPoint.y;
+
+        this.updateElementProperty(this.selectedElement.id, 'x', this.dragState.elementStartPos.x + deltaX);
+        this.updateElementProperty(this.selectedElement.id, 'y', this.dragState.elementStartPos.y + deltaY);
+
+        this.render();
+    }
+
+    /**
+     * Termine le glisser-déposer
+     */
+    endDrag() {
+        this.dragState = null;
+        this.saveToHistory();
+    }
+
+    /**
+     * Gère le survol des éléments
+     */
+    handleHover(point) {
+        const element = this.getElementAtPoint(point);
+        this.canvas.style.cursor = element ? 'move' : 'default';
+    }
+
+    /**
+     * Sélectionne un élément
+     */
+    selectElement(elementId) {
+        this.selectedElement = this.elements.get(elementId);
+        this.render();
+    }
+
+    /**
+     * Désélectionne l'élément actuel
+     */
+    deselectElement() {
+        this.selectedElement = null;
+        this.render();
+    }
+
+    /**
+     * Obtient l'élément à une position donnée
+     */
+    getElementAtPoint(point) {
+        // Parcourir les éléments dans l'ordre inverse (dernier ajouté = premier cliqué)
+        const elementsArray = Array.from(this.elements.values()).reverse();
+
+        for (const element of elementsArray) {
+            if (this.isPointInElement(point, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Vérifie si un point est dans un élément
+     */
+    isPointInElement(point, element) {
+        const props = element.properties;
+        return point.x >= props.x &&
+               point.x <= props.x + props.width &&
+               point.y >= props.y &&
+               point.y <= props.y + props.height;
+    }
+
+    /**
+     * Ajoute un élément au canvas
+     */
+    addElement(type, properties = {}) {
+        const elementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Obtenir les propriétés par défaut
+        const defaultProps = this.customizationService.getDefaultProperties(type);
+
+        // Fusionner avec les propriétés fournies
+        const elementProperties = { ...defaultProps, ...properties };
+
+        // Valider les propriétés
+        const validatedProps = {};
+        for (const [key, value] of Object.entries(elementProperties)) {
+            validatedProps[key] = this.customizationService.validateProperty(key, value);
+        }
+
+        const element = {
+            id: elementId,
+            type: type,
+            properties: validatedProps,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+
+        this.elements.set(elementId, element);
+        this.saveToHistory();
+        this.render();
+
+        return elementId;
+    }
+
+    /**
+     * Met à jour une propriété d'élément
+     */
+    updateElementProperty(elementId, property, value) {
+        const element = this.elements.get(elementId);
+        if (!element) return false;
+
+        // Valider la propriété
+        const validatedValue = this.customizationService.validateProperty(property, value);
+
+        // Vérifier les restrictions
+        if (!isPropertyAllowed(element.type, property)) {
+            console.warn(`Property "${property}" not allowed for element type "${element.type}"`);
+            return false;
+        }
+
+        element.properties[property] = validatedValue;
+        element.updatedAt = Date.now();
+
+        this.render();
+        return true;
+    }
+
+    /**
+     * Supprime un élément
+     */
+    deleteElement(elementId) {
+        if (this.elements.delete(elementId)) {
+            if (this.selectedElement && this.selectedElement.id === elementId) {
+                this.selectedElement = null;
+            }
+            this.saveToHistory();
+            this.render();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Définit le niveau de zoom
+     */
+    setZoom(zoom) {
+        this.options.zoom = Math.max(0.1, Math.min(5, zoom));
+        this.canvas.style.transform = `scale(${this.options.zoom})`;
+        this.canvas.style.transformOrigin = 'top left';
+    }
+
+    /**
+     * Définit le mode d'interaction
+     */
+    setMode(mode) {
+        this.mode = mode;
+        this.canvas.style.cursor = this.getCursorForMode(mode);
+    }
+
+    /**
+     * Obtient le curseur approprié pour un mode
+     */
+    getCursorForMode(mode) {
+        const cursors = {
+            select: 'default',
+            draw: 'crosshair',
+            text: 'text',
+            move: 'move'
+        };
+        return cursors[mode] || 'default';
+    }
+
+    /**
+     * Rend tous les éléments sur le canvas
+     */
+    render() {
+        // Utiliser l'optimiseur de performance si disponible
+        if (this.performanceOptimizer) {
+            this.performanceOptimizer.optimizeRendering();
+            return;
+        }
+
+        // Effacer le canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Dessiner la grille si activée
+        if (this.options.showGrid) {
+            this.drawGrid();
+        }
+
+        // Dessiner tous les éléments
+        for (const element of this.elements.values()) {
+            this.renderElement(element);
+        }
+
+        // Dessiner les poignées de sélection
+        if (this.selectedElement) {
+            this.drawSelectionHandles(this.selectedElement);
+        }
+    }
+
+    /**
+     * Dessine la grille d'arrière-plan
+     */
+    drawGrid() {
+        const gridSize = this.options.gridSize;
+        this.ctx.strokeStyle = '#f0f0f0';
+        this.ctx.lineWidth = 1;
+
+        // Lignes verticales
+        for (let x = 0; x <= this.canvas.width; x += gridSize) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, this.canvas.height);
+            this.ctx.stroke();
+        }
+
+        // Lignes horizontales
+        for (let y = 0; y <= this.canvas.height; y += gridSize) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(this.canvas.width, y);
+            this.ctx.stroke();
+        }
+    }
+
+    /**
+     * Rend un élément spécifique
+     */
+    renderElement(element) {
+        const props = element.properties;
+
+        // Sauvegarder le contexte
+        this.ctx.save();
+
+        // Appliquer les transformations
+        this.ctx.translate(props.x + props.width / 2, props.y + props.height / 2);
+        if (props.rotation) {
+            this.ctx.rotate((props.rotation * Math.PI) / 180);
+        }
+        this.ctx.translate(-props.width / 2, -props.height / 2);
+
+        // Appliquer l'opacité
+        if (props.opacity !== undefined && props.opacity < 100) {
+            this.ctx.globalAlpha = props.opacity / 100;
+        }
+
+        // Rendu selon le type d'élément
+        switch (element.type) {
+            case 'text':
+                this.renderTextElement(element);
+                break;
+            case 'rectangle':
+                this.renderRectangleElement(element);
+                break;
+            case 'image':
+                this.renderImageElement(element);
+                break;
+            default:
+                this.renderGenericElement(element);
+                break;
+        }
+
+        // Restaurer le contexte
+        this.ctx.restore();
+    }
+
+    /**
+     * Rend un élément texte
+     */
+    renderTextElement(element) {
+        const props = element.properties;
+
+        // Configuration du texte
+        this.ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 14}px ${props.fontFamily || 'Arial, sans-serif'}`;
+        this.ctx.fillStyle = props.color || '#000000';
+        this.ctx.textAlign = props.textAlign || 'left';
+
+        // Position de départ
+        let x = 0;
+        let y = 0;
+
+        // Ajuster selon l'alignement
+        if (props.textAlign === 'center') {
+            x = props.width / 2;
+        } else if (props.textAlign === 'right') {
+            x = props.width;
+        }
+
+        // Rendu du texte
+        const text = props.text || 'Texte';
+        const lines = text.split('\n');
+
+        for (let i = 0; i < lines.length; i++) {
+            this.ctx.fillText(lines[i], x, y + i * (props.fontSize || 14) * 1.2);
+        }
+    }
+
+    /**
+     * Rend un élément rectangle
+     */
+    renderRectangleElement(element) {
+        const props = element.properties;
+
+        // Fond
+        if (props.backgroundColor && props.backgroundColor !== 'transparent') {
+            this.ctx.fillStyle = props.backgroundColor;
+            this.roundRect(0, 0, props.width, props.height, props.borderRadius || 0);
+            this.ctx.fill();
+        }
+
+        // Bordure
+        if (props.borderWidth && props.borderWidth > 0) {
+            this.ctx.strokeStyle = props.borderColor || '#000000';
+            this.ctx.lineWidth = props.borderWidth;
+            this.roundRect(0, 0, props.width, props.height, props.borderRadius || 0);
+            this.ctx.stroke();
+        }
+    }
+
+    /**
+     * Rend un élément image
+     */
+    renderImageElement(element) {
+        const props = element.properties;
+
+        if (props.src) {
+            const img = new Image();
+            img.onload = () => {
+                // Calculer les dimensions pour le fit
+                let drawWidth = props.width;
+                let drawHeight = props.height;
+                let drawX = 0;
+                let drawY = 0;
+
+                if (props.objectFit === 'cover') {
+                    const scale = Math.max(props.width / img.width, props.height / img.height);
+                    drawWidth = img.width * scale;
+                    drawHeight = img.height * scale;
+                    drawX = (props.width - drawWidth) / 2;
+                    drawY = (props.height - drawHeight) / 2;
+                }
+
+                this.ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+                this.render(); // Re-rendre après le chargement de l'image
+            };
+            img.src = props.src;
+        }
+    }
+
+    /**
+     * Rend un élément générique
+     */
+    renderGenericElement(element) {
+        // Rendu par défaut pour les éléments non reconnus
+        this.renderRectangleElement(element);
+    }
+
+    /**
+     * Dessine un rectangle avec des coins arrondis
+     */
+    roundRect(x, y, width, height, radius) {
+        if (radius === 0) {
+            this.ctx.rect(x, y, width, height);
+            return;
+        }
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(x + radius, y);
+        this.ctx.lineTo(x + width - radius, y);
+        this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        this.ctx.lineTo(x + width, y + height - radius);
+        this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        this.ctx.lineTo(x + radius, y + height);
+        this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        this.ctx.lineTo(x, y + radius);
+        this.ctx.quadraticCurveTo(x, y, x + radius, y);
+        this.ctx.closePath();
+    }
+
+    /**
+     * Dessine les poignées de sélection
+     */
+    drawSelectionHandles(element) {
+        const props = element.properties;
+        const handleSize = 8;
+
+        this.ctx.strokeStyle = '#007bff';
+        this.ctx.lineWidth = 2;
+        this.ctx.fillStyle = '#ffffff';
+
+        // Poignées de redimensionnement
+        const handles = [
+            { x: props.x, y: props.y }, // Haut-gauche
+            { x: props.x + props.width, y: props.y }, // Haut-droite
+            { x: props.x + props.width, y: props.y + props.height }, // Bas-droite
+            { x: props.x, y: props.y + props.height } // Bas-gauche
+        ];
+
+        handles.forEach(handle => {
+            this.ctx.fillRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+            this.ctx.strokeRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+        });
+
+        // Rectangle de sélection
+        this.ctx.strokeStyle = '#007bff';
+        this.ctx.setLineDash([5, 5]);
+        this.ctx.strokeRect(props.x, props.y, props.width, props.height);
+        this.ctx.setLineDash([]);
+    }
+
+    /**
+     * Sauvegarde l'état actuel dans l'historique
+     */
+    saveToHistory() {
+        const state = {
+            elements: new Map(this.elements),
+            selectedElement: this.selectedElement ? this.selectedElement.id : null
+        };
+
+        // Supprimer les états futurs si on est au milieu de l'historique
+        this.history = this.history.slice(0, this.historyIndex + 1);
+
+        // Ajouter le nouvel état
+        this.history.push(state);
+        this.historyIndex++;
+
+        // Limiter la taille de l'historique
+        if (this.history.length > 50) {
+            this.history.shift();
+            this.historyIndex--;
+        }
+    }
+
+    /**
+     * Annule la dernière action
+     */
+    undo() {
+        if (this.historyIndex > 0) {
+            this.historyIndex--;
+            this.restoreFromHistory();
+        }
+    }
+
+    /**
+     * Rétablit la dernière action annulée
+     */
+    redo() {
+        if (this.historyIndex < this.history.length - 1) {
+            this.historyIndex++;
+            this.restoreFromHistory();
+        }
+    }
+
+    /**
+     * Restaure l'état depuis l'historique
+     */
+    restoreFromHistory() {
+        const state = this.history[this.historyIndex];
+        this.elements = new Map(state.elements);
+        this.selectedElement = state.selectedElement ? this.elements.get(state.selectedElement) : null;
+        this.render();
+    }
+
+    /**
+     * Exporte le canvas en image
+     */
+    exportToImage(format = 'png', quality = 1) {
+        return this.canvas.toDataURL(`image/${format}`, quality);
+    }
+
+    /**
+     * Obtient les données JSON du canvas
+     */
+    exportToJSON() {
+        return {
+            version: '1.0',
+            canvas: {
+                width: this.options.width,
+                height: this.options.height,
+                backgroundColor: this.options.backgroundColor
+            },
+            elements: Array.from(this.elements.values()).map(element => ({
+                id: element.id,
+                type: element.type,
+                properties: element.properties,
+                createdAt: element.createdAt,
+                updatedAt: element.updatedAt
+            })),
+            metadata: {
+                exportedAt: Date.now(),
+                elementCount: this.elements.size
+            }
+        };
+    }
+
+    /**
+     * Importe des données JSON dans le canvas
+     */
+    importFromJSON(data) {
+        try {
+            this.elements.clear();
+
+            data.elements.forEach(elementData => {
+                const element = {
+                    ...elementData,
+                    properties: { ...elementData.properties }
+                };
+                this.elements.set(element.id, element);
+            });
+
+            this.render();
+            this.saveToHistory();
+            return true;
+        } catch (error) {
+            console.error('Failed to import JSON:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Nettoie les ressources
+     */
+    dispose() {
+        // Supprimer les gestionnaires d'événements
+        if (this.canvas) {
+            this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+            this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+            this.canvas.removeEventListener('mouseup', this.handleMouseUp);
+            this.canvas.removeEventListener('wheel', this.handleWheel);
+        }
+
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
+        window.removeEventListener('resize', this.handleResize);
+
+        // Nettoyer les références
+        this.elements.clear();
+        this.selectedElement = null;
+        this.dragState = null;
+        this.history = [];
+        this.historyIndex = -1;
+
+        console.log('PDFCanvasVanilla disposed');
+    }
+
+    /**
+     * Obtient les statistiques du canvas
+     */
+    getStats() {
+        const baseStats = {
+            totalElements: this.elements.size,
+            selectedElement: this.selectedElement ? this.selectedElement.id : null,
+            canvasSize: {
+                width: this.canvas.width,
+                height: this.canvas.height
+            },
+            zoom: this.options.zoom,
+            mode: this.mode
+        };
+
+        // Ajouter les statistiques de performance si disponibles
+        if (this.performanceOptimizer) {
+            return {
+                ...baseStats,
+                performance: this.performanceOptimizer.getPerformanceStats()
+            };
+        }
+
+        return baseStats;
+    }
+}
+
+// Export de la classe
+export default PDFCanvasVanilla;
+
+// Fonction d'initialisation globale pour WordPress
+window.pdfBuilderInitVanilla = function(containerId, options = {}) {
+    console.log('🚀 Initialisation Vanilla JS PDF Builder...');
+
+    try {
+        // Créer l'instance principale
+        const pdfCanvas = new PDFCanvasVanilla(containerId, options);
+
+        // Attendre que le DOM soit prêt
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                pdfCanvas.init();
+            });
+        } else {
+            pdfCanvas.init();
+        }
+
+        // Exposer l'instance globalement pour le débogage
+        window.pdfBuilderInstance = pdfCanvas;
+
+        console.log('✅ PDF Builder Vanilla initialisé avec succès');
+        return pdfCanvas;
+
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'initialisation Vanilla:', error);
+        throw error;
+    }
+};
+
+// Alias pour la compatibilité
+window.pdfBuilderPro = {
+    init: window.pdfBuilderInitVanilla
+};

@@ -4,11 +4,10 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: {
-          node: 'current',
+          browsers: ['> 1%', 'last 2 versions', 'not ie <= 11'],
         },
       },
     ],
-    '@babel/preset-react',
   ],
   plugins: [
     '@babel/plugin-transform-nullish-coalescing-operator',
