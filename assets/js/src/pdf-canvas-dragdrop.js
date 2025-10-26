@@ -94,6 +94,21 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
                         event.clientY >= canvasRect.top &&
                         event.clientY <= canvasRect.bottom;
 
+    console.log('[DRAG] Canvas rect:', {
+        left: canvasRect.left,
+        right: canvasRect.right,
+        top: canvasRect.top,
+        bottom: canvasRect.bottom,
+        width: canvasRect.width,
+        height: canvasRect.height
+    });
+    console.log('[DRAG] Mouse position:', {x: event.clientX, y: event.clientY});
+    console.log('[DRAG] Checks:', {
+        xInRange: event.clientX >= canvasRect.left && event.clientX <= canvasRect.right,
+        yInRange: event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom,
+        isOverCanvas: isOverCanvas
+    });
+
     console.log('[DRAG] DragOver - Position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
 
     if (isOverCanvas) {
@@ -128,6 +143,21 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
                         event.clientX <= canvasRect.right &&
                         event.clientY >= canvasRect.top &&
                         event.clientY <= canvasRect.bottom;
+
+    console.log('[DRAG] Drop canvas rect:', {
+        left: canvasRect.left,
+        right: canvasRect.right,
+        top: canvasRect.top,
+        bottom: canvasRect.bottom,
+        width: canvasRect.width,
+        height: canvasRect.height
+    });
+    console.log('[DRAG] Drop mouse position:', {x: event.clientX, y: event.clientY});
+    console.log('[DRAG] Drop checks:', {
+        xInRange: event.clientX >= canvasRect.left && event.clientX <= canvasRect.right,
+        yInRange: event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom,
+        isOverCanvas: isOverCanvas
+    });
 
     console.log('[DRAG] Drop position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
 
