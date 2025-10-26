@@ -10,8 +10,8 @@ console.log('REACT CHECK - React.createElement:', typeof window.React?.createEle
 console.log('REACT CHECK - ReactDOM.createRoot:', typeof window.ReactDOM?.createRoot);
 
 // Main application entry point that actually uses all components
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+// REMOVED: import React from 'react';
+// REMOVED: import ReactDOM from 'react-dom/client';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 
 // Initialize the application
@@ -24,9 +24,7 @@ const init = (containerId, options = {}) => {
   console.log('🔍 React.createElement disponible:', typeof window.React?.createElement);
   console.log('🔍 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
   
-  // Vérifier les imports locaux (devraient être undefined maintenant)
-  console.log('🔍 React importé (devrait être undefined):', typeof React);
-  console.log('🔍 ReactDOM importé (devrait être undefined):', typeof ReactDOM);
+  // REMOVED: Vérifier les imports locaux (plus d'imports locaux)
   console.log('🚀 React disponible:', typeof window.React);
   console.log('🚀 ReactDOM disponible:', typeof window.ReactDOM);
   console.log('🚀 ReactDOM.createRoot disponible:', typeof window.ReactDOM?.createRoot);
