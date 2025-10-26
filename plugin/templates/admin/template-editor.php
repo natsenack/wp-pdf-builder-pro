@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Main Editor -->
         <div id="pdf-builder-editor" class="pdf-builder-editor" style="display: none;">
             <!-- Toolbar -->
-            <div class="pdf-builder-toolbar">
+            <div class="pdf-builder-toolbar pdf-builder-toolbar">
                 <!-- Text Tools -->
                 <div class="toolbar-group">
                     <h3><?php esc_html_e('Text', 'pdf-builder-pro'); ?></h3>
@@ -1142,4 +1142,168 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+<!-- ===== INITIALISATION DU CANVAS EDITOR ===== -->
+<script>
+console.log('[INIT] 🚀 Initialisation du Canvas Editor - Début');
+
+// Attendre que PDFBuilderPro soit disponible
+function waitForPDFBuilder(maxRetries = 20) {
+    console.log('[INIT] Attente du chargement de PDFBuilderPro...');
+    
+    if (typeof window.PDFBuilderPro !== 'undefined') {
+        console.log('[INIT] ✅ PDFBuilderPro trouvé!', typeof window.PDFBuilderPro);
+        initializeCanvas();
+        return;
+    }
+    
+    if (maxRetries > 0) {
+        setTimeout(() => waitForPDFBuilder(maxRetries - 1), 250);
+    } else {
+        console.error('[INIT] ❌ PDFBuilderPro pas trouvé après attente');
+        showError('Impossible de charger le système PDF Builder');
+    }
+}
+
+// Initialiser le canvas une fois PDFBuilderPro disponible
+function initializeCanvas() {
+    console.log('[INIT] Initialisation du Canvas...');
+    
+    // Masquer le loading, afficher l'éditeur
+    var loading = document.getElementById('pdf-builder-loading');
+    var editor = document.getElementById('pdf-builder-editor');
+    
+    if (loading) loading.style.display = 'none';
+    if (editor) editor.style.display = 'block';
+    
+    // Récupérer l'ID du template depuis l'URL
+    var templateId = new URLSearchParams(window.location.search).get('template_id');
+    console.log('[INIT] Template ID:', templateId);
+    
+    // Options de configuration du canvas
+    var canvasOptions = {
+        containerId: 'pdf-canvas-container',
+        templateId: templateId || null,
+        width: 595,  // A4 largeur
+        height: 842, // A4 hauteur
+        zoom: 1,
+        gridEnabled: true,
+        snapToGrid: true,
+        gridSize: 10,
+        canvasElementId: 'pdf-builder-canvas',
+        elementsContainerId: 'elements-container',
+        propertiesPanelId: 'properties-content'
+    };
+    
+    console.log('[INIT] Options:', canvasOptions);
+    
+    try {
+        // Initialiser le canvas
+        if (window.PDFBuilderPro.init && typeof window.PDFBuilderPro.init === 'function') {
+            console.log('[INIT] Appel de PDFBuilderPro.init()');
+            window.PDFBuilderPro.init(canvasOptions);
+            window.pdfCanvasInstance = window.PDFBuilderPro;
+        } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
+            console.log('[INIT] Utilisation de PDFCanvasVanilla');
+            var canvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvasOptions);
+            window.pdfCanvasInstance = canvas;
+            canvas.init();
+        }
+        
+        console.log('[INIT] ✅ Canvas initialisé avec succès');
+        
+        // Configurer le drag & drop de la bibliothèque
+        setupDragAndDrop();
+        
+        // Charger le template si fourni
+        if (templateId && window.pdfCanvasInstance && typeof window.pdfCanvasInstance.loadTemplate === 'function') {
+            console.log('[INIT] Chargement du template:', templateId);
+            window.pdfCanvasInstance.loadTemplate(templateId);
+        }
+        
+    } catch (error) {
+        console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
+        showError('Erreur lors de l\'initialisation du canvas: ' + error.message);
+    }
+}
+
+// Configurer le drag & drop
+function setupDragAndDrop() {
+    console.log('[INIT] Configuration du Drag & Drop...');
+    
+    var elementsContainer = document.getElementById('elements-container');
+    var canvas = document.getElementById('pdf-canvas-container') || document.getElementById('pdf-builder-canvas');
+    
+    if (!canvas) {
+        console.warn('[INIT] Canvas non trouvé pour le drag & drop');
+        return;
+    }
+    
+    // Événements de drag sur les éléments
+    if (elementsContainer) {
+        elementsContainer.addEventListener('dragstart', function(e) {
+            if (e.target.classList.contains('element-item')) {
+                var elementType = e.target.dataset.type;
+                var elementData = {
+                    type: 'new-element',
+                    elementType: elementType,
+                    elementData: JSON.parse(e.target.dataset.element || '{}')
+                };
+                console.log('[DRAGDROP] Début du drag:', elementType);
+                e.dataTransfer.effectAllowed = 'copy';
+                e.dataTransfer.setData('application/json', JSON.stringify(elementData));
+            }
+        });
+    }
+    
+    // Événements de drop sur le canvas
+    canvas.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        canvas.classList.add('drag-over');
+    });
+    
+    canvas.addEventListener('dragleave', function(e) {
+        if (e.target === canvas) {
+            canvas.classList.remove('drag-over');
+        }
+    });
+    
+    canvas.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        canvas.classList.remove('drag-over');
+        
+        try {
+            var data = JSON.parse(e.dataTransfer.getData('application/json'));
+            
+            if (data.type === 'new-element') {
+                var rect = canvas.getBoundingClientRect();
+                var zoom = (window.pdfCanvasInstance && window.pdfCanvasInstance.zoom) || 1;
+                var x = (e.clientX - rect.left) / zoom;
+                var y = (e.clientY - rect.top) / zoom;
+                
+                console.log('[DRAGDROP] Drop:', data.elementType, 'à', { x, y });
+                
+                if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.addElement === 'function') {
+                    window.pdfCanvasInstance.addElement(data.elementType, { x, y, ...data.elementData });
+                }
+            }
+        } catch (error) {
+            console.error('[DRAGDROP] ❌ Erreur:', error);
+        }
+    });
+    
+    console.log('[INIT] ✅ Drag & Drop configuré');
+}
+
+// Démarrer l'initialisation quand le DOM est prêt
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', waitForPDFBuilder);
+} else {
+    waitForPDFBuilder();
+}
+
+console.log('[INIT] Script d\'initialisation du Canvas chargé');
 </script>
+
