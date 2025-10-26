@@ -1,9 +1,7 @@
 open 65.108.242.181
-nats
-iZ6vU3zV2y
-cd /wp-content/plugins/wp-pdf-builder-pro
-rmdir /S /Q wp-pdf-builder-pro 2>nul
-mkdir "assets\css"
+USER nats
+PASS iZ6vU3zV2y
+cd /wp-content/plugins/wp-pdf-builder-promkdir "assets\css"
 mkdir "assets\css\toastr"
 mkdir "assets\js\dist"
 mkdir "assets\js\toastr"

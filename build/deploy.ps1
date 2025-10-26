@@ -757,15 +757,14 @@ Write-Host "`n📝 PRÉPARATION DU SCRIPT FTP..." -ForegroundColor Magenta
 
 $FtpScript = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 "@
 
-# Supprimer l'ancien contenu (sauf pour le mode plugin qui écrase tout)
-if ($Mode -eq "plugin") {
-    $FtpScript += "`nrmdir /S /Q wp-pdf-builder-pro 2>nul`n"
-}
+# NOTE: Les commandes DOS comme "rmdir /S /Q" ne fonctionnent PAS en FTP!
+# FTP ne reconnaît que: open, cd, mkdir, delete, rmdir (vide), put, get, etc.
+# On écrase simplement les fichiers en les renvoyant par-dessus
 
 # Créer les répertoires
 foreach ($dir in ($directories.Keys | Sort-Object)) {
@@ -792,8 +791,8 @@ if (-not $IsTestMode) {
     # Créer un script FTP de test de connexion
     $testScript = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 pwd
 bye
@@ -838,15 +837,13 @@ $FtpScriptPath = "ftp-script-temp.txt"
 # Créer le script FTP de base (connexion + répertoires)
 $FtpScript = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 "@
 
-# Supprimer l'ancien contenu (sauf pour le mode plugin qui écrase tout)
-if ($Mode -eq "plugin") {
-    $FtpScript += "`nrmdir /S /Q wp-pdf-builder-pro 2>nul`n"
-}
+# NOTE: Les commandes DOS comme "rmdir /S /Q" ne fonctionnent PAS en FTP!
+# Les fichiers anciens seront simplement écrasés lors de l'upload
 
 # Créer les répertoires
 foreach ($dir in ($directories.Keys | Sort-Object)) {
@@ -891,8 +888,8 @@ function New-FtpBatchScript {
 
     $scriptContent = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 "@
 
@@ -1122,8 +1119,8 @@ if ($Mode -eq "plugin" -and -not $IsTestMode) {
         $remotePath = "$FtpPath/$file"
         $testScript = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 ls $file
 bye
@@ -1165,8 +1162,8 @@ bye
             # Tester la taille distante (estimation via listing)
             $sizeTestScript = @"
 open $FtpHost
-$FtpUser
-$FtpPass
+USER $FtpUser
+PASS $FtpPass
 cd $FtpPath
 ls assets/js/dist/pdf-builder-admin.js
 bye
