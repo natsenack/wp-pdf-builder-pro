@@ -237,7 +237,7 @@ class PDF_Builder_Admin
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('admin_head-pdf-builder-pro_page_pdf-builder-editor', [$this, 'add_preview_button_to_header']);
 // Hook supplémentaire pour les pages qui chargent du contenu dynamiquement
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
 // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);

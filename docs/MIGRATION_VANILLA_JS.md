@@ -215,6 +215,8 @@ Puisque 80% de l'architecture fonctionnait déjà, on garde tout ce qui est bon 
 #### **Étape 2.4 : Tests Interface**
 - ✅ Test HTML fonctionnel avec chargement template
 - ✅ Bundle compilé 155 KiB (objectif 127-160 KiB)
+- ✅ Déploiement FTP réussi (4 fichiers uploadés)
+- ✅ Commit Git automatique et push vers dev
 - [ ] Tests d'interface utilisateur
 - [ ] Tests cross-browser (IE11+)
 - [ ] Tests responsive
@@ -242,11 +244,11 @@ Puisque 80% de l'architecture fonctionnait déjà, on garde tout ce qui est bon 
 - [ ] Intégrer contrôles slider vanilla
 - [ ] Tests d'interface utilisateur
 
-### **Semaine 4 : Optimisation et Tests**
-- [ ] Optimisations de performance
-- [ ] Tests d'intégration
-- [ ] Migration des templates
-- [ ] Documentation utilisateur
+### **Déploiements Réussis**
+- **26 octobre 2025** : Corrections Phase 2 - 4 fichiers déployés (155 KiB)
+  - pdf-canvas-vanilla.js, pdf-canvas-renderer.js, pdf-canvas-events.js, pdf-canvas-optimizer.js
+  - Temps: 3.67s | Vitesse: 21.6 KB/s | Mode: Parallèle (8 jobs)
+  - Commit: a067e01 | Branch: dev
 
 ## 🏗️ Architecture Cible
 
