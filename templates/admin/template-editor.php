@@ -25,6 +25,19 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<h4>📦 Chargement des scripts PDF Builder</h4>';
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
+
+    // Vérification que le bundle principal s'exécute
+    echo '<script>
+        setTimeout(function() {
+            console.log("🔍 VÉRIFICATION BUNDLE PRINCIPAL...");
+            console.log("🔍 pdfBuilderInitReact:", typeof window.pdfBuilderInitReact);
+            console.log("🔍 pdfBuilderPro:", typeof window.pdfBuilderPro);
+            if (window.pdfBuilderPro) {
+                console.log("🔍 pdfBuilderPro.init:", typeof window.pdfBuilderPro.init);
+            }
+        }, 1000);
+    </script>';
+
     echo '<p>Scripts essentiels chargés</p>';
     echo '</div>';
 
