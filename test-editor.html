@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Éditeur PDF Vanilla JS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #pdf-builder-loading { text-align: center; padding: 50px; }
+        #pdf-builder-loading .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #pdf-builder-canvas-container {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            background: #f9f9f9;
+            display: none;
+        }
+        #pdf-builder-canvas {
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Éditeur PDF Vanilla JS</h1>
+
+    <div id="pdf-builder-editor-container">
+        <div id="pdf-builder-loading">
+            <div class="spinner"></div>
+            <p>Chargement de l'éditeur PDF Vanilla JS...</p>
+        </div>
+
+        <div id="pdf-builder-error" style="display: none;">
+            <div class="notice notice-error">
+                <p>Erreur de chargement de l'éditeur PDF. Vérifiez la console pour plus de détails.</p>
+            </div>
+        </div>
+
+        <div id="pdf-builder-toolbar" style="display: none;">
+            <!-- Toolbar will be populated by JavaScript -->
+        </div>
+
+        <div id="pdf-builder-canvas-container">
+            <canvas id="pdf-builder-canvas"></canvas>
+        </div>
+
+        <div id="pdf-builder-properties" style="display: none;">
+            <!-- Properties panel will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Simuler les données WordPress -->
+    <script>
+        window.pdfBuilderData = {
+            templateData: {
+                elements: [
+                    {
+                        id: "element_1",
+                        type: "text",
+                        x: 20,
+                        y: 20,
+                        width: 200,
+                        height: 50,
+                        text: "Test Element",
+                        fontSize: 14,
+                        color: "#000000"
+                    }
+                ],
+                settings: {
+                    pageSize: "A4",
+                    orientation: "portrait"
+                }
+            },
+            templateId: 1,
+            ajaxUrl: "#",
+            nonce: "test_nonce"
+        };
+    </script>
+
+    <!-- Charger le bundle -->
+    <script src="assets/js/dist/pdf-builder-admin.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM ready, initializing PDF Builder Vanilla JS...');
+
+            // Wait for bundle to load
+            if (typeof window.PDFBuilderPro === 'undefined') {
+                console.error('PDFBuilderPro bundle not loaded');
+                showError();
+                return;
+            }
+
+            console.log('PDFBuilderPro bundle loaded:', window.PDFBuilderPro);
+
+            // Check if required classes are available
+            if (typeof window.PDFBuilderPro.PDFCanvasVanilla === 'undefined') {
+                console.error('PDFCanvasVanilla class not found in bundle');
+                showError();
+                return;
+            }
+
+            console.log('All required classes found, initializing editor...');
+
+            try {
+                // Initialize the editor
+                initializePDFEditor();
+            } catch (error) {
+                console.error('Error initializing PDF editor:', error);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('pdf-builder-loading').style.display = 'none';
+            document.getElementById('pdf-builder-error').style.display = 'block';
+        }
+
+        function initializePDFEditor() {
+            const canvas = document.getElementById('pdf-builder-canvas');
+            const toolbar = document.getElementById('pdf-builder-toolbar');
+            const properties = document.getElementById('pdf-builder-properties');
+
+            if (!canvas || !toolbar || !properties) {
+                console.error('Required DOM elements not found');
+                showError();
+                return;
+            }
+
+            // Get template data from localized script
+            const templateData = window.pdfBuilderData ? window.pdfBuilderData.templateData : {};
+            const templateId = window.pdfBuilderData ? window.pdfBuilderData.templateId : 0;
+
+            console.log('Initializing with template data:', templateData);
+
+            // Initialize canvas
+            const pdfCanvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvas, {
+                width: 595, // A4 width in points
+                height: 842, // A4 height in points
+                templateData: templateData
+            });
+
+            console.log('PDF Editor initialized successfully');
+
+            // Hide loading, show editor
+            document.getElementById('pdf-builder-loading').style.display = 'none';
+            document.getElementById('pdf-builder-toolbar').style.display = 'block';
+            document.getElementById('pdf-builder-canvas-container').style.display = 'block';
+            document.getElementById('pdf-builder-properties').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1473,27 +1473,15 @@ class PDF_Builder_Admin
                 };
             }
         ');
-// Scripts JavaScript - VERSION VANILLA JS + CANVAS API
-        // Charger le bundle unique qui contient tous les modules ES6
-        wp_enqueue_script('pdf-builder-vanilla-bundle', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], '1.0.0', true);
+// Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
+        // Charger uniquement le bundle Vanilla JS qui contient tout
+        wp_enqueue_script('pdf-builder-vanilla-bundle', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
-        // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
-        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0', false);
-
-        // Script loader pour définir l'API globale - CHARGER AVANT LE SCRIPT PRINCIPAL
-        wp_enqueue_script('pdf-builder-script-loader', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.js', [], '3.0.0', false);
-
-        // Bundle optimisé pour les utilitaires partagés
-        wp_enqueue_script('pdf-builder-admin-vanilla', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-debug.js', ['jquery', 'pdf-builder-script-loader'], '10.0.0', false);
-        error_log('PDF Builder: Vanilla JS scripts enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-vanilla.js');
-// DEBUG: Confirm PHP deployment
-        error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed');
-// Script de correction de nonce - DÉPLACÉ PLUS HAUT
-// Variables JavaScript pour AJAX - VERSION VANILLA JS
+        // Variables JavaScript pour AJAX - VERSION VANILLA JS
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => '10.0.0',
+            'version' => PDF_BUILDER_PRO_VERSION,
             'timestamp' => time(),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
@@ -1502,7 +1490,7 @@ class PDF_Builder_Admin
                 'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
                 'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
             ]
-            ]);
+        ]);
 // SÉCURITÉ SUPPLÉMENTAIRE: Définir les variables globales directement dans le HTML
         wp_add_inline_script('pdf-builder-admin-v3', '
             // Forcer la définition globale des variables AJAX
@@ -1640,22 +1628,8 @@ class PDF_Builder_Admin
         ]);
 // Styles pour l'éditeur canvas
         if ($hook === 'pdf-builder_page_pdf-builder-editor') {
-            wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
-// Styles supplémentaires pour l'éditeur
-            wp_enqueue_style('pdf-builder-editor-consolidated', PDF_BUILDER_PRO_ASSETS_URL . 'css/editor.css', [], PDF_BUILDER_PRO_VERSION);
-// Script inline pour vérifier React
-            wp_add_inline_script('pdf-builder-admin-v3', '
-            ', 'after');
-// Variables globales pour l'éditeur
-            wp_add_inline_script('pdf-builder-admin-v3', '
-                window.pdfBuilderData = {
-                    templateId: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'null') . ',
-                    templateName: null,
-                    isNew: ' . (isset($_GET['template_id']) ? 'false' : 'true') . ',
-                    ajaxurl: "' . admin_url('admin-ajax.php') . '",
-                    nonce: "' . wp_create_nonce('pdf_builder_order_actions') . '"
-                };
-            ', 'after');
+            // Styles pour l'éditeur Vanilla JS
+            wp_enqueue_style('pdf-builder-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/editor.css', [], PDF_BUILDER_PRO_VERSION);
         }
     }
 

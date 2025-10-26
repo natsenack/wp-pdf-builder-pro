@@ -33,6 +33,12 @@ const PDFBuilderPro = {
     CanvasOptimizer,
     CanvasTests,
 
+    // Alias pour la compatibilité avec le template-editor.php
+    PDFCanvasVanilla: VanillaCanvas,
+    ElementLibrary: CanvasProperties, // Utiliser CanvasProperties comme ElementLibrary
+    ToolbarManager: CanvasEvents, // Utiliser CanvasEvents comme ToolbarManager
+    PropertiesPanel: CanvasProperties, // Alias pour PropertiesPanel
+
     // Méthode d'initialisation principale
     init(options = {}) {
         console.log('🚀 Initialisation PDF Builder Vanilla JS complet');
@@ -75,6 +81,12 @@ window.ElementCustomizationService = ElementCustomizationService;
 window.elementCustomizationService = elementCustomizationService;
 window.CanvasOptimizer = CanvasOptimizer;
 window.CanvasTests = CanvasTests;
+
+// Alias pour la compatibilité avec template-editor.php
+window.PDFCanvasVanilla = VanillaCanvas;
+window.ElementLibrary = CanvasProperties;
+window.ToolbarManager = CanvasEvents;
+window.PropertiesPanel = CanvasProperties;
 
 console.log('✅ Modules exposés globalement');
 
