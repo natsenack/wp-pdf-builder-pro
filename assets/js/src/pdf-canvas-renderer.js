@@ -186,49 +186,39 @@ export class PDFCanvasRenderer {
      * Rend selon le type d'élément
      */
     renderByType(element) {
-        console.log('Renderer: rendering type', element.type);
         
         // Éléments WooCommerce - traiter comme du texte dynamique
         if (this.isWooCommerceElement(element.type)) {
-            console.log('Renderer: calling renderWooCommerceElement for type', element.type);
             this.renderWooCommerceElement(element);
             return;
         }
         
         switch (element.type) {
             case 'text':
-                console.log('Renderer: calling renderText');
                 this.renderText(element);
                 break;
             case 'rectangle':
             case 'shape-rectangle':
-                console.log('Renderer: calling renderRectangle');
                 this.renderRectangle(element);
                 break;
             case 'circle':
             case 'shape-circle':
-                console.log('Renderer: calling renderCircle');
                 this.renderCircle(element);
                 break;
             case 'line':
             case 'shape-line':
-                console.log('Renderer: calling renderLine');
                 this.renderLine(element);
                 break;
             case 'image':
-                console.log('Renderer: calling renderImage');
                 this.renderImage(element);
                 break;
             case 'barcode':
-                console.log('Renderer: calling renderBarcode');
                 this.renderBarcode(element);
                 break;
             case 'qrcode':
-                console.log('Renderer: calling renderQRCode');
                 this.renderQRCode(element);
                 break;
             default:
-                console.log('Renderer: calling renderGeneric for type', element.type);
                 this.renderGeneric(element);
                 break;
         }
@@ -257,7 +247,6 @@ export class PDFCanvasRenderer {
      * Rend un élément WooCommerce comme du texte
      */
     renderWooCommerceElement(element) {
-        console.log('Renderer: renderWooCommerceElement called with element:', element);
         
         // Obtenir le texte depuis le gestionnaire WooCommerce
         let displayText = '';
@@ -282,8 +271,6 @@ export class PDFCanvasRenderer {
      * Rend du texte avec effets avancés
      */
     renderText(element) {
-        console.log('Renderer: renderText called with element:', element);
-        console.log('Renderer: renderText properties:', element.properties);
         const props = element.properties;
 
         // Configuration de la police
@@ -370,8 +357,6 @@ export class PDFCanvasRenderer {
      * Rend un rectangle avec coins arrondis
      */
     renderRectangle(element) {
-        console.log('Renderer: renderRectangle called with element:', element);
-        console.log('Renderer: renderRectangle properties:', element.properties);
         const props = element.properties;
         const radius = props.borderRadius || 0;
 
