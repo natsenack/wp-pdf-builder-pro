@@ -771,7 +771,10 @@ function setupDragAndDrop() {
     
     console.log('[DRAGDROP] Canvas et container trouvés, configuration des événements...');
     
-    // Événements de drag sur les éléments
+    var isDragging = false;
+    var currentDraggedElement = null;
+    
+    // Événements de drag sur les éléments (DEPUIS la toolbar)
     elementsContainer.addEventListener('dragstart', function(e) {
         console.log('[DRAGDROP] dragstart event, target:', e.target, 'classe:', e.target.className);
         
@@ -785,6 +788,8 @@ function setupDragAndDrop() {
                 elementData: JSON.parse(elementItem.dataset.element || '{}')
             };
             console.log('[DRAGDROP] Début du drag:', elementType, 'data:', elementData);
+            isDragging = true;
+            currentDraggedElement = elementItem;
             e.dataTransfer.effectAllowed = 'copy';
             e.dataTransfer.setData('application/json', JSON.stringify(elementData));
             elementItem.classList.add('dragging');
@@ -795,29 +800,44 @@ function setupDragAndDrop() {
     
     elementsContainer.addEventListener('dragend', function(e) {
         console.log('[DRAGDROP] dragend event');
+        isDragging = false;
+        currentDraggedElement = null;
         var elementItem = e.target.closest('.element-item');
         if (elementItem) {
             elementItem.classList.remove('dragging');
         }
     });
     
-    // Événements de drop sur le canvas
+    // Événements de drop sur le canvas (ACCEPTER le drop UNIQUEMENT si on vient de la toolbar)
     canvas.addEventListener('dragover', function(e) {
-        console.log('[DRAGDROP] dragover');
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'copy';
-        canvas.classList.add('drag-over');
-    });
+        // ⚠️ N'accepter le drag que s'il vient d'un élément de toolbar (isDragging = true depuis la toolbar)
+        if (isDragging && currentDraggedElement) {
+            console.log('[DRAGDROP] dragover - accepté (depuis toolbar)');
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            canvas.classList.add('drag-over');
+        } else {
+            console.log('[DRAGDROP] dragover - rejeté (drag interne du canvas)');
+            e.dataTransfer.dropEffect = 'none';
+        }
+    }, false);
     
     canvas.addEventListener('dragleave', function(e) {
         console.log('[DRAGDROP] dragleave');
         if (e.target === canvas) {
             canvas.classList.remove('drag-over');
         }
-    });
+    }, false);
     
     canvas.addEventListener('drop', function(e) {
-        console.log('[DRAGDROP] drop event');
+        console.log('[DRAGDROP] drop event - isDragging:', isDragging);
+        
+        // Ne traiter le drop que s'il vient de la toolbar
+        if (!isDragging || !currentDraggedElement) {
+            console.log('[DRAGDROP] Drop rejeté - pas de drag de toolbar actif');
+            return;
+        }
+        
         e.preventDefault();
         e.stopPropagation();
         canvas.classList.remove('drag-over');
@@ -827,7 +847,7 @@ function setupDragAndDrop() {
             
             if (data.type === 'new-element') {
                 var rect = canvas.getBoundingClientRect();
-                var zoom = (window.pdfCanvasInstance && window.pdfCanvasInstance.zoom) || 1;
+                var zoom = (window.pdfCanvasInstance && window.pdfCanvasInstance.options && window.pdfCanvasInstance.options.zoom) || 1;
                 var x = (e.clientX - rect.left) / zoom;
                 var y = (e.clientY - rect.top) / zoom;
                 
@@ -840,9 +860,19 @@ function setupDragAndDrop() {
         } catch (error) {
             console.error('[DRAGDROP] ❌ Erreur:', error);
         }
-    });
+    }, false);
     
-    console.log('[DRAGDROP] ✅ Drag & Drop configuré');
+    // Empêcher les conflits avec les clics sur les éléments du canvas
+    canvas.addEventListener('mousedown', function(e) {
+        console.log('[DRAGDROP] mousedown sur canvas - isDragging:', isDragging);
+        // Le drag-drop n'interfère pas avec les clics normaux du canvas
+        if (isDragging) {
+            console.log('[DRAGDROP] ⚠️ Click ignoré - drag en cours');
+            e.stopPropagation();
+        }
+    }, false);
+    
+    console.log('[DRAGDROP] ✅ Drag & Drop configuré avec protection contre les conflits');
 }
 
 // Afficher message d'erreur
