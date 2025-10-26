@@ -1474,18 +1474,8 @@ class PDF_Builder_Admin
             }
         ');
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API
-        // Charger les modules ES6 Vanilla JS au lieu de React
-        wp_enqueue_script('pdf-canvas-vanilla', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-vanilla.js', [], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-renderer', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-renderer.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-events', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-events.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-selection', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-selection.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-properties', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-properties.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-layers', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-layers.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-export', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-export.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-woocommerce', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-woocommerce.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-customization', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-customization.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-optimizer', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-optimizer.js', ['pdf-canvas-vanilla'], '1.0.0', true);
-        wp_enqueue_script('pdf-canvas-tests', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-canvas-tests.js', ['pdf-canvas-vanilla'], '1.0.0', true);
+        // Charger le bundle unique qui contient tous les modules ES6
+        wp_enqueue_script('pdf-builder-vanilla-bundle', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], '1.0.0', true);
 
         // Script de correction de nonce - CHARGER EN PREMIER avec priorité haute
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0', false);
@@ -1500,7 +1490,7 @@ class PDF_Builder_Admin
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed');
 // Script de correction de nonce - DÉPLACÉ PLUS HAUT
 // Variables JavaScript pour AJAX - VERSION VANILLA JS
-        wp_localize_script('pdf-canvas-vanilla', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions'),
             'version' => '10.0.0',

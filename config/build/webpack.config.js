@@ -5,9 +5,9 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: 'development', // CHANGÉ TEMPORAIREMENT pour le débogage
+  mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-admin-debug': './assets/js/pdf-canvas-vanilla.js',
+    'pdf-builder-admin': './assets/js/pdf-builder-vanilla-bundle.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
     // script-loader is copied directly without webpack processing
   },
@@ -86,9 +86,11 @@ module.exports = {
     })
   ],
   optimization: {
+    // Désactiver certaines optimisations qui pourraient supprimer les variables globales
+    usedExports: false,
+    sideEffects: false,
     // Séparation des chunks pour l'optimisation
     splitChunks: {
-      chunks: 'all',
       cacheGroups: {
         // Chunk pour les vendors (bibliothèques externes) - nom numérique
         vendor: {
