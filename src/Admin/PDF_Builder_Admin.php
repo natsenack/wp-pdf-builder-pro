@@ -1487,55 +1487,45 @@ class PDF_Builder_Admin
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         error_log('PDF Builder: Script enqueued successfully');
 
-        // Variables JavaScript pour AJAX - VERSION VANILLA JS
-        wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'timestamp' => time(),
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-            ]
-        ]);
-// SÉCURITÉ SUPPLÉMENTAIRE: Définir les variables globales directement dans le HTML
-        wp_add_inline_script('pdf-builder-vanilla-bundle', '
-            // Forcer la définition globale des variables AJAX
-            window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-                'version' => '8.0.0',
-                'timestamp' => 0,
-                'strings' => [
-                    'loading' => __('Chargement...', 'pdf-builder-pro'),
-                    'error' => __('Erreur', 'pdf-builder-pro'),
-                    'success' => __('Succès', 'pdf-builder-pro'),
-                    'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                    'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-                ]
-                ]) . ';
-            
-            // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
-            // Attendre que le bundle soit chargé avant d\'ajouter le nonce
-            function waitForPDFBuilderPro() {
-                if (typeof window.initializePDFBuilderPro === \'function\') {
-                    // La fonction d\'initialisation existe, l\'utiliser pour obtenir l\'instance
-                    window.pdfBuilderPro = window.initializePDFBuilderPro();
-                    window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
-                    console.log(\'PDF Builder: Instance initialisee via initializePDFBuilderPro\');
-                    return;
-                }
+        // Use wp_localize_script for AJAX configuration - safe method
+wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
+    'ajaxurl' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+    'version' => PDF_BUILDER_PRO_VERSION,
+    'timestamp' => time(),
+    'strings' => [
+        'loading' => __('Chargement...', 'pdf-builder-pro'),
+        'error' => __('Erreur', 'pdf-builder-pro'),
+        'success' => __('Succès', 'pdf-builder-pro'),
+        'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+        'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+    ]
+]);
 
-                // Si la fonction n\'existe pas encore, attendre un peu et réessayer
-                setTimeout(waitForPDFBuilderPro, 50);
+// Add safe inline script that references localized variables
+wp_add_inline_script('pdf-builder-vanilla-bundle', '
+    // Safe initialization using localized variables
+    (function() {
+        // Ensure pdfBuilderAjax is available globally
+        window.pdfBuilderAjax = window.pdfBuilderAjax || pdfBuilderAjax;
+
+        // Wait for PDF Builder Pro to be ready
+        function waitForPDFBuilderPro() {
+            if (typeof window.initializePDFBuilderPro === "function") {
+                window.pdfBuilderPro = window.initializePDFBuilderPro();
+                window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || pdfBuilderAjax.nonce;
+                console.log("PDF Builder: Instance initialized via initializePDFBuilderPro");
+                return;
             }
-            
-            // Démarrer l\'attente
-            waitForPDFBuilderPro();
-        ', 'before');
+
+            // If function doesn\'t exist yet, wait and retry
+            setTimeout(waitForPDFBuilderPro, 50);
+        }
+
+        // Start waiting
+        waitForPDFBuilderPro();
+    })();
+', 'after');
 // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
         $canvas_settings = get_option('pdf_builder_settings', []);
