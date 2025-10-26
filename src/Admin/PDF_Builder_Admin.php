@@ -1502,7 +1502,7 @@ class PDF_Builder_Admin
             ]
         ]);
 // SÉCURITÉ SUPPLÉMENTAIRE: Définir les variables globales directement dans le HTML
-        wp_add_inline_script('pdf-builder-admin-v3', '
+        wp_add_inline_script('pdf-builder-vanilla-bundle', '
             // Forcer la définition globale des variables AJAX
             window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
                 'ajaxurl' => admin_url('admin-ajax.php'),
@@ -1539,7 +1539,7 @@ class PDF_Builder_Admin
 // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
         $canvas_settings = get_option('pdf_builder_settings', []);
-        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
+        wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderCanvasSettings', [
             // Paramètres généraux du canvas
             'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 210,
             'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 297,
