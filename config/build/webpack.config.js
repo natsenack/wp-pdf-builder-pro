@@ -8,6 +8,7 @@ module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
     'pdf-builder-admin': './assets/js/pdf-builder-vanilla-bundle.js',
+    'pdf-builder-admin-debug': './assets/js/pdf-builder-vanilla-bundle.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
     // script-loader is copied directly without webpack processing
   },

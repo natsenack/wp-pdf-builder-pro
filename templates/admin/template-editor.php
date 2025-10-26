@@ -61,12 +61,10 @@ if (empty($template_data)) {
     );
 }
 
-// Localize script data - moved to after DOM elements to ensure script is registered
-// Use wp_add_inline_script instead of wp_localize_script to avoid JSON encoding issues
+// Localize script data - simplified to avoid JSON encoding issues
 wp_add_inline_script('pdf-builder-vanilla-bundle', '
-    // Safely set global data
-    window.pdfBuilderData = ' . wp_json_encode(array(
-        "templateData" => $template_data,
+    // Set basic configuration only
+    window.pdfBuilderConfig = ' . wp_json_encode(array(
         "templateId" => $template_id,
         "ajaxUrl" => admin_url("admin-ajax.php"),
         "nonce" => wp_create_nonce("pdf_builder_nonce"),
@@ -369,19 +367,53 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            console.log("All required classes found, initializing editor...");
+            console.log("All required classes found, loading template data...");
 
-            try {
-                // Initialize the editor
-                initializePDFEditor();
-            } catch (error) {
-                console.error("Error initializing PDF editor:", error);
-                showError();
-            }
+            // Load template data via AJAX to avoid JSON encoding issues
+            loadTemplateData();
         } else {
             console.error("PDFBuilderPro global not found after script load");
             showError();
         }
+    }
+
+    // Function to load template data via AJAX
+    function loadTemplateData() {
+        const config = window.pdfBuilderConfig;
+        if (!config || !config.templateId) {
+            console.log("No template to load, initializing with empty data");
+            initializePDFEditor({});
+            return;
+        }
+
+        console.log("Loading template data for ID:", config.templateId);
+
+        // AJAX request to load template data
+        fetch(config.ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_load_template',
+                'template_id': config.templateId,
+                'nonce': config.nonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Template data loaded:", data.data);
+                initializePDFEditor(data.data);
+            } else {
+                console.error("Failed to load template data:", data.data);
+                initializePDFEditor({});
+            }
+        })
+        .catch(error => {
+            console.error("Error loading template data:", error);
+            initializePDFEditor({});
+        });
     }
 
     // Function to handle script load errors
@@ -439,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function() {
         subtree: true
     });
 
-    // Fallback timeout in case script loading takes too long
+        // Fallback timeout in case script loading takes too long
     setTimeout(function() {
         if (typeof window.PDFBuilderPro === "undefined") {
             console.error("PDFBuilderPro script failed to load within timeout");
@@ -447,4 +479,116 @@ document.addEventListener("DOMContentLoaded", function() {
             handleScriptError();
         }
     }, 10000); // 10 second timeout
+}
+
+function showError() {
+    document.getElementById("pdf-builder-loading").style.display = "none";
+    document.getElementById("pdf-builder-error").style.display = "block";
+}
+
+function initializePDFEditor(templateData) {
+    const canvas = document.getElementById("pdf-builder-canvas");
+    const toolbar = document.getElementById("pdf-builder-toolbar");
+    const properties = document.getElementById("pdf-builder-properties");
+
+    if (!canvas || !toolbar || !properties) {
+        console.error("Required DOM elements not found");
+        showError();
+        return;
+    }
+
+    console.log("Initializing with template data:", templateData);
+
+    // Initialize canvas - pass container ID, not canvas element
+    const pdfCanvas = new window.PDFBuilderPro.PDFCanvasVanilla("pdf-builder-canvas-container", {
+        width: 595, // A4 width in points
+        height: 842, // A4 height in points
+        templateData: templateData || {}
+    });
+
+    console.log("PDF Editor initialized successfully");
+
+    // Setup toolbar event listeners
+    setupToolbarEvents(pdfCanvas);
+
+    // Setup properties panel
+    setupPropertiesPanel(pdfCanvas);
+
+    // Hide loading, show editor
+    document.getElementById("pdf-builder-loading").style.display = "none";
+    document.getElementById("pdf-builder-toolbar").style.display = "flex";
+    document.getElementById("pdf-builder-canvas-container").style.display = "flex";
+    document.getElementById("pdf-builder-properties").style.display = "flex";
+}
+
+function setupToolbarEvents(pdfCanvas) {
+    // Add element buttons
+    document.getElementById("add-text-btn").addEventListener("click", () => {
+        const elementId = pdfCanvas.addElement("text", {
+            x: 50,
+            y: 50,
+            text: "Nouveau texte",
+            fontSize: 16,
+            color: "#000000"
+        });
+        console.log("Added text element:", elementId);
+    });
+
+    document.getElementById("add-rectangle-btn").addEventListener("click", () => {
+        const elementId = pdfCanvas.addElement("rectangle", {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 60,
+            fillColor: "#cccccc",
+            strokeColor: "#000000",
+            strokeWidth: 1
+        });
+        console.log("Added rectangle element:", elementId);
+    });
+
+    document.getElementById("add-circle-btn").addEventListener("click", () => {
+        const elementId = pdfCanvas.addElement("circle", {
+            x: 150,
+            y: 150,
+            width: 80,
+            height: 80,
+            fillColor: "#cccccc",
+            strokeColor: "#000000",
+            strokeWidth: 1
+        });
+        console.log("Added circle element:", elementId);
+    });
+
+    document.getElementById("add-line-btn").addEventListener("click", () => {
+        const elementId = pdfCanvas.addElement("line", {
+            x: 200,
+            y: 200,
+            width: 100,
+            height: 2,
+            strokeColor: "#000000",
+            strokeWidth: 2
+        });
+        console.log("Added line element:", elementId);
+    });
+
+    // Action buttons
+    document.getElementById("save-btn").addEventListener("click", () => {
+        alert("Fonction de sauvegarde à implémenter");
+    });
+
+    document.getElementById("export-pdf-btn").addEventListener("click", () => {
+        alert("Fonction d'export PDF à implémenter");
+    });
+
+    document.getElementById("preview-btn").addEventListener("click", () => {
+        alert("Fonction d'aperçu à implémenter");
+    });
+}
+
+function setupPropertiesPanel(pdfCanvas) {
+    // This will be enhanced when selection system is implemented
+    console.log("Properties panel initialized");
+}
+</script>
 

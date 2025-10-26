@@ -104,9 +104,10 @@ function checkTemplate() {
 
         // Vérifier que le template utilise l'approche hybride Vanilla JS
         // (attend que les scripts soient chargés par WordPress enqueue)
-        if (content.includes('pdfBuilderInitVanilla') &&
-            content.includes('waitForScripts') &&
-            content.includes('PDFCanvasVanilla')) {
+        if (content.includes('initializePDFEditor') &&
+            content.includes('loadTemplateData') &&
+            content.includes('PDFCanvasVanilla') &&
+            content.includes('MutationObserver')) {
             console.log('✅ Template WordPress: Utilise l\'approche hybride Vanilla JS');
             checks.passed++;
             return true;
@@ -124,11 +125,14 @@ function checkTemplate() {
 
 function checkConfig() {
     const webpackPath = path.join(__dirname, 'config', 'build', 'webpack.config.js');
-    if (fs.existsSync(webpackPath)) {
-        const content = fs.readFileSync(webpackPath, 'utf8');
+    const bundlePath = path.join(__dirname, 'assets', 'js', 'pdf-builder-vanilla-bundle.js');
+    if (fs.existsSync(webpackPath) && fs.existsSync(bundlePath)) {
+        const webpackContent = fs.readFileSync(webpackPath, 'utf8');
+        const bundleContent = fs.readFileSync(bundlePath, 'utf8');
 
         // Vérifier que webpack utilise les fichiers Vanilla JS
-        if (content.includes('pdf-canvas-vanilla.js')) {
+        if (webpackContent.includes('pdf-builder-vanilla-bundle.js') &&
+            bundleContent.includes('pdf-canvas-vanilla.js')) {
             console.log('✅ Configuration Webpack: Utilise les modules Vanilla JS');
             checks.passed++;
             return true;
@@ -138,7 +142,7 @@ function checkConfig() {
             return false;
         }
     } else {
-        console.log('❌ Configuration Webpack manquante');
+        console.log('❌ Configuration Webpack ou bundle manquant');
         checks.failed++;
         return false;
     }
