@@ -21,18 +21,19 @@
     Mode forcé : écrase tous les fichiers existants
     À utiliser avec précaution
 
-.PARAMETER NoConfirm
-    Passe la confirmation manuelle avant le déploiement
-
 .PARAMETER Diagnostic
     Lance un diagnostic complet du système avant déploiement
+
+.PARAMETER AutoFix
+    Tente de corriger automatiquement les erreurs détectées lors du diagnostic
 
 .EXAMPLE
     .\deploy.ps1 -Mode test
     .\deploy.ps1 -Mode plugin
     .\deploy.ps1 -Mode plugin -FullSync
     .\deploy.ps1 -Mode plugin -Force
-    .\deploy.ps1 -Mode plugin -NoConfirm
+    .\deploy.ps1 -Mode plugin -Diagnostic
+    .\deploy.ps1 -Diagnostic -AutoFix
     .\deploy.ps1 -Diagnostic
 #>
 
@@ -51,7 +52,10 @@ param(
     [switch]$NoConfirm,
 
     [Parameter(Mandatory=$false)]
-    [switch]$Diagnostic
+    [switch]$Diagnostic,
+
+    [Parameter(Mandatory=$false)]
+    [switch]$AutoFix
 )
 
 # Configuration des logs
@@ -293,21 +297,135 @@ function Start-SystemDiagnostic {
     # Évaluation globale
     if ($diagnosticResults.failed -eq 0) {
         Write-Host "`n🎉 DIAGNOSTIC RÉUSSI - Système prêt pour le déploiement !" -ForegroundColor Green
-        return $true
+        return @{result=$true; details=$diagnosticResults}
     } elseif ($diagnosticResults.critical | Where-Object { $_.status -eq "FAIL" }) {
         Write-Host "`n❌ PROBLÈMES CRITIQUES - Déploiement impossible !" -ForegroundColor Red
         Write-Host "Résoudre les problèmes suivants :" -ForegroundColor Red
         foreach ($issue in ($diagnosticResults.critical | Where-Object { $_.status -eq "FAIL" })) {
             Write-Host "  • $($issue.name): $($issue.message)" -ForegroundColor Red
         }
-        return $false
+        return @{result=$false; details=$diagnosticResults}
     } else {
         Write-Host "`n⚠️ AVERTISSEMENTS - Déploiement possible mais déconseillé" -ForegroundColor Yellow
         Write-Host "Considérer résoudre :" -ForegroundColor Yellow
         foreach ($issue in $diagnosticResults.warnings) {
             Write-Host "  • $($issue.name): $($issue.message)" -ForegroundColor Yellow
         }
-        return $true
+        return @{result=$true; details=$diagnosticResults}
+    }
+}
+
+# Fonction de correction automatique des erreurs détectées
+function Start-SystemAutoFix {
+    param([hashtable]$diagnosticResults)
+
+    Write-Host "`n🔧 CORRECTION AUTOMATIQUE DES ERREURS" -ForegroundColor Cyan
+    Write-Host "=" * 40 -ForegroundColor Cyan
+
+    $fixesApplied = 0
+
+    # 1. Créer les dossiers manquants
+    Write-Host "`n📁 CRÉATION DES DOSSIERS MANQUANTS" -ForegroundColor Magenta
+
+    # Dossier logs
+    if (!(Test-Path "$PSScriptRoot\logs")) {
+        try {
+            New-Item -ItemType Directory -Path "$PSScriptRoot\logs" -Force | Out-Null
+            Write-Host "  ✅ Dossier logs créé" -ForegroundColor Green
+            $fixesApplied++
+        } catch {
+            Write-Host "  ❌ Impossible de créer le dossier logs: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+
+    # Dossier backups
+    if (!(Test-Path "$PSScriptRoot\backups")) {
+        try {
+            New-Item -ItemType Directory -Path "$PSScriptRoot\backups" -Force | Out-Null
+            Write-Host "  ✅ Dossier backups créé" -ForegroundColor Green
+            $fixesApplied++
+        } catch {
+            Write-Host "  ❌ Impossible de créer le dossier backups: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+
+    # 2. Compiler les assets si npm est disponible
+    Write-Host "`n🎨 COMPILATION DES ASSETS" -ForegroundColor Magenta
+
+    $pluginPath = Split-Path $PSScriptRoot -Parent
+    if (Test-Path "$pluginPath\package.json") {
+        if (Get-Command npm -ErrorAction SilentlyContinue) {
+            Write-Host "  🔄 Compilation des assets JavaScript/CSS..." -ForegroundColor Yellow
+            Push-Location $pluginPath
+            try {
+                $npmResult = & npm run build 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "  ✅ Assets compilés avec succès" -ForegroundColor Green
+                    $fixesApplied++
+                } else {
+                    Write-Host "  ❌ Échec de la compilation: $($npmResult[-1])" -ForegroundColor Red
+                }
+            } catch {
+                Write-Host "  ❌ Erreur lors de la compilation: $($_.Exception.Message)" -ForegroundColor Red
+            } finally {
+                Pop-Location
+            }
+        } else {
+            Write-Host "  ⚠️ npm non disponible, compilation manuelle requise" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  ⚠️ package.json non trouvé, compilation ignorée" -ForegroundColor Yellow
+    }
+
+    # 3. Commiter les fichiers non committés si Git disponible
+    Write-Host "`n📝 COMMIT DES FICHIERS MODIFIÉS" -ForegroundColor Magenta
+
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        Push-Location $pluginPath
+        try {
+            $gitStatus = git status --porcelain 2>$null
+            $uncommitted = ($gitStatus | Measure-Object).Count
+
+            if ($uncommitted -gt 0) {
+                Write-Host "  🔄 Commit automatique des $uncommitted fichier(s) modifié(s)..." -ForegroundColor Yellow
+
+                # Ajouter tous les fichiers
+                & git add . 2>$null
+
+                # Créer un commit automatique
+                $commitMessage = "feat: Mise à jour automatique - $uncommitted fichier(s) modifié(s)"
+                & git commit -m $commitMessage 2>$null
+
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "  ✅ Commit automatique créé: $commitMessage" -ForegroundColor Green
+                    $fixesApplied++
+                } else {
+                    Write-Host "  ❌ Échec du commit automatique" -ForegroundColor Red
+                }
+            } else {
+                Write-Host "  ✅ Repository déjà propre" -ForegroundColor Green
+            }
+        } catch {
+            Write-Host "  ❌ Erreur Git: $($_.Exception.Message)" -ForegroundColor Red
+        } finally {
+            Pop-Location
+        }
+    } else {
+        Write-Host "  ⚠️ Git non disponible" -ForegroundColor Yellow
+    }
+
+    # 4. Vérifier les corrections
+    Write-Host "`n🔍 VÉRIFICATION DES CORRECTIONS" -ForegroundColor Magenta
+
+    if ($fixesApplied -gt 0) {
+        Write-Host "  ✅ $fixesApplied correction(s) appliquée(s)" -ForegroundColor Green
+        Write-Host "  🔄 Relancement du diagnostic..." -ForegroundColor Cyan
+
+        # Relancer le diagnostic pour vérifier les corrections
+        return Start-SystemDiagnostic
+    } else {
+        Write-Host "  ⚠️ Aucune correction automatique possible" -ForegroundColor Yellow
+        return $false
     }
 }
 
@@ -318,7 +436,17 @@ if (!(Test-Path $LogDir)) {
 
 # Mode diagnostic
 if ($Diagnostic) {
-    $diagnosticResult = Start-SystemDiagnostic
+    $diagnosticData = Start-SystemDiagnostic
+    $diagnosticResult = $diagnosticData.result
+
+    # Si AutoFix est activé et qu'il y a des erreurs ou avertissements, tenter la correction
+    if ($AutoFix -and ($diagnosticData.details.failed -gt 0)) {
+        Write-Host "`n🤖 MODE AUTO-CORRECTION ACTIVÉ" -ForegroundColor Cyan
+        Write-Host "Tentative de correction automatique des erreurs..." -ForegroundColor Yellow
+
+        $diagnosticResult = Start-SystemAutoFix -diagnosticResults $diagnosticData.details
+    }
+
     exit $(if ($diagnosticResult) { 0 } else { 1 })
 }
 
@@ -532,21 +660,12 @@ if ($Mode -eq "plugin" -and -not $IsTestMode) {
     }
     Write-Host ""
 }
-Write-Host "`n⚠️ CONFIRMATION REQUISE" -ForegroundColor Yellow
+Write-Host "`n🚀 PRÊT POUR DÉPLOIEMENT" -ForegroundColor Green
 Write-Host "-" * 25
-Write-Host "Vous allez déployer $finalFileCount fichiers ($([math]::Round($finalSize / 1MB, 2)) MB)" -ForegroundColor Yellow
-Write-Host "vers $FtpPath" -ForegroundColor Yellow
+Write-Host "Déploiement de $finalFileCount fichiers ($([math]::Round($finalSize / 1MB, 2)) MB)" -ForegroundColor Green
+Write-Host "vers $FtpPath" -ForegroundColor Green
+Write-Host "Déploiement automatique en cours..." -ForegroundColor Cyan
 Write-Host ""
-
-if (-not $NoConfirm) {
-    $confirmation = Read-Host "Continuer ? (oui/non)"
-    if ($confirmation -ne "oui") {
-        Write-Host "❌ Déploiement annulé" -ForegroundColor Red
-        exit 0
-    }
-} else {
-    Write-Host "✅ Confirmation automatique (-NoConfirm)" -ForegroundColor Green
-}
 
 # Créer le dossier de backup
 if (!(Test-Path $BackupDir)) {

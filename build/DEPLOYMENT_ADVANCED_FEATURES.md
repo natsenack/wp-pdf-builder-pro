@@ -72,6 +72,86 @@ build/backups/
 .\deploy.ps1 -Diagnostic
 ```
 
+### Diagnostic avec Auto-Correction
+```powershell
+.\deploy.ps1 -Diagnostic -AutoFix
+```
+
+## Corrections Automatiques
+
+Le système d'auto-correction (`-AutoFix`) peut automatiquement résoudre plusieurs types d'erreurs :
+
+### 🔧 **Corrections Disponibles**
+
+#### 1. **Création des Dossiers Manquants**
+- **Dossier logs** : `$PSScriptRoot\logs`
+- **Dossier backups** : `$PSScriptRoot\backups`
+
+#### 2. **Compilation des Assets**
+- Détection automatique de `package.json`
+- Exécution de `npm run build`
+- Recompilation des bundles JavaScript/CSS
+
+#### 3. **Commit Automatique**
+- Détection des fichiers non committés
+- Ajout automatique avec `git add .`
+- Commit avec message descriptif
+
+#### 4. **Re-Diagnostic**
+- Vérification des corrections appliquées
+- Relancement automatique du diagnostic
+- Rapport final des améliorations
+
+### 📊 **Flux de Correction**
+
+```
+Diagnostic Initial → Erreurs Détectées → Auto-Correction → Re-Diagnostic → Résultat Final
+```
+
+### ✅ **Exemple de Sortie**
+
+```
+🔧 CORRECTION AUTOMATIQUE DES ERREURS
+========================================
+
+📁 CRÉATION DES DOSSIERS MANQUANTS
+  ✅ Dossier logs créé
+  ✅ Dossier backups créé
+
+🎨 COMPILATION DES ASSETS
+  🔄 Compilation des assets JavaScript/CSS...
+  ✅ Assets compilés avec succès
+
+📝 COMMIT DES FICHIERS MODIFIÉS
+  🔄 Commit automatique des 5 fichier(s) modifié(s)...
+  ✅ Commit automatique créé: feat: Mise à jour automatique - 5 fichier(s) modifié(s)
+
+🔍 VÉRIFICATION DES CORRECTIONS
+  ✅ 3 correction(s) appliquée(s)
+  🔄 Relancement du diagnostic...
+```
+
+### ⚠️ **Limitations**
+
+Certaines erreurs ne peuvent pas être corrigées automatiquement :
+- Problèmes de réseau (connexion FTP, Internet)
+- Fichiers critiques manquants
+- Permissions système insuffisantes
+- Erreurs de configuration externe
+
+### 🎯 **Utilisation Recommandée**
+
+```powershell
+# Diagnostic seul
+.\deploy.ps1 -Diagnostic
+
+# Diagnostic avec correction automatique
+.\deploy.ps1 -Diagnostic -AutoFix
+
+# Intégration CI/CD
+.\deploy.ps1 -Diagnostic -AutoFix; if ($LASTEXITCODE -eq 0) { .\deploy.ps1 -Mode plugin }
+```
+
 ## Étapes du Processus de Déploiement
 
 1. **Initialisation** : Configuration et vérifications préalables
