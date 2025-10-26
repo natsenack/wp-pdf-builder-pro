@@ -648,6 +648,15 @@ function initializeCanvas() {
         
         console.log('[INIT] ✅ Canvas initialisé avec succès');
         
+        // ⚠️ DÉSACTIVER le PDFCanvasDragDropManager du bundle pour éviter les conflits
+        if (window.pdfCanvasInstance && window.pdfCanvasInstance.dragDropManager) {
+            console.log('[INIT] ⚠️ Désactivation du dragDropManager du bundle');
+            if (typeof window.pdfCanvasInstance.dragDropManager.dispose === 'function') {
+                window.pdfCanvasInstance.dragDropManager.dispose();
+            }
+            window.pdfCanvasInstance.dragDropManager = null;
+        }
+        
         // Populer la bibliothèque d'éléments
         populateElementsLibrary();
         
@@ -864,12 +873,18 @@ function setupDragAndDrop() {
     
     // Empêcher les conflits avec les clics sur les éléments du canvas
     canvas.addEventListener('mousedown', function(e) {
-        console.log('[DRAGDROP] mousedown sur canvas - isDragging:', isDragging);
-        // Le drag-drop n'interfère pas avec les clics normaux du canvas
-        if (isDragging) {
-            console.log('[DRAGDROP] ⚠️ Click ignoré - drag en cours');
+        console.log('[DRAGDROP] mousedown sur canvas - isDragging:', isDragging, 'currentDraggedElement:', currentDraggedElement);
+        
+        // Si un drag est en cours depuis la toolbar, ignorer les interactions du canvas
+        if (isDragging && currentDraggedElement) {
+            console.log('[DRAGDROP] ⚠️ Click ignoré - drag en cours depuis la toolbar');
             e.stopPropagation();
+            e.preventDefault();
+            return false;
         }
+        
+        // Sinon, laisser passer les événements normaux du canvas (sélection, redimensionnement)
+        console.log('[DRAGDROP] ✅ Click sur canvas autorisé - pas de drag en cours');
     }, false);
     
     console.log('[DRAGDROP] ✅ Drag & Drop configuré avec protection contre les conflits');
