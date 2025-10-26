@@ -71,7 +71,7 @@ const init = (containerId, options = {}) => {
     console.log('� PDFCanvasEditor importé:', typeof PDFCanvasEditor);
     console.log('� window.React.createElement:', typeof window.React?.createElement);
     
-    const element = React.createElement(PDFCanvasEditor, {
+    const element = window.React.createElement(PDFCanvasEditor, {
       options: options
     });
     console.log('� ELEMENT REACT CRÉÉ:', !!element);
