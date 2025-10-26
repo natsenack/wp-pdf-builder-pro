@@ -1,7 +1,13 @@
 // Import global fallbacks first
 import './globalFallback.js';
 
-console.log('�🔴🔴 PDF BUILDER MAIN.JS CHARGÉ - TIMESTAMP:', Date.now(), '- VERSION AVEC REACT EXTERNALS');
+console.log('🚨🚨🚨 MAIN.JS CHARGÉ ET EXÉCUTÉ - DÉBUT 🚨🚨🚨');
+
+// Vérifier immédiatement React
+console.log('REACT CHECK - window.React:', typeof window.React);
+console.log('REACT CHECK - window.ReactDOM:', typeof window.ReactDOM);
+console.log('REACT CHECK - React.createElement:', typeof window.React?.createElement);
+console.log('REACT CHECK - ReactDOM.createRoot:', typeof window.ReactDOM?.createRoot);
 
 // Main application entry point that actually uses all components
 import React from 'react';
@@ -61,16 +67,37 @@ const init = (containerId, options = {}) => {
   console.log('✅ Root React créé:', !!root);
   
   try {
-    console.log('🚀 Tentative de rendu du composant PDFCanvasEditor...');
-    root.render(
-      window.React.createElement(PDFCanvasEditor, {
-        options: options
-      })
-    );
-    console.log('✅ Composant rendu avec succès');
+    console.log('�🚨🚨 MAIN.JS: TENTATIVE DE RENDU REACT 🚨🚨🚨');
+    console.log('� PDFCanvasEditor importé:', typeof PDFCanvasEditor);
+    console.log('� window.React.createElement:', typeof window.React?.createElement);
+    
+    const element = window.React.createElement(PDFCanvasEditor, {
+      options: options
+    });
+    console.log('� ELEMENT REACT CRÉÉ:', !!element);
+    console.log('🚨 TYPE ELEMENT:', element?.constructor?.name);
+    
+    console.log('🚨 AVANT ROOT.RENDER');
+    root.render(element);
+    console.log('🚨🚨🚨 ROOT.RENDER TERMINÉ SANS ERREUR 🚨🚨🚨');
+    
+    // Vérifier que le container a du contenu après le rendu
+    setTimeout(() => {
+      const containerContent = container.innerHTML;
+      console.log('� CONTENU CONTAINER APRÈS RENDU:', containerContent.substring(0, 300) + '...');
+      console.log('� NOMBRE ENFANTS:', container.children.length);
+      if (container.children.length > 0) {
+        console.log('🚨 PREMIER ENFANT:', container.children[0].tagName, container.children[0].className);
+      }
+    }, 100);
+    
   } catch (error) {
-    console.error('❌ Erreur lors du rendu du composant:', error);
-    console.error('❌ Stack trace:', error.stack);
+    console.error('🚨🚨🚨 ERREUR FATALE DANS MAIN.JS RENDER 🚨🚨🚨:', error);
+    console.error('🚨 STACK TRACE:', error.stack);
+    console.error('🚨 TYPE ERREUR:', error.constructor.name);
+    
+    // Afficher l'erreur dans le container
+    container.innerHTML = '<div style="color: red; padding: 20px; border: 2px solid red;"><h3>🚨 ERREUR REACT FATAL 🚨</h3><p>' + error.message + '</p><pre>' + error.stack + '</pre></div>';
   }
 
   console.log('✅ PDF Builder Pro: Éditeur initialisé avec succès - TIMESTAMP:', Date.now());

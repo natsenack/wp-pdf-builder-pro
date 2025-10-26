@@ -15,10 +15,20 @@ import PropertiesPanel from './PropertiesPanel.jsx';
 import NewTemplateModal from './NewTemplateModal.jsx';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
-  console.log('🎨 PDFCanvasEditor: Composant INSTANCIÉ avec options:', options);
-  
-  // Log immédiat pour confirmer que le composant démarre
-    console.log('🎨 PDFCanvasEditor: Avant le return JSX...');
+  console.log('🚨🚨🚨 REACT COMPONENT PDFCanvasEditor INSTANCIÉ 🚨🚨🚨');
+  console.log('🚨 REACT DISPONIBLE:', typeof window.React);
+  console.log('🚨 REACTDOM DISPONIBLE:', typeof window.ReactDOM);
+  console.log('🚨 OPTIONS:', options);
+
+  // Test immédiat de React
+  try {
+    const testElement = window.React.createElement('div', null, 'TEST REACT');
+    console.log('🚨 REACT CREATE ELEMENT OK:', !!testElement);
+  } catch (e) {
+    console.error('🚨 ERREUR REACT CREATE ELEMENT:', e);
+  }
+
+  console.log('🚨 AVANT TRY-CATCH DU COMPOSANT');
 
   try {
 
@@ -652,11 +662,13 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     }
   }, [globalSettings.settings.zoomToSelection, canvasState]);
 
+  console.log('🚨🚨🚨 AVANT RETURN JSX - COMPOSANT VA RENDRE 🚨🚨🚨');
+
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
       {/* Header avec titre et actions */}
       <header className="editor-header">
-        <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
+        <h2>🚨 REACT RENDU OK 🚨 - Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
         <nav className="editor-actions">
           <button
             className="btn btn-outline"
@@ -960,17 +972,18 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     </div>
   );
     } catch (renderError) {
-      console.error('❌ ERREUR DE RENDU dans PDFCanvasEditor:', renderError);
-      console.error('Stack trace complet:', renderError.stack);
+      console.error('🚨🚨🚨 ERREUR CATCHÉE DANS PDFCanvasEditor 🚨🚨🚨:', renderError);
+      console.error('🚨 STACK TRACE COMPLET:', renderError.stack);
+      console.error('🚨 TYPE ERREUR:', renderError.constructor.name);
       
       // Retourner un composant d'erreur simple
       return (
         <div style={{ padding: '20px', color: 'red', border: '2px solid red', margin: '20px' }}>
-          <h3>Erreur de rendu du composant PDFCanvasEditor</h3>
-          <p>Une erreur s'est produite lors du rendu de l'éditeur.</p>
+          <h3>🚨 ERREUR FATALE REACT 🚨</h3>
+          <p>Erreur dans PDFCanvasEditor: {renderError.message}</p>
           <details>
-            <summary>Voir les détails de l'erreur</summary>
-            <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+            <summary>Voir les détails complets</summary>
+            <pre style={{ fontSize: '12px', overflow: 'auto', background: '#f0f0f0', padding: '10px' }}>
               {renderError.toString()}
               {'\n\n'}
               {renderError.stack}

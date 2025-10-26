@@ -17,12 +17,91 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 // Tous les scripts et styles sont maintenant chargés dans la classe admin via enqueue_admin_scripts
 // Plus besoin d'enqueues ici car ils sont déjà faits avant wp_head()
 
-// Forcer le chargement des scripts pour l'éditeur si ce n'est pas déjà fait
-if (!did_action('admin_enqueue_scripts')) {
-    do_action('admin_enqueue_scripts', 'pdf-builder-editor');
-}
+    // DEBUG ABSOLU - Afficher les chemins et URLs
+    echo '<div style="background: yellow; padding: 20px; margin: 20px; border: 2px solid red; font-family: monospace;">';
+    echo '<h3>🚨 DEBUG CHEMIN ABSOLU 🚨</h3>';
+    echo '<strong>Plugin DIR:</strong> ' . WP_PLUGIN_DIR . '<br>';
+    echo '<strong>Plugin URL:</strong> ' . WP_PLUGIN_URL . '<br>';
+    echo '<strong>Current plugin path:</strong> ' . plugin_dir_path(__FILE__) . '<br>';
+    echo '<strong>Current plugin URL:</strong> ' . plugin_dir_url(__FILE__) . '<br>';
+    if (defined('PDF_BUILDER_PRO_ASSETS_URL')) {
+        echo '<strong>PDF_BUILDER_PRO_ASSETS_URL:</strong> ' . PDF_BUILDER_PRO_ASSETS_URL . '<br>';
+    }
+    echo '<strong>Script loader URL:</strong> ' . plugins_url('assets/js/dist/pdf-builder-script-loader.js', dirname(dirname(__FILE__))) . '<br>';
+    echo '<strong>Main bundle URL:</strong> ' . plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__))) . '<br>';
+    echo '</div>';
 
-// S'assurer que le core PDF Builder est chargé
+    // CHARGER DIRECTEMENT LES SCRIPTS AVEC LES BONNES URLS
+    $script_loader_url = plugins_url('assets/js/dist/pdf-builder-script-loader.js', dirname(dirname(__FILE__)));
+    $main_bundle_url = plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__)));
+
+    echo '<div style="background: lightgreen; padding: 20px; margin: 20px; border: 2px solid green;">';
+    echo '<h3>🚨 CHARGEMENT DIRECT DES SCRIPTS 🚨</h3>';
+    echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
+    echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
+    echo '<p>Scripts chargés directement avec plugins_url()</p>';
+    echo '</div>';
+
+    // TEST DES URLS
+    echo '<div style="background: lightblue; padding: 20px; margin: 20px; border: 2px solid blue;">';
+    echo '<h3>🚨 TEST DES URLS 🚨</h3>';
+    echo '<script>
+        setTimeout(function() {
+            console.log("🚨🚨🚨 TEST URL SCRIPT-LOADER 🚨🚨🚨");
+            fetch("' . esc_url($script_loader_url) . '")
+                .then(r => console.log("🚨 Script-loader status:", r.status))
+                .catch(e => console.error("🚨 Script-loader error:", e));
+
+            console.log("🚨🚨🚨 TEST URL MAIN BUNDLE 🚨🚨🚨");
+            fetch("' . esc_url($main_bundle_url) . '")
+                .then(r => console.log("🚨 Main bundle status:", r.status))
+                .catch(e => console.error("🚨 Main bundle error:", e));
+        }, 1000);
+    </script>';
+
+    // PLAN B : CHARGER REACT DEPUIS CDN SI LES FICHIERS LOCAUX NE MARCHENT PAS
+    echo '<script>
+        window.REACT_LOADED_FROM_CDN = false;
+        setTimeout(function() {
+            if (typeof window.React === "undefined" || typeof window.ReactDOM === "undefined") {
+                console.log("🚨🚨🚨 REACT MANQUANT - CHARGEMENT DEPUIS CDN 🚨🚨🚨");
+                window.REACT_LOADED_FROM_CDN = true;
+
+                // Charger React depuis CDN
+                var reactScript = document.createElement("script");
+                reactScript.src = "https://unpkg.com/react@18/umd/react.production.min.js";
+                document.head.appendChild(reactScript);
+
+                var reactDomScript = document.createElement("script");
+                reactDomScript.src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
+                document.head.appendChild(reactDomScript);
+
+                reactDomScript.onload = function() {
+                    console.log("🚨🚨🚨 REACT CHARGÉ DEPUIS CDN - RELANCEMENT 🚨🚨🚨");
+                    // Relancer l\'initialisation
+                    if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
+                        window.pdfBuilderPro.init("invoice-quote-builder-container", {
+                            templateId: null,
+                            templateName: null,
+                            isNew: true,
+                            initialElements: [],
+                            width: 595,
+                            height: 842,
+                            zoom: 1,
+                            initialElements: [],
+                            width: 595,
+                            height: 842,
+                            zoom: 1,
+                            gridSize: 10,
+                            snapToGrid: true,
+                            maxHistorySize: 50
+                        });
+                    }
+                };
+            }
+        }, 2000);
+    </script>';
+    echo '</div>';// S'assurer que le core PDF Builder est chargé
 if (function_exists('pdf_builder_load_core_when_needed')) {
     pdf_builder_load_core_when_needed();
 }
@@ -42,7 +121,7 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     $assets_url = plugins_url('assets/', dirname(dirname(__FILE__))) . '/';
 
     // CHARGER LE SCRIPT DE GESTION D'ERREURS EN PREMIER - AVANT TOUT
-    $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js?v=' . time() . '_' . uniqid();
+    $error_handler_url = $assets_url . 'js/dist/pdf-builder-nonce-fix.js';
     echo '<script type="text/javascript" src="' . esc_url($error_handler_url) . '"></script>';
 
     // Script de blocage des scripts externes pour sécurité
@@ -76,8 +155,8 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     $ajax_vars = [
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-        'version' => '8.0.0_direct_' . time(),
-        'timestamp' => time(),
+        'version' => '8.0.0_direct',
+                    'timestamp' => 0,
         'strings' => [
             'loading' => 'Chargement...',
             'error' => 'Erreur',
@@ -360,7 +439,7 @@ body.wp-admin .pdf-builder-container {
                 console.log('📋 pdfBuilderPro disponible:', typeof window.pdfBuilderPro);
                 console.log('📋 pdfBuilderPro.init disponible:', typeof window.pdfBuilderPro?.init);
 
-                console.log('🚀 Appel de pdfBuilderPro.init()...');
+                console.log('�🚨🚨 TEMPLATE: AVANT APPEL pdfBuilderPro.init() 🚨🚨🚨');
                 try {
                     pdfBuilderPro.init('invoice-quote-builder-container', {
                         templateId: <?php echo is_numeric($template_id) ? intval($template_id) : 'null'; ?>,
@@ -380,16 +459,20 @@ body.wp-admin .pdf-builder-container {
                         snapToGrid: true,
                         maxHistorySize: 50
                     });
-                    console.log('✅ pdfBuilderPro.init() terminé SANS ERREUR');
+                    console.log('🚨🚨🚨 TEMPLATE: pdfBuilderPro.init() TERMINÉ SANS ERREUR 🚨🚨🚨');
                     
-                    // Forcer l'affichage d'un message de succès
+                    // Ajouter un petit indicateur de succès qui ne gêne pas React
+                    const successIndicator = document.createElement('div');
+                    successIndicator.id = 'pdf-init-success-indicator';
+                    successIndicator.style.cssText = 'position:fixed;top:10px;left:10px;background:red;color:white;padding:5px;font-size:11px;z-index:999999;border-radius:3px;opacity:0.9;';
+                    successIndicator.textContent = '✅ PDF Init OK - FORCE RELOAD - ' + new Date().toLocaleTimeString();
+                    document.body.appendChild(successIndicator);
+                    
+                    // Supprimer l'indicateur après 5 secondes
                     setTimeout(() => {
-                        console.log('🎉 SUCCESS: PDF Builder initialized successfully!');
-                        const container = document.getElementById('invoice-quote-builder-container');
-                        if (container) {
-                            container.innerHTML = '<div style="color: green; padding: 20px; border: 2px solid green;"><h3>✅ SUCCÈS !</h3><p>L\'éditeur PDF a été chargé avec succès.</p><p>Timestamp: ' + new Date().toISOString() + '</p></div>';
-                        }
-                    }, 100);
+                        const indicator = document.getElementById('pdf-init-success-indicator');
+                        if (indicator) indicator.remove();
+                    }, 5000);
                     
                 } catch (initError) {
                     console.error('❌ ERREUR CAPTURÉE dans pdfBuilderPro.init():', initError);
@@ -413,17 +496,6 @@ body.wp-admin .pdf-builder-container {
                             '</div>';
                     }
                 }
-                    // Afficher l'erreur dans l'interface
-                    var container = document.getElementById('invoice-quote-builder-container');
-                    if (container) {
-                        container.innerHTML =
-                            '<div style="text-align: center; padding: 40px; color: #dc3545;">' +
-                                '<h3>Erreur d\'initialisation</h3>' +
-                                '<p>Une erreur s\'est produite lors du chargement de l\'éditeur.</p>' +
-                                '<p>Vérifiez la console pour plus de détails.</p>' +
-                                '<button onclick="location.reload()">Recharger la page</button>' +
-                            '</div>';
-                    }
                 }
     };
 
