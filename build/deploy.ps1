@@ -1045,13 +1045,36 @@ Write-Host "-" * 20
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $tagName = if ($Mode -eq "plugin") { "v1.0.0-deploy-$timestamp" } else { "dev-deploy-$timestamp" }
 
-Write-Host "�️ Création du tag : $tagName" -ForegroundColor Yellow
+Write-Host "📝 Commit automatique des fichiers modifiés..." -ForegroundColor Yellow
 
 try {
     # Changer vers la racine du projet pour git
     Push-Location (Split-Path $PSScriptRoot -Parent)
 
-    # Pousser les commits sur la branche actuelle
+    # Vérifier s'il y a des fichiers à committer
+    $gitStatus = git status --porcelain 2>$null
+    $uncommitted = ($gitStatus | Measure-Object).Count
+
+    if ($uncommitted -gt 0) {
+        Write-Host "  🔄 $uncommitted fichier(s) modifié(s) trouvé(s)" -ForegroundColor Cyan
+        Write-Host "  📦 Ajout de tous les fichiers..." -ForegroundColor White
+
+        # Ajouter tous les fichiers
+        & git add . 2>$null
+
+        # Créer un commit automatique
+        $commitMessage = "feat: Déploiement automatique - $uncommitted fichier(s) modifié(s)"
+        & git commit -m $commitMessage 2>$null
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✅ Commit automatique créé: $commitMessage" -ForegroundColor Green
+        } else {
+            Write-Host "  ❌ Échec du commit automatique" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "  ✅ Repository déjà propre" -ForegroundColor Green
+    }
+
     Write-Host "📤 Poussée des commits sur la branche..." -ForegroundColor Yellow
     & git push origin dev 2>$null
 
@@ -1062,6 +1085,7 @@ try {
     }
 
     # Créer et pousser le tag
+    Write-Host "�️ Création du tag : $tagName" -ForegroundColor Yellow
     & git tag $tagName 2>$null
     & git push origin $tagName 2>$null
 
@@ -1074,7 +1098,7 @@ try {
     Pop-Location
 } catch {
     Write-Log "⚠️ Git non disponible ou erreur : $($_.Exception.Message)" -Level "WARN" -Color "Yellow"
-    Write-DetailedLog "Git push" "Erreur Git : $($_.Exception.Message)" "WARN" @{error=$_.Exception.Message}
+    Write-DetailedLog "Git operations" "Erreur Git : $($_.Exception.Message)" "WARN" @{error=$_.Exception.Message}
 }
 
 # 4. Tests post-déploiement (uniquement pour le mode plugin)
