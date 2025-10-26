@@ -648,13 +648,15 @@ function initializeCanvas() {
         
         console.log('[INIT] ✅ Canvas initialisé avec succès');
         
-        // ⚠️ DÉSACTIVER le PDFCanvasDragDropManager du bundle pour éviter les conflits
+        // ⚠️ DÉSACTIVER le handleDragOver du PDFCanvasDragDropManager pour éviter les conflits
+        // (mais garder le gestionnaire, il est nécessaire pour render())
         if (window.pdfCanvasInstance && window.pdfCanvasInstance.dragDropManager) {
-            console.log('[INIT] ⚠️ Désactivation du dragDropManager du bundle');
-            if (typeof window.pdfCanvasInstance.dragDropManager.dispose === 'function') {
-                window.pdfCanvasInstance.dragDropManager.dispose();
-            }
-            window.pdfCanvasInstance.dragDropManager = null;
+            console.log('[INIT] ⚠️ Désactivation du handleDragOver du dragDropManager du bundle');
+            var dragDropManager = window.pdfCanvasInstance.dragDropManager;
+            // Remplacer handleDragOver par une fonction vide pour éviter les conflits
+            dragDropManager.handleDragOver = function(e) {
+                // Fonction désactivée - on laisse notre système de drag-drop custom gérer
+            };
         }
         
         // Populer la bibliothèque d'éléments
