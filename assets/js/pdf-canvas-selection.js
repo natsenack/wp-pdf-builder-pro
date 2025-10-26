@@ -277,7 +277,9 @@ export class PDFCanvasSelectionManager {
      * Obtient le mode de sélection basé sur les touches pressées
      */
     getSelectionModeFromKeys() {
-        const modifiers = this.canvasInstance.eventManager?.keyboardState?.modifiers || {};
+        const modifiers = (this.canvasInstance.eventManager &&
+                          this.canvasInstance.eventManager.keyboardState &&
+                          this.canvasInstance.eventManager.keyboardState.modifiers) || {};
 
         switch (this.config.multiSelectKey) {
             case 'ctrl':

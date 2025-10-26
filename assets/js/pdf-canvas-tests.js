@@ -69,7 +69,7 @@ class PDFCanvasIntegrationTests {
 
             // Test des propriétés par défaut
             for (const type of supportedTypes) {
-                const defaults = ELEMENT_PROPERTY_RESTRICTIONS[type]?.defaults;
+                const defaults = ELEMENT_PROPERTY_RESTRICTIONS[type] && ELEMENT_PROPERTY_RESTRICTIONS[type].defaults;
                 this.assert(defaults, `Propriétés par défaut pour ${type}`);
             }
 
