@@ -23,7 +23,7 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
 }
 
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '2.0.0-debug-' . time());
+    define('PDF_BUILDER_PRO_VERSION', '2.0.1');
 }
 
 // Debug logging
