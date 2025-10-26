@@ -349,9 +349,17 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement drag over
      */
     handleDragOver(event) {
-        // Déléguer au gestionnaire de drag & drop
-        if (this.dragDropManager) {
-            this.dragDropManager.handleDragOver(event);
+        try {
+            // Vérifier que event est valide
+            if (!event || typeof event.preventDefault !== 'function') {
+                return;
+            }
+            // Déléguer au gestionnaire de drag & drop
+            if (this.dragDropManager) {
+                this.dragDropManager.handleDragOver(event);
+            }
+        } catch (error) {
+            console.error('[CANVAS] Erreur handleDragOver:', error);
         }
     }
 
@@ -359,9 +367,17 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement drop
      */
     handleDrop(event) {
-        // Déléguer au gestionnaire de drag & drop
-        if (this.dragDropManager) {
-            this.dragDropManager.handleDrop(event);
+        try {
+            // Vérifier que event est valide
+            if (!event || typeof event.preventDefault !== 'function') {
+                return;
+            }
+            // Déléguer au gestionnaire de drag & drop
+            if (this.dragDropManager) {
+                this.dragDropManager.handleDrop(event);
+            }
+        } catch (error) {
+            console.error('[CANVAS] Erreur handleDrop:', error);
         }
     }
 

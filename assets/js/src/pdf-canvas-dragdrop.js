@@ -82,29 +82,39 @@ PDFCanvasDragDropManager.prototype.handleDragEnd = function(event) {
  * Gère le survol pendant le glisser
  */
 PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
-    if (!this.isDragging || !this.canvasInstance || !this.canvasInstance.canvas) {
-        return;
-    }
+    try {
+        // Vérifier que event est un vrai événement DOM avec preventDefault
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('[DRAG] handleDragOver: événement invalide, skipped');
+            return;
+        }
 
-    // Vérifier si on est au-dessus du canvas
-    const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
-    const isOverCanvas = event.clientX >= canvasRect.left &&
-                        event.clientX <= canvasRect.right &&
-                        event.clientY >= canvasRect.top &&
-                        event.clientY <= canvasRect.bottom;
+        if (!this.isDragging || !this.canvasInstance || !this.canvasInstance.canvas) {
+            return;
+        }
 
-    if (isOverCanvas) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'copy';
+        // Vérifier si on est au-dessus du canvas
+        const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
+        const isOverCanvas = event.clientX >= canvasRect.left &&
+                            event.clientX <= canvasRect.right &&
+                            event.clientY >= canvasRect.top &&
+                            event.clientY <= canvasRect.bottom;
 
-        // Calculer la position sur le canvas
-        const point = this.canvasInstance.getMousePosition(event);
-        this.dragOffset = point;
+        if (isOverCanvas) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
 
-        console.log('[DRAG] ✅ DragOver - Position canvas:', point);
+            // Calculer la position sur le canvas
+            const point = this.canvasInstance.getMousePosition(event);
+            this.dragOffset = point;
 
-        // Mettre à jour le rendu pour montrer le preview
-        this.canvasInstance.render();
+            console.log('[DRAG] ✅ DragOver - Position canvas:', point);
+
+            // Mettre à jour le rendu pour montrer le preview
+            this.canvasInstance.render();
+        }
+    } catch (error) {
+        console.error('[DRAG] Erreur dans handleDragOver:', error);
     }
 };
 
@@ -112,53 +122,63 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
  * Gère le dépôt
  */
 PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
-    console.log('[DRAG] Drop détecté - isDragging:', this.isDragging);
+    try {
+        console.log('[DRAG] Drop détecté - isDragging:', this.isDragging);
 
-    if (!this.isDragging || !this.dragElement || !this.canvasInstance || !this.canvasInstance.canvas) {
-        return;
+        // Vérifier que event est un vrai événement DOM
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('[DRAG] handleDrop: événement invalide, skipped');
+            return;
+        }
+
+        if (!this.isDragging || !this.dragElement || !this.canvasInstance || !this.canvasInstance.canvas) {
+            return;
+        }
+
+        // Vérifier si on dépose sur le canvas
+        const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
+        const isOverCanvas = event.clientX >= canvasRect.left &&
+                            event.clientX <= canvasRect.right &&
+                            event.clientY >= canvasRect.top &&
+                            event.clientY <= canvasRect.bottom;
+
+        if (!isOverCanvas) {
+            console.log('[DRAG] Drop hors du canvas - ignoré');
+            return;
+        }
+
+        event.preventDefault();
+
+        // Calculer la position finale
+        const point = this.canvasInstance.getMousePosition(event);
+        console.log('[DRAG] ✅ Drop sur canvas - Position:', point);
+
+        // Ajuster la position pour centrer l'élément
+        const finalProperties = Object.assign({}, this.dragElement.properties);
+        finalProperties.x = point.x - (finalProperties.width || 100) / 2;
+        finalProperties.y = point.y - (finalProperties.height || 50) / 2;
+
+        // Ajouter l'élément au canvas
+        const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
+        console.log('[DRAG] ✅ Élément ajouté avec ID:', elementId);
+
+        // Sélectionner le nouvel élément
+        this.canvasInstance.selectElement(elementId);
+
+        // Émettre un événement
+        this.canvasInstance.emit('element-dropped', {
+            elementId: elementId,
+            elementType: this.dragElement.type,
+            position: point
+        });
+
+        // Nettoyer
+        this.isDragging = false;
+        this.dragElement = null;
+        this.dragOffset = null;
+    } catch (error) {
+        console.error('[DRAG] Erreur dans handleDrop:', error);
     }
-
-    // Vérifier si on dépose sur le canvas
-    const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
-    const isOverCanvas = event.clientX >= canvasRect.left &&
-                        event.clientX <= canvasRect.right &&
-                        event.clientY >= canvasRect.top &&
-                        event.clientY <= canvasRect.bottom;
-
-    if (!isOverCanvas) {
-        console.log('[DRAG] Drop hors du canvas - ignoré');
-        return;
-    }
-
-    event.preventDefault();
-
-    // Calculer la position finale
-    const point = this.canvasInstance.getMousePosition(event);
-    console.log('[DRAG] ✅ Drop sur canvas - Position:', point);
-
-    // Ajuster la position pour centrer l'élément
-    const finalProperties = Object.assign({}, this.dragElement.properties);
-    finalProperties.x = point.x - (finalProperties.width || 100) / 2;
-    finalProperties.y = point.y - (finalProperties.height || 50) / 2;
-
-    // Ajouter l'élément au canvas
-    const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
-    console.log('[DRAG] ✅ Élément ajouté avec ID:', elementId);
-
-    // Sélectionner le nouvel élément
-    this.canvasInstance.selectElement(elementId);
-
-    // Émettre un événement
-    this.canvasInstance.emit('element-dropped', {
-        elementId: elementId,
-        elementType: this.dragElement.type,
-        position: point
-    });
-
-    // Nettoyer
-    this.isDragging = false;
-    this.dragElement = null;
-    this.dragOffset = null;
 };
 
 /**
