@@ -1488,8 +1488,12 @@ class PDF_Builder_Admin
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
         error_log('[PHP] Script URL: ' . $script_url);
         error_log('[PHP] PDF_BUILDER_PRO_VERSION constant: ' . PDF_BUILDER_PRO_VERSION);
-        wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        error_log('[PHP] Script enqueued successfully with version: ' . PDF_BUILDER_PRO_VERSION);
+        
+        // Forcer une version unique basée sur le timestamp pour forcer le rechargement du cache browser
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd');
+        
+        wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true);
+        error_log('[PHP] Script enqueued successfully with version: ' . $version_param);
 
         // Use wp_localize_script for AJAX configuration - safe method
 wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
