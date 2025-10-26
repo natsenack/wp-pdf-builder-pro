@@ -68,11 +68,19 @@ export class PDFCanvasPerformanceOptimizer {
     }
 
     /**
+     * Vérifie si le rendu doit être effectué (pour frame skipping)
+     */
+    shouldRender() {
+        return this.optimizationConfig.enableFrameSkipping;
+    }
+
+    /**
      * Optimise le rendu avec skipping de frames
      */
     optimizeRendering() {
         if (!this.optimizationConfig.enableFrameSkipping) {
-            return this.canvasInstance.render();
+            this.renderOptimized();
+            return;
         }
 
         this.frameSkipCounter++;
@@ -80,7 +88,7 @@ export class PDFCanvasPerformanceOptimizer {
 
         if (this.frameSkipCounter >= targetFrameInterval / 16.67) { // 60 FPS baseline
             this.frameSkipCounter = 0;
-            return this.renderOptimized();
+            this.renderOptimized();
         }
     }
 
@@ -93,30 +101,27 @@ export class PDFCanvasPerformanceOptimizer {
         if (this.optimizationConfig.enableDirtyRectRendering && this.dirtyRegions.length > 0) {
             this.renderDirtyRegions();
         } else {
-            this.canvasInstance.render();
+            this.renderNormal();
         }
 
         this.metrics.renderTime = performance.now() - startTime;
     }
 
     /**
+     * Rendu normal (délégué depuis l'instance principale)
+     */
+    renderNormal() {
+        // Déléguer au rendu normal de l'instance canvas
+        this.canvasInstance.renderNormal();
+    }
+
+    /**
      * Rend seulement les régions modifiées
      */
     renderDirtyRegions() {
-        const ctx = this.canvasInstance.ctx;
-
-        this.dirtyRegions.forEach(region => {
-            // Effacer la région
-            ctx.clearRect(region.x, region.y, region.width, region.height);
-
-            // Rendre seulement les éléments dans cette région
-            this.canvasInstance.elements.forEach((element, id) => {
-                if (this.isElementInRegion(element, region)) {
-                    this.canvasInstance.renderElement(element);
-                }
-            });
-        });
-
+        // Pour l'instant, rerendre tout le canvas
+        // TODO: Implémenter le rendu partiel optimisé
+        this.renderNormal();
         this.dirtyRegions = [];
     }
 

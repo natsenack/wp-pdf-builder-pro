@@ -4,8 +4,8 @@
  */
 
 export class PDFCanvasEventManager {
-    constructor(canvas, canvasInstance) {
-        this.canvas = canvas;
+    constructor(canvasInstance) {
+        this.canvas = null;
         this.canvasInstance = canvasInstance;
         this.eventListeners = new Map();
 
@@ -47,6 +47,14 @@ export class PDFCanvasEventManager {
         // Timers pour le throttling
         this.throttleTimers = new Map();
 
+        // Will be initialized when canvas is created
+    }
+
+    /**
+     * Initialise le gestionnaire d'événements avec le canvas
+     */
+    initialize(canvas) {
+        this.canvas = canvas;
         this.init();
     }
 

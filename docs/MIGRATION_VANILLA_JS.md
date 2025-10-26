@@ -191,23 +191,30 @@ Puisque 80% de l'architecture fonctionnait déjà, on garde tout ce qui est bon 
 
 ---
 
-### **Phase 2 : Développement Interface Utilisateur**
+### **Phase 2 : Développement Interface Utilisateur** ✅ EN COURS
 #### **Étape 2.1 : Conservation CSS**
-- [ ] Réutiliser CSS toolbar (styles déjà parfaits)
-- [ ] Réutiliser CSS propriétés (panels, contrôles)
-- [ ] Réutiliser CSS éléments canvas (sélection, resize)
+- ✅ Réutiliser CSS toolbar (styles déjà parfaits)
+- ✅ Réutiliser CSS propriétés (panels, contrôles)
+- ✅ Réutiliser CSS éléments canvas (sélection, resize)
 
 #### **Étape 2.2 : Développement Outils**
+- ✅ Correction initialisation renderer (canvas/context)
+- ✅ Correction initialisation event manager
+- ✅ Correction système de rendu avec renderer spécialisé
+- ✅ Correction chargement données template
+- ✅ Correction test HTML (containerId au lieu d'élément canvas)
 - [ ] Implémenter système de sélection (clic, lasso, multiple)
 - [ ] Implémenter transformations (déplacement, redimensionnement, rotation)
 - [ ] Implémenter alignement (grille, guides, aimantation)
 
 #### **Étape 2.3 : Événements et Interactions**
-- [ ] Setup événements souris/clavier natifs
+- ✅ Setup événements souris/clavier natifs (event manager)
 - [ ] Implémenter drag & drop natif
 - [ ] Implémenter undo/redo
 
 #### **Étape 2.4 : Tests Interface**
+- ✅ Test HTML fonctionnel avec chargement template
+- ✅ Bundle compilé 155 KiB (objectif 127-160 KiB)
 - [ ] Tests d'interface utilisateur
 - [ ] Tests cross-browser (IE11+)
 - [ ] Tests responsive

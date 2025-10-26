@@ -4,9 +4,10 @@
  */
 
 export class PDFCanvasRenderer {
-    constructor(canvas, context) {
-        this.canvas = canvas;
-        this.ctx = context;
+    constructor(mainInstance) {
+        this.mainInstance = mainInstance;
+        this.canvas = null;
+        this.ctx = null;
         this.devicePixelRatio = window.devicePixelRatio || 1;
 
         // Cache pour les images et formes
@@ -28,6 +29,15 @@ export class PDFCanvasRenderer {
             lastRenderTime: Date.now()
         };
 
+        // Will be initialized when canvas is created
+    }
+
+    /**
+     * Initialise le renderer avec le canvas et contexte
+     */
+    initialize(canvas, context) {
+        this.canvas = canvas;
+        this.ctx = context;
         this.init();
     }
 
@@ -35,6 +45,7 @@ export class PDFCanvasRenderer {
      * Initialise le renderer
      */
     init() {
+        if (!this.canvas || !this.ctx) return;
         this.optimizeForDevice();
         this.setupContext();
     }

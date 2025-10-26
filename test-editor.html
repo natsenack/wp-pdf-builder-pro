@@ -53,7 +53,7 @@
         </div>
 
         <div id="pdf-builder-canvas-container">
-            <canvas id="pdf-builder-canvas"></canvas>
+            <!-- Canvas will be created dynamically by JavaScript -->
         </div>
 
         <div id="pdf-builder-properties" style="display: none;">
@@ -145,8 +145,8 @@
 
             console.log('Initializing with template data:', templateData);
 
-            // Initialize canvas
-            const pdfCanvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvas, {
+            // Initialize canvas - pass container ID, not canvas element
+            const pdfCanvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-builder-canvas-container', {
                 width: 595, // A4 width in points
                 height: 842, // A4 height in points
                 templateData: templateData

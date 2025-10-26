@@ -73,6 +73,12 @@ export class PDFCanvasVanilla {
             // Configurer le contexte
             this.setupContext();
 
+            // Initialiser le renderer avec le canvas et contexte
+            this.renderer.initialize(this.canvas, this.ctx);
+
+            // Initialiser le gestionnaire d'événements
+            this.eventManager.initialize(this.canvas);
+
             // Attacher les gestionnaires d'événements
             this.attachEventListeners();
 
@@ -156,9 +162,25 @@ export class PDFCanvasVanilla {
      * Charge les données initiales
      */
     async loadInitialData() {
+        // Charger les données du template si fournies
+        if (this.options.templateData && this.options.templateData.elements) {
+            this.loadTemplateData(this.options.templateData);
+        }
+
         // Charger les données WooCommerce en mode test
         this.wooCommerceManager.setTestMode(true);
         await this.wooCommerceManager.loadWooCommerceData();
+    }
+
+    /**
+     * Charge les données du template
+     */
+    loadTemplateData(templateData) {
+        if (!templateData.elements) return;
+
+        templateData.elements.forEach(elementData => {
+            this.addElement(elementData.type, elementData);
+        });
     }
 
     /**
@@ -491,12 +513,20 @@ export class PDFCanvasVanilla {
      * Rend tous les éléments sur le canvas
      */
     render() {
-        // Utiliser l'optimiseur de performance si disponible
-        if (this.performanceOptimizer) {
+        // Vérifier si l'optimisation de performance est activée
+        if (this.performanceOptimizer && this.performanceOptimizer.shouldRender()) {
             this.performanceOptimizer.optimizeRendering();
             return;
         }
 
+        // Rendu normal
+        this.renderNormal();
+    }
+
+    /**
+     * Rendu normal sans optimisation
+     */
+    renderNormal() {
         // Effacer le canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -505,9 +535,9 @@ export class PDFCanvasVanilla {
             this.drawGrid();
         }
 
-        // Dessiner tous les éléments
+        // Dessiner tous les éléments en utilisant le renderer spécialisé
         for (const element of this.elements.values()) {
-            this.renderElement(element);
+            this.renderer.renderElement(element, element.properties);
         }
 
         // Dessiner les poignées de sélection
