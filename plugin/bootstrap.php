@@ -23,8 +23,13 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
 }
 
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '1.1.1');
+    define('PDF_BUILDER_PRO_VERSION', '2.0.0-debug-' . time());
 }
+
+// Debug logging
+$debug_log = plugin_dir_path(__FILE__) . 'debug.log';
+file_put_contents($debug_log, "[" . date('Y-m-d H:i:s') . "] Bootstrap loaded. Version: " . PDF_BUILDER_PRO_VERSION . "\n", FILE_APPEND);
+error_log("[PDF-BUILDER] Bootstrap.php loaded. Version: " . PDF_BUILDER_PRO_VERSION);
 
 // Fonction pour charger le core du plugin
 function pdf_builder_load_core() {

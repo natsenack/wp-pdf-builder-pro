@@ -1487,8 +1487,9 @@ class PDF_Builder_Admin
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
         error_log('[PHP] Script URL: ' . $script_url);
+        error_log('[PHP] PDF_BUILDER_PRO_VERSION constant: ' . PDF_BUILDER_PRO_VERSION);
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        error_log('[PHP] Script enqueued successfully');
+        error_log('[PHP] Script enqueued successfully with version: ' . PDF_BUILDER_PRO_VERSION);
 
         // Use wp_localize_script for AJAX configuration - safe method
 wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
