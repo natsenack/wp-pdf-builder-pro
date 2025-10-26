@@ -41,15 +41,29 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<p>Scripts chargés directement avec plugins_url()</p>';
 
-    // DEBUG: Vérifier que les scripts sont dans le DOM
+    // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
         setTimeout(function() {
-            var scripts = document.querySelectorAll("script[src*=\'pdf-builder\']");
-            console.log("🔍 SCRIPTS PDF-BUILDER TROUVÉS DANS LE DOM:", scripts.length);
-            scripts.forEach(function(script, index) {
-                console.log("🔍 Script " + index + ":", script.src);
-            });
-        }, 500);
+            console.log("🔍 TEST EXECUTION SCRIPTS...");
+
+            try {
+                // Tester si les scripts ont défini les variables globales
+                console.log("🔍 window.pdfBuilderPro:", typeof window.pdfBuilderPro);
+                console.log("🔍 window.pdfBuilderPro.init:", typeof window.pdfBuilderPro?.init);
+
+                if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
+                    console.log("✅ pdfBuilderPro.init trouvé, test d\'appel...");
+                    // Essayer un appel de test
+                    var testResult = window.pdfBuilderPro.init("test-container", {});
+                    console.log("✅ pdfBuilderPro.init test result:", testResult);
+                } else {
+                    console.log("❌ pdfBuilderPro.init NON trouvé");
+                }
+            } catch (error) {
+                console.error("❌ ERREUR lors du test d\'exécution:", error);
+                console.error("Stack:", error.stack);
+            }
+        }, 1000);
     </script>';
     echo '</div>';
 

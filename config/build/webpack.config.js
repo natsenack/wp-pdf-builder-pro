@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
+  mode: 'development', // CHANGÉ TEMPORAIREMENT pour le débogage
   entry: {
     'pdf-builder-script-loader': './resources/js/script-loader.js',
     'pdf-builder-admin-debug': './resources/js/main.js',
