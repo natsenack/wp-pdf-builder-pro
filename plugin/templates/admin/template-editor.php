@@ -772,23 +772,31 @@ function setupDragAndDrop() {
     // Événements de drag sur les éléments
     elementsContainer.addEventListener('dragstart', function(e) {
         console.log('[DRAGDROP] dragstart event, target:', e.target, 'classe:', e.target.className);
-        if (e.target.classList.contains('element-item')) {
-            var elementType = e.target.getAttribute('data-element-type');
+        
+        // Chercher l'ancêtre .element-item (délégation d'événements robuste)
+        var elementItem = e.target.closest('.element-item');
+        if (elementItem) {
+            var elementType = elementItem.getAttribute('data-element-type');
             var elementData = {
                 type: 'new-element',
                 elementType: elementType,
-                elementData: JSON.parse(e.target.dataset.element || '{}')
+                elementData: JSON.parse(elementItem.dataset.element || '{}')
             };
             console.log('[DRAGDROP] Début du drag:', elementType, 'data:', elementData);
             e.dataTransfer.effectAllowed = 'copy';
             e.dataTransfer.setData('application/json', JSON.stringify(elementData));
-            e.target.classList.add('dragging');
+            elementItem.classList.add('dragging');
+        } else {
+            console.warn('[DRAGDROP] ⚠️ Pas de .element-item trouvé pour:', e.target);
         }
     });
     
     elementsContainer.addEventListener('dragend', function(e) {
         console.log('[DRAGDROP] dragend event');
-        e.target.classList.remove('dragging');
+        var elementItem = e.target.closest('.element-item');
+        if (elementItem) {
+            elementItem.classList.remove('dragging');
+        }
     });
     
     // Événements de drop sur le canvas
