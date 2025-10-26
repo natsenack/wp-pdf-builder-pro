@@ -2,13 +2,14 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development', // CHANGÉ TEMPORAIREMENT pour le débogage
   entry: {
-    'pdf-builder-script-loader': './resources/js/script-loader.js',
     'pdf-builder-admin-debug': './resources/js/main.js',
     'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
+    // script-loader is copied directly without webpack processing
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
   output: {
@@ -66,6 +67,19 @@ module.exports = {
     'react-dom': 'ReactDOM'
   },
   plugins: [
+    // Copier les scripts directement sans traitement webpack
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../../resources/js/script-loader.js'),
+          to: path.resolve(__dirname, '../../assets/js/dist/pdf-builder-script-loader.js')
+        },
+        {
+          from: path.resolve(__dirname, '../../resources/js/main.js'),
+          to: path.resolve(__dirname, '../../assets/js/dist/pdf-builder-admin-debug.js')
+        }
+      ]
+    }),
     // Plugin de compression pour les assets
     new CompressionPlugin({
       algorithm: 'gzip',

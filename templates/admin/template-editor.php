@@ -41,6 +41,20 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<p>Scripts chargés directement avec plugins_url()</p>';
 
+    // DEBUG: Vérifier que les scripts sont dans le DOM et s'exécutent
+    echo '<script>
+        setTimeout(function() {
+            console.log("🔍 VÉRIFICATION MAIN BUNDLE...");
+            console.log("🔍 window.pdfBuilderInitReact:", typeof window.pdfBuilderInitReact);
+
+            var scripts = document.querySelectorAll("script[src*=\'pdf-builder\']");
+            console.log("🔍 SCRIPTS PDF-BUILDER DANS LE DOM:", scripts.length);
+            scripts.forEach(function(script, index) {
+                console.log("🔍 Script " + index + ":", script.src, "loaded:", script.hasAttribute("data-loaded") || "unknown");
+            });
+        }, 2000);
+    </script>';
+
     // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
         // Intercepter les erreurs JavaScript globales
