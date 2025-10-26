@@ -5,6 +5,36 @@ if (!current_user_can('manage_options')) {
 ?>
 <div id="wpbody-content">
     <div class="pdf-builder-workspace">
+        <!-- Header -->
+        <div class="pdf-builder-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><?php esc_html_e('PDF Builder Pro - Template Editor', 'pdf-builder-pro'); ?></h1>
+                    <div class="template-info">
+                        <?php
+                        $template_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+                        if ($template_id > 0) {
+                            // Ici vous pouvez ajouter la logique pour récupérer le nom du template
+                            echo '<span class="template-name">' . sprintf(__('Editing Template #%d', 'pdf-builder-pro'), $template_id) . '</span>';
+                        } else {
+                            echo '<span class="template-name">' . __('New Template', 'pdf-builder-pro') . '</span>';
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" class="button button-secondary">
+                        <span class="dashicons dashicons-arrow-left-alt"></span>
+                        <?php esc_html_e('Back to Templates', 'pdf-builder-pro'); ?>
+                    </a>
+                    <button id="btn-preview" class="button button-secondary">
+                        <span class="dashicons dashicons-visibility"></span>
+                        <?php esc_html_e('Preview', 'pdf-builder-pro'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Loading State -->
         <div id="pdf-builder-loading" class="pdf-builder-loading">
             <div class="spinner is-active"></div>
@@ -15,29 +45,65 @@ if (!current_user_can('manage_options')) {
         <div id="pdf-builder-editor" class="pdf-builder-editor" style="display: none;">
             <!-- Toolbar -->
             <div class="pdf-builder-toolbar">
+                <!-- Text Tools -->
                 <div class="toolbar-group">
-                    <h3><?php esc_html_e('Elements', 'pdf-builder-pro'); ?></h3>
-                    <button id="btn-add-text" class="toolbar-btn" title="Add Text">
-                        <span class="dashicons dashicons-edit"></span> <?php esc_html_e('Text', 'pdf-builder-pro'); ?>
+                    <h3><?php esc_html_e('Text', 'pdf-builder-pro'); ?></h3>
+                    <button id="tool-select" class="toolbar-btn tool-btn" data-tool="select" title="Sélection (V)">
+                        <span class="tool-icon">👆</span>
                     </button>
-                    <button id="btn-add-rectangle" class="toolbar-btn" title="Add Rectangle">
-                        <span class="dashicons dashicons-admin-page"></span> <?php esc_html_e('Rectangle', 'pdf-builder-pro'); ?>
+                    <button id="tool-add-text" class="toolbar-btn tool-btn" data-tool="add-text" title="Texte Simple (T)">
+                        <span class="tool-icon">📝</span>
                     </button>
-                    <button id="btn-add-circle" class="toolbar-btn" title="Add Circle">
-                        <span class="dashicons dashicons-admin-comments"></span> <?php esc_html_e('Circle', 'pdf-builder-pro'); ?>
+                    <button id="tool-add-text-title" class="toolbar-btn tool-btn" data-tool="add-text-title" title="Titre (H)">
+                        <span class="tool-icon">📄</span>
                     </button>
-                    <button id="btn-add-line" class="toolbar-btn" title="Add Line">
-                        <span class="dashicons dashicons-minus"></span> <?php esc_html_e('Line', 'pdf-builder-pro'); ?>
+                    <button id="tool-add-text-subtitle" class="toolbar-btn tool-btn" data-tool="add-text-subtitle" title="Sous-titre (S)">
+                        <span class="tool-icon">📋</span>
                     </button>
                 </div>
 
+                <!-- Shape Tools -->
+                <div class="toolbar-group">
+                    <h3><?php esc_html_e('Shapes', 'pdf-builder-pro'); ?></h3>
+                    <button id="tool-add-rectangle" class="toolbar-btn tool-btn" data-tool="add-rectangle" title="Rectangle (R)">
+                        <span class="tool-icon">▭</span>
+                    </button>
+                    <button id="tool-add-circle" class="toolbar-btn tool-btn" data-tool="add-circle" title="Cercle (C)">
+                        <span class="tool-icon">○</span>
+                    </button>
+                    <button id="tool-add-line" class="toolbar-btn tool-btn" data-tool="add-line" title="Ligne (L)">
+                        <span class="tool-icon">━</span>
+                    </button>
+                    <button id="tool-add-arrow" class="toolbar-btn tool-btn" data-tool="add-arrow" title="Flèche (A)">
+                        <span class="tool-icon">➤</span>
+                    </button>
+                    <button id="tool-add-triangle" class="toolbar-btn tool-btn" data-tool="add-triangle" title="Triangle (3)">
+                        <span class="tool-icon">△</span>
+                    </button>
+                    <button id="tool-add-star" class="toolbar-btn tool-btn" data-tool="add-star" title="Étoile (5)">
+                        <span class="tool-icon">⭐</span>
+                    </button>
+                </div>
+
+                <!-- Insert Tools -->
+                <div class="toolbar-group">
+                    <h3><?php esc_html_e('Insert', 'pdf-builder-pro'); ?></h3>
+                    <button id="tool-add-divider" class="toolbar-btn tool-btn" data-tool="add-divider" title="Séparateur (D)">
+                        <span class="tool-icon">⎯</span>
+                    </button>
+                    <button id="tool-add-image" class="toolbar-btn tool-btn" data-tool="add-image" title="Image (I)">
+                        <span class="tool-icon">🖼️</span>
+                    </button>
+                </div>
+
+                <!-- Actions -->
                 <div class="toolbar-group">
                     <h3><?php esc_html_e('Actions', 'pdf-builder-pro'); ?></h3>
                     <button id="btn-save" class="toolbar-btn toolbar-btn-primary" title="Save">
-                        <span class="dashicons dashicons-yes"></span> <?php esc_html_e('Save', 'pdf-builder-pro'); ?>
+                        <span class="dashicons dashicons-yes"></span>
                     </button>
                     <button id="btn-export-pdf" class="toolbar-btn toolbar-btn-primary" title="Export PDF">
-                        <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export PDF', 'pdf-builder-pro'); ?>
+                        <span class="dashicons dashicons-download"></span>
                     </button>
                     <button id="btn-undo" class="toolbar-btn" title="Undo" disabled>
                         <span class="dashicons dashicons-undo"></span>
@@ -58,6 +124,17 @@ if (!current_user_can('manage_options')) {
 
             <!-- Main Content Area -->
             <div class="pdf-builder-content">
+                <!-- Elements Sidebar -->
+                <div class="pdf-builder-elements-sidebar">
+                    <h3><?php esc_html_e('Elements', 'pdf-builder-pro'); ?></h3>
+                    <div class="elements-search">
+                        <input type="text" id="elements-search" placeholder="<?php esc_html_e('Search elements...', 'pdf-builder-pro'); ?>">
+                    </div>
+                    <div id="elements-container" class="elements-container">
+                        <!-- Elements will be populated by JavaScript -->
+                    </div>
+                </div>
+
                 <!-- Canvas Area -->
                 <div class="pdf-builder-canvas-area">
                     <div id="pdf-canvas-container" class="pdf-canvas-container">
@@ -91,6 +168,57 @@ if (!current_user_can('manage_options')) {
     flex-direction: column;
     height: 100vh;
     background-color: #f5f5f5;
+}
+
+/* Header */
+.pdf-builder-header {
+    background-color: white;
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    max-width: 100%;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-left h1 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.template-info {
+    font-size: 14px;
+    color: #646970;
+}
+
+.template-name {
+    background-color: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+.header-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.header-right .button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* Loading State */
@@ -154,7 +282,24 @@ if (!current_user_can('manage_options')) {
     transition: all 0.2s ease;
 }
 
-.toolbar-btn:hover:not(:disabled) {
+.tool-btn {
+    padding: 8px;
+    min-width: 36px;
+    justify-content: center;
+}
+
+.tool-btn.active {
+    background-color: #2271b1;
+    color: white;
+    border-color: #1e5aa8;
+}
+
+.tool-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.toolbar-btn:hover:not(:disabled):not(.active) {
     background-color: #e8e8e8;
     border-color: #ccc;
 }
@@ -269,6 +414,119 @@ if (!current_user_can('manage_options')) {
     margin: 20px 0;
 }
 
+/* Elements Sidebar */
+.pdf-builder-elements-sidebar {
+    width: 280px;
+    padding: 15px;
+    background-color: white;
+    border-right: 1px solid #e5e5e5;
+    overflow-y: auto;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.pdf-builder-elements-sidebar h3 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #2271b1;
+    padding-bottom: 10px;
+}
+
+.elements-search {
+    margin-bottom: 15px;
+}
+
+.elements-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.elements-search input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.1);
+}
+
+.elements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.element-category {
+    margin-bottom: 20px;
+}
+
+.element-category-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.element-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #fafafa;
+}
+
+.element-item:hover {
+    background-color: #f0f8ff;
+    border-color: #2271b1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.15);
+}
+
+.element-item.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+.element-icon {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+.element-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.element-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.element-description {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 /* Error State */
 .pdf-builder-error {
     display: flex;
@@ -292,22 +550,53 @@ if (!current_user_can('manage_options')) {
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
+    .pdf-builder-elements-sidebar,
     .pdf-builder-properties {
         width: 250px;
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
+    .pdf-builder-elements-sidebar,
+    .pdf-builder-properties {
+        width: 220px;
+    }
+}
+
+@media (max-width: 1000px) {
     .pdf-builder-content {
         flex-direction: column;
+        height: calc(100vh - 120px);
+    }
+
+    .pdf-builder-elements-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e5e5e5;
+        max-height: 200px;
+    }
+
+    .pdf-builder-canvas-area {
+        flex: 1;
     }
 
     .pdf-builder-properties {
         width: 100%;
         border-left: none;
         border-top: 1px solid #e5e5e5;
-        max-height: 200px;
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pdf-builder-elements-sidebar,
+    .pdf-builder-properties {
+        max-height: 150px;
+    }
+
+    .pdf-builder-canvas-area {
+        min-height: 400px;
     }
 }
 </style>
@@ -355,6 +644,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Initialize the editor
             editor.init().then(function() {
+                // Initialize elements sidebar
+                initializeElementsSidebar(editor);
+
                 // Setup event listeners
                 setupToolbarEvents(editor);
                 setupCanvasEvents(editor);
@@ -376,47 +668,205 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupToolbarEvents(editor) {
-        // Add element buttons
-        document.getElementById('btn-add-text').addEventListener('click', function() {
-            editor.addElement('text', {
-                x: 50,
-                y: 50,
-                text: '<?php esc_html_e('New Text', 'pdf-builder-pro'); ?>',
-                fontSize: 14,
-                color: '#000000'
+        var currentTool = 'select';
+        var toolButtons = document.querySelectorAll('.tool-btn');
+
+        // Tool definitions matching the test specifications
+        var toolDefinitions = {
+            'select': { action: 'select', shortcut: 'V' },
+            'add-text': { action: 'add-text', shortcut: 'T' },
+            'add-text-title': { action: 'add-text-title', shortcut: 'H' },
+            'add-text-subtitle': { action: 'add-text-subtitle', shortcut: 'S' },
+            'add-rectangle': { action: 'add-rectangle', shortcut: 'R' },
+            'add-circle': { action: 'add-circle', shortcut: 'C' },
+            'add-line': { action: 'add-line', shortcut: 'L' },
+            'add-arrow': { action: 'add-arrow', shortcut: 'A' },
+            'add-triangle': { action: 'add-triangle', shortcut: '3' },
+            'add-star': { action: 'add-star', shortcut: '5' },
+            'add-divider': { action: 'add-divider', shortcut: 'D' },
+            'add-image': { action: 'add-image', shortcut: 'I' }
+        };
+
+        // Function to set active tool
+        function setActiveTool(toolId) {
+            // Remove active class from all tool buttons
+            toolButtons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to selected tool
+            var activeBtn = document.getElementById('tool-' + toolId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            currentTool = toolId;
+            console.log('🔧 Tool changed to:', toolId);
+
+            // Notify canvas about tool change
+            if (editor && typeof editor.setTool === 'function') {
+                editor.setTool(toolId);
+            }
+        }
+
+        // Function to handle tool action
+        function handleToolAction(toolId) {
+            var toolDef = toolDefinitions[toolId];
+            if (!toolDef) return;
+
+            if (toolId === 'select') {
+                setActiveTool('select');
+            } else if (toolId.startsWith('add-')) {
+                // Add element and keep tool active
+                addElementByTool(toolId);
+            }
+        }
+
+        // Function to add element based on tool
+        function addElementByTool(toolId) {
+            var elementType = toolId.replace('add-', '');
+            var defaultProps = {};
+
+            switch (elementType) {
+                case 'text':
+                    defaultProps = {
+                        x: 50,
+                        y: 50,
+                        text: '<?php esc_html_e('New Text', 'pdf-builder-pro'); ?>',
+                        fontSize: 14,
+                        color: '#000000'
+                    };
+                    break;
+                case 'text-title':
+                    defaultProps = {
+                        x: 50,
+                        y: 50,
+                        text: '<?php esc_html_e('Title', 'pdf-builder-pro'); ?>',
+                        fontSize: 24,
+                        color: '#000000',
+                        fontWeight: 'bold'
+                    };
+                    break;
+                case 'text-subtitle':
+                    defaultProps = {
+                        x: 50,
+                        y: 100,
+                        text: '<?php esc_html_e('Subtitle', 'pdf-builder-pro'); ?>',
+                        fontSize: 18,
+                        color: '#666666'
+                    };
+                    break;
+                case 'rectangle':
+                    defaultProps = {
+                        x: 100,
+                        y: 100,
+                        width: 100,
+                        height: 60,
+                        fillColor: '#cccccc',
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'circle':
+                    defaultProps = {
+                        x: 150,
+                        y: 150,
+                        width: 80,
+                        height: 80,
+                        fillColor: '#cccccc',
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'line':
+                    defaultProps = {
+                        x: 200,
+                        y: 200,
+                        width: 100,
+                        height: 2,
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'arrow':
+                    defaultProps = {
+                        x: 200,
+                        y: 200,
+                        width: 100,
+                        height: 20,
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'triangle':
+                    defaultProps = {
+                        x: 150,
+                        y: 150,
+                        width: 80,
+                        height: 80,
+                        fillColor: '#cccccc',
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'star':
+                    defaultProps = {
+                        x: 150,
+                        y: 150,
+                        width: 80,
+                        height: 80,
+                        fillColor: '#cccccc',
+                        strokeColor: '#000000'
+                    };
+                    break;
+                case 'divider':
+                    defaultProps = {
+                        x: 50,
+                        y: 200,
+                        width: 500,
+                        height: 2,
+                        strokeColor: '#cccccc'
+                    };
+                    break;
+                case 'image':
+                    defaultProps = {
+                        x: 100,
+                        y: 100,
+                        width: 150,
+                        height: 100,
+                        src: '' // Will need image picker
+                    };
+                    break;
+            }
+
+            editor.addElement(elementType, defaultProps);
+        }
+
+        // Add click handlers for tool buttons
+        toolButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var toolId = this.dataset.tool;
+                handleToolAction(toolId);
             });
         });
 
-        document.getElementById('btn-add-rectangle').addEventListener('click', function() {
-            editor.addElement('rectangle', {
-                x: 100,
-                y: 100,
-                width: 100,
-                height: 60,
-                fillColor: '#cccccc',
-                strokeColor: '#000000'
-            });
-        });
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Only handle shortcuts when not typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
 
-        document.getElementById('btn-add-circle').addEventListener('click', function() {
-            editor.addElement('circle', {
-                x: 150,
-                y: 150,
-                width: 80,
-                height: 80,
-                fillColor: '#cccccc',
-                strokeColor: '#000000'
-            });
-        });
+            var key = e.key.toUpperCase();
+            var toolId = null;
 
-        document.getElementById('btn-add-line').addEventListener('click', function() {
-            editor.addElement('line', {
-                x: 200,
-                y: 200,
-                width: 100,
-                height: 2,
-                strokeColor: '#000000'
-            });
+            // Find tool by shortcut
+            for (var id in toolDefinitions) {
+                if (toolDefinitions[id].shortcut === key) {
+                    toolId = id;
+                    break;
+                }
+            }
+
+            if (toolId) {
+                e.preventDefault();
+                handleToolAction(toolId);
+            }
         });
 
         // Action buttons
@@ -448,7 +898,17 @@ document.addEventListener('DOMContentLoaded', function() {
             canvas.style.transformOrigin = 'top center';
             document.getElementById('zoom-level').textContent = Math.round(level * 100) + '%';
         }
+
+        // Set initial tool
+        setActiveTool('select');
     }
+
+    // Header button handlers
+    document.getElementById('btn-preview').addEventListener('click', function() {
+        console.log('👁️ Opening preview...');
+        // TODO: Implement preview functionality
+        alert('<?php esc_html_e('Preview functionality coming soon', 'pdf-builder-pro'); ?>');
+    });
 
     function setupCanvasEvents(editor) {
         // Listen for element selection
@@ -468,6 +928,123 @@ document.addEventListener('DOMContentLoaded', function() {
         var content = document.getElementById('properties-content');
         content.innerHTML = '<p><strong><?php esc_html_e('Element:', 'pdf-builder-pro'); ?></strong> ' + elementId + '</p>';
         content.innerHTML += '<p><em><?php esc_html_e('Property editing coming soon', 'pdf-builder-pro'); ?></em></p>';
+    }
+
+    function initializeElementsSidebar(editor) {
+        var elementsContainer = document.getElementById('elements-container');
+        var searchInput = document.getElementById('elements-search');
+
+        // Get elements library
+        var elementLibrary = window.PDFBuilderPro.getAllElements();
+
+        // Function to render elements
+        function renderElements(elements) {
+            elementsContainer.innerHTML = '';
+
+            for (var category in elements) {
+                var categoryElements = elements[category];
+                if (categoryElements.length === 0) continue;
+
+                // Create category section
+                var categoryDiv = document.createElement('div');
+                categoryDiv.className = 'element-category';
+
+                var categoryTitle = document.createElement('div');
+                categoryTitle.className = 'element-category-title';
+                categoryTitle.textContent = getCategoryLabel(category);
+                categoryDiv.appendChild(categoryTitle);
+
+                // Add elements
+                categoryElements.forEach(function(element) {
+                    var elementDiv = document.createElement('div');
+                    elementDiv.className = 'element-item';
+                    elementDiv.draggable = true;
+                    elementDiv.dataset.elementType = element.type;
+
+                    elementDiv.innerHTML = `
+                        <div class="element-icon">${element.icon}</div>
+                        <div class="element-info">
+                            <div class="element-name">${element.label}</div>
+                            <div class="element-description">${element.description}</div>
+                        </div>
+                    `;
+
+                    // Add click handler
+                    elementDiv.addEventListener('click', function() {
+                        addElementToCanvas(editor, element);
+                    });
+
+                    // Add drag handlers
+                    elementDiv.addEventListener('dragstart', function(e) {
+                        e.dataTransfer.setData('application/json', JSON.stringify(element));
+                        this.classList.add('dragging');
+                    });
+
+                    elementDiv.addEventListener('dragend', function() {
+                        this.classList.remove('dragging');
+                    });
+
+                    categoryDiv.appendChild(elementDiv);
+                });
+
+                elementsContainer.appendChild(categoryDiv);
+            }
+        }
+
+        // Function to get category label
+        function getCategoryLabel(category) {
+            var labels = {
+                special: 'Éléments WooCommerce'
+            };
+            return labels[category] || category;
+        }
+
+        // Function to add element to canvas
+        function addElementToCanvas(editor, element) {
+            var defaultProps = element.defaultProps || {};
+            editor.addElement(element.type, defaultProps);
+        }
+
+        // Initial render
+        renderElements(elementLibrary);
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            var query = this.value.trim();
+            if (query.length === 0) {
+                renderElements(elementLibrary);
+            } else {
+                var filteredElements = {};
+                for (var category in elementLibrary) {
+                    var categoryElements = elementLibrary[category];
+                    var filtered = categoryElements.filter(function(element) {
+                        return element.label.toLowerCase().includes(query.toLowerCase()) ||
+                               element.description.toLowerCase().includes(query.toLowerCase()) ||
+                               element.type.toLowerCase().includes(query.toLowerCase());
+                    });
+                    if (filtered.length > 0) {
+                        filteredElements[category] = filtered;
+                    }
+                }
+                renderElements(filteredElements);
+            }
+        });
+
+        // Setup canvas drop zone
+        var canvasContainer = document.getElementById('pdf-canvas-container');
+        canvasContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        canvasContainer.addEventListener('drop', function(e) {
+            e.preventDefault();
+            try {
+                var elementData = JSON.parse(e.dataTransfer.getData('application/json'));
+                addElementToCanvas(editor, elementData);
+            } catch (error) {
+                console.error('Error dropping element:', error);
+            }
+        });
     }
 
     function showError(message) {

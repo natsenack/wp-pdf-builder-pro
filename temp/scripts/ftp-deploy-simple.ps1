@@ -84,7 +84,7 @@ Write-Host "✅ Prérequis validés" -ForegroundColor Green
 Write-Host "2. Chargement de la configuration..." -ForegroundColor Cyan
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$projectRoot = Split-Path -Parent $scriptPath
+$projectRoot = Split-Path -Parent (Split-Path -Parent $scriptPath)
 $configFile = Join-Path $scriptPath "ftp-config.env"
 
 if (-not (Test-Path $configFile)) {

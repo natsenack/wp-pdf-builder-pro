@@ -14,6 +14,7 @@ import { WooCommerceElementsManager, wooCommerceElementsManager } from './pdf-ca
 import { ElementCustomizationService, elementCustomizationService } from './pdf-canvas-customization.js';
 import CanvasOptimizer from './pdf-canvas-optimizer.js';
 import CanvasTests from './pdf-canvas-tests.js';
+import { ELEMENT_LIBRARY, getAllElements, getElementsByCategory, getElementByType, getAllElementsFlat, searchElements } from './pdf-canvas-element-library.js';
 
 console.log('📚 Tous les modules ES6 importés avec succès');
 
@@ -32,10 +33,16 @@ const PDFBuilderPro = {
     elementCustomizationService,
     CanvasOptimizer,
     CanvasTests,
+    ELEMENT_LIBRARY,
+    getAllElements,
+    getElementsByCategory,
+    getElementByType,
+    getAllElementsFlat,
+    searchElements,
 
     // Alias pour la compatibilité avec le template-editor.php
     PDFCanvasVanilla: VanillaCanvas,
-    ElementLibrary: CanvasProperties, // Utiliser CanvasProperties comme ElementLibrary
+    ElementLibrary: ELEMENT_LIBRARY, // Bibliothèque d'éléments complète
     ToolbarManager: CanvasEvents, // Utiliser CanvasEvents comme ToolbarManager
     PropertiesPanel: CanvasProperties, // Alias pour PropertiesPanel
 
@@ -81,10 +88,16 @@ window.ElementCustomizationService = ElementCustomizationService;
 window.elementCustomizationService = elementCustomizationService;
 window.CanvasOptimizer = CanvasOptimizer;
 window.CanvasTests = CanvasTests;
+window.ELEMENT_LIBRARY = ELEMENT_LIBRARY;
+window.getAllElements = getAllElements;
+window.getElementsByCategory = getElementsByCategory;
+window.getElementByType = getElementByType;
+window.getAllElementsFlat = getAllElementsFlat;
+window.searchElements = searchElements;
 
 // Alias pour la compatibilité avec template-editor.php
 window.PDFCanvasVanilla = VanillaCanvas;
-window.ElementLibrary = CanvasProperties;
+window.ElementLibrary = ELEMENT_LIBRARY;
 window.ToolbarManager = CanvasEvents;
 window.PropertiesPanel = CanvasProperties;
 

@@ -14,7 +14,9 @@ import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
 import { PDFCanvasPropertiesManager } from './pdf-canvas-properties.js';
 import { PDFCanvasLayersManager } from './pdf-canvas-layers.js';
 import { PDFCanvasExportManager } from './pdf-canvas-export.js';
-import { PDFCanvasPerformanceOptimizer } from './pdf-canvas-optimizer.js';
+import { PDFCanvasTransformationsManager } from './pdf-canvas-transformations.js';
+import { PDFCanvasHistoryManager } from './pdf-canvas-history.js';
+import { PDFCanvasDragDropManager } from './pdf-canvas-dragdrop.js';
 
 export class PDFCanvasVanilla {
     constructor(containerId, options = {}) {
@@ -52,6 +54,9 @@ export class PDFCanvasVanilla {
         this.layersManager = new PDFCanvasLayersManager(this);
         this.exportManager = new PDFCanvasExportManager(this);
         this.performanceOptimizer = new PDFCanvasPerformanceOptimizer(this);
+        this.transformationsManager = new PDFCanvasTransformationsManager(this);
+        this.historyManager = new PDFCanvasHistoryManager(this);
+        this.dragDropManager = new PDFCanvasDragDropManager(this);
 
         // État d'interaction
         this.mode = 'select'; // select, draw, text, etc.
@@ -246,6 +251,19 @@ export class PDFCanvasVanilla {
     handleMouseMove(event) {
         const point = this.getMousePosition(event);
 
+        // Gérer les transformations en cours
+        if (this.transformationsManager.isTransforming) {
+            this.transformationsManager.updateTransform(point);
+            return;
+        }
+
+        // Gérer la sélection par rectangle
+        if (this.selectionManager.isSelecting) {
+            this.selectionManager.updateSelection(point);
+            this.render();
+            return;
+        }
+
         if (this.dragState) {
             this.handleDrag(point);
         } else {
@@ -257,6 +275,22 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse up
      */
     handleMouseUp(event) {
+        const point = this.getMousePosition(event);
+
+        // Terminer les transformations
+        if (this.transformationsManager.isTransforming) {
+            this.transformationsManager.endTransform();
+            return;
+        }
+
+        // Terminer la sélection par rectangle
+        if (this.selectionManager.isSelecting) {
+            const multiSelect = event.ctrlKey || event.metaKey;
+            this.selectionManager.endSelection(multiSelect);
+            this.render();
+            return;
+        }
+
         if (this.dragState) {
             this.endDrag();
         }
@@ -331,13 +365,24 @@ export class PDFCanvasVanilla {
      * Gère le mode sélection
      */
     handleSelectMode(point) {
-        const element = this.getElementAtPoint(point);
+        const multiSelect = event.ctrlKey || event.metaKey;
 
-        if (element) {
-            this.selectElement(element.id);
+        // Vérifier d'abord si on clique sur un handle de transformation
+        const transformHandle = this.transformationsManager.getHandleAtPoint(point, this.selectedElement);
+        if (transformHandle) {
+            this.transformationsManager.startTransform(point, transformHandle);
+            return;
+        }
+
+        // Sinon, gérer la sélection normale
+        const elementSelected = this.selectionManager.selectAtPoint(point, multiSelect);
+
+        if (elementSelected) {
+            // Démarrer le déplacement si un élément est sélectionné
             this.startDrag(point);
         } else {
-            this.deselectElement();
+            // Démarrer une sélection par rectangle
+            this.selectionManager.startSelection(point);
         }
     }
 
@@ -408,6 +453,14 @@ export class PDFCanvasVanilla {
      */
     selectElement(elementId) {
         this.selectedElement = this.elements.get(elementId);
+        this.selectionManager.clearSelection();
+        if (this.selectedElement) {
+            this.selectionManager.selectAtPoint(
+                { x: this.selectedElement.properties.x + this.selectedElement.properties.width / 2,
+                  y: this.selectedElement.properties.y + this.selectedElement.properties.height / 2 },
+                false
+            );
+        }
         this.render();
     }
 
@@ -416,6 +469,7 @@ export class PDFCanvasVanilla {
      */
     deselectElement() {
         this.selectedElement = null;
+        this.selectionManager.clearSelection();
         this.render();
     }
 
@@ -473,7 +527,7 @@ export class PDFCanvasVanilla {
         };
 
         this.elements.set(elementId, element);
-        this.saveToHistory();
+        this.historyManager.saveState();
         this.render();
 
         return elementId;
@@ -498,6 +552,7 @@ export class PDFCanvasVanilla {
         element.properties[property] = validatedValue;
         element.updatedAt = Date.now();
 
+        this.historyManager.saveState();
         this.render();
         return true;
     }
@@ -510,8 +565,30 @@ export class PDFCanvasVanilla {
             if (this.selectedElement && this.selectedElement.id === elementId) {
                 this.selectedElement = null;
             }
-            this.saveToHistory();
+            this.historyManager.saveState();
             this.render();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Annule la dernière action
+     */
+    undo() {
+        if (this.historyManager.undo()) {
+            this.emit('undo-executed');
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Rétablit la dernière action annulée
+     */
+    redo() {
+        if (this.historyManager.redo()) {
+            this.emit('redo-executed');
             return true;
         }
         return false;
@@ -532,6 +609,34 @@ export class PDFCanvasVanilla {
     setMode(mode) {
         this.mode = mode;
         this.canvas.style.cursor = this.getCursorForMode(mode);
+    }
+
+    /**
+     * Définit l'outil actif
+     */
+    setTool(toolId) {
+        this.tool = toolId;
+
+        // Mapper les outils aux modes
+        const toolToModeMap = {
+            'select': 'select',
+            'add-text': 'text',
+            'add-text-title': 'text',
+            'add-text-subtitle': 'text',
+            'add-rectangle': 'draw',
+            'add-circle': 'draw',
+            'add-line': 'draw',
+            'add-arrow': 'draw',
+            'add-triangle': 'draw',
+            'add-star': 'draw',
+            'add-divider': 'draw',
+            'add-image': 'draw'
+        };
+
+        const mode = toolToModeMap[toolId] || 'select';
+        this.setMode(mode);
+
+        console.log(`Tool set to: ${toolId}, mode: ${mode}`);
     }
 
     /**
@@ -578,10 +683,12 @@ export class PDFCanvasVanilla {
             this.renderer.renderElement(element, element.properties);
         }
 
-        // Dessiner les poignées de sélection
-        if (this.selectedElement) {
-            this.drawSelectionHandles(this.selectedElement);
-        }
+        // Dessiner la sélection et les transformations
+        this.selectionManager.render(this.ctx);
+        this.transformationsManager.render(this.ctx);
+
+        // Dessiner le preview de drag & drop
+        this.dragDropManager.render(this.ctx);
     }
 
     /**
