@@ -1,0 +1,5 @@
+open ftp://nats:nats123456@65.108.242.181
+cd /wp-content/plugins/wp-pdf-builder-pro/assets/js/dist
+put plugin/assets/js/dist/pdf-builder-admin.js
+put plugin/assets/js/dist/pdf-builder-admin-debug.js
+quit

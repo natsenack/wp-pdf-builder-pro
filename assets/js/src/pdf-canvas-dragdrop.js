@@ -344,23 +344,6 @@ PDFCanvasDragDropManager.prototype.unregisterDropZone = function(id) {
 };
 
 /**
- * Rend le preview de drag & drop
- */
-PDFCanvasDragDropManager.prototype.render = function(ctx) {
-    try {
-        // Ne rien rendre si pas de drag en cours
-        if (!this.isDragging || !this.dragElement || !this.dragOffset) {
-            return;
-        }
-        
-        // Rendre le preview du drag element
-        this.drawDragPreview(ctx);
-    } catch (error) {
-        console.error('[DRAG] Erreur dans render():', error);
-    }
-};
-
-/**
  * Nettoie les ressources
  */
 PDFCanvasDragDropManager.prototype.dispose = function() {

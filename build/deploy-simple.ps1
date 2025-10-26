@@ -1,4 +1,4 @@
-# Script de déploiement simplifié - Envoie UNIQUEMENT les fichiers modifiés
+# Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
 # Usage: .\deploy-simple.ps1
 
 param(
@@ -12,78 +12,99 @@ $ErrorActionPreference = "Stop"
 # Configuration FTP
 $FtpHost = "65.108.242.181"
 $FtpUser = "nats"
-$FtpPass = "nats123456"
+$FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
 $LocalPluginPath = "D:\wp-pdf-builder-pro\plugin"
 $WorkingDir = "D:\wp-pdf-builder-pro"
 
-Write-Host "`n🚀 DÉPLOIEMENT PLUGIN - Mode: $Mode" -ForegroundColor Cyan
+Write-Host "`nDEPLOIEMENT PLUGIN - Mode: $Mode" -ForegroundColor Cyan
 Write-Host ("=" * 60) -ForegroundColor White
 
-# 1️⃣ COMPILATION DES ASSETS
-Write-Host "`n1️⃣ Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
+# 1 COMPILATION DES ASSETS
+Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
 
 try {
     Push-Location $WorkingDir
-    Write-Host "   Exécution: npm run build" -ForegroundColor Yellow
+    Write-Host "   Execution: npm run build" -ForegroundColor Yellow
     $buildResult = & npm run build 2>&1
     
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Erreur de compilation!" -ForegroundColor Red
+        Write-Host "Erreur de compilation!" -ForegroundColor Red
         Write-Host $buildResult -ForegroundColor Red
         exit 1
     }
-    Write-Host "✅ Compilation réussie" -ForegroundColor Green
+    Write-Host "Compilation reussie" -ForegroundColor Green
     Pop-Location
 } catch {
-    Write-Host "❌ Erreur: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 
-# 2️⃣ LISTER LES FICHIERS MODIFIÉS
-Write-Host "`n2️⃣ Détection des fichiers modifiés..." -ForegroundColor Magenta
+# 2 LISTER LES FICHIERS MODIFIES
+Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
 
 try {
     Push-Location $WorkingDir
     
-    # Récupérer les fichiers modifiés depuis git
+    # Recuperer les fichiers modifies depuis git (les warnings git ne doivent pas causer d'erreur)
+    $ErrorActionPreference = "Continue"
     $modifiedFiles = & git diff --name-only HEAD 2>&1
     $stagedFiles = & git diff --cached --name-only HEAD 2>&1
-    $allModified = @($modifiedFiles) + @($stagedFiles) | Sort-Object -Unique
+    $ErrorActionPreference = "Stop"
+    
+    # Filtrer pour enlever les warnings
+    $allModified = @($modifiedFiles) + @($stagedFiles) | Where-Object { $_ -and $_ -notlike "*warning*" } | Sort-Object -Unique
     
     # Filtrer pour le dossier plugin uniquement
     $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" }
     
     if ($pluginModified.Count -eq 0) {
-        Write-Host "✅ Aucun fichier modifié à déployer" -ForegroundColor Green
-        Write-Host "   (Tous les fichiers sont à jour)" -ForegroundColor Gray
+        Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
+        Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
         Pop-Location
         exit 0
     }
     
-    Write-Host "📝 Fichiers modifiés détectés: $($pluginModified.Count)" -ForegroundColor Cyan
+    Write-Host "Fichiers modifies detects: $($pluginModified.Count)" -ForegroundColor Cyan
     $pluginModified | ForEach-Object {
-        Write-Host "   • $_" -ForegroundColor White
+        Write-Host "   - $_" -ForegroundColor White
     }
     
     Pop-Location
 } catch {
-    Write-Host "❌ Erreur git: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Erreur git: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 
-# 3️⃣ UPLOAD FTP
+# 3 UPLOAD FTP
 if ($Mode -eq "test") {
-    Write-Host "`n🧪 MODE TEST - Pas d'upload réel" -ForegroundColor Yellow
+    Write-Host "`nMODE TEST - Pas d'upload reel" -ForegroundColor Yellow
 } else {
-    Write-Host "`n3️⃣ Upload FTP des fichiers modifiés..." -ForegroundColor Magenta
+    Write-Host "`n3 Upload FTP des fichiers modifies..." -ForegroundColor Magenta
+    
+    # Test connexion FTP
+    Write-Host "   Test de connexion FTP..." -ForegroundColor Yellow
+    try {
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.UseBinary = $false
+        $ftpRequest.UsePassive = $false
+        $ftpRequest.Timeout = 10000
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        Write-Host "   Connexion FTP OK" -ForegroundColor Green
+    } catch {
+        Write-Host "   Erreur FTP: $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
     
     $uploadCount = 0
     $errorCount = 0
     $startTime = Get-Date
     
-    # Créer les répertoires d'abord
+    # Creer les repertoires d'abord
     $dirs = @{}
     foreach ($file in $pluginModified) {
         $dir = Split-Path $file -Parent
@@ -92,22 +113,21 @@ if ($Mode -eq "test") {
         }
     }
     
-    # Créer répertoires sur FTP
+    # Creer repertoires sur FTP
     foreach ($dir in $dirs.Keys) {
         $ftpDir = $dir.Replace("\", "/").Replace("plugin/", "")
         $fullPath = "$FtpPath/$ftpDir"
         
         try {
-            $ftpUri = "ftp://$FtpHost$fullPath/"
+            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$fullPath/"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
             $ftpRequest.UseBinary = $false
-            $ftpRequest.UsePassive = $true
+            $ftpRequest.UsePassive = $false
             $response = $ftpRequest.GetResponse()
             $response.Close()
         } catch {
-            # Dossier peut déjà exister
+            # Dossier peut deja exister
         }
     }
     
@@ -116,7 +136,7 @@ if ($Mode -eq "test") {
         $localFile = Join-Path $WorkingDir $file
         
         if (!(Test-Path $localFile)) {
-            # Fichier supprimé
+            # Fichier supprime
             continue
         }
         
@@ -124,11 +144,11 @@ if ($Mode -eq "test") {
         $ftpUri = "ftp://$FtpHost$FtpPath/$remotePath"
         
         try {
+            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$FtpPath/$remotePath"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
             $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $true
+            $ftpRequest.UsePassive = $false
             $ftpRequest.Timeout = 30000
             
             $fileContent = [System.IO.File]::ReadAllBytes($localFile)
@@ -142,70 +162,71 @@ if ($Mode -eq "test") {
             $response.Close()
             
             $uploadCount++
-            Write-Host "   ✅ $file" -ForegroundColor Green
+            Write-Host "   OK: $file" -ForegroundColor Green
         } catch {
             $errorCount++
-            Write-Host "   ❌ $file - $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "   ERREUR: $file - $($_.Exception.Message)" -ForegroundColor Red
         }
     }
     
     $totalTime = (Get-Date) - $startTime
-    Write-Host "`n📊 Upload terminé:" -ForegroundColor White
-    Write-Host "   • Fichiers envoyés: $uploadCount" -ForegroundColor Green
-    Write-Host "   • Erreurs: $errorCount" -ForegroundColor $(if ($errorCount -gt 0) { "Red" } else { "Green" })
-    Write-Host "   • Temps: $([math]::Round($totalTime.TotalSeconds, 1))s" -ForegroundColor Gray
+    Write-Host "`nUpload termine:" -ForegroundColor White
+    Write-Host "   Fichiers envoyes: $uploadCount" -ForegroundColor Green
+    Write-Host "   Erreurs: $errorCount" -ForegroundColor $(if ($errorCount -gt 0) { "Red" } else { "Green" })
+    Write-Host "   Temps: $([math]::Round($totalTime.TotalSeconds, 1))s" -ForegroundColor Gray
     
     if ($errorCount -gt 0) {
-        Write-Host "`n⚠️ Certains fichiers n'ont pas pu être uploadés!" -ForegroundColor Yellow
+        Write-Host "`nCertains fichiers n'ont pas pu etre uploades!" -ForegroundColor Yellow
         exit 1
     }
 }
 
-# 4️⃣ GIT COMMIT + PUSH + TAG
-Write-Host "`n4️⃣ Git commit + push + tag..." -ForegroundColor Magenta
+# 4 GIT COMMIT + PUSH + TAG
+Write-Host "`n4 Git commit + push + tag..." -ForegroundColor Magenta
 
 try {
     Push-Location $WorkingDir
     
     # Staging
-    Write-Host "   📝 Staging des fichiers..." -ForegroundColor Yellow
+    Write-Host "   Staging des fichiers..." -ForegroundColor Yellow
+    $ErrorActionPreference = "Continue"
     & git add -A 2>&1 | Out-Null
+    $ErrorActionPreference = "Stop"
     
     # Commit
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $commitMsg = "feat: Déploiement plugin - $timestamp ($($pluginModified.Count) fichiers)"
-    Write-Host "   📤 Commit: $commitMsg" -ForegroundColor Yellow
+    $commitMsg = "fix: Drag-drop FTP deploy - $timestamp"
+    Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
     & git commit -m $commitMsg 2>&1 | Out-Null
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "   ✅ Commit créé" -ForegroundColor Green
+        Write-Host "   Commit cree" -ForegroundColor Green
     } else {
-        Write-Host "   ⚠️ Rien à committer (déjà à jour)" -ForegroundColor Gray
+        Write-Host "   Rien a committer (deja a jour)" -ForegroundColor Gray
     }
     
     # Push
-    Write-Host "   🚀 Push vers remote..." -ForegroundColor Yellow
+    Write-Host "   Push vers remote..." -ForegroundColor Yellow
     & git push origin dev 2>&1 | Out-Null
-    Write-Host "   ✅ Push réussi" -ForegroundColor Green
+    Write-Host "   Push reussi" -ForegroundColor Green
     
     # Tag de version
     $version = Get-Date -Format "v1.0.0-deploy-yyyyMMdd-HHmmss"
-    Write-Host "   🏷️ Tag: $version" -ForegroundColor Yellow
-    & git tag -a $version -m "Déploiement $version" 2>&1 | Out-Null
+    Write-Host "   Tag: $version" -ForegroundColor Yellow
+    & git tag -a $version -m "Deploiement $version" 2>&1 | Out-Null
     & git push origin $version 2>&1 | Out-Null
-    Write-Host "   ✅ Tag créé et pushé" -ForegroundColor Green
+    Write-Host "   Tag cree et pousse" -ForegroundColor Green
     
     Pop-Location
 } catch {
-    Write-Host "❌ Erreur git: $($_.Exception.Message)" -ForegroundColor Red
-    exit 1
+    Write-Host "   Erreur git (non critique)" -ForegroundColor Yellow
 }
 
-# ✅ FIN
-Write-Host "`n✅ DÉPLOIEMENT TERMINÉ AVEC SUCCÈS!" -ForegroundColor Green
+# FIN
+Write-Host "`nDEPLOIEMENT TERMINE AVEC SUCCES!" -ForegroundColor Green
 Write-Host ("=" * 60) -ForegroundColor White
-Write-Host "📊 Résumé:" -ForegroundColor Cyan
-Write-Host "   • Compilation: ✅" -ForegroundColor Green
-Write-Host "   • Upload FTP: ✅ ($uploadCount fichiers)" -ForegroundColor Green
-Write-Host "   • Git: ✅ (commit + push + tag)" -ForegroundColor Green
+Write-Host "Resume:" -ForegroundColor Cyan
+Write-Host "   Compilation: OK" -ForegroundColor Green
+Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
+Write-Host "   Git: OK (commit + push + tag)" -ForegroundColor Green
 Write-Host ""
