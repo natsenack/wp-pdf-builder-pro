@@ -648,28 +648,11 @@ function initializeCanvas() {
         
         console.log('[INIT] ✅ Canvas initialisé avec succès');
         
-        // ⚠️ DÉSACTIVER le handleDragOver de PDFCanvasVanilla pour éviter les conflits avec le custom drag-drop
-        if (window.pdfCanvasInstance) {
-            console.log('[INIT] ⚠️ Désactivation du handleDragOver du PDFCanvasVanilla du bundle');
-            // Remplacer la méthode handleDragOver par une fonction vide
-            window.pdfCanvasInstance.handleDragOver = function(e) {
-                // Désactivée - notre système custom de drag-drop (dans setupDragAndDrop) gère tout
-                // On ne fait rien ici pour éviter les conflits
-            };
-            
-            // Également désactiver le dragDropManager.handleDragOver
-            if (window.pdfCanvasInstance.dragDropManager) {
-                window.pdfCanvasInstance.dragDropManager.handleDragOver = function(e) {
-                    // Désactivée
-                };
-            }
-        }
-        
         // Populer la bibliothèque d'éléments
         populateElementsLibrary();
         
-        // Configurer le drag & drop de la bibliothèque
-        setupDragAndDrop();
+        // ⚠️ DÉSACTIVER notre setupDragAndDrop() custom - utiliser le système du bundle à la place
+        // setupDragAndDrop();
         
         // Charger le template si fourni
         if (templateId && window.pdfCanvasInstance && typeof window.pdfCanvasInstance.loadTemplate === 'function') {
