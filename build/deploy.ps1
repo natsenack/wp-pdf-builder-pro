@@ -737,8 +737,34 @@ if (-not $FullSync -and -not $IsTestMode -and $Mode -eq "plugin") {
     Write-Host "🔍 Mode synchronisation intelligente activé" -ForegroundColor Cyan
     Write-Host "   • Recherche des fichiers modifiés..." -ForegroundColor White
 
-    # Pour une vraie synchronisation intelligente, on pourrait comparer les dates
-    # Pour l'instant, on garde tous les fichiers mais on indique le mode
+    # Charger le timestamp du dernier déploiement
+    $lastDeployFile = Join-Path $PSScriptRoot ".last-deploy-time"
+    $lastDeployTime = $null
+    
+    if (Test-Path $lastDeployFile) {
+        $lastDeployContent = Get-Content $lastDeployFile -ErrorAction SilentlyContinue
+        if ([DateTime]::TryParse($lastDeployContent, [ref]$lastDeployTime)) {
+            Write-Host "   • Dernier déploiement : $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
+            
+            # Filtrer les fichiers modifiés depuis le dernier déploiement
+            $beforeCount = $filteredFiles.Count
+            $filteredFiles = $filteredFiles | Where-Object { $_.LastWriteTime -gt $lastDeployTime }
+            $afterCount = $filteredFiles.Count
+            
+            Write-Host "   • Fichiers modifiés depuis : $afterCount / $beforeCount" -ForegroundColor Cyan
+            
+            if ($afterCount -eq 0) {
+                Write-Host "   ✅ Aucun fichier modifié - Déploiement annulé" -ForegroundColor Green
+                Write-Host ""
+                Write-Host "✅ DÉPLOIEMENT INUTILE - TOUS LES FICHIERS SONT À JOUR" -ForegroundColor Green
+                exit 0
+            }
+        }
+    } else {
+        Write-Host "   • Aucun déploiement précédent trouvé - Envoi complet" -ForegroundColor Yellow
+        $FullSync = $true
+    }
+    
     Write-Host "   • Analyse basée sur les timestamps..." -ForegroundColor White
 }
 
@@ -1118,6 +1144,10 @@ Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 Write-Host "📤 Upload des fichiers..." -ForegroundColor Yellow
 Write-Host "   Configuration: 50 uploads simultanés (ultra-optimisé)" -ForegroundColor Gray
 
+# 🎯 PRIORISER LES FICHIERS MODIFIÉS : Trier par date de modification (les plus récents d'abord)
+Write-Host "🔄 Tri des fichiers par priorité (les modifiés récemment en premier)..." -ForegroundColor Cyan
+$filteredFiles = $filteredFiles | Sort-Object -Property LastWriteTime -Descending
+
 $maxParallelJobs = 50
 $runningJobs = @()
 $processedFiles = 0
@@ -1337,7 +1367,16 @@ try {
 #     Write-Log "`n5️⃣  ÉTAPE 5 : VALIDATION DES ASSETS" -Level "INFO" -Color "Magenta"
 # }
 
-# 6. Résumé final et logs
+# 6. Sauvegarder le timestamp du déploiement
+if ($Mode -eq "plugin" -and -not $IsTestMode -and $errorCount -eq 0) {
+    $lastDeployFile = Join-Path $PSScriptRoot ".last-deploy-time"
+    $currentTime = Get-Date
+    $currentTime.ToString("yyyy-MM-dd HH:mm:ss") | Set-Content $lastDeployFile -Force
+    Write-Host ""
+    Write-Host "💾 Timestamp du déploiement sauvegardé pour prochains déploiements incrémentaux" -ForegroundColor Gray
+}
+
+# 7. Résumé final et logs
 Write-Log "`n✅ DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !" -Level "SUCCESS" -Color "Green"
 Write-Log ("-" * 40) -Level "INFO" -Color "White"
 Write-Log "📊 RÉSUMÉ FINAL :" -Level "INFO" -Color "White"
