@@ -45,6 +45,7 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script type="text/javascript" src="' . esc_url($bundle_test_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url(plugins_url('assets/js/react-diagnostic.js', dirname(dirname(__FILE__)))) . '"></script>';
+    echo '<script type="text/javascript" src="' . esc_url(plugins_url('assets/js/bundle-advanced-diagnostic.js', dirname(dirname(__FILE__)))) . '"></script>';
     echo '<p>Scripts chargés directement avec plugins_url()</p>';
 
     // DEBUG: Vérifier que les scripts sont dans le DOM et s'exécutent
