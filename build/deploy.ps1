@@ -1024,7 +1024,27 @@ foreach ($file in $filteredFiles) {
             $currentTime = Get-Date
             if (($currentTime - $lastProgressUpdate).TotalMilliseconds -gt 500) {
                 $percent = [math]::Round(($processedFiles / $totalFiles) * 100, 1)
-                Write-Progress -Activity "Upload FTP" -Status "En cours..." -PercentComplete $percent -CurrentOperation "$processedFiles/$totalFiles"
+                $remainingFiles = $totalFiles - $processedFiles
+                $avgTimePerFile = if ($processedFiles -gt 0) { ($currentTime - $startTime).TotalSeconds / $processedFiles } else { 0 }
+                $estimatedRemaining = [math]::Round($avgTimePerFile * $remainingFiles, 0)
+                
+                # Barre de progression visuelle
+                $barLength = 30
+                $filledLength = [math]::Round(($processedFiles / $totalFiles) * $barLength)
+                $emptyLength = $barLength - $filledLength
+                $progressBar = "█" * $filledLength + "░" * $emptyLength
+                
+                # Affichage amélioré
+                Write-Host "`r   [" -NoNewline -ForegroundColor White
+                Write-Host $progressBar -NoNewline -ForegroundColor Cyan
+                Write-Host "] " -NoNewline -ForegroundColor White
+                Write-Host "$percent%" -NoNewline -ForegroundColor Green
+                Write-Host " | " -NoNewline -ForegroundColor White
+                Write-Host "$processedFiles/$totalFiles" -NoNewline -ForegroundColor Yellow
+                Write-Host " | ↓$([math]::Round($totalSize / 1MB / ($currentTime - $startTime).TotalSeconds, 2)) MB/s" -NoNewline -ForegroundColor Cyan
+                Write-Host " | ⏱️ " -NoNewline -ForegroundColor White
+                Write-Host "$estimatedRemaining sec" -NoNewline -ForegroundColor Magenta
+                
                 $lastProgressUpdate = $currentTime
             }
         }
@@ -1065,7 +1085,7 @@ foreach ($file in $filteredFiles) {
 }
 
 # Attendre tous les jobs restants
-Write-Host "   Finalisation..." -ForegroundColor Gray
+Write-Host "`n   Finalisation..." -ForegroundColor Gray
 while ($runningJobs.Count -gt 0) {
     $completedJobs = @($runningJobs | Where-Object { $_.State -ne "Running" })
     if ($completedJobs.Count -gt 0) {
@@ -1085,13 +1105,24 @@ while ($runningJobs.Count -gt 0) {
             $processedFiles++
             
             $percent = [math]::Round(($processedFiles / $totalFiles) * 100, 1)
-            Write-Progress -Activity "Upload FTP" -Status "Finalisation..." -PercentComplete $percent -CurrentOperation "$processedFiles/$totalFiles"
+            $barLength = 30
+            $filledLength = [math]::Round(($processedFiles / $totalFiles) * $barLength)
+            $emptyLength = $barLength - $filledLength
+            $progressBar = "█" * $filledLength + "░" * $emptyLength
+            
+            Write-Host "`r   [" -NoNewline -ForegroundColor White
+            Write-Host $progressBar -NoNewline -ForegroundColor Cyan
+            Write-Host "] " -NoNewline -ForegroundColor White
+            Write-Host "$percent%" -NoNewline -ForegroundColor Green
+            Write-Host " | " -NoNewline -ForegroundColor White
+            Write-Host "$processedFiles/$totalFiles" -NoNewline -ForegroundColor Yellow
+            Write-Host " | Finalisé" -NoNewline -ForegroundColor Green
         }
     }
     Start-Sleep -Milliseconds 50
 }
 
-Write-Progress -Activity "Upload FTP" -Completed
+Write-Host "`n"
 
 # Calculer le temps total
 $totalTime = (Get-Date) - $startTime
