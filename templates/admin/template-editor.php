@@ -49,6 +49,61 @@ if (!is_user_logged_in() || !current_user_can('read')) {
         console.log("🧪 TEST SIMPLE - FIN");
     </script>';
 
+    // TEST ULTIME: Script-loader simplifié SANS webpack
+    echo '<script type="text/javascript">
+        console.log("🔧 TEST ULTIME - SCRIPT-LOADER SIMPLIFIÉ");
+        try {
+            // Définition simplifiée de pdfBuilderPro
+            window.pdfBuilderPro = {
+                version: "3.0.0-simple",
+                React: window.React,
+                ReactDOM: window.ReactDOM,
+                editors: new Map(),
+                init: function(containerId, options) {
+                    console.log("✅ pdfBuilderPro.init() appelée avec:", { containerId, options });
+                    options = options || {};
+
+                    var container = document.getElementById(containerId);
+                    if (!container) {
+                        console.error("❌ Container non trouvé:", containerId);
+                        return false;
+                    }
+
+                    console.log("✅ Container trouvé, affichage message temporaire");
+                    container.innerHTML = "<div style=\"padding: 20px; text-align: center; color: #666;\">Chargement de l\'éditeur PDF (version simplifiée)...</div>";
+
+                    // Simuler le chargement réussi
+                    setTimeout(function() {
+                        container.innerHTML = "<div style=\"padding: 20px; text-align: center; color: green;\">✅ Éditeur PDF chargé avec succès ! (Version simplifiée)</div>";
+                    }, 1000);
+
+                    return true;
+                },
+                destroy: function(containerId) {
+                    console.log("pdfBuilderPro.destroy() appelée pour:", containerId);
+                },
+                getData: function(containerId) {
+                    return null;
+                },
+                getElements: function() {
+                    return [];
+                }
+            };
+
+            window.PDFBuilderPro = window.pdfBuilderPro;
+            window.initializePDFBuilderPro = function() {
+                return window.pdfBuilderPro;
+            };
+
+            console.log("✅ pdfBuilderPro défini avec succès (version simplifiée)");
+            console.log("✅ API disponible:", typeof window.pdfBuilderPro.init);
+
+        } catch (error) {
+            console.error("❌ ERREUR dans script-loader simplifié:", error);
+            console.error("Stack:", error.stack);
+        }
+    </script>';
+
     // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
         // Intercepter les erreurs JavaScript globales

@@ -3,6 +3,7 @@
 
 console.log('🚨🚨🚨 SCRIPT-LOADER.JS CHARGÉ ET EXÉCUTÉ - TOP LEVEL 🚨🚨🚨');
 
+try {
 (function() {
   'use strict';
 
@@ -73,3 +74,7 @@ console.log('🚨🚨🚨 SCRIPT-LOADER.JS CHARGÉ ET EXÉCUTÉ - TOP LEVEL 🚨
   }
 
 })();
+} catch (error) {
+  console.error('🚨 ERREUR FATALE dans script-loader.js:', error);
+  console.error('Stack:', error.stack);
+}
