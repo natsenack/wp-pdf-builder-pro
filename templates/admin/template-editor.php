@@ -43,6 +43,22 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
     // DEBUG: Tester l'exécution des scripts avec gestion d'erreurs
     echo '<script>
+        // Intercepter les erreurs JavaScript globales
+        window.addEventListener("error", function(e) {
+            console.error("🚨 ERREUR JAVASCRIPT GLOBALE:", e.error);
+            console.error("Message:", e.message);
+            console.error("Fichier:", e.filename);
+            console.error("Ligne:", e.lineno);
+            console.error("Stack:", e.error ? e.error.stack : "No stack");
+        });
+
+        // Intercepter les erreurs de chargement de script
+        window.addEventListener("error", function(e) {
+            if (e.target && e.target.tagName === "SCRIPT") {
+                console.error("🚨 ERREUR CHARGEMENT SCRIPT:", e.target.src);
+            }
+        }, true);
+
         setTimeout(function() {
             console.log("🔍 TEST EXECUTION SCRIPTS...");
 
@@ -64,6 +80,26 @@ if (!is_user_logged_in() || !current_user_can('read')) {
                 console.error("Stack:", error.stack);
             }
         }, 1000);
+    </script>';
+
+    // TEST ALTERNATIF: Charger dynamiquement avec gestion d'erreurs
+    echo '<script>
+        setTimeout(function() {
+            console.log("🔄 TEST ALTERNATIF - CHARGEMENT DYNAMIQUE...");
+
+            // Tester le chargement dynamique du script-loader
+            var scriptLoaderTest = document.createElement("script");
+            scriptLoaderTest.src = "' . esc_url($script_loader_url) . '";
+            scriptLoaderTest.onload = function() {
+                console.log("✅ Script-loader chargé dynamiquement");
+                console.log("🔍 window.pdfBuilderPro après chargement dynamique:", typeof window.pdfBuilderPro);
+            };
+            scriptLoaderTest.onerror = function(e) {
+                console.error("❌ Échec chargement dynamique script-loader:", e);
+            };
+
+            document.head.appendChild(scriptLoaderTest);
+        }, 2000);
     </script>';
     echo '</div>';
 
