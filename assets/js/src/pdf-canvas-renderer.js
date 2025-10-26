@@ -187,6 +187,14 @@ export class PDFCanvasRenderer {
      */
     renderByType(element) {
         console.log('Renderer: rendering type', element.type);
+        
+        // Éléments WooCommerce - traiter comme du texte dynamique
+        if (this.isWooCommerceElement(element.type)) {
+            console.log('Renderer: calling renderWooCommerceElement for type', element.type);
+            this.renderWooCommerceElement(element);
+            return;
+        }
+        
         switch (element.type) {
             case 'text':
                 console.log('Renderer: calling renderText');
@@ -224,6 +232,50 @@ export class PDFCanvasRenderer {
                 this.renderGeneric(element);
                 break;
         }
+    }
+
+    /**
+     * Vérifie si un type d'élément est un élément WooCommerce
+     */
+    isWooCommerceElement(type) {
+        const wooCommerceTypes = [
+            'order_number', 'order_date', 'customer_name', 'customer_email',
+            'billing_address', 'shipping_address', 'payment_method', 'order_status',
+            'subtotal', 'discount', 'shipping', 'taxes', 'total', 'refund',
+            'product_table', 'customer_info', 'company_info', 'company_logo',
+            'dynamic-text', 'woocommerce-invoice-number', 'woocommerce-invoice-date',
+            'woocommerce-order-number', 'woocommerce-order-date', 'woocommerce-billing-address',
+            'woocommerce-shipping-address', 'woocommerce-customer-name', 'woocommerce-customer-email',
+            'woocommerce-payment-method', 'woocommerce-order-status', 'woocommerce-products-table',
+            'woocommerce-subtotal', 'woocommerce-discount', 'woocommerce-shipping',
+            'woocommerce-taxes', 'woocommerce-total', 'woocommerce-refund'
+        ];
+        return wooCommerceTypes.includes(type);
+    }
+
+    /**
+     * Rend un élément WooCommerce comme du texte
+     */
+    renderWooCommerceElement(element) {
+        console.log('Renderer: renderWooCommerceElement called with element:', element);
+        
+        // Obtenir le texte depuis le gestionnaire WooCommerce
+        let displayText = '';
+        if (this.canvasInstance && this.canvasInstance.wooCommerceManager) {
+            displayText = this.canvasInstance.wooCommerceManager.getElementDisplayText(element.type);
+        }
+        
+        // Créer une copie des propriétés avec le texte
+        const textElement = {
+            ...element,
+            properties: {
+                ...element.properties,
+                text: displayText || `[${element.type}]`
+            }
+        };
+        
+        // Rendre comme du texte
+        this.renderText(textElement);
     }
 
     /**
