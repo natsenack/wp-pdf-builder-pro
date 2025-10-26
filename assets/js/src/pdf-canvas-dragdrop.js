@@ -122,29 +122,14 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
         return;
     }
 
-    // Vérifier si on dépose sur le canvas
-    const canvasRect = this.canvasInstance.canvas.getBoundingClientRect();
-    const isOverCanvas = event.clientX >= canvasRect.left &&
-                        event.clientX <= canvasRect.right &&
-                        event.clientY >= canvasRect.top &&
-                        event.clientY <= canvasRect.bottom;
+    // Vérifier si on dépose sur le canvas - Méthode directe: check if element at point is canvas or its container
+    const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
+    const isOverCanvas = elementAtPoint === this.canvasInstance.canvas || 
+                         (elementAtPoint && elementAtPoint.closest('#pdf-canvas-container') !== null) ||
+                         (elementAtPoint && elementAtPoint.id === 'pdf-builder-canvas') ||
+                         (elementAtPoint && elementAtPoint.id === 'pdf-canvas-container');
 
-    console.log('[DRAG] Drop canvas rect:', {
-        left: canvasRect.left,
-        right: canvasRect.right,
-        top: canvasRect.top,
-        bottom: canvasRect.bottom,
-        width: canvasRect.width,
-        height: canvasRect.height
-    });
-    console.log('[DRAG] Drop mouse position:', {x: event.clientX, y: event.clientY});
-    console.log('[DRAG] Drop checks:', {
-        xInRange: event.clientX >= canvasRect.left && event.clientX <= canvasRect.right,
-        yInRange: event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom,
-        isOverCanvas: isOverCanvas
-    });
-
-    console.log('[DRAG] Drop position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas);
+    console.log('[DRAG] Drop position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas, 'Element:', elementAtPoint?.id || elementAtPoint?.className);
 
     if (isOverCanvas) {
         event.preventDefault();
