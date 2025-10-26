@@ -1413,6 +1413,9 @@ class PDF_Builder_Admin
      */
     public function enqueue_admin_scripts($hook)
     {
+        // LOG PHP DE BASE - vérifier si la fonction est appelée
+        error_log('[PHP] enqueue_admin_scripts appelée avec hook: ' . $hook);
+
         // DEBUG: Log pour vérifier que la méthode est appelée
         error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
 
@@ -1483,9 +1486,9 @@ class PDF_Builder_Admin
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
-        error_log('PDF Builder: About to enqueue script: ' . $script_url);
+        error_log('[PHP] Script URL: ' . $script_url);
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        error_log('PDF Builder: Script enqueued successfully');
+        error_log('[PHP] Script enqueued successfully');
 
         // Use wp_localize_script for AJAX configuration - safe method
 wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [

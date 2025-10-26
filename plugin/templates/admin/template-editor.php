@@ -2,7 +2,39 @@
 if (!current_user_can('manage_options')) {
     wp_die('Unauthorized');
 }
+
+// LOG PHP - Vérifier que la page PHP est chargée
+error_log('[PHP] Template editor page loaded - PHP execution test');
+error_log('[PHP] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'unknown'));
+error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'none'));
+error_log('[PHP] User: ' . get_current_user_id());
 ?>
+<script>
+console.log('🚀 TEMPLATE EDITOR PAGE LOADED - JavaScript execution test');
+console.log('Current URL:', window.location.href);
+console.log('User Agent:', navigator.userAgent);
+console.log('DOMContentLoaded status:', document.readyState);
+
+// Test if jQuery is loaded
+if (typeof jQuery !== 'undefined') {
+    console.log('✅ jQuery is loaded, version:', jQuery.fn.jquery);
+} else {
+    console.log('❌ jQuery is NOT loaded');
+}
+
+// Test if our main script variables exist
+console.log('pdfBuilderAjax exists:', typeof pdfBuilderAjax !== 'undefined');
+console.log('pdfBuilderInstance exists:', typeof pdfBuilderInstance !== 'undefined');
+console.log('pdfBuilderPro exists:', typeof pdfBuilderPro !== 'undefined');
+
+// Check if the canvas container exists
+var canvasContainer = document.getElementById('pdf-canvas-container');
+console.log('Canvas container exists:', !!canvasContainer);
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOMContentLoaded fired - page fully loaded');
+});
+</script>
 <div id="wpbody-content">
     <div class="pdf-builder-workspace">
         <!-- Header -->
