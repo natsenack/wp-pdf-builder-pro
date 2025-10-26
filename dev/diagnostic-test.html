@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic PDF Builder Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Diagnostic PDF Builder Pro</h1>
+
+    <div id="script-loading-test" class="test-section">
+        <h3>Test 1: Chargement des scripts</h3>
+        <div id="script-status">Vérification en cours...</div>
+    </div>
+
+    <div id="ajax-test" class="test-section">
+        <h3>Test 2: Endpoint AJAX</h3>
+        <div id="ajax-status">Test non exécuté</div>
+    </div>
+
+    <div id="canvas-test" class="test-section">
+        <h3>Test 3: Canvas API</h3>
+        <div id="canvas-status">Test non exécuté</div>
+    </div>
+
+    <div id="template-test" class="test-section">
+        <h3>Test 4: Chargement template</h3>
+        <div id="template-status">Test non exécuté</div>
+        <input type="number" id="template-id" placeholder="ID du template" value="1">
+        <button onclick="testTemplateLoading()">Tester</button>
+    </div>
+
+    <div id="console-output" class="test-section">
+        <h3>Console Output</h3>
+        <pre id="console-log"></pre>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const consoleOutput = document.getElementById('console-log');
+
+        function addToConsole(level, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = `[${timestamp}] ${level}: ${args.join(' ')}\n`;
+            consoleOutput.textContent += message;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+
+            // Also call original console method
+            if (level === 'LOG') originalLog(...args);
+            else if (level === 'ERROR') originalError(...args);
+            else if (level === 'WARN') originalWarn(...args);
+        }
+
+        console.log = (...args) => addToConsole('LOG', ...args);
+        console.error = (...args) => addToConsole('ERROR', ...args);
+        console.warn = (...args) => addToConsole('WARN', ...args);
+
+        // Test 1: Script loading
+        function testScriptLoading() {
+            const statusDiv = document.getElementById('script-status');
+
+            console.log('🔍 Testing script loading...');
+
+            if (typeof window.PDFBuilderPro === 'undefined') {
+                statusDiv.innerHTML = '<span style="color: red;">❌ PDFBuilderPro global not found</span>';
+                statusDiv.className = 'test-section error';
+                console.error('PDFBuilderPro global object not found');
+                return false;
+            }
+
+            console.log('✅ PDFBuilderPro global found:', Object.keys(window.PDFBuilderPro));
+
+            if (typeof window.PDFBuilderPro.PDFCanvasVanilla === 'undefined') {
+                statusDiv.innerHTML = '<span style="color: red;">❌ PDFCanvasVanilla class not found</span>';
+                statusDiv.className = 'test-section error';
+                console.error('PDFCanvasVanilla class not found');
+                return false;
+            }
+
+            console.log('✅ PDFCanvasVanilla class found');
+
+            if (typeof window.ajaxurl === 'undefined') {
+                console.warn('⚠️ ajaxurl not defined, using fallback');
+            } else {
+                console.log('✅ ajaxurl defined:', window.ajaxurl);
+            }
+
+            statusDiv.innerHTML = '<span style="color: green;">✅ Scripts loaded successfully</span>';
+            statusDiv.className = 'test-section success';
+            return true;
+        }
+
+        // Test 2: AJAX endpoint
+        async function testAjaxEndpoint() {
+            const statusDiv = document.getElementById('ajax-status');
+            statusDiv.textContent = 'Testing AJAX endpoint...';
+
+            try {
+                const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'pdf_builder_load_template',
+                        template_id: 1,
+                        nonce: window.pdfBuilderNonce || ''
+                    })
+                });
+
+                const data = await response.json();
+                console.log('AJAX Response:', data);
+
+                if (data.success === false) {
+                    statusDiv.innerHTML = `<span style="color: orange;">⚠️ AJAX endpoint responded but failed: ${data.data || 'Unknown error'}</span>`;
+                    statusDiv.className = 'test-section warning';
+                } else {
+                    statusDiv.innerHTML = '<span style="color: green;">✅ AJAX endpoint working</span>';
+                    statusDiv.className = 'test-section success';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: red;">❌ AJAX test failed: ${error.message}</span>`;
+                statusDiv.className = 'test-section error';
+                console.error('AJAX test error:', error);
+            }
+        }
+
+        // Test 3: Canvas API
+        function testCanvasAPI() {
+            const statusDiv = document.getElementById('canvas-status');
+            statusDiv.textContent = 'Testing Canvas API...';
+
+            try {
+                // Create a test canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = 100;
+                canvas.height = 100;
+                document.body.appendChild(canvas);
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    throw new Error('Canvas 2D context not available');
+                }
+
+                // Test basic drawing
+                ctx.fillStyle = 'red';
+                ctx.fillRect(10, 10, 50, 50);
+
+                console.log('✅ Canvas API working');
+                statusDiv.innerHTML = '<span style="color: green;">✅ Canvas API working</span>';
+                statusDiv.className = 'test-section success';
+
+                // Clean up
+                document.body.removeChild(canvas);
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: red;">❌ Canvas API test failed: ${error.message}</span>`;
+                statusDiv.className = 'test-section error';
+                console.error('Canvas API test error:', error);
+            }
+        }
+
+        // Test 4: Template loading
+        async function testTemplateLoading() {
+            const statusDiv = document.getElementById('template-status');
+            const templateId = document.getElementById('template-id').value;
+
+            if (!templateId) {
+                alert('Please enter a template ID');
+                return;
+            }
+
+            statusDiv.textContent = `Testing template loading for ID ${templateId}...`;
+
+            try {
+                const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'pdf_builder_load_template',
+                        template_id: templateId,
+                        nonce: window.pdfBuilderNonce || ''
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Template load response:', data);
+
+                if (data.success && data.data && data.data.template) {
+                    statusDiv.innerHTML = `<span style="color: green;">✅ Template loaded successfully: ${data.data.name || 'Unnamed'} (${data.data.element_count || 0} elements)</span>`;
+                    statusDiv.className = 'test-section success';
+                } else {
+                    statusDiv.innerHTML = `<span style="color: orange;">⚠️ Template load failed: ${data.data || 'Unknown error'}</span>`;
+                    statusDiv.className = 'test-section warning';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: red;">❌ Template load test failed: ${error.message}</span>`;
+                statusDiv.className = 'test-section error';
+                console.error('Template load test error:', error);
+            }
+        }
+
+        // Run all tests
+        window.addEventListener('load', function() {
+            console.log('🚀 Starting PDF Builder Pro diagnostics...');
+
+            // Test script loading first
+            if (testScriptLoading()) {
+                // If scripts loaded, test other components
+                testAjaxEndpoint();
+                testCanvasAPI();
+            }
+        });
+    </script>
+
+    <!-- Load PDF Builder scripts -->
+    <script src="/wp-content/plugins/pdf-builder-pro/assets/js/dist/pdf-builder-admin.js"></script>
+</body>
+</html>
