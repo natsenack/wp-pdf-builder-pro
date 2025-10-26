@@ -759,6 +759,7 @@ export class PDFCanvasVanilla {
 
         // Dessiner tous les éléments en utilisant le renderer spécialisé
         for (const element of this.elements.values()) {
+            console.log('Rendering element:', element.type, element.properties);
             this.renderer.renderElement(element, element.properties);
         }
 
