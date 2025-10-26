@@ -768,13 +768,14 @@ cd $FtpPath
 
 # Créer les répertoires
 foreach ($dir in ($directories.Keys | Sort-Object)) {
-    $FtpScript += "mkdir `"$dir`"`n"
+    $ftpDir = $dir.Replace("\", "/")
+    $FtpScript += "`nmkdir `"$ftpDir`""
 }
 
 # Envoyer les fichiers
 foreach ($file in $filteredFiles) {
-    $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\")
-    $FtpScript += "put `"$($file.FullName)`" `"$relativePath`"`n"
+    $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\").Replace("\", "/")
+    $FtpScript += "`nput `"$($file.FullName)`" `"$relativePath`""
 }
 
 $FtpScript += @"
@@ -847,12 +848,11 @@ cd $FtpPath
 
 # Créer les répertoires
 foreach ($dir in ($directories.Keys | Sort-Object)) {
-    $FtpScript += "mkdir `"$dir`"`n"
+    $ftpDir = $dir.Replace("\", "/")
+    $FtpScript += "`nmkdir `"$ftpDir`""
 }
 
-$FtpScript += @"
-bye
-"@
+$FtpScript += "`nbye"
 
 # Sauvegarder le script de base
 $FtpScript | Out-File -FilePath $FtpScriptPath -Encoding ASCII
@@ -894,14 +894,11 @@ cd $FtpPath
 "@
 
     foreach ($file in $FileBatch) {
-        $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\")
+        $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\").Replace("\", "/")
         $scriptContent += "`nput `"$($file.FullName)`" `"$relativePath`""
     }
 
-    $scriptContent += @"
-
-bye
-"@
+    $scriptContent += "`nbye"
 
     $scriptPath = "ftp-batch-$BatchId-temp.txt"
     $scriptContent | Out-File -FilePath $scriptPath -Encoding ASCII
