@@ -1,7 +1,7 @@
 # Script pour uploader manuellement les bundles corrigés
 $ftpServer = "65.108.242.181"
 $ftpUser = "nats"
-$ftpPass = Get-Content "tools/ftp-config.env" | Where-Object { $_ -match "FTP_PASSWORD" } | ForEach-Object { $_.Split('=')[1] }
+$ftpPass = Get-Content "tools/ftp-config.env" | Where-Object { $_ -match "FTP_PASS" } | ForEach-Object { $_.Split('=')[1] }
 $remotePath = "/wp-content/plugins/wp-pdf-builder-pro/assets/js/dist"
 
 $files = @(
