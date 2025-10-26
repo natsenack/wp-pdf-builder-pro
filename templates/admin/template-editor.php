@@ -27,7 +27,39 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     echo '<script type="text/javascript" src="' . esc_url($main_bundle_url) . '"></script>';
     echo '<script type="text/javascript" src="' . esc_url(plugins_url('bundle-diagnostic.js', dirname(__FILE__))) . '"></script>';
 
-    // Vérification que le bundle principal s'exécute
+    // Code temporaire de diagnostic
+    echo '<script>
+    console.log("🔍 DIAGNOSTIC IMMÉDIAT:");
+    console.log("📦 Script loader URL:", "' . esc_url($script_loader_url) . '");
+    console.log("📦 Main bundle URL:", "' . esc_url($main_bundle_url) . '");
+
+    // Vérifier immédiatement après le chargement des scripts
+    setTimeout(function() {
+        console.log("🔍 APRÈS 500ms:");
+        console.log("📦 pdfBuilderPro:", typeof window.pdfBuilderPro);
+        console.log("📦 pdfBuilderInitReact:", typeof window.pdfBuilderInitReact);
+        
+        // Tester l\'initialisation manuellement
+        if (window.pdfBuilderPro && window.pdfBuilderPro.init) {
+            console.log("🚀 TEST D\'INITIALISATION MANUELLE...");
+            try {
+                window.pdfBuilderPro.init("invoice-quote-builder-container", {
+                    templateId: ' . intval($template_id) . ',
+                    isNew: ' . ($is_new ? 'true' : 'false') . ',
+                    initialElements: [],
+                    width: 595,
+                    height: 842
+                });
+                console.log("✅ INITIALISATION MANUELLE RÉUSSIE");
+            } catch (error) {
+                console.error("❌ ERREUR INITIALISATION MANUELLE:", error);
+            }
+        }
+    }, 500);
+    </script>';
+
+    echo '<p>Scripts essentiels chargés</p>';
+    echo '</div>';
     echo '<script>
         setTimeout(function() {
             console.log("🔍 VÉRIFICATION BUNDLE PRINCIPAL...");
