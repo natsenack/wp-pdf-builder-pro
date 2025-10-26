@@ -640,7 +640,8 @@ function initializeCanvas() {
             window.pdfCanvasInstance = window.PDFBuilderPro;
         } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
             console.log('[INIT] Utilisation de PDFCanvasVanilla');
-            var canvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvasOptions);
+            // ✅ CORRECTION: Passer le containerId en tant que premier paramètre STRING
+            var canvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-canvas-container', canvasOptions);
             window.pdfCanvasInstance = canvas;
             canvas.init();
         }

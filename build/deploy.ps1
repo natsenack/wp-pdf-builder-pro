@@ -31,6 +31,20 @@
 .PARAMETER DailyDeploy
     Déploiement quotidien complet : diagnostic + auto-correction + déploiement automatique
 
+.PARAMETER FolderFilter
+    Filtre les dossiers à déployer :
+    - all : Tous les dossiers (défaut)
+    - assets : Seulement le dossier assets/
+    - core : Seulement le dossier core/
+    - lib : Seulement le dossier lib/
+    - languages : Seulement le dossier languages/
+    - templates : Seulement le dossier templates/
+    - custom : Dossiers personnalisés (utiliser avec -CustomFolders)
+
+.PARAMETER CustomFolders
+    Dossiers personnalisés à déployer (utilisé avec -FolderFilter custom)
+    Accepte des wildcards : "assets/js", "core/managers", etc.
+
 .PARAMETER FileFilter
     Filtre les fichiers à déployer :
     - all : Tous les fichiers (défaut)
@@ -42,7 +56,7 @@
     - custom : Filtres personnalisés (utiliser avec -CustomFilter)
 
 .PARAMETER CustomFilter
-    Patterns de filtrage personnalisés (utilisé avec -FileFilter custom)
+    Patterns de filtrage personnalisés pour les fichiers (utilisé avec -FileFilter custom)
     Accepte des wildcards : "*admin.js", "*style.css", etc.
 
 .EXAMPLE
@@ -53,12 +67,24 @@
     .\deploy.ps1 -Mode plugin -Diagnostic
     .\deploy.ps1 -Diagnostic -AutoFix
     .\deploy.ps1 -DailyDeploy
-    .\deploy.ps1 -Mode plugin -FileFilter assets      # Envoyer seulement les assets
-    .\deploy.ps1 -Mode plugin -FileFilter js          # Envoyer seulement les fichiers JS
-    .\deploy.ps1 -Mode plugin -FileFilter css         # Envoyer seulement les CSS
-    .\deploy.ps1 -Mode plugin -FileFilter php         # Envoyer seulement les PHP
-    .\deploy.ps1 -Mode plugin -FileFilter languages   # Envoyer seulement les traductions
-    .\deploy.ps1 -Mode plugin -FileFilter custom -CustomFilter "*admin.js","*style.css"  # Filtres personnalisés
+    
+    # Filtres dossiers
+    .\deploy.ps1 -Mode plugin -FolderFilter assets      # Envoyer seulement assets/
+    .\deploy.ps1 -Mode plugin -FolderFilter core        # Envoyer seulement core/
+    .\deploy.ps1 -Mode plugin -FolderFilter languages   # Envoyer seulement languages/
+    .\deploy.ps1 -Mode plugin -FolderFilter custom -CustomFolders "assets/js","core/managers"  # Dossiers personnalisés
+    
+    # Filtres fichiers
+    .\deploy.ps1 -Mode plugin -FileFilter assets        # Envoyer seulement les assets
+    .\deploy.ps1 -Mode plugin -FileFilter js            # Envoyer seulement les fichiers JS
+    .\deploy.ps1 -Mode plugin -FileFilter css           # Envoyer seulement les CSS
+    .\deploy.ps1 -Mode plugin -FileFilter php           # Envoyer seulement les PHP
+    .\deploy.ps1 -Mode plugin -FileFilter languages     # Envoyer seulement les traductions
+    .\deploy.ps1 -Mode plugin -FileFilter custom -CustomFilter "*admin.js","*style.css"  # Fichiers personnalisés
+    
+    # Combinaisons
+    .\deploy.ps1 -Mode plugin -FolderFilter assets -FileFilter js    # Assets + JS seulement
+    .\deploy.ps1 -Mode plugin -FolderFilter core -FileFilter php     # Core + PHP seulement
 #>
 
 param(
@@ -83,6 +109,13 @@ param(
 
     [Parameter(Mandatory=$false)]
     [switch]$DailyDeploy,
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("all", "assets", "core", "lib", "languages", "templates", "custom")]
+    [string]$FolderFilter = "all",
+
+    [Parameter(Mandatory=$false)]
+    [string[]]$CustomFolders = @(),
 
     [Parameter(Mandatory=$false)]
     [ValidateSet("all", "assets", "js", "css", "php", "languages", "custom")]
@@ -763,6 +796,45 @@ if ($FileFilter -ne "all") {
     
     Write-Host "   • Avant filtre: $beforeFilterCount fichiers" -ForegroundColor White
     Write-Host "   • Après filtre: $($filteredFiles.Count) fichiers" -ForegroundColor Cyan
+}
+
+# Appliquer le filtre de dossiers sélectionnés
+if ($FolderFilter -ne "all") {
+    Write-Host "`n📁 FILTRE DE DOSSIERS APPLIQUÉ: $FolderFilter" -ForegroundColor Yellow
+    
+    $beforeFolderFilterCount = $filteredFiles.Count
+    
+    $filteredFiles = $filteredFiles | Where-Object {
+        $file = $_
+        $fullName = $file.FullName.ToLower()
+        
+        switch ($FolderFilter) {
+            "assets" { $fullName -like "*\assets\*" }
+            "core" { $fullName -like "*\core\*" }
+            "lib" { $fullName -like "*\lib\*" }
+            "languages" { $fullName -like "*\languages\*" }
+            "templates" { $fullName -like "*\templates\*" }
+            "custom" {
+                $include = $false
+                foreach ($folder in $CustomFolders) {
+                    $folderPattern = $folder.Replace("/", "\").ToLower()
+                    if ($fullName -like "*\$folderPattern\*" -or $fullName -like "*\$folderPattern") {
+                        $include = $true
+                        break
+                    }
+                }
+                $include
+            }
+            default { $true }
+        }
+    }
+    
+    Write-Host "   • Avant filtre: $beforeFolderFilterCount fichiers" -ForegroundColor White
+    Write-Host "   • Après filtre: $($filteredFiles.Count) fichiers" -ForegroundColor Cyan
+    
+    if ($CustomFolders.Count -gt 0) {
+        Write-Host "   • Dossiers sélectionnés: $($CustomFolders -join ', ')" -ForegroundColor White
+    }
 }
 
 $finalFileCount = $filteredFiles.Count
