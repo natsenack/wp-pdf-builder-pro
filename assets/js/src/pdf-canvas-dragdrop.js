@@ -3,6 +3,8 @@
  * Permet de glisser des éléments depuis la bibliothèque vers le canvas
  */
 
+console.log('[DRAG] Script drag-drop chargé');
+
 function PDFCanvasDragDropManager(canvasInstance) {
     this.canvasInstance = canvasInstance;
     this.isDragging = false;

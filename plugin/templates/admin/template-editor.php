@@ -628,9 +628,9 @@ if (!current_user_can('manage_options')) {
 </style>
 
 <script>
-console.log('🚀 [TEMPLATE] Template editor JavaScript starting...');
+console.log('[TEMPLATE] Début du script template-editor.php');
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎨 [TEMPLATE] PDF Builder Editor Template Loaded');
+    console.log('[TEMPLATE] DOMContentLoaded déclenché');
     
     // Initialize editor when bundle is ready
     if (typeof window.PDFBuilderPro !== 'undefined') {

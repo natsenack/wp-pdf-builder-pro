@@ -1,7 +1,7 @@
 // Point d'entrée principal pour le bundle Vanilla JS
 // Ce fichier importe tous les modules ES6 et les expose globalement
 
-console.log('🔧 [BUNDLE] Bundle PDF Builder Vanilla JS chargé et en cours d\'exécution...');
+console.log('[BUNDLE] Début du chargement du bundle PDF Builder Vanilla JS');
 
 import VanillaCanvas from './pdf-canvas-vanilla.js';
 import CanvasRenderer from './pdf-canvas-renderer.js';
