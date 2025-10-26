@@ -63,6 +63,44 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Écoute un événement personnalisé
+     */
+    on(eventType, callback) {
+        if (!this.eventListeners.has(eventType)) {
+            this.eventListeners.set(eventType, []);
+        }
+        this.eventListeners.get(eventType).push(callback);
+    }
+
+    /**
+     * Supprime un écouteur d'événement
+     */
+    off(eventType, callback) {
+        if (this.eventListeners.has(eventType)) {
+            const listeners = this.eventListeners.get(eventType);
+            const index = listeners.indexOf(callback);
+            if (index > -1) {
+                listeners.splice(index, 1);
+            }
+        }
+    }
+
+    /**
+     * Émet un événement personnalisé
+     */
+    emit(eventType, data) {
+        if (this.eventListeners.has(eventType)) {
+            this.eventListeners.get(eventType).forEach(callback => {
+                try {
+                    callback(data);
+                } catch (error) {
+                    console.error(`Error in event listener for ${eventType}:`, error);
+                }
+            });
+        }
+    }
+
+    /**
      * Initialise le canvas et les gestionnaires d'événements
      */
     async init() {

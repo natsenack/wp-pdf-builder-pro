@@ -620,6 +620,9 @@ export class PDFCanvasLayersManager {
      * Émet un événement de calque
      */
     emitLayerEvent(eventType, data) {
+        // Ne pas émettre d'événements si le canvas n'est pas encore initialisé
+        if (!this.canvasInstance.canvas) return;
+
         const event = new CustomEvent(`layer-${eventType}`, {
             detail: data,
             bubbles: true

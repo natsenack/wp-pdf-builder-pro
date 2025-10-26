@@ -353,15 +353,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 templateId: <?php echo isset($_GET['id']) ? intval($_GET['id']) : '0'; ?>
             });
 
-            // Setup event listeners
-            setupToolbarEvents(editor);
-            setupCanvasEvents(editor);
+            // Initialize the editor
+            editor.init().then(function() {
+                // Setup event listeners
+                setupToolbarEvents(editor);
+                setupCanvasEvents(editor);
 
-            // Show editor, hide loading
-            document.getElementById('pdf-builder-loading').style.display = 'none';
-            document.getElementById('pdf-builder-editor').style.display = 'flex';
+                // Show editor, hide loading
+                document.getElementById('pdf-builder-loading').style.display = 'none';
+                document.getElementById('pdf-builder-editor').style.display = 'flex';
 
-            console.log('✅ PDF Editor initialized successfully');
+                console.log('✅ PDF Editor initialized successfully');
+            }).catch(function(error) {
+                console.error('❌ Error initializing editor:', error);
+                showError('Failed to initialize editor: ' + error.message);
+            });
 
         } catch (error) {
             console.error('❌ Error initializing editor:', error);

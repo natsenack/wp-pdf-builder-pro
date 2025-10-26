@@ -617,9 +617,24 @@ export class PDFCanvasSelectionManager {
      * Émet un événement de changement de sélection
      */
     emitSelectionChange() {
+        // Ne pas émettre d'événements si le canvas n'est pas encore initialisé
+        if (!this.canvasInstance.canvas) return;
+
+        const selectedIds = this.getSelectedElementIds();
+
+        // Émettre les événements attendus par le template
+        if (selectedIds.length === 1) {
+            // Événement de sélection d'un élément unique
+            this.canvasInstance.emit('element-selected', selectedIds[0]);
+        } else if (selectedIds.length === 0) {
+            // Événement de désélection
+            this.canvasInstance.emit('selection-cleared');
+        }
+
+        // Événement générique de changement de sélection
         const event = new CustomEvent('selection-change', {
             detail: {
-                selectedElements: this.getSelectedElementIds(),
+                selectedElements: selectedIds,
                 selectionBounds: this.selectionBounds,
                 selectionCount: this.getSelectionCount()
             }
