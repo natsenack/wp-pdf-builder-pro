@@ -26,7 +26,7 @@ global.self = global.window;
 // Load and execute runtime first
 try {
   const fs = require('fs');
-  const runtime = fs.readFileSync('assets/js/dist/runtime.306632636f2fea0d6496.js', 'utf8');
+  const runtime = fs.readFileSync('assets/js/dist/runtime.5a3a6b88d4542257f277.js', 'utf8');
   console.log('Runtime loaded, length:', runtime.length);
 
   eval(runtime);
