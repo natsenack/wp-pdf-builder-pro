@@ -21,6 +21,10 @@ if (!is_user_logged_in() || !current_user_can('read')) {
     $script_loader_url = plugins_url('assets/js/dist/pdf-builder-script-loader.js', dirname(dirname(__FILE__)));
     $main_bundle_url = plugins_url('assets/js/dist/pdf-builder-admin-debug.js', dirname(dirname(__FILE__)));
 
+    // Get template ID from URL (défini tôt pour le diagnostic)
+    $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+    $is_new = $template_id === 0;
+
     echo '<div style="background: lightgreen; padding: 10px; margin: 10px; border: 1px solid green; font-size: 12px;">';
     echo '<h4>📦 Chargement des scripts PDF Builder</h4>';
     echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
@@ -73,10 +77,6 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
     echo '<p>Scripts essentiels chargés</p>';
     echo '</div>';
-
-// Get template ID from URL
-$template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-$is_new = $template_id === 0;
 
 // Récupérer les données complètes du template si c'est un template existant
 $template_name = '';
