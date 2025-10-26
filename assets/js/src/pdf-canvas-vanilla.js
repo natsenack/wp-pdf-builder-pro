@@ -150,47 +150,27 @@ export class PDFCanvasVanilla {
             throw new Error(`Container with id "${this.containerId}" not found`);
         }
 
-        // Vérifier si un canvas existant doit être utilisé
-        if (this.options.canvasElementId) {
-            this.canvas = document.getElementById(this.options.canvasElementId);
-            if (this.canvas) {
-                console.log('Using existing canvas element:', this.options.canvasElementId);
-                this.ctx = this.canvas.getContext('2d');
-                if (!this.ctx) {
-                    throw new Error('Failed to get 2D context from existing canvas');
-                }
-                // Mettre à jour les dimensions si nécessaire
-                if (this.canvas.width !== this.options.width) {
-                    this.canvas.width = this.options.width;
-                }
-                if (this.canvas.height !== this.options.height) {
-                    this.canvas.height = this.options.height;
-                }
-                return;
-            } else {
-                console.warn('Canvas element with id "' + this.options.canvasElementId + '" not found, creating new canvas');
-            }
+        // TOUJOURS utiliser le canvas existant défini en HTML
+        // Ne JAMAIS vider le conteneur ni créer un nouveau canvas
+        this.canvas = document.getElementById(this.options.canvasElementId || 'pdf-builder-canvas');
+        
+        if (!this.canvas || this.canvas.tagName !== 'CANVAS') {
+            throw new Error(`Canvas element with id "${this.options.canvasElementId || 'pdf-builder-canvas'}" not found or is not a canvas element`);
         }
 
-        // Vider le conteneur
-        container.innerHTML = '';
+        console.log('✅ Using existing HTML5 canvas:', this.canvas.id, 'dimensions:', this.canvas.width + 'x' + this.canvas.height);
 
-        // Créer le canvas
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.options.width;
-        this.canvas.height = this.options.height;
-        this.canvas.style.border = '1px solid #ddd';
-        this.canvas.style.cursor = 'default';
-        this.canvas.style.backgroundColor = this.options.backgroundColor;
-
-        // Ajouter au conteneur
-        container.appendChild(this.canvas);
-
-        // Obtenir le contexte
+        // Obtenir le contexte 2D
         this.ctx = this.canvas.getContext('2d');
         if (!this.ctx) {
             throw new Error('Failed to get 2D context from canvas');
         }
+
+        // Enregistrer les dimensions réelles du canvas
+        this.canvasWidth = this.canvas.width;
+        this.canvasHeight = this.canvas.height;
+
+        console.log('✅ Canvas context initialized successfully');
     }
 
     /**

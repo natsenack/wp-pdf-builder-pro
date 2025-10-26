@@ -83,32 +83,20 @@ PDFCanvasDragDropManager.prototype.handleDragEnd = function(event) {
  */
 PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
     if (!this.isDragging || !this.canvasInstance || !this.canvasInstance.canvas) {
-        console.log('[DRAG] DragOver ignoré - isDragging:', this.isDragging, 'canvasInstance:', !!this.canvasInstance);
         return;
     }
 
-    // Vérifier si on survole le canvas - Méthode directe: check if element at point is canvas or its container
-    const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
-    const isOverCanvas = elementAtPoint === this.canvasInstance.canvas || 
-                         (elementAtPoint && elementAtPoint.closest('#pdf-canvas-container') !== null) ||
-                         (elementAtPoint && elementAtPoint.id === 'pdf-builder-canvas') ||
-                         (elementAtPoint && elementAtPoint.id === 'pdf-canvas-container');
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
 
-    console.log('[DRAG] DragOver - Position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas, 'Element:', elementAtPoint?.id || elementAtPoint?.className);
+    // Calculer la position sur le canvas
+    const point = this.canvasInstance.getMousePosition(event);
+    this.dragOffset = point;
 
-    if (isOverCanvas) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'copy';
+    console.log('[DRAG] DragOver - Canvas Position:', point);
 
-        // Calculer la position sur le canvas
-        const point = this.canvasInstance.getMousePosition(event);
-        this.dragOffset = point;
-
-        console.log('[DRAG] Position canvas calculée:', point);
-
-        // Mettre à jour le rendu pour montrer le preview
-        this.canvasInstance.render();
-    }
+    // Mettre à jour le rendu pour montrer le preview
+    this.canvasInstance.render();
 };
 
 /**
@@ -122,47 +110,39 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
         return;
     }
 
-    // Vérifier si on dépose sur le canvas - Méthode directe: check if element at point is canvas or its container
-    const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
-    const isOverCanvas = elementAtPoint === this.canvasInstance.canvas || 
-                         (elementAtPoint && elementAtPoint.closest('#pdf-canvas-container') !== null) ||
-                         (elementAtPoint && elementAtPoint.id === 'pdf-builder-canvas') ||
-                         (elementAtPoint && elementAtPoint.id === 'pdf-canvas-container');
+    event.preventDefault();
 
-    console.log('[DRAG] Drop position:', {x: event.clientX, y: event.clientY}, 'Sur canvas:', isOverCanvas, 'Element:', elementAtPoint?.id || elementAtPoint?.className);
+    // Calculer la position finale
+    const point = this.canvasInstance.getMousePosition(event);
+    console.log('[DRAG] Drop position:', point);
 
-    if (isOverCanvas) {
-        event.preventDefault();
+    // Ajuster la position pour centrer l'élément
+    const finalProperties = Object.assign({}, this.dragElement.properties);
+    finalProperties.x = point.x - (finalProperties.width || 100) / 2;
+    finalProperties.y = point.y - (finalProperties.height || 50) / 2;
 
-        // Calculer la position finale
-        const point = this.canvasInstance.getMousePosition(event);
-        console.log('[DRAG] Position finale calculée:', point);
+    console.log('[DRAG] Propriétés finales:', finalProperties);
 
-        // Ajuster la position pour centrer l'élément
-        const finalProperties = Object.assign({}, this.dragElement.properties);
-        finalProperties.x = point.x - (finalProperties.width || 100) / 2;
-        finalProperties.y = point.y - (finalProperties.height || 50) / 2;
+    // Ajouter l'élément au canvas
+    const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
+    console.log('[DRAG] Élément ajouté avec ID:', elementId);
 
-        console.log('[DRAG] Propriétés finales:', finalProperties);
+    // Sélectionner le nouvel élément
+    this.canvasInstance.selectElement(elementId);
 
-        // Ajouter l'élément au canvas
-        const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
-        console.log('[DRAG] Élément ajouté avec ID:', elementId);
+    // Émettre un événement
+    this.canvasInstance.emit('element-dropped', {
+        elementId: elementId,
+        elementType: this.dragElement.type,
+        position: point
+    });
 
-        // Sélectionner le nouvel élément
-        this.canvasInstance.selectElement(elementId);
+    console.log('[DRAG] Drop terminé avec succès - Élément créé:', elementId);
 
-        // Émettre un événement
-        this.canvasInstance.emit('element-dropped', {
-            elementId: elementId,
-            elementType: this.dragElement.type,
-            position: point
-        });
-
-        console.log('[DRAG] Drop terminé avec succès - Élément créé:', elementId);
-    } else {
-        console.log('[DRAG] Drop hors du canvas - ignoré');
-    }
+    // Nettoyer
+    this.isDragging = false;
+    this.dragElement = null;
+    this.dragOffset = null;
 };
 
 /**

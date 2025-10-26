@@ -481,11 +481,9 @@ document.addEventListener('DOMContentLoaded', function() {
     position: relative;
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    pointer-events: none;
 }
 
 .pdf-canvas-container canvas {
-    pointer-events: auto;
     display: block;
     background-color: white;
     border: 1px solid #ddd;
