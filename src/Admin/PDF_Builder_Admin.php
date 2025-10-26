@@ -1416,6 +1416,10 @@ class PDF_Builder_Admin
         // DEBUG: Log pour vérifier que la méthode est appelée
         error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
 
+        // DEBUG: Log de tous les paramètres GET et POST pour diagnostiquer
+        error_log('PDF Builder: GET params: ' . print_r($_GET, true));
+        error_log('PDF Builder: Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
+
         // Charger seulement sur nos pages admin
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
