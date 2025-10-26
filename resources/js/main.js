@@ -112,11 +112,14 @@ const init = (containerId, options = {}) => {
 
 // Make it globally available
 if (typeof window !== 'undefined') {
+  // Exposer la fonction d'initialisation React pour le script-loader
+  window.pdfBuilderInitReact = init;
+  console.log('🔧 pdfBuilderInitReact exposé globalement');
+
+  // Aussi assigner à pdfBuilderPro si nécessaire
   if (!window.pdfBuilderPro) {
     window.pdfBuilderPro = {};
   }
-  // Forcer l'assignation de la fonction init, même si pdfBuilderPro existe déjà
-  console.log('🔧 Assignation de pdfBuilderPro.init...');
   window.pdfBuilderPro.init = init;
   console.log('✅ pdfBuilderPro.init assigné:', typeof window.pdfBuilderPro.init);
 }
