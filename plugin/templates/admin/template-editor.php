@@ -632,33 +632,30 @@ function initializeCanvas() {
     console.log('[INIT] Options:', canvasOptions);
     
     try {
-        // Initialiser le canvas
-        if (window.PDFBuilderPro.init && typeof window.PDFBuilderPro.init === 'function') {
-            console.log('[INIT] Appel de PDFBuilderPro.init() avec containerId: "pdf-canvas-container"');
-            // ✅ CORRECTION: Passer l'ID du conteneur en STRING, pas l'objet entier!
-            window.PDFBuilderPro.init('pdf-canvas-container', canvasOptions);
-            window.pdfCanvasInstance = window.PDFBuilderPro;
-        } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
-            console.log('[INIT] Utilisation de PDFCanvasVanilla');
-            // ✅ CORRECTION: Passer le containerId en tant que premier paramètre STRING
-            var canvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-canvas-container', canvasOptions);
-            window.pdfCanvasInstance = canvas;
-            canvas.init();
-        }
+        // Initialiser le canvas avec PDFCanvasVanilla
+        console.log('[INIT] Création de PDFCanvasVanilla avec containerId: "pdf-canvas-container"');
+        
+        // ✅ Créer une instance de PDFCanvasVanilla (c'est une classe)
+        var canvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-canvas-container', canvasOptions);
+        window.pdfCanvasInstance = canvas;
+        
+        // ✅ Initialiser le canvas
+        canvas.init();
         
         console.log('[INIT] ✅ Canvas initialisé avec succès');
+        
+        // Charger les données initiales du canvas (template + WooCommerce)
+        if (typeof canvas.loadInitialData === 'function') {
+            console.log('[INIT] Chargement des données initiales...');
+            canvas.loadInitialData();
+        }
         
         // Populer la bibliothèque d'éléments
         populateElementsLibrary();
         
-        // ⚠️ DÉSACTIVER notre setupDragAndDrop() custom - utiliser le système du bundle à la place
-        // setupDragAndDrop();
-        
-        // Charger le template si fourni
-        if (templateId && window.pdfCanvasInstance && typeof window.pdfCanvasInstance.loadTemplate === 'function') {
-            console.log('[INIT] Chargement du template:', templateId);
-            window.pdfCanvasInstance.loadTemplate(templateId);
-        }
+        // Afficher le canvas et cacher le loader
+        document.getElementById('pdf-builder-loading').style.display = 'none';
+        document.getElementById('pdf-builder-editor').style.display = 'flex';
         
     } catch (error) {
         console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
