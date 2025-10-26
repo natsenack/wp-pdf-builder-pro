@@ -646,6 +646,9 @@ function initializeCanvas() {
         
         console.log('[INIT] ✅ Canvas initialisé avec succès');
         
+        // Populer la bibliothèque d'éléments
+        populateElementsLibrary();
+        
         // Configurer le drag & drop de la bibliothèque
         setupDragAndDrop();
         
@@ -658,6 +661,92 @@ function initializeCanvas() {
     } catch (error) {
         console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
         showError('Erreur lors de l\'initialisation du canvas: ' + error.message);
+    }
+}
+
+// Populer la bibliothèque d'éléments
+function populateElementsLibrary() {
+    console.log('[INIT] Population de la bibliothèque d\'éléments...');
+    
+    var elementsContainer = document.getElementById('elements-container');
+    if (!elementsContainer) {
+        console.warn('[INIT] Elements container non trouvé');
+        return;
+    }
+    
+    // Vérifier si PDFBuilderPro a une méthode pour obtenir les éléments
+    if (typeof window.PDFBuilderPro !== 'undefined') {
+        // Essayer différentes méthodes pour obtenir les éléments
+        var elements = null;
+        
+        if (typeof window.PDFBuilderPro.getAllElements === 'function') {
+            elements = window.PDFBuilderPro.getAllElements();
+            console.log('[INIT] Éléments obtenus via getAllElements()', elements);
+        } else if (typeof window.PDFBuilderPro.ELEMENT_LIBRARY !== 'undefined') {
+            elements = window.PDFBuilderPro.ELEMENT_LIBRARY;
+            console.log('[INIT] Éléments obtenus via ELEMENT_LIBRARY', elements);
+        }
+        
+        if (!elements || Object.keys(elements).length === 0) {
+            console.warn('[INIT] Aucun élément trouvé, utilisation des éléments par défaut');
+            // Éléments par défaut si rien n'est trouvé
+            elements = {
+                'text': [
+                    { type: 'text', label: 'Texte', description: 'Texte simple', icon: '📝' },
+                    { type: 'text-title', label: 'Titre', description: 'Titre principal', icon: '📄' },
+                    { type: 'text-subtitle', label: 'Sous-titre', description: 'Sous-titre', icon: '📋' }
+                ],
+                'shapes': [
+                    { type: 'rectangle', label: 'Rectangle', description: 'Forme rectangulaire', icon: '▭' },
+                    { type: 'circle', label: 'Cercle', description: 'Forme circulaire', icon: '○' },
+                    { type: 'line', label: 'Ligne', description: 'Ligne simple', icon: '━' },
+                    { type: 'arrow', label: 'Flèche', description: 'Flèche directionnelle', icon: '➤' }
+                ],
+                'special': [
+                    { type: 'image', label: 'Image', description: 'Insérer une image', icon: '🖼️' },
+                    { type: 'divider', label: 'Séparateur', description: 'Ligne de séparation', icon: '⎯' }
+                ]
+            };
+        }
+        
+        // Vider le container
+        elementsContainer.innerHTML = '';
+        
+        // Ajouter les éléments
+        for (var category in elements) {
+            var categoryElements = elements[category];
+            if (!categoryElements || categoryElements.length === 0) continue;
+            
+            // Créer une section pour la catégorie
+            var categoryDiv = document.createElement('div');
+            categoryDiv.className = 'element-category';
+            
+            var categoryTitle = document.createElement('div');
+            categoryTitle.className = 'element-category-title';
+            categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categoryDiv.appendChild(categoryTitle);
+            
+            // Ajouter chaque élément
+            categoryElements.forEach(function(element) {
+                var elementDiv = document.createElement('div');
+                elementDiv.className = 'element-item';
+                elementDiv.draggable = true;
+                elementDiv.setAttribute('data-element-type', element.type);
+                elementDiv.setAttribute('data-element', JSON.stringify(element));
+                
+                elementDiv.innerHTML = (element.icon || '') + ' ' + (element.label || element.type);
+                elementDiv.title = element.description || '';
+                
+                categoryDiv.appendChild(elementDiv);
+                console.log('[INIT] Élément ajouté:', element.type, element.label);
+            });
+            
+            elementsContainer.appendChild(categoryDiv);
+        }
+        
+        console.log('[INIT] ✅ Bibliothèque d\'éléments populée');
+    } else {
+        console.error('[INIT] PDFBuilderPro non disponible');
     }
 }
 
