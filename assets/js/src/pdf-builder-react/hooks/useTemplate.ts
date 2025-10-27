@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { BuilderContext } from '../contexts/builder/BuilderContext';
+import { useBuilder } from '../contexts/builder/BuilderContext';
 
 export function useTemplate() {
-  const { state, dispatch } = useContext(BuilderContext);
+  const { state, dispatch } = useBuilder();
 
   const saveTemplate = async () => {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
