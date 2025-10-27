@@ -454,23 +454,45 @@ export class PDFCanvasVanilla {
      * Obtient la position de la souris relative au canvas
      */
     getMousePosition(event) {
-        if (!event || typeof event.clientX !== 'number' || typeof event.clientY !== 'number') {
-            console.warn('Invalid event object in getMousePosition');
-            return { x: 0, y: 0 };
+        // Pour les événements normalisés (depuis PDFCanvasEventManager)
+        // Ces événements ont déjà les coordonnées correctes
+        if (event && event.position) {
+            return { x: event.position.x, y: event.position.y };
         }
-        
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: (event.clientX - rect.left) / this.options.zoom,
-            y: (event.clientY - rect.top) / this.options.zoom
-        };
+
+        // Pour les événements DOM directs
+        if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            return {
+                x: (event.clientX - rect.left) * scaleX,
+                y: (event.clientY - rect.top) * scaleY
+            };
+        }
+
+        // Pour les événements avec originalEvent
+        if (event && event.originalEvent && typeof event.originalEvent.clientX === 'number') {
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            return {
+                x: (event.originalEvent.clientX - rect.left) * scaleX,
+                y: (event.originalEvent.clientY - rect.top) * scaleY
+            };
+        }
+
+        console.warn('Invalid event object in getMousePosition:', event);
+        return { x: 0, y: 0 };
     }
 
     /**
      * Gère le mode sélection
      */
     handleSelectMode(point, event) {
-        const multiSelect = event.ctrlKey || event.metaKey;
+        // Utiliser les modificateurs depuis l'événement normalisé ou l'événement original
+        const ctrlKey = event.modifiers ? event.modifiers.ctrl : (event.ctrlKey || event.originalEvent?.ctrlKey);
+        const multiSelect = ctrlKey;
 
         // Vérifier d'abord si on clique sur un handle de transformation pour les éléments sélectionnés
         const selectedElements = this.selectionManager.getSelectedElements();
@@ -526,14 +548,19 @@ export class PDFCanvasVanilla {
      * Démarre un glisser-déposer
      */
     startDrag(point) {
-        if (!this.selectedElement) return;
+        const selectedElements = this.selectionManager.getSelectedElements();
+        if (selectedElements.length === 0) return;
+
+        // Pour la compatibilité, utiliser le premier élément sélectionné
+        this.selectedElement = selectedElements[0];
 
         this.dragState = {
             startPoint: point,
-            elementStartPos: {
-                x: this.selectedElement.properties.x,
-                y: this.selectedElement.properties.y
-            }
+            elementStartPositions: selectedElements.map(element => ({
+                id: element.id,
+                x: element.properties.x,
+                y: element.properties.y
+            }))
         };
     }
 
@@ -541,13 +568,19 @@ export class PDFCanvasVanilla {
      * Gère le glisser-déposer
      */
     handleDrag(point) {
-        if (!this.dragState || !this.selectedElement) return;
+        if (!this.dragState || !this.dragState.elementStartPositions) return;
 
         const deltaX = point.x - this.dragState.startPoint.x;
         const deltaY = point.y - this.dragState.startPoint.y;
 
-        this.updateElementProperty(this.selectedElement.id, 'x', this.dragState.elementStartPos.x + deltaX);
-        this.updateElementProperty(this.selectedElement.id, 'y', this.dragState.elementStartPos.y + deltaY);
+        // Déplacer tous les éléments sélectionnés
+        this.dragState.elementStartPositions.forEach(startPos => {
+            const element = this.elements.get(startPos.id);
+            if (element) {
+                this.updateElementProperty(startPos.id, 'x', startPos.x + deltaX);
+                this.updateElementProperty(startPos.id, 'y', startPos.y + deltaY);
+            }
+        });
 
         this.render();
     }
