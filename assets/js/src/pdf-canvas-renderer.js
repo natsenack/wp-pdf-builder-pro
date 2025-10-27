@@ -139,9 +139,16 @@ export class PDFCanvasRenderer {
             this.ctx.translate(-centerX, -centerY);
         }
 
-        // Opacité
-        if (properties.opacity !== undefined && properties.opacity < 100) {
-            this.ctx.globalAlpha = properties.opacity / 100;
+        // Opacité — accepte les deux échelles (0-1 ou 0-100)
+        if (properties.opacity !== undefined) {
+            const opacity = properties.opacity;
+            if (opacity <= 1) {
+                // Valeur déjà en 0..1
+                this.ctx.globalAlpha = opacity;
+            } else if (opacity <= 100) {
+                // Valeur en pourcentage 0..100
+                this.ctx.globalAlpha = opacity / 100;
+            }
         }
     }
 

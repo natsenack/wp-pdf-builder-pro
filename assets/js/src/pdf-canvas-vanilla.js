@@ -815,9 +815,14 @@ export class PDFCanvasVanilla {
         }
         this.ctx.translate(-props.width / 2, -props.height / 2);
 
-        // Appliquer l'opacité
-        if (props.opacity !== undefined && props.opacity < 100) {
-            this.ctx.globalAlpha = props.opacity / 100;
+        // Appliquer l'opacité — accepte 0..1 ou 0..100
+        if (props.opacity !== undefined) {
+            const opacity = props.opacity;
+            if (opacity <= 1) {
+                this.ctx.globalAlpha = opacity;
+            } else if (opacity <= 100) {
+                this.ctx.globalAlpha = opacity / 100;
+            }
         }
 
         // Rendu selon le type d'élément
