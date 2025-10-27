@@ -1,10 +1,10 @@
 import React from 'react';
-import { BuilderProvider } from './contexts/builder/BuilderContext';
-import { Canvas } from './components/canvas/Canvas';
-import { Toolbar } from './components/toolbar/Toolbar';
-import { PropertiesPanel } from './components/properties/PropertiesPanel';
-import { Header } from './components/header/Header';
-import { useTemplate } from './hooks/useTemplate';
+import { BuilderProvider } from './contexts/builder/BuilderContext.tsx';
+import { Canvas } from './components/canvas/Canvas.tsx';
+import { Toolbar } from './components/toolbar/Toolbar.tsx';
+import { PropertiesPanel } from './components/properties/PropertiesPanel.tsx';
+import { Header } from './components/header/Header.tsx';
+import { useTemplate } from './hooks/useTemplate.ts';
 
 interface PDFBuilderProps {
   width?: number;
@@ -17,6 +17,8 @@ function PDFBuilderContent({
   height = 600,
   className
 }: PDFBuilderProps) {
+  console.log('PDFBuilderContent rendering...');
+
   const {
     templateName,
     isNewTemplate,
@@ -26,6 +28,10 @@ function PDFBuilderContent({
     previewTemplate,
     newTemplate
   } = useTemplate();
+
+  console.log('useTemplate hook returned:', { templateName, isNewTemplate, isModified, isSaving });
+
+  console.log('About to render Toolbar component');
 
   return (
     <div className={`pdf-builder ${className || ''}`} style={{
@@ -41,7 +47,7 @@ function PDFBuilderContent({
     }}>
       {/* Header en haut */}
       <Header
-        templateName={templateName}
+        templateName={templateName || ''}
         isNewTemplate={isNewTemplate}
         isModified={isModified}
         isSaving={isSaving}

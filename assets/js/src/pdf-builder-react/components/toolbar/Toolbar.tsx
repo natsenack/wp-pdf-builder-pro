@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { BuilderMode } from '../../types/elements';
 
 interface ToolbarProps {

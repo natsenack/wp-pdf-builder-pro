@@ -1,7 +1,7 @@
 // Import des composants React
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Header } from './components/header/Header.tsx';
+import { PDFBuilder } from './PDFBuilder.tsx';
 
 // État de l'application
 let currentTemplate = null;
@@ -37,83 +37,10 @@ function initPDFBuilderReact() {
   if (loadingEl) loadingEl.style.display = 'none';
   if (editorEl) editorEl.style.display = 'block';
 
-  // Composant principal de l'éditeur React
-  function PDFBuilderApp() {
-    const [templateName, setTemplateName] = useState(currentTemplate?.name || '');
-    const [modified, setModified] = useState(isModified);
-    const [isSaving, setIsSaving] = useState(false);
-
-    const handleSave = () => {
-      setIsSaving(true);
-      // Simulation de sauvegarde
-      setTimeout(() => {
-        setIsSaving(false);
-        setModified(false);
-        isModified = false;
-        if (!currentTemplate) {
-          currentTemplate = { name: templateName || 'Template sans nom' };
-        }
-        alert('Template sauvegardé avec succès !');
-      }, 1000);
-    };
-
-    const handlePreview = () => {
-      alert('Fonctionnalité d\'aperçu à venir...');
-    };
-
-    const handleNewTemplate = () => {
-      if (modified && !confirm('Vous avez des modifications non sauvegardées. Voulez-vous vraiment créer un nouveau template ?')) {
-        return;
-      }
-      currentTemplate = null;
-      isModified = false;
-      setTemplateName('');
-      setModified(false);
-      alert('Nouveau template créé !');
-    };
-
-    const isNew = !currentTemplate;
-
-    return React.createElement('div', { className: 'pdf-builder-app' },
-      React.createElement(Header, {
-        templateName: templateName,
-        isNewTemplate: isNew,
-        isModified: modified,
-        onSave: handleSave,
-        onPreview: handlePreview,
-        onNewTemplate: handleNewTemplate,
-        isSaving: isSaving
-      }),
-      React.createElement('div', {
-        className: 'pdf-builder-workspace',
-        style: {
-          flex: 1,
-          padding: '20px',
-          backgroundColor: '#f8f9fa',
-          minHeight: 'calc(100vh - 80px)'
-        }
-      },
-        React.createElement('div', {
-          style: {
-            textAlign: 'center',
-            padding: '40px',
-            backgroundColor: '#fff',
-            border: '2px dashed #007cba',
-            borderRadius: '8px'
-          }
-        },
-          React.createElement('div', { style: { fontSize: '48px', marginBottom: '20px' } }, '🎨'),
-          React.createElement('h3', { style: { color: '#007cba', marginBottom: '10px' } }, 'Zone de travail'),
-          React.createElement('p', { style: { color: '#666' } }, 'L\'éditeur complet sera bientôt disponible ici...')
-        )
-      )
-    );
-  }
-
   // Créer et rendre l'application React
   try {
     const root = ReactDOM.createRoot(container);
-    root.render(React.createElement(PDFBuilderApp));
+    root.render(React.createElement(PDFBuilder, { width: 1200, height: 800 }));
     console.log('React component rendered successfully');
 
   } catch (error) {

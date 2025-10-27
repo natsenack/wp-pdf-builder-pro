@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext';
+import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
