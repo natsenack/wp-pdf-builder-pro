@@ -231,6 +231,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const shippingCost = props.shippingCost || 0;
     const taxRate = props.taxRate || 0;
     const globalDiscount = props.globalDiscount || 0;
+    const orderFees = props.orderFees || 0;
 
     // Données fictives plus réalistes de produits WooCommerce
     const products = [
@@ -277,9 +278,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const itemDiscounts = products.reduce((sum, product) => sum + product.discount, 0);
     const subtotalAfterItemDiscounts = subtotal - itemDiscounts;
 
+    // Ajouter les frais de commande
+    const subtotalWithOrderFees = subtotalAfterItemDiscounts + orderFees;
+
     // Appliquer la remise globale
-    const globalDiscountAmount = globalDiscount > 0 ? (subtotalAfterItemDiscounts * globalDiscount / 100) : 0;
-    const subtotalAfterGlobalDiscount = subtotalAfterItemDiscounts - globalDiscountAmount;
+    const globalDiscountAmount = globalDiscount > 0 ? (subtotalWithOrderFees * globalDiscount / 100) : 0;
+    const subtotalAfterGlobalDiscount = subtotalWithOrderFees - globalDiscountAmount;
 
     // Ajouter les frais de port
     const subtotalWithShipping = subtotalAfterGlobalDiscount + shippingCost;
@@ -423,6 +427,48 @@ export function Canvas({ width, height, className }: CanvasProps) {
       }
     });
 
+    // Ligne des frais de commande (si applicable)
+    if (orderFees > 0) {
+      const rowHeight = showDescription ? 40 : 28;
+
+      // Fond légèrement différent pour les frais
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(1, currentY - 2, element.width - 2, rowHeight);
+
+      ctx.fillStyle = '#000000';
+      ctx.font = `italic ${fontSize}px Arial`;
+
+      columns.forEach(col => {
+        ctx.textAlign = col.align as CanvasTextAlign;
+        const textX = col.align === 'right' ? col.x + col.width * (element.width - 16) - 4 :
+                     col.align === 'center' ? col.x + (col.width * (element.width - 16)) / 2 :
+                     col.x;
+
+        let text = '';
+        switch (col.key) {
+          case 'name': text = 'Frais de commande'; break;
+          case 'sku': text = ''; break;
+          case 'description': text = 'Frais supplémentaires'; break;
+          case 'qty': text = '1'; break;
+          case 'price': text = `${orderFees.toFixed(2)}${currency}`; break;
+          case 'discount': text = '-'; break;
+          case 'total': text = `${orderFees.toFixed(2)}${currency}`; break;
+        }
+
+        ctx.fillText(text, textX, currentY + rowHeight / 2);
+      });
+
+      currentY += rowHeight + 4;
+
+      // Ligne de séparation après les frais de commande
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(8, currentY - 6);
+      ctx.lineTo(element.width - 8, currentY - 6);
+      ctx.stroke();
+    }
+
     // Section des totaux
     currentY += 8;
 
@@ -447,6 +493,16 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillText(`${subtotal.toFixed(2)}${currency}`, element.width - 8, totalsY);
 
     currentY += 18;
+
+    // Frais de commande
+    if (orderFees > 0) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#374151';
+      ctx.fillText('Frais de commande:', element.width - 140, currentY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${orderFees.toFixed(2)}${currency}`, element.width - 8, currentY);
+      currentY += 18;
+    }
 
     // Remises sur articles
     if (itemDiscounts > 0) {

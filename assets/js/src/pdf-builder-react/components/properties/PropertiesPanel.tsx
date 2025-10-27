@@ -631,6 +631,100 @@ function renderSpecificProperties(
               }}
             />
           </div>
+
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+          <div style={{ marginBottom: '12px' }}>
+            <h6 style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
+              💰 Calculs financiers
+            </h6>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Frais de commande (€)
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={(element as any).orderFees || 0}
+              onChange={(e) => onChange(element.id, 'orderFees', parseFloat(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+            <span style={{ fontSize: '10px', color: '#666' }}>Frais supplémentaires par commande</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Frais de port (€)
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={(element as any).shippingCost || 0}
+              onChange={(e) => onChange(element.id, 'shippingCost', parseFloat(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+            <span style={{ fontSize: '10px', color: '#666' }}>Coûts de livraison</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Taux TVA (%)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              value={(element as any).taxRate || 0}
+              onChange={(e) => onChange(element.id, 'taxRate', parseFloat(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+            <span style={{ fontSize: '10px', color: '#666' }}>Taux de TVA appliqué</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Remise globale (%)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              value={(element as any).globalDiscount || 0}
+              onChange={(e) => onChange(element.id, 'globalDiscount', parseFloat(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+            <span style={{ fontSize: '10px', color: '#666' }}>Remise appliquée au total</span>
+          </div>
         </>
       );
 
