@@ -1,6 +1,7 @@
 // Import des composants React
 import React, { useState } from 'react';
-import { Header } from './components/header/Header';
+import ReactDOM from 'react-dom/client';
+import { Header } from './components/header/Header.tsx';
 import './components/header/Header.css';
 
 // État de l'application
@@ -74,8 +75,8 @@ function initPDFBuilderReact() {
 
     const isNew = !currentTemplate;
 
-    return window.React.createElement('div', { className: 'pdf-builder-app' },
-      window.React.createElement(Header, {
+    return React.createElement('div', { className: 'pdf-builder-app' },
+      React.createElement(Header, {
         templateName: templateName,
         isNewTemplate: isNew,
         isModified: modified,
@@ -84,7 +85,7 @@ function initPDFBuilderReact() {
         onNewTemplate: handleNewTemplate,
         isSaving: isSaving
       }),
-      window.React.createElement('div', {
+      React.createElement('div', {
         className: 'pdf-builder-workspace',
         style: {
           flex: 1,
@@ -93,7 +94,7 @@ function initPDFBuilderReact() {
           minHeight: 'calc(100vh - 80px)'
         }
       },
-        window.React.createElement('div', {
+        React.createElement('div', {
           style: {
             textAlign: 'center',
             padding: '40px',
@@ -102,9 +103,9 @@ function initPDFBuilderReact() {
             borderRadius: '8px'
           }
         },
-          window.React.createElement('div', { style: { fontSize: '48px', marginBottom: '20px' } }, '🎨'),
-          window.React.createElement('h3', { style: { color: '#007cba', marginBottom: '10px' } }, 'Zone de travail'),
-          window.React.createElement('p', { style: { color: '#666' } }, 'L\'éditeur complet sera bientôt disponible ici...')
+          React.createElement('div', { style: { fontSize: '48px', marginBottom: '20px' } }, '🎨'),
+          React.createElement('h3', { style: { color: '#007cba', marginBottom: '10px' } }, 'Zone de travail'),
+          React.createElement('p', { style: { color: '#666' } }, 'L\'éditeur complet sera bientôt disponible ici...')
         )
       )
     );
@@ -112,8 +113,8 @@ function initPDFBuilderReact() {
 
   // Créer et rendre l'application React
   try {
-    const root = window.ReactDOM.createRoot(container);
-    root.render(window.React.createElement(PDFBuilderApp));
+    const root = ReactDOM.createRoot(container);
+    root.render(React.createElement(PDFBuilderApp));
     console.log('React component rendered successfully');
 
   } catch (error) {

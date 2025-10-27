@@ -24,8 +24,9 @@ module.exports = {
     },
     globalObject: 'this'
   },
-  resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.json']
+  externals: {
+    // 'react': 'React',  // Commenté pour bundler React
+    // 'react-dom': 'ReactDOM'  // Commenté pour bundler ReactDOM
   },
   module: {
     rules: [
