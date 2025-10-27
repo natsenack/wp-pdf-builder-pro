@@ -532,7 +532,7 @@ export class PDFCanvasVanilla {
      */
     handleDrawMode(point) {
         // Implémentation du mode dessin
-        console.log('Draw mode at:', point);
+        // TODO: Implement draw mode functionality
     }
 
     /**
@@ -540,7 +540,7 @@ export class PDFCanvasVanilla {
      */
     handleTextMode(point) {
         // Implémentation du mode texte
-        console.log('Text mode at:', point);
+        // TODO: Implement text mode functionality
     }
 
     /**

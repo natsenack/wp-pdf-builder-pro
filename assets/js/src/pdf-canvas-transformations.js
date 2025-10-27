@@ -100,21 +100,21 @@ export class PDFCanvasTransformationsManager {
      * Déplace un élément spécifique
      */
     moveElement(element, deltaX, deltaY) {
-        // Appliquer le snapping si activé
-        let finalDeltaX = deltaX;
-        let finalDeltaY = deltaY;
+        const original = this.originalBounds;
 
+        // Calculer la nouvelle position de manière absolue
+        let newX = original.x + deltaX;
+        let newY = original.y + deltaY;
+
+        // Appliquer le snapping si activé
         if (this.snapToGrid) {
-            const snapped = this.snapToGridPoint(
-                element.properties.x + deltaX,
-                element.properties.y + deltaY
-            );
-            finalDeltaX = snapped.x - element.properties.x;
-            finalDeltaY = snapped.y - element.properties.y;
+            const snapped = this.snapToGridPoint(newX, newY);
+            newX = snapped.x;
+            newY = snapped.y;
         }
 
-        element.properties.x += finalDeltaX;
-        element.properties.y += finalDeltaY;
+        element.properties.x = newX;
+        element.properties.y = newY;
         element.updatedAt = Date.now();
     }
 
@@ -167,46 +167,49 @@ export class PDFCanvasTransformationsManager {
      */
     resizeElement(element, handlePosition, deltaX, deltaY) {
         const props = element.properties;
-        let newX = props.x;
-        let newY = props.y;
-        let newWidth = props.width;
-        let newHeight = props.height;
+        const original = this.originalBounds;
 
-        // Calculer les nouvelles dimensions selon le handle
+        // Calculer les nouvelles dimensions de manière absolue par rapport aux dimensions originales
+        let newX = original.x;
+        let newY = original.y;
+        let newWidth = original.width;
+        let newHeight = original.height;
+
+        // Appliquer la transformation selon le handle
         switch (handlePosition) {
             case 'nw': // Nord-Ouest
-                newX = props.x + deltaX;
-                newY = props.y + deltaY;
-                newWidth = Math.max(this.minSize, props.width - deltaX);
-                newHeight = Math.max(this.minSize, props.height - deltaY);
+                newX = original.x + deltaX;
+                newY = original.y + deltaY;
+                newWidth = Math.max(this.minSize, original.width - deltaX);
+                newHeight = Math.max(this.minSize, original.height - deltaY);
                 break;
             case 'ne': // Nord-Est
-                newY = props.y + deltaY;
-                newWidth = Math.max(this.minSize, props.width + deltaX);
-                newHeight = Math.max(this.minSize, props.height - deltaY);
+                newY = original.y + deltaY;
+                newWidth = Math.max(this.minSize, original.width + deltaX);
+                newHeight = Math.max(this.minSize, original.height - deltaY);
                 break;
             case 'sw': // Sud-Ouest
-                newX = props.x + deltaX;
-                newWidth = Math.max(this.minSize, props.width - deltaX);
-                newHeight = Math.max(this.minSize, props.height + deltaY);
+                newX = original.x + deltaX;
+                newWidth = Math.max(this.minSize, original.width - deltaX);
+                newHeight = Math.max(this.minSize, original.height + deltaY);
                 break;
             case 'se': // Sud-Est
-                newWidth = Math.max(this.minSize, props.width + deltaX);
-                newHeight = Math.max(this.minSize, props.height + deltaY);
+                newWidth = Math.max(this.minSize, original.width + deltaX);
+                newHeight = Math.max(this.minSize, original.height + deltaY);
                 break;
             case 'n': // Nord
-                newY = props.y + deltaY;
-                newHeight = Math.max(this.minSize, props.height - deltaY);
+                newY = original.y + deltaY;
+                newHeight = Math.max(this.minSize, original.height - deltaY);
                 break;
             case 's': // Sud
-                newHeight = Math.max(this.minSize, props.height + deltaY);
+                newHeight = Math.max(this.minSize, original.height + deltaY);
                 break;
             case 'w': // Ouest
-                newX = props.x + deltaX;
-                newWidth = Math.max(this.minSize, props.width - deltaX);
+                newX = original.x + deltaX;
+                newWidth = Math.max(this.minSize, original.width - deltaX);
                 break;
             case 'e': // Est
-                newWidth = Math.max(this.minSize, props.width + deltaX);
+                newWidth = Math.max(this.minSize, original.width + deltaX);
                 break;
         }
 
@@ -271,7 +274,7 @@ export class PDFCanvasTransformationsManager {
                 Math.pow(point.x - handle.x, 2) + Math.pow(point.y - handle.y, 2)
             );
 
-            if (distance <= this.handleSize) {  // Augmenté de handleSize/2 à handleSize pour une meilleure détection
+            if (distance <= this.handleSize / 2) {  // Zone de détection correspondant à la taille visuelle du handle
                 return {
                     type: 'resize',
                     position: position,
