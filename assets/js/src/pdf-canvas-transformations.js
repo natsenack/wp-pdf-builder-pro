@@ -15,7 +15,7 @@ export class PDFCanvasTransformationsManager {
         this.minSize = 10;
 
         // Configuration des handles
-        this.handleSize = 16;
+        this.handleSize = 12;
         this.handleColor = '#007bff';
         this.handleBorderColor = '#ffffff';
         this.rotationHandleColor = '#ff6b35';
@@ -34,8 +34,19 @@ export class PDFCanvasTransformationsManager {
         this.transformHandle = handle;
         this.transformStartPoint = { x: point.x, y: point.y };
 
-        // Sauvegarder les bounds originaux
-        this.originalBounds = this.canvasInstance.selectionManager.selectionBounds;
+        // Sauvegarder les bounds originaux de l'élément spécifique (si handle.element existe)
+        // ou des éléments sélectionnés
+        if (handle.element) {
+            const props = handle.element.properties;
+            this.originalBounds = {
+                x: props.x,
+                y: props.y,
+                width: props.width,
+                height: props.height
+            };
+        } else {
+            this.originalBounds = this.canvasInstance.selectionManager.selectionBounds;
+        }
 
         return true;
     }
@@ -85,32 +96,44 @@ export class PDFCanvasTransformationsManager {
     }
 
     /**
+     * Déplace un élément spécifique
+     */
+    moveElement(element, deltaX, deltaY) {
+        // Appliquer le snapping si activé
+        let finalDeltaX = deltaX;
+        let finalDeltaY = deltaY;
+
+        if (this.snapToGrid) {
+            const snapped = this.snapToGridPoint(
+                element.properties.x + deltaX,
+                element.properties.y + deltaY
+            );
+            finalDeltaX = snapped.x - element.properties.x;
+            finalDeltaY = snapped.y - element.properties.y;
+        }
+
+        element.properties.x += finalDeltaX;
+        element.properties.y += finalDeltaY;
+        element.updatedAt = Date.now();
+    }
+
+    /**
      * Déplace les éléments sélectionnés
      */
     moveElements(deltaX, deltaY) {
-        const selectedIds = this.canvasInstance.selectionManager.getSelectedElementIds();
-
-        selectedIds.forEach(elementId => {
-            const element = this.canvasInstance.elements.get(elementId);
-            if (element) {
-                // Appliquer le snapping si activé
-                let finalDeltaX = deltaX;
-                let finalDeltaY = deltaY;
-
-                if (this.snapToGrid) {
-                    const snapped = this.snapToGridPoint(
-                        element.properties.x + deltaX,
-                        element.properties.y + deltaY
-                    );
-                    finalDeltaX = snapped.x - element.properties.x;
-                    finalDeltaY = snapped.y - element.properties.y;
+        // Si on a un élément spécifique dans le handle, ne déplacer que cet élément
+        if (this.transformHandle && this.transformHandle.element) {
+            this.moveElement(this.transformHandle.element, deltaX, deltaY);
+        } else {
+            // Sinon, déplacer tous les éléments sélectionnés
+            const selectedIds = this.canvasInstance.selectionManager.getSelectedElementIds();
+            selectedIds.forEach(elementId => {
+                const element = this.canvasInstance.elements.get(elementId);
+                if (element) {
+                    this.moveElement(element, deltaX, deltaY);
                 }
-
-                element.properties.x += finalDeltaX;
-                element.properties.y += finalDeltaY;
-                element.updatedAt = Date.now();
-            }
-        });
+            });
+        }
 
         // Mettre à jour les bounds de sélection
         this.canvasInstance.selectionManager.updateSelectionBounds();
@@ -120,14 +143,19 @@ export class PDFCanvasTransformationsManager {
      * Redimensionne les éléments sélectionnés
      */
     resizeElements(handlePosition, deltaX, deltaY) {
-        const selectedIds = this.canvasInstance.selectionManager.getSelectedElementIds();
-
-        selectedIds.forEach(elementId => {
-            const element = this.canvasInstance.elements.get(elementId);
-            if (element) {
-                this.resizeElement(element, handlePosition, deltaX, deltaY);
-            }
-        });
+        // Si on a un élément spécifique dans le handle, ne redimensionner que cet élément
+        if (this.transformHandle && this.transformHandle.element) {
+            this.resizeElement(this.transformHandle.element, handlePosition, deltaX, deltaY);
+        } else {
+            // Sinon, redimensionner tous les éléments sélectionnés (pour compatibilité)
+            const selectedIds = this.canvasInstance.selectionManager.getSelectedElementIds();
+            selectedIds.forEach(elementId => {
+                const element = this.canvasInstance.elements.get(elementId);
+                if (element) {
+                    this.resizeElement(element, handlePosition, deltaX, deltaY);
+                }
+            });
+        }
 
         // Mettre à jour les bounds de sélection
         this.canvasInstance.selectionManager.updateSelectionBounds();

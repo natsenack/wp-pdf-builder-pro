@@ -866,22 +866,26 @@ export class PDFCanvasVanilla {
      */
     drawGrid() {
         const gridSize = this.options.gridSize;
+        const rect = this.canvas.getBoundingClientRect();
+        const canvasWidth = rect.width;
+        const canvasHeight = rect.height;
+
         this.ctx.strokeStyle = '#e0e0e0';
         this.ctx.lineWidth = 1;
 
         // Lignes verticales
-        for (let x = 0; x <= this.canvas.width; x += gridSize) {
+        for (let x = 0; x <= canvasWidth; x += gridSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 0);
-            this.ctx.lineTo(x, this.canvas.height);
+            this.ctx.lineTo(x, canvasHeight);
             this.ctx.stroke();
         }
 
         // Lignes horizontales
-        for (let y = 0; y <= this.canvas.height; y += gridSize) {
+        for (let y = 0; y <= canvasHeight; y += gridSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(0, y);
-            this.ctx.lineTo(this.canvas.width, y);
+            this.ctx.lineTo(canvasWidth, y);
             this.ctx.stroke();
         }
     }
