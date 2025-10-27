@@ -3,7 +3,7 @@
 
 
 
-import VanillaCanvas from './pdf-canvas-vanilla.js';
+import VanillaCanvas from './pdf-canvas-vanilla-new.js';
 import CanvasRenderer from './pdf-canvas-renderer.js';
 import CanvasEvents from './pdf-canvas-events.js';
 import CanvasSelection from './pdf-canvas-selection.js';

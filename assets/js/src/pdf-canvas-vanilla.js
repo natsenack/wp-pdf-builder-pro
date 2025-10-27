@@ -7,7 +7,7 @@
 import { ELEMENT_PROPERTY_RESTRICTIONS, ELEMENT_TYPE_MAPPING, isPropertyAllowed, getPropertyDefault, validateProperty, fixInvalidProperty } from './pdf-canvas-elements.js';
 import { WooCommerceElementsManager, wooCommerceElementsManager } from './pdf-canvas-woocommerce.js';
 import { ElementCustomizationService, elementCustomizationService } from './pdf-canvas-customization.js';
-import { PDFCanvasSimpleRenderer } from './pdf-canvas-render-simple.js';
+import { PDFCanvasCore } from './pdf-canvas-core.js';
 import { PDFCanvasEventManager } from './pdf-canvas-events.js';
 import { PDFCanvasRenderUtils } from './pdf-canvas-render-utils.js';
 import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
