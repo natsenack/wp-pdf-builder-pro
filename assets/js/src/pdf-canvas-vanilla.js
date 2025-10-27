@@ -495,6 +495,7 @@ export class PDFCanvasVanilla {
         for (const element of selectedElements) {
             const transformHandle = this.transformationsManager.getHandleAtPoint(point, element);
             if (transformHandle) {
+                // Démarrer une transformation par handle - pas de drag en même temps
                 this.transformationsManager.startTransform(point, transformHandle);
                 this.render();
                 return;
@@ -513,8 +514,10 @@ export class PDFCanvasVanilla {
                 this.selectedElement = null; // Multiple sélection
             }
 
-            // Démarrer le déplacement si un élément est sélectionné
-            this.startDrag(point);
+            // Démarrer le déplacement si un élément est sélectionné (pas de transformation en cours)
+            if (!this.transformationsManager.isTransforming) {
+                this.startDrag(point);
+            }
         } else {
             // Démarrer une sélection par rectangle
             this.selectionManager.startSelection(point);
@@ -593,6 +596,23 @@ export class PDFCanvasVanilla {
      * Gère le survol des éléments
      */
     handleHover(point) {
+        // Vérifier d'abord les handles de transformation pour les éléments sélectionnés
+        const selectedElements = this.selectionManager.getSelectedElements();
+        for (const element of selectedElements) {
+            const transformHandle = this.transformationsManager.getHandleAtPoint(point, element);
+            if (transformHandle) {
+                // Changer le curseur selon le type de handle
+                const cursorMap = {
+                    'nw': 'nw-resize', 'n': 'n-resize', 'ne': 'ne-resize',
+                    'e': 'e-resize', 'se': 'se-resize', 's': 's-resize',
+                    'sw': 'sw-resize', 'w': 'w-resize'
+                };
+                this.canvas.style.cursor = cursorMap[transformHandle.position] || 'crosshair';
+                return;
+            }
+        }
+
+        // Sinon, vérifier les éléments pour le déplacement
         const element = this.getElementAtPoint(point);
         this.canvas.style.cursor = element ? 'move' : 'default';
     }
