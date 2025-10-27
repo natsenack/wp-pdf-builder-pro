@@ -590,7 +590,7 @@ function waitForPDFBuilder(maxRetries = 20) {
 }
 
 // Initialiser le canvas une fois PDFBuilderPro disponible
-function initializeCanvas() {
+async function initializeCanvas() {
     // console.log removed
     
     // Masquer le loading, afficher l'éditeur
@@ -637,7 +637,7 @@ function initializeCanvas() {
         
         // ✅ Initialiser le canvas
         console.log('🚀 Appel canvas.init()...');
-        canvas.init();
+        await canvas.init();
         console.log('✅ canvas.init() complété');
         
         // console.log removed
