@@ -228,10 +228,10 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showDescription = props.showDescription !== false;
     const showQuantity = props.showQuantity !== false;
     const showDiscount = props.showDiscount !== false;
-    const shippingCost = props.shippingCost || 0;
-    const taxRate = props.taxRate || 0;
-    const globalDiscount = props.globalDiscount || 0;
-    const orderFees = props.orderFees || 0;
+    const shippingCost = props.shippingCost || 8.50; // Exemple de frais de port
+    const taxRate = props.taxRate || 20; // Exemple de TVA 20%
+    const globalDiscount = props.globalDiscount || 5; // Exemple de remise globale 5%
+    const orderFees = props.orderFees || 2.50; // Exemple de frais de commande
 
     // Données fictives plus réalistes de produits WooCommerce
     const products = [
