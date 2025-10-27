@@ -600,14 +600,17 @@ async function initializeCanvas() {
     if (loading) loading.style.display = 'none';
     if (editor) editor.style.display = 'flex';
     
-    // Récupérer l'ID du template depuis l'URL
+    // Récupérer l'ID et le nom du template depuis l'URL et la page
     var templateId = new URLSearchParams(window.location.search).get('template_id');
+    var templateNameEl = document.querySelector('.template-name');
+    var templateName = templateNameEl ? templateNameEl.textContent.replace('✏️ Editing: ', '').replace('✏️ Editing Template #' + templateId, 'Template ' + templateId) : 'Template ' + (templateId || 'Nouveau');
     // console.log removed
     
     // Options de configuration du canvas
     var canvasOptions = {
         containerId: 'pdf-canvas-container',
         templateId: templateId || null,
+        templateName: templateName || 'Template',
         width: 595,  // A4 largeur
         height: 842, // A4 hauteur
         zoom: 1,
