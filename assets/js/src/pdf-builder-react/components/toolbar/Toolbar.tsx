@@ -25,9 +25,111 @@ export function Toolbar({ className }: ToolbarProps) {
   return (
     <div className={`pdf-builder-toolbar ${className || ''}`} style={{
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'row',
       gap: '8px',
       padding: '12px',
+      backgroundColor: '#f8f9fa',
+      borderBottom: '1px solid #dee2e6',
+      flexWrap: 'wrap'
+    }}>
+      {/* Outils de sélection de mode */}
+      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+        {tools.map((tool) => (
+          <button
+            key={tool.mode}
+            onClick={() => handleModeChange(tool.mode)}
+            className={`toolbar-btn ${state.mode === tool.mode ? 'active' : ''}`}
+            style={{
+              padding: '8px 12px',
+              border: '1px solid #ced4da',
+              borderRadius: '4px',
+              backgroundColor: state.mode === tool.mode ? '#007cba' : '#fff',
+              color: state.mode === tool.mode ? '#fff' : '#495057',
+              cursor: 'pointer',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+            title={tool.label}
+          >
+            <span>{tool.icon}</span>
+            <span>{tool.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Séparateur */}
+      <div style={{ width: '1px', height: '32px', backgroundColor: '#dee2e6', margin: '0 8px' }} />
+
+      {/* Actions Undo/Redo */}
+      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+        <button
+          onClick={undo}
+          disabled={!state.canUndo}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #ced4da',
+            borderRadius: '4px',
+            backgroundColor: state.canUndo ? '#28a745' : '#e9ecef',
+            color: state.canUndo ? '#fff' : '#6c757d',
+            cursor: state.canUndo ? 'pointer' : 'not-allowed',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+          title="Annuler"
+        >
+          <span>↶</span>
+          <span>Annuler</span>
+        </button>
+
+        <button
+          onClick={redo}
+          disabled={!state.canRedo}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #ced4da',
+            borderRadius: '4px',
+            backgroundColor: state.canRedo ? '#28a745' : '#e9ecef',
+            color: state.canRedo ? '#fff' : '#6c757d',
+            cursor: state.canRedo ? 'pointer' : 'not-allowed',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+          title="Rétablir"
+        >
+          <span>↷</span>
+          <span>Rétablir</span>
+        </button>
+
+        <button
+          onClick={reset}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #ced4da',
+            borderRadius: '4px',
+            backgroundColor: '#dc3545',
+            color: '#fff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+          title="Réinitialiser"
+        >
+          <span>🔄</span>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+    </div>
+  );
+}
       backgroundColor: '#f5f5f5',
       border: '1px solid #ddd',
       borderRadius: '4px'

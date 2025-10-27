@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     'pdf-builder-admin': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
     'pdf-builder-admin-debug': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
-    'pdf-builder-react': './assets/js/src/pdf-builder-react/index.ts',
+    'pdf-builder-react': './assets/js/src/pdf-builder-react/index.js',
     'pdf-builder-nonce-fix': './dev/resources/js/pdf-builder-nonce-fix.js'
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
