@@ -7,7 +7,23 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  const { state, setMode, undo, redo, reset } = useBuilder();
+  console.log('Toolbar component rendered'); // Debug log
+
+  let state, setMode, undo, redo, reset;
+  try {
+    const builder = useBuilder();
+    state = builder.state;
+    setMode = builder.setMode;
+    undo = builder.undo;
+    redo = builder.redo;
+    reset = builder.reset;
+    console.log('Builder context available:', !!state); // Debug log
+  } catch (error) {
+    console.error('Error accessing builder context:', error);
+    return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
+      Erreur: Contexte Builder non disponible
+    </div>;
+  }
 
   const tools: { mode: BuilderMode; label: string; icon: string }[] = [
     { mode: 'select', label: 'Sélection', icon: '🖱️' },
@@ -29,9 +45,10 @@ export function Toolbar({ className }: ToolbarProps) {
       gap: '8px',
       padding: '12px',
       backgroundColor: '#f5f5f5',
-      border: '1px solid #ddd',
+      border: '2px solid #ff0000', // Debug: bordure rouge pour voir si elle s'affiche
       borderRadius: '4px',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      minHeight: '60px' // Debug: hauteur minimale
     }}>
       {/* Outils de création */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
