@@ -15,7 +15,7 @@ export class PDFCanvasTransformationsManager {
         this.minSize = 10;
 
         // Configuration des handles
-        this.handleSize = 12;
+        this.handleSize = 16;
         this.handleColor = '#007bff';
         this.handleBorderColor = '#ffffff';
         this.rotationHandleColor = '#ff6b35';

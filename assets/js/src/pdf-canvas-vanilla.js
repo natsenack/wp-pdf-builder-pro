@@ -120,8 +120,8 @@ export class PDFCanvasVanilla {
             // Initialiser le renderer avec le canvas et contexte
             this.renderer.initialize(this.canvas, this.ctx);
 
-            // Initialiser le gestionnaire d'événements
-            this.eventManager.initialize(this.canvas);
+            // NE PAS initialiser l'eventManager pour éviter les conflits avec les gestionnaires directs
+            // this.eventManager.initialize(this.canvas);
 
             // Attacher les gestionnaires d'événements
             this.attachEventListeners();
@@ -269,8 +269,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse down
      */
     handleMouseDown(event) {
-        // Accepter les événements DOM et les événements normalisés
-        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
+        // Vérifier que l'événement est valide
+        if (!event || typeof event.preventDefault !== 'function') {
             console.warn('Invalid event in handleMouseDown');
             return;
         }
@@ -294,8 +294,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse move
      */
     handleMouseMove(event) {
-        // Accepter les événements DOM et les événements normalisés
-        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
+        // Vérifier que l'événement est valide
+        if (!event || typeof event.preventDefault !== 'function') {
             console.warn('Invalid event in handleMouseMove');
             return;
         }
@@ -326,8 +326,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse up
      */
     handleMouseUp(event) {
-        // Accepter les événements DOM et les événements normalisés
-        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
+        // Vérifier que l'événement est valide
+        if (!event || typeof event.preventDefault !== 'function') {
             console.warn('Invalid event in handleMouseUp');
             return;
         }
@@ -454,12 +454,6 @@ export class PDFCanvasVanilla {
      * Obtient la position de la souris relative au canvas
      */
     getMousePosition(event) {
-        // Pour les événements normalisés (depuis PDFCanvasEventManager)
-        // Ces événements ont déjà les coordonnées correctes
-        if (event && event.position) {
-            return { x: event.position.x, y: event.position.y };
-        }
-
         // Pour les événements DOM directs
         if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
             const rect = this.canvas.getBoundingClientRect();
@@ -490,8 +484,8 @@ export class PDFCanvasVanilla {
      * Gère le mode sélection
      */
     handleSelectMode(point, event) {
-        // Utiliser les modificateurs depuis l'événement normalisé ou l'événement original
-        const ctrlKey = event.modifiers ? event.modifiers.ctrl : (event.ctrlKey || event.originalEvent?.ctrlKey);
+        // Utiliser les modificateurs depuis l'événement DOM
+        const ctrlKey = event.ctrlKey || event.originalEvent?.ctrlKey;
         const multiSelect = ctrlKey;
 
         // Vérifier d'abord si on clique sur un handle de transformation pour les éléments sélectionnés
@@ -1264,30 +1258,6 @@ export class PDFCanvasVanilla {
             console.error('Failed to import JSON:', error);
             return false;
         }
-    }
-
-    /**
-     * Obtient la position de la souris relative au canvas
-     */
-    getMousePosition(event) {
-        // Pour les événements normalisés (depuis PDFCanvasEventManager)
-        if (event.position) {
-            return event.position;
-        }
-
-        // Pour les événements DOM directs
-        if (event.originalEvent) {
-            event = event.originalEvent;
-        }
-
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
-
-        return {
-            x: (event.clientX - rect.left) * scaleX,
-            y: (event.clientY - rect.top) * scaleY
-        };
     }
 
     /**
