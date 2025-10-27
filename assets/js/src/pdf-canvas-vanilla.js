@@ -41,6 +41,12 @@ export class PDFCanvasVanilla {
         this.lastMouseMoveTime = 0;
         this.mouseMoveThrottleMs = 16; // ~60fps
 
+        // État du canvas - DOIT être initialisé AVANT les gestionnaires
+        this.canvas = null;
+        this.ctx = null;
+        this.elements = new Map();
+        this.selectedElement = null;
+
         // Services intégrés
         this.eventListeners = new Map();
 
@@ -132,6 +138,9 @@ export class PDFCanvasVanilla {
 
             // Premier rendu
             this.render();
+
+            // Sauvegarder l'état initial dans l'historique
+            this.historyManager.saveState();
 
             this.isInitialized = true;
 

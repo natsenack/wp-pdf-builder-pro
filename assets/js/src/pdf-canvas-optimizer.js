@@ -51,7 +51,8 @@ export class PDFCanvasPerformanceOptimizer {
      * Met à jour les métriques de performance
      */
     updateMetrics() {
-        this.metrics.elementCount = this.canvasInstance.elements.size;
+        // Vérifier que elements est défini avant d'accéder à size
+        this.metrics.elementCount = this.canvasInstance.elements ? this.canvasInstance.elements.size : 0;
         this.metrics.frameCount++;
 
         if (typeof performance !== 'undefined' && performance.memory) {

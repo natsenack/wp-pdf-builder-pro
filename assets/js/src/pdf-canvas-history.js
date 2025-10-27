@@ -9,14 +9,19 @@ function PDFCanvasHistoryManager(canvasInstance) {
     this.historyIndex = -1;
     this.maxHistorySize = 50;
 
-    // État initial
-    this.saveState();
+    // NE PAS appeler saveState() ici - elements n'est pas encore initialisé
+    // this.saveState(); // Commenté pour éviter l'erreur
 }
 
 /**
  * Sauvegarde l'état actuel dans l'historique
  */
 PDFCanvasHistoryManager.prototype.saveState = function() {
+    // Vérifier que elements est défini
+    if (!this.canvasInstance.elements) {
+        return; // Ne rien faire si elements n'est pas encore initialisé
+    }
+
     const state = {
         elements: new Map(),
         selectedElement: this.canvasInstance.selectedElement ? this.canvasInstance.selectedElement.id : null,
