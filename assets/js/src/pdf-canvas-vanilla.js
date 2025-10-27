@@ -1408,6 +1408,263 @@ export class PDFCanvasVanilla {
         console.log('isGridVisible called - returning:', this.options.showGrid);
         return this.options.showGrid;
     }
+
+    /**
+     * Gère l'événement mousedown
+     */
+    handleMouseDown(event) {
+        console.log('handleMouseDown:', event.position);
+
+        const point = event.position;
+        const multiSelect = event.modifiers.ctrl || event.modifiers.shift;
+
+        // Vérifier si on clique sur un handle de transformation
+        const transformHandle = this.transformationsManager.getHandleAtPoint(point);
+        if (transformHandle) {
+            console.log('Starting transformation:', transformHandle);
+            this.transformationsManager.startTransform(point, transformHandle);
+            this.canvas.style.cursor = this.getCursorForHandle(transformHandle);
+            return;
+        }
+
+        // Vérifier si on clique sur un élément (pour déplacement)
+        const element = this.getElementAtPoint(point);
+        if (element) {
+            console.log('Element clicked for move:', element.id);
+
+            // Si l'élément n'est pas déjà sélectionné, le sélectionner
+            if (!this.selectionManager.isElementSelected(element.id)) {
+                this.selectionManager.selectAtPoint(point, multiSelect);
+            }
+
+            // Démarrer le déplacement si on a des éléments sélectionnés
+            if (this.selectionManager.getSelectionCount() > 0) {
+                this.transformationsManager.startTransform(point, { type: 'move' });
+                this.canvas.style.cursor = 'move';
+            }
+
+            this.render();
+            return;
+        }
+
+        // Démarrer une sélection par rectangle
+        console.log('Starting selection rectangle');
+        this.selectionManager.startSelection(point);
+        this.render();
+    }
+
+    /**
+     * Gère l'événement mousemove
+     */
+    handleMouseMove(event) {
+        const point = event.position;
+
+        // Si on est en train de transformer
+        if (this.transformationsManager.isTransforming) {
+            this.transformationsManager.updateTransform(point);
+            return;
+        }
+
+        // Si on est en train de sélectionner
+        if (this.selectionManager.isSelecting) {
+            this.selectionManager.updateSelection(point);
+            this.render();
+            return;
+        }
+
+        // Mettre à jour le curseur selon ce qui est sous la souris
+        const transformHandle = this.transformationsManager.getHandleAtPoint(point);
+        if (transformHandle) {
+            this.canvas.style.cursor = this.getCursorForHandle(transformHandle);
+        } else {
+            const element = this.getElementAtPoint(point);
+            this.canvas.style.cursor = element ? 'move' : 'default';
+        }
+    }
+
+    /**
+     * Gère l'événement mouseup
+     */
+    handleMouseUp(event) {
+        console.log('handleMouseUp');
+
+        // Terminer la transformation si en cours
+        if (this.transformationsManager.isTransforming) {
+            this.transformationsManager.endTransform();
+            this.canvas.style.cursor = 'default';
+            return;
+        }
+
+        // Terminer la sélection si en cours
+        if (this.selectionManager.isSelecting) {
+            const multiSelect = event.modifiers.ctrl || event.modifiers.shift;
+            this.selectionManager.endSelection(multiSelect);
+            this.render();
+        }
+    }
+
+    /**
+     * Gère l'événement click
+     */
+    handleClick(event) {
+        console.log('handleClick');
+        // La logique de sélection est déjà gérée dans handleMouseDown
+    }
+
+    /**
+     * Gère l'événement double click
+     */
+    handleDoubleClick(event) {
+        console.log('handleDoubleClick');
+        const point = event.position;
+        const element = this.getElementAtPoint(point);
+        if (element) {
+            // Ouvrir les propriétés de l'élément ou éditer le texte
+            console.log('Double-clicked element:', element.id);
+            this.emit('element-double-click', { element, point });
+        }
+    }
+
+    /**
+     * Obtient l'élément à une position donnée
+     */
+    getElementAtPoint(point) {
+        // Parcourir les éléments dans l'ordre inverse (dernier rendu = premier cliqué)
+        const elements = Array.from(this.elements.values()).reverse();
+
+        for (const element of elements) {
+            if (this.isPointInElement(point, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Vérifie si un point est dans un élément
+     */
+    isPointInElement(point, element) {
+        const props = element.properties;
+        const x = props.x || 0;
+        const y = props.y || 0;
+        const width = props.width || 100;
+        const height = props.height || 50;
+
+        return point.x >= x && point.x <= x + width &&
+               point.y >= y && point.y <= y + height;
+    }
+
+    /**
+     * Obtient le curseur approprié pour un handle
+     */
+    getCursorForHandle(handle) {
+        switch (handle.type) {
+            case 'move':
+                return 'move';
+            case 'resize':
+                switch (handle.position) {
+                    case 'nw': case 'se': return 'nw-resize';
+                    case 'ne': case 'sw': return 'ne-resize';
+                    case 'n': case 's': return 'ns-resize';
+                    case 'e': case 'w': return 'ew-resize';
+                    default: return 'pointer';
+                }
+            case 'rotate':
+                return 'alias';
+            default:
+                return 'pointer';
+        }
+    }
+
+    /**
+     * Gère les événements clavier
+     */
+    handleKeyDown(event) {
+        console.log('handleKeyDown:', event.key);
+
+        switch (event.key) {
+            case 'Delete':
+            case 'Backspace':
+                this.deleteSelectedElements();
+                break;
+            case 'Escape':
+                this.selectionManager.clearSelection();
+                this.render();
+                break;
+            case 'a':
+                if (event.modifiers.ctrl) {
+                    event.originalEvent.preventDefault();
+                    this.selectAllElements();
+                }
+                break;
+            case 'z':
+                if (event.modifiers.ctrl) {
+                    event.originalEvent.preventDefault();
+                    if (event.modifiers.shift) {
+                        this.redo();
+                    } else {
+                        this.undo();
+                    }
+                }
+                break;
+            case 'y':
+                if (event.modifiers.ctrl) {
+                    event.originalEvent.preventDefault();
+                    this.redo();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Supprime les éléments sélectionnés
+     */
+    deleteSelectedElements() {
+        const selectedIds = Array.from(this.selectionManager.selectedElements);
+        if (selectedIds.length === 0) return;
+
+        selectedIds.forEach(id => {
+            this.elements.delete(id);
+        });
+
+        this.selectionManager.clearSelection();
+        this.historyManager.saveState();
+        this.render();
+
+        console.log('Deleted elements:', selectedIds);
+    }
+
+    /**
+     * Sélectionne tous les éléments
+     */
+    selectAllElements() {
+        this.selectionManager.clearSelection();
+        for (const [id] of this.elements) {
+            this.selectionManager.selectedElements.add(id);
+        }
+        this.selectionManager.updateSelectionBounds();
+        this.render();
+        console.log('Selected all elements');
+    }
+
+    /**
+     * Undo
+     */
+    undo() {
+        if (this.historyManager) {
+            this.historyManager.undo();
+        }
+    }
+
+    /**
+     * Redo
+     */
+    redo() {
+        if (this.historyManager) {
+            this.historyManager.redo();
+        }
+    }
 }
 
 // Export de la classe

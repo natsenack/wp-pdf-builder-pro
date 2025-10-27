@@ -261,11 +261,25 @@ export class PDFCanvasTransformationsManager {
     }
 
     /**
-     * Obtient le handle à une position donnée
+     * Obtient le handle à une position donnée (pour tous les éléments sélectionnés)
      */
-    getHandleAtPoint(point, element) {
-        if (!element) return null;
+    getHandleAtPoint(point) {
+        const selectedElements = this.canvasInstance.selectionManager.getSelectedElements();
 
+        for (const element of selectedElements) {
+            const handle = this.getHandleAtPointForElement(point, element);
+            if (handle) {
+                return handle;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Obtient le handle à une position donnée pour un élément spécifique
+     */
+    getHandleAtPointForElement(point, element) {
         const props = element.properties;
         const handles = this.getResizeHandles(props);
 
@@ -274,7 +288,7 @@ export class PDFCanvasTransformationsManager {
                 Math.pow(point.x - handle.x, 2) + Math.pow(point.y - handle.y, 2)
             );
 
-            if (distance <= this.handleSize / 2) {  // Zone de détection correspondant à la taille visuelle du handle
+            if (distance <= this.handleSize / 2) {
                 return {
                     type: 'resize',
                     position: position,
