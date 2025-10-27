@@ -467,23 +467,14 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     currentY += 18;
 
-    // Remises sur articles
-    if (itemDiscounts > 0) {
+    // Remises combinées (articles + globale)
+    const totalDiscounts = itemDiscounts + (showGlobalDiscount ? globalDiscountAmount : 0);
+    if (totalDiscounts > 0) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText('Remises articles:', element.width - 200, currentY);
+      ctx.fillText('Remises:', element.width - 200, currentY);
       ctx.textAlign = 'right';
-      ctx.fillText(`-${itemDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
-      currentY += 18;
-    }
-
-    // Remise globale
-    if (globalDiscountAmount > 0 && showGlobalDiscount) {
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText(`Remise globale (${globalDiscount}%):`, element.width - 200, currentY);
-      ctx.textAlign = 'right';
-      ctx.fillText(`-${globalDiscountAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
+      ctx.fillText(`-${totalDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
     }
 
