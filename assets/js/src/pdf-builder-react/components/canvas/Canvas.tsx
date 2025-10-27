@@ -227,7 +227,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showSku = props.showSku !== false;
     const showDescription = props.showDescription !== false;
     const showQuantity = props.showQuantity !== false;
-    const showDiscount = props.showDiscount !== false;
     const showShipping = props.showShipping !== false;
     const showTax = props.showTax !== false;
     const showGlobalDiscount = props.showGlobalDiscount !== false;
@@ -316,7 +315,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (showDescription) columns.push({ key: 'description', label: 'Description', width: 0.25, align: 'left', x: 0 });
     if (showQuantity) columns.push({ key: 'qty', label: 'Qté', width: 0.08, align: 'center', x: 0 });
     columns.push({ key: 'price', label: 'Prix', width: 0.12, align: 'right', x: 0 });
-    if (showDiscount && (itemDiscounts > 0 || globalDiscountAmount > 0)) columns.push({ key: 'discount', label: 'Remise', width: 0.12, align: 'right', x: 0 });
     columns.push({ key: 'total', label: 'Total', width: 0.12, align: 'right', x: 0 });
 
     // Normaliser les largeurs

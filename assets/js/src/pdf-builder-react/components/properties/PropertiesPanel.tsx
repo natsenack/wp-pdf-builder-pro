@@ -510,19 +510,6 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les remises
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showDiscount !== false}
-              onChange={(e) => onChange(element.id, 'showDiscount', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des remises appliquées</span>
-          </div>
-
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
           <div style={{ marginBottom: '12px' }}>
