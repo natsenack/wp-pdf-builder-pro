@@ -39,12 +39,17 @@ export class PDFCanvasTransformationsManager {
         // ou des éléments sélectionnés
         if (handle.element) {
             const props = handle.element.properties;
-            this.originalBounds = {
-                x: props.x,
-                y: props.y,
-                width: props.width,
-                height: props.height
-            };
+            if (props) {
+                this.originalBounds = {
+                    x: props.x || 0,
+                    y: props.y || 0,
+                    width: props.width || 100,
+                    height: props.height || 50
+                };
+            } else {
+                console.warn('startTransform: handle.element.properties is undefined');
+                this.originalBounds = { x: 0, y: 0, width: 100, height: 50 };
+            }
         } else {
             this.originalBounds = this.canvasInstance.selectionManager.selectionBounds;
         }
@@ -101,6 +106,12 @@ export class PDFCanvasTransformationsManager {
      */
     moveElement(element, deltaX, deltaY) {
         const original = this.originalBounds;
+
+        // Safeguard
+        if (!element || !element.properties) {
+            console.warn('moveElement: invalid element or properties', element);
+            return;
+        }
 
         // Calculer la nouvelle position de manière absolue
         let newX = original.x + deltaX;
@@ -166,6 +177,12 @@ export class PDFCanvasTransformationsManager {
      * Redimensionne un élément spécifique
      */
     resizeElement(element, handlePosition, deltaX, deltaY) {
+        // Safeguard
+        if (!element || !element.properties) {
+            console.warn('resizeElement: invalid element or properties', element);
+            return;
+        }
+
         const props = element.properties;
         const original = this.originalBounds;
 
@@ -243,7 +260,7 @@ export class PDFCanvasTransformationsManager {
         const selectedIds = this.canvasInstance.selectionManager.getSelectedElementIds();
         selectedIds.forEach(elementId => {
             const element = this.canvasInstance.elements.get(elementId);
-            if (element) {
+            if (element && element.properties) {
                 element.properties.rotation = (element.properties.rotation || 0) + rotationDelta;
                 element.updatedAt = Date.now();
             }
@@ -280,6 +297,11 @@ export class PDFCanvasTransformationsManager {
      * Obtient le handle à une position donnée pour un élément spécifique
      */
     getHandleAtPointForElement(point, element) {
+        // Safeguard
+        if (!element || !element.properties) {
+            return null;
+        }
+
         const props = element.properties;
         const handles = this.getResizeHandles(props);
 
@@ -306,10 +328,25 @@ export class PDFCanvasTransformationsManager {
      * Obtient les positions des handles de redimensionnement
      */
     getResizeHandles(props) {
-        const x = props.x;
-        const y = props.y;
-        const w = props.width;
-        const h = props.height;
+        // Safeguard against undefined properties
+        if (!props) {
+            console.warn('getResizeHandles: props is undefined');
+            return {
+                nw: { x: 0, y: 0 },
+                n:  { x: 50, y: 0 },
+                ne: { x: 100, y: 0 },
+                w:  { x: 0, y: 25 },
+                e:  { x: 100, y: 25 },
+                sw: { x: 0, y: 50 },
+                s:  { x: 50, y: 50 },
+                se: { x: 100, y: 50 }
+            };
+        }
+
+        const x = props.x || 0;
+        const y = props.y || 0;
+        const w = props.width || 100;
+        const h = props.height || 50;
 
         return {
             nw: { x: x, y: y },           // Nord-Ouest
@@ -343,6 +380,12 @@ export class PDFCanvasTransformationsManager {
      * Rend les handles pour un élément
      */
     renderElementHandles(ctx, element) {
+        // Safeguard against invalid element or properties
+        if (!element || !element.properties) {
+            console.warn('renderElementHandles: invalid element or properties', element);
+            return;
+        }
+
         const handles = this.getResizeHandles(element.properties);
 
         ctx.save();
