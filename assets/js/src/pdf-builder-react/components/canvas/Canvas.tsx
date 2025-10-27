@@ -439,7 +439,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.strokeStyle = '#d1d5db';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(element.width - 170, currentY);
+    ctx.moveTo(element.width - 200, currentY);
     ctx.lineTo(element.width - 8, currentY);
     ctx.stroke();
 
@@ -451,7 +451,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.textAlign = 'left';
 
     const totalsY = currentY;
-    ctx.fillText('Sous-total:', element.width - 170, totalsY);
+    ctx.fillText('Sous-total:', element.width - 200, totalsY);
     ctx.textAlign = 'right';
     ctx.fillText(`${subtotalWithOrderFees.toFixed(2)}${currency}`, element.width - 8, totalsY);
 
@@ -461,7 +461,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (itemDiscounts > 0) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText('Remises articles:', element.width - 170, currentY);
+      ctx.fillText('Remises articles:', element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`-${itemDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
@@ -471,7 +471,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (globalDiscountAmount > 0 && showGlobalDiscount) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText(`Remise globale (${globalDiscount}%):`, element.width - 170, currentY);
+      ctx.fillText(`Remise globale (${globalDiscount}%):`, element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`-${globalDiscountAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
@@ -481,7 +481,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (shippingCost > 0 && showShipping) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#374151';
-      ctx.fillText('Frais de port:', element.width - 170, currentY);
+      ctx.fillText('Frais de port:', element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`${shippingCost.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
@@ -491,7 +491,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (taxAmount > 0 && showTax) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#374151';
-      ctx.fillText(`TVA (${taxRate}%):`, element.width - 170, currentY);
+      ctx.fillText(`TVA (${taxRate}%):`, element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`${taxAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
@@ -501,7 +501,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(element.width - 170, currentY - 5);
+    ctx.moveTo(element.width - 200, currentY - 5);
     ctx.lineTo(element.width - 8, currentY - 5);
     ctx.stroke();
 
@@ -509,7 +509,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.font = `bold ${fontSize + 2}px Arial`;
     ctx.fillStyle = '#111827';
     ctx.textAlign = 'left';
-    ctx.fillText('TOTAL:', element.width - 170, currentY);
+    ctx.fillText('TOTAL:', element.width - 200, currentY);
     ctx.textAlign = 'right';
     ctx.fillText(`${finalTotal.toFixed(2)}${currency}`, element.width - 8, currentY);
   };
