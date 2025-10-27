@@ -351,7 +351,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.textBaseline = 'top';
 
     products.forEach((product, index) => {
-      const rowHeight = showDescription ? 32 : 20;
+      const rowHeight = showDescription ? 40 : 28;
 
       // Fond alterné pour les lignes
       if (showAlternatingRows && index % 2 === 1) {
@@ -392,15 +392,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
         ctx.fillText(text, textX, currentY);
       });
 
-      currentY += rowHeight;
+      currentY += rowHeight + 4;
 
       // Ligne de séparation subtile entre les produits
       if (index < products.length - 1) {
         ctx.strokeStyle = '#f3f4f6';
         ctx.lineWidth = 0.5;
         ctx.beginPath();
-        ctx.moveTo(8, currentY - 2);
-        ctx.lineTo(element.width - 8, currentY - 2);
+        ctx.moveTo(8, currentY - 6);
+        ctx.lineTo(element.width - 8, currentY - 6);
         ctx.stroke();
       }
     });
