@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder.tsx';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 
 // État de l'application
 let currentTemplate = null;
@@ -40,7 +41,7 @@ function initPDFBuilderReact() {
   // Créer et rendre l'application React
   try {
     const root = ReactDOM.createRoot(container);
-    root.render(React.createElement(PDFBuilder, { width: 794, height: 1123 })); // A4 portrait dimensions
+    root.render(React.createElement(PDFBuilder, { width: DEFAULT_CANVAS_WIDTH, height: DEFAULT_CANVAS_HEIGHT })); // A4 portrait dimensions
     console.log('React component rendered successfully');
 
   } catch (error) {

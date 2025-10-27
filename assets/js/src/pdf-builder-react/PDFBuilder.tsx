@@ -5,10 +5,7 @@ import { Toolbar } from './components/toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './components/properties/PropertiesPanel.tsx';
 import { Header } from './components/header/Header.tsx';
 import { useTemplate } from './hooks/useTemplate.ts';
-
-// Constantes pour les dimensions A4 (évite les doublons)
-const A4_WIDTH = 794; // 210mm at 96 DPI
-const A4_HEIGHT = 1123; // 297mm at 96 DPI
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 
 interface PDFBuilderProps {
   width?: number;
@@ -17,8 +14,8 @@ interface PDFBuilderProps {
 }
 
 function PDFBuilderContent({
-  width = A4_WIDTH, // A4 portrait width in pixels (210mm at 96 DPI)
-  height = A4_HEIGHT, // A4 portrait height in pixels (297mm at 96 DPI)
+  width = DEFAULT_CANVAS_WIDTH, // A4 portrait width in pixels (210mm at 96 DPI)
+  height = DEFAULT_CANVAS_HEIGHT, // A4 portrait height in pixels (297mm at 96 DPI)
   className
 }: PDFBuilderProps) {
   console.log('PDFBuilderContent rendering...');
@@ -112,8 +109,8 @@ function PDFBuilderContent({
 }
 
 export function PDFBuilder({
-  width = A4_WIDTH, // A4 portrait width in pixels (210mm at 96 DPI)
-  height = A4_HEIGHT, // A4 portrait height in pixels (297mm at 96 DPI)
+  width = DEFAULT_CANVAS_WIDTH, // A4 portrait width in pixels (210mm at 96 DPI)
+  height = DEFAULT_CANVAS_HEIGHT, // A4 portrait height in pixels (297mm at 96 DPI)
   className
 }: PDFBuilderProps) {
   return (
