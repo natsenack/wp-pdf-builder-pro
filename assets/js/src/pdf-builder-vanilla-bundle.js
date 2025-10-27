@@ -71,9 +71,7 @@ const PDFBuilderPro = {
 };
 
 // Exposer l'objet global principal
-
 window.PDFBuilderPro = PDFBuilderPro;
-
 
 // Pour la compatibilité, exposer aussi les modules individuellement
 window.VanillaCanvas = VanillaCanvas;
@@ -99,17 +97,6 @@ window.searchElements = searchElements;
 // Alias pour la compatibilité avec template-editor.php
 window.PDFCanvasVanilla = VanillaCanvas;
 window.ElementLibrary = ELEMENT_LIBRARY;
-
-// Namespace PDFBuilderPro pour template-editor.php
-window.PDFBuilderPro = {
-    PDFCanvasVanilla: VanillaCanvas,
-    getAllElements: getAllElements,
-    getElementsByCategory: getElementsByCategory,
-    getElementByType: getElementByType,
-    getAllElementsFlat: getAllElementsFlat,
-    searchElements: searchElements,
-    ELEMENT_LIBRARY: ELEMENT_LIBRARY
-};
 window.ToolbarManager = CanvasEvents;
 window.PropertiesPanel = CanvasProperties;
 
