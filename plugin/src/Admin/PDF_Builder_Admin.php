@@ -235,7 +235,8 @@ class PDF_Builder_Admin
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
-        add_action('admin_head-pdf-builder-pro_page_pdf-builder-editor', [$this, 'add_preview_button_to_header']);
+        // Ancien bouton aperçu supprimé - remplacé par le header React
+        // add_action('admin_head-pdf-builder-pro_page_pdf-builder-editor', [$this, 'add_preview_button_to_header']);
 // Hook supplémentaire pour les pages qui chargent du contenu dynamiquement - REMOVED: causing duplicate script loading
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
 // Hooks WooCommerce - Délégation vers le manager
@@ -1408,8 +1409,6 @@ class PDF_Builder_Admin
             });
         </script>
         <?php
-    }
-
     /**
      * Charge les scripts et styles d'administration
      */
@@ -5657,27 +5656,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         ?>
         <div class="wrap">
-            <div class="pdf-builder-react-header">
-                <div class="header-content">
-                    <div class="header-left">
-                        <h1><?php esc_html_e('⚛️ PDF Builder Pro - Éditeur React', 'pdf-builder-pro'); ?></h1>
-                        <div class="editor-info">
-                            <span class="editor-badge"><?php esc_html_e('Version React - Expérimental', 'pdf-builder-pro'); ?></span>
-                        </div>
-                    </div>
-                    <div class="header-right">
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-editor'); ?>" class="button button-secondary">
-                            <span class="dashicons dashicons-arrow-left-alt"></span>
-                            <?php esc_html_e('Retour à l\'éditeur Canvas', 'pdf-builder-pro'); ?>
-                        </a>
-                        <button id="btn-preview-react" class="button button-secondary">
-                            <span class="dashicons dashicons-visibility"></span>
-                            <?php esc_html_e('Aperçu', 'pdf-builder-pro'); ?>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
                 <div class="spinner is-active"></div>
@@ -5713,35 +5691,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         </script>
 
         <style>
-        .pdf-builder-react-header {
-            background: #fff;
-            border: 1px solid #ccd0d4;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 20px;
-        }
-
-        .pdf-builder-react-header .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pdf-builder-react-header .header-left h1 {
-            margin: 0 0 5px 0;
-            color: #1d2327;
-            font-size: 24px;
-        }
-
-        .editor-badge {
-            background: #007cba;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         .pdf-builder-react-editor {
             background: #fff;
             border: 1px solid #ccd0d4;
