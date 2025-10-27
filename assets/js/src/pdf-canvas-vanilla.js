@@ -472,18 +472,29 @@ export class PDFCanvasVanilla {
     handleSelectMode(point, event) {
         const multiSelect = event.ctrlKey || event.metaKey;
 
-        // Vérifier d'abord si on clique sur un handle de transformation
-        const transformHandle = this.transformationsManager.getHandleAtPoint(point, this.selectedElement);
-        if (transformHandle) {
-            this.transformationsManager.startTransform(point, transformHandle);
-            this.render();  // ✅ Rendre après démarrage de transformation
-            return;
+        // Vérifier d'abord si on clique sur un handle de transformation pour les éléments sélectionnés
+        const selectedElements = this.selectionManager.getSelectedElements();
+        for (const element of selectedElements) {
+            const transformHandle = this.transformationsManager.getHandleAtPoint(point, element);
+            if (transformHandle) {
+                this.transformationsManager.startTransform(point, transformHandle);
+                this.render();
+                return;
+            }
         }
 
         // Sinon, gérer la sélection normale
         const elementSelected = this.selectionManager.selectAtPoint(point, multiSelect);
 
         if (elementSelected) {
+            // Mettre à jour selectedElement pour compatibilité
+            const selectedIds = this.selectionManager.getSelectedElementIds();
+            if (selectedIds.length === 1) {
+                this.selectedElement = this.elements.get(selectedIds[0]);
+            } else {
+                this.selectedElement = null; // Multiple sélection
+            }
+
             // Démarrer le déplacement si un élément est sélectionné
             this.startDrag(point);
         } else {
@@ -749,6 +760,25 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Bascule l'affichage de la grille
+     */
+    toggleGrid() {
+        this.options.showGrid = !this.options.showGrid;
+        this.render();
+        console.log(`Grid ${this.options.showGrid ? 'enabled' : 'disabled'}`);
+        return this.options.showGrid;
+    }
+
+    /**
+     * Active/désactive la grille
+     */
+    setGrid(enabled) {
+        this.options.showGrid = enabled;
+        this.render();
+        console.log(`Grid ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    /**
      * Obtient le curseur approprié pour un mode
      */
     getCursorForMode(mode) {
@@ -798,6 +828,7 @@ export class PDFCanvasVanilla {
 
         // Dessiner la sélection et les transformations
         this.selectionManager.render(this.ctx);
+        this.transformationsManager.render(this.ctx);
         this.transformationsManager.render(this.ctx);
 
         // Dessiner le preview de drag & drop
