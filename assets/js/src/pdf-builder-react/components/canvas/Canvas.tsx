@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
+import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { Point, Element } from '../../types/elements';
 
 interface CanvasProps {
@@ -12,8 +13,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
-  // Log des dimensions pour debug
-  console.log('Canvas dimensions:', { width, height, expectedA4: width === 794 && height === 1123 });
+  // Utiliser le hook de drop
+  const { handleDrop, handleDragOver } = useCanvasDrop({
+    canvasRef,
+    canvasWidth: width,
+    canvasHeight: height
+  });
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
@@ -243,11 +248,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
       height={height}
       className={className}
       onClick={handleCanvasClick}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
       style={{
-        border: '3px solid #007acc', // Bordure bleue distinctive pour identifier le canvas A4
+        border: '1px solid #ccc',
         cursor: 'crosshair',
-        backgroundColor: '#ffffff', // Fond blanc pour simuler le papier
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // Ombre légère
+        backgroundColor: '#ffffff'
       }}
     />
   );
