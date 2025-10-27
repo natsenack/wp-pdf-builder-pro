@@ -266,6 +266,8 @@ export class PDFCanvasVanilla {
         };
 
         this.elements.set(elementId, element);
+        console.log(`➕ Element ajouté: ${type} (ID: ${elementId.substring(0, 20)}...) - Position: (${elementProperties.x}, ${elementProperties.y}), Size: ${elementProperties.width}x${elementProperties.height}`);
+        
         this.historyManager.saveState();
         this.render();
 
