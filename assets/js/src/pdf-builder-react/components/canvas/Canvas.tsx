@@ -373,16 +373,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Calcul de la hauteur uniforme des lignes
     const rowHeight = showDescription ? 40 : 28;
 
-    // Ligne de séparation au-dessus de la première ligne de produits
-    if (showHeaders) {
-      ctx.strokeStyle = '#f3f4f6';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(8, currentY - 6);
-      ctx.lineTo(element.width - 8, currentY - 6);
-      ctx.stroke();
-    }
-
     // Produits avec alternance de couleurs
     ctx.font = `${fontSize}px Arial`;
     ctx.textBaseline = 'middle';
