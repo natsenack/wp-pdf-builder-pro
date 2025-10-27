@@ -806,7 +806,7 @@ export class PDFCanvasVanilla {
      */
     drawGrid() {
         const gridSize = this.options.gridSize;
-        this.ctx.strokeStyle = '#f0f0f0';
+        this.ctx.strokeStyle = '#e0e0e0';
         this.ctx.lineWidth = 1;
 
         // Lignes verticales
