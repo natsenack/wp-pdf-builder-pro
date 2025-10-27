@@ -207,6 +207,12 @@ export class PDFCanvasRenderer {
         this.ctx.save();
 
         try {
+            // Safeguard against invalid element or properties
+            if (!element || !element.properties) {
+                console.warn('renderElement: invalid element or properties', element);
+                return;
+            }
+
             // Appliquer les transformations
             this.applyTransforms(element.properties, computedProperties);
 
@@ -232,31 +238,49 @@ export class PDFCanvasRenderer {
      * Applique les transformations géométriques
      */
     applyTransforms(properties, computedProperties) {
+        // Safeguard against undefined properties
+        if (!properties) {
+            console.warn('applyTransforms: properties is undefined');
+            return;
+        }
+
+        // Ensure required properties have defaults
+        const safeProps = {
+            x: properties.x || 0,
+            y: properties.y || 0,
+            width: properties.width || 100,
+            height: properties.height || 50,
+            rotation: properties.rotation || 0,
+            scale: properties.scale || 100,
+            opacity: properties.opacity !== undefined ? properties.opacity : 100,
+            ...properties
+        };
+
         // Translation
-        this.ctx.translate(properties.x, properties.y);
+        this.ctx.translate(safeProps.x, safeProps.y);
 
         // Rotation
-        if (properties.rotation && properties.rotation !== 0) {
-            const centerX = properties.width / 2;
-            const centerY = properties.height / 2;
+        if (safeProps.rotation && safeProps.rotation !== 0) {
+            const centerX = safeProps.width / 2;
+            const centerY = safeProps.height / 2;
             this.ctx.translate(centerX, centerY);
-            this.ctx.rotate((properties.rotation * Math.PI) / 180);
+            this.ctx.rotate((safeProps.rotation * Math.PI) / 180);
             this.ctx.translate(-centerX, -centerY);
         }
 
         // Échelle
-        if (properties.scale && properties.scale !== 100) {
-            const scale = properties.scale / 100;
-            const centerX = properties.width / 2;
-            const centerY = properties.height / 2;
+        if (safeProps.scale && safeProps.scale !== 100) {
+            const scale = safeProps.scale / 100;
+            const centerX = safeProps.width / 2;
+            const centerY = safeProps.height / 2;
             this.ctx.translate(centerX, centerY);
             this.ctx.scale(scale, scale);
             this.ctx.translate(-centerX, -centerY);
         }
 
         // Opacité — accepte les deux échelles (0-1 ou 0-100)
-        if (properties.opacity !== undefined) {
-            const opacity = properties.opacity;
+        if (safeProps.opacity !== undefined) {
+            const opacity = safeProps.opacity;
             if (opacity <= 1) {
                 // Valeur déjà en 0..1
                 this.ctx.globalAlpha = opacity;
@@ -394,6 +418,12 @@ export class PDFCanvasRenderer {
      */
     renderText(element) {
         const props = element.properties;
+        
+        // Safeguard
+        if (!props) {
+            console.warn('renderText: properties is undefined for element', element);
+            return;
+        }
 
         // Configuration de la police
         const fontStyle = this.buildFontString(props);
@@ -410,9 +440,9 @@ export class PDFCanvasRenderer {
         const metrics = this.ctx.measureText(text);
 
         if (props.textAlign === 'center') {
-            x = props.width / 2;
+            x = (props.width || 100) / 2;
         } else if (props.textAlign === 'right') {
-            x = props.width;
+            x = props.width || 100;
         }
 
         // Rendu du texte avec effets
