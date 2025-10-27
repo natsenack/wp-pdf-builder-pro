@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
+import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { Point, Element } from '../../types/elements';
 
 interface CanvasProps {
@@ -13,11 +14,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
-  // Utiliser le hook de drop
+  // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver } = useCanvasDrop({
     canvasRef,
     canvasWidth: width,
     canvasHeight: height
+  });
+
+  const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasInteraction({
+    canvasRef
   });
 
   // Fonction de rendu du canvas
@@ -214,28 +219,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.setLineDash([]);
   };
 
-  // Gestionnaire de clic pour la sélection
-  const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
-
-    // Trouver l'élément cliqué
-    const clickedElement = state.elements.find(el =>
-      x >= el.x && x <= el.x + el.width &&
-      y >= el.y && y <= el.y + el.height
-    );
-
-    if (clickedElement) {
-      dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-    } else {
-      dispatch({ type: 'CLEAR_SELECTION' });
-    }
-  }, [state, dispatch]);
-
   // Redessiner quand l'état change
   useEffect(() => {
     renderCanvas();
@@ -248,6 +231,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
       height={height}
       className={className}
       onClick={handleCanvasClick}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       style={{
