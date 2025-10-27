@@ -184,42 +184,88 @@ if ($Mode -eq "test") {
 # 4 GIT COMMIT + PUSH + TAG
 Write-Host "`n4 Git commit + push + tag..." -ForegroundColor Magenta
 
+$commitCreated = $false
+$pushSuccess = $false
+
 try {
     Push-Location $WorkingDir
-    
+
     # Staging
     Write-Host "   Staging des fichiers..." -ForegroundColor Yellow
     $ErrorActionPreference = "Continue"
     & git add -A 2>&1 | Out-Null
     $ErrorActionPreference = "Stop"
-    
-    # Commit
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $commitMsg = "fix: Drag-drop FTP deploy - $timestamp"
-    Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
-    & git commit -m $commitMsg 2>&1 | Out-Null
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "   Commit cree" -ForegroundColor Green
+
+    # Vérifier s'il y a des changements à committer
+    $status = & git status --porcelain 2>&1
+    if ($status -and $status.Count -gt 0) {
+        # Commit
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $commitMsg = "fix: Drag-drop FTP deploy - $timestamp"
+        Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $commitResult = & git commit -m $commitMsg 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   Commit cree" -ForegroundColor Green
+            $commitCreated = $true
+        } else {
+            Write-Host "   Erreur commit: $($commitResult -join ' ')" -ForegroundColor Red
+            $commitCreated = $false
+        }
     } else {
         Write-Host "   Rien a committer (deja a jour)" -ForegroundColor Gray
+        $commitCreated = $false
     }
-    
-    # Push
-    Write-Host "   Push vers remote..." -ForegroundColor Yellow
-    & git push origin dev 2>&1 | Out-Null
-    Write-Host "   Push reussi" -ForegroundColor Green
-    
-    # Tag de version
-    $version = Get-Date -Format "v1.0.0-deploy-yyyyMMdd-HHmmss"
-    Write-Host "   Tag: $version" -ForegroundColor Yellow
-    & git tag -a $version -m "Deploiement $version" 2>&1 | Out-Null
-    & git push origin $version 2>&1 | Out-Null
-    Write-Host "   Tag cree et pousse" -ForegroundColor Green
-    
+
+    # Push seulement si un commit a été créé
+    if ($commitCreated) {
+        Write-Host "   Push vers remote..." -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $pushResult = & git push origin dev 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   Push reussi" -ForegroundColor Green
+            $pushSuccess = $true
+        } else {
+            Write-Host "   Erreur push: $($pushResult -join ' ')" -ForegroundColor Red
+            $pushSuccess = $false
+        }
+    } else {
+        Write-Host "   Pas de push (pas de commit)" -ForegroundColor Gray
+        $pushSuccess = $true  # Pas d'erreur si pas de commit
+    }
+
+    # Tag seulement si push réussi
+    if ($pushSuccess -and $commitCreated) {
+        $version = Get-Date -Format "v1.0.0-deploy-yyyyMMdd-HHmmss"
+        Write-Host "   Tag: $version" -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $tagResult = & git tag -a $version -m "Deploiement $version" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            $ErrorActionPreference = "Continue"
+            $tagPushResult = & git push origin $version 2>&1
+            $ErrorActionPreference = "Stop"
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   Tag cree et pousse" -ForegroundColor Green
+            } else {
+                Write-Host "   Erreur push tag: $($tagPushResult -join ' ')" -ForegroundColor Red
+            }
+        } else {
+            Write-Host "   Erreur creation tag: $($tagResult -join ' ')" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "   Pas de tag (pas de push ou commit)" -ForegroundColor Gray
+    }
+
     Pop-Location
 } catch {
-    Write-Host "   Erreur git (non critique)" -ForegroundColor Yellow
+    Write-Host "   Erreur git: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 # FIN
@@ -228,5 +274,13 @@ Write-Host ("=" * 60) -ForegroundColor White
 Write-Host "Resume:" -ForegroundColor Cyan
 Write-Host "   Compilation: OK" -ForegroundColor Green
 Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
-Write-Host "   Git: OK (commit + push + tag)" -ForegroundColor Green
+
+# Afficher le statut Git selon les résultats
+if ($commitCreated -and $pushSuccess) {
+    Write-Host "   Git: OK (commit + push + tag)" -ForegroundColor Green
+} elseif ($commitCreated) {
+    Write-Host "   Git: PARTIEL (commit OK, push/tag echoue)" -ForegroundColor Yellow
+} else {
+    Write-Host "   Git: SKIP (rien a committer)" -ForegroundColor Gray
+}
 Write-Host ""

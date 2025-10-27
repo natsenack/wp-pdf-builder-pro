@@ -1436,6 +1436,43 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Ajoute un nouvel élément au canvas
+     */
+    addElement(elementData) {
+        // Générer un ID unique
+        const elementId = 'element_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+        // Obtenir les propriétés par défaut pour ce type d'élément
+        const defaultProperties = this.customizationService.getDefaultProperties(elementData.type);
+
+        // Fusionner avec les propriétés fournies
+        const properties = {
+            ...defaultProperties,
+            ...elementData.properties
+        };
+
+        // Créer l'élément
+        const element = {
+            id: elementId,
+            type: elementData.type,
+            properties: properties,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+
+        // Ajouter à la collection
+        this.elements.set(elementId, element);
+
+        // Sauvegarder dans l'historique
+        this.historyManager.saveState();
+
+        // Déclencher un rendu
+        this.render();
+
+        return element;
+    }
+
+    /**
      * Rend un élément spécifique
      */
     renderElement(element) {

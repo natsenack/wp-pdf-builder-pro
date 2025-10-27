@@ -396,8 +396,8 @@ export class PDFCanvasRenderer {
         
         // Obtenir le texte depuis le gestionnaire WooCommerce
         let displayText = '';
-        if (this.canvasInstance && this.canvasInstance.wooCommerceManager) {
-            displayText = this.canvasInstance.wooCommerceManager.getElementDisplayText(element.type);
+        if (this.mainInstance && this.mainInstance.wooCommerceManager) {
+            displayText = this.mainInstance.wooCommerceManager.getElementDisplayText(element.type);
         }
         
         // Créer une copie des propriétés avec le texte
