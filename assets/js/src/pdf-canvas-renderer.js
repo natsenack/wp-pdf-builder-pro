@@ -84,6 +84,113 @@ export class PDFCanvasRenderer {
     }
 
     /**
+     * Rend l'ensemble du canvas
+     */
+    render() {
+        // Effacer le canvas
+        this.clear();
+
+        // Rendre le fond
+        this.renderBackground();
+
+        // Rendre la grille si activée
+        if (this.mainInstance.options.showGrid) {
+            this.renderGrid();
+        }
+
+        // Rendre tous les éléments
+        this.renderAllElements();
+
+        // Rendre les poignées de sélection et de transformation
+        this.renderSelectionHandles();
+    }
+
+    /**
+     * Rend le fond du canvas
+     */
+    renderBackground() {
+        this.ctx.fillStyle = this.mainInstance.options.backgroundColor || '#ffffff';
+        this.ctx.fillRect(0, 0, this.canvas.width / this.devicePixelRatio, this.canvas.height / this.devicePixelRatio);
+    }
+
+    /**
+     * Rend la grille d'alignement
+     */
+    renderGrid() {
+        const gridSize = this.mainInstance.options.gridSize || 20;
+        const width = this.canvas.width / this.devicePixelRatio;
+        const height = this.canvas.height / this.devicePixelRatio;
+
+        this.ctx.save();
+        this.ctx.strokeStyle = '#e0e0e0';
+        this.ctx.lineWidth = 1;
+        this.ctx.setLineDash([1, 1]);
+
+        // Lignes verticales
+        for (let x = 0; x <= width; x += gridSize) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, height);
+            this.ctx.stroke();
+        }
+
+        // Lignes horizontales
+        for (let y = 0; y <= height; y += gridSize) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(width, y);
+            this.ctx.stroke();
+        }
+
+        this.ctx.restore();
+    }
+
+    /**
+     * Rend tous les éléments
+     */
+    renderAllElements() {
+        // Trier les éléments par ordre z-index (couche)
+        const sortedElements = Array.from(this.mainInstance.elements.values())
+            .sort((a, b) => (a.properties.zIndex || 0) - (b.properties.zIndex || 0));
+
+        sortedElements.forEach(element => {
+            this.renderElement(element, {});
+        });
+    }
+
+    /**
+     * Rend les poignées de sélection et de transformation
+     */
+    renderSelectionHandles() {
+        const selectedElements = this.mainInstance.selectionManager.getSelectedElements();
+
+        selectedElements.forEach(element => {
+            // Rendre les handles de transformation
+            this.mainInstance.transformationsManager.renderElementHandles(this.ctx, element);
+        });
+
+        // Rendre les bounds de sélection si multiple
+        if (selectedElements.length > 1) {
+            this.renderSelectionBounds();
+        }
+    }
+
+    /**
+     * Rend les bounds de sélection pour les sélections multiples
+     */
+    renderSelectionBounds() {
+        const bounds = this.mainInstance.selectionManager.selectionBounds;
+        if (!bounds) return;
+
+        this.ctx.save();
+        this.ctx.strokeStyle = '#007bff';
+        this.ctx.lineWidth = 2;
+        this.ctx.setLineDash([5, 5]);
+        this.ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.ctx.restore();
+    }
+
+    /**
      * Rend un élément avec des effets avancés
      */
     renderElement(element, computedProperties) {

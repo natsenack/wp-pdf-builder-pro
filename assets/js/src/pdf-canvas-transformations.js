@@ -32,7 +32,9 @@ export class PDFCanvasTransformationsManager {
 
         this.isTransforming = true;
         this.transformHandle = handle;
-        this.transformStartPoint = { x: point.x, y: point.y };
+        // Pour les transformations par handle, utiliser la position du handle comme point de référence
+        // plutôt que la position de la souris pour plus de précision
+        this.transformStartPoint = { x: handle.x, y: handle.y };
 
         // Sauvegarder les bounds originaux de l'élément spécifique (si handle.element existe)
         // ou des éléments sélectionnés
@@ -274,7 +276,9 @@ export class PDFCanvasTransformationsManager {
                 return {
                     type: 'resize',
                     position: position,
-                    element: element
+                    element: element,
+                    x: handle.x,
+                    y: handle.y
                 };
             }
         }

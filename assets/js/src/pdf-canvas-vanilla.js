@@ -445,24 +445,37 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Rend le canvas complet
+     */
+    render() {
+        if (this.renderer) {
+            this.renderer.render();
+        }
+    }
+
+    /**
      * Obtient la position de la souris relative au canvas
      */
     getMousePosition(event) {
         // Pour les événements DOM directs
         if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
             const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
             return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
+                x: (event.clientX - rect.left) * scaleX,
+                y: (event.clientY - rect.top) * scaleY
             };
         }
 
         // Pour les événements avec originalEvent
         if (event && event.originalEvent && typeof event.originalEvent.clientX === 'number') {
             const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
             return {
-                x: event.originalEvent.clientX - rect.left,
-                y: event.originalEvent.clientY - rect.top
+                x: (event.originalEvent.clientX - rect.left) * scaleX,
+                y: (event.originalEvent.clientY - rect.top) * scaleY
             };
         }
 

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Canvas Transformations & Grid - Fixed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .control-group {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #e9ecef;
+        }
+        button.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        #canvas-container {
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            background: white;
+            position: relative;
+        }
+        #pdf-builder-canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Canvas Transformations & Grid - Fixed</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <button id="add-rect">Add Rectangle</button>
+                <button id="add-text">Add Text</button>
+                <button id="toggle-grid">Toggle Grid</button>
+                <button id="clear">Clear All</button>
+            </div>
+            <div class="control-group">
+                <button id="test-precision">Test Precision</button>
+                <button id="check-coords">Check Coordinates</button>
+                <button id="verify-handles">Verify Handles</button>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="pdf-builder-canvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="status" id="status">
+            Status: Initializing...<br>
+            Grid: <span id="grid-status">Unknown</span><br>
+            Elements: <span id="elements-count">0</span><br>
+            Selected: <span id="selected-element">None</span>
+        </div>
+    </div>
+
+    <script src="/assets/js/src/pdf-builder-vanilla-bundle.js"></script>
+    <script>
+        let pdfCanvas;
+        let testResults = [];
+
+        // Initialize canvas when DOM is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                console.log('🚀 Initializing test canvas...');
+
+                // Initialize the canvas
+                pdfCanvas = window.pdfBuilderInitVanilla('canvas-container', {
+                    canvasElementId: 'pdf-builder-canvas',
+                    width: 800,
+                    height: 600,
+                    showGrid: true,
+                    gridSize: 20
+                });
+
+                console.log('✅ Canvas initialized successfully');
+                updateStatus();
+
+                // Setup event listeners
+                setupControls();
+
+                // Run initial tests
+                runInitialTests();
+
+            } catch (error) {
+                console.error('❌ Failed to initialize canvas:', error);
+                document.getElementById('status').innerHTML = '❌ Error: ' + error.message;
+            }
+        });
+
+        function setupControls() {
+            // Add rectangle
+            document.getElementById('add-rect').addEventListener('click', () => {
+                if (pdfCanvas) {
+                    const elementId = pdfCanvas.addElement('rectangle', {
+                        x: Math.random() * 300 + 50,
+                        y: Math.random() * 200 + 50,
+                        width: 100,
+                        height: 80,
+                        backgroundColor: '#007bff',
+                        borderColor: '#0056b3',
+                        borderWidth: 2
+                    });
+                    console.log('Added rectangle:', elementId);
+                    updateStatus();
+                }
+            });
+
+            // Add text
+            document.getElementById('add-text').addEventListener('click', () => {
+                if (pdfCanvas) {
+                    const elementId = pdfCanvas.addElement('text', {
+                        x: Math.random() * 300 + 50,
+                        y: Math.random() * 200 + 100,
+                        width: 150,
+                        height: 40,
+                        text: 'Test Text',
+                        fontSize: 16,
+                        color: '#333'
+                    });
+                    console.log('Added text:', elementId);
+                    updateStatus();
+                }
+            });
+
+            // Toggle grid
+            document.getElementById('toggle-grid').addEventListener('click', () => {
+                if (pdfCanvas) {
+                    const gridEnabled = pdfCanvas.toggleGrid();
+                    console.log('Grid toggled:', gridEnabled);
+                    updateStatus();
+                    document.getElementById('toggle-grid').classList.toggle('active', gridEnabled);
+                }
+            });
+
+            // Clear all
+            document.getElementById('clear').addEventListener('click', () => {
+                if (pdfCanvas) {
+                    pdfCanvas.elements.clear();
+                    pdfCanvas.render();
+                    console.log('Cleared all elements');
+                    updateStatus();
+                }
+            });
+
+            // Test precision
+            document.getElementById('test-precision').addEventListener('click', () => {
+                testTransformationPrecision();
+            });
+
+            // Check coordinates
+            document.getElementById('check-coords').addEventListener('click', () => {
+                checkCoordinateSystem();
+            });
+
+            // Verify handles
+            document.getElementById('verify-handles').addEventListener('click', () => {
+                verifyHandleDetection();
+            });
+        }
+
+        function updateStatus() {
+            if (!pdfCanvas) return;
+
+            const gridStatus = pdfCanvas.options.showGrid ? '✅ Enabled' : '❌ Disabled';
+            const elementsCount = pdfCanvas.elements.size;
+            const selectedElement = pdfCanvas.selectedElement ? pdfCanvas.selectedElement.id : 'None';
+
+            document.getElementById('grid-status').textContent = gridStatus;
+            document.getElementById('elements-count').textContent = elementsCount;
+            document.getElementById('selected-element').textContent = selectedElement;
+        }
+
+        function runInitialTests() {
+            testResults = [];
+
+            // Test 1: Check if grid API exists
+            if (typeof pdfCanvas.toggleGrid === 'function') {
+                testResults.push('✅ toggleGrid method exists');
+            } else {
+                testResults.push('❌ toggleGrid method missing');
+            }
+
+            // Test 2: Check if setGrid API exists
+            if (typeof pdfCanvas.setGrid === 'function') {
+                testResults.push('✅ setGrid method exists');
+            } else {
+                testResults.push('❌ setGrid method missing');
+            }
+
+            // Test 3: Check coordinate system
+            if (typeof pdfCanvas.getMousePosition === 'function') {
+                testResults.push('✅ getMousePosition method exists');
+            } else {
+                testResults.push('❌ getMousePosition method missing');
+            }
+
+            // Test 4: Check transformations manager
+            if (pdfCanvas.transformationsManager) {
+                testResults.push('✅ transformationsManager exists');
+            } else {
+                testResults.push('❌ transformationsManager missing');
+            }
+
+            // Test 5: Check renderer
+            if (pdfCanvas.renderer) {
+                testResults.push('✅ renderer exists');
+            } else {
+                testResults.push('❌ renderer missing');
+            }
+
+            console.log('Initial tests completed:', testResults);
+            updateTestResults();
+        }
+
+        function testTransformationPrecision() {
+            console.log('🧪 Testing transformation precision...');
+
+            if (!pdfCanvas || pdfCanvas.elements.size === 0) {
+                alert('Please add an element first');
+                return;
+            }
+
+            // Get first element
+            const element = Array.from(pdfCanvas.elements.values())[0];
+            console.log('Testing with element:', element);
+
+            // Test handle detection
+            const testPoints = [
+                { x: element.properties.x, y: element.properties.y }, // Top-left
+                { x: element.properties.x + element.properties.width, y: element.properties.y }, // Top-right
+                { x: element.properties.x + element.properties.width, y: element.properties.y + element.properties.height }, // Bottom-right
+                { x: element.properties.x, y: element.properties.y + element.properties.height } // Bottom-left
+            ];
+
+            testPoints.forEach((point, index) => {
+                const handle = pdfCanvas.transformationsManager.getHandleAtPoint(point, element);
+                if (handle) {
+                    console.log(`✅ Handle detected at corner ${index + 1}:`, handle);
+                } else {
+                    console.log(`❌ No handle detected at corner ${index + 1}`);
+                }
+            });
+
+            alert('Check console for transformation precision test results');
+        }
+
+        function checkCoordinateSystem() {
+            console.log('🧪 Checking coordinate system...');
+
+            // Simulate mouse event
+            const mockEvent = {
+                clientX: 100,
+                clientY: 100,
+                originalEvent: {
+                    clientX: 100,
+                    clientY: 100
+                }
+            };
+
+            const coords = pdfCanvas.getMousePosition(mockEvent);
+            console.log('Mouse coordinates:', coords);
+
+            // Check if coordinates are scaled (should be for canvas internal coords)
+            const rect = pdfCanvas.canvas.getBoundingClientRect();
+            const expectedScale = pdfCanvas.canvas.width / rect.width;
+
+            if (Math.abs(coords.x - (100 * expectedScale)) < 1 && Math.abs(coords.y - (100 * expectedScale)) < 1) {
+                console.log('✅ Coordinates are properly scaled for canvas internal system');
+            } else {
+                console.log('❌ Coordinates may not be properly scaled');
+                console.log('Expected scale:', expectedScale);
+                console.log('Expected coords:', { x: 100 * expectedScale, y: 100 * expectedScale });
+            }
+
+            alert('Check console for coordinate system test results');
+        }
+
+        function verifyHandleDetection() {
+            console.log('🧪 Verifying handle detection...');
+
+            if (!pdfCanvas || pdfCanvas.elements.size === 0) {
+                alert('Please add an element first');
+                return;
+            }
+
+            const element = Array.from(pdfCanvas.elements.values())[0];
+            const handles = pdfCanvas.transformationsManager.getResizeHandles(element.properties);
+
+            console.log('Element handles:', handles);
+
+            // Verify handle positions are correct
+            const props = element.properties;
+            const expectedHandles = {
+                nw: { x: props.x, y: props.y },
+                n: { x: props.x + props.width/2, y: props.y },
+                ne: { x: props.x + props.width, y: props.y },
+                e: { x: props.x + props.width, y: props.y + props.height/2 },
+                se: { x: props.x + props.width, y: props.y + props.height },
+                s: { x: props.x + props.width/2, y: props.y + props.height },
+                sw: { x: props.x, y: props.y + props.height },
+                w: { x: props.x, y: props.y + props.height/2 }
+            };
+
+            let allCorrect = true;
+            Object.keys(expectedHandles).forEach(pos => {
+                if (handles[pos]) {
+                    const expected = expectedHandles[pos];
+                    const actual = handles[pos];
+                    if (Math.abs(actual.x - expected.x) < 0.1 && Math.abs(actual.y - expected.y) < 0.1) {
+                        console.log(`✅ Handle ${pos} position correct`);
+                    } else {
+                        console.log(`❌ Handle ${pos} position incorrect. Expected:`, expected, 'Actual:', actual);
+                        allCorrect = false;
+                    }
+                } else {
+                    console.log(`❌ Handle ${pos} missing`);
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                console.log('✅ All handle positions are correct');
+            } else {
+                console.log('❌ Some handle positions are incorrect');
+            }
+
+            alert('Check console for handle detection test results');
+        }
+
+        function updateTestResults() {
+            const statusDiv = document.getElementById('status');
+            let html = statusDiv.innerHTML.split('<br>')[0]; // Keep first line
+
+            html += '<br><br><strong>Test Results:</strong><br>';
+            testResults.forEach(result => {
+                html += result + '<br>';
+            });
+
+            statusDiv.innerHTML = html;
+        }
+
+        // Update status periodically
+        setInterval(updateStatus, 1000);
+    </script>
+</body>
+</html>
