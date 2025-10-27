@@ -257,6 +257,9 @@ export class PDFCanvasVanilla {
     loadTemplateData(templateData) {
         if (!templateData.elements) return;
 
+        // Vider les éléments existants avant de charger
+        this.elements.clear();
+
         templateData.elements.forEach(elementData => {
             this.addElement(elementData.type, elementData);
         });
@@ -665,7 +668,16 @@ export class PDFCanvasVanilla {
      * Ajoute un élément au canvas
      */
     addElement(type, properties = {}) {
-        const elementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Vérification de dédoublonnement : éviter d'ajouter des éléments identiques
+        if (properties.id) {
+            // Si un ID est fourni, vérifier s'il existe déjà
+            if (this.elements.has(properties.id)) {
+                console.warn(`Element with ID ${properties.id} already exists, skipping duplicate`);
+                return properties.id;
+            }
+        }
+
+        const elementId = properties.id || `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         // Obtenir les propriétés par défaut
         const defaultProps = this.customizationService.getDefaultProperties(type);
@@ -1335,6 +1347,36 @@ export class PDFCanvasVanilla {
         }
 
         return baseStats;
+    }
+
+    /**
+     * Nettoie les éléments dupliqués du canvas
+     */
+    removeDuplicateElements() {
+        const seen = new Map();
+        const duplicates = [];
+
+        for (const [id, element] of this.elements) {
+            const key = `${element.type}_${JSON.stringify(element.properties)}`;
+            if (seen.has(key)) {
+                duplicates.push(id);
+            } else {
+                seen.set(key, id);
+            }
+        }
+
+        // Supprimer les éléments dupliqués
+        duplicates.forEach(id => {
+            this.elements.delete(id);
+        });
+
+        if (duplicates.length > 0) {
+            console.log(`Removed ${duplicates.length} duplicate elements`);
+            this.historyManager.saveState();
+            this.render();
+        }
+
+        return duplicates.length;
     }
 }
 
