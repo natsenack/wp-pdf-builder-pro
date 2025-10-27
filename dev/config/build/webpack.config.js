@@ -69,9 +69,9 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: process.env.NODE_ENV === 'production',
+            drop_console: false,  // ✅ GARDÉ POUR DEBUGGING
             drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.debug']
+            pure_funcs: [] // ✅ VIDE POUR NE PAS SUPPRIMER console.log
           },
           mangle: {
             safari10: true

@@ -99,7 +99,12 @@ export class PDFCanvasVanilla {
      * Initialisation du canvas
      */
     async init() {
-        console.log('🚀 [init] DÉBUT initialisation PDFCanvasVanilla');
+        console.log('🚀🚀🚀 [init] DÉBUT initialisation');
+        try {
+            console.log('🚀 [init] DÉBUT initialisation PDFCanvasVanilla');
+        } catch (e) {
+            console.error('Erreur avant premier log:', e);
+        }
         console.log('🚀 [init] containerId:', this.containerId);
         console.log('🚀 [init] options:', this.options);
         
