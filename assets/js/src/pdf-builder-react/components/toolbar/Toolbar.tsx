@@ -7,8 +7,6 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  console.log('Toolbar component rendered'); // Debug log
-
   let state, setMode, undo, redo, reset;
   try {
     const builder = useBuilder();
@@ -45,10 +43,9 @@ export function Toolbar({ className }: ToolbarProps) {
       gap: '8px',
       padding: '12px',
       backgroundColor: '#f5f5f5',
-      border: '2px solid #ff0000', // Debug: bordure rouge pour voir si elle s'affiche
       borderRadius: '4px',
       flexWrap: 'wrap',
-      minHeight: '60px' // Debug: hauteur minimale
+      minHeight: '60px'
     }}>
       {/* Outils de création */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
