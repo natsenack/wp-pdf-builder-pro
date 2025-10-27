@@ -862,7 +862,6 @@ export class PDFCanvasVanilla {
         // Dessiner la sélection et les transformations
         this.selectionManager.render(this.ctx);
         this.transformationsManager.render(this.ctx);
-        this.transformationsManager.render(this.ctx);
 
         // Dessiner le preview de drag & drop
         this.dragDropManager.render(this.ctx);

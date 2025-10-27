@@ -15,7 +15,7 @@ export class PDFCanvasTransformationsManager {
         this.minSize = 10;
 
         // Configuration des handles
-        this.handleSize = 8;
+        this.handleSize = 12;
         this.handleColor = '#007bff';
         this.handleBorderColor = '#ffffff';
         this.rotationHandleColor = '#ff6b35';
@@ -242,7 +242,7 @@ export class PDFCanvasTransformationsManager {
                 Math.pow(point.x - handle.x, 2) + Math.pow(point.y - handle.y, 2)
             );
 
-            if (distance <= this.handleSize / 2) {
+            if (distance <= this.handleSize) {  // Augmenté de handleSize/2 à handleSize pour une meilleure détection
                 return {
                     type: 'resize',
                     position: position,
