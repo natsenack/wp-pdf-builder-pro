@@ -636,94 +636,138 @@ function renderSpecificProperties(
 
           <div style={{ marginBottom: '12px' }}>
             <h6 style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
-              💰 Calculs financiers
+              � Éléments du tableau
             </h6>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Frais de commande (€)
+              Afficher frais de commande
             </label>
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={(element as any).orderFees || 0}
-              onChange={(e) => onChange(element.id, 'orderFees', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+              type="checkbox"
+              checked={(element as any).showOrderFees !== false}
+              onChange={(e) => onChange(element.id, 'showOrderFees', e.target.checked)}
+              style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '10px', color: '#666' }}>Frais supplémentaires par commande</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Inclure les frais de commande dans le tableau</span>
+            {(element as any).showOrderFees !== false && (
+              <div style={{ marginTop: '8px' }}>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={(element as any).orderFees || 0}
+                  onChange={(e) => onChange(element.id, 'orderFees', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                  placeholder="Montant (€)"
+                />
+              </div>
+            )}
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Frais de port (€)
+              Afficher frais de port
             </label>
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={(element as any).shippingCost || 0}
-              onChange={(e) => onChange(element.id, 'shippingCost', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+              type="checkbox"
+              checked={(element as any).showShipping !== false}
+              onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
+              style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '10px', color: '#666' }}>Coûts de livraison</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Inclure les frais de port dans les totaux</span>
+            {(element as any).showShipping !== false && (
+              <div style={{ marginTop: '8px' }}>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={(element as any).shippingCost || 0}
+                  onChange={(e) => onChange(element.id, 'shippingCost', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                  placeholder="Montant (€)"
+                />
+              </div>
+            )}
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Taux TVA (%)
+              Afficher TVA
             </label>
             <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              value={(element as any).taxRate || 0}
-              onChange={(e) => onChange(element.id, 'taxRate', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+              type="checkbox"
+              checked={(element as any).showTax !== false}
+              onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
+              style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '10px', color: '#666' }}>Taux de TVA appliqué</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Inclure la TVA dans les totaux</span>
+            {(element as any).showTax !== false && (
+              <div style={{ marginTop: '8px' }}>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={(element as any).taxRate || 0}
+                  onChange={(e) => onChange(element.id, 'taxRate', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                  placeholder="Taux (%)"
+                />
+              </div>
+            )}
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Remise globale (%)
+              Afficher remise globale
             </label>
             <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              value={(element as any).globalDiscount || 0}
-              onChange={(e) => onChange(element.id, 'globalDiscount', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+              type="checkbox"
+              checked={(element as any).showGlobalDiscount !== false}
+              onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
+              style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '10px', color: '#666' }}>Remise appliquée au total</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Inclure une remise globale dans les totaux</span>
+            {(element as any).showGlobalDiscount !== false && (
+              <div style={{ marginTop: '8px' }}>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={(element as any).globalDiscount || 0}
+                  onChange={(e) => onChange(element.id, 'globalDiscount', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                  placeholder="Pourcentage (%)"
+                />
+              </div>
+            )}
           </div>
         </>
       );
