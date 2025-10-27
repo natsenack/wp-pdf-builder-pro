@@ -77,32 +77,33 @@ export class WooCommerceElementsManager {
      */
     getTestData(elementType) {
         const testData = {
-            'woocommerce-invoice-number': 'INV-001',
-            'woocommerce-invoice-date': new Date().toISOString().split('T')[0],
-            'woocommerce-order-number': '#1234',
-            'woocommerce-order-date': new Date().toLocaleString(),
-            'woocommerce-billing-address': 'John Doe\n123 Main Street\nSpringfield, IL 62701\nUnited States',
-            'woocommerce-shipping-address': 'John Doe\n456 Shipping Avenue\nSpringfield, IL 62702\nUnited States',
-            'woocommerce-customer-name': 'John Doe',
-            'woocommerce-customer-email': 'john.doe@example.com',
-            'woocommerce-payment-method': 'Carte de crédit (Stripe)',
-            'woocommerce-order-status': 'Traitée',
+            'woocommerce-invoice-number': 'FACT-2025-001',
+            'woocommerce-invoice-date': '27/10/2025',
+            'woocommerce-order-number': '#WC-12345',
+            'woocommerce-order-date': '26/10/2025 à 14:30',
+            'woocommerce-billing-address': 'Marie Dupont\n15 Rue de la Paix\n75002 Paris\nFrance',
+            'woocommerce-shipping-address': 'Marie Dupont\n25 Avenue des Champs-Élysées\n75008 Paris\nFrance',
+            'woocommerce-customer-name': 'Marie Dupont',
+            'woocommerce-customer-email': 'marie.dupont@email.fr',
+            'woocommerce-payment-method': 'Carte bancaire (Stripe)',
+            'woocommerce-order-status': 'Commande expédiée',
             'woocommerce-products-table': this.formatProductsTable([
-                { name: 'Produit Exemple 1', quantity: 1, price: '$10.00', total: '$10.00' },
-                { name: 'Produit Exemple 2', quantity: 2, price: '$15.00', total: '$30.00' },
-                { name: 'Produit Exemple 3', quantity: 1, price: '$5.00', total: '$5.00' }
+                { name: 'Ordinateur portable Dell XPS 13', quantity: 1, price: '1 299,00 €', total: '1 299,00 €' },
+                { name: 'Souris Logitech MX Master 3', quantity: 1, price: '89,99 €', total: '89,99 €' },
+                { name: 'Clavier mécanique Keychron K8', quantity: 1, price: '79,99 €', total: '79,99 €' },
+                { name: 'Sacoche ordinateur 15"', quantity: 1, price: '49,99 €', total: '49,99 €' }
             ]),
-            'woocommerce-subtotal': '$45.00',
-            'woocommerce-discount': '-$5.00',
-            'woocommerce-shipping': '$5.00',
-            'woocommerce-taxes': '$2.25',
-            'woocommerce-total': '$47.25',
-            'woocommerce-refund': '$0.00',
-            'woocommerce-fees': '$1.50',
-            'woocommerce-quote-number': 'QUO-001',
-            'woocommerce-quote-date': new Date().toISOString().split('T')[0],
+            'woocommerce-subtotal': '1 518,97 €',
+            'woocommerce-discount': '-76,00 €',
+            'woocommerce-shipping': '9,99 €',
+            'woocommerce-taxes': '304,00 €',
+            'woocommerce-total': '1 756,96 €',
+            'woocommerce-refund': '0,00 €',
+            'woocommerce-fees': '15,00 €',
+            'woocommerce-quote-number': 'DEV-2025-001',
+            'woocommerce-quote-date': '20/10/2025',
             'woocommerce-quote-validity': '30 jours',
-            'woocommerce-quote-notes': 'Conditions spéciales : paiement à 30 jours.'
+            'woocommerce-quote-notes': 'Devis pour équipement informatique professionnel. Prix valables 30 jours.'
         };
 
         return testData[elementType] || '';
@@ -116,9 +117,18 @@ export class WooCommerceElementsManager {
             return '';
         }
 
-        return products.map(product =>
-            `- ${product.name} x${product.quantity} ${product.price}`
-        ).join('\n');
+        // En-tête du tableau
+        let table = 'PRODUIT\t\t\tQTÉ\tPRIX UNIT.\tTOTAL\n';
+        table += '─'.repeat(80) + '\n';
+
+        // Lignes de produits
+        products.forEach(product => {
+            const name = product.name.length > 30 ? product.name.substring(0, 27) + '...' : product.name;
+            const line = `${name}\t${product.quantity}\t${product.price}\t${product.total}`;
+            table += line + '\n';
+        });
+
+        return table;
     }
 
     /**

@@ -534,6 +534,14 @@ export class PDFCanvasRenderer {
             this.ctx.lineWidth = props.borderWidth;
             this.ctx.stroke();
         }
+
+        // Ajouter un texte d'exemple pour la visibilité
+        if (props.width > 60 && props.height > 20) {
+            this.ctx.fillStyle = props.color || '#64748b';
+            this.ctx.font = '12px Arial, sans-serif';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('Zone de contenu', props.width / 2, props.height / 2 + 4);
+        }
     }
 
     /**
@@ -559,6 +567,14 @@ export class PDFCanvasRenderer {
             this.ctx.strokeStyle = props.borderColor || '#000000';
             this.ctx.lineWidth = props.borderWidth;
             this.ctx.stroke();
+        }
+
+        // Ajouter un indicateur visuel
+        if (radius > 15) {
+            this.ctx.fillStyle = props.color || '#ffffff';
+            this.ctx.font = '16px Arial, sans-serif';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('●', centerX, centerY + 6);
         }
     }
 
@@ -660,23 +676,30 @@ export class PDFCanvasRenderer {
      * Dessine un placeholder pour les images non chargées
      */
     drawImagePlaceholder(props) {
-        // Rectangle gris avec icône d'image
-        this.ctx.fillStyle = '#f0f0f0';
+        // Rectangle avec fond dégradé
+        const gradient = this.ctx.createLinearGradient(0, 0, props.width, props.height);
+        gradient.addColorStop(0, '#f8fafc');
+        gradient.addColorStop(1, '#e2e8f0');
+
+        this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, props.width, props.height);
 
-        this.ctx.strokeStyle = '#ccc';
+        this.ctx.strokeStyle = '#cbd5e1';
         this.ctx.lineWidth = 2;
         this.ctx.strokeRect(2, 2, props.width - 4, props.height - 4);
 
-        // Icône simple (carré avec X)
-        this.ctx.strokeStyle = '#999';
-        this.ctx.lineWidth = 3;
-        this.ctx.beginPath();
-        this.ctx.moveTo(10, 10);
-        this.ctx.lineTo(props.width - 10, props.height - 10);
-        this.ctx.moveTo(props.width - 10, 10);
-        this.ctx.lineTo(10, props.height - 10);
-        this.ctx.stroke();
+        // Icône d'image stylisée
+        this.ctx.fillStyle = '#94a3b8';
+        this.ctx.font = Math.min(props.width / 4, 24) + 'px Arial, sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('🖼️', props.width / 2, props.height / 2 + 8);
+
+        // Texte descriptif
+        if (props.width > 80 && props.height > 40) {
+            this.ctx.fillStyle = '#64748b';
+            this.ctx.font = '11px Arial, sans-serif';
+            this.ctx.fillText('Image', props.width / 2, props.height - 15);
+        }
     }
 
     /**

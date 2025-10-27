@@ -738,8 +738,8 @@ export class PDFCanvasVanilla {
             }
         });
 
-        // Rendu optimisé pour le drag
-        this.renderDragOptimized();
+        // Rendu complet pendant le drag pour éviter les problèmes de synchronisation
+        this.render();
     }
 
     /**

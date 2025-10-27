@@ -387,8 +387,8 @@ export class ElementCustomizationService {
       textAlign: 'left',
       textDecoration: 'none',
 
-      // Contenu (pour éléments texte)
-      text: 'Texte',
+      // Contenu (pour éléments texte) - sera remplacé par les ajustements de type
+      // text: 'Texte',
 
       // Images
       src: '',
@@ -448,7 +448,22 @@ export class ElementCustomizationService {
     const typeAdjustments = {
       'text': {
         width: 150,
-        height: 30
+        height: 30,
+        text: 'Texte d\'exemple'
+      },
+      'text-title': {
+        width: 200,
+        height: 40,
+        text: 'FACTURE PROFESSIONNELLE',
+        fontSize: 24,
+        fontWeight: 'bold'
+      },
+      'text-subtitle': {
+        width: 180,
+        height: 35,
+        text: 'Équipement informatique',
+        fontSize: 18,
+        fontWeight: 'bold'
       },
       'image': {
         width: 150,
@@ -457,8 +472,21 @@ export class ElementCustomizationService {
       'rectangle': {
         backgroundColor: '#f1f5f9',
         borderWidth: 1,
+        borderColor: '#e2e8f0',
         width: 150,
         height: 80
+      },
+      'circle': {
+        backgroundColor: '#e0f2fe',
+        borderWidth: 2,
+        borderColor: '#0ea5e9',
+        width: 80,
+        height: 80
+      },
+      'line': {
+        height: 2,
+        lineWidth: 2,
+        color: '#64748b'
       },
       'product_table': {
         width: 300,
@@ -466,7 +494,8 @@ export class ElementCustomizationService {
       },
       'customer_info': {
         width: 200,
-        height: 100
+        height: 100,
+        text: 'Marie Dupont\n15 Rue de la Paix\n75002 Paris\nFrance\nmarie.dupont@email.fr'
       },
       'company_logo': {
         width: 100,
@@ -474,15 +503,18 @@ export class ElementCustomizationService {
       },
       'order_number': {
         width: 150,
-        height: 30
+        height: 30,
+        text: 'Commande #WC-12345'
       },
       'company_info': {
         width: 200,
-        height: 80
+        height: 80,
+        text: 'TechCorp SARL\n123 Boulevard Haussmann\n75008 Paris\nFrance\ncontact@techcorp.fr\nSIRET: 123 456 789 00012'
       },
       'document_type': {
         width: 120,
-        height: 40
+        height: 40,
+        text: 'FACTURE'
       },
       'watermark': {
         width: 300,
