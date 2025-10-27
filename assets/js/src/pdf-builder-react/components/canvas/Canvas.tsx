@@ -103,6 +103,27 @@ export function Canvas({ width, height, className }: CanvasProps) {
       case 'line':
         drawLine(ctx, element);
         break;
+      case 'product_table':
+        drawProductTable(ctx, element);
+        break;
+      case 'customer_info':
+        drawCustomerInfo(ctx, element);
+        break;
+      case 'company_info':
+        drawCompanyInfo(ctx, element);
+        break;
+      case 'company_logo':
+        drawCompanyLogo(ctx, element);
+        break;
+      case 'order_number':
+        drawOrderNumber(ctx, element);
+        break;
+      case 'dynamic-text':
+        drawDynamicText(ctx, element);
+        break;
+      case 'mentions':
+        drawMentions(ctx, element);
+        break;
       default:
         // Élément générique - dessiner un rectangle simple
         ctx.strokeStyle = '#000000';
@@ -194,6 +215,261 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.lineTo(x, y + radius);
     ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
+  };
+
+  // Fonctions de rendu WooCommerce avec données fictives
+  const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const showHeaders = props.showHeaders !== false;
+    const showBorders = props.showBorders !== false;
+    const fontSize = props.fontSize || 12;
+
+    // Données fictives de produits
+    const products = [
+      { name: 'T-shirt Premium', qty: 2, price: 29.99, total: 59.98 },
+      { name: 'Jean Slim Fit', qty: 1, price: 89.99, total: 89.99 },
+      { name: 'Chaussures Running', qty: 1, price: 129.99, total: 129.99 }
+    ];
+
+    ctx.fillStyle = props.backgroundColor || '#ffffff';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    if (showBorders) {
+      ctx.strokeStyle = props.borderColor || '#e5e7eb';
+      ctx.lineWidth = props.borderWidth || 1;
+      ctx.strokeRect(0, 0, element.width, element.height);
+    }
+
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = 'left';
+
+    let y = showHeaders ? 25 : 15;
+
+    // En-têtes
+    if (showHeaders) {
+      ctx.fillText('Produit', 10, 15);
+      ctx.fillText('Qté', element.width - 120, 15);
+      ctx.fillText('Prix', element.width - 80, 15);
+      ctx.fillText('Total', element.width - 40, 15);
+
+      // Ligne de séparation
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(5, 20);
+      ctx.lineTo(element.width - 5, 20);
+      ctx.stroke();
+    }
+
+    // Produits
+    ctx.font = `${fontSize}px Arial`;
+    products.forEach(product => {
+      ctx.fillText(product.name, 10, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(product.qty.toString(), element.width - 110, y);
+      ctx.fillText(`${product.price.toFixed(2)}€`, element.width - 70, y);
+      ctx.fillText(`${product.total.toFixed(2)}€`, element.width - 10, y);
+      ctx.textAlign = 'left';
+      y += 18;
+    });
+
+    // Total
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.beginPath();
+    ctx.moveTo(element.width - 100, y - 5);
+    ctx.lineTo(element.width - 5, y - 5);
+    ctx.stroke();
+
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.fillText('Total:', element.width - 100, y + 10);
+    ctx.textAlign = 'right';
+    ctx.fillText('279.96€', element.width - 10, y + 10);
+  };
+
+  const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fontSize = props.fontSize || 12;
+    const layout = props.layout || 'vertical';
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.textAlign = 'left';
+
+    let y = 20;
+
+    // Informations client fictives
+    const customerData = {
+      name: 'Marie Dupont',
+      address: '15 rue des Lilas',
+      city: '75001 Paris',
+      email: 'marie.dupont@email.com',
+      phone: '+33 6 12 34 56 78'
+    };
+
+    if (layout === 'vertical') {
+      ctx.fillText(customerData.name, 0, y);
+      y += 18;
+
+      ctx.font = `${fontSize}px Arial`;
+      ctx.fillText(customerData.address, 0, y);
+      y += 15;
+      ctx.fillText(customerData.city, 0, y);
+      y += 18;
+      ctx.fillText(customerData.email, 0, y);
+      y += 15;
+      ctx.fillText(customerData.phone, 0, y);
+    } else {
+      // Layout horizontal
+      ctx.fillText(`${customerData.name} - ${customerData.email}`, 0, y);
+      ctx.fillText(customerData.phone, element.width - 100, y);
+    }
+  };
+
+  const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fontSize = props.fontSize || 12;
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.textAlign = 'left';
+
+    let y = 20;
+
+    // Informations entreprise fictives
+    const companyData = {
+      name: 'Ma Boutique En Ligne',
+      address: '25 avenue des Commerçants',
+      city: '69000 Lyon',
+      siret: 'SIRET: 123 456 789 00012',
+      tva: 'TVA: FR 12 345 678 901',
+      email: 'contact@maboutique.com',
+      phone: '+33 4 12 34 56 78'
+    };
+
+    ctx.fillText(companyData.name, 0, y);
+    y += 18;
+
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillText(companyData.address, 0, y);
+    y += 15;
+    ctx.fillText(companyData.city, 0, y);
+    y += 18;
+    ctx.fillText(companyData.siret, 0, y);
+    y += 15;
+    ctx.fillText(companyData.tva, 0, y);
+    y += 15;
+    ctx.fillText(companyData.email, 0, y);
+    y += 15;
+    ctx.fillText(companyData.phone, 0, y);
+  };
+
+  const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fit = props.fit || 'contain';
+    const alignment = props.alignment || 'left';
+
+    // Fond transparent
+    ctx.fillStyle = 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    // Dessiner un logo fictif (rectangle avec texte)
+    const logoWidth = Math.min(element.width - 20, 120);
+    const logoHeight = Math.min(element.height - 20, 60);
+
+    let x = 10;
+    if (alignment === 'center') {
+      x = (element.width - logoWidth) / 2;
+    } else if (alignment === 'right') {
+      x = element.width - logoWidth - 10;
+    }
+
+    const y = (element.height - logoHeight) / 2;
+
+    // Rectangle du logo
+    ctx.fillStyle = '#007acc';
+    ctx.fillRect(x, y, logoWidth, logoHeight);
+
+    // Texte du logo
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('LOGO', x + logoWidth / 2, y + logoHeight / 2 + 6);
+  };
+
+  const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fontSize = props.fontSize || 14;
+    const textAlign = props.textAlign || 'right';
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = textAlign as CanvasTextAlign;
+
+    const orderNumber = 'CMD-2024-01234';
+    const orderDate = '27/10/2024';
+
+    let x = textAlign === 'right' ? element.width - 10 : textAlign === 'center' ? element.width / 2 : 10;
+
+    ctx.fillText(`Commande: ${orderNumber}`, x, 20);
+    ctx.font = `${fontSize - 2}px Arial`;
+    ctx.fillText(`Date: ${orderDate}`, x, 40);
+  };
+
+  const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const template = props.template || 'Commande #{order_number}';
+    const fontSize = props.fontSize || 14;
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = 'left';
+
+    // Remplacer les variables par des valeurs fictives
+    const processedText = template
+      .replace('#{order_number}', 'CMD-2024-01234')
+      .replace('#{customer_name}', 'Marie Dupont')
+      .replace('#{order_date}', '27/10/2024')
+      .replace('#{total}', '279.96€');
+
+    ctx.fillText(processedText, 10, 25);
+  };
+
+  const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fontSize = props.fontSize || 10;
+    const textAlign = props.textAlign || 'left';
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = '#666666';
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = textAlign as CanvasTextAlign;
+
+    const mentions = [
+      'SARL au capital de 10 000€ - RCS Lyon 123 456 789',
+      'TVA FR 12 345 678 901 - SIRET 123 456 789 00012',
+      'contact@maboutique.com - +33 4 12 34 56 78'
+    ];
+
+    let y = 15;
+    mentions.forEach(mention => {
+      ctx.fillText(mention, textAlign === 'center' ? element.width / 2 : 10, y);
+      y += 12;
+    });
   };
 
   // Fonction pour dessiner la sélection
