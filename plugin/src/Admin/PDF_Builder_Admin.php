@@ -278,6 +278,8 @@ class PDF_Builder_Admin
         );
 // Éditeur Canvas (outil principal)
         add_submenu_page('pdf-builder-pro', __('Éditeur Canvas - PDF Builder Pro', 'pdf-builder-pro'), __('🎨 Éditeur Canvas', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-editor', [$this, 'template_editor_page']);
+// Éditeur React (nouvelle version)
+        add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
 // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 // Paramètres et configuration
@@ -5626,6 +5628,138 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             {
             }
         };
+    }
+
+    /**
+     * Page de l'éditeur React
+     */
+    public function react_editor_page()
+    {
+        $this->checkAdminPermissions();
+
+        // Enqueue React scripts from local build
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
+
+        // Enqueue PDF Builder React scripts from local build
+        $react_script_path = plugin_dir_url(__FILE__) . '../../assets/js/dist/pdf-builder-react.js';
+        wp_enqueue_script('pdf-builder-react', $react_script_path, ['react', 'react-dom'], PDF_BUILDER_PRO_VERSION, true);
+
+        // Localize script with data
+        wp_localize_script('pdf-builder-react', 'pdfBuilderReactData', [
+            'nonce' => wp_create_nonce('pdf_builder_react_nonce'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'strings' => [
+                'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
+                'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
+            ]
+        ]);
+
+        ?>
+        <div class="wrap">
+            <div class="pdf-builder-react-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1><?php esc_html_e('⚛️ PDF Builder Pro - Éditeur React', 'pdf-builder-pro'); ?></h1>
+                        <div class="editor-info">
+                            <span class="editor-badge"><?php esc_html_e('Version React - Expérimental', 'pdf-builder-pro'); ?></span>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-editor'); ?>" class="button button-secondary">
+                            <span class="dashicons dashicons-arrow-left-alt"></span>
+                            <?php esc_html_e('Retour à l\'éditeur Canvas', 'pdf-builder-pro'); ?>
+                        </a>
+                        <button id="btn-preview-react" class="button button-secondary">
+                            <span class="dashicons dashicons-visibility"></span>
+                            <?php esc_html_e('Aperçu', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="pdf-builder-react-loading" class="pdf-builder-loading">
+                <div class="spinner is-active"></div>
+                <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+            </div>
+
+            <!-- Main React Editor Container -->
+            <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
+                <div id="pdf-builder-react-root"></div>
+            </div>
+        </div>
+
+        <script>
+        // Script d'initialisation React
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing React PDF Builder...');
+
+            // Attendre que React soit chargé
+            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
+                window.pdfBuilderReact.initPDFBuilderReact();
+            } else {
+                // Fallback si le script n'est pas encore chargé
+                setTimeout(function() {
+                    if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
+                        window.pdfBuilderReact.initPDFBuilderReact();
+                    } else {
+                        console.error('PDF Builder React script not loaded');
+                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé.</p>';
+                    }
+                }, 1000);
+            }
+        });
+        </script>
+
+        <style>
+        .pdf-builder-react-header {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .pdf-builder-react-header .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-builder-react-header .header-left h1 {
+            margin: 0 0 5px 0;
+            color: #1d2327;
+            font-size: 24px;
+        }
+
+        .editor-badge {
+            background: #007cba;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pdf-builder-react-editor {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            min-height: 600px;
+        }
+
+        .pdf-builder-loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .pdf-builder-loading .spinner {
+            float: none;
+            margin: 0 auto 20px;
+        }
+        </style>
+        <?php
     }
 }
 

@@ -7,8 +7,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-admin': './assets/js/src/pdf-builder-vanilla-bundle.js',
-    'pdf-builder-admin-debug': './assets/js/src/pdf-builder-vanilla-bundle.js',
+    'pdf-builder-admin': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
+    'pdf-builder-admin-debug': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
+    'pdf-builder-react': './assets/js/src/pdf-builder-react/index.ts',
     'pdf-builder-nonce-fix': './dev/resources/js/pdf-builder-nonce-fix.js'
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
@@ -17,26 +18,27 @@ module.exports = {
     path: path.resolve(__dirname, '../../../plugin/assets/js/dist'),
     clean: true,
     library: {
-      name: 'pdfBuilderPro',
+      name: 'pdfBuilderReact',
       type: 'umd',
       export: 'default'
     },
     globalObject: 'this'
   },
   resolve: {
-    extensions: ['.js', '.ts', '.json']
+    extensions: ['.js', '.ts', '.tsx', '.json']
   },
   module: {
     rules: [
       {
-        test: /\.(js|ts)$/,
+        test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
             presets: [
               '@babel/preset-env',
-              '@babel/preset-typescript'
+              '@babel/preset-typescript',
+              ['@babel/preset-react', { runtime: 'automatic' }]
             ]
           }
         }

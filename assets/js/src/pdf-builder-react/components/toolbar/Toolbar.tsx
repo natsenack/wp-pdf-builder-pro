@@ -1,0 +1,125 @@
+import React from 'react';
+import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { BuilderMode } from '../../types/elements';
+
+interface ToolbarProps {
+  className?: string;
+}
+
+export function Toolbar({ className }: ToolbarProps) {
+  const { state, setMode, undo, redo, reset } = useBuilder();
+
+  const tools: { mode: BuilderMode; label: string; icon: string }[] = [
+    { mode: 'select', label: 'Sélection', icon: '🖱️' },
+    { mode: 'rectangle', label: 'Rectangle', icon: '▭' },
+    { mode: 'circle', label: 'Cercle', icon: '○' },
+    { mode: 'text', label: 'Texte', icon: 'T' },
+    { mode: 'line', label: 'Ligne', icon: '━' },
+    { mode: 'image', label: 'Image', icon: '🖼️' },
+  ];
+
+  const handleModeChange = (mode: BuilderMode) => {
+    setMode(mode);
+  };
+
+  return (
+    <div className={`pdf-builder-toolbar ${className || ''}`} style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+      padding: '12px',
+      backgroundColor: '#f5f5f5',
+      border: '1px solid #ddd',
+      borderRadius: '4px'
+    }}>
+      {/* Outils de création */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          Outils
+        </h4>
+        {tools.map(tool => (
+          <button
+            key={tool.mode}
+            onClick={() => handleModeChange(tool.mode)}
+            style={{
+              padding: '8px 12px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: state.mode === tool.mode ? '#007acc' : '#ffffff',
+              color: state.mode === tool.mode ? '#ffffff' : '#000000',
+              cursor: 'pointer',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              minWidth: '120px',
+              textAlign: 'left'
+            }}
+          >
+            <span>{tool.icon}</span>
+            <span>{tool.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Actions d'édition */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          Actions
+        </h4>
+        <button
+          onClick={undo}
+          disabled={!state.history.canUndo}
+          style={{
+            padding: '6px 12px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            backgroundColor: state.history.canUndo ? '#ffffff' : '#f0f0f0',
+            color: state.history.canUndo ? '#000000' : '#999999',
+            cursor: state.history.canUndo ? 'pointer' : 'not-allowed',
+            fontSize: '12px'
+          }}
+        >
+          ↶ Annuler
+        </button>
+        <button
+          onClick={redo}
+          disabled={!state.history.canRedo}
+          style={{
+            padding: '6px 12px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            backgroundColor: state.history.canRedo ? '#ffffff' : '#f0f0f0',
+            color: state.history.canRedo ? '#000000' : '#999999',
+            cursor: state.history.canRedo ? 'pointer' : 'not-allowed',
+            fontSize: '12px'
+          }}
+        >
+          ↷ Rétablir
+        </button>
+        <button
+          onClick={reset}
+          style={{
+            padding: '6px 12px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            cursor: 'pointer',
+            fontSize: '12px'
+          }}
+        >
+          🔄 Réinitialiser
+        </button>
+      </div>
+
+      {/* Informations */}
+      <div style={{ marginTop: '16px', fontSize: '12px', color: '#666' }}>
+        <div>Éléments: {state.elements.length}</div>
+        <div>Sélectionnés: {state.selection.selectedElements.length}</div>
+        <div>Mode: {state.mode}</div>
+        <div>Zoom: {Math.round(state.canvas.zoom * 100)}%</div>
+      </div>
+    </div>
+  );
+}

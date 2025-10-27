@@ -16,6 +16,7 @@
     "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
     "@babel/plugin-transform-optional-chaining": "^7.28.5",
     "@babel/preset-env": "^7.20.0",
+    "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.27.1",
     "@testing-library/jest-dom": "^6.1.4",
     "babel-jest": "^29.7.0",
@@ -37,6 +38,8 @@
     "@wordpress/element": "^6.32.0",
     "jsbarcode": "^3.12.1",
     "qrcode": "^1.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "toastr": "^2.1.4"
   },
   "sideEffects": [
