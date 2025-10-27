@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Conversion Unités</title>
+</head>
+<body>
+    <h1>Test de conversion d'unités Canvas</h1>
+    <div id="test-results"></div>
+
+    <script>
+        // Simuler les settings
+        window.pdfBuilderCanvasSettings = {
+            default_canvas_unit: 'mm'
+        };
+
+        // Test des conversions
+        const testResults = [];
+
+        // Test 1: mm vers pixels
+        const mmToPx = 595 / 210; // ≈ 2.833
+        testResults.push(`1mm = ${mmToPx.toFixed(3)} pixels`);
+
+        // Test 2: pixels vers mm
+        const pxToMm = 210 / 595; // ≈ 0.353
+        testResults.push(`1 pixel = ${pxToMm.toFixed(3)} mm`);
+
+        // Test 3: Exemple de position
+        const exampleMm = 50; // 50mm
+        const examplePx = Math.round(exampleMm * mmToPx);
+        testResults.push(`Position 50mm = ${examplePx} pixels`);
+
+        // Test 4: Conversion inverse
+        const backToMm = Math.round(examplePx * pxToMm);
+        testResults.push(`Position ${examplePx} pixels = ${backToMm} mm`);
+
+        // Afficher les résultats
+        document.getElementById('test-results').innerHTML = testResults.map(r => `<p>${r}</p>`).join('');
+    </script>
+</body>
+</html>

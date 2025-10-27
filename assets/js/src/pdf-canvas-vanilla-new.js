@@ -288,16 +288,16 @@ export class PDFCanvasVanilla {
             
             // Convertir les dimensions vers pixels
             if (properties.x !== undefined) {
-                properties.x = Math.round(properties.x * factor);
+                properties.x = Math.round(properties.x * factor * 100) / 100; // 2 décimales
             }
             if (properties.y !== undefined) {
-                properties.y = Math.round(properties.y * factor);
+                properties.y = Math.round(properties.y * factor * 100) / 100;
             }
             if (properties.width !== undefined) {
-                properties.width = Math.round(properties.width * factor);
+                properties.width = Math.round(properties.width * factor * 100) / 100;
             }
             if (properties.height !== undefined) {
-                properties.height = Math.round(properties.height * factor);
+                properties.height = Math.round(properties.height * factor * 100) / 100;
             }
             
             this.addElement(elementData.type, properties);
@@ -455,9 +455,12 @@ export class PDFCanvasVanilla {
             clientY = event.clientY;
         }
 
+        // Tenir compte du zoom CSS
+        const zoom = this.options.zoom || 1;
+
         return {
-            x: (clientX - rect.left) * scaleX,
-            y: (clientY - rect.top) * scaleY
+            x: ((clientX - rect.left) * scaleX) / zoom,
+            y: ((clientY - rect.top) * scaleY) / zoom
         };
     }
 
@@ -679,10 +682,10 @@ export class PDFCanvasVanilla {
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: Math.round((element.properties.x || 0) * factor),
-                y: Math.round((element.properties.y || 0) * factor),
-                width: Math.round((element.properties.width || 100) * factor),
-                height: Math.round((element.properties.height || 50) * factor),
+                x: Math.round((element.properties.x || 0) * factor * 100) / 100,
+                y: Math.round((element.properties.y || 0) * factor * 100) / 100,
+                width: Math.round((element.properties.width || 100) * factor * 100) / 100,
+                height: Math.round((element.properties.height || 50) * factor * 100) / 100,
                 ...element.properties  // Inclure toutes les autres propriétés
             };
             
