@@ -4,6 +4,7 @@ import { Canvas } from './components/canvas/Canvas.tsx';
 import { Toolbar } from './components/toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './components/properties/PropertiesPanel.tsx';
 import { Header } from './components/header/Header.tsx';
+import { ElementLibrary } from './components/element-library/ElementLibrary.tsx';
 import { useTemplate } from './hooks/useTemplate.ts';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 
@@ -63,8 +64,11 @@ function PDFBuilderContent({
       </div>
 
       {/* Contenu principal */}
-      <div style={{ display: 'flex', flex: 1, gap: '12px' }}>
-        {/* Zone principale avec le canvas */}
+      <div style={{ display: 'flex', flex: 1, gap: '0' }}>
+        {/* Sidebar des éléments WooCommerce */}
+        <ElementLibrary />
+
+        {/* Zone centrale avec le canvas */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{
             flex: 1,
