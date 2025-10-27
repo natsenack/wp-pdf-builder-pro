@@ -523,6 +523,47 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Colonne des remises appliquées</span>
           </div>
 
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les frais de port
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showShipping !== false}
+              onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les frais de livraison</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher la TVA
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showTax !== false}
+              onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les taxes sur le total</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher la remise globale
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showGlobalDiscount !== false}
+              onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche la remise globale appliquée</span>
+          </div>
+
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
               Taille de police

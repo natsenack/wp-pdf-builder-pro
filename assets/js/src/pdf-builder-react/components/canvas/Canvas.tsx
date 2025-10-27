@@ -228,6 +228,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showDescription = props.showDescription !== false;
     const showQuantity = props.showQuantity !== false;
     const showDiscount = props.showDiscount !== false;
+    const showShipping = props.showShipping !== false;
+    const showTax = props.showTax !== false;
+    const showGlobalDiscount = props.showGlobalDiscount !== false;
     const shippingCost = props.shippingCost || 8.50; // Exemple de frais de port
     const taxRate = props.taxRate || 20; // Exemple de TVA 20%
     const globalDiscount = props.globalDiscount || 5; // Exemple de remise globale 5%
@@ -281,15 +284,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Sous-total incluant les frais de commande
     const subtotalWithOrderFees = subtotalAfterItemDiscounts + orderFees;
 
-    // Appliquer la remise globale sur le sous-total incluant les frais de commande
-    const globalDiscountAmount = globalDiscount > 0 ? (subtotalWithOrderFees * globalDiscount / 100) : 0;
+    // Appliquer la remise globale sur le sous-total incluant les frais de commande (seulement si affichée)
+    const globalDiscountAmount = (globalDiscount > 0 && showGlobalDiscount) ? (subtotalWithOrderFees * globalDiscount / 100) : 0;
     const subtotalAfterGlobalDiscount = subtotalWithOrderFees - globalDiscountAmount;
 
-    // Ajouter les frais de port
-    const subtotalWithShipping = subtotalAfterGlobalDiscount + shippingCost;
+    // Ajouter les frais de port (seulement si affichés)
+    const subtotalWithShipping = subtotalAfterGlobalDiscount + (showShipping ? shippingCost : 0);
 
-    // Calculer les taxes
-    const taxAmount = taxRate > 0 ? (subtotalWithShipping * taxRate / 100) : 0;
+    // Calculer les taxes (seulement si affichées)
+    const taxAmount = (taxRate > 0 && showTax) ? (subtotalWithShipping * taxRate / 100) : 0;
 
     // Total final
     const finalTotal = subtotalWithShipping + taxAmount;
@@ -465,7 +468,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     // Remise globale
-    if (globalDiscountAmount > 0) {
+    if (globalDiscountAmount > 0 && showGlobalDiscount) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
       ctx.fillText(`Remise globale (${globalDiscount}%):`, element.width - 140, currentY);
@@ -475,7 +478,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     // Frais de port
-    if (shippingCost > 0) {
+    if (shippingCost > 0 && showShipping) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#374151';
       ctx.fillText('Frais de port:', element.width - 140, currentY);
@@ -485,7 +488,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     // Taxes
-    if (taxAmount > 0) {
+    if (taxAmount > 0 && showTax) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#374151';
       ctx.fillText(`TVA (${taxRate}%):`, element.width - 140, currentY);
