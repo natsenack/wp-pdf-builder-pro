@@ -497,7 +497,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
       currentY += 18;
     }
 
-    currentY += 2;
+    currentY += 8; // Plus d'espace avant la ligne de séparation du total
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -505,7 +505,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.lineTo(element.width - 8, currentY - 5);
     ctx.stroke();
 
-    currentY += 2;
+    currentY += 8; // Plus d'espace après la ligne de séparation
     ctx.font = `bold ${fontSize + 2}px Arial`;
     ctx.fillStyle = '#111827';
     ctx.textAlign = 'left';
