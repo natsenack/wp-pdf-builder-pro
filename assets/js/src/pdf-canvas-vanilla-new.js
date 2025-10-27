@@ -61,6 +61,10 @@ export class PDFCanvasVanilla {
         this.tool = null;
         this.dragState = null;
         this.selectedElement = null;
+
+        // Optimisation du rendu avec RAF
+        this.pendingFrame = null;
+        this.isDirty = false;
     }
 
     /**
@@ -297,6 +301,22 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Optimisation RAF - Planifie un rendu avec throttling
+     */
+    scheduleRender() {
+        this.isDirty = true;
+        if (this.pendingFrame) return;
+
+        this.pendingFrame = requestAnimationFrame(() => {
+            this.pendingFrame = null;
+            if (this.isDirty) {
+                this.isDirty = false;
+                this.render();
+            }
+        });
+    }
+
+    /**
      * Ajoute un élément
      */
     addElement(type, properties = {}) {
@@ -434,19 +454,19 @@ export class PDFCanvasVanilla {
 
         if (this.transformationsManager.isTransforming) {
             this.transformationsManager.updateTransform(point);
-            this.render();
+            this.scheduleRender();
             return;
         }
 
         if (this.dragState) {
             this.updateDrag(point);
-            this.render();
+            this.scheduleRender();
             return;
         }
 
         if (this.selectionManager.isSelecting) {
             this.selectionManager.updateSelection(point);
-            this.render();
+            this.scheduleRender();
         }
     }
 

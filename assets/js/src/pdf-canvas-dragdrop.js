@@ -35,10 +35,23 @@ PDFCanvasDragDropManager.prototype.setupGlobalListeners = function() {
  */
 PDFCanvasDragDropManager.prototype.handleDragStart = function(event) {
     const target = event.target;
+    let elementType = target.getAttribute('data-element-type');
 
-    // Vérifier si c'est un élément de la bibliothèque
-    const elementType = target.getAttribute('data-element-type');
-    if (!elementType) return;
+    // Si pas trouvé directement, chercher dans les parents
+    if (!elementType) {
+        let parent = target.parentElement;
+        while (parent && !elementType) {
+            elementType = parent.getAttribute('data-element-type');
+            parent = parent.parentElement;
+        }
+    }
+
+    if (!elementType) {
+        console.warn('❌ [dragstart] Pas d\'attribut data-element-type trouvé');
+        return;
+    }
+
+    console.log(`🟡 [dragstart] Type: ${elementType}`);
 
     this.isDragging = true;
     this.dragElement = {
@@ -96,8 +109,12 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
             const point = this.canvasInstance.getMousePosition(event);
             this.dragOffset = point;
 
-            // Mettre à jour le rendu pour montrer le preview
-            this.canvasInstance.render();
+            // Mettre à jour le rendu pour montrer le preview avec RAF
+            if (this.canvasInstance.scheduleRender) {
+                this.canvasInstance.scheduleRender();
+            } else {
+                this.canvasInstance.render();
+            }
         }
     } catch (error) {
         // Ignore errors
@@ -109,8 +126,14 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
  */
 PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
     try {
+        console.log('🔵 [handleDrop] Dépôt appelé');
 
         if (!this.isDragging || !this.dragElement || !this.canvasInstance || !this.canvasInstance.canvas) {
+            console.warn('❌ [handleDrop] Conditions manquantes:', {
+                isDragging: this.isDragging,
+                hasDragElement: !!this.dragElement,
+                hasCanvas: !!this.canvasInstance?.canvas
+            });
             return;
         }
 
@@ -121,7 +144,15 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
                             event.clientY >= canvasRect.top &&
                             event.clientY <= canvasRect.bottom;
 
+        console.log('🔵 [handleDrop] Position vérification:', {
+            mouseX: event.clientX,
+            mouseY: event.clientY,
+            canvasRect: {left: canvasRect.left, right: canvasRect.right, top: canvasRect.top, bottom: canvasRect.bottom},
+            isOverCanvas
+        });
+
         if (!isOverCanvas) {
+            console.log('⚠️ [handleDrop] Pas au-dessus du canvas');
             return;
         }
 
@@ -134,6 +165,12 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
         const finalProperties = Object.assign({}, this.dragElement.properties);
         finalProperties.x = point.x - (finalProperties.width || 100) / 2;
         finalProperties.y = point.y - (finalProperties.height || 50) / 2;
+
+        console.log('✅ [handleDrop] Ajout élément:', {
+            type: this.dragElement.type,
+            position: {x: finalProperties.x, y: finalProperties.y},
+            size: {width: finalProperties.width, height: finalProperties.height}
+        });
 
         // Ajouter l'élément au canvas
         const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
@@ -152,8 +189,11 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
         this.isDragging = false;
         this.dragElement = null;
         this.dragOffset = null;
+        
+        console.log('✅ [handleDrop] Dépôt réussi!');
     } catch (error) {
-        // Ignore errors
+        console.error('❌ [handleDrop] Erreur:', error);
+        console.error('Stack:', error.stack);
     }
 };
 

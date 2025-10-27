@@ -10,6 +10,9 @@ error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['t
 error_log('[PHP] User: ' . get_current_user_id());
 ?>
 <script>
+// Créer le nonce global pour les appels AJAX
+window.pdfBuilderNonce = '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>';
+
 // Test if jQuery is loaded
 if (typeof jQuery !== 'undefined') {
     // jQuery is loaded
