@@ -99,35 +99,56 @@ export class PDFCanvasVanilla {
      * Initialisation du canvas
      */
     async init() {
+        console.log('🚀 [init] DÉBUT initialisation PDFCanvasVanilla');
+        console.log('🚀 [init] containerId:', this.containerId);
+        console.log('🚀 [init] options:', this.options);
+        
         try {
             // 1. Créer le canvas
+            console.log('🚀 [init] Appel createCanvas()');
             this.createCanvas();
+            console.log('✅ [init] Canvas créé avec succès');
 
             // 2. Configurer le contexte
+            console.log('🚀 [init] Appel setupContext()');
             this.setupContext();
+            console.log('✅ [init] Contexte configuré');
 
             // 3. Initialiser le render engine
+            console.log('🚀 [init] Création de PDFCanvasCore');
             this.renderEngine = new PDFCanvasCore(this.canvas, this.ctx);
+            console.log('✅ [init] PDFCanvasCore créé:', this.renderEngine);
 
             // 4. Initialiser l'event manager
+            console.log('🚀 [init] Initialisation event manager');
             this.eventManager.initialize(this.canvas);
+            console.log('✅ [init] Event manager initialisé');
 
             // 5. Attacher les événements
+            console.log('🚀 [init] Attachement des événements');
             this.attachEventListeners();
+            console.log('✅ [init] Événements attachés');
 
             // 6. Charger les données initiales
+            console.log('🚀 [init] Appel loadInitialData()');
             await this.loadInitialData();
+            console.log('✅ [init] Données initiales chargées');
 
             // 7. Premier rendu
+            console.log('🚀 [init] Appel render() - premier rendu');
             this.render();
+            console.log('✅ [init] Premier rendu effectué');
 
             // 8. Sauvegarder l'état initial
+            console.log('🚀 [init] Sauvegarde de l\'état initial');
             this.historyManager.saveState();
+            console.log('✅ [init] État initial sauvegardé');
 
             this.isInitialized = true;
-            console.log('Canvas initialized successfully');
+            console.log('🟢 [init] Canvas initialisé avec SUCCÈS');
         } catch (error) {
-            console.error('Canvas initialization failed:', error);
+            console.error('❌ [init] ERREUR initialisation:', error);
+            console.error('❌ Stack:', error.stack);
             throw error;
         }
     }
@@ -136,22 +157,30 @@ export class PDFCanvasVanilla {
      * Crée le canvas
      */
     createCanvas() {
+        console.log('🔍 [createCanvas] Recherche container:', this.containerId);
         const container = document.getElementById(this.containerId);
         if (!container) {
+            console.error('❌ [createCanvas] Container NOT FOUND:', this.containerId);
             throw new Error(`Container "${this.containerId}" not found`);
         }
+        console.log('✅ [createCanvas] Container trouvé:', container);
 
+        console.log('🔍 [createCanvas] Recherche canvas:', this.options.canvasElementId);
         this.canvas = document.getElementById(this.options.canvasElementId || 'pdf-builder-canvas');
         if (!this.canvas) {
+            console.error('❌ [createCanvas] Canvas NOT FOUND:', this.options.canvasElementId);
             throw new Error(`Canvas element "${this.options.canvasElementId}" not found`);
         }
+        console.log('✅ [createCanvas] Canvas trouvé:', this.canvas);
 
+        console.log('🔍 [createCanvas] Récupération contexte 2D');
         this.ctx = this.canvas.getContext('2d');
         if (!this.ctx) {
+            console.error('❌ [createCanvas] Contexte 2D FAILED');
             throw new Error('Failed to get 2D context');
         }
-
-        console.log('Canvas created:', this.canvas.width, 'x', this.canvas.height);
+        console.log('✅ [createCanvas] Contexte 2D obtenu');
+        console.log('📐 [createCanvas] Dimensions canvas:', this.canvas.width, 'x', this.canvas.height);
     }
 
     /**
@@ -177,15 +206,26 @@ export class PDFCanvasVanilla {
      * Charge les données initiales
      */
     async loadInitialData() {
+        console.log('📥 [loadInitialData] Début chargement données');
+        console.log('📥 [loadInitialData] templateId:', this.options.templateId);
+        console.log('📥 [loadInitialData] templateData:', this.options.templateData);
+        
         if (this.options.templateId && this.options.templateId > 0) {
+            console.log('📥 [loadInitialData] Chargement template du serveur ID:', this.options.templateId);
             await this.loadTemplateFromServer(this.options.templateId);
         } else if (this.options.templateData) {
+            console.log('📥 [loadInitialData] Chargement templateData local');
             this.loadTemplateData(this.options.templateData);
+        } else {
+            console.log('📥 [loadInitialData] Pas de template trouvé');
         }
 
         // Activer le mode test pour WooCommerce
+        console.log('📥 [loadInitialData] Activation mode test WooCommerce');
         this.wooCommerceManager.setTestMode(true);
+        console.log('📥 [loadInitialData] Chargement données WooCommerce');
         await this.wooCommerceManager.loadWooCommerceData();
+        console.log('✅ [loadInitialData] Données WooCommerce chargées');
     }
 
     /**
@@ -228,17 +268,24 @@ export class PDFCanvasVanilla {
      * RENDU PRINCIPAL - Simple et efficace
      */
     render() {
+        console.log(`🎨 [render] RENDU APPELÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
+        
         if (this.isRendering || !this.renderEngine) {
+            console.log(`⚠️  [render] Rendu IGNORÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
             return;
         }
 
         this.isRendering = true;
 
         try {
+            console.log(`🎨 [render] Éléments: ${this.elements.size}`);
             const selectedIds = this.selectionManager.getSelectedElementIds();
+            console.log(`🎨 [render] Appel renderEngine.renderAll() avec ${this.elements.size} éléments`);
             this.renderEngine.renderAll(this.elements, selectedIds, this.options);
+            console.log(`✅ [render] Rendu COMPLÉTÉ`);
         } catch (error) {
-            console.error('Render error:', error);
+            console.error('❌ [render] Render error:', error);
+            console.error('❌ Stack:', error.stack);
         } finally {
             this.isRendering = false;
         }
