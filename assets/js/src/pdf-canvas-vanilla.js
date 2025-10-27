@@ -1378,6 +1378,31 @@ export class PDFCanvasVanilla {
 
         return duplicates.length;
     }
+
+    /**
+     * Bascule l'affichage de la grille
+     */
+    toggleGrid() {
+        this.options.showGrid = !this.options.showGrid;
+        this.render();
+        return this.options.showGrid;
+    }
+
+    /**
+     * Active ou désactive la grille
+     */
+    setGridVisibility(visible) {
+        this.options.showGrid = visible === true;
+        this.render();
+        return this.options.showGrid;
+    }
+
+    /**
+     * Vérifie si la grille est visible
+     */
+    isGridVisible() {
+        return this.options.showGrid;
+    }
 }
 
 // Export de la classe
