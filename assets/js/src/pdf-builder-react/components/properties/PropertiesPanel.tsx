@@ -429,6 +429,208 @@ function renderSpecificProperties(
         </>
       );
 
+    case 'product_table':
+      return (
+        <>
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les en-têtes
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showHeaders !== false}
+              onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les noms des colonnes</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les bordures
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showBorders !== false}
+              onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures du tableau</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Lignes alternées
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showAlternatingRows !== false}
+              onChange={(e) => onChange(element.id, 'showAlternatingRows', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Alterne les couleurs des lignes</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les SKU
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showSku !== false}
+              onChange={(e) => onChange(element.id, 'showSku', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des références produit</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les descriptions
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showDescription !== false}
+              onChange={(e) => onChange(element.id, 'showDescription', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des descriptions courtes</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Taille de police
+            </label>
+            <input
+              type="number"
+              min="8"
+              max="24"
+              value={(element as any).fontSize || 11}
+              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 11)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Devise
+            </label>
+            <select
+              value={(element as any).currency || '€'}
+              onChange={(e) => onChange(element.id, 'currency', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="€">Euro (€)</option>
+              <option value="$">Dollar ($)</option>
+              <option value="£">Livre (£)</option>
+              <option value="CHF">Franc suisse (CHF)</option>
+              <option value="CAD">Dollar canadien (CAD)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Couleur de fond
+            </label>
+            <input
+              type="color"
+              value={(element as any).backgroundColor || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '3px'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Fond des en-têtes
+            </label>
+            <input
+              type="color"
+              value={(element as any).headerBackgroundColor || '#f9fafb'}
+              onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '3px'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Couleur lignes alternées
+            </label>
+            <input
+              type="color"
+              value={(element as any).alternateRowColor || '#f9fafb'}
+              onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '3px'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Couleur des bordures
+            </label>
+            <input
+              type="color"
+              value={(element as any).borderColor || '#d1d5db'}
+              onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '3px'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Épaisseur des bordures
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="5"
+              step="0.5"
+              value={(element as any).borderWidth || 1}
+              onChange={(e) => onChange(element.id, 'borderWidth', parseFloat(e.target.value) || 1)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+        </>
+      );
+
     default:
       return null;
   }
