@@ -519,29 +519,6 @@ function renderSpecificProperties(
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Devise
-            </label>
-            <select
-              value={(element as any).currency || '€'}
-              onChange={(e) => onChange(element.id, 'currency', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="€">Euro (€)</option>
-              <option value="$">Dollar ($)</option>
-              <option value="£">Livre (£)</option>
-              <option value="CHF">Franc suisse (CHF)</option>
-              <option value="CAD">Dollar canadien (CAD)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
               Couleur de fond
             </label>
             <input

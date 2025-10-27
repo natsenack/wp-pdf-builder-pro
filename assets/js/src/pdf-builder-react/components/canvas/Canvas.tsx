@@ -224,7 +224,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showBorders = props.showBorders !== false;
     const showAlternatingRows = props.showAlternatingRows !== false;
     const fontSize = props.fontSize || 11;
-    const currency = props.currency || '€';
     const showSku = props.showSku !== false;
     const showDescription = props.showDescription !== false;
 
@@ -272,6 +271,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const subtotal = products.reduce((sum, product) => sum + (product.price * product.qty), 0);
     const totalDiscount = products.reduce((sum, product) => sum + product.discount, 0);
     const finalTotal = subtotal - totalDiscount;
+
+    // Devise par défaut (géré par WooCommerce)
+    const currency = '€';
 
     // Configuration des colonnes
     interface TableColumn {

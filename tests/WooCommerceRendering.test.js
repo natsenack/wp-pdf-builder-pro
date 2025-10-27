@@ -191,6 +191,5 @@ describe('WooCommerce Elements Rendering Tests', () => {
         expect(element.properties.showSku).toBe(true);
         expect(element.properties.showDescription).toBe(true);
         expect(element.properties.showAlternatingRows).toBe(true);
-        expect(element.properties.currency).toBe('$');
     });
 });

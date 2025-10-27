@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panneau de Propriétés - Table de Produits</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .properties-panel {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background: #f9f9f9;
+            margin: 20px 0;
+        }
+        .panel-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .property-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        .property-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .property-row:last-child {
+            margin-bottom: 0;
+        }
+        .property-label {
+            flex: 1;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .property-control {
+            flex: 2;
+        }
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-control input {
+            margin-right: 8px;
+        }
+        .checkbox-description {
+            font-size: 11px;
+            color: #666;
+        }
+        .select-control select,
+        .number-control input {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .color-control input {
+            width: 100%;
+            height: 32px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+        .feature-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        .feature-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin: 5px 0;
+            color: #333;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 6px;
+            border: 1px solid #c8e6c9;
+        }
+        .demo-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 15px 0;
+        }
+        .code-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎛️ Panneau de Propriétés - Table de Produits</h1>
+        <p>Cette démonstration présente l'interface de personnalisation complète pour l'élément "Table de Produits" dans l'éditeur PDF.</p>
+
+        <div class="demo-section">
+            <div class="demo-title">✨ Fonctionnalités du Panneau de Propriétés</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-title">Contrôles Visuels</div>
+                    <ul class="feature-list">
+                        <li>Checkboxes pour activer/désactiver les fonctionnalités</li>
+                        <li>Sélecteurs déroulants pour les options</li>
+                        <li>Contrôles de couleur pour la personnalisation</li>
+                        <li>Champs numériques avec validation</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">Propriétés Avancées</div>
+                    <ul class="feature-list">
+                        <li>Affichage conditionnel des colonnes (SKU, description)</li>
+                        <li>Personnalisation des couleurs (fond, en-têtes, bordures)</li>
+                        <li>Configuration de la typographie</li>
+                        <li>Calculs automatiques des totaux</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">Interface Utilisateur</div>
+                    <ul class="feature-list">
+                        <li>Descriptions contextuelles pour chaque propriété</li>
+                        <li>Regroupement logique des contrôles</li>
+                        <li>Feedback visuel immédiat des changements</li>
+                        <li>Interface responsive et intuitive</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2>📋 Panneau de Propriétés - Aperçu</h2>
+        <div class="properties-panel">
+            <div class="panel-title">Propriétés - Table de Produits</div>
+
+            <div class="property-group">
+                <div class="property-row">
+                    <div class="property-label">Afficher les en-têtes</div>
+                    <div class="property-control">
+                        <div class="checkbox-control">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-description">Affiche les noms des colonnes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Afficher les bordures</div>
+                    <div class="property-control">
+                        <div class="checkbox-control">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-description">Affiche les bordures du tableau</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Lignes alternées</div>
+                    <div class="property-control">
+                        <div class="checkbox-control">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-description">Alterne les couleurs des lignes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Afficher les SKU</div>
+                    <div class="property-control">
+                        <div class="checkbox-control">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-description">Colonne des références produit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Afficher les descriptions</div>
+                    <div class="property-control">
+                        <div class="checkbox-control">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-description">Colonne des descriptions courtes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-group">
+                <div class="property-row">
+                    <div class="property-label">Taille de police</div>
+                    <div class="property-control">
+                        <div class="number-control">
+                            <input type="number" min="8" max="24" value="11">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-group">
+                <div class="property-row">
+                    <div class="property-label">Couleur de fond</div>
+                    <div class="property-control">
+                        <div class="color-control">
+                            <input type="color" value="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Fond des en-têtes</div>
+                    <div class="property-control">
+                        <div class="color-control">
+                            <input type="color" value="#f9fafb">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Couleur lignes alternées</div>
+                    <div class="property-control">
+                        <div class="color-control">
+                            <input type="color" value="#f9fafb">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Couleur des bordures</div>
+                    <div class="property-control">
+                        <div class="color-control">
+                            <input type="color" value="#d1d5db">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-row">
+                    <div class="property-label">Épaisseur des bordures</div>
+                    <div class="property-control">
+                        <div class="number-control">
+                            <input type="number" min="0" max="5" step="0.5" value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🔧 Configuration JSON</h2>
+        <p>Voici la structure JSON des propriétés configurables pour l'élément table de produits :</p>
+
+        <div class="code-block">
+            <div class="code-title">Propriétés de l'élément product_table :</div>
+            <pre><code>{
+  "type": "product_table",
+  "showHeaders": true,           // Afficher les en-têtes de colonnes
+  "showBorders": true,           // Afficher les bordures du tableau
+  "showAlternatingRows": true,   // Alterner les couleurs des lignes
+  "showSku": true,              // Afficher la colonne SKU
+  "showDescription": true,      // Afficher la colonne description
+  "fontSize": 11,               // Taille de la police (8-24px)
+  "backgroundColor": "#ffffff", // Couleur de fond du tableau
+  "headerBackgroundColor": "#f9fafb", // Couleur de fond des en-têtes
+  "alternateRowColor": "#f9fafb",     // Couleur des lignes alternées
+  "borderColor": "#d1d5db",     // Couleur des bordures
+  "borderWidth": 1              // Épaisseur des bordures (0-5px)
+}</code></pre>
+        </div>
+
+        <h2>🎯 Avantages de cette Interface</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-title">Personnalisation Complète</div>
+                <ul class="feature-list">
+                    <li>Contrôle total sur l'apparence du tableau</li>
+                    <li>Configuration des colonnes affichées</li>
+                    <li>Personnalisation des couleurs et typographie</li>
+                    <li>Adaptation aux besoins spécifiques</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">Facilité d'Utilisation</div>
+                <ul class="feature-list">
+                    <li>Interface intuitive avec descriptions</li>
+                    <li>Modification en temps réel</li>
+                    <li>Validation automatique des valeurs</li>
+                    <li>Prévisualisation immédiate</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">Performance</div>
+                <ul class="feature-list">
+                    <li>Mise à jour optimisée du rendu</li>
+                    <li>Calculs automatiques des totaux</li>
+                    <li>Gestion intelligente du texte</li>
+                    <li>Support des longues descriptions</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="background: #fff9c4; padding: 15px; border-radius: 4px; margin: 20px 0;">
+            <h3>💡 Conseils d'utilisation</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li><strong>Colonnes :</strong> Désactivez SKU/description si l'espace est limité</li>
+                <li><strong>Couleurs :</strong> Utilisez des contrastes suffisants pour la lisibilité</li>
+                <li><strong>Police :</strong> 11-12px recommandé pour un bon équilibre</li>
+                <li><strong>Devise :</strong> Adapte automatiquement le symbole dans les calculs</li>
+                <li><strong>Bordures :</strong> 1px recommandé pour un aspect professionnel</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-radius: 4px;">
+            <h3>✅ Implémentation Réussie</h3>
+            <p>Le panneau de propriétés pour la table de produits a été entièrement implémenté :</p>
+            <ul>
+                <li>✅ Interface utilisateur complète avec tous les contrôles</li>
+                <li>✅ Validation et gestion des types de données</li>
+                <li>✅ Intégration avec le système de propriétés existant</li>
+                <li>✅ Tests unitaires pour la validation des fonctionnalités</li>
+                <li>✅ Déploiement réussi avec compilation et upload FTP</li>
+                <li>✅ Documentation complète des propriétés disponibles</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
