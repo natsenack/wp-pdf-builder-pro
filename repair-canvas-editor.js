@@ -17,6 +17,10 @@ const colors = {
     blue: '\x1b[34m'
 };
 
+function log(message, color = 'reset') {
+    console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
 function checkFileExists(filePath) {
     return fs.existsSync(filePath);
 }

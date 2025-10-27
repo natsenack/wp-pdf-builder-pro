@@ -121,8 +121,8 @@ export class PDFCanvasVanilla {
             // Initialiser le renderer avec le canvas et contexte
             this.renderer.initialize(this.canvas, this.ctx);
 
-            // NE PAS initialiser l'eventManager pour éviter les conflits avec les gestionnaires directs
-            // this.eventManager.initialize(this.canvas);
+            // Initialiser l'eventManager pour normaliser les événements
+            this.eventManager.initialize(this.canvas);
 
             // Attacher les gestionnaires d'événements
             this.attachEventListeners();
@@ -187,19 +187,12 @@ export class PDFCanvasVanilla {
      * Attache les gestionnaires d'événements DOM
      */
     attachEventListeners() {
-        // Gestionnaires de souris
-        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        // this.canvas.addEventListener('wheel', this.handleWheel.bind(this)); // Zoom désactivé
+        // Les événements souris et clavier sont gérés par l'eventManager
+        // Seuls les événements drag & drop sont gérés directement car non normalisés
 
         // Gestionnaires de drag & drop - DOIVENT ÊTRE AU NIVEAU DU DOCUMENT
         document.addEventListener('dragover', this.handleDragOver.bind(this));
         document.addEventListener('drop', this.handleDrop.bind(this));
-
-        // Gestionnaires de clavier
-        document.addEventListener('keydown', this.handleKeyDown.bind(this));
-        document.addEventListener('keyup', this.handleKeyUp.bind(this));
 
         // Gestionnaire de redimensionnement
         window.addEventListener('resize', this.handleResize.bind(this));
@@ -271,12 +264,16 @@ export class PDFCanvasVanilla {
     handleMouseDown(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            console.log('handleMouseDown: undefined');
             return;
         }
 
         // Utiliser la position normalisée depuis l'EventManager
         const point = event.position || this.getMousePosition(event.originalEvent);
+
+        if (!point || typeof point.x === 'undefined' || typeof point.y === 'undefined') {
+            console.error('handleMouseDown: point is invalid', point);
+            return;
+        }
 
         switch (this.mode) {
             case 'select':
@@ -299,8 +296,13 @@ export class PDFCanvasVanilla {
         if (!event || typeof event.preventDefault !== 'function') {
             return;
         }
-        
+
         const point = event.position || this.getMousePosition(event.originalEvent);
+
+        if (!point || typeof point.x === 'undefined' || typeof point.y === 'undefined') {
+            console.error('handleMouseMove: point is invalid', point);
+            return;
+        }
 
         // Gérer les transformations en cours
         if (this.transformationsManager.isTransforming) {
@@ -328,11 +330,15 @@ export class PDFCanvasVanilla {
     handleMouseUp(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            console.log('handleMouseUp');
             return;
         }
         
         const point = event.position || this.getMousePosition(event.originalEvent);
+
+        if (!point || typeof point.x === 'undefined' || typeof point.y === 'undefined') {
+            console.error('handleMouseUp: point is invalid', point);
+            return;
+        }
 
         // Terminer les transformations
         if (this.transformationsManager.isTransforming) {
@@ -1304,16 +1310,14 @@ export class PDFCanvasVanilla {
      * Nettoie les ressources
      */
     dispose() {
-        // Supprimer les gestionnaires d'événements
-        if (this.canvas) {
-            this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-            this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-            this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-            this.canvas.removeEventListener('wheel', this.handleWheel);
+        // Nettoyer l'eventManager (supprime tous les gestionnaires d'événements normalisés)
+        if (this.eventManager) {
+            this.eventManager.dispose();
         }
 
-        document.removeEventListener('keydown', this.handleKeyDown);
-        document.removeEventListener('keyup', this.handleKeyUp);
+        // Supprimer les gestionnaires d'événements directs restants (drag & drop)
+        document.removeEventListener('dragover', this.handleDragOver);
+        document.removeEventListener('drop', this.handleDrop);
         window.removeEventListener('resize', this.handleResize);
 
         // Nettoyer les références
