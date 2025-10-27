@@ -366,14 +366,16 @@ export class PDFCanvasLayersManager {
         // Dupliquer les éléments
         sourceLayer.elements.forEach(elementId => {
             const element = this.canvasInstance.elements.get(elementId);
-            if (element) {
-                const newElementId = this.canvasInstance.addElement(element.type, {
-                    ...element.properties,
-                    x: element.properties.x + 20, // Offset léger
-                    y: element.properties.y + 20
-                });
-                this.addElementToLayer(newElementId, newLayerId);
-            }
+                if (element) {
+                    // Safeguard properties when duplicating
+                    const props = element.properties || {};
+                    const newElementId = this.canvasInstance.addElement(element.type, {
+                        ...props,
+                        x: (props.x || 0) + 20, // Offset léger
+                        y: (props.y || 0) + 20
+                    });
+                    this.addElementToLayer(newElementId, newLayerId);
+                }
         });
 
         return duplicatedLayer;

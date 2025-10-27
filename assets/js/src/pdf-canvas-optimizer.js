@@ -129,11 +129,20 @@ export class PDFCanvasPerformanceOptimizer {
      * Vérifie si un élément est dans une région
      */
     isElementInRegion(element, region) {
+        // Safeguard: ensure properties exist
+        if (!element || !element.properties) {
+            console.warn('isElementInRegion: invalid element or properties', element);
+            return false;
+        }
         const props = element.properties;
-        return !(props.x + props.width < region.x ||
-                props.x > region.x + region.width ||
-                props.y + props.height < region.y ||
-                props.y > region.y + region.height);
+        const x = props.x || 0;
+        const y = props.y || 0;
+        const w = props.width || 0;
+        const h = props.height || 0;
+        return !(x + w < region.x ||
+                x > region.x + region.width ||
+                y + h < region.y ||
+                y > region.y + region.height);
     }
 
     /**
@@ -200,10 +209,12 @@ export class PDFCanvasPerformanceOptimizer {
         this.canvasInstance.ctx = cacheCtx;
 
         // Déplacer temporairement l'élément à l'origine
-        const originalX = element.properties.x;
-        const originalY = element.properties.y;
-        element.properties.x = 0;
-        element.properties.y = 0;
+    // Safeguard properties
+    const originalX = (element.properties && element.properties.x) || 0;
+    const originalY = (element.properties && element.properties.y) || 0;
+    if (!element.properties) element.properties = {};
+    element.properties.x = 0;
+    element.properties.y = 0;
 
         // Rendre l'élément dans le cache
         this.canvasInstance.renderElement(element);
@@ -224,10 +235,14 @@ export class PDFCanvasPerformanceOptimizer {
      * Récupère les limites d'un élément
      */
     getElementBounds(element) {
+        if (!element || !element.properties) {
+            console.warn('getElementBounds: invalid element or properties', element);
+            return { x: 0, y: 0, width: 100, height: 100 };
+        }
         const props = element.properties;
         return {
-            x: props.x,
-            y: props.y,
+            x: props.x || 0,
+            y: props.y || 0,
             width: props.width || 100,
             height: props.height || 100
         };
@@ -243,7 +258,9 @@ export class PDFCanvasPerformanceOptimizer {
         const element = this.canvasInstance.elements.get(elementId);
         if (!element) return false;
 
-        ctx.drawImage(cache.canvas, element.properties.x, element.properties.y);
+        const x = (element.properties && element.properties.x) || 0;
+        const y = (element.properties && element.properties.y) || 0;
+        ctx.drawImage(cache.canvas, x, y);
         return true;
     }
 

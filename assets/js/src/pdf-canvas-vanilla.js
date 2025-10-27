@@ -552,8 +552,8 @@ export class PDFCanvasVanilla {
             startPoint: point,
             elementStartPositions: selectedElements.map(element => ({
                 id: element.id,
-                x: element.properties.x,
-                y: element.properties.y
+                x: (element.properties && element.properties.x) || 0,
+                y: (element.properties && element.properties.y) || 0
             }))
         };
     }
@@ -619,11 +619,12 @@ export class PDFCanvasVanilla {
         this.selectedElement = this.elements.get(elementId);
         this.selectionManager.clearSelection();
         if (this.selectedElement) {
-            this.selectionManager.selectAtPoint(
-                { x: this.selectedElement.properties.x + this.selectedElement.properties.width / 2,
-                  y: this.selectedElement.properties.y + this.selectedElement.properties.height / 2 },
-                false
-            );
+                        const props = this.selectedElement.properties || {};
+                        this.selectionManager.selectAtPoint(
+                                { x: (props.x || 0) + (props.width || 100) / 2,
+                                    y: (props.y || 0) + (props.height || 50) / 2 },
+                                false
+                        );
         }
         this.render();
     }

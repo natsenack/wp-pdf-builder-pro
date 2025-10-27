@@ -84,13 +84,20 @@ PDFCanvasHistoryManager.prototype.restoreState = function(state) {
         // Mettre à jour le gestionnaire de sélection
         if (this.canvasInstance.selectionManager) {
             this.canvasInstance.selectionManager.clearSelection();
-            this.canvasInstance.selectionManager.selectAtPoint(
-                {
-                    x: this.canvasInstance.selectedElement.properties.x + this.canvasInstance.selectedElement.properties.width / 2,
-                    y: this.canvasInstance.selectedElement.properties.y + this.canvasInstance.selectedElement.properties.height / 2
-                },
-                false
-            );
+            // Sécurité: vérifier que selectedElement et ses propriétés existent
+            const sel = this.canvasInstance.selectedElement;
+            if (sel && sel.properties) {
+                this.canvasInstance.selectionManager.selectAtPoint(
+                    {
+                        x: (sel.properties.x || 0) + (sel.properties.width || 100) / 2,
+                        y: (sel.properties.y || 0) + (sel.properties.height || 50) / 2
+                    },
+                    false
+                );
+            } else {
+                // Aucun point de sélection fiable — on laisse la sélection vide
+                console.warn('restoreState: selectedElement has no properties', sel);
+            }
         }
     } else {
         this.canvasInstance.selectedElement = null;
