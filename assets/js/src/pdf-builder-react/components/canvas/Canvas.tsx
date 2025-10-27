@@ -233,10 +233,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showGlobalDiscount = props.showGlobalDiscount !== false;
     const shippingCost = props.shippingCost || 8.50; // Exemple de frais de port
     const taxRate = props.taxRate || 20; // Exemple de TVA 20%
-    const globalDiscount = props.globalDiscount || 5; // Exemple de remise globale 5%
+    const globalDiscount = props.globalDiscount || 5; // Exemple de coupon panier "PROMO5" (5% sur le total)
     const orderFees = props.orderFees || 2.50; // Exemple de frais de commande
 
     // Données fictives plus réalistes de produits WooCommerce
+    // Données d'exemple WooCommerce avec remises de coupons appliqués
     const products = [
       {
         sku: 'TSHIRT-001',
@@ -244,7 +245,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
         description: 'T-shirt en coton biologique, coupe slim',
         qty: 2,
         price: 29.99,
-        discount: 0,
+        discount: 0, // Pas de remise individuelle sur ce produit
         total: 59.98
       },
       {
@@ -253,7 +254,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
         description: 'Jean stretch confort, taille haute',
         qty: 1,
         price: 89.99,
-        discount: 10.00,
+        discount: 10.00, // Remise de 10€ via coupon "ETE2025"
         total: 79.99
       },
       {
@@ -262,7 +263,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
         description: 'Chaussures de running avec semelle amortissante',
         qty: 1,
         price: 129.99,
-        discount: 0,
+        discount: 0, // Pas de remise individuelle
         total: 129.99
       },
       {
@@ -467,12 +468,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     currentY += 18;
 
-    // Remises combinées (articles + globale)
+    // Remises combinées (articles + globale) - proviennent de coupons WooCommerce
     const totalDiscounts = itemDiscounts + (showGlobalDiscount ? globalDiscountAmount : 0);
     if (totalDiscounts > 0) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText('Remises:', element.width - 200, currentY);
+      ctx.fillText('Coupon:', element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`-${totalDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
       currentY += 18;
