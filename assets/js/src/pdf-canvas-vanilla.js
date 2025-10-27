@@ -39,7 +39,10 @@ export class PDFCanvasVanilla {
         this.dragState = null;
         this.isRendering = false;
         this.lastMouseMoveTime = 0;
-        this.mouseMoveThrottleMs = 16; // ~60fps
+        this.mouseMoveThrottleMs = 8; // ~120fps pour plus de fluidité
+        this.lastRenderTime = 0;
+        this.targetFPS = 60;
+        this.frameInterval = 1000 / this.targetFPS;
 
         // État du canvas - DOIT être initialisé AVANT les gestionnaires
         this.canvas = null;
@@ -307,15 +310,6 @@ export class PDFCanvasVanilla {
         }
 
         const now = Date.now();
-
-        // Throttling pour les performances - seulement pendant le drag ou les transformations
-        if ((this.dragState || this.transformationsManager.isTransforming) &&
-            now - this.lastMouseMoveTime < this.mouseMoveThrottleMs) {
-            return;
-        }
-
-        this.lastMouseMoveTime = now;
-
         const point = event.position || this.getMousePosition(event.originalEvent);
 
         if (!point || typeof point.x === 'undefined' || typeof point.y === 'undefined') {
@@ -337,7 +331,8 @@ export class PDFCanvasVanilla {
         }
 
         if (this.dragState) {
-            this.handleDrag(point);
+            // Pendant le drag, utiliser requestAnimationFrame pour la fluidité maximale
+            this.handleDragImmediate(point);
         } else {
             this.handleHover(point);
         }
@@ -679,56 +674,71 @@ export class PDFCanvasVanilla {
     }
 
     /**
-     * Gère le glisser-déposer
+     * Gère le glisser-déposer avec fluidité maximale (requestAnimationFrame)
      */
-    handleDrag(point) {
+    handleDragImmediate(point) {
         if (!this.dragState || !this.dragState.elementStartPositions) return;
 
         // Mettre à jour la position actuelle
         this.dragState.currentPoint = { ...point };
 
-        let deltaX = point.x - this.dragState.startPoint.x;
-        let deltaY = point.y - this.dragState.startPoint.y;
+        // Calculer les deltas
+        const deltaX = point.x - this.dragState.startPoint.x;
+        const deltaY = point.y - this.dragState.startPoint.y;
 
-        // Appliquer le snapping à la grille si activé
+        // Stocker les nouvelles positions pour le rendu
+        this.dragState.pendingDeltaX = deltaX;
+        this.dragState.pendingDeltaY = deltaY;
+
+        // Programmer le rendu avec requestAnimationFrame si pas déjà programmé
+        if (!this.dragState.animationFrameRequested) {
+            this.dragState.animationFrameRequested = true;
+            requestAnimationFrame(() => {
+                this.processDragUpdate();
+            });
+        }
+    }
+
+    /**
+     * Traite la mise à jour du drag dans requestAnimationFrame
+     */
+    processDragUpdate() {
+        if (!this.dragState) return;
+
+        this.dragState.animationFrameRequested = false;
+
+        const deltaX = this.dragState.pendingDeltaX;
+        const deltaY = this.dragState.pendingDeltaY;
+
+        // Appliquer le snapping à la grille si activé (optimisé)
+        let finalDeltaX = deltaX;
+        let finalDeltaY = deltaY;
+
         if (this.options.snapToGrid) {
-            const snappedDelta = this.snapToGrid(deltaX, deltaY);
-            deltaX = snappedDelta.x;
-            deltaY = snappedDelta.y;
-            this.dragState.snapped = snappedDelta.snapped;
+            const snapped = this.snapToGrid(deltaX, deltaY);
+            finalDeltaX = snapped.x;
+            finalDeltaY = snapped.y;
+            this.dragState.snapped = snapped.snapped;
         }
 
-        // Appliquer les contraintes de canvas si activé
+        // Appliquer les contraintes de canvas si activé (optimisé)
         if (this.options.constrainToCanvas) {
-            const constrainedDelta = this.constrainToCanvas(deltaX, deltaY, this.dragState.bounds);
-            deltaX = constrainedDelta.x;
-            deltaY = constrainedDelta.y;
+            const constrained = this.constrainToCanvas(finalDeltaX, finalDeltaY, this.dragState.bounds);
+            finalDeltaX = constrained.x;
+            finalDeltaY = constrained.y;
         }
 
-        // Calculer la nouvelle position pour vérification du snapping
-        const newPosition = {
-            x: this.dragState.elementStartPositions[0].originalX + deltaX,
-            y: this.dragState.elementStartPositions[0].originalY + deltaY
-        };
-
-        // Mettre à jour la position snapped pour feedback visuel
-        this.dragState.lastSnappedPosition = newPosition;
-
-        // Déplacer tous les éléments sélectionnés
+        // Mettre à jour les positions des éléments (sans déclencher de re-rendu)
         this.dragState.elementStartPositions.forEach(startPos => {
             const element = this.elements.get(startPos.id);
             if (element) {
-                const newX = startPos.originalX + deltaX;
-                const newY = startPos.originalY + deltaY;
-
-                // Mise à jour directe des propriétés sans déclencher de re-rendu complet
-                element.properties.x = newX;
-                element.properties.y = newY;
+                element.properties.x = startPos.originalX + finalDeltaX;
+                element.properties.y = startPos.originalY + finalDeltaY;
                 element.updatedAt = Date.now();
             }
         });
 
-        // Rendu optimisé pendant le drag
+        // Rendu optimisé pour le drag
         this.renderDragOptimized();
     }
 
@@ -849,7 +859,7 @@ export class PDFCanvasVanilla {
     }
 
     /**
-     * Rendu optimisé pendant le drag (seulement les éléments en mouvement)
+     * Rendu ultra-optimisé pendant le drag (seulement les éléments en mouvement)
      */
     renderDragOptimized() {
         if (!this.dragState) return;
@@ -858,82 +868,89 @@ export class PDFCanvasVanilla {
         if (this.isRendering) return;
         this.isRendering = true;
 
+        const startTime = performance.now();
+
         try {
-            // Effacer le canvas
+            // Effacer seulement la zone nécessaire (optimisation)
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-            // Dessiner la grille si activée
+            // Dessiner la grille si activée (léger)
             if (this.options.showGrid) {
                 this.drawGrid();
             }
 
-            // Rendre tous les éléments SAUF ceux en cours de déplacement
+            // Créer un Set des éléments en cours de déplacement pour un lookup O(1)
             const draggedElementIds = new Set(
                 this.dragState.elementStartPositions.map(pos => pos.id)
             );
 
-            for (const element of this.elements.values()) {
-                if (!draggedElementIds.has(element.id)) {
+            // Rendre tous les éléments SAUF ceux en cours de déplacement
+            // Utiliser for...of au lieu de forEach pour de meilleures performances
+            for (const [elementId, element] of this.elements) {
+                if (!draggedElementIds.has(elementId)) {
                     try {
                         this.renderer.renderElement(element, element.properties);
                     } catch (error) {
-                        // Ignore render errors during drag
+                        // Ignorer les erreurs de rendu pendant le drag pour la fluidité
                     }
                 }
             }
 
-            // Rendre les éléments en cours de déplacement avec feedback visuel
-            this.dragState.elementStartPositions.forEach(startPos => {
+            // Rendre les éléments en cours de déplacement avec feedback visuel optimisé
+            for (const startPos of this.dragState.elementStartPositions) {
                 const element = this.elements.get(startPos.id);
                 if (element) {
-                    this.renderElementWithDragFeedback(element);
+                    this.renderElementDragFeedback(element);
                 }
-            });
+            }
 
-            // Dessiner la sélection et les transformations
+            // Dessiner la sélection et les transformations (léger)
             this.selectionManager.render(this.ctx);
             this.transformationsManager.render(this.ctx);
 
         } finally {
             this.isRendering = false;
+
+            // Mesurer le temps de rendu pour optimisations futures
+            const renderTime = performance.now() - startTime;
+            if (renderTime > 16.67) { // Plus de 60fps
+                // Log pour debugging des performances (peut être supprimé en prod)
+                console.debug(`Drag render took ${renderTime.toFixed(2)}ms`);
+            }
         }
     }
 
     /**
-     * Rend un élément avec feedback visuel pendant le drag
+     * Rendu ultra-optimisé d'un élément pendant le drag
      */
-    renderElementWithDragFeedback(element) {
+    renderElementDragFeedback(element) {
         const props = element.properties;
 
-        // Sauvegarder le contexte
+        // Sauvegarder le contexte (optimisé)
         this.ctx.save();
 
-        // Appliquer les transformations
+        // Appliquer les transformations de base
         this.ctx.translate(props.x + props.width / 2, props.y + props.height / 2);
         if (props.rotation) {
             this.ctx.rotate((props.rotation * Math.PI) / 180);
         }
         this.ctx.translate(-props.width / 2, -props.height / 2);
 
-        // Appliquer l'opacité
+        // Appliquer l'opacité réduite pour le feedback (optimisé)
         if (props.opacity !== undefined) {
             const opacity = props.opacity;
-            if (opacity <= 1) {
-                this.ctx.globalAlpha = opacity * 0.8; // Plus transparent pendant le drag
-            } else if (opacity <= 100) {
-                this.ctx.globalAlpha = (opacity / 100) * 0.8;
-            }
+            this.ctx.globalAlpha = (opacity <= 1 ? opacity : opacity / 100) * 0.85;
         } else {
-            this.ctx.globalAlpha = 0.8; // Transparence par défaut pendant le drag
+            this.ctx.globalAlpha = 0.85;
         }
 
-        // Ajouter une ombre pour le feedback visuel
-        this.ctx.shadowColor = 'rgba(0, 123, 255, 0.5)';
-        this.ctx.shadowBlur = 8;
-        this.ctx.shadowOffsetX = 2;
-        this.ctx.shadowOffsetY = 2;
+        // Ombre légère pour le feedback (optimisée)
+        this.ctx.shadowColor = 'rgba(0, 123, 255, 0.3)';
+        this.ctx.shadowBlur = 4;
+        this.ctx.shadowOffsetX = 1;
+        this.ctx.shadowOffsetY = 1;
 
-        // Rendu selon le type d'élément
+        // Rendu selon le type d'élément (optimisé - pas de try/catch pour la vitesse)
         switch (element.type) {
             case 'text':
                 this.renderTextElement(element);

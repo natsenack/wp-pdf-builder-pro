@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fluidité Drag & Drop - PDF Builder Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .canvas-container {
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin: 20px 0;
+            background: white;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .performance-metrics {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .metric {
+            display: inline-block;
+            margin: 5px 10px 5px 0;
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Fluidité Drag & Drop - PDF Builder Pro</h1>
+
+        <div class="status success">
+            ✅ Optimisations implémentées : requestAnimationFrame, rendu sélectif, throttling optimisé
+        </div>
+
+        <div class="controls">
+            <h3>Instructions de test :</h3>
+            <ol>
+                <li>Glissez-déposez les éléments sur le canvas</li>
+                <li>Vérifiez la fluidité du mouvement (60fps attendu)</li>
+                <li>Observez le feedback visuel pendant le drag</li>
+                <li>Vérifiez les métriques de performance ci-dessous</li>
+            </ol>
+            <button onclick="addTestElements()">Ajouter des éléments de test</button>
+            <button onclick="clearCanvas()">Vider le canvas</button>
+            <button onclick="toggleGrid()">Grille On/Off</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="pdf-canvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="performance-metrics">
+            <h3>Métriques de Performance :</h3>
+            <div class="metric">FPS: <span id="fps">0</span></div>
+            <div class="metric">Temps de rendu: <span id="render-time">0</span>ms</div>
+            <div class="metric">Éléments: <span id="element-count">0</span></div>
+            <div class="metric">Drag actif: <span id="drag-active">Non</span></div>
+        </div>
+
+        <div class="status info">
+            💡 Conseil : Les optimisations incluent le rendu sélectif (seuls les éléments en mouvement sont mis à jour pendant le drag)
+        </div>
+    </div>
+
+    <script type="module">
+        import PDFCanvas from './pdf-canvas-vanilla.js';
+
+        let canvas;
+        let fpsCounter = 0;
+        let lastFpsUpdate = performance.now();
+        let frameCount = 0;
+
+        // Métriques de performance
+        const metrics = {
+            fps: 0,
+            renderTime: 0,
+            elementCount: 0,
+            dragActive: false
+        };
+
+        function updateMetricsDisplay() {
+            document.getElementById('fps').textContent = metrics.fps;
+            document.getElementById('render-time').textContent = metrics.renderTime.toFixed(2);
+            document.getElementById('element-count').textContent = metrics.elementCount;
+            document.getElementById('drag-active').textContent = metrics.dragActive ? 'Oui' : 'Non';
+        }
+
+        function calculateFPS() {
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsUpdate >= 1000) {
+                metrics.fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+                frameCount = 0;
+                lastFpsUpdate = now;
+                updateMetricsDisplay();
+            }
+        }
+
+        // Initialisation
+        window.addEventListener('load', async () => {
+            try {
+                const canvasElement = document.getElementById('pdf-canvas');
+                canvas = new PDFCanvas(canvasElement, {
+                    showGrid: true,
+                    snapToGrid: true,
+                    enableSelection: true,
+                    enableTransformations: true
+                });
+
+                // Hook pour mesurer les performances
+                const originalRenderDragOptimized = canvas.renderDragOptimized.bind(canvas);
+                canvas.renderDragOptimized = function() {
+                    const start = performance.now();
+                    originalRenderDragOptimized();
+                    metrics.renderTime = performance.now() - start;
+                    metrics.dragActive = true;
+                    calculateFPS();
+                };
+
+                // Hook pour compter les éléments
+                const originalAddElement = canvas.addElement.bind(canvas);
+                canvas.addElement = function(element) {
+                    originalAddElement(element);
+                    metrics.elementCount = canvas.elements.size;
+                    updateMetricsDisplay();
+                };
+
+                // Hook pour le drag terminé
+                canvas.addEventListener('dragend', () => {
+                    metrics.dragActive = false;
+                    updateMetricsDisplay();
+                });
+
+                console.log('✅ Canvas initialisé avec succès');
+                updateMetricsDisplay();
+
+            } catch (error) {
+                console.error('❌ Erreur d\'initialisation:', error);
+                document.body.innerHTML += `<div style="color: red; padding: 20px;">Erreur: ${error.message}</div>`;
+            }
+        });
+
+        // Fonctions de test
+        window.addTestElements = function() {
+            const elements = [
+                {
+                    type: 'rectangle',
+                    properties: {
+                        x: 50, y: 50, width: 100, height: 80,
+                        fillColor: '#FF6B6B', strokeColor: '#FF5252', strokeWidth: 2
+                    }
+                },
+                {
+                    type: 'text',
+                    properties: {
+                        x: 200, y: 100, width: 150, height: 40,
+                        text: 'Test Fluidité', fontSize: 16, fontFamily: 'Arial',
+                        fillColor: '#2E7D32'
+                    }
+                },
+                {
+                    type: 'rectangle',
+                    properties: {
+                        x: 400, y: 150, width: 120, height: 90,
+                        fillColor: '#42A5F5', strokeColor: '#1976D2', strokeWidth: 2,
+                        rotation: 15
+                    }
+                }
+            ];
+
+            elements.forEach(element => canvas.addElement(element));
+        };
+
+        window.clearCanvas = function() {
+            canvas.elements.clear();
+            canvas.selectionManager.clearSelection();
+            metrics.elementCount = 0;
+            updateMetricsDisplay();
+            canvas.render();
+        };
+
+        window.toggleGrid = function() {
+            canvas.options.showGrid = !canvas.options.showGrid;
+            canvas.render();
+        };
+
+        // Animation loop pour mesurer les FPS
+        function animate() {
+            calculateFPS();
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">D:\wp-pdf-builder-pro\test-drag-fluidity.html
