@@ -25,6 +25,10 @@ export class PDFCanvasTransformationsManager {
      * Démarre une transformation
      */
     startTransform(point, handle) {
+        if (!point || !handle) {
+            return false;
+        }
+
         if (!this.canvasInstance.selectionManager ||
             this.canvasInstance.selectionManager.getSelectionCount() === 0) {
             return false;
@@ -61,7 +65,7 @@ export class PDFCanvasTransformationsManager {
      * Met à jour la transformation en cours
      */
     updateTransform(point) {
-        if (!this.isTransforming || !this.transformStartPoint || !this.originalBounds) {
+        if (!point || !this.isTransforming || !this.transformStartPoint || !this.originalBounds) {
             return;
         }
 
@@ -281,6 +285,8 @@ export class PDFCanvasTransformationsManager {
      * Obtient le handle à une position donnée (pour tous les éléments sélectionnés)
      */
     getHandleAtPoint(point) {
+        if (!point) return null;
+
         const selectedElements = this.canvasInstance.selectionManager.getSelectedElements();
 
         for (const element of selectedElements) {
@@ -298,7 +304,7 @@ export class PDFCanvasTransformationsManager {
      */
     getHandleAtPointForElement(point, element) {
         // Safeguard
-        if (!element || !element.properties) {
+        if (!point || !element || !element.properties) {
             return null;
         }
 

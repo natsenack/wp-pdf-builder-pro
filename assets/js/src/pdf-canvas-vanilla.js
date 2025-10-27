@@ -1325,6 +1325,22 @@ export class PDFCanvasVanilla {
     }
 
     /**
+     * Obtient la position de la souris relative au canvas
+     */
+    getMousePosition(event) {
+        if (!this.canvas || !event) return { x: 0, y: 0 };
+
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
+        return {
+            x: (event.clientX - rect.left) * scaleX,
+            y: (event.clientY - rect.top) * scaleY
+        };
+    }
+
+    /**
      * Obtient les statistiques du canvas
      */
     getStats() {
