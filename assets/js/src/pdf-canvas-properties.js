@@ -3,7 +3,6 @@
  * Système centralisé pour la gestion, validation et liaison des propriétés
  */
 
-import { validateProperty, getPropertyDefault, isPropertyAllowed } from './pdf-canvas-elements.js';
 import { elementCustomizationService } from './pdf-canvas-customization.js';
 
 export class PDFCanvasPropertiesManager {
@@ -145,15 +144,6 @@ export class PDFCanvasPropertiesManager {
      * Valide une propriété
      */
     validateProperty(element, propertyName, value) {
-        // Validation des restrictions d'éléments
-        if (!isPropertyAllowed(element.type, propertyName)) {
-            return {
-                valid: false,
-                reason: `Property "${propertyName}" not allowed for element type "${element.type}"`,
-                value: value
-            };
-        }
-
         // Validation du service de personnalisation
         const validatedValue = elementCustomizationService.validateProperty(propertyName, value);
 
@@ -611,7 +601,7 @@ export class PDFCanvasPropertiesManager {
         const copiedProps = {};
 
         propertiesToCopy.forEach(prop => {
-            if (sourceProps.hasOwnProperty(prop) && isPropertyAllowed(targetElement.type, prop)) {
+            if (sourceProps.hasOwnProperty(prop)) {
                 copiedProps[prop] = sourceProps[prop];
             }
         });

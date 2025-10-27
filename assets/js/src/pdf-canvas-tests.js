@@ -3,13 +3,11 @@
  * Validation des fonctionnalités après migration depuis React
  */
 
-import { PDFCanvasVanilla } from './pdf-canvas-vanilla.js';
-import { ELEMENT_PROPERTY_RESTRICTIONS } from './pdf-canvas-elements.js';
+import PDFCanvasVanilla from './pdf-canvas-vanilla-new.js';
 import { WooCommerceElementsManager } from './pdf-canvas-woocommerce.js';
 import { ElementCustomizationService } from './pdf-canvas-customization.js';
-import { PDFCanvasRenderer } from './pdf-canvas-renderer.js';
+import CanvasRenderer from './pdf-canvas-renderer.js';
 import { PDFCanvasEventManager } from './pdf-canvas-events.js';
-import { PDFCanvasRenderUtils } from './pdf-canvas-render-utils.js';
 import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
 import { PDFCanvasPropertiesManager } from './pdf-canvas-properties.js';
 import { PDFCanvasLayersManager } from './pdf-canvas-layers.js';

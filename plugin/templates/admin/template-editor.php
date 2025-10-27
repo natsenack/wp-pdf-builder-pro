@@ -921,11 +921,11 @@ function setupDragAndDrop() {
     }, false);
     
     canvas.addEventListener('drop', function(e) {
-        // console.log removed
+        console.log('[DRAGDROP] 🔵 Drop event fired');
         
         // Ne traiter le drop que s'il vient de la toolbar
         if (!isDragging || !currentDraggedElement) {
-            // console.log removed
+            console.warn('[DRAGDROP] ⚠️ Not a toolbar drag, ignoring');
             return;
         }
         
@@ -934,7 +934,11 @@ function setupDragAndDrop() {
         canvas.classList.remove('drag-over');
         
         try {
-            var data = JSON.parse(e.dataTransfer.getData('application/json'));
+            var jsonData = e.dataTransfer.getData('application/json');
+            console.log('[DRAGDROP] 📦 Received data:', jsonData);
+            
+            var data = JSON.parse(jsonData);
+            console.log('[DRAGDROP] 📋 Parsed data:', data);
             
             if (data.type === 'new-element') {
                 var rect = canvas.getBoundingClientRect();
@@ -942,14 +946,20 @@ function setupDragAndDrop() {
                 var x = (e.clientX - rect.left) / zoom;
                 var y = (e.clientY - rect.top) / zoom;
                 
-                // console.log removed
+                console.log('[DRAGDROP] 📍 Position:', { x, y, zoom });
+                console.log('[DRAGDROP] ✓ pdfCanvasInstance exists:', !!window.pdfCanvasInstance);
+                console.log('[DRAGDROP] ✓ addElement function exists:', typeof window.pdfCanvasInstance?.addElement);
                 
                 if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.addElement === 'function') {
+                    console.log('[DRAGDROP] ✅ Adding element:', data.elementType);
                     window.pdfCanvasInstance.addElement(data.elementType, { x, y, ...data.elementData });
+                } else {
+                    console.error('[DRAGDROP] ❌ pdfCanvasInstance or addElement not available');
                 }
             }
         } catch (error) {
             console.error('[DRAGDROP] ❌ Erreur:', error);
+            console.error('[DRAGDROP] ❌ Stack:', error.stack);
         }
     }, false);
     

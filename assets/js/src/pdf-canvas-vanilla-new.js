@@ -10,7 +10,7 @@ import { PDFCanvasEventManager } from './pdf-canvas-events.js';
 import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
 import { PDFCanvasTransformationsManager } from './pdf-canvas-transformations.js';
 import { PDFCanvasHistoryManager } from './pdf-canvas-history.js';
-import { PDFCanvasDragDropManager } from './pdf-canvas-dragdrop.js';
+// NOTE: PDFCanvasDragDropManager is disabled - drag & drop is handled by template-editor.php setupDragAndDrop()
 
 /**
  * Classe principale du Canvas Vanilla
@@ -54,7 +54,8 @@ export class PDFCanvasVanilla {
         this.selectionManager = new PDFCanvasSelectionManager(this);
         this.transformationsManager = new PDFCanvasTransformationsManager(this);
         this.historyManager = new PDFCanvasHistoryManager(this);
-        this.dragDropManager = new PDFCanvasDragDropManager(this);
+        // NOTE: dragDropManager is disabled - template-editor.php handles drag & drop via setupDragAndDrop()
+        // this.dragDropManager = new PDFCanvasDragDropManager(this);
 
         // État d'interaction
         this.mode = 'select';
@@ -269,7 +270,27 @@ export class PDFCanvasVanilla {
 
         this.elements.clear();
         templateData.elements.forEach(elementData => {
-            this.addElement(elementData.type, elementData.properties);
+            // Conversion des unités mm vers pixels si nécessaire
+            const properties = { ...elementData.properties };
+            
+            // Facteur de conversion mm vers pixels (A4: 210mm = 595px)
+            const MM_TO_PX = 595 / 210; // ≈ 2.833
+            
+            // Si les positions semblent être en mm (valeurs réalistes pour une page A4)
+            if (properties.x !== undefined && properties.x > 0 && properties.x < 300) {
+                properties.x = Math.round(properties.x * MM_TO_PX);
+            }
+            if (properties.y !== undefined && properties.y > 0 && properties.y < 300) {
+                properties.y = Math.round(properties.y * MM_TO_PX);
+            }
+            if (properties.width !== undefined && properties.width > 0 && properties.width < 300) {
+                properties.width = Math.round(properties.width * MM_TO_PX);
+            }
+            if (properties.height !== undefined && properties.height > 0 && properties.height < 300) {
+                properties.height = Math.round(properties.height * MM_TO_PX);
+            }
+            
+            this.addElement(elementData.type, properties);
         });
     }
 
@@ -487,15 +508,13 @@ export class PDFCanvasVanilla {
     }
 
     handleDragOver(event) {
-        if (this.dragDropManager) {
-            this.dragDropManager.handleDragOver(event);
-        }
+        // Drag & drop is handled by template-editor.php setupDragAndDrop()
+        // This method is kept for compatibility but does nothing
     }
 
     handleDrop(event) {
-        if (this.dragDropManager) {
-            this.dragDropManager.handleDrop(event);
-        }
+        // Drag & drop is handled by template-editor.php setupDragAndDrop()
+        // This method is kept for compatibility but does nothing
     }
 
     handleResize() {
@@ -632,15 +651,18 @@ export class PDFCanvasVanilla {
     serializeElements() {
         const serialized = [];
         
+        // Facteur de conversion pixels vers mm (A4: 595px = 210mm)
+        const PX_TO_MM = 210 / 595; // ≈ 0.353
+        
         for (const [id, element] of this.elements) {
-            // Aplatir les propriétés principales au niveau racine
+            // Convertir les positions de pixels vers mm pour la sauvegarde
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: element.properties.x || 0,
-                y: element.properties.y || 0,
-                width: element.properties.width || 100,
-                height: element.properties.height || 50,
+                x: Math.round((element.properties.x || 0) * PX_TO_MM),
+                y: Math.round((element.properties.y || 0) * PX_TO_MM),
+                width: Math.round((element.properties.width || 100) * PX_TO_MM),
+                height: Math.round((element.properties.height || 50) * PX_TO_MM),
                 ...element.properties  // Inclure toutes les autres propriétés
             };
             
