@@ -604,6 +604,111 @@ export class PDFCanvasVanilla {
     setTool(toolId) {
         this.tool = toolId;
     }
+
+    /**
+     * Sérialise les éléments du canvas avec leurs positions actuelles
+     * Prépare les données pour la sauvegarde en base de données
+     */
+    serializeElements() {
+        const serialized = [];
+        
+        for (const [id, element] of this.elements) {
+            serialized.push({
+                id: element.id,
+                type: element.type,
+                properties: element.properties
+            });
+        }
+        
+        return {
+            elements: serialized,
+            settings: {
+                width: this.options.width,
+                height: this.options.height,
+                backgroundColor: this.options.backgroundColor,
+                gridSize: this.options.gridSize
+            }
+        };
+    }
+
+    /**
+     * Sauvegarde le template en base de données
+     * Envoie les éléments avec leurs positions actuelles au serveur
+     */
+    async saveTemplate() {
+        try {
+            const templateData = this.serializeElements();
+            const templateName = this.options.templateName || `Template ${Date.now()}`;
+            const templateId = this.options.templateId || 0;
+
+            const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_save_template',
+                    template_id: templateId,
+                    template_name: templateName,
+                    template_data: JSON.stringify(templateData),
+                    nonce: window.pdfBuilderNonce || ''
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('✅ [saveTemplate] Template sauvegardé avec succès');
+                console.log('📥 [saveTemplate] Template ID:', data.data.template_id);
+                this.historyManager.saveState();
+                return true;
+            } else {
+                console.error('❌ [saveTemplate] Erreur:', data.data);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ [saveTemplate] Exception:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Exporte le PDF
+     */
+    async exportPDF() {
+        try {
+            const templateData = this.serializeElements();
+
+            const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_generate_pdf',
+                    template_data: JSON.stringify(templateData),
+                    nonce: window.pdfBuilderNonce || ''
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('✅ [exportPDF] PDF généré');
+                // Rediriger vers le PDF ou l'ouvrir
+                if (data.data.url) {
+                    window.open(data.data.url, '_blank');
+                }
+                return true;
+            } else {
+                console.error('❌ [exportPDF] Erreur:', data.data);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ [exportPDF] Exception:', error);
+            return false;
+        }
+    }
 }
 
 export default PDFCanvasVanilla;
