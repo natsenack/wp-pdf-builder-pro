@@ -643,9 +643,11 @@ function initializeCanvas() {
         // Populer la bibliothèque d'éléments
         populateElementsLibrary();
         
-        // Afficher le canvas et cacher le loader
-        document.getElementById('pdf-builder-loading').style.display = 'none';
-        document.getElementById('pdf-builder-editor').style.display = 'flex';
+        // Configurer les contrôles de la toolbar
+        setupToolbarControls();
+        
+        // Configurer le drag & drop
+        setupDragAndDrop();
         
     } catch (error) {
         console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
@@ -735,6 +737,97 @@ function populateElementsLibrary() {
     } else {
         console.error('[INIT] PDFBuilderPro non disponible');
     }
+}
+
+// Configurer les contrôles de la toolbar
+function setupToolbarControls() {
+    console.log('[TOOLBAR] Configuration des contrôles de toolbar');
+
+    // Bouton toggle grid
+    var toggleGridBtn = document.getElementById('btn-toggle-grid');
+    if (toggleGridBtn) {
+        toggleGridBtn.addEventListener('click', function() {
+            console.log('[TOOLBAR] Toggle grid button clicked');
+            if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.toggleGrid === 'function') {
+                var isVisible = window.pdfCanvasInstance.toggleGrid();
+                this.innerHTML = '<span class="tool-icon">' + (isVisible ? '⊞' : '⊟') + '</span>';
+                this.title = (isVisible ? 'Masquer la grille (G)' : 'Afficher la grille (G)');
+                console.log('[TOOLBAR] Grid toggled:', isVisible);
+            } else {
+                console.error('[TOOLBAR] pdfCanvasInstance.toggleGrid not available');
+            }
+        });
+        console.log('[TOOLBAR] Toggle grid button configured');
+    } else {
+        console.warn('[TOOLBAR] Toggle grid button not found');
+    }
+
+    // Bouton toggle snap
+    var toggleSnapBtn = document.getElementById('btn-toggle-snap');
+    if (toggleSnapBtn) {
+        toggleSnapBtn.addEventListener('click', function() {
+            console.log('[TOOLBAR] Toggle snap button clicked');
+            // TODO: Implémenter la logique snap to grid
+            this.classList.toggle('active');
+        });
+    }
+
+    // Boutons zoom
+    var zoomInBtn = document.getElementById('btn-zoom-in');
+    var zoomOutBtn = document.getElementById('btn-zoom-out');
+    var zoomLevel = document.getElementById('zoom-level');
+
+    if (zoomInBtn && zoomOutBtn && zoomLevel) {
+        zoomInBtn.addEventListener('click', function() {
+            // TODO: Implémenter le zoom in
+            console.log('[TOOLBAR] Zoom in clicked');
+        });
+
+        zoomOutBtn.addEventListener('click', function() {
+            // TODO: Implémenter le zoom out
+            console.log('[TOOLBAR] Zoom out clicked');
+        });
+    }
+
+    // Boutons undo/redo
+    var undoBtn = document.getElementById('btn-undo');
+    var redoBtn = document.getElementById('btn-redo');
+
+    if (undoBtn && redoBtn) {
+        undoBtn.addEventListener('click', function() {
+            if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.undo === 'function') {
+                window.pdfCanvasInstance.undo();
+            }
+        });
+
+        redoBtn.addEventListener('click', function() {
+            if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.redo === 'function') {
+                window.pdfCanvasInstance.redo();
+            }
+        });
+    }
+
+    // Bouton save
+    var saveBtn = document.getElementById('btn-save');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.saveTemplate === 'function') {
+                window.pdfCanvasInstance.saveTemplate();
+            }
+        });
+    }
+
+    // Bouton export PDF
+    var exportBtn = document.getElementById('btn-export-pdf');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.exportPDF === 'function') {
+                window.pdfCanvasInstance.exportPDF();
+            }
+        });
+    }
+
+    console.log('[TOOLBAR] Toolbar controls configured');
 }
 
 // Configurer le drag & drop

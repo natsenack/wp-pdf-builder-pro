@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Grille Canvas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        #canvas-container {
+            border: 1px solid #ccc;
+            display: inline-block;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de la grille du canvas</h1>
+
+    <div class="controls">
+        <button id="toggle-grid">Grille: OFF</button>
+        <button id="show-grid">Afficher grille</button>
+        <button id="hide-grid">Masquer grille</button>
+        <button id="check-status">Vérifier statut</button>
+        <button id="force-render">Forcer rendu</button>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="test-canvas" width="800" height="600"></canvas>
+    </div>
+
+    <div id="logs" style="margin-top: 20px; padding: 10px; background: #f5f5f5; font-family: monospace; white-space: pre-line;"></div>
+
+    <script>
+        // Logs pour le débogage
+        let logs = [];
+        function addLog(message) {
+            logs.push(new Date().toLocaleTimeString() + ': ' + message);
+            document.getElementById('logs').textContent = logs.slice(-10).join('\n'); // Derniers 10 logs
+            console.log(message);
+        }
+
+        // Simuler le renderer avec les logs
+        class MockRenderer {
+            constructor(canvas, mainInstance) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.mainInstance = mainInstance;
+                this.devicePixelRatio = window.devicePixelRatio || 1;
+            }
+
+            renderGrid() {
+                const gridSize = this.mainInstance.options.gridSize || 20;
+                const width = this.canvas.width / this.devicePixelRatio;
+                const height = this.canvas.height / this.devicePixelRatio;
+
+                addLog('Rendering grid: showGrid=' + this.mainInstance.options.showGrid + ', gridSize=' + gridSize + ', width=' + width + ', height=' + height);
+
+                this.ctx.save();
+
+                // Couleur plus visible pour la grille
+                this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+                this.ctx.lineWidth = 0.5;
+                this.ctx.setLineDash([2, 2]);
+
+                // Lignes verticales
+                for (let x = 0; x <= width; x += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, height);
+                    this.ctx.stroke();
+                }
+
+                // Lignes horizontales
+                for (let y = 0; y <= height; y += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(width, y);
+                    this.ctx.stroke();
+                }
+
+                this.ctx.restore();
+            }
+
+            render() {
+                addLog('Canvas render - showGrid: ' + this.mainInstance.options.showGrid);
+
+                // Effacer le canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Fond blanc
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Rendre la grille si activée
+                if (this.mainInstance.options.showGrid) {
+                    addLog('Calling renderGrid');
+                    this.renderGrid();
+                } else {
+                    addLog('Grid not rendered - showGrid is false');
+                }
+            }
+        }
+
+        // Simuler le canvas
+        class MockCanvas {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.options = {
+                    showGrid: false,
+                    gridSize: 20,
+                    backgroundColor: '#ffffff'
+                };
+                this.renderer = new MockRenderer(canvas, this);
+            }
+
+            toggleGrid() {
+                addLog('toggleGrid called - current showGrid: ' + this.options.showGrid);
+                this.options.showGrid = !this.options.showGrid;
+                addLog('toggleGrid - new showGrid: ' + this.options.showGrid);
+                this.render();
+                return this.options.showGrid;
+            }
+
+            setGridVisibility(visible) {
+                addLog('setGridVisibility called - visible: ' + visible);
+                this.options.showGrid = visible === true;
+                addLog('setGridVisibility - new showGrid: ' + this.options.showGrid);
+                this.render();
+                return this.options.showGrid;
+            }
+
+            isGridVisible() {
+                addLog('isGridVisible called - returning: ' + this.options.showGrid);
+                return this.options.showGrid;
+            }
+
+            render() {
+                this.renderer.render();
+            }
+        }
+
+        // Initialisation
+        const canvas = document.getElementById('test-canvas');
+        const mockCanvas = new MockCanvas(canvas);
+
+        // Boutons
+        document.getElementById('toggle-grid').addEventListener('click', function() {
+            const isVisible = mockCanvas.toggleGrid();
+            this.textContent = 'Grille: ' + (isVisible ? 'ON' : 'OFF');
+        });
+
+        document.getElementById('show-grid').addEventListener('click', function() {
+            mockCanvas.setGridVisibility(true);
+            document.getElementById('toggle-grid').textContent = 'Grille: ON';
+        });
+
+        document.getElementById('hide-grid').addEventListener('click', function() {
+            mockCanvas.setGridVisibility(false);
+            document.getElementById('toggle-grid').textContent = 'Grille: OFF';
+        });
+
+        document.getElementById('check-status').addEventListener('click', function() {
+            const isVisible = mockCanvas.isGridVisible();
+            alert('La grille est ' + (isVisible ? 'visible' : 'cachée'));
+        });
+
+        document.getElementById('force-render').addEventListener('click', function() {
+            mockCanvas.render();
+        });
+
+        // Rendu initial
+        mockCanvas.render();
+        addLog('Test de grille initialisé');
+    </script>
+</body>
+</html>
