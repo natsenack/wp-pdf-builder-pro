@@ -432,8 +432,8 @@ function renderSpecificProperties(
     case 'product_table':
       return (
         <>
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les en-têtes
             </label>
             <input
@@ -445,8 +445,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche les noms des colonnes</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les bordures
             </label>
             <input
@@ -458,8 +458,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures du tableau</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Lignes alternées
             </label>
             <input
@@ -471,8 +471,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Alterne les couleurs des lignes</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les SKU
             </label>
             <input
@@ -484,8 +484,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Colonne des références produit</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les descriptions
             </label>
             <input
@@ -497,8 +497,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Colonne des descriptions courtes</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher la quantité
             </label>
             <input
@@ -510,8 +510,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les remises
             </label>
             <input
@@ -525,8 +525,8 @@ function renderSpecificProperties(
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher les frais de port
             </label>
             <input
@@ -538,8 +538,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche les frais de livraison</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher la TVA
             </label>
             <input
@@ -551,8 +551,8 @@ function renderSpecificProperties(
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche les taxes sur le total</span>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher la remise globale
             </label>
             <input
