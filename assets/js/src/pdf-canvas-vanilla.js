@@ -7,7 +7,7 @@
 import { ELEMENT_PROPERTY_RESTRICTIONS, ELEMENT_TYPE_MAPPING, isPropertyAllowed, getPropertyDefault, validateProperty, fixInvalidProperty } from './pdf-canvas-elements.js';
 import { WooCommerceElementsManager, wooCommerceElementsManager } from './pdf-canvas-woocommerce.js';
 import { ElementCustomizationService, elementCustomizationService } from './pdf-canvas-customization.js';
-import { PDFCanvasRenderer } from './pdf-canvas-renderer.js';
+import { PDFCanvasSimpleRenderer } from './pdf-canvas-render-simple.js';
 import { PDFCanvasEventManager } from './pdf-canvas-events.js';
 import { PDFCanvasRenderUtils } from './pdf-canvas-render-utils.js';
 import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
@@ -58,7 +58,7 @@ export class PDFCanvasVanilla {
         this.customizationService = elementCustomizationService;
 
         // Gestionnaires spécialisés
-        this.renderer = new PDFCanvasRenderer(this);
+        this.renderer = new PDFCanvasSimpleRenderer(this);
         this.eventManager = new PDFCanvasEventManager(this);
         this.selectionManager = new PDFCanvasSelectionManager(this);
         this.propertiesManager = new PDFCanvasPropertiesManager(this);
@@ -1356,6 +1356,9 @@ export class PDFCanvasVanilla {
     /**
      * Rend tous les éléments sur le canvas
      */
+    /**
+     * Méthode de rendu principale - simple et directe
+     */
     render() {
         // Éviter les appels récursifs
         if (this.isRendering) {
@@ -1365,46 +1368,23 @@ export class PDFCanvasVanilla {
         this.isRendering = true;
 
         try {
-            // Vérifier si l'optimisation de performance est activée
-            if (this.performanceOptimizer && this.performanceOptimizer.shouldRender()) {
-                this.performanceOptimizer.optimizeRendering();
-                return;
+            // Appeler le renderer simplifié pour tout faire
+            if (this.renderer && typeof this.renderer.renderComplete === 'function') {
+                this.renderer.renderComplete();
             }
-
-            // Rendu normal
-            this.renderNormal();
+        } catch (error) {
+            console.error('Error during rendering:', error);
         } finally {
             this.isRendering = false;
         }
     }
 
     /**
-     * Rendu normal sans optimisation
+     * Rendu normal sans optimisation - DÉPRÉCIÉE (utiliser render() directement)
+     * @deprecated
      */
     renderNormal() {
-        // Effacer le canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Dessiner la grille si activée
-        if (this.options.showGrid) {
-            this.drawGrid();
-        }
-
-        // Dessiner tous les éléments en utilisant le renderer spécialisé
-        for (const element of this.elements.values()) {
-            try {
-                this.renderer.renderElement(element, element.properties);
-            } catch (error) {
-                // Error rendering element
-            }
-        }
-
-        // Dessiner la sélection et les transformations
-        this.selectionManager.render(this.ctx);
-        this.transformationsManager.render(this.ctx);
-
-        // Dessiner le preview de drag & drop
-        this.dragDropManager.render(this.ctx);
+        this.render();
     }
 
     /**
