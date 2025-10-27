@@ -269,11 +269,16 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse down
      */
     handleMouseDown(event) {
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('Invalid event in handleMouseDown');
+            return;
+        }
+        
         const point = this.getMousePosition(event);
 
         switch (this.mode) {
             case 'select':
-                this.handleSelectMode(point);
+                this.handleSelectMode(point, event);
                 break;
             case 'draw':
                 this.handleDrawMode(point);
@@ -288,6 +293,11 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse move
      */
     handleMouseMove(event) {
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('Invalid event in handleMouseMove');
+            return;
+        }
+        
         const point = this.getMousePosition(event);
 
         // Gérer les transformations en cours
@@ -314,6 +324,11 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse up
      */
     handleMouseUp(event) {
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('Invalid event in handleMouseUp');
+            return;
+        }
+        
         const point = this.getMousePosition(event);
 
         // Terminer les transformations
@@ -339,6 +354,11 @@ export class PDFCanvasVanilla {
      * Gestionnaire de roulette de souris (zoom)
      */
     handleWheel(event) {
+        if (!event || typeof event.preventDefault !== 'function') {
+            console.warn('Invalid event in handleWheel');
+            return;
+        }
+        
         event.preventDefault();
 
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
@@ -429,6 +449,11 @@ export class PDFCanvasVanilla {
      * Obtient la position de la souris relative au canvas
      */
     getMousePosition(event) {
+        if (!event || typeof event.clientX !== 'number' || typeof event.clientY !== 'number') {
+            console.warn('Invalid event object in getMousePosition');
+            return { x: 0, y: 0 };
+        }
+        
         const rect = this.canvas.getBoundingClientRect();
         return {
             x: (event.clientX - rect.left) / this.options.zoom,
@@ -439,7 +464,7 @@ export class PDFCanvasVanilla {
     /**
      * Gère le mode sélection
      */
-    handleSelectMode(point) {
+    handleSelectMode(point, event) {
         const multiSelect = event.ctrlKey || event.metaKey;
 
         // Vérifier d'abord si on clique sur un handle de transformation
