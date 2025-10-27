@@ -50,13 +50,13 @@ function PDFBuilderContent({
         onNewTemplate={newTemplate}
       />
 
+      {/* Toolbar sous le header */}
+      <div style={{ flexShrink: 0 }}>
+        <Toolbar />
+      </div>
+
       {/* Contenu principal */}
       <div style={{ display: 'flex', flex: 1, gap: '12px' }}>
-        {/* Toolbar à gauche */}
-        <div style={{ flexShrink: 0 }}>
-          <Toolbar />
-        </div>
-
         {/* Zone principale avec le canvas */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{
