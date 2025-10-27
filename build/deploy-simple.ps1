@@ -51,10 +51,11 @@ try {
     $ErrorActionPreference = "Continue"
     $modifiedFiles = & git diff --name-only HEAD 2>&1
     $stagedFiles = & git diff --cached --name-only HEAD 2>&1
+    $lastCommitFiles = & git diff --name-only HEAD~1 HEAD 2>&1
     $ErrorActionPreference = "Stop"
     
     # Filtrer pour enlever les warnings
-    $allModified = @($modifiedFiles) + @($stagedFiles) | Where-Object { $_ -and $_ -notlike "*warning*" } | Sort-Object -Unique
+    $allModified = @($modifiedFiles) + @($stagedFiles) + @($lastCommitFiles) | Where-Object { $_ -and $_ -notlike "*warning*" } | Sort-Object -Unique
     
     # Filtrer pour le dossier plugin uniquement
     $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" }
