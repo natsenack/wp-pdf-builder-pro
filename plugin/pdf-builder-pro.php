@@ -66,11 +66,15 @@ function pdf_builder_init() {
         return;
     }
 
+    // Ajouter les headers de cache pour les assets
+    add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
+    add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
+
     // Charger le bootstrap (à la racine du plugin)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
-        
+
         // Démarrer le plugin
         if (function_exists('pdf_builder_load_bootstrap')) {
             pdf_builder_load_bootstrap();
@@ -84,6 +88,38 @@ function pdf_builder_init() {
         $test_tools_path = plugin_dir_path(__FILE__) . 'tools/security-tests-phase5.php';
         if (file_exists($test_tools_path)) {
             require_once $test_tools_path;
+        }
+    }
+
+    // Charger le moniteur de performance
+    $performance_monitor_path = plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Performance_Monitor.php';
+    if (file_exists($performance_monitor_path)) {
+        require_once $performance_monitor_path;
+    }
+}
+
+/**
+ * Ajouter les headers de cache pour les assets du plugin
+ */
+function pdf_builder_add_asset_cache_headers() {
+    // Headers de cache pour les assets du plugin (1 semaine)
+    $cache_time = 604800; // 7 jours en secondes
+
+    // Pour les assets JavaScript
+    if (isset($_SERVER['REQUEST_URI']) &&
+        (strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/js/') !== false ||
+         strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/css/') !== false)) {
+
+        // Headers de cache
+        header('Cache-Control: public, max-age=' . $cache_time);
+        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache_time) . ' GMT');
+        header('ETag: "' . md5($_SERVER['REQUEST_URI'] . filemtime($_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'])) . '"');
+
+        // Compression si supportée
+        if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) &&
+            strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false &&
+            strpos($_SERVER['REQUEST_URI'], '.gz') !== false) {
+            header('Content-Encoding: gzip');
         }
     }
 }

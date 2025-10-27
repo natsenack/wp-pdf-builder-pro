@@ -22,10 +22,9 @@ if (!defined('PDF_BUILDER_DEV_MODE') || !PDF_BUILDER_DEV_MODE) {
     wp_die(__('Page développeur désactivée. Définissez PDF_BUILDER_DEV_MODE à true dans wp-config.php pour l\'activer.', 'pdf-builder-pro'));
 }
 
-// Vérifier que c'est bien le développeur principal (utilisateur ID 1)
-$current_user = wp_get_current_user();
-if ($current_user->ID !== 1) {
-    wp_die(__('Accès refusé. Cette page est réservée au développeur.', 'pdf-builder-pro'));
+// Vérifier que c'est un super-administrateur
+if (!is_super_admin()) {
+    wp_die(__('Accès refusé. Cette page est réservée aux super-administrateurs.', 'pdf-builder-pro'));
 }
 
 // Vérifier les permissions
@@ -49,22 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Protection contre les codes trop longs
         if (strlen($php_code) > 10000) {
             $execution_result = '❌ Code PHP trop long (maximum 10,000 caractères).';
-        }
-        // Protection contre les exécutions dangereuses
-        elseif (stripos($php_code, 'exec(') !== false || stripos($php_code, 'shell_exec(') !== false ||
-                stripos($php_code, 'system(') !== false || stripos($php_code, 'passthru(') !== false ||
-                stripos($php_code, 'eval(') !== false || stripos($php_code, 'create_function(') !== false) {
-            $execution_result = '❌ Commandes système ou fonctions dangereuses interdites pour des raisons de sécurité.';
         } else {
+            // Inclure le gestionnaire de commandes sécurisées
+            require_once plugin_dir_path(dirname(__FILE__)) . 'src/Managers/PDF_Builder_Safe_Command_Manager.php';
+
             try {
                 // Limiter le temps d'exécution et la mémoire
                 ini_set('max_execution_time', 10); // 10 secondes max
                 $old_memory_limit = ini_get('memory_limit');
                 ini_set('memory_limit', '128M'); // Limiter à 128MB
 
-                ob_start();
-                eval($php_code);
-                $execution_result = ob_get_clean();
+                // Utiliser le système de commandes sécurisées au lieu d'eval()
+                $execution_result = PDF_Builder_Safe_Command_Manager::execute_safe_command($php_code);
 
                 // Restaurer les limites
                 ini_set('memory_limit', $old_memory_limit);
@@ -337,9 +332,39 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'system-
         <?php elseif ($active_tab === 'php-console'): ?>
             <!-- Onglet Console PHP -->
             <div class="pdf-builder-dev-section">
-                <h3><?php _e('Console PHP - Exécuter du code', 'pdf-builder-pro'); ?></h3>
-                <div class="notice notice-warning">
-                    <p><strong><?php _e('⚠️ ATTENTION :', 'pdf-builder-pro'); ?></strong> <?php _e('Cette console permet d\'exécuter du code PHP directement sur le serveur. Utilisez-la avec précaution !', 'pdf-builder-pro'); ?></p>
+                <h3><?php _e('Console PHP - Exécuter du code sécurisé', 'pdf-builder-pro'); ?></h3>
+                <div class="notice notice-info">
+                    <p><strong><?php _e('🔒 SÉCURISÉ :', 'pdf-builder-pro'); ?></strong> <?php _e('Cette console utilise un système de commandes whitelistées sûres. Seules les fonctions autorisées peuvent être exécutées.', 'pdf-builder-pro'); ?></p>
+                </div>
+
+                <div class="pdf-builder-dev-section" style="background: #f9f9f9; padding: 15px; margin: 15px 0; border-left: 4px solid #007cba;">
+                    <h4><?php _e('📚 Commandes disponibles', 'pdf-builder-pro'); ?></h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <div>
+                            <strong><?php _e('Fonctions de debug :', 'pdf-builder-pro'); ?></strong><br>
+                            <code>var_dump($variable)</code><br>
+                            <code>print_r($variable)</code><br>
+                            <code>var_export($variable)</code><br>
+                            <code>echo "texte"</code>
+                        </div>
+                        <div>
+                            <strong><?php _e('Fonctions d\'info :', 'pdf-builder-pro'); ?></strong><br>
+                            <code>phpversion()</code><br>
+                            <code>phpinfo()</code><br>
+                            <code>get_loaded_extensions()</code><br>
+                            <code>get_defined_constants()</code>
+                        </div>
+                        <div>
+                            <strong><?php _e('Variables globales :', 'pdf-builder-pro'); ?></strong><br>
+                            <code>var_dump($wp_version)</code><br>
+                            <code>var_dump($wpdb)</code><br>
+                            <code>var_dump($current_user)</code><br>
+                            <code>var_dump($wp_query)</code>
+                        </div>
+                    </div>
+                    <p style="margin-top: 10px; color: #666;">
+                        <em><?php _e('💡 Conseil : Les commandes dangereuses (eval, exec, shell_exec, etc.) sont automatiquement bloquées.', 'pdf-builder-pro'); ?></em>
+                    </p>
                 </div>
 
                 <form method="post">
@@ -348,15 +373,15 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'system-
                         <tr>
                             <th scope="row"><?php _e('Code PHP à exécuter', 'pdf-builder-pro'); ?></th>
                             <td>
-                                <textarea name="php_code" rows="10" cols="80" style="font-family: monospace; width: 100%;"><?php
-                                    echo isset($_SESSION['executed_code']) ? esc_textarea($_SESSION['executed_code']) : "// Exemple :\n// echo 'Hello World!';\n// var_dump(get_option('pdf_builder_settings'));\n// global \$wpdb;\n// var_dump(\$wpdb->get_results('SELECT * FROM ' . \$wpdb->posts . ' LIMIT 5'));\n";
+                                <textarea name="php_code" rows="8" cols="80" style="font-family: monospace; width: 100%;"><?php
+                                    echo isset($_SESSION['executed_code']) ? esc_textarea($_SESSION['executed_code']) : "// Exemples de commandes sûres :\nvar_dump(\$wp_version);\nprint_r(get_loaded_extensions());\necho 'Hello World!';\nphpversion();";
                                 ?></textarea>
-                                <p class="description"><?php _e('Le code sera exécuté avec eval(). Les variables globales WordPress sont disponibles.', 'pdf-builder-pro'); ?></p>
+                                <p class="description"><?php _e('Seules les fonctions whitelistées sont autorisées. Les variables globales WordPress sont disponibles.', 'pdf-builder-pro'); ?></p>
                             </td>
                         </tr>
                     </table>
                     <p class="submit">
-                        <input type="submit" name="execute_php_code" class="button button-primary" value="<?php _e('Exécuter le code', 'pdf-builder-pro'); ?>" />
+                        <input type="submit" name="execute_php_code" class="button button-primary" value="<?php _e('Exécuter le code sécurisé', 'pdf-builder-pro'); ?>" />
                     </p>
                 </form>
             </div>

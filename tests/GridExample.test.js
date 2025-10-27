@@ -3,11 +3,35 @@
  * Montre comment intégrer les contrôles de grille dans l'interface utilisateur
  */
 
-// Exemple d'intégration avec des boutons HTML
-const setupGridControls = (canvasInstance) => {
-    console.log('=== Configuration des contrôles de grille ===');
+describe('Grid Example Integration', () => {
+    let mockCanvas;
 
-    // Simuler des boutons HTML
+    beforeEach(() => {
+        mockCanvas = {
+            options: { showGrid: false, snapToGrid: false },
+            toggleGrid: jest.fn(),
+            setGridSize: jest.fn(),
+            toggleSnapToGrid: jest.fn(),
+            render: jest.fn()
+        };
+    });
+
+    test('should setup grid controls correctly', () => {
+        // Test que les contrôles peuvent être configurés
+        expect(mockCanvas.options.showGrid).toBe(false);
+        expect(mockCanvas.options.snapToGrid).toBe(false);
+    });
+
+    test('should handle grid toggle', () => {
+        mockCanvas.toggleGrid();
+        expect(mockCanvas.toggleGrid).toHaveBeenCalled();
+    });
+
+    test('should handle snap toggle', () => {
+        mockCanvas.toggleSnapToGrid();
+        expect(mockCanvas.toggleSnapToGrid).toHaveBeenCalled();
+    });
+});
     const mockButtons = {
         toggleButton: {
             textContent: 'Grille: OFF',

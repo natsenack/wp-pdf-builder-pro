@@ -69,7 +69,12 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: process.env.NODE_ENV === 'production'
+            drop_console: process.env.NODE_ENV === 'production',
+            drop_debugger: true,
+            pure_funcs: ['console.log', 'console.info', 'console.debug']
+          },
+          mangle: {
+            safari10: true
           }
         }
       })
@@ -77,13 +82,13 @@ module.exports = {
     // Désactiver la séparation des chunks pour forcer un seul bundle
     runtimeChunk: false,
     splitChunks: false,
-    usedExports: false,
-    sideEffects: false
+    usedExports: true, // Améliorer l'arbre des dépendances
+    sideEffects: true   // Respecter les sideEffects du package.json
   },
   performance: {
     hints: 'warning',
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000,
+    maxEntrypointSize: 204800, // 200 KiB limit
+    maxAssetSize: 204800,     // 200 KiB limit
     assetFilter: function(assetFilename) {
       return !assetFilename.endsWith('.map');
     }

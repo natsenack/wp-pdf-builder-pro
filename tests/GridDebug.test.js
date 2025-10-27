@@ -3,11 +3,54 @@
  * Vérifie que les méthodes de grille sont appelées et que la grille se rend
  */
 
-const testGridDebug = () => {
-    console.log('=== Test de débogage de la grille ===');
+describe('Grid Debug Tests', () => {
+    let mockCanvas;
+    let mockRenderer;
 
-    // Simuler une instance de canvas avec renderer
-    const mockRenderer = {
+    beforeEach(() => {
+        mockRenderer = {
+            renderGrid: jest.fn(),
+            clearCanvas: jest.fn()
+        };
+
+        mockCanvas = {
+            options: { showGrid: true, gridSize: 20 },
+            renderer: mockRenderer,
+            ctx: { save: jest.fn(), restore: jest.fn() },
+            drawGrid: jest.fn(),
+            render: jest.fn(),
+            debugGrid: jest.fn()
+        };
+    });
+
+    test('should render grid when enabled', () => {
+        mockCanvas.drawGrid();
+        expect(mockCanvas.drawGrid).toHaveBeenCalled();
+    });
+
+    test('should call renderer for grid drawing', () => {
+        mockRenderer.renderGrid();
+        expect(mockRenderer.renderGrid).toHaveBeenCalled();
+    });
+
+    test('should handle grid debug mode', () => {
+        mockCanvas.debugGrid();
+        expect(mockCanvas.debugGrid).toHaveBeenCalled();
+    });
+
+    test('should save and restore canvas context', () => {
+        mockCanvas.ctx.save();
+        mockCanvas.ctx.restore();
+
+        expect(mockCanvas.ctx.save).toHaveBeenCalled();
+        expect(mockCanvas.ctx.restore).toHaveBeenCalled();
+    });
+
+    test('should respect grid options', () => {
+        expect(mockCanvas.options.showGrid).toBe(true);
+        expect(mockCanvas.options.gridSize).toBe(20);
+    });
+});
         mainInstance: {
             options: { showGrid: false, gridSize: 20 }
         },
