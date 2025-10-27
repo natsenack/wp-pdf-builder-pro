@@ -39,6 +39,7 @@ export class PDFCanvasVanilla {
         this.selectedElement = null;
         this.dragState = null;
         this.isInitialized = false;
+        this.isRendering = false;
 
         // Gestionnaires d'événements
         this.eventListeners = new Map();
@@ -831,14 +832,25 @@ export class PDFCanvasVanilla {
      * Rend tous les éléments sur le canvas
      */
     render() {
-        // Vérifier si l'optimisation de performance est activée
-        if (this.performanceOptimizer && this.performanceOptimizer.shouldRender()) {
-            this.performanceOptimizer.optimizeRendering();
+        // Éviter les appels récursifs
+        if (this.isRendering) {
             return;
         }
 
-        // Rendu normal
-        this.renderNormal();
+        this.isRendering = true;
+
+        try {
+            // Vérifier si l'optimisation de performance est activée
+            if (this.performanceOptimizer && this.performanceOptimizer.shouldRender()) {
+                this.performanceOptimizer.optimizeRendering();
+                return;
+            }
+
+            // Rendu normal
+            this.renderNormal();
+        } finally {
+            this.isRendering = false;
+        }
     }
 
     /**
