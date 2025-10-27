@@ -5,7 +5,7 @@
  * Gère le drag & drop de manière cohérente pour tous les types d'éléments
  */
 
-console.log('[DRAGDROP] 🎯 Chargement du système de Drag & Drop');
+
 
 export class UnifiedDragDropManager {
     constructor(canvasElement, pdfBuilder) {
@@ -18,7 +18,7 @@ export class UnifiedDragDropManager {
     }
 
     init() {
-        console.log('[DRAGDROP] Initialisation du gestionnaire drag & drop');
+        
         
         // Événements de drag sur les éléments du canvas
         document.addEventListener('dragstart', (e) => this.handleDragStart(e), true);
@@ -36,7 +36,7 @@ export class UnifiedDragDropManager {
         const target = e.target.closest('[data-element-id]');
         if (!target) return;
 
-        console.log('[DRAGDROP] Début du drag d\'élément:', target.dataset.elementId);
+        
         
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', target.dataset.elementId);
@@ -71,14 +71,14 @@ export class UnifiedDragDropManager {
         
         if (elementId) {
             // C'est un élément existant qu'on déplace
-            console.log('[DRAGDROP] Déplacement d\'élément:', elementId, 'vers', { x, y });
+            
             if (this.pdfBuilder && typeof this.pdfBuilder.moveElement === 'function') {
                 this.pdfBuilder.moveElement(elementId, x, y);
             }
         } else if (jsonData) {
             // C'est un nouvel élément de la bibliothèque
             const data = JSON.parse(jsonData);
-            console.log('[DRAGDROP] Ajout d\'élément:', data.elementType, 'à', { x, y });
+            
             if (this.pdfBuilder && typeof this.pdfBuilder.addElement === 'function') {
                 this.pdfBuilder.addElement(data.elementType, { x, y });
             }
@@ -87,7 +87,7 @@ export class UnifiedDragDropManager {
 
     handleDragEnd(e) {
         if (this.draggedElement) {
-            console.log('[DRAGDROP] Fin du drag');
+            
             this.draggedElement.classList.remove('dragging');
             this.draggedElement = null;
         }
@@ -98,7 +98,7 @@ export class UnifiedDragDropManager {
         const element = e.target.closest('[data-element-id]');
         if (!element || element.closest('.pdf-builder-toolbar')) return;
         
-        console.log('[DRAGDROP] Mouse down sur élément:', element.dataset.elementId);
+        
         
         this.isDragging = true;
         this.draggedElement = element;
@@ -130,7 +130,7 @@ export class UnifiedDragDropManager {
 
     handleMouseUp(e) {
         if (this.draggedElement) {
-            console.log('[DRAGDROP] Mouse up');
+            
             this.draggedElement.classList.remove('dragging');
             this.isDragging = false;
             this.draggedElement = null;
@@ -138,7 +138,7 @@ export class UnifiedDragDropManager {
     }
 
     destroy() {
-        console.log('[DRAGDROP] Destruction du gestionnaire');
+        
         document.removeEventListener('dragstart', (e) => this.handleDragStart(e), true);
         document.removeEventListener('dragover', (e) => this.handleDragOver(e), true);
         document.removeEventListener('drop', (e) => this.handleDrop(e), true);

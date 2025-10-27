@@ -42,7 +42,7 @@ export class PDFCanvasPropertiesManager {
 
         const element = this.canvasInstance.elements.get(elementId);
         if (!element) {
-            console.warn(`Element ${elementId} not found`);
+            
             return false;
         }
 
@@ -50,7 +50,7 @@ export class PDFCanvasPropertiesManager {
         if (this.config.enableValidation && !skipValidation) {
             const validation = this.validateProperty(element, propertyName, value);
             if (!validation.valid) {
-                console.warn(`Property validation failed: ${validation.reason}`);
+                
                 return false;
             }
             value = validation.value; // Utiliser la valeur validée/corrigée
@@ -514,7 +514,7 @@ export class PDFCanvasPropertiesManager {
                     type: 'change'
                 });
             } catch (error) {
-                console.error('Property watcher error:', error);
+                
             }
         });
     }

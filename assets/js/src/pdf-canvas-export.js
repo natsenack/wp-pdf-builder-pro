@@ -54,7 +54,7 @@ export class PDFCanvasExportManager {
             this.jspdf = jsPDF;
             return this.jspdf;
         } catch (error) {
-            console.error('Failed to load jsPDF:', error);
+            
             throw new Error('jsPDF library is required for PDF export');
         }
     }
@@ -375,7 +375,7 @@ export class PDFCanvasExportManager {
 
             ctx.drawImage(img, 0, 0, props.width, props.height);
         } catch (error) {
-            console.warn('Failed to load image for PDF export:', error);
+            
             // Dessiner un rectangle de substitution
             ctx.strokeStyle = '#ff0000';
             ctx.lineWidth = 2;

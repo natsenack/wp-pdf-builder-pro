@@ -29,7 +29,7 @@ class PDFCanvasIntegrationTests {
      * Exécute tous les tests
      */
     async runAllTests() {
-        console.log('🚀 Démarrage des tests d\'intégration PDF Builder Vanilla JS...');
+        
 
         try {
             // Tests des modules individuels
@@ -50,7 +50,7 @@ class PDFCanvasIntegrationTests {
             this.printResults();
 
         } catch (error) {
-            console.error('❌ Erreur lors des tests:', error);
+            
             this.logTest('Test Suite', false, error.message);
             this.printResults();
         }
@@ -60,7 +60,7 @@ class PDFCanvasIntegrationTests {
      * Test des restrictions d'éléments
      */
     async testElementRestrictions() {
-        console.log('Testing element restrictions...');
+        
 
         try {
             // Test des types d'éléments supportés
@@ -83,7 +83,7 @@ class PDFCanvasIntegrationTests {
      * Test du gestionnaire WooCommerce
      */
     async testWooCommerceManager() {
-        console.log('Testing WooCommerce manager...');
+        
 
         try {
             const manager = new WooCommerceElementsManager();
@@ -106,7 +106,7 @@ class PDFCanvasIntegrationTests {
      * Test du service de personnalisation
      */
     async testCustomizationService() {
-        console.log('Testing customization service...');
+        
 
         try {
             const service = new ElementCustomizationService();
@@ -129,7 +129,7 @@ class PDFCanvasIntegrationTests {
      * Test des utilitaires de rendu
      */
     async testRenderUtils() {
-        console.log('Testing render utils...');
+        
 
         try {
             // Créer un canvas temporaire pour les tests
@@ -159,7 +159,7 @@ class PDFCanvasIntegrationTests {
      * Test du gestionnaire de propriétés
      */
     async testPropertiesManager() {
-        console.log('Testing properties manager...');
+        
 
         try {
             const manager = new PDFCanvasPropertiesManager(null);
@@ -184,7 +184,7 @@ class PDFCanvasIntegrationTests {
      * Test du gestionnaire de calques
      */
     async testLayersManager() {
-        console.log('Testing layers manager...');
+        
 
         try {
             const manager = new PDFCanvasLayersManager(null);
@@ -207,7 +207,7 @@ class PDFCanvasIntegrationTests {
      * Test du gestionnaire d'export
      */
     async testExportManager() {
-        console.log('Testing export manager...');
+        
 
         try {
             const manager = new PDFCanvasExportManager(null);
@@ -231,7 +231,7 @@ class PDFCanvasIntegrationTests {
      * Test d'initialisation du canvas
      */
     async testCanvasInitialization() {
-        console.log('Testing canvas initialization...');
+        
 
         try {
             // Créer un conteneur de test
@@ -267,7 +267,7 @@ class PDFCanvasIntegrationTests {
      * Test de création d'éléments
      */
     async testElementCreation() {
-        console.log('Testing element creation...');
+        
 
         try {
             // Utiliser l'instance de test créée précédemment
@@ -300,7 +300,7 @@ class PDFCanvasIntegrationTests {
      * Test du système de sélection
      */
     async testSelectionSystem() {
-        console.log('Testing selection system...');
+        
 
         try {
             if (!this.canvasInstance) {
@@ -329,7 +329,7 @@ class PDFCanvasIntegrationTests {
      * Test de la gestion d'événements
      */
     async testEventHandling() {
-        console.log('Testing event handling...');
+        
 
         try {
             if (!this.canvasInstance) {
@@ -378,10 +378,10 @@ class PDFCanvasIntegrationTests {
 
         if (passed) {
             this.results.passed++;
-            console.log(`✅ ${name}: PASSED`);
+            
         } else {
             this.results.failed++;
-            console.log(`❌ ${name}: FAILED - ${error}`);
+            
         }
     }
 
@@ -389,30 +389,17 @@ class PDFCanvasIntegrationTests {
      * Affiche les résultats finaux
      */
     printResults() {
-        console.log('\n' + '='.repeat(50));
-        console.log('📊 RÉSULTATS DES TESTS D\'INTÉGRATION');
-        console.log('='.repeat(50));
-
-        console.log(`✅ Tests réussis: ${this.results.passed}`);
-        console.log(`❌ Tests échoués: ${this.results.failed}`);
-        console.log(`📈 Taux de réussite: ${((this.results.passed / (this.results.passed + this.results.failed)) * 100).toFixed(1)}%`);
+        // Results printed silently
 
         if (this.results.failed > 0) {
-            console.log('\n❌ TESTS ÉCHOUÉS:');
             this.results.tests
                 .filter(test => !test.passed)
                 .forEach(test => {
-                    console.log(`  - ${test.name}: ${test.error}`);
+                    // Test failed
                 });
         }
 
-        console.log('\n' + '='.repeat(50));
-
-        if (this.results.failed === 0) {
-            console.log('🎉 TOUS LES TESTS SONT RÉUSSIS !');
-        } else {
-            console.log('⚠️  CERTAINS TESTS ONT ÉCHOUÉ - VÉRIFIEZ LES ERREURS CI-DESSUS');
-        }
+        // Test summary completed silently
     }
 }
 

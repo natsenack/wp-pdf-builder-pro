@@ -6,11 +6,11 @@
  * Il s'assure que tous les modules sont en place et fonctionnent ensemble.
  */
 
-console.log('[INIT] 🚀 Démarrage de l\'initialisation du Canvas Editor');
+
 
 // 1. VÉRIFIER LES DÉPENDANCES GLOBALES
 function verifyGlobalDependencies() {
-    console.log('[INIT] 1️⃣ Vérification des dépendances globales...');
+    
     
     const dependencies = {
         'jQuery': typeof jQuery !== 'undefined',
@@ -18,7 +18,7 @@ function verifyGlobalDependencies() {
         'PDFBuilderPro': typeof window.PDFBuilderPro !== 'undefined' || typeof PDFBuilderPro !== 'undefined'
     };
     
-    console.table(dependencies);
+    
     
     return {
         jquery: jQuery,
@@ -29,20 +29,20 @@ function verifyGlobalDependencies() {
 
 // 2. INITIALISER LE CANVAS
 function initializeCanvas(deps) {
-    console.log('[INIT] 2️⃣ Initialisation du Canvas...');
+    
     
     if (!deps.pdfBuilder) {
-        console.error('[INIT] ❌ PDFBuilderPro n\'est pas disponible');
+        
         return false;
     }
     
     const canvas = document.getElementById('pdf-canvas');
     if (!canvas) {
-        console.error('[INIT] ❌ #pdf-canvas n\'a pas été trouvé');
+        
         return false;
     }
     
-    console.log('[INIT] ✅ Canvas trouvé');
+    
     
     // Initialiser avec les options du template
     const templateId = new URLSearchParams(window.location.search).get('template_id');
@@ -60,12 +60,12 @@ function initializeCanvas(deps) {
     // Initialiser le PDFBuilderPro
     if (deps.pdfBuilder.init) {
         deps.pdfBuilder.init(options);
-        console.log('[INIT] ✅ PDFBuilderPro initialisé');
+        
     } else if (deps.pdfBuilder.PDFCanvasVanilla) {
         const canvas = new deps.pdfBuilder.PDFCanvasVanilla(options);
         window.pdfCanvasInstance = canvas;
         canvas.init();
-        console.log('[INIT] ✅ PDFCanvasVanilla initialisé');
+        
     }
     
     return true;
@@ -73,11 +73,11 @@ function initializeCanvas(deps) {
 
 // 3. INITIALISER LA BARRE D'OUTILS
 function initializeToolbar(deps) {
-    console.log('[INIT] 3️⃣ Initialisation de la Barre d\'Outils...');
+    
     
     const toolbar = document.querySelector('.pdf-builder-toolbar');
     if (!toolbar) {
-        console.warn('[INIT] ⚠️ Barre d\'outils non trouvée');
+        
         return false;
     }
     
@@ -86,7 +86,7 @@ function initializeToolbar(deps) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             const action = this.dataset.action;
-            console.log('[TOOLBAR] Action triggered:', action);
+            
             
             if (window.pdfCanvasInstance) {
                 if (typeof window.pdfCanvasInstance[action] === 'function') {
@@ -96,22 +96,22 @@ function initializeToolbar(deps) {
         });
     });
     
-    console.log('[INIT] ✅ Barre d\'outils initialisée');
+    
     return true;
 }
 
 // 4. INITIALISER LA BIBLIOTHÈQUE D'ÉLÉMENTS
 function initializeElementLibrary(deps) {
-    console.log('[INIT] 4️⃣ Initialisation de la Bibliothèque d\'Éléments...');
+    
     
     if (!deps.pdfBuilder || !deps.pdfBuilder.ELEMENT_LIBRARY) {
-        console.warn('[INIT] ⚠️ Bibliothèque d\'éléments non trouvée');
+        
         return false;
     }
     
     const library = document.querySelector('.element-library');
     if (!library) {
-        console.warn('[INIT] ⚠️ Conteneur de bibliothèque non trouvé');
+        
         return false;
     }
     
@@ -120,7 +120,7 @@ function initializeElementLibrary(deps) {
         deps.pdfBuilder.getAllElementsFlat() : 
         (deps.pdfBuilder.getAllElements ? deps.pdfBuilder.getAllElements() : []);
     
-    console.log('[INIT] Éléments disponibles:', elements.length);
+    
     
     // Créer les items de la bibliothèque
     elements.forEach(element => {
@@ -146,17 +146,17 @@ function initializeElementLibrary(deps) {
         library.appendChild(item);
     });
     
-    console.log('[INIT] ✅ Bibliothèque d\'éléments initialisée');
+    
     return true;
 }
 
 // 5. INITIALISER LES ÉVÉNEMENTS DU CANVAS
 function initializeCanvasEvents(deps) {
-    console.log('[INIT] 5️⃣ Initialisation des Événements du Canvas...');
+    
     
     const canvas = document.getElementById('pdf-canvas');
     if (!canvas) {
-        console.warn('[INIT] ⚠️ Canvas non trouvé');
+        
         return false;
     }
     
@@ -182,38 +182,38 @@ function initializeCanvasEvents(deps) {
                 const x = (e.clientX - rect.left) / (window.pdfCanvasInstance?.zoom || 1);
                 const y = (e.clientY - rect.top) / (window.pdfCanvasInstance?.zoom || 1);
                 
-                console.log('[CANVAS] Ajout d\'élément:', data.elementType, 'à', { x, y });
+                
                 
                 if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.addElement === 'function') {
                     window.pdfCanvasInstance.addElement(data.elementType, { x, y, ...data.elementData });
                 }
             }
         } catch (error) {
-            console.error('[CANVAS] ❌ Erreur lors du drop:', error);
+            
         }
     });
     
-    console.log('[INIT] ✅ Événements du canvas initialisés');
+    
     return true;
 }
 
 // 6. INITIALISER LES PANNEAUX LATÉRAUX
 function initializeSidePanels(deps) {
-    console.log('[INIT] 6️⃣ Initialisation des Panneaux Latéraux...');
+    
     
     const propertiesPanel = document.querySelector('.properties-panel');
     if (!propertiesPanel) {
-        console.warn('[INIT] ⚠️ Panneau des propriétés non trouvé');
+        
         return false;
     }
     
-    console.log('[INIT] ✅ Panneaux latéraux initialisés');
+    
     return true;
 }
 
 // 7. INITIALISER LE SYSTÈME D'AUTO-SAUVEGARDE
 function initializeAutoSave(deps) {
-    console.log('[INIT] 7️⃣ Initialisation de l\'Auto-Sauvegarde...');
+    
     
     let autoSaveTimer;
     let hasChanges = false;
@@ -226,7 +226,7 @@ function initializeAutoSave(deps) {
     // Auto-save toutes les 30 secondes
     autoSaveTimer = setInterval(() => {
         if (hasChanges && window.pdfCanvasInstance) {
-            console.log('[AUTO-SAVE] 💾 Sauvegarde automatique...');
+            
             if (typeof window.pdfCanvasInstance.save === 'function') {
                 window.pdfCanvasInstance.save();
                 hasChanges = false;
@@ -234,20 +234,20 @@ function initializeAutoSave(deps) {
         }
     }, 30000);
     
-    console.log('[INIT] ✅ Auto-sauvegarde initialisée');
+    
 }
 
 // FONCTION D'INITIALISATION PRINCIPALE
 function initializeEditor() {
-    console.log('[INIT] ========================');
-    console.log('[INIT] 🚀 INITIALISATION COMPLÈTE DE L\'ÉDITEUR');
-    console.log('[INIT] ========================');
+    
+    
+    
     
     try {
         // 1. Vérifier les dépendances
         const deps = verifyGlobalDependencies();
         if (!deps.pdfBuilder) {
-            console.error('[INIT] ❌ Impossibilité d\'initialiser: PDFBuilderPro manquant');
+            
             // Attendre le chargement
             setTimeout(initializeEditor, 500);
             return;
@@ -267,12 +267,12 @@ function initializeEditor() {
         if (loading) loading.style.display = 'none';
         if (editor) editor.style.display = 'block';
         
-        console.log('[INIT] ✅ ========================');
-        console.log('[INIT] ✅ ÉDITEUR INITIALISÉ AVEC SUCCÈS');
-        console.log('[INIT] ✅ ========================');
+        
+        
+        
         
     } catch (error) {
-        console.error('[INIT] ❌ ERREUR D\'INITIALISATION:', error);
+        
     }
 }
 
@@ -290,4 +290,4 @@ window.PDFBuilderEditorInit = {
     verify: verifyGlobalDependencies
 };
 
-console.log('[INIT] ✅ Script d\'initialisation chargé et prêt');
+

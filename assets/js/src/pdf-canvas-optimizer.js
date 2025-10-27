@@ -295,7 +295,7 @@ export class PDFCanvasPerformanceOptimizer {
         const maxSize = this.optimizationConfig.maxCanvasSize;
 
         if (canvas.width > maxSize || canvas.height > maxSize) {
-            console.warn(`Canvas size exceeds maximum (${maxSize}px). Consider reducing resolution.`);
+            // Canvas size exceeds maximum - consider reducing resolution
         }
 
         // Ajuster le device pixel ratio pour les écrans haute résolution

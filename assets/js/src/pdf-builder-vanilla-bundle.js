@@ -1,7 +1,7 @@
 // Point d'entrée principal pour le bundle Vanilla JS
 // Ce fichier importe tous les modules ES6 et les expose globalement
 
-console.log('[BUNDLE] Début du chargement du bundle PDF Builder Vanilla JS');
+
 
 import VanillaCanvas from './pdf-canvas-vanilla.js';
 import CanvasRenderer from './pdf-canvas-renderer.js';
@@ -16,7 +16,7 @@ import CanvasOptimizer from './pdf-canvas-optimizer.js';
 import CanvasTests from './pdf-canvas-tests.js';
 import { ELEMENT_LIBRARY, getAllElements, getElementsByCategory, getElementByType, getAllElementsFlat, searchElements } from './pdf-canvas-element-library.js';
 
-console.log('📚 Tous les modules ES6 importés avec succès');
+
 
 // Créer un objet global unique qui contient tous les modules
 const PDFBuilderPro = {
@@ -48,7 +48,7 @@ const PDFBuilderPro = {
 
     // Méthode d'initialisation principale
     init(options = {}) {
-        console.log('🚀 Initialisation PDF Builder Vanilla JS complet');
+        
 
         try {
             // Initialiser le canvas principal
@@ -61,19 +61,19 @@ const PDFBuilderPro = {
                 CanvasEvents.init();
             }
 
-            console.log('✅ PDF Builder Vanilla JS initialisé avec succès');
+            
             return true;
         } catch (error) {
-            console.error('❌ Erreur lors de l\'initialisation PDF Builder Vanilla JS:', error);
+            
             return false;
         }
     }
 };
 
 // Exposer l'objet global principal
-console.log('🌍 [BUNDLE] Exposition de PDFBuilderPro globalement...');
+
 window.PDFBuilderPro = PDFBuilderPro;
-console.log('✅ [BUNDLE] PDFBuilderPro exposé avec succès:', typeof window.PDFBuilderPro);
+
 
 // Pour la compatibilité, exposer aussi les modules individuellement
 window.VanillaCanvas = VanillaCanvas;
@@ -113,7 +113,7 @@ window.PDFBuilderPro = {
 window.ToolbarManager = CanvasEvents;
 window.PropertiesPanel = CanvasProperties;
 
-console.log('✅ Modules exposés globalement');
+
 
 // Export par défaut pour les modules ES6
 export default PDFBuilderPro;

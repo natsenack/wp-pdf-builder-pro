@@ -611,7 +611,7 @@ export class PDFCanvasLayersManager {
             this.emitLayerEvent('layers-imported', data);
             return true;
         } catch (error) {
-            console.error('Failed to import layers:', error);
+            
             return false;
         }
     }

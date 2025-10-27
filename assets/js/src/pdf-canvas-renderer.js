@@ -580,7 +580,7 @@ export class PDFCanvasRenderer {
         };
 
         img.onerror = () => {
-            console.warn(`Failed to load image: ${src}`);
+            
             // Dessiner un placeholder
             this.drawImagePlaceholder(props);
         };

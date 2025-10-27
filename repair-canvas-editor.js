@@ -17,11 +17,6 @@ const colors = {
     blue: '\x1b[34m'
 };
 
-function log(msg, color = 'reset') {
-    const timestamp = new Date().toLocaleTimeString();
-    console.log(`${colors[color]}[${timestamp}] ${msg}${colors.reset}`);
-}
-
 function checkFileExists(filePath) {
     return fs.existsSync(filePath);
 }
@@ -32,13 +27,7 @@ function checkFileContains(filePath, pattern) {
     return new RegExp(pattern).test(content);
 }
 
-console.clear();
-log('╔════════════════════════════════════════════════════════════════╗', 'cyan');
-log('║      RÉPARATION COMPLÈTE DU CANVAS EDITOR                     ║', 'cyan');
-log('╚════════════════════════════════════════════════════════════════╝', 'cyan');
-
 // ========== ÉTAPE 1: Vérifier la structure ==========
-log('\n1️⃣  ÉTAPE 1 : Vérification de la structure', 'blue');
 
 const requiredFiles = [
     'assets/js/src/pdf-builder-vanilla-bundle.js',
@@ -57,16 +46,16 @@ let validFiles = 0;
 
 requiredFiles.forEach(file => {
     if (checkFileExists(file)) {
-        log(`  ✅ ${file}`, 'green');
+        
         validFiles++;
     } else {
-        log(`  ❌ ${file} MANQUANT`, 'yellow');
+        
         missingFiles.push(file);
     }
 });
 
 // ========== ÉTAPE 2: Vérifier les imports ==========
-log('\n2️⃣  ÉTAPE 2 : Vérification des imports ES6', 'blue');
+
 
 const bundleFile = 'assets/js/src/pdf-builder-vanilla-bundle.js';
 const bundleContent = fs.readFileSync(bundleFile, 'utf8');
@@ -80,14 +69,14 @@ const requiredImports = [
 
 requiredImports.forEach(importName => {
     if (bundleContent.includes(importName)) {
-        log(`  ✅ Import: ${importName}`, 'green');
+        
     } else {
-        log(`  ❌ Import manquant: ${importName}`, 'yellow');
+        
     }
 });
 
 // ========== ÉTAPE 3: Vérifier les expositions globales ==========
-log('\n3️⃣  ÉTAPE 3 : Vérification des expositions globales', 'blue');
+
 
 const globalExposures = [
     'window.PDFBuilderPro',
@@ -99,14 +88,14 @@ const globalExposures = [
 globalExposures.forEach(exposure => {
     const pattern = exposure.replace(/\./g, '\\.').replace(/window\./, '');
     if (bundleContent.includes(pattern)) {
-        log(`  ✅ Exposé: ${exposure}`, 'green');
+        
     } else {
-        log(`  ❌ PAS exposé: ${exposure}`, 'yellow');
+        
     }
 });
 
 // ========== ÉTAPE 4: Vérifier le template editor ==========
-log('\n4️⃣  ÉTAPE 4 : Vérification du Template Editor', 'blue');
+
 
 const templateFile = 'plugin/templates/admin/template-editor.php';
 const templateContent = fs.readFileSync(templateFile, 'utf8');
@@ -121,46 +110,46 @@ const templateChecks = [
 
 templateChecks.forEach(check => {
     if (templateContent.includes(check.pattern)) {
-        log(`  ✅ ${check.desc}`, 'green');
+        
     } else {
-        log(`  ❌ ${check.desc} MANQUANT`, 'yellow');
+        
     }
 });
 
 // ========== ÉTAPE 5: Vérifier les enqueues ==========
-log('\n5️⃣  ÉTAPE 5 : Vérification des enqueues scripts', 'blue');
+
 
 const adminFile = 'plugin/src/Admin/PDF_Builder_Admin.php';
 const adminContent = fs.readFileSync(adminFile, 'utf8');
 
 if (adminContent.includes('wp_enqueue_script') && adminContent.includes('pdf-builder')) {
-    log('  ✅ Scripts PDF Builder enqués', 'green');
+    
 } else {
-    log('  ❌ Scripts PDF Builder PAS enqués', 'yellow');
+    
 }
 
 if (adminContent.includes('wp_create_nonce') || adminContent.includes('wp_verify_nonce')) {
-    log('  ✅ Nonce AJAX configuré', 'green');
+    
 } else {
-    log('  ❌ Nonce AJAX PAS configuré', 'yellow');
+    
 }
 
 // ========== RÉSUMÉ ==========
 log('\n' + '='.repeat(65), 'cyan');
-log('📊 RÉSUMÉ DE LA VÉRIFICATION', 'cyan');
+
 log('='.repeat(65), 'cyan');
 
-log(`\n📋 Fichiers vérifiés: ${requiredFiles.length}`, 'blue');
-log(`✅ Fichiers valides: ${validFiles}`, 'green');
-log(`❌ Fichiers manquants: ${missingFiles.length}`, missingFiles.length > 0 ? 'yellow' : 'green');
+
+
+
 
 if (missingFiles.length > 0) {
-    log('\n⚠️  Fichiers à créer ou vérifier:', 'yellow');
+    
     missingFiles.forEach(f => log(`   - ${f}`, 'yellow'));
 }
 
 // ========== GÉNÉRER RAPPORT JSON ==========
-log('\n6️⃣  ÉTAPE 6 : Génération du rapport', 'blue');
+
 
 const report = {
     timestamp: new Date().toISOString(),
@@ -178,32 +167,27 @@ const report = {
 };
 
 fs.writeFileSync('repair-report.json', JSON.stringify(report, null, 2));
-log('✅ Rapport généré: repair-report.json', 'green');
+
 
 // ========== PROCHAINES ÉTAPES ==========
-log('\n' + '='.repeat(65), 'cyan');
-log('📋 PROCHAINES ÉTAPES', 'cyan');
-log('='.repeat(65), 'cyan');
 
-console.log(`
-${colors.green}✅ ACTIONS RECOMMANDÉES:${colors.reset}
+// ACTIONS RECOMMANDÉES:
 
-1. ${colors.cyan}npm run build${colors.reset} - Compiler les assets
-2. ${colors.cyan}cd build && .\\deploy.ps1 -Mode plugin${colors.reset} - Déployer via FTP
-3. ${colors.cyan}Accéder au template editor dans WordPress${colors.reset}
-4. ${colors.cyan}Ouvrir F12 → Console${colors.reset}
-5. ${colors.cyan}Vérifier les logs d'initialisation${colors.reset}
-6. ${colors.cyan}Tester le drag & drop${colors.reset}
-7. ${colors.cyan}Tester la modification de propriétés${colors.reset}
-8. ${colors.cyan}Tester la sauvegarde/chargement${colors.reset}
+// 1. npm run build - Compiler les assets
+// 2. cd build && .\deploy.ps1 -Mode plugin - Déployer via FTP
+// 3. Accéder au template editor dans WordPress
+// 4. Ouvrir F12 → Console
+// 5. Vérifier les logs d'initialisation
+// 6. Tester le drag & drop
+// 7. Tester la modification de propriétés
+// 8. Tester la sauvegarde/chargement
 
-${colors.blue}📚 DOCUMENTATION:${colors.reset}
-   - COMPLETE_FIX_PLAN.md
-   - BUGFIX_REPORT_20251026.md
-   - VERIFICATION_CHECKLIST.md
-   - repair-report.json
+// DOCUMENTATION:
+//    - COMPLETE_FIX_PLAN.md
+//    - BUGFIX_REPORT_20251026.md
+//    - VERIFICATION_CHECKLIST.md
+//    - repair-report.json
 
-${colors.green}✅ Vérification terminée!${colors.reset}
-`);
+// Vérification terminée!
 
 process.exit(missingFiles.length > 0 ? 1 : 0);

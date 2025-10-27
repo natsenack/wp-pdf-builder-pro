@@ -73,7 +73,7 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
     try {
         // Vérifier que event est un vrai événement DOM avec preventDefault
         if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('[DRAG] handleDragOver: événement invalide, skipped');
+            
             return;
         }
 

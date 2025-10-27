@@ -101,7 +101,7 @@ export class PDFCanvasVanilla {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in event listener for ${eventType}:`, error);
+                    // Error in event listener
                 }
             });
         }
@@ -167,7 +167,7 @@ export class PDFCanvasVanilla {
         this.canvasWidth = this.canvas.width;
         this.canvasHeight = this.canvas.height;
 
-        console.log('✅ Canvas context initialized successfully');
+        // Canvas context initialized successfully
     }
 
     /**
@@ -242,12 +242,12 @@ export class PDFCanvasVanilla {
 
             if (data.success && data.data.template) {
                 this.loadTemplateData(data.data.template);
-                console.log('Template loaded successfully:', data.data.name);
+                // Template loaded successfully
             } else {
-                console.error('Failed to load template:', data.data || 'Unknown error');
+                // Failed to load template
             }
         } catch (error) {
-            console.error('Error loading template:', error);
+            // Error loading template
         }
     }
 
@@ -268,10 +268,10 @@ export class PDFCanvasVanilla {
     handleMouseDown(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('Invalid event in handleMouseDown');
+            // Invalid event in handleMouseDown
             return;
         }
-        
+
         const point = this.getMousePosition(event);
 
         switch (this.mode) {
@@ -354,10 +354,10 @@ export class PDFCanvasVanilla {
     /*
     handleWheel(event) {
         if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('Invalid event in handleWheel');
+            // Invalid event in handleWheel
             return;
         }
-        
+
         event.preventDefault();
 
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
@@ -706,7 +706,7 @@ export class PDFCanvasVanilla {
 
         // Vérifier les restrictions
         if (!isPropertyAllowed(element.type, property)) {
-            console.warn(`Property "${property}" not allowed for element type "${element.type}"`);
+            // Property not allowed for element type
             return false;
         }
 
@@ -870,7 +870,7 @@ export class PDFCanvasVanilla {
             try {
                 this.renderer.renderElement(element, element.properties);
             } catch (error) {
-                console.error('Error rendering element:', error);
+                // Error rendering element
             }
         }
 
@@ -1280,7 +1280,7 @@ export class PDFCanvasVanilla {
             this.saveToHistory();
             return true;
         } catch (error) {
-            console.error('Failed to import JSON:', error);
+            // Failed to import JSON
             return false;
         }
     }
@@ -1308,7 +1308,7 @@ export class PDFCanvasVanilla {
         this.history = [];
         this.historyIndex = -1;
 
-        console.log('PDFCanvasVanilla disposed');
+        // PDFCanvasVanilla disposed
     }
 
     /**
@@ -1343,7 +1343,7 @@ export default PDFCanvasVanilla;
 
 // Fonction d'initialisation globale pour WordPress
 window.pdfBuilderInitVanilla = function(containerIdOrOptions, options = {}) {
-    console.log('🚀 Initialisation Vanilla JS PDF Builder...');
+    // Initialisation Vanilla JS PDF Builder
 
     let containerId, canvasOptions;
 
