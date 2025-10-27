@@ -132,14 +132,47 @@ export class PDFCanvasCore {
     _renderElementLowQuality(element) {
         const p = element.properties || {};
         
-        // Rendu très basique : juste un rectangle coloré
-        this.ctx.fillStyle = p.backgroundColor || p.fillColor || '#cccccc';
-        this.ctx.fillRect(0, 0, p.width || 100, p.height || 50);
-        
-        // Bordure simple
-        this.ctx.strokeStyle = '#999999';
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(0, 0, p.width || 100, p.height || 50);
+        // Rendu simplifié mais reconnaissable
+        switch (element.type) {
+            case 'text':
+                // Texte simplifié : juste un rectangle avec indication de texte
+                this.ctx.fillStyle = p.color || '#333333';
+                this.ctx.fillRect(2, 2, (p.width || 100) - 4, (p.height || 50) - 4);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.font = '10px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('T', (p.width || 100) / 2, (p.height || 50) / 2 + 3);
+                break;
+                
+            case 'rectangle':
+            case 'shape-rectangle':
+                this.ctx.fillStyle = p.backgroundColor || p.fillColor || '#cccccc';
+                this.ctx.fillRect(0, 0, p.width || 100, p.height || 50);
+                if (p.borderColor || p.strokeColor) {
+                    this.ctx.strokeStyle = p.borderColor || p.strokeColor;
+                    this.ctx.lineWidth = p.borderWidth || 1;
+                    this.ctx.strokeRect(0, 0, p.width || 100, p.height || 50);
+                }
+                break;
+                
+            case 'circle':
+            case 'shape-circle':
+                this.ctx.fillStyle = p.backgroundColor || p.fillColor || '#cccccc';
+                this.ctx.beginPath();
+                this.ctx.arc((p.width || 100) / 2, (p.height || 50) / 2, Math.min(p.width || 100, p.height || 50) / 2, 0, 2 * Math.PI);
+                this.ctx.fill();
+                if (p.borderColor || p.strokeColor) {
+                    this.ctx.strokeStyle = p.borderColor || p.strokeColor;
+                    this.ctx.lineWidth = p.borderWidth || 1;
+                    this.ctx.stroke();
+                }
+                break;
+                
+            default:
+                // Pour tous les autres types : rectangle simple
+                this.ctx.fillStyle = p.backgroundColor || p.fillColor || '#cccccc';
+                this.ctx.fillRect(0, 0, p.width || 100, p.height || 50);
+        }
     }
 
     /**

@@ -68,7 +68,6 @@ export class PDFCanvasVanilla {
         this.isDirty = false;
         this.lastRenderTime = 0;
         this.throttleTimeout = null;
-        this.frameSkipCounter = 0; // Pour le frame skipping pendant le drag
     }
 
     /**
@@ -343,26 +342,15 @@ export class PDFCanvasVanilla {
     }
 
     /**
-     * Optimisation RAF - Planifie un rendu avec throttling et frame skipping
+     * Optimisation RAF - Planifie un rendu avec throttling
      */
     scheduleRender() {
         this.isDirty = true;
         if (this.pendingFrame) return;
 
-        // Frame skipping pendant le drag : ne rendre qu'une frame sur 2 pour la fluidité
-        if (this.dragState) {
-            this.frameSkipCounter++;
-            if (this.frameSkipCounter % 2 !== 0) {
-                // Skip cette frame
-                return;
-            }
-        } else {
-            this.frameSkipCounter = 0; // Reset quand pas en drag
-        }
-
-        // Throttling pour le drag : maximum 30 FPS effectif (avec frame skipping)
+        // Throttling pour le drag : maximum 60 FPS pendant le drag
         const now = Date.now();
-        const minInterval = this.dragState ? 32 : 0; // 32ms = ~30fps effectif, 0ms = pas de limite sinon
+        const minInterval = this.dragState ? 16 : 0; // 16ms = ~60fps, 0ms = pas de limite sinon
 
         if (this.lastRenderTime && (now - this.lastRenderTime) < minInterval) {
             // Trop tôt, on attend
@@ -535,7 +523,7 @@ export class PDFCanvasVanilla {
             const deltaX = Math.abs(point.x - this.dragState.lastPoint?.x || 0);
             const deltaY = Math.abs(point.y - this.dragState.lastPoint?.y || 0);
             
-            if (deltaX > 0.5 || deltaY > 0.5) { // Seuil minimum de mouvement
+            if (deltaX > 0.1 || deltaY > 0.1) { // Seuil minimum de mouvement réduit
                 this.dragState.lastPoint = point;
                 this.updateDrag(point);
                 this.scheduleRender();
@@ -611,8 +599,8 @@ export class PDFCanvasVanilla {
                 const newY = startPos.y + deltaY;
                 
                 // Éviter les mises à jour inutiles
-                if (Math.abs(element.properties.x - newX) > 0.1 || 
-                    Math.abs(element.properties.y - newY) > 0.1) {
+                if (Math.abs(element.properties.x - newX) > 0.01 || 
+                    Math.abs(element.properties.y - newY) > 0.01) {
                     element.properties.x = newX;
                     element.properties.y = newY;
                 }
