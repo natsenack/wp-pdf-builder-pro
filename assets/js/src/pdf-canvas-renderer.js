@@ -94,8 +94,12 @@ export class PDFCanvasRenderer {
         this.renderBackground();
 
         // Rendre la grille si activée
+        console.log('Canvas render - showGrid:', this.mainInstance.options.showGrid);
         if (this.mainInstance.options.showGrid) {
+            console.log('Calling renderGrid');
             this.renderGrid();
+        } else {
+            console.log('Grid not rendered - showGrid is false');
         }
 
         // Rendre tous les éléments
@@ -121,10 +125,14 @@ export class PDFCanvasRenderer {
         const width = this.canvas.width / this.devicePixelRatio;
         const height = this.canvas.height / this.devicePixelRatio;
 
+        console.log('Rendering grid:', { showGrid: this.mainInstance.options.showGrid, gridSize, width, height });
+
         this.ctx.save();
-        this.ctx.strokeStyle = '#e0e0e0';
-        this.ctx.lineWidth = 1;
-        this.ctx.setLineDash([1, 1]);
+
+        // Couleur plus visible pour la grille
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'; // Plus visible que #e0e0e0
+        this.ctx.lineWidth = 0.5; // Ligne plus fine
+        this.ctx.setLineDash([2, 2]); // Pointillés plus visibles
 
         // Lignes verticales
         for (let x = 0; x <= width; x += gridSize) {

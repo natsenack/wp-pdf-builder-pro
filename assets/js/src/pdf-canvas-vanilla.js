@@ -1383,7 +1383,9 @@ export class PDFCanvasVanilla {
      * Bascule l'affichage de la grille
      */
     toggleGrid() {
+        console.log('toggleGrid called - current showGrid:', this.options.showGrid);
         this.options.showGrid = !this.options.showGrid;
+        console.log('toggleGrid - new showGrid:', this.options.showGrid);
         this.render();
         return this.options.showGrid;
     }
@@ -1392,7 +1394,9 @@ export class PDFCanvasVanilla {
      * Active ou désactive la grille
      */
     setGridVisibility(visible) {
+        console.log('setGridVisibility called - visible:', visible);
         this.options.showGrid = visible === true;
+        console.log('setGridVisibility - new showGrid:', this.options.showGrid);
         this.render();
         return this.options.showGrid;
     }
@@ -1401,6 +1405,7 @@ export class PDFCanvasVanilla {
      * Vérifie si la grille est visible
      */
     isGridVisible() {
+        console.log('isGridVisible called - returning:', this.options.showGrid);
         return this.options.showGrid;
     }
 }
