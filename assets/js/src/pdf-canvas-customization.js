@@ -358,12 +358,52 @@ export class ElementCustomizationService {
   /**
    * Réinitialise les propriétés aux valeurs par défaut
    */
+  /**
+   * Calcule la position initiale intelligente selon le type d'élément
+   * Stratégie de grille pour éviter les chevauchements
+   */
+  calculateInitialPosition(elementType) {
+    // Stratégie de positionnement par type d'élément
+    const positionStrategy = {
+      // COLONNE GAUCHE (x: 50)
+      'product_table': { x: 50, y: 50 },
+      'customer_info': { x: 50, y: 220 },
+      'company_info': { x: 50, y: 340 },
+      'document_type': { x: 50, y: 430 },
+      'mentions': { x: 50, y: 480 },
+      'line': { x: 50, y: 40 },  // Haute à gauche
+      'dynamic-text': { x: 50, y: 550 },
+      
+      // COLONNE DROITE (x: 350)
+      'company_logo': { x: 350, y: 50 },
+      'order_number': { x: 350, y: 130 },
+      'woocommerce-order-date': { x: 350, y: 160 },
+      'woocommerce-invoice-number': { x: 350, y: 190 },
+      
+      // Éléments texte standards (répartition)
+      'text': { x: 50, y: 600 },
+      'text-title': { x: 50, y: 10 },
+      'text-subtitle': { x: 50, y: 60 },
+      
+      // Formes et autres
+      'rectangle': { x: 50, y: 700 },
+      'circle': { x: 150, y: 700 },
+      'arrow': { x: 250, y: 700 },
+      'image': { x: 400, y: 500 }
+    };
+
+    // Retourner la position stratégique ou défaut si non trouvée
+    return positionStrategy[elementType] || { x: 50, y: 50 };
+  }
+
   getDefaultProperties(elementType = 'text') {
     // Propriétés communes à tous les éléments
+    const position = this.calculateInitialPosition(elementType);
+    
     const defaults = {
       // Propriétés communes
-      x: 50,
-      y: 50,
+      x: position.x,
+      y: position.y,
       width: 100,
       height: 50,
       opacity: 100,
