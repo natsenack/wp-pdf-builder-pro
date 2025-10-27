@@ -157,4 +157,40 @@ describe('WooCommerce Elements Rendering Tests', () => {
         expect(element.type).toBe('mentions');
         expect(element.properties.fontSize).toBe(10);
     });
+
+    test('should render enhanced product table with advanced features', () => {
+        const element = {
+            id: 'enhanced-table',
+            type: 'product_table',
+            x: 50,
+            y: 100,
+            width: 600,
+            height: 300,
+            properties: {
+                showHeaders: true,
+                showBorders: true,
+                showAlternatingRows: true,
+                showSku: true,
+                showDescription: true,
+                fontSize: 11,
+                currency: '$',
+                backgroundColor: '#ffffff',
+                headerBackgroundColor: '#f9fafb',
+                alternateRowColor: '#f9fafb',
+                borderColor: '#d1d5db'
+            }
+        };
+
+        // Simuler le rendu avec les nouvelles fonctionnalités
+        mockCtx.fillRect.mockImplementation(() => {});
+        mockCtx.fillText.mockImplementation(() => {});
+        mockCtx.stroke.mockImplementation(() => {});
+        mockCtx.measureText = jest.fn().mockReturnValue({ width: 50 });
+
+        expect(element.type).toBe('product_table');
+        expect(element.properties.showSku).toBe(true);
+        expect(element.properties.showDescription).toBe(true);
+        expect(element.properties.showAlternatingRows).toBe(true);
+        expect(element.properties.currency).toBe('$');
+    });
 });

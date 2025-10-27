@@ -222,69 +222,234 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const props = element as any;
     const showHeaders = props.showHeaders !== false;
     const showBorders = props.showBorders !== false;
-    const fontSize = props.fontSize || 12;
+    const showAlternatingRows = props.showAlternatingRows !== false;
+    const fontSize = props.fontSize || 11;
+    const currency = props.currency || '€';
+    const showSku = props.showSku !== false;
+    const showDescription = props.showDescription !== false;
 
-    // Données fictives de produits
+    // Données fictives plus réalistes de produits WooCommerce
     const products = [
-      { name: 'T-shirt Premium', qty: 2, price: 29.99, total: 59.98 },
-      { name: 'Jean Slim Fit', qty: 1, price: 89.99, total: 89.99 },
-      { name: 'Chaussures Running', qty: 1, price: 129.99, total: 129.99 }
+      {
+        sku: 'TSHIRT-001',
+        name: 'T-shirt Premium Bio',
+        description: 'T-shirt en coton biologique, coupe slim',
+        qty: 2,
+        price: 29.99,
+        discount: 0,
+        total: 59.98
+      },
+      {
+        sku: 'JEAN-045',
+        name: 'Jean Slim Fit Noir',
+        description: 'Jean stretch confort, taille haute',
+        qty: 1,
+        price: 89.99,
+        discount: 10.00,
+        total: 79.99
+      },
+      {
+        sku: 'SHOES-089',
+        name: 'Chaussures Running Pro',
+        description: 'Chaussures de running avec semelle amortissante',
+        qty: 1,
+        price: 129.99,
+        discount: 0,
+        total: 129.99
+      },
+      {
+        sku: 'HOODIE-112',
+        name: 'Sweat à Capuche',
+        description: 'Sweat molletonné, capuche ajustable',
+        qty: 1,
+        price: 49.99,
+        discount: 5.00,
+        total: 44.99
+      }
     ];
 
+    // Calcul du total avec remises
+    const subtotal = products.reduce((sum, product) => sum + (product.price * product.qty), 0);
+    const totalDiscount = products.reduce((sum, product) => sum + product.discount, 0);
+    const finalTotal = subtotal - totalDiscount;
+
+    // Configuration des colonnes
+    interface TableColumn {
+      key: string;
+      label: string;
+      width: number;
+      align: 'left' | 'center' | 'right';
+      x: number;
+    }
+
+    const columns: TableColumn[] = [];
+    columns.push({ key: 'name', label: 'Produit', width: showSku && showDescription ? 0.35 : showSku || showDescription ? 0.45 : 0.55, align: 'left', x: 0 });
+    if (showSku) columns.push({ key: 'sku', label: 'SKU', width: 0.15, align: 'left', x: 0 });
+    if (showDescription) columns.push({ key: 'description', label: 'Description', width: 0.25, align: 'left', x: 0 });
+    columns.push({ key: 'qty', label: 'Qté', width: 0.08, align: 'center', x: 0 });
+    columns.push({ key: 'price', label: 'Prix', width: 0.12, align: 'right', x: 0 });
+    if (totalDiscount > 0) columns.push({ key: 'discount', label: 'Remise', width: 0.12, align: 'right', x: 0 });
+    columns.push({ key: 'total', label: 'Total', width: 0.12, align: 'right', x: 0 });
+
+    // Normaliser les largeurs
+    const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
+    columns.forEach(col => col.width = col.width / totalWidth);
+
+    // Calcul des positions X des colonnes
+    let currentX = 8;
+    columns.forEach(col => {
+      col.x = currentX;
+      currentX += col.width * (element.width - 16);
+    });
+
+    // Fond
     ctx.fillStyle = props.backgroundColor || '#ffffff';
     ctx.fillRect(0, 0, element.width, element.height);
 
+    // Bordure extérieure
     if (showBorders) {
-      ctx.strokeStyle = props.borderColor || '#e5e7eb';
+      ctx.strokeStyle = props.borderColor || '#d1d5db';
       ctx.lineWidth = props.borderWidth || 1;
       ctx.strokeRect(0, 0, element.width, element.height);
     }
 
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${fontSize}px Arial`;
     ctx.textAlign = 'left';
+    let currentY = showHeaders ? 25 : 15;
 
-    let y = showHeaders ? 25 : 15;
-
-    // En-têtes
+    // En-têtes avec style professionnel
     if (showHeaders) {
-      ctx.fillText('Produit', 10, 15);
-      ctx.fillText('Qté', element.width - 120, 15);
-      ctx.fillText('Prix', element.width - 80, 15);
-      ctx.fillText('Total', element.width - 40, 15);
+      ctx.fillStyle = props.headerBackgroundColor || '#f9fafb';
+      ctx.fillRect(1, 1, element.width - 2, 22);
 
-      // Ligne de séparation
+      ctx.fillStyle = props.headerTextColor || '#374151';
+      ctx.font = `bold ${fontSize + 1}px Arial`;
+      ctx.textBaseline = 'top';
+
+      columns.forEach(col => {
+        ctx.textAlign = col.align as CanvasTextAlign;
+        const textX = col.align === 'right' ? col.x + col.width * (element.width - 16) - 4 :
+                     col.align === 'center' ? col.x + (col.width * (element.width - 16)) / 2 :
+                     col.x;
+        ctx.fillText(col.label, textX, 6);
+      });
+
+      // Ligne de séparation sous les en-têtes
       ctx.strokeStyle = '#e5e7eb';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(5, 20);
-      ctx.lineTo(element.width - 5, 20);
+      ctx.moveTo(4, 24);
+      ctx.lineTo(element.width - 4, 24);
       ctx.stroke();
+
+      currentY = 45;
     }
 
-    // Produits
+    // Produits avec alternance de couleurs
     ctx.font = `${fontSize}px Arial`;
-    products.forEach(product => {
-      ctx.fillText(product.name, 10, y);
-      ctx.textAlign = 'right';
-      ctx.fillText(product.qty.toString(), element.width - 110, y);
-      ctx.fillText(`${product.price.toFixed(2)}€`, element.width - 70, y);
-      ctx.fillText(`${product.total.toFixed(2)}€`, element.width - 10, y);
-      ctx.textAlign = 'left';
-      y += 18;
+    ctx.textBaseline = 'top';
+
+    products.forEach((product, index) => {
+      const rowHeight = showDescription ? 32 : 20;
+
+      // Fond alterné pour les lignes
+      if (showAlternatingRows && index % 2 === 1) {
+        ctx.fillStyle = props.alternateRowColor || '#f9fafb';
+        ctx.fillRect(1, currentY - 2, element.width - 2, rowHeight);
+      }
+
+      ctx.fillStyle = '#000000';
+
+      columns.forEach(col => {
+        ctx.textAlign = col.align as CanvasTextAlign;
+        const textX = col.align === 'right' ? col.x + col.width * (element.width - 16) - 4 :
+                     col.align === 'center' ? col.x + (col.width * (element.width - 16)) / 2 :
+                     col.x;
+
+        let text = '';
+        switch (col.key) {
+          case 'name': text = product.name; break;
+          case 'sku': text = product.sku; break;
+          case 'description': text = product.description; break;
+          case 'qty': text = product.qty.toString(); break;
+          case 'price': text = `${product.price.toFixed(2)}${currency}`; break;
+          case 'discount': text = product.discount > 0 ? `${product.discount.toFixed(2)}${currency}` : '-'; break;
+          case 'total': text = `${product.total.toFixed(2)}${currency}`; break;
+        }
+
+        // Gestion du texte qui dépasse
+        const maxWidth = col.width * (element.width - 16) - 8;
+        if (ctx.measureText(text).width > maxWidth && col.key === 'name') {
+          // Tronquer avec "..."
+          let truncated = text;
+          while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
+            truncated = truncated.slice(0, -1);
+          }
+          text = truncated + '...';
+        }
+
+        ctx.fillText(text, textX, currentY);
+      });
+
+      currentY += rowHeight;
+
+      // Ligne de séparation subtile entre les produits
+      if (index < products.length - 1) {
+        ctx.strokeStyle = '#f3f4f6';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(8, currentY - 2);
+        ctx.lineTo(element.width - 8, currentY - 2);
+        ctx.stroke();
+      }
     });
 
-    // Total
-    ctx.strokeStyle = '#e5e7eb';
+    // Section des totaux
+    currentY += 8;
+
+    // Ligne de séparation avant les totaux
+    ctx.strokeStyle = '#d1d5db';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(element.width - 100, y - 5);
-    ctx.lineTo(element.width - 5, y - 5);
+    ctx.moveTo(element.width - 140, currentY);
+    ctx.lineTo(element.width - 8, currentY);
     ctx.stroke();
 
+    currentY += 20;
+
+    // Affichage des totaux
     ctx.font = `bold ${fontSize}px Arial`;
-    ctx.fillText('Total:', element.width - 100, y + 10);
+    ctx.fillStyle = '#374151';
+    ctx.textAlign = 'left';
+
+    const totalsY = currentY;
+    ctx.fillText('Sous-total:', element.width - 140, totalsY);
     ctx.textAlign = 'right';
-    ctx.fillText('279.96€', element.width - 10, y + 10);
+    ctx.fillText(`${subtotal.toFixed(2)}${currency}`, element.width - 8, totalsY);
+
+    if (totalDiscount > 0) {
+      currentY += 18;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#059669'; // Vert pour la remise
+      ctx.fillText('Remise:', element.width - 140, currentY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`-${totalDiscount.toFixed(2)}${currency}`, element.width - 8, currentY);
+    }
+
+    currentY += 20;
+    ctx.strokeStyle = '#374151';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(element.width - 140, currentY - 5);
+    ctx.lineTo(element.width - 8, currentY - 5);
+    ctx.stroke();
+
+    currentY += 2;
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.fillStyle = '#111827';
+    ctx.textAlign = 'left';
+    ctx.fillText('TOTAL:', element.width - 140, currentY);
+    ctx.textAlign = 'right';
+    ctx.fillText(`${finalTotal.toFixed(2)}${currency}`, element.width - 8, currentY);
   };
 
   const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
