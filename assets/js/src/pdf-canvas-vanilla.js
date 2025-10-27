@@ -194,7 +194,7 @@ export class PDFCanvasVanilla {
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        this.canvas.addEventListener('wheel', this.handleWheel.bind(this));
+        // this.canvas.addEventListener('wheel', this.handleWheel.bind(this)); // Zoom désactivé
 
         // Gestionnaires de drag & drop - DOIVENT ÊTRE AU NIVEAU DU DOCUMENT
         document.addEventListener('dragover', this.handleDragOver.bind(this));
@@ -351,8 +351,9 @@ export class PDFCanvasVanilla {
     }
 
     /**
-     * Gestionnaire de roulette de souris (zoom)
+     * Gestionnaire de roulette de souris (zoom) - DÉSACTIVÉ
      */
+    /*
     handleWheel(event) {
         if (!event || typeof event.preventDefault !== 'function') {
             console.warn('Invalid event in handleWheel');
@@ -364,6 +365,7 @@ export class PDFCanvasVanilla {
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
         this.setZoom(this.options.zoom * delta);
     }
+    */
 
     /**
      * Gestionnaire d'événement drag over
