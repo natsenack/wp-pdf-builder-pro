@@ -19,28 +19,28 @@ export class PDFCanvasCore {
      * @param {Object} options - Options du canvas
      */
     renderAll(elements, selectedIds = [], options = {}) {
-        console.log('🎨 PDFCanvasCore.renderAll() CALLED - Éléments:', elements.size, 'Canvas:', this.canvasWidth + 'x' + this.canvasHeight);
+        // console.log('🎨 PDFCanvasCore.renderAll() CALLED - Éléments:', elements.size, 'Canvas:', this.canvasWidth + 'x' + this.canvasHeight);
         
         // Étape 1: Nettoyer complètement
         this.ctx.fillStyle = options.backgroundColor || '#ffffff';
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-        // Étape 2: Grille (optionnel)
-        if (options.showGrid) {
+        // Étape 2: Grille (optionnel, sauf en mode lowQuality)
+        if (options.showGrid && !options.lowQuality) {
             this._drawGrid(options.gridSize || 20);
         }
 
         // Étape 3: Tous les éléments
         const elementArray = Array.from(elements.values());
-        console.log('📦 Rendu de', elementArray.length, 'éléments:', elementArray.map(e => e.type).join(', '));
+        // console.log('📦 Rendu de', elementArray.length, 'éléments:', elementArray.map(e => e.type).join(', '));
         
         elementArray.forEach((element, index) => {
-            console.log(`  ✏️ Élément ${index + 1}:`, element.type, 'props:', element.properties);
-            this._renderElement(element);
+            // console.log(`  ✏️ Élément ${index + 1}:`, element.type, 'props:', element.properties);
+            this._renderElement(element, options);
         });
 
-        // Étape 4: Sélection et handles
-        if (selectedIds.length > 0) {
+        // Étape 4: Sélection et handles (simplifiés en mode lowQuality)
+        if (selectedIds.length > 0 && !options.lowQuality) {
             selectedIds.forEach(id => {
                 const element = elements.get(id);
                 if (element) {
@@ -82,14 +82,14 @@ export class PDFCanvasCore {
      * Rend un seul élément
      * @private
      */
-    _renderElement(element) {
+    _renderElement(element, options = {}) {
         const p = element.properties || {};
         const x = p.x !== undefined ? p.x : 0;
         const y = p.y !== undefined ? p.y : 0;
         const width = p.width !== undefined ? p.width : 100;
         const height = p.height !== undefined ? p.height : 50;
 
-        console.log(`    Position: x=${x}, y=${y}, width=${width}, height=${height}`);
+        // console.log(`    Position: x=${x}, y=${y}, width=${width}, height=${height}`);
 
         // Sauvegarder le contexte
         this.ctx.save();

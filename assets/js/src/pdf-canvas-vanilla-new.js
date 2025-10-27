@@ -66,6 +66,8 @@ export class PDFCanvasVanilla {
         // Optimisation du rendu avec RAF
         this.pendingFrame = null;
         this.isDirty = false;
+        this.lastRenderTime = 0;
+        this.throttleTimeout = null;
     }
 
     /**
@@ -308,21 +310,29 @@ export class PDFCanvasVanilla {
      * RENDU PRINCIPAL - Simple et efficace
      */
     render() {
-        console.log(`🎨 [render] RENDU APPELÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
+        // console.log(`🎨 [render] RENDU APPELÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
         
         if (this.isRendering || !this.renderEngine) {
-            console.log(`⚠️  [render] Rendu IGNORÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
+            // console.log(`⚠️  [render] Rendu IGNORÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
             return;
         }
 
         this.isRendering = true;
 
         try {
-            console.log(`🎨 [render] Éléments: ${this.elements.size}`);
+            // console.log(`🎨 [render] Éléments: ${this.elements.size}`);
             const selectedIds = this.selectionManager.getSelectedElementIds();
-            console.log(`🎨 [render] Appel renderEngine.renderAll() avec ${this.elements.size} éléments`);
-            this.renderEngine.renderAll(this.elements, selectedIds, this.options);
-            console.log(`✅ [render] Rendu COMPLÉTÉ`);
+            // console.log(`🎨 [render] Appel renderEngine.renderAll() avec ${this.elements.size} éléments`);
+            
+            // Optimisation pendant le drag : réduire la qualité pour la fluidité
+            const renderOptions = this.dragState ? {
+                ...this.options,
+                showGrid: false, // Pas de grille pendant le drag
+                lowQuality: true  // Mode basse qualité pendant le drag
+            } : this.options;
+            
+            this.renderEngine.renderAll(this.elements, selectedIds, renderOptions);
+            // console.log(`✅ [render] Rendu COMPLÉTÉ`);
         } catch (error) {
             console.error('❌ [render] Render error:', error);
             console.error('❌ Stack:', error.stack);
@@ -338,8 +348,24 @@ export class PDFCanvasVanilla {
         this.isDirty = true;
         if (this.pendingFrame) return;
 
+        // Throttling pour le drag : maximum 60 FPS pendant le drag
+        const now = Date.now();
+        const minInterval = this.dragState ? 16 : 0; // 16ms = ~60fps, 0ms = pas de limite sinon
+
+        if (this.lastRenderTime && (now - this.lastRenderTime) < minInterval) {
+            // Trop tôt, on attend
+            if (!this.throttleTimeout) {
+                this.throttleTimeout = setTimeout(() => {
+                    this.throttleTimeout = null;
+                    this.scheduleRender();
+                }, minInterval - (now - this.lastRenderTime));
+            }
+            return;
+        }
+
         this.pendingFrame = requestAnimationFrame(() => {
             this.pendingFrame = null;
+            this.lastRenderTime = Date.now();
             if (this.isDirty) {
                 this.isDirty = false;
                 this.render();
