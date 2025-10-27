@@ -1522,7 +1522,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             if (typeof window.initializePDFBuilderPro === "function") {
                 window.pdfBuilderPro = window.initializePDFBuilderPro();
                 window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || pdfBuilderAjax.nonce;
-                console.log("PDF Builder: Instance initialized via initializePDFBuilderPro");
                 return;
             }
 

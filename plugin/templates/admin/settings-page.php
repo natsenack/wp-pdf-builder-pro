@@ -1741,7 +1741,6 @@ window.addEventListener('load', function() {
                 <!-- JAVASCRIPT ULTRA SIMPLE POUR LES ONGLES -->
                 <script>
                 jQuery(document).ready(function($) {
-                    console.log('=== ULTRA SIMPLE TABS INIT ===');
 
                     // Cacher tous les panneaux sauf le premier
                     $('.modern-tab-panel').not(':first').hide();
@@ -1752,7 +1751,6 @@ window.addEventListener('load', function() {
                         e.preventDefault();
 
                         var tabName = $(this).data('tab');
-                        console.log('Clicked tab:', tabName);
 
                         // Retirer active de tous les onglets
                         $('.modern-tab-button').removeClass('active');
@@ -1764,10 +1762,8 @@ window.addEventListener('load', function() {
                         // Montrer le panneau correspondant
                         $('.modern-tab-panel[data-tab="' + tabName + '"]').show();
 
-                        console.log('Switched to panel:', tabName);
                     });
 
-                    console.log('=== ULTRA SIMPLE TABS READY ===');
                 });
                 </script>
             </div>

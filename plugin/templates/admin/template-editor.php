@@ -10,28 +10,21 @@ error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['t
 error_log('[PHP] User: ' . get_current_user_id());
 ?>
 <script>
-console.log('🚀 TEMPLATE EDITOR PAGE LOADED - JavaScript execution test');
-console.log('Current URL:', window.location.href);
-console.log('User Agent:', navigator.userAgent);
-console.log('DOMContentLoaded status:', document.readyState);
-
 // Test if jQuery is loaded
 if (typeof jQuery !== 'undefined') {
-    console.log('✅ jQuery is loaded, version:', jQuery.fn.jquery);
+    // jQuery is loaded
 } else {
-    console.log('❌ jQuery is NOT loaded');
+    // jQuery is NOT loaded
 }
 
 // Test if our main script variables exist
-console.log('pdfBuilderAjax exists:', typeof pdfBuilderAjax !== 'undefined');
-console.log('pdfBuilderPro exists:', typeof pdfBuilderPro !== 'undefined');
+// pdfBuilderAjax and pdfBuilderPro checks removed
 
 // Check if the canvas container exists
 var canvasContainer = document.getElementById('pdf-canvas-container');
-console.log('Canvas container exists:', !!canvasContainer);
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOMContentLoaded fired - page fully loaded');
+    // DOMContentLoaded fired - page fully loaded
 });
 </script>
 <div id="wpbody-content">
@@ -579,14 +572,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- ===== INITIALISATION DU CANVAS EDITOR ===== -->
 <script>
-console.log('[INIT] 🚀 Initialisation du Canvas Editor - Début');
+// console.log removed
 
 // Attendre que PDFBuilderPro soit disponible
 function waitForPDFBuilder(maxRetries = 20) {
-    console.log('[INIT] Attente du chargement de PDFBuilderPro... (retries restants:', maxRetries, ')');
     
     if (typeof window.PDFBuilderPro !== 'undefined') {
-        console.log('[INIT] ✅ PDFBuilderPro trouvé!', typeof window.PDFBuilderPro);
         initializeCanvas();
         return;
     }
@@ -594,14 +585,13 @@ function waitForPDFBuilder(maxRetries = 20) {
     if (maxRetries > 0) {
         setTimeout(() => waitForPDFBuilder(maxRetries - 1), 250);
     } else {
-        console.error('[INIT] ❌ PDFBuilderPro pas trouvé après attente');
         showError('Impossible de charger le système PDF Builder');
     }
 }
 
 // Initialiser le canvas une fois PDFBuilderPro disponible
 function initializeCanvas() {
-    console.log('[INIT] Initialisation du Canvas...');
+    // console.log removed
     
     // Masquer le loading, afficher l'éditeur
     var loading = document.getElementById('pdf-builder-loading');
@@ -612,7 +602,7 @@ function initializeCanvas() {
     
     // Récupérer l'ID du template depuis l'URL
     var templateId = new URLSearchParams(window.location.search).get('template_id');
-    console.log('[INIT] Template ID:', templateId);
+    // console.log removed
     
     // Options de configuration du canvas
     var canvasOptions = {
@@ -629,11 +619,11 @@ function initializeCanvas() {
         propertiesPanelId: 'properties-content'
     };
     
-    console.log('[INIT] Options:', canvasOptions);
+    // console.log removed
     
     try {
         // Initialiser le canvas avec PDFCanvasVanilla
-        console.log('[INIT] Création de PDFCanvasVanilla avec containerId: "pdf-canvas-container"');
+        // console.log removed
         
         // ✅ Créer une instance de PDFCanvasVanilla (c'est une classe)
         var canvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-canvas-container', canvasOptions);
@@ -642,11 +632,11 @@ function initializeCanvas() {
         // ✅ Initialiser le canvas
         canvas.init();
         
-        console.log('[INIT] ✅ Canvas initialisé avec succès');
+        // console.log removed
         
         // Charger les données initiales du canvas (template + WooCommerce)
         if (typeof canvas.loadInitialData === 'function') {
-            console.log('[INIT] Chargement des données initiales...');
+            // console.log removed
             canvas.loadInitialData();
         }
         
@@ -665,7 +655,7 @@ function initializeCanvas() {
 
 // Populer la bibliothèque d'éléments
 function populateElementsLibrary() {
-    console.log('[INIT] Population de la bibliothèque d\'éléments...');
+    // console.log removed
     
     var elementsContainer = document.getElementById('elements-container');
     if (!elementsContainer) {
@@ -680,10 +670,8 @@ function populateElementsLibrary() {
         
         if (typeof window.PDFBuilderPro.getAllElements === 'function') {
             elements = window.PDFBuilderPro.getAllElements();
-            console.log('[INIT] Éléments obtenus via getAllElements()', elements);
         } else if (typeof window.PDFBuilderPro.ELEMENT_LIBRARY !== 'undefined') {
-            elements = window.PDFBuilderPro.ELEMENT_LIBRARY;
-            console.log('[INIT] Éléments obtenus via ELEMENT_LIBRARY', elements);
+            // console.log removed
         }
         
         if (!elements || Object.keys(elements).length === 0) {
@@ -737,13 +725,13 @@ function populateElementsLibrary() {
                 elementDiv.title = element.description || '';
                 
                 categoryDiv.appendChild(elementDiv);
-                console.log('[INIT] Élément ajouté:', element.type, element.label);
+                // console.log removed
             });
             
             elementsContainer.appendChild(categoryDiv);
         }
         
-        console.log('[INIT] ✅ Bibliothèque d\'éléments populée');
+        // console.log removed
     } else {
         console.error('[INIT] PDFBuilderPro non disponible');
     }
@@ -751,7 +739,7 @@ function populateElementsLibrary() {
 
 // Configurer le drag & drop
 function setupDragAndDrop() {
-    console.log('[DRAGDROP] Configuration du Drag & Drop...');
+    // console.log removed
     
     var elementsContainer = document.getElementById('elements-container');
     var canvas = document.getElementById('pdf-canvas-container') || document.getElementById('pdf-builder-canvas');
@@ -766,14 +754,14 @@ function setupDragAndDrop() {
         return;
     }
     
-    console.log('[DRAGDROP] Canvas et container trouvés, configuration des événements...');
+    // console.log removed
     
     var isDragging = false;
     var currentDraggedElement = null;
     
     // Événements de drag sur les éléments (DEPUIS la toolbar)
     elementsContainer.addEventListener('dragstart', function(e) {
-        console.log('[DRAGDROP] dragstart event, target:', e.target, 'classe:', e.target.className);
+        // console.log removed
         
         // Chercher l'ancêtre .element-item (délégation d'événements robuste)
         var elementItem = e.target.closest('.element-item');
@@ -784,7 +772,7 @@ function setupDragAndDrop() {
                 elementType: elementType,
                 elementData: JSON.parse(elementItem.dataset.element || '{}')
             };
-            console.log('[DRAGDROP] Début du drag:', elementType, 'data:', elementData);
+            // console.log removed
             isDragging = true;
             currentDraggedElement = elementItem;
             e.dataTransfer.effectAllowed = 'copy';
@@ -796,7 +784,7 @@ function setupDragAndDrop() {
     });
     
     elementsContainer.addEventListener('dragend', function(e) {
-        console.log('[DRAGDROP] dragend event');
+        // console.log removed
         isDragging = false;
         currentDraggedElement = null;
         var elementItem = e.target.closest('.element-item');
@@ -809,29 +797,27 @@ function setupDragAndDrop() {
     canvas.addEventListener('dragover', function(e) {
         // ⚠️ N'accepter le drag que s'il vient d'un élément de toolbar (isDragging = true depuis la toolbar)
         if (isDragging && currentDraggedElement) {
-            console.log('[DRAGDROP] dragover - accepté (depuis toolbar)');
             e.preventDefault();
             e.dataTransfer.dropEffect = 'copy';
             canvas.classList.add('drag-over');
         } else {
-            console.log('[DRAGDROP] dragover - rejeté (drag interne du canvas)');
             e.dataTransfer.dropEffect = 'none';
         }
     }, false);
     
     canvas.addEventListener('dragleave', function(e) {
-        console.log('[DRAGDROP] dragleave');
+        // console.log removed
         if (e.target === canvas) {
             canvas.classList.remove('drag-over');
         }
     }, false);
     
     canvas.addEventListener('drop', function(e) {
-        console.log('[DRAGDROP] drop event - isDragging:', isDragging);
+        // console.log removed
         
         // Ne traiter le drop que s'il vient de la toolbar
         if (!isDragging || !currentDraggedElement) {
-            console.log('[DRAGDROP] Drop rejeté - pas de drag de toolbar actif');
+            // console.log removed
             return;
         }
         
@@ -848,7 +834,7 @@ function setupDragAndDrop() {
                 var x = (e.clientX - rect.left) / zoom;
                 var y = (e.clientY - rect.top) / zoom;
                 
-                console.log('[DRAGDROP] Drop accepté:', data.elementType, 'à', { x, y });
+                // console.log removed
                 
                 if (window.pdfCanvasInstance && typeof window.pdfCanvasInstance.addElement === 'function') {
                     window.pdfCanvasInstance.addElement(data.elementType, { x, y, ...data.elementData });
@@ -861,21 +847,21 @@ function setupDragAndDrop() {
     
     // Empêcher les conflits avec les clics sur les éléments du canvas
     canvas.addEventListener('mousedown', function(e) {
-        console.log('[DRAGDROP] mousedown sur canvas - isDragging:', isDragging, 'currentDraggedElement:', currentDraggedElement);
+        // console.log removed
         
         // Si un drag est en cours depuis la toolbar, ignorer les interactions du canvas
         if (isDragging && currentDraggedElement) {
-            console.log('[DRAGDROP] ⚠️ Click ignoré - drag en cours depuis la toolbar');
+            // console.log removed
             e.stopPropagation();
             e.preventDefault();
             return false;
         }
         
         // Sinon, laisser passer les événements normaux du canvas (sélection, redimensionnement)
-        console.log('[DRAGDROP] ✅ Click sur canvas autorisé - pas de drag en cours');
+        // console.log removed
     }, false);
     
-    console.log('[DRAGDROP] ✅ Drag & Drop configuré avec protection contre les conflits');
+    // console.log removed
 }
 
 // Afficher message d'erreur
@@ -891,17 +877,17 @@ function showError(message) {
 }
 
 // Initialiser au chargement du DOM (système unique d'initialisation)
-console.log('[INIT] Script d\'initialisation du Canvas chargé');
+// console.log removed
 
 // Vérifier si DOM est déjà chargé
 if (document.readyState === 'loading') {
-    console.log('[INIT] DOM en cours de chargement, attente de DOMContentLoaded...');
+    // console.log removed
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('[INIT] DOMContentLoaded - Démarrage waitForPDFBuilder');
+        // console.log removed
         waitForPDFBuilder();
     });
 } else {
-    console.log('[INIT] DOM déjà chargé - Démarrage waitForPDFBuilder immédiatement');
+    // console.log removed
     waitForPDFBuilder();
 }
 </script>

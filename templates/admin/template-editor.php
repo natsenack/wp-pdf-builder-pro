@@ -10,28 +10,21 @@ error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['t
 error_log('[PHP] User: ' . get_current_user_id());
 ?>
 <script>
-console.log('🚀 TEMPLATE EDITOR PAGE LOADED - JavaScript execution test');
-console.log('Current URL:', window.location.href);
-console.log('User Agent:', navigator.userAgent);
-console.log('DOMContentLoaded status:', document.readyState);
-
 // Test if jQuery is loaded
 if (typeof jQuery !== 'undefined') {
-    console.log('✅ jQuery is loaded, version:', jQuery.fn.jquery);
+    // jQuery is loaded
 } else {
-    console.log('❌ jQuery is NOT loaded');
+    // jQuery is NOT loaded
 }
 
 // Test if our main script variables exist
-console.log('pdfBuilderAjax exists:', typeof pdfBuilderAjax !== 'undefined');
-console.log('pdfBuilderPro exists:', typeof pdfBuilderPro !== 'undefined');
+// pdfBuilderAjax and pdfBuilderPro checks removed
 
 // Check if the canvas container exists
 var canvasContainer = document.getElementById('pdf-canvas-container');
-console.log('Canvas container exists:', !!canvasContainer);
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOMContentLoaded fired - page fully loaded');
+    // DOMContentLoaded fired - page fully loaded
 });
 </script>
 <div id="wpbody-content">
@@ -579,14 +572,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- ===== INITIALISATION DU CANVAS EDITOR ===== -->
 <script>
-console.log('[INIT] 🚀 Initialisation du Canvas Editor - Début');
-
 // Attendre que PDFBuilderPro soit disponible
 function waitForPDFBuilder(maxRetries = 20) {
-    console.log('[INIT] Attente du chargement de PDFBuilderPro... (retries restants:', maxRetries, ')');
     
     if (typeof window.PDFBuilderPro !== 'undefined') {
-        console.log('[INIT] ✅ PDFBuilderPro trouvé!', typeof window.PDFBuilderPro);
         initializeCanvas();
         return;
     }
@@ -594,14 +583,12 @@ function waitForPDFBuilder(maxRetries = 20) {
     if (maxRetries > 0) {
         setTimeout(() => waitForPDFBuilder(maxRetries - 1), 250);
     } else {
-        console.error('[INIT] ❌ PDFBuilderPro pas trouvé après attente');
         showError('Impossible de charger le système PDF Builder');
     }
 }
 
 // Initialiser le canvas une fois PDFBuilderPro disponible
 function initializeCanvas() {
-    console.log('[INIT] Initialisation du Canvas...');
     
     // Masquer le loading, afficher l'éditeur
     var loading = document.getElementById('pdf-builder-loading');
@@ -612,7 +599,6 @@ function initializeCanvas() {
     
     // Récupérer l'ID du template depuis l'URL
     var templateId = new URLSearchParams(window.location.search).get('template_id');
-    console.log('[INIT] Template ID:', templateId);
     
     // Options de configuration du canvas
     var canvasOptions = {
@@ -629,22 +615,17 @@ function initializeCanvas() {
         propertiesPanelId: 'properties-content'
     };
     
-    console.log('[INIT] Options:', canvasOptions);
-    
     try {
         // Initialiser le canvas
         if (window.PDFBuilderPro.init && typeof window.PDFBuilderPro.init === 'function') {
-            console.log('[INIT] Appel de PDFBuilderPro.init()');
             window.PDFBuilderPro.init(canvasOptions);
             window.pdfCanvasInstance = window.PDFBuilderPro;
         } else if (window.PDFBuilderPro.PDFCanvasVanilla) {
-            console.log('[INIT] Utilisation de PDFCanvasVanilla');
             var canvas = new window.PDFBuilderPro.PDFCanvasVanilla(canvasOptions);
             window.pdfCanvasInstance = canvas;
             canvas.init();
         }
         
-        console.log('[INIT] ✅ Canvas initialisé avec succès');
         
         // Populer la bibliothèque d'éléments
         populateElementsLibrary();
@@ -654,23 +635,19 @@ function initializeCanvas() {
         
         // Charger le template si fourni
         if (templateId && window.pdfCanvasInstance && typeof window.pdfCanvasInstance.loadTemplate === 'function') {
-            console.log('[INIT] Chargement du template:', templateId);
             window.pdfCanvasInstance.loadTemplate(templateId);
         }
         
     } catch (error) {
-        console.error('[INIT] ❌ Erreur lors de l\'initialisation:', error);
         showError('Erreur lors de l\'initialisation du canvas: ' + error.message);
     }
 }
 
 // Populer la bibliothèque d'éléments
 function populateElementsLibrary() {
-    console.log('[INIT] Population de la bibliothèque d\'éléments...');
     
     var elementsContainer = document.getElementById('elements-container');
     if (!elementsContainer) {
-        console.warn('[INIT] Elements container non trouvé');
         return;
     }
     
@@ -681,14 +658,11 @@ function populateElementsLibrary() {
         
         if (typeof window.PDFBuilderPro.getAllElements === 'function') {
             elements = window.PDFBuilderPro.getAllElements();
-            console.log('[INIT] Éléments obtenus via getAllElements()', elements);
         } else if (typeof window.PDFBuilderPro.ELEMENT_LIBRARY !== 'undefined') {
             elements = window.PDFBuilderPro.ELEMENT_LIBRARY;
-            console.log('[INIT] Éléments obtenus via ELEMENT_LIBRARY', elements);
         }
         
         if (!elements || Object.keys(elements).length === 0) {
-            console.warn('[INIT] Aucun élément trouvé, utilisation des éléments par défaut');
             // Éléments par défaut si rien n'est trouvé
             elements = {
                 'text': [
