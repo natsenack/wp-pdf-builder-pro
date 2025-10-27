@@ -1409,6 +1409,8 @@ class PDF_Builder_Admin
             });
         </script>
         <?php
+    }
+
     /**
      * Charge les scripts et styles d'administration
      */
