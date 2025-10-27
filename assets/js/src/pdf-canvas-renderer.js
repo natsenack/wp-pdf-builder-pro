@@ -534,14 +534,6 @@ export class PDFCanvasRenderer {
             this.ctx.lineWidth = props.borderWidth;
             this.ctx.stroke();
         }
-
-        // Ajouter un texte d'exemple pour la visibilité
-        if (props.width > 60 && props.height > 20) {
-            this.ctx.fillStyle = props.color || '#64748b';
-            this.ctx.font = '12px Arial, sans-serif';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText('Zone de contenu', props.width / 2, props.height / 2 + 4);
-        }
     }
 
     /**
@@ -567,14 +559,6 @@ export class PDFCanvasRenderer {
             this.ctx.strokeStyle = props.borderColor || '#000000';
             this.ctx.lineWidth = props.borderWidth;
             this.ctx.stroke();
-        }
-
-        // Ajouter un indicateur visuel
-        if (radius > 15) {
-            this.ctx.fillStyle = props.color || '#ffffff';
-            this.ctx.font = '16px Arial, sans-serif';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText('●', centerX, centerY + 6);
         }
     }
 
