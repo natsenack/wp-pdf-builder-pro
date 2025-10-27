@@ -133,10 +133,8 @@ export class PDFCanvasVanilla {
             this.render();
 
             this.isInitialized = true;
-            console.log('PDFCanvasVanilla initialized successfully');
 
         } catch (error) {
-            console.error('Failed to initialize PDFCanvasVanilla:', error);
             throw error;
         }
     }
@@ -157,8 +155,6 @@ export class PDFCanvasVanilla {
         if (!this.canvas || this.canvas.tagName !== 'CANVAS') {
             throw new Error(`Canvas element with id "${this.options.canvasElementId || 'pdf-builder-canvas'}" not found or is not a canvas element`);
         }
-
-        console.log('✅ Using existing HTML5 canvas:', this.canvas.id, 'dimensions:', this.canvas.width + 'x' + this.canvas.height);
 
         // Obtenir le contexte 2D
         this.ctx = this.canvas.getContext('2d');
@@ -296,7 +292,6 @@ export class PDFCanvasVanilla {
     handleMouseMove(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('Invalid event in handleMouseMove');
             return;
         }
         
@@ -328,7 +323,6 @@ export class PDFCanvasVanilla {
     handleMouseUp(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('Invalid event in handleMouseUp');
             return;
         }
         
@@ -384,7 +378,7 @@ export class PDFCanvasVanilla {
                 this.dragDropManager.handleDragOver(event);
             }
         } catch (error) {
-            console.error('[CANVAS] Erreur handleDragOver:', error);
+            // Ignore errors
         }
     }
 
@@ -402,7 +396,7 @@ export class PDFCanvasVanilla {
                 this.dragDropManager.handleDrop(event);
             }
         } catch (error) {
-            console.error('[CANVAS] Erreur handleDrop:', error);
+            // Ignore errors
         }
     }
 
@@ -472,7 +466,6 @@ export class PDFCanvasVanilla {
             };
         }
 
-        console.warn('Invalid event object in getMousePosition:', event);
         return { x: 0, y: 0 };
     }
 
@@ -778,8 +771,6 @@ export class PDFCanvasVanilla {
 
         const mode = toolToModeMap[toolId] || 'select';
         this.setMode(mode);
-
-        console.log(`Tool set to: ${toolId}, mode: ${mode}`);
     }
 
     /**
@@ -788,7 +779,6 @@ export class PDFCanvasVanilla {
     toggleGrid() {
         this.options.showGrid = !this.options.showGrid;
         this.render();
-        console.log(`Grid ${this.options.showGrid ? 'enabled' : 'disabled'}`);
         return this.options.showGrid;
     }
 
@@ -798,7 +788,6 @@ export class PDFCanvasVanilla {
     setGrid(enabled) {
         this.options.showGrid = enabled;
         this.render();
-        console.log(`Grid ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     /**
@@ -1351,11 +1340,9 @@ window.pdfBuilderInitVanilla = function(containerIdOrOptions, options = {}) {
         // Exposer l'instance globalement pour le débogage
         window.pdfBuilderInstance = pdfCanvas;
 
-        console.log('✅ PDF Builder Vanilla initialisé avec succès');
         return pdfCanvas;
 
     } catch (error) {
-        console.error('❌ Erreur lors de l\'initialisation Vanilla:', error);
         throw error;
     }
 };

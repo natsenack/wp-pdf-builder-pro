@@ -3,8 +3,6 @@
  * Permet de glisser des éléments depuis la bibliothèque vers le canvas
  */
 
-console.log('[DRAG] Script drag-drop chargé');
-
 function PDFCanvasDragDropManager(canvasInstance) {
     this.canvasInstance = canvasInstance;
     this.isDragging = false;
@@ -19,9 +17,7 @@ function PDFCanvasDragDropManager(canvasInstance) {
  * Initialise le gestionnaire
  */
 PDFCanvasDragDropManager.prototype.init = function() {
-    console.log('[DRAG] Initialisation du PDFCanvasDragDropManager');
     this.setupGlobalListeners();
-    console.log('[DRAG] Gestionnaire initialisé avec succès');
 };
 
 /**
@@ -44,15 +40,11 @@ PDFCanvasDragDropManager.prototype.handleDragStart = function(event) {
     const elementType = target.getAttribute('data-element-type');
     if (!elementType) return;
 
-    console.log('[DRAG] Début du drag - Type:', elementType, 'Target:', target);
-
     this.isDragging = true;
     this.dragElement = {
         type: elementType,
         properties: this.getDefaultPropertiesForType(elementType)
     };
-
-    console.log('[DRAG] Élément drag créé:', this.dragElement);
 
     // Créer un feedback visuel
     event.dataTransfer.effectAllowed = 'copy';
@@ -66,16 +58,12 @@ PDFCanvasDragDropManager.prototype.handleDragStart = function(event) {
  * Gère la fin du glisser
  */
 PDFCanvasDragDropManager.prototype.handleDragEnd = function(event) {
-    console.log('[DRAG] Fin du drag - isDragging:', this.isDragging, 'dragElement:', this.dragElement);
-
     this.isDragging = false;
     this.dragElement = null;
     this.dragOffset = null;
 
     // Retirer la classe CSS
     document.body.classList.remove('pdf-builder-dragging');
-
-    console.log('[DRAG] Drag terminé, nettoyage effectué');
 };
 
 /**
@@ -108,13 +96,11 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
             const point = this.canvasInstance.getMousePosition(event);
             this.dragOffset = point;
 
-            console.log('[DRAG] ✅ DragOver - Position canvas:', point);
-
             // Mettre à jour le rendu pour montrer le preview
             this.canvasInstance.render();
         }
     } catch (error) {
-        console.error('[DRAG] Erreur dans handleDragOver:', error);
+        // Ignore errors
     }
 };
 
@@ -123,13 +109,6 @@ PDFCanvasDragDropManager.prototype.handleDragOver = function(event) {
  */
 PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
     try {
-        console.log('[DRAG] Drop détecté - isDragging:', this.isDragging);
-
-        // Vérifier que event est un vrai événement DOM
-        if (!event || typeof event.preventDefault !== 'function') {
-            console.warn('[DRAG] handleDrop: événement invalide, skipped');
-            return;
-        }
 
         if (!this.isDragging || !this.dragElement || !this.canvasInstance || !this.canvasInstance.canvas) {
             return;
@@ -143,7 +122,6 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
                             event.clientY <= canvasRect.bottom;
 
         if (!isOverCanvas) {
-            console.log('[DRAG] Drop hors du canvas - ignoré');
             return;
         }
 
@@ -151,7 +129,6 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
 
         // Calculer la position finale
         const point = this.canvasInstance.getMousePosition(event);
-        console.log('[DRAG] ✅ Drop sur canvas - Position:', point);
 
         // Ajuster la position pour centrer l'élément
         const finalProperties = Object.assign({}, this.dragElement.properties);
@@ -160,7 +137,6 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
 
         // Ajouter l'élément au canvas
         const elementId = this.canvasInstance.addElement(this.dragElement.type, finalProperties);
-        console.log('[DRAG] ✅ Élément ajouté avec ID:', elementId);
 
         // Sélectionner le nouvel élément
         this.canvasInstance.selectElement(elementId);
@@ -177,7 +153,7 @@ PDFCanvasDragDropManager.prototype.handleDrop = function(event) {
         this.dragElement = null;
         this.dragOffset = null;
     } catch (error) {
-        console.error('[DRAG] Erreur dans handleDrop:', error);
+        // Ignore errors
     }
 };
 
