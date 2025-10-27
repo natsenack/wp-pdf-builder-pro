@@ -226,6 +226,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const fontSize = props.fontSize || 11;
     const showSku = props.showSku !== false;
     const showDescription = props.showDescription !== false;
+    const showQuantity = props.showQuantity !== false;
+    const showDiscount = props.showDiscount !== false;
+    const shippingCost = props.shippingCost || 0;
+    const taxRate = props.taxRate || 0;
+    const globalDiscount = props.globalDiscount || 0;
 
     // Données fictives plus réalistes de produits WooCommerce
     const products = [
@@ -269,8 +274,21 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Calcul du total avec remises
     const subtotal = products.reduce((sum, product) => sum + (product.price * product.qty), 0);
-    const totalDiscount = products.reduce((sum, product) => sum + product.discount, 0);
-    const finalTotal = subtotal - totalDiscount;
+    const itemDiscounts = products.reduce((sum, product) => sum + product.discount, 0);
+    const subtotalAfterItemDiscounts = subtotal - itemDiscounts;
+
+    // Appliquer la remise globale
+    const globalDiscountAmount = globalDiscount > 0 ? (subtotalAfterItemDiscounts * globalDiscount / 100) : 0;
+    const subtotalAfterGlobalDiscount = subtotalAfterItemDiscounts - globalDiscountAmount;
+
+    // Ajouter les frais de port
+    const subtotalWithShipping = subtotalAfterGlobalDiscount + shippingCost;
+
+    // Calculer les taxes
+    const taxAmount = taxRate > 0 ? (subtotalWithShipping * taxRate / 100) : 0;
+
+    // Total final
+    const finalTotal = subtotalWithShipping + taxAmount;
 
     // Devise par défaut (géré par WooCommerce)
     const currency = '€';
@@ -288,9 +306,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     columns.push({ key: 'name', label: 'Produit', width: showSku && showDescription ? 0.35 : showSku || showDescription ? 0.45 : 0.55, align: 'left', x: 0 });
     if (showSku) columns.push({ key: 'sku', label: 'SKU', width: 0.15, align: 'left', x: 0 });
     if (showDescription) columns.push({ key: 'description', label: 'Description', width: 0.25, align: 'left', x: 0 });
-    columns.push({ key: 'qty', label: 'Qté', width: 0.08, align: 'center', x: 0 });
+    if (showQuantity) columns.push({ key: 'qty', label: 'Qté', width: 0.08, align: 'center', x: 0 });
     columns.push({ key: 'price', label: 'Prix', width: 0.12, align: 'right', x: 0 });
-    if (totalDiscount > 0) columns.push({ key: 'discount', label: 'Remise', width: 0.12, align: 'right', x: 0 });
+    if (showDiscount && globalDiscountAmount > 0) columns.push({ key: 'discount', label: 'Remise', width: 0.12, align: 'right', x: 0 });
     columns.push({ key: 'total', label: 'Total', width: 0.12, align: 'right', x: 0 });
 
     // Normaliser les largeurs
@@ -348,7 +366,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Produits avec alternance de couleurs
     ctx.font = `${fontSize}px Arial`;
-    ctx.textBaseline = 'top';
+    ctx.textBaseline = 'middle';
 
     products.forEach((product, index) => {
       const rowHeight = showDescription ? 40 : 28;
@@ -389,7 +407,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
           text = truncated + '...';
         }
 
-        ctx.fillText(text, textX, currentY);
+        ctx.fillText(text, textX, currentY + rowHeight / 2);
       });
 
       currentY += rowHeight + 4;
@@ -428,16 +446,49 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.textAlign = 'right';
     ctx.fillText(`${subtotal.toFixed(2)}${currency}`, element.width - 8, totalsY);
 
-    if (totalDiscount > 0) {
-      currentY += 18;
+    currentY += 18;
+
+    // Remises sur articles
+    if (itemDiscounts > 0) {
       ctx.textAlign = 'left';
       ctx.fillStyle = '#059669'; // Vert pour la remise
-      ctx.fillText('Remise:', element.width - 140, currentY);
+      ctx.fillText('Remises articles:', element.width - 140, currentY);
       ctx.textAlign = 'right';
-      ctx.fillText(`-${totalDiscount.toFixed(2)}${currency}`, element.width - 8, currentY);
+      ctx.fillText(`-${itemDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
+      currentY += 18;
     }
 
-    currentY += 20;
+    // Remise globale
+    if (globalDiscountAmount > 0) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#059669'; // Vert pour la remise
+      ctx.fillText(`Remise globale (${globalDiscount}%):`, element.width - 140, currentY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`-${globalDiscountAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
+      currentY += 18;
+    }
+
+    // Frais de port
+    if (shippingCost > 0) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#374151';
+      ctx.fillText('Frais de port:', element.width - 140, currentY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${shippingCost.toFixed(2)}${currency}`, element.width - 8, currentY);
+      currentY += 18;
+    }
+
+    // Taxes
+    if (taxAmount > 0) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#374151';
+      ctx.fillText(`TVA (${taxRate}%):`, element.width - 140, currentY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${taxAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
+      currentY += 18;
+    }
+
+    currentY += 2;
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 2;
     ctx.beginPath();

@@ -499,6 +499,32 @@ function renderSpecificProperties(
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher la quantité
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showQuantity !== false}
+              onChange={(e) => onChange(element.id, 'showQuantity', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Afficher les remises
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showDiscount !== false}
+              onChange={(e) => onChange(element.id, 'showDiscount', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des remises appliquées</span>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
               Taille de police
             </label>
             <input
