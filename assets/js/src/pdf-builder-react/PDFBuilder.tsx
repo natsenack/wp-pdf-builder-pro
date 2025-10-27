@@ -108,8 +108,8 @@ function PDFBuilderContent({
 }
 
 export function PDFBuilder({
-  width = 800,
-  height = 600,
+  width = 794, // A4 portrait width in pixels (210mm at 96 DPI)
+  height = 1123, // A4 portrait height in pixels (297mm at 96 DPI)
   className
 }: PDFBuilderProps) {
   return (
