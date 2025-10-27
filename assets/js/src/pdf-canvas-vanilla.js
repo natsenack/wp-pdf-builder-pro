@@ -457,22 +457,18 @@ export class PDFCanvasVanilla {
         // Pour les événements DOM directs
         if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
             const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
             return {
-                x: (event.clientX - rect.left) * scaleX,
-                y: (event.clientY - rect.top) * scaleY
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
             };
         }
 
         // Pour les événements avec originalEvent
         if (event && event.originalEvent && typeof event.originalEvent.clientX === 'number') {
             const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
             return {
-                x: (event.originalEvent.clientX - rect.left) * scaleX,
-                y: (event.originalEvent.clientY - rect.top) * scaleY
+                x: event.originalEvent.clientX - rect.left,
+                y: event.originalEvent.clientY - rect.top
             };
         }
 
