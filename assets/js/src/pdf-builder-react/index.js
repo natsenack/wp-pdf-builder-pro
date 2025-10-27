@@ -40,7 +40,7 @@ function initPDFBuilderReact() {
   // Créer et rendre l'application React
   try {
     const root = ReactDOM.createRoot(container);
-    root.render(React.createElement(PDFBuilder, { width: 1200, height: 800 }));
+    root.render(React.createElement(PDFBuilder, { width: 794, height: 1123 })); // A4 portrait dimensions
     console.log('React component rendered successfully');
 
   } catch (error) {
