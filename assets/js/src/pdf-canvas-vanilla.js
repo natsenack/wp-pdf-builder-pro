@@ -29,19 +29,19 @@ export class PDFCanvasVanilla {
             gridSize: options.gridSize || 20,
             showGrid: options.showGrid !== false,
             zoom: options.zoom || 1,
+            snapToGrid: options.snapToGrid !== false,
+            constrainToCanvas: options.constrainToCanvas !== false,
+            dragFeedback: options.dragFeedback !== false,
             ...options
         };
 
-        // État du canvas
-        this.canvas = null;
-        this.ctx = null;
-        this.elements = new Map();
-        this.selectedElement = null;
+        // Gestion d'état pour optimisations
         this.dragState = null;
-        this.isInitialized = false;
         this.isRendering = false;
+        this.lastMouseMoveTime = 0;
+        this.mouseMoveThrottleMs = 16; // ~60fps
 
-        // Gestionnaires d'événements
+        // Services intégrés
         this.eventListeners = new Map();
 
         // Services intégrés
@@ -297,6 +297,16 @@ export class PDFCanvasVanilla {
             return;
         }
 
+        const now = Date.now();
+
+        // Throttling pour les performances - seulement pendant le drag ou les transformations
+        if ((this.dragState || this.transformationsManager.isTransforming) &&
+            now - this.lastMouseMoveTime < this.mouseMoveThrottleMs) {
+            return;
+        }
+
+        this.lastMouseMoveTime = now;
+
         const point = event.position || this.getMousePosition(event.originalEvent);
 
         if (!point || typeof point.x === 'undefined' || typeof point.y === 'undefined') {
@@ -416,6 +426,11 @@ export class PDFCanvasVanilla {
      * Gestionnaire de touches clavier
      */
     handleKeyDown(event) {
+        // Ignorer si un élément de formulaire est focus
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
         switch (event.key) {
             case 'Delete':
             case 'Backspace':
@@ -425,6 +440,24 @@ export class PDFCanvasVanilla {
                 break;
             case 'Escape':
                 this.deselectElement();
+                break;
+            case 'a':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                    this.selectAll();
+                }
+                break;
+            case 'd':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                    this.selectNone();
+                }
+                break;
+            case 'i':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                    this.invertSelection();
+                }
                 break;
             case 'z':
                 if (event.ctrlKey || event.metaKey) {
@@ -438,7 +471,63 @@ export class PDFCanvasVanilla {
                     this.redo();
                 }
                 break;
+            case 'ArrowUp':
+            case 'ArrowDown':
+            case 'ArrowLeft':
+            case 'ArrowRight':
+                this.handleArrowKey(event);
+                break;
         }
+    }
+
+    /**
+     * Gestionnaire des touches fléchées pour déplacement précis
+     */
+    handleArrowKey(event) {
+        const selectedElements = this.selectionManager.getSelectedElements();
+        if (selectedElements.length === 0) return;
+
+        event.preventDefault();
+
+        // Calculer le déplacement
+        const step = event.shiftKey ? 10 : 1; // Shift pour déplacement plus grand
+        let deltaX = 0;
+        let deltaY = 0;
+
+        switch (event.key) {
+            case 'ArrowUp':
+                deltaY = -step;
+                break;
+            case 'ArrowDown':
+                deltaY = step;
+                break;
+            case 'ArrowLeft':
+                deltaX = -step;
+                break;
+            case 'ArrowRight':
+                deltaX = step;
+                break;
+        }
+
+        // Appliquer le snapping si activé
+        if (this.options.snapToGrid) {
+            const snapped = this.snapToGrid(deltaX, deltaY);
+            deltaX = snapped.x;
+            deltaY = snapped.y;
+        }
+
+        // Déplacer tous les éléments sélectionnés
+        selectedElements.forEach(element => {
+            const newX = element.properties.x + deltaX;
+            const newY = element.properties.y + deltaY;
+
+            this.updateElementProperty(element.id, 'x', newX);
+            this.updateElementProperty(element.id, 'y', newY);
+        });
+
+        // Sauvegarder dans l'historique
+        this.historyManager.saveState();
+        this.render();
     }
 
     /**
@@ -556,14 +645,28 @@ export class PDFCanvasVanilla {
         // Pour la compatibilité, utiliser le premier élément sélectionné
         this.selectedElement = selectedElements[0];
 
+        // Calculer les bounds des éléments sélectionnés pour les contraintes
+        const bounds = this.calculateSelectionBounds(selectedElements);
+
         this.dragState = {
-            startPoint: point,
+            startPoint: { ...point },
+            currentPoint: { ...point },
             elementStartPositions: selectedElements.map(element => ({
                 id: element.id,
                 x: (element.properties && element.properties.x) || 0,
-                y: (element.properties && element.properties.y) || 0
-            }))
+                y: (element.properties && element.properties.y) || 0,
+                originalX: (element.properties && element.properties.x) || 0,
+                originalY: (element.properties && element.properties.y) || 0
+            })),
+            bounds: bounds,
+            snapped: false,
+            lastSnappedPosition: null
         };
+
+        // Activer le feedback visuel si configuré
+        if (this.options.dragFeedback) {
+            this.canvas.style.cursor = 'grabbing';
+        }
     }
 
     /**
@@ -572,27 +675,273 @@ export class PDFCanvasVanilla {
     handleDrag(point) {
         if (!this.dragState || !this.dragState.elementStartPositions) return;
 
-        const deltaX = point.x - this.dragState.startPoint.x;
-        const deltaY = point.y - this.dragState.startPoint.y;
+        // Mettre à jour la position actuelle
+        this.dragState.currentPoint = { ...point };
+
+        let deltaX = point.x - this.dragState.startPoint.x;
+        let deltaY = point.y - this.dragState.startPoint.y;
+
+        // Appliquer le snapping à la grille si activé
+        if (this.options.snapToGrid) {
+            const snappedDelta = this.snapToGrid(deltaX, deltaY);
+            deltaX = snappedDelta.x;
+            deltaY = snappedDelta.y;
+            this.dragState.snapped = snappedDelta.snapped;
+        }
+
+        // Appliquer les contraintes de canvas si activé
+        if (this.options.constrainToCanvas) {
+            const constrainedDelta = this.constrainToCanvas(deltaX, deltaY, this.dragState.bounds);
+            deltaX = constrainedDelta.x;
+            deltaY = constrainedDelta.y;
+        }
+
+        // Calculer la nouvelle position pour vérification du snapping
+        const newPosition = {
+            x: this.dragState.elementStartPositions[0].originalX + deltaX,
+            y: this.dragState.elementStartPositions[0].originalY + deltaY
+        };
+
+        // Mettre à jour la position snapped pour feedback visuel
+        this.dragState.lastSnappedPosition = newPosition;
 
         // Déplacer tous les éléments sélectionnés
         this.dragState.elementStartPositions.forEach(startPos => {
             const element = this.elements.get(startPos.id);
             if (element) {
-                this.updateElementProperty(startPos.id, 'x', startPos.x + deltaX);
-                this.updateElementProperty(startPos.id, 'y', startPos.y + deltaY);
+                const newX = startPos.originalX + deltaX;
+                const newY = startPos.originalY + deltaY;
+
+                // Mise à jour directe des propriétés sans déclencher de re-rendu complet
+                element.properties.x = newX;
+                element.properties.y = newY;
+                element.updatedAt = Date.now();
             }
         });
 
-        this.render();
+        // Rendu optimisé pendant le drag
+        this.renderDragOptimized();
     }
 
     /**
      * Termine le glisser-déposer
      */
     endDrag() {
+        if (!this.dragState) return;
+
+        // Restaurer le curseur
+        if (this.options.dragFeedback) {
+            this.canvas.style.cursor = this.getCursorForMode(this.mode);
+        }
+
+        // Sauvegarder dans l'historique seulement si les éléments ont effectivement bougé
+        const hasMoved = this.dragState.elementStartPositions.some(startPos => {
+            const element = this.elements.get(startPos.id);
+            return element &&
+                   (element.properties.x !== startPos.originalX ||
+                    element.properties.y !== startPos.originalY);
+        });
+
+        if (hasMoved) {
+            this.historyManager.saveState();
+        }
+
+        // Nettoyer l'état de drag
         this.dragState = null;
-        this.saveToHistory();
+
+        // Rendu final complet
+        this.render();
+    }
+
+    /**
+     * Calcule les bounds des éléments sélectionnés
+     */
+    calculateSelectionBounds(elements) {
+        if (elements.length === 0) return null;
+
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        elements.forEach(element => {
+            const props = element.properties;
+            const x = props.x || 0;
+            const y = props.y || 0;
+            const width = props.width || 100;
+            const height = props.height || 50;
+
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x + width);
+            maxY = Math.max(maxY, y + height);
+        });
+
+        return {
+            x: minX,
+            y: minY,
+            width: maxX - minX,
+            height: maxY - minY
+        };
+    }
+
+    /**
+     * Applique le snapping à la grille
+     */
+    snapToGrid(deltaX, deltaY) {
+        const gridSize = this.options.gridSize;
+        const snapThreshold = gridSize * 0.3; // 30% de la taille de la grille
+
+        // Calculer la position snapped
+        const snappedX = Math.round(deltaX / gridSize) * gridSize;
+        const snappedY = Math.round(deltaY / gridSize) * gridSize;
+
+        // Vérifier si on est proche assez de la grille pour snapper
+        const distanceX = Math.abs(deltaX - snappedX);
+        const distanceY = Math.abs(deltaY - snappedY);
+
+        const shouldSnapX = distanceX <= snapThreshold;
+        const shouldSnapY = distanceY <= snapThreshold;
+
+        return {
+            x: shouldSnapX ? snappedX : deltaX,
+            y: shouldSnapY ? snappedY : deltaY,
+            snapped: shouldSnapX || shouldSnapY
+        };
+    }
+
+    /**
+     * Contraint le déplacement aux limites du canvas
+     */
+    constrainToCanvas(deltaX, deltaY, bounds) {
+        if (!bounds) return { x: deltaX, y: deltaY };
+
+        const canvasWidth = this.canvas.width;
+        const canvasHeight = this.canvas.height;
+
+        // Calculer les nouvelles positions
+        const newX = bounds.x + deltaX;
+        const newY = bounds.y + deltaY;
+
+        // Appliquer les contraintes
+        let constrainedX = deltaX;
+        let constrainedY = deltaY;
+
+        if (newX < 0) {
+            constrainedX = -bounds.x;
+        } else if (newX + bounds.width > canvasWidth) {
+            constrainedX = canvasWidth - bounds.width - bounds.x;
+        }
+
+        if (newY < 0) {
+            constrainedY = -bounds.y;
+        } else if (newY + bounds.height > canvasHeight) {
+            constrainedY = canvasHeight - bounds.height - bounds.y;
+        }
+
+        return { x: constrainedX, y: constrainedY };
+    }
+
+    /**
+     * Rendu optimisé pendant le drag (seulement les éléments en mouvement)
+     */
+    renderDragOptimized() {
+        if (!this.dragState) return;
+
+        // Éviter les appels récursifs
+        if (this.isRendering) return;
+        this.isRendering = true;
+
+        try {
+            // Effacer le canvas
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Dessiner la grille si activée
+            if (this.options.showGrid) {
+                this.drawGrid();
+            }
+
+            // Rendre tous les éléments SAUF ceux en cours de déplacement
+            const draggedElementIds = new Set(
+                this.dragState.elementStartPositions.map(pos => pos.id)
+            );
+
+            for (const element of this.elements.values()) {
+                if (!draggedElementIds.has(element.id)) {
+                    try {
+                        this.renderer.renderElement(element, element.properties);
+                    } catch (error) {
+                        // Ignore render errors during drag
+                    }
+                }
+            }
+
+            // Rendre les éléments en cours de déplacement avec feedback visuel
+            this.dragState.elementStartPositions.forEach(startPos => {
+                const element = this.elements.get(startPos.id);
+                if (element) {
+                    this.renderElementWithDragFeedback(element);
+                }
+            });
+
+            // Dessiner la sélection et les transformations
+            this.selectionManager.render(this.ctx);
+            this.transformationsManager.render(this.ctx);
+
+        } finally {
+            this.isRendering = false;
+        }
+    }
+
+    /**
+     * Rend un élément avec feedback visuel pendant le drag
+     */
+    renderElementWithDragFeedback(element) {
+        const props = element.properties;
+
+        // Sauvegarder le contexte
+        this.ctx.save();
+
+        // Appliquer les transformations
+        this.ctx.translate(props.x + props.width / 2, props.y + props.height / 2);
+        if (props.rotation) {
+            this.ctx.rotate((props.rotation * Math.PI) / 180);
+        }
+        this.ctx.translate(-props.width / 2, -props.height / 2);
+
+        // Appliquer l'opacité
+        if (props.opacity !== undefined) {
+            const opacity = props.opacity;
+            if (opacity <= 1) {
+                this.ctx.globalAlpha = opacity * 0.8; // Plus transparent pendant le drag
+            } else if (opacity <= 100) {
+                this.ctx.globalAlpha = (opacity / 100) * 0.8;
+            }
+        } else {
+            this.ctx.globalAlpha = 0.8; // Transparence par défaut pendant le drag
+        }
+
+        // Ajouter une ombre pour le feedback visuel
+        this.ctx.shadowColor = 'rgba(0, 123, 255, 0.5)';
+        this.ctx.shadowBlur = 8;
+        this.ctx.shadowOffsetX = 2;
+        this.ctx.shadowOffsetY = 2;
+
+        // Rendu selon le type d'élément
+        switch (element.type) {
+            case 'text':
+                this.renderTextElement(element);
+                break;
+            case 'rectangle':
+                this.renderRectangleElement(element);
+                break;
+            case 'image':
+                this.renderImageElement(element);
+                break;
+            default:
+                this.renderGenericElement(element);
+                break;
+        }
+
+        // Restaurer le contexte
+        this.ctx.restore();
     }
 
     /**
@@ -615,9 +964,23 @@ export class PDFCanvasVanilla {
             }
         }
 
+        // Pendant le drag, afficher un curseur spécial
+        if (this.dragState) {
+            if (this.dragState.snapped) {
+                this.canvas.style.cursor = 'grabbing';
+            } else {
+                this.canvas.style.cursor = 'grabbing';
+            }
+            return;
+        }
+
         // Sinon, vérifier les éléments pour le déplacement
         const element = this.getElementAtPoint(point);
-        this.canvas.style.cursor = element ? 'move' : 'default';
+        if (element) {
+            this.canvas.style.cursor = 'grab';
+        } else {
+            this.canvas.style.cursor = 'default';
+        }
     }
 
     /**
@@ -833,6 +1196,120 @@ export class PDFCanvasVanilla {
      */
     setGrid(enabled) {
         this.options.showGrid = enabled;
+        this.render();
+    }
+
+    /**
+     * Active/désactive le snapping à la grille
+     */
+    setSnapToGrid(enabled) {
+        this.options.snapToGrid = enabled;
+    }
+
+    /**
+     * Active/désactive les contraintes de canvas
+     */
+    setConstrainToCanvas(enabled) {
+        this.options.constrainToCanvas = enabled;
+    }
+
+    /**
+     * Active/désactive le feedback visuel pendant le drag
+     */
+    setDragFeedback(enabled) {
+        this.options.dragFeedback = enabled;
+    }
+
+    /**
+     * Définit la taille de la grille
+     */
+    setGridSize(size) {
+        this.options.gridSize = Math.max(5, Math.min(100, size));
+        if (this.options.showGrid) {
+            this.render();
+        }
+    }
+
+    /**
+     * Active/désactive le snapping à la grille
+     */
+    setSnapToGrid(enabled) {
+        this.options.snapToGrid = enabled;
+    }
+
+    /**
+     * Active/désactive les contraintes de canvas
+     */
+    setConstrainToCanvas(enabled) {
+        this.options.constrainToCanvas = enabled;
+    }
+
+    /**
+     * Active/désactive le feedback visuel pendant le drag
+     */
+    setDragFeedback(enabled) {
+        this.options.dragFeedback = enabled;
+    }
+
+    /**
+     * Définit la taille de la grille
+     */
+    setGridSize(size) {
+        this.options.gridSize = Math.max(5, Math.min(100, size));
+        if (this.options.showGrid) {
+            this.render();
+        }
+    }
+
+    /**
+     * Sélectionne tous les éléments
+     */
+    selectAll() {
+        this.selectionManager.clearSelection();
+        for (const element of this.elements.values()) {
+            this.selectionManager.selectAtPoint(
+                {
+                    x: element.properties.x + element.properties.width / 2,
+                    y: element.properties.y + element.properties.height / 2
+                },
+                true // multi-select
+            );
+        }
+        this.render();
+    }
+
+    /**
+     * Désélectionne tous les éléments
+     */
+    selectNone() {
+        this.selectionManager.clearSelection();
+        this.selectedElement = null;
+        this.render();
+    }
+
+    /**
+     * Inverse la sélection actuelle
+     */
+    invertSelection() {
+        const currentlySelected = new Set(this.selectionManager.getSelectedElementIds());
+        const allElementIds = Array.from(this.elements.keys());
+
+        this.selectionManager.clearSelection();
+
+        for (const elementId of allElementIds) {
+            if (!currentlySelected.has(elementId)) {
+                const element = this.elements.get(elementId);
+                if (element) {
+                    this.selectionManager.selectAtPoint(
+                        {
+                            x: element.properties.x + element.properties.width / 2,
+                            y: element.properties.y + element.properties.height / 2
+                        },
+                        true
+                    );
+                }
+            }
+        }
         this.render();
     }
 
