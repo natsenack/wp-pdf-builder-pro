@@ -622,7 +622,8 @@ async function initializeCanvas() {
         gridSize: 10,
         canvasElementId: 'pdf-builder-canvas',
         elementsContainerId: 'elements-container',
-        propertiesPanelId: 'properties-content'
+        propertiesPanelId: 'properties-content',
+        version: '1.0.0'
     };
     
     // console.log removed

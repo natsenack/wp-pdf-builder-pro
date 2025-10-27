@@ -642,6 +642,9 @@ export class PDFCanvasVanilla {
         
         return {
             elements: serialized,
+            canvasWidth: this.options.width || 595,
+            canvasHeight: this.options.height || 842,
+            version: this.options.version || '1.0.0',
             settings: {
                 width: this.options.width,
                 height: this.options.height,
