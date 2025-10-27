@@ -115,6 +115,38 @@ export class PDFCanvasCore {
             this.ctx.globalAlpha = opacity;
         }
 
+        // Mode lowQuality : rendu simplifié
+        if (options.lowQuality) {
+            this._renderElementLowQuality(element);
+        } else {
+            this._renderElementNormal(element);
+        }
+
+        this.ctx.restore();
+    }
+
+    /**
+     * Rendu simplifié pour le mode lowQuality (pendant le drag)
+     * @private
+     */
+    _renderElementLowQuality(element) {
+        const p = element.properties || {};
+        
+        // Rendu très basique : juste un rectangle coloré
+        this.ctx.fillStyle = p.backgroundColor || p.fillColor || '#cccccc';
+        this.ctx.fillRect(0, 0, p.width || 100, p.height || 50);
+        
+        // Bordure simple
+        this.ctx.strokeStyle = '#999999';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(0, 0, p.width || 100, p.height || 50);
+    }
+
+    /**
+     * Rendu normal complet
+     * @private
+     */
+    _renderElementNormal(element) {
         // Rendre selon le type
         switch (element.type) {
             case 'text':
@@ -163,8 +195,6 @@ export class PDFCanvasCore {
             default:
                 this._drawPlaceholder(element);
         }
-
-        this.ctx.restore();
     }
 
     /**
