@@ -270,24 +270,34 @@ export class PDFCanvasVanilla {
 
         this.elements.clear();
         templateData.elements.forEach(elementData => {
-            // Conversion des unités mm vers pixels si nécessaire
+            // Conversion des unités vers pixels si nécessaire
             const properties = { ...elementData.properties };
             
-            // Facteur de conversion mm vers pixels (A4: 210mm = 595px)
-            const MM_TO_PX = 595 / 210; // ≈ 2.833
+            // Récupérer l'unité depuis les settings
+            const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
             
-            // Si les positions semblent être en mm (valeurs réalistes pour une page A4)
-            if (properties.x !== undefined && properties.x > 0 && properties.x < 300) {
-                properties.x = Math.round(properties.x * MM_TO_PX);
+            // Facteurs de conversion vers pixels (A4: 210mm = 595px)
+            const conversions = {
+                'mm': 595 / 210,  // ≈ 2.833
+                'cm': 595 / 21,   // ≈ 28.333
+                'in': 595 / 8.27, // ≈ 72.0 (1 inch = 25.4mm, 210mm/25.4 ≈ 8.27 inches)
+                'px': 1            // Pas de conversion
+            };
+            
+            const factor = conversions[unit] || conversions['mm'];
+            
+            // Convertir les dimensions vers pixels
+            if (properties.x !== undefined) {
+                properties.x = Math.round(properties.x * factor);
             }
-            if (properties.y !== undefined && properties.y > 0 && properties.y < 300) {
-                properties.y = Math.round(properties.y * MM_TO_PX);
+            if (properties.y !== undefined) {
+                properties.y = Math.round(properties.y * factor);
             }
-            if (properties.width !== undefined && properties.width > 0 && properties.width < 300) {
-                properties.width = Math.round(properties.width * MM_TO_PX);
+            if (properties.width !== undefined) {
+                properties.width = Math.round(properties.width * factor);
             }
-            if (properties.height !== undefined && properties.height > 0 && properties.height < 300) {
-                properties.height = Math.round(properties.height * MM_TO_PX);
+            if (properties.height !== undefined) {
+                properties.height = Math.round(properties.height * factor);
             }
             
             this.addElement(elementData.type, properties);
@@ -651,18 +661,28 @@ export class PDFCanvasVanilla {
     serializeElements() {
         const serialized = [];
         
-        // Facteur de conversion pixels vers mm (A4: 595px = 210mm)
-        const PX_TO_MM = 210 / 595; // ≈ 0.353
+        // Récupérer l'unité depuis les settings
+        const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+        
+        // Facteurs de conversion depuis pixels
+        const conversions = {
+            'mm': 210 / 595,  // ≈ 0.353
+            'cm': 21 / 595,   // ≈ 0.0353
+            'in': 8.27 / 595, // ≈ 0.0139
+            'px': 1            // Pas de conversion
+        };
+        
+        const factor = conversions[unit] || conversions['mm'];
         
         for (const [id, element] of this.elements) {
-            // Convertir les positions de pixels vers mm pour la sauvegarde
+            // Convertir les positions de pixels vers l'unité configurée
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: Math.round((element.properties.x || 0) * PX_TO_MM),
-                y: Math.round((element.properties.y || 0) * PX_TO_MM),
-                width: Math.round((element.properties.width || 100) * PX_TO_MM),
-                height: Math.round((element.properties.height || 50) * PX_TO_MM),
+                x: Math.round((element.properties.x || 0) * factor),
+                y: Math.round((element.properties.y || 0) * factor),
+                width: Math.round((element.properties.width || 100) * factor),
+                height: Math.round((element.properties.height || 50) * factor),
                 ...element.properties  // Inclure toutes les autres propriétés
             };
             
