@@ -73,8 +73,24 @@ function PDFBuilderContent({
             backgroundColor: '#f8f8f8',
             border: '1px solid #e0e0e0',
             borderRadius: '4px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            position: 'relative'
           }}>
+            {/* Indicateur de dimensions A4 */}
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              backgroundColor: 'rgba(0, 122, 204, 0.9)',
+              color: 'white',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              zIndex: 10
+            }}>
+              A4: {width}×{height}px
+            </div>
             <Canvas
               width={width}
               height={height}

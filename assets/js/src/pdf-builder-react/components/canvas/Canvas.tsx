@@ -12,6 +12,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
+  // Log des dimensions pour debug
+  console.log('Canvas dimensions:', { width, height, expectedA4: width === 794 && height === 1123 });
+
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -241,9 +244,10 @@ export function Canvas({ width, height, className }: CanvasProps) {
       className={className}
       onClick={handleCanvasClick}
       style={{
-        border: '1px solid #ccc',
+        border: '3px solid #007acc', // Bordure bleue distinctive pour identifier le canvas A4
         cursor: 'crosshair',
-        backgroundColor: state.canvas.backgroundColor
+        backgroundColor: '#ffffff', // Fond blanc pour simuler le papier
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // Ombre légère
       }}
     />
   );
