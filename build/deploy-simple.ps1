@@ -60,6 +60,11 @@ try {
     # Filtrer pour le dossier plugin uniquement
     $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" }
     
+    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
+    $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
+    $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+    $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
+    
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
         Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
