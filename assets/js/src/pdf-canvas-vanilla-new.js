@@ -742,3 +742,4 @@ export class PDFCanvasVanilla {
 }
 
 export default PDFCanvasVanilla;
+// Force rebuild
