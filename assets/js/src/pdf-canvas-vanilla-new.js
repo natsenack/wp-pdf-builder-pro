@@ -633,11 +633,18 @@ export class PDFCanvasVanilla {
         const serialized = [];
         
         for (const [id, element] of this.elements) {
-            serialized.push({
+            // Aplatir les propriétés principales au niveau racine
+            const elementData = {
                 id: element.id,
                 type: element.type,
-                properties: element.properties
-            });
+                x: element.properties.x || 0,
+                y: element.properties.y || 0,
+                width: element.properties.width || 100,
+                height: element.properties.height || 50,
+                ...element.properties  // Inclure toutes les autres propriétés
+            };
+            
+            serialized.push(elementData);
         }
         
         return {
