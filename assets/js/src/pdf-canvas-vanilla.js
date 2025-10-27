@@ -266,7 +266,7 @@ export class PDFCanvasVanilla {
         this.elements.clear();
 
         templateData.elements.forEach(elementData => {
-            this.addElement(elementData.type, elementData);
+            this.addElement(elementData);
         });
     }
 

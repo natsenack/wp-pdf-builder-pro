@@ -213,17 +213,24 @@ export class PDFCanvasRenderer {
                 return;
             }
 
+            const props = element.properties;
+
             // Appliquer les transformations
-            this.applyTransforms(element.properties, computedProperties);
+            this.applyTransforms(props, computedProperties);
 
             // Appliquer les effets visuels
-            this.applyVisualEffects(element.properties);
+            this.applyVisualEffects(props);
 
             // Rendre selon le type
             this.renderByType(element);
 
+            // Rendre la boîte limite pour debug (très subtil)
+            if (this.mainInstance.options.showElementBounds !== false) {
+                this.renderElementBounds(props);
+            }
+
             // Appliquer les filtres post-rendu
-            this.applyPostFilters(element.properties);
+            this.applyPostFilters(props);
 
         } finally {
             this.ctx.restore();
@@ -232,6 +239,15 @@ export class PDFCanvasRenderer {
         // Mettre à jour les statistiques
         this.performanceStats.renderTime += performance.now() - startTime;
         this.performanceStats.elementCount++;
+    }
+
+    /**
+     * Rend les limites d'un élément (boîte de délimitation)
+     */
+    renderElementBounds(props) {
+        this.ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
+        this.ctx.lineWidth = 0.5;
+        this.ctx.strokeRect(0, 0, props.width || 100, props.height || 50);
     }
 
     /**
@@ -390,31 +406,71 @@ export class PDFCanvasRenderer {
     }
 
     /**
-     * Rend un élément WooCommerce comme du texte
+     * Rend un élément WooCommerce avec rendu intelligente
      */
     renderWooCommerceElement(element) {
+        const props = element.properties;
+        const elementType = element.type;
         
         // Obtenir le texte depuis le gestionnaire WooCommerce
         let displayText = '';
         if (this.mainInstance && this.mainInstance.wooCommerceManager) {
-            displayText = this.mainInstance.wooCommerceManager.getElementDisplayText(element.type);
+            displayText = this.mainInstance.wooCommerceManager.getElementDisplayText(elementType);
         }
         
-        // Créer une copie des propriétés avec le texte
+        // Créer un élément texte avec le contenu réel
         const textElement = {
             ...element,
             properties: {
                 ...element.properties,
-                text: displayText || `[${element.type}]`
+                text: displayText || `[${elementType}]`
             }
         };
         
-        // Rendre comme du texte
+        // Rendre comme du texte avec style approprié
         this.renderText(textElement);
+        
+        // Ajouter un petit indicateur visuel selon le type pour mieux identifier les éléments
+        this.addWooCommerceTypeIndicator(element, displayText);
     }
 
     /**
-     * Rend du texte avec effets avancés
+     * Ajoute un petit indicateur visuel pour identifier le type d'élément WooCommerce
+     */
+    addWooCommerceTypeIndicator(element, displayText) {
+        const props = element.properties;
+        
+        // Ne pas afficher d'indicateur si le texte remplit déjà l'espace
+        if (!displayText || displayText.length < 5) return;
+        
+        // Déterminer l'icône selon le type
+        let icon = '';
+        const type = element.type;
+        
+        if (type.includes('invoice') || type.includes('invoice-number')) icon = '📄';
+        else if (type.includes('order') && type.includes('number')) icon = '🛒';
+        else if (type.includes('customer') && type.includes('name')) icon = '👤';
+        else if (type.includes('email')) icon = '📧';
+        else if (type.includes('address')) icon = '📍';
+        else if (type.includes('payment')) icon = '💳';
+        else if (type.includes('status')) icon = '✓';
+        else if (type.includes('subtotal') || type.includes('total') || type.includes('shipping') || type.includes('taxes')) icon = '💰';
+        else if (type.includes('products') || type.includes('table')) icon = '📦';
+        else if (type.includes('quote')) icon = '📋';
+        
+        // Afficher l'icône de manière subtile en bas à droite
+        if (icon && props.width > 40 && props.height > 20) {
+            this.ctx.save();
+            this.ctx.font = 'bold 10px Arial, sans-serif';
+            this.ctx.fillStyle = 'rgba(100, 116, 139, 0.4)';
+            this.ctx.textAlign = 'right';
+            this.ctx.fillText(icon, props.width - 4, props.height - 2);
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Rend du texte avec effets avancés et support multi-ligne
      */
     renderText(element) {
         const props = element.properties;
@@ -425,6 +481,14 @@ export class PDFCanvasRenderer {
             return;
         }
 
+        // Sauvegarder le contexte pour limiter le clipping
+        this.ctx.save();
+        
+        // Créer un clipping rect pour s'assurer que le texte ne déborde pas
+        this.ctx.beginPath();
+        this.ctx.rect(0, 0, props.width || 100, props.height || 50);
+        this.ctx.clip();
+
         // Configuration de la police
         const fontStyle = this.buildFontString(props);
         this.ctx.font = fontStyle;
@@ -433,32 +497,50 @@ export class PDFCanvasRenderer {
 
         // Position de départ
         let x = 0;
-        let y = 0;
+        let y = 5; // Petit padding en haut
 
-        // Ajuster selon l'alignement
+        // Traiter le texte multi-ligne
         const text = props.text || '';
-        const metrics = this.ctx.measureText(text);
-
+        const lines = text.split('\n');
+        const lineHeight = (props.fontSize || 14) * 1.3;
+        
+        // Ajuster la position selon l'alignement horizontal
         if (props.textAlign === 'center') {
             x = (props.width || 100) / 2;
         } else if (props.textAlign === 'right') {
-            x = props.width || 100;
+            x = (props.width || 100) - 5;
+        } else {
+            x = 5; // Petit padding à gauche
         }
 
-        // Rendu du texte avec effets
-        if (props.textDecoration) {
-            this.renderTextDecoration(text, x, y, props, metrics);
-        }
+        // Rendre chaque ligne
+        lines.forEach((line, index) => {
+            const lineY = y + (index * lineHeight);
+            
+            // Vérifier que la ligne rentre dans la boîte
+            if (lineY + (props.fontSize || 14) > (props.height || 50)) {
+                return; // Couper si hors de la boîte
+            }
 
-        // Rendu principal du texte
-        this.ctx.fillText(text, x, y);
+            // Rendre la décoration si première ligne
+            if (index === 0 && props.textDecoration) {
+                const metrics = this.ctx.measureText(line);
+                this.renderTextDecoration(line, x, lineY, props, metrics);
+            }
 
-        // Contour du texte si spécifié
-        if (props.strokeWidth && props.strokeWidth > 0) {
-            this.ctx.strokeStyle = props.strokeColor || '#000000';
-            this.ctx.lineWidth = props.strokeWidth;
-            this.ctx.strokeText(text, x, y);
-        }
+            // Rendre la ligne de texte
+            this.ctx.fillText(line, x, lineY);
+
+            // Rendu du contour si spécifié
+            if (props.strokeWidth && props.strokeWidth > 0) {
+                this.ctx.strokeStyle = props.strokeColor || '#000000';
+                this.ctx.lineWidth = props.strokeWidth;
+                this.ctx.strokeText(line, x, lineY);
+            }
+        });
+
+        // Restaurer le contexte
+        this.ctx.restore();
     }
 
     /**
