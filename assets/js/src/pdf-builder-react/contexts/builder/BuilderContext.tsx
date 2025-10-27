@@ -38,6 +38,11 @@ const initialHistoryState: HistoryState = {
     selection: initialSelectionState,
     drag: initialDragState,
     mode: 'select',
+    template: {
+      isNew: true,
+      isModified: false,
+      isSaving: false
+    },
     history: {} as HistoryState // Sera défini récursivement
   } as BuilderState,
   future: [],
@@ -54,6 +59,11 @@ const initialState: BuilderState = {
   selection: initialSelectionState,
   drag: initialDragState,
   mode: 'select',
+  template: {
+    isNew: true,
+    isModified: false,
+    isSaving: false
+  },
   history: initialHistoryState
 };
 
@@ -181,6 +191,66 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
 
     case 'RESET':
       return initialState;
+
+    case 'SAVE_TEMPLATE':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          isNew: false,
+          isModified: false,
+          isSaving: false,
+          lastSaved: new Date(),
+          id: action.payload?.id || state.template.id,
+          name: action.payload?.name || state.template.name
+        }
+      };
+
+    case 'SET_TEMPLATE_MODIFIED':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          isModified: action.payload
+        }
+      };
+
+    case 'SET_TEMPLATE_SAVING':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          isSaving: action.payload
+        }
+      };
+
+    case 'LOAD_TEMPLATE':
+      return {
+        ...state,
+        elements: action.payload.elements || [],
+        template: {
+          id: action.payload.id,
+          name: action.payload.name,
+          isNew: false,
+          isModified: false,
+          isSaving: false,
+          lastSaved: action.payload.lastSaved
+        },
+        history: updateHistory(state, {
+          ...state,
+          elements: action.payload.elements || []
+        })
+      };
+
+    case 'NEW_TEMPLATE':
+      return {
+        ...initialState,
+        template: {
+          isNew: true,
+          isModified: false,
+          isSaving: false
+        }
+      };
 
     default:
       return state;
@@ -379,3 +449,5 @@ export function useCanvas() {
     setBackgroundColor: (color: string) => setCanvas({ backgroundColor: color })
   };
 }
+
+export { BuilderContext };

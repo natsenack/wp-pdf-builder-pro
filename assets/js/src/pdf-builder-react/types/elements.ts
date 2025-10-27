@@ -11,6 +11,15 @@ export interface Size {
 
 export interface Bounds extends Point, Size {}
 
+export interface TemplateState {
+  id?: string;
+  name?: string;
+  isNew: boolean;
+  isModified: boolean;
+  isSaving: boolean;
+  lastSaved?: Date;
+}
+
 export interface BaseElement {
   id: string;
   type: string;
@@ -64,6 +73,8 @@ export interface BuilderState {
   drag: DragState;
   mode: BuilderMode;
   history: HistoryState;
+  // Propriétés du template
+  template: TemplateState;
 }
 
 export type BuilderMode =
@@ -118,7 +129,12 @@ export type BuilderAction =
   | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
   | { type: 'UNDO' }
   | { type: 'REDO' }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string } }
+  | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
+  | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
+  | { type: 'LOAD_TEMPLATE'; payload: { id?: string; name?: string; elements?: Element[]; lastSaved?: Date } }
+  | { type: 'NEW_TEMPLATE' };
 
 // Props des composants
 export interface CanvasProps {

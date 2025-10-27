@@ -3,6 +3,8 @@ import { BuilderProvider } from './contexts/builder/BuilderContext';
 import { Canvas } from './components/canvas/Canvas';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { PropertiesPanel } from './components/properties/PropertiesPanel';
+import { Header } from './components/header/Header';
+import { useTemplate } from './hooks/useTemplate';
 
 interface PDFBuilderProps {
   width?: number;
@@ -10,23 +12,46 @@ interface PDFBuilderProps {
   className?: string;
 }
 
-export function PDFBuilder({
+function PDFBuilderContent({
   width = 800,
   height = 600,
   className
 }: PDFBuilderProps) {
+  const {
+    templateName,
+    isNewTemplate,
+    isModified,
+    isSaving,
+    saveTemplate,
+    previewTemplate,
+    newTemplate
+  } = useTemplate();
+
   return (
-    <BuilderProvider>
-      <div className={`pdf-builder ${className || ''}`} style={{
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        gap: '12px',
-        padding: '12px',
-        backgroundColor: '#ffffff',
-        border: '1px solid #ddd',
-        borderRadius: '8px'
-      }}>
+    <div className={`pdf-builder ${className || ''}`} style={{
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      height: '100%',
+      gap: '12px',
+      padding: '12px',
+      backgroundColor: '#ffffff',
+      border: '1px solid #ddd',
+      borderRadius: '8px'
+    }}>
+      {/* Header en haut */}
+      <Header
+        templateName={templateName}
+        isNewTemplate={isNewTemplate}
+        isModified={isModified}
+        isSaving={isSaving}
+        onSave={saveTemplate}
+        onPreview={previewTemplate}
+        onNewTemplate={newTemplate}
+      />
+
+      {/* Contenu principal */}
+      <div style={{ display: 'flex', flex: 1, gap: '12px' }}>
         {/* Toolbar à gauche */}
         <div style={{ flexShrink: 0 }}>
           <Toolbar />
@@ -56,6 +81,22 @@ export function PDFBuilder({
           <PropertiesPanel />
         </div>
       </div>
+    </div>
+  );
+}
+
+export function PDFBuilder({
+  width = 800,
+  height = 600,
+  className
+}: PDFBuilderProps) {
+  return (
+    <BuilderProvider>
+      <PDFBuilderContent
+        width={width}
+        height={height}
+        className={className}
+      />
     </BuilderProvider>
   );
 }
