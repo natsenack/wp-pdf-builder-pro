@@ -271,11 +271,12 @@ export class PDFCanvasVanilla {
     handleMouseDown(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
-            // Invalid event in handleMouseDown
+            console.log('handleMouseDown: undefined');
             return;
         }
 
-        const point = this.getMousePosition(event);
+        // Utiliser la position normalisée depuis l'EventManager
+        const point = event.position || this.getMousePosition(event.originalEvent);
 
         switch (this.mode) {
             case 'select':
@@ -299,7 +300,7 @@ export class PDFCanvasVanilla {
             return;
         }
         
-        const point = this.getMousePosition(event);
+        const point = event.position || this.getMousePosition(event.originalEvent);
 
         // Gérer les transformations en cours
         if (this.transformationsManager.isTransforming) {
@@ -327,10 +328,11 @@ export class PDFCanvasVanilla {
     handleMouseUp(event) {
         // Vérifier que l'événement est valide
         if (!event || typeof event.preventDefault !== 'function') {
+            console.log('handleMouseUp');
             return;
         }
         
-        const point = this.getMousePosition(event);
+        const point = event.position || this.getMousePosition(event.originalEvent);
 
         // Terminer les transformations
         if (this.transformationsManager.isTransforming) {
@@ -481,8 +483,8 @@ export class PDFCanvasVanilla {
      * Gère le mode sélection
      */
     handleSelectMode(point, event) {
-        // Utiliser les modificateurs depuis l'événement DOM
-        const ctrlKey = event.ctrlKey || event.originalEvent?.ctrlKey;
+        // Utiliser les modificateurs depuis l'événement normalisé
+        const ctrlKey = event.modifiers?.ctrl || event.ctrlKey || event.originalEvent?.ctrlKey;
         const multiSelect = ctrlKey;
 
         // Vérifier d'abord si on clique sur un handle de transformation pour les éléments sélectionnés
