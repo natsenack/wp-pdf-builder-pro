@@ -621,16 +621,24 @@ function initializeCanvas() {
     
     // console.log removed
     
+    console.log('🔍 Vérification window.PDFBuilderPro:', typeof window.PDFBuilderPro);
+    console.log('🔍 Vérification PDFCanvasVanilla:', typeof window.PDFBuilderPro?.PDFCanvasVanilla);
+    console.log('🔍 Paramètres:', canvasOptions);
+    
     try {
         // Initialiser le canvas avec PDFCanvasVanilla
         // console.log removed
         
         // ✅ Créer une instance de PDFCanvasVanilla (c'est une classe)
+        console.log('🚀 Création instance PDFCanvasVanilla...');
         var canvas = new window.PDFBuilderPro.PDFCanvasVanilla('pdf-canvas-container', canvasOptions);
+        console.log('✅ Instance créée:', canvas);
         window.pdfCanvasInstance = canvas;
         
         // ✅ Initialiser le canvas
+        console.log('🚀 Appel canvas.init()...');
         canvas.init();
+        console.log('✅ canvas.init() complété');
         
         // console.log removed
         
