@@ -54,6 +54,25 @@ export class PDFCanvasCore {
     }
 
     /**
+     * Rendu d'un élément individuel (pour rendu sélectif)
+     * @param {Object} element - Élément à rendre
+     * @param {Object} options - Options du canvas
+     */
+    renderElement(element, options = {}) {
+        this._renderElement(element, options);
+    }
+
+    /**
+     * Rendu de la sélection d'un élément (pour rendu sélectif)
+     * @param {Object} element - Élément sélectionné
+     * @param {Object} options - Options du canvas
+     */
+    renderSelection(element, options = {}) {
+        this._drawSelection(element);
+        this._drawHandles(element);
+    }
+
+    /**
      * Dessine la grille
      * @private
      */

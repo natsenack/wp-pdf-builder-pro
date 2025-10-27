@@ -66,6 +66,10 @@ export class PDFCanvasVanilla {
         // Optimisation du rendu avec RAF
         this.pendingFrame = null;
         this.isDirty = false;
+        
+        // Rendu sélectif (dirty rectangles)
+        this.dirtyRegions = [];
+        this.renderScheduled = false;
     }
 
     /**
@@ -318,17 +322,21 @@ export class PDFCanvasVanilla {
         this.isRendering = true;
 
         try {
-            // console.log(`🎨 [render] Éléments: ${this.elements.size}`);
-            const selectedIds = this.selectionManager.getSelectedElementIds();
-            // console.log(`🎨 [render] Appel renderEngine.renderAll() avec ${this.elements.size} éléments`);
-            
-            this.renderEngine.renderAll(this.elements, selectedIds, this.options);
+            // Rendu sélectif si des régions sont marquées comme sales
+            if (this.dirtyRegions.length > 0) {
+                this.renderSelective();
+            } else {
+                // Rendu complet normal
+                const selectedIds = this.selectionManager.getSelectedElementIds();
+                this.renderEngine.renderAll(this.elements, selectedIds, this.options);
+            }
             // console.log(`✅ [render] Rendu COMPLÉTÉ`);
         } catch (error) {
             console.error('❌ [render] Render error:', error);
             console.error('❌ Stack:', error.stack);
         } finally {
             this.isRendering = false;
+            this.dirtyRegions = []; // Reset après rendu
         }
     }
 
@@ -336,16 +344,75 @@ export class PDFCanvasVanilla {
      * Optimisation RAF - Planifie un rendu
      */
     scheduleRender() {
-        this.isDirty = true;
-        if (this.pendingFrame) return;
-
+        if (this.renderScheduled) return;
+        this.renderScheduled = true;
+        
         this.pendingFrame = requestAnimationFrame(() => {
             this.pendingFrame = null;
+            this.renderScheduled = false;
             if (this.isDirty) {
                 this.isDirty = false;
                 this.render();
             }
         });
+    }
+
+    /**
+     * Rendu sélectif - Ne redessine que les régions modifiées
+     */
+    renderSelective() {
+        const selectedIds = this.selectionManager.getSelectedElementIds();
+        
+        // Effacer seulement les régions sales
+        this.dirtyRegions.forEach(region => {
+            this.ctx.clearRect(region.x, region.y, region.width, region.height);
+        });
+        
+        // Redessiner seulement les éléments affectés
+        this.elements.forEach(element => {
+            if (this.isElementInDirtyRegion(element)) {
+                this.renderEngine.renderElement(element, this.options);
+            }
+        });
+        
+        // Redessiner la sélection si nécessaire
+        if (selectedIds.length > 0) {
+            selectedIds.forEach(id => {
+                const element = this.elements.get(id);
+                if (element && this.isElementInDirtyRegion(element)) {
+                    this.renderEngine.renderSelection(element, this.options);
+                }
+            });
+        }
+    }
+
+    /**
+     * Marque une région comme sale (à redessiner)
+     */
+    markDirty(element) {
+        if (!element || !element.properties) return;
+        
+        const region = {
+            x: element.properties.x - 10,
+            y: element.properties.y - 10,
+            width: element.properties.width + 20,
+            height: element.properties.height + 20
+        };
+        this.dirtyRegions.push(region);
+    }
+
+    /**
+     * Vérifie si un élément est dans une région sale
+     */
+    isElementInDirtyRegion(element) {
+        if (!element || !element.properties) return false;
+        
+        return this.dirtyRegions.some(region => 
+            element.properties.x < region.x + region.width &&
+            element.properties.x + element.properties.width > region.x &&
+            element.properties.y < region.y + region.height &&
+            element.properties.y + element.properties.height > region.y
+        );
     }
 
     /**
@@ -560,15 +627,21 @@ export class PDFCanvasVanilla {
         const deltaX = point.x - this.dragState.startPoint.x;
         const deltaY = point.y - this.dragState.startPoint.y;
 
-        // Optimisation: mettre à jour seulement les éléments qui ont bougé
+        // Mettre à jour les éléments et marquer les régions comme sales
         this.dragState.elementStartPositions.forEach(startPos => {
             const element = this.elements.get(startPos.id);
             if (element) {
                 const newX = startPos.x + deltaX;
                 const newY = startPos.y + deltaY;
                 
+                // Marquer l'ancienne position comme sale
+                this.markDirty(element);
+                
                 element.properties.x = newX;
                 element.properties.y = newY;
+                
+                // Marquer la nouvelle position comme sale
+                this.markDirty(element);
             }
         });
     }
