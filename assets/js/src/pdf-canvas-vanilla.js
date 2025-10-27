@@ -269,7 +269,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse down
      */
     handleMouseDown(event) {
-        if (!event || typeof event.preventDefault !== 'function') {
+        // Accepter les événements DOM et les événements normalisés
+        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
             console.warn('Invalid event in handleMouseDown');
             return;
         }
@@ -293,7 +294,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse move
      */
     handleMouseMove(event) {
-        if (!event || typeof event.preventDefault !== 'function') {
+        // Accepter les événements DOM et les événements normalisés
+        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
             console.warn('Invalid event in handleMouseMove');
             return;
         }
@@ -324,7 +326,8 @@ export class PDFCanvasVanilla {
      * Gestionnaire d'événement mouse up
      */
     handleMouseUp(event) {
-        if (!event || typeof event.preventDefault !== 'function') {
+        // Accepter les événements DOM et les événements normalisés
+        if (!event || (!event.position && typeof event.preventDefault !== 'function' && !event.originalEvent)) {
             console.warn('Invalid event in handleMouseUp');
             return;
         }
@@ -1198,6 +1201,30 @@ export class PDFCanvasVanilla {
             console.error('Failed to import JSON:', error);
             return false;
         }
+    }
+
+    /**
+     * Obtient la position de la souris relative au canvas
+     */
+    getMousePosition(event) {
+        // Pour les événements normalisés (depuis PDFCanvasEventManager)
+        if (event.position) {
+            return event.position;
+        }
+
+        // Pour les événements DOM directs
+        if (event.originalEvent) {
+            event = event.originalEvent;
+        }
+
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
+        return {
+            x: (event.clientX - rect.left) * scaleX,
+            y: (event.clientY - rect.top) * scaleY
+        };
     }
 
     /**
