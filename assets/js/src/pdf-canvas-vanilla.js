@@ -445,15 +445,6 @@ export class PDFCanvasVanilla {
     }
 
     /**
-     * Rend le canvas complet
-     */
-    render() {
-        if (this.renderer) {
-            this.renderer.render();
-        }
-    }
-
-    /**
      * Obtient la position de la souris relative au canvas
      */
     getMousePosition(event) {
