@@ -39,10 +39,26 @@ export function useTemplate() {
       let elements = [];
       let canvas = null;
       try {
-        elements = templateData.elements ? JSON.parse(templateData.elements) : [];
-        canvas = templateData.canvas ? JSON.parse(templateData.canvas) : null;
+        // Check if elements is already an object or needs parsing
+        if (typeof templateData.elements === 'string') {
+          elements = JSON.parse(templateData.elements);
+        } else if (Array.isArray(templateData.elements)) {
+          elements = templateData.elements;
+        } else {
+          elements = [];
+        }
+
+        // Same for canvas
+        if (typeof templateData.canvas === 'string') {
+          canvas = JSON.parse(templateData.canvas);
+        } else if (templateData.canvas && typeof templateData.canvas === 'object') {
+          canvas = templateData.canvas;
+        } else {
+          canvas = null;
+        }
       } catch (parseError) {
         console.error('Erreur lors du parsing des données du template:', parseError);
+        console.error('Données reçues:', templateData);
         elements = [];
         canvas = null;
       }
