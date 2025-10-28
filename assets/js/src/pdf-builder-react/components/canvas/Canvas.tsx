@@ -381,19 +381,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
       // Calcul de la position Y absolue pour cette ligne
       const rowY = currentY + index * (rowHeight + 4);
 
-      // Fond alterné pour les lignes
+      // Fond alterné pour les lignes (sans bordures)
       if (showAlternatingRows && index % 2 === 1) {
         ctx.fillStyle = props.alternateRowColor || '#f9fafb';
         ctx.fillRect(1, rowY, element.width - 2, rowHeight);
       }
-
-      // Ligne de séparation au-dessus de la ligne (bordure haute)
-      ctx.strokeStyle = '#e5e7eb';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(8, rowY);
-      ctx.lineTo(element.width - 8, rowY);
-      ctx.stroke();
 
       ctx.fillStyle = '#000000';
 
