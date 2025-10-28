@@ -500,6 +500,77 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Famille de police
+            </label>
+            <select
+              value={(element as any).fontFamily || 'Arial'}
+              onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Tahoma">Tahoma</option>
+              <option value="Trebuchet MS">Trebuchet MS</option>
+              <option value="Calibri">Calibri</option>
+              <option value="Cambria">Cambria</option>
+              <option value="Segoe UI">Segoe UI</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Épaisseur de police
+            </label>
+            <select
+              value={(element as any).fontWeight || 'normal'}
+              onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="normal">Normal (400)</option>
+              <option value="bold">Gras (700)</option>
+              <option value="lighter">Fin (300)</option>
+              <option value="bolder">Très gras (900)</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Style de police
+            </label>
+            <select
+              value={(element as any).fontStyle || 'normal'}
+              onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="normal">Normal</option>
+              <option value="italic">Italique</option>
+              <option value="oblique">Oblique</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Alignement du texte
             </label>
             <select

@@ -556,6 +556,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 12;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
     const layout = props.layout || 'vertical';
     const showHeaders = props.showHeaders !== false;
     const showBorders = props.showBorders !== false;
@@ -576,7 +579,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     ctx.fillStyle = props.textColor || '#000000';
-    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize + 2}px ${fontFamily}`;
     ctx.textAlign = 'left';
 
     let y = showHeaders ? 25 : 15;
@@ -667,6 +670,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 12;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
     const textAlign = props.textAlign || 'left';
     const theme = (props.theme || 'corporate') as keyof typeof themes;
     const showHeaders = props.showHeaders !== false; // Par défaut true
@@ -757,11 +763,14 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Afficher le nom de l'entreprise si demandé
     if (showCompanyName) {
       ctx.fillStyle = headerTxtColor;
-      ctx.font = `bold ${Math.round(fontSize * 1.2)}px Arial`;
+      ctx.font = `${fontStyle} bold ${Math.round(fontSize * 1.2)}px ${fontFamily}`;
       ctx.fillText(companyData.name, x, y);
       y += Math.round(fontSize * 1.5);
       ctx.fillStyle = txtColor;
     }
+
+    // Police normale pour les autres éléments
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 
     // Afficher l'adresse si demandée
     if (showAddress) {
