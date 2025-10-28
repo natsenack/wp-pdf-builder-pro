@@ -5,6 +5,7 @@ interface HeaderProps {
   isNewTemplate: boolean;
   isModified: boolean;
   isSaving: boolean;
+  isEditingExistingTemplate: boolean;
   onSave: () => void;
   onPreview: () => void;
   onNewTemplate: () => void;
@@ -15,6 +16,7 @@ export function Header({
   isNewTemplate,
   isModified,
   isSaving,
+  isEditingExistingTemplate,
   onSave,
   onPreview,
   onNewTemplate
@@ -203,10 +205,10 @@ export function Header({
             opacity: (isSaving || !isModified) ? 0.6 : 1,
             pointerEvents: (isSaving || !isModified) ? 'none' : 'auto'
           }}
-          title={isModified ? 'Enregistrer les modifications' : 'Aucune modification'}
+          title={isModified ? (isEditingExistingTemplate ? 'Modifier le modèle' : 'Enregistrer les modifications') : 'Aucune modification'}
         >
           <span>{isSaving ? '⟳' : '💾'}</span>
-          <span>{isSaving ? 'Enregistrement...' : 'Enregistrer'}</span>
+          <span>{isSaving ? 'Enregistrement...' : (isEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
         </button>
       </div>
 

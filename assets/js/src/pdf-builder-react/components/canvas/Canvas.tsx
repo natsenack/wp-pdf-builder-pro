@@ -3,6 +3,7 @@ import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { Point, Element } from '../../types/elements';
+import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 
 interface CanvasProps {
   width: number;
@@ -217,7 +218,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.closePath();
   };
 
-  // Fonctions de rendu WooCommerce avec données fictives
+  // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
   const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const showHeaders = props.showHeaders !== false;
@@ -230,53 +231,83 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showShipping = props.showShipping !== false;
     const showTax = props.showTax !== false;
     const showGlobalDiscount = props.showGlobalDiscount !== false;
-    const shippingCost = props.shippingCost || 8.50; // Exemple de frais de port
-    const taxRate = props.taxRate || 20; // Exemple de TVA 20%
-    const globalDiscount = props.globalDiscount || 5; // Exemple de coupon panier "PROMO5" (5% sur le total)
-    const orderFees = props.orderFees || 2.50; // Exemple de frais de commande
 
-    // Données fictives plus réalistes de produits WooCommerce
-    // Données d'exemple WooCommerce avec remises de coupons appliqués
-    const products = [
-      {
-        sku: 'TSHIRT-001',
-        name: 'T-shirt Premium Bio',
-        description: 'T-shirt en coton biologique, coupe slim',
-        qty: 2,
-        price: 29.99,
-        discount: 0, // Pas de remise individuelle sur ce produit
-        total: 59.98
-      },
-      {
-        sku: 'JEAN-045',
-        name: 'Jean Slim Fit Noir',
-        description: 'Jean stretch confort, taille haute',
-        qty: 1,
-        price: 89.99,
-        discount: 10.00, // Remise de 10€ via coupon "ETE2025"
-        total: 79.99
-      },
-      {
-        sku: 'SHOES-089',
-        name: 'Chaussures Running Pro',
-        description: 'Chaussures de running avec semelle amortissante',
-        qty: 1,
-        price: 129.99,
-        discount: 0, // Pas de remise individuelle
-        total: 129.99
-      },
-      {
-        sku: 'HOODIE-112',
-        name: 'Sweat à Capuche',
-        description: 'Sweat molletonné, capuche ajustable',
-        qty: 1,
-        price: 49.99,
-        discount: 5.00,
-        total: 44.99
-      }
-    ];
+    let products: Array<{
+      sku: string;
+      name: string;
+      description: string;
+      qty: number;
+      price: number;
+      discount: number;
+      total: number;
+    }>;
+    let shippingCost: number;
+    let taxRate: number;
+    let globalDiscount: number;
+    let orderFees: number;
+    let currency: string;
 
-    // Calcul du total avec remises
+    // Utiliser les données WooCommerce si en mode commande, sinon données fictives
+    if (state.previewMode === 'command' && wooCommerceManager.getOrderData()) {
+      const orderData = wooCommerceManager.getOrderData()!;
+      const orderItems = wooCommerceManager.getOrderItems();
+      const orderTotals = wooCommerceManager.getOrderTotals();
+
+      products = orderItems;
+      shippingCost = orderTotals.shipping;
+      taxRate = orderTotals.tax > 0 ? (orderTotals.tax / orderTotals.subtotal) * 100 : 20;
+      globalDiscount = orderTotals.discount;
+      orderFees = 0; // Les frais de commande sont déjà inclus dans les items
+      currency = orderData.currency;
+    } else {
+      // Données fictives pour le mode éditeur
+      shippingCost = props.shippingCost || 8.50;
+      taxRate = props.taxRate || 20;
+      globalDiscount = props.globalDiscount || 5;
+      orderFees = props.orderFees || 2.50;
+      currency = '€';
+
+      products = [
+        {
+          sku: 'TSHIRT-001',
+          name: 'T-shirt Premium Bio',
+          description: 'T-shirt en coton biologique, coupe slim',
+          qty: 2,
+          price: 29.99,
+          discount: 0,
+          total: 59.98
+        },
+        {
+          sku: 'JEAN-045',
+          name: 'Jean Slim Fit Noir',
+          description: 'Jean stretch confort, taille haute',
+          qty: 1,
+          price: 89.99,
+          discount: 10.00,
+          total: 79.99
+        },
+        {
+          sku: 'SHOES-089',
+          name: 'Chaussures Running Pro',
+          description: 'Chaussures de running avec semelle amortissante',
+          qty: 1,
+          price: 129.99,
+          discount: 0,
+          total: 129.99
+        },
+        {
+          sku: 'HOODIE-112',
+          name: 'Sweat à Capuche',
+          description: 'Sweat molletonné, capuche ajustable',
+          qty: 1,
+          price: 49.99,
+          discount: 5.00,
+          total: 44.99
+        }
+      ];
+    }
+
+    // Calcul du total avec remises (même logique pour données fictives et réelles)
     const subtotal = products.reduce((sum, product) => sum + (product.price * product.qty), 0);
     const itemDiscounts = products.reduce((sum, product) => sum + product.discount, 0);
     const subtotalAfterItemDiscounts = subtotal - itemDiscounts;
@@ -286,9 +317,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Appliquer la remise globale sur le sous-total incluant les frais de commande (seulement si affichée)
     const globalDiscountAmount = (globalDiscount > 0 && showGlobalDiscount) ? (subtotalWithOrderFees * globalDiscount / 100) : 0;
-    const subtotalAfterGlobalDiscount = subtotalWithOrderFees - globalDiscountAmount;
-
-    // Ajouter les frais de port (seulement si affichés)
+    const subtotalAfterGlobalDiscount = subtotalWithOrderFees - globalDiscountAmount;    // Ajouter les frais de port (seulement si affichés)
     const subtotalWithShipping = subtotalAfterGlobalDiscount + (showShipping ? shippingCost : 0);
 
     // Calculer les taxes (seulement si affichées)
@@ -296,9 +325,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Total final
     const finalTotal = subtotalWithShipping + taxAmount;
-
-    // Devise par défaut (géré par WooCommerce)
-    const currency = '€';
 
     // Configuration des colonnes
     interface TableColumn {
@@ -533,13 +559,25 @@ export function Canvas({ width, height, className }: CanvasProps) {
       ctx.fillStyle = props.textColor || '#000000';
     }
 
-    // Informations client fictives
-    const customerData = {
-      name: 'Marie Dupont',
-      address: '15 rue des Lilas, 75001 Paris',
-      email: 'marie.dupont@email.com',
-      phone: '+33 6 12 34 56 78'
+    // Informations client fictives ou réelles selon le mode
+    let customerData: {
+      name: string;
+      address: string;
+      email: string;
+      phone: string;
     };
+
+    if (state.previewMode === 'command') {
+      customerData = wooCommerceManager.getCustomerInfo();
+    } else {
+      // Données fictives pour le mode éditeur
+      customerData = {
+        name: 'Marie Dupont',
+        address: '15 rue des Lilas, 75001 Paris',
+        email: 'marie.dupont@email.com',
+        phone: '+33 6 12 34 56 78'
+      };
+    }
 
     ctx.font = `${fontSize}px Arial`;
 
@@ -609,15 +647,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     let y = 20;
 
-    // Informations entreprise fictives
+    // Informations entreprise hybrides : props configurables + valeurs par défaut
     const companyData = {
-      name: 'Ma Boutique En Ligne',
-      address: '25 avenue des Commerçants',
-      city: '69000 Lyon',
-      siret: 'SIRET: 123 456 789 00012',
-      tva: 'TVA: FR 12 345 678 901',
-      email: 'contact@maboutique.com',
-      phone: '+33 4 12 34 56 78'
+      name: props.companyName || 'Ma Boutique En Ligne',
+      address: props.companyAddress || '25 avenue des Commerçants',
+      city: props.companyCity || '69000 Lyon',
+      siret: props.companySiret || 'SIRET: 123 456 789 00012',
+      tva: props.companyTva || 'TVA: FR 12 345 678 901',
+      email: props.companyEmail || 'contact@maboutique.com',
+      phone: props.companyPhone || '+33 4 12 34 56 78'
     };
 
     ctx.fillText(companyData.name, 0, y);
@@ -682,8 +720,18 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.font = `bold ${fontSize}px Arial`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
-    const orderNumber = 'CMD-2024-01234';
-    const orderDate = '27/10/2024';
+    // Numéro de commande et date fictifs ou réels selon le mode
+    let orderNumber: string;
+    let orderDate: string;
+
+    if (state.previewMode === 'command') {
+      orderNumber = wooCommerceManager.getOrderNumber();
+      orderDate = wooCommerceManager.getOrderDate();
+    } else {
+      // Données fictives pour le mode éditeur
+      orderNumber = 'CMD-2024-01234';
+      orderDate = '27/10/2024';
+    }
 
     let x = textAlign === 'right' ? element.width - 10 : textAlign === 'center' ? element.width / 2 : 10;
 
@@ -704,12 +752,34 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.font = `${fontSize}px Arial`;
     ctx.textAlign = 'left';
 
-    // Remplacer les variables par des valeurs fictives
+    // Remplacer les variables par des valeurs fictives ou réelles selon le mode
+    let orderNumber: string;
+    let customerName: string;
+    let orderDate: string;
+    let total: string;
+
+    if (state.previewMode === 'command') {
+      const orderData = wooCommerceManager.getOrderData();
+      const customerInfo = wooCommerceManager.getCustomerInfo();
+      const orderTotals = wooCommerceManager.getOrderTotals();
+
+      orderNumber = wooCommerceManager.getOrderNumber();
+      customerName = customerInfo.name;
+      orderDate = wooCommerceManager.getOrderDate();
+      total = `${orderTotals.total.toFixed(2)}${orderTotals.currency}`;
+    } else {
+      // Données fictives pour le mode éditeur
+      orderNumber = 'CMD-2024-01234';
+      customerName = 'Marie Dupont';
+      orderDate = '27/10/2024';
+      total = '279.96€';
+    }
+
     const processedText = template
-      .replace('#{order_number}', 'CMD-2024-01234')
-      .replace('#{customer_name}', 'Marie Dupont')
-      .replace('#{order_date}', '27/10/2024')
-      .replace('#{total}', '279.96€');
+      .replace('#{order_number}', orderNumber)
+      .replace('#{customer_name}', customerName)
+      .replace('#{order_date}', orderDate)
+      .replace('#{total}', total);
 
     ctx.fillText(processedText, 10, 25);
   };
@@ -718,24 +788,21 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const props = element as any;
     const fontSize = props.fontSize || 10;
     const textAlign = props.textAlign || 'left';
+    const text = props.text || 'SARL au capital de 10 000€ - RCS Lyon 123 456 789\nTVA FR 12 345 678 901 - SIRET 123 456 789 00012\ncontact@maboutique.com - +33 4 12 34 56 78';
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
 
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = props.textColor || '#666666';
     ctx.font = `${fontSize}px Arial`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
-    const mentions = [
-      'SARL au capital de 10 000€ - RCS Lyon 123 456 789',
-      'TVA FR 12 345 678 901 - SIRET 123 456 789 00012',
-      'contact@maboutique.com - +33 4 12 34 56 78'
-    ];
-
+    const mentions = text.split('\n');
     let y = 15;
-    mentions.forEach(mention => {
-      ctx.fillText(mention, textAlign === 'center' ? element.width / 2 : 10, y);
-      y += 12;
+    mentions.forEach((mention: string) => {
+      const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width - 10 : 10;
+      ctx.fillText(mention, x, y);
+      y += fontSize + 2;
     });
   };
 

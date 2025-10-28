@@ -43,6 +43,7 @@ const initialHistoryState: HistoryState = {
       isModified: false,
       isSaving: false
     },
+    previewMode: 'editor',
     history: {} as HistoryState // Sera défini récursivement
   } as BuilderState,
   future: [],
@@ -64,6 +65,7 @@ const initialState: BuilderState = {
     isModified: false,
     isSaving: false
   },
+  previewMode: 'editor',
   history: initialHistoryState
 };
 
@@ -159,6 +161,18 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       return {
         ...state,
         drag: { ...state.drag, ...action.payload }
+      };
+
+    case 'SET_PREVIEW_MODE':
+      return {
+        ...state,
+        previewMode: action.payload
+      };
+
+    case 'SET_ORDER_ID':
+      return {
+        ...state,
+        orderId: action.payload
       };
 
     case 'UNDO':

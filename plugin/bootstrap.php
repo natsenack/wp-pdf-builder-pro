@@ -285,6 +285,19 @@ function pdf_builder_ensure_admin_menu() {
             $pdf_builder_core = $core;
             $core->render_settings_page();
         }
+
+        // Fonction callback pour la page React Editor
+        function pdf_builder_react_editor_page_callback() {
+            if (!is_user_logged_in()) {
+                wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
+            }
+
+            pdf_builder_load_core_when_needed();
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            global $pdf_builder_core;
+            $pdf_builder_core = $core;
+            $core->render_react_editor_page();
+        }
     }
 
     global $menu;
@@ -337,8 +350,16 @@ function pdf_builder_ensure_admin_menu() {
             'Settings',
             'read',  // Changé pour permettre à tous les utilisateurs connectés
             'pdf-builder-settings',
-            'pdf-builder-settings',
             'pdf_builder_settings_page_callback'
+        );
+
+        add_submenu_page(
+            'pdf-builder-main',
+            'React Editor',
+            'React Editor',
+            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'pdf-builder-react-editor',
+            'pdf_builder_react_editor_page_callback'
         );
     }
 }

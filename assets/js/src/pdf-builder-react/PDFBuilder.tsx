@@ -26,6 +26,7 @@ function PDFBuilderContent({
     isNewTemplate,
     isModified,
     isSaving,
+    isEditingExistingTemplate,
     saveTemplate,
     previewTemplate,
     newTemplate
@@ -53,6 +54,7 @@ function PDFBuilderContent({
         isNewTemplate={isNewTemplate}
         isModified={isModified}
         isSaving={isSaving}
+        isEditingExistingTemplate={isEditingExistingTemplate}
         onSave={saveTemplate}
         onPreview={previewTemplate}
         onNewTemplate={newTemplate}

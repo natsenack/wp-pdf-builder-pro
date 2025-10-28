@@ -936,6 +936,41 @@ class PDF_Builder_Core
 
         return $tag;
     }
+
+    /**
+     * Page de l'éditeur React
+     */
+    public function render_react_editor_page()
+    {
+        // Récupérer le template_id depuis l'URL si présent
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
+            <?php if ($template_id): ?>
+                <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
+            <?php else: ?>
+                <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
+            <?php endif; ?>
+
+            <div id="pdf-builder-react-editor-container">
+                <!-- Le contenu React sera chargé ici -->
+                <p><?php _e('Loading PDF Builder React Editor...', 'pdf-builder-pro'); ?></p>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            // Passer les données à React
+            window.pdfBuilderData = {
+                templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
+                isEditing: <?php echo $template_id ? 'true' : 'false'; ?>,
+                ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
+            };
+        </script>
+        <?php
+    }
 }
 
 // Empêcher l'accès direct

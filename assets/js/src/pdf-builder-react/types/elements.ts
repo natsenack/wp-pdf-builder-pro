@@ -75,6 +75,9 @@ export interface BuilderState {
   history: HistoryState;
   // Propriétés du template
   template: TemplateState;
+  // Mode de prévisualisation (éditeur vs commande)
+  previewMode: 'editor' | 'command';
+  orderId?: string;
 }
 
 export type BuilderMode =
@@ -127,6 +130,8 @@ export type BuilderAction =
   | { type: 'SET_CANVAS'; payload: Partial<CanvasState> }
   | { type: 'SET_MODE'; payload: BuilderMode }
   | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
+  | { type: 'SET_PREVIEW_MODE'; payload: 'editor' | 'command' }
+  | { type: 'SET_ORDER_ID'; payload: string | undefined }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'RESET' }
