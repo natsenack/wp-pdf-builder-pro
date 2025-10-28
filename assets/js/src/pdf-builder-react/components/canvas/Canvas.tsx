@@ -48,7 +48,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     // Dessiner les éléments
-    state.elements.forEach(element => {
+    console.log('Canvas rendering', state.elements.length, 'elements');
+    state.elements.forEach((element, index) => {
+      console.log(`Drawing element ${index}:`, element.type, 'at', element.x, element.y);
       drawElement(ctx, element);
     });
 

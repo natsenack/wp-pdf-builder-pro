@@ -46,6 +46,7 @@ export function useTemplate() {
       });
 
       console.log('Template chargé avec succès:', templateData);
+      console.log('Éléments chargés:', templateData.elements?.length || 0, 'éléments');
 
     } catch (error) {
       console.error('Erreur lors du chargement du template:', error);

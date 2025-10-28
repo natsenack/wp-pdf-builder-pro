@@ -240,22 +240,23 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE':
+      console.log('LOAD_TEMPLATE action dispatched with', (action.payload as any).elements?.length || 0, 'elements');
       return {
         ...state,
-        elements: action.payload.elements || [],
-        canvas: action.payload.canvas ? { ...state.canvas, ...action.payload.canvas } : state.canvas,
+        elements: (action.payload as any).elements || [],
+        canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas,
         template: {
-          id: action.payload.id,
-          name: action.payload.name,
+          id: (action.payload as any).id,
+          name: (action.payload as any).name,
           isNew: false,
           isModified: false,
           isSaving: false,
-          lastSaved: action.payload.lastSaved
+          lastSaved: (action.payload as any).lastSaved
         },
         history: updateHistory(state, {
           ...state,
-          elements: action.payload.elements || [],
-          canvas: action.payload.canvas ? { ...state.canvas, ...action.payload.canvas } : state.canvas
+          elements: (action.payload as any).elements || [],
+          canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas
         })
       };
 
