@@ -239,7 +239,7 @@ export function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Créer un nouveau modèle"
+          title="Créer un nouveau template"
         >
           <span>➕</span>
           <span>Nouveau</span>
@@ -254,7 +254,7 @@ export function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Aperçu du modèle"
+          title="Aperçu du template"
         >
           <span>👁️</span>
           <span>Aperçu</span>
@@ -271,7 +271,7 @@ export function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Paramètres du modèle"
+          title="Paramètres du template"
         >
           <span>⚙️</span>
           <span>Paramètres</span>
@@ -294,14 +294,14 @@ export function Header({
             opacity: (isSaving || !isModified) ? 0.6 : 1,
             pointerEvents: (isSaving || !isModified) ? 'none' : 'auto'
           }}
-          title={isModified ? (isEditingExistingTemplate ? 'Modifier le modèle' : 'Enregistrer les modifications') : 'Aucune modification'}
+          title={isModified ? (isEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') : 'Aucune modification'}
         >
           <span>{isSaving ? '⟳' : '💾'}</span>
           <span>{isSaving ? 'Enregistrement...' : (isEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
         </button>
       </div>
 
-      {/* Modale des paramètres */}
+      {/* Modale des paramètres du template */}
       {showSettingsModal && (
         <div style={{
           position: 'fixed',
@@ -334,7 +334,7 @@ export function Header({
               paddingBottom: '16px'
             }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#1a1a1a' }}>
-                Paramètres du modèle
+                Paramètres du template
               </h3>
               <button
                 onClick={() => setShowSettingsModal(false)}
@@ -369,7 +369,7 @@ export function Header({
                     fontSize: '14px',
                     backgroundColor: '#ffffff'
                   }}
-                  placeholder="Entrez le nom du modèle"
+                  placeholder="Entrez le nom du template"
                 />
               </div>
 
@@ -389,7 +389,7 @@ export function Header({
                     minHeight: '60px',
                     resize: 'vertical'
                   }}
-                  placeholder="Description du modèle..."
+                  placeholder="Description du template..."
                 />
               </div>
 
@@ -608,7 +608,7 @@ export function Header({
                       fontSize: '12px',
                       fontWeight: '500'
                     }}>
-                      Nouveau modèle
+                      Nouveau template
                     </span>
                   )}
                   {isModified && (
@@ -643,7 +643,7 @@ export function Header({
                   Informations système
                 </label>
                 <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.5' }}>
-                  <div>Modèle ID: {templateName || 'N/A'}</div>
+                  <div>Template ID: {templateName || 'N/A'}</div>
                   <div>Dernière modification: {new Date().toLocaleString('fr-FR')}</div>
                   <div>État: {isSaving ? 'Enregistrement...' : isModified ? 'Modifié' : 'Sauvegardé'}</div>
                 </div>
