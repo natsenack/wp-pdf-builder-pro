@@ -205,7 +205,7 @@ export function Header({
             opacity: (isSaving || !isModified) ? 0.6 : 1,
             pointerEvents: (isSaving || !isModified) ? 'none' : 'auto'
           }}
-          title={`isModified: ${isModified}, isSaving: ${isSaving}, isEditingExistingTemplate: ${isEditingExistingTemplate}`}
+          title={isModified ? (isEditingExistingTemplate ? 'Modifier le modèle' : 'Enregistrer les modifications') : 'Aucune modification'}
         >
           <span>{isSaving ? '⟳' : '💾'}</span>
           <span>{isSaving ? 'Enregistrement...' : (isEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>

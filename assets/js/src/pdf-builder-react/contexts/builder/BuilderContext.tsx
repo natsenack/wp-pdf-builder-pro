@@ -74,7 +74,6 @@ const initialState: BuilderState = {
 function builderReducer(state: BuilderState, action: BuilderAction): BuilderState {
   switch (action.type) {
     case 'ADD_ELEMENT':
-      console.log('ADD_ELEMENT: Setting isModified to true');
       return {
         ...state,
         elements: [...state.elements, action.payload],
@@ -89,7 +88,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'UPDATE_ELEMENT':
-      console.log('UPDATE_ELEMENT: Setting isModified to true');
       return {
         ...state,
         elements: state.elements.map(el =>
@@ -112,7 +110,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'REMOVE_ELEMENT':
-      console.log('REMOVE_ELEMENT: Setting isModified to true');
       return {
         ...state,
         elements: state.elements.filter(el => el.id !== action.payload),
