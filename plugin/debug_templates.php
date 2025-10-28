@@ -4,10 +4,12 @@
  * À placer sur le serveur et exécuter via URL
  */
 
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(__FILE__) . '/');
-    require_once ABSPATH . 'wp-load.php';
+// Charger WordPress de manière sécurisée
+$wp_load_path = dirname(__FILE__) . '/../../../wp-load.php';
+if (file_exists($wp_load_path)) {
+    require_once $wp_load_path;
+} else {
+    die('Erreur: Impossible de charger WordPress. Vérifiez le chemin.');
 }
 
 // Headers pour éviter le cache
