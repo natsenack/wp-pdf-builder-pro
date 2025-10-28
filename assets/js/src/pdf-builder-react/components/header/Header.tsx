@@ -23,6 +23,10 @@ export function Header({
 }: HeaderProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [editedTemplateName, setEditedTemplateName] = useState(templateName);
+  const [templateDescription, setTemplateDescription] = useState('');
+  const [templateTags, setTemplateTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState('');
 
   const buttonBaseStyles = {
     padding: '10px 16px',
@@ -293,17 +297,221 @@ export function Header({
                 </label>
                 <input
                   type="text"
-                  value={templateName}
-                  readOnly
+                  value={editedTemplateName}
+                  onChange={(e) => setEditedTemplateName(e.target.value)}
                   style={{
                     width: '100%',
                     padding: '8px 12px',
                     border: '1px solid #ddd',
                     borderRadius: '4px',
                     fontSize: '14px',
-                    backgroundColor: '#f8f8f8'
+                    backgroundColor: '#ffffff'
                   }}
+                  placeholder="Entrez le nom du modèle"
                 />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Description
+                </label>
+                <textarea
+                  value={templateDescription}
+                  onChange={(e) => setTemplateDescription(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    minHeight: '60px',
+                    resize: 'vertical'
+                  }}
+                  placeholder="Description du modèle..."
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Étiquettes (Tags)
+                </label>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  {templateTags.map((tag, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '4px 8px',
+                        backgroundColor: '#e3f2fd',
+                        color: '#1565c0',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {tag}
+                      <button
+                        onClick={() => setTemplateTags(templateTags.filter((_, i) => i !== index))}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#1565c0',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          padding: '0',
+                          lineHeight: '1'
+                        }}
+                        title="Supprimer cette étiquette"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newTag.trim()) {
+                        e.preventDefault();
+                        setTemplateTags([...templateTags, newTag.trim()]);
+                        setNewTag('');
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                    placeholder="Ajouter une étiquette..."
+                  />
+                  <button
+                    onClick={() => {
+                      if (newTag.trim()) {
+                        setTemplateTags([...templateTags, newTag.trim()]);
+                        setNewTag('');
+                      }
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #007bff',
+                      borderRadius: '4px',
+                      backgroundColor: '#007bff',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Ajouter
+                  </button>
+                </div>
+                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                  Appuyez sur Entrée ou cliquez sur "Ajouter" pour ajouter une étiquette
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+                  Paramètres avancés
+                </h4>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Largeur du canvas (px)
+                    </label>
+                    <input
+                      type="number"
+                      defaultValue="595"
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Hauteur du canvas (px)
+                    </label>
+                    <input
+                      type="number"
+                      defaultValue="842"
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Marge supérieure (px)
+                    </label>
+                    <input
+                      type="number"
+                      defaultValue="20"
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Marge inférieure (px)
+                    </label>
+                    <input
+                      type="number"
+                      defaultValue="20"
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '12px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
+                    <input
+                      type="checkbox"
+                      defaultChecked={true}
+                      style={{ margin: 0 }}
+                    />
+                    Afficher les guides d'alignement
+                  </label>
+                </div>
+
+                <div style={{ marginTop: '8px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
+                    <input
+                      type="checkbox"
+                      defaultChecked={false}
+                      style={{ margin: 0 }}
+                    />
+                    Mode grille magnétique
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -374,7 +582,30 @@ export function Header({
                     fontSize: '14px'
                   }}
                 >
-                  Fermer
+                  Annuler
+                </button>
+                <button
+                  onClick={() => {
+                    // Ici on pourrait sauvegarder les paramètres
+                    console.log('Sauvegarde des paramètres:', {
+                      name: editedTemplateName,
+                      description: templateDescription,
+                      tags: templateTags
+                    });
+                    setShowSettingsModal(false);
+                  }}
+                  style={{
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    backgroundColor: '#4CAF50',
+                    color: '#ffffff',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                >
+                  Sauvegarder
                 </button>
               </div>
             </div>
