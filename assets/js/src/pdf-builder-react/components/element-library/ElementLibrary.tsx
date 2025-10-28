@@ -90,6 +90,25 @@ const WOOCOMMERCE_ELEMENTS = [
     }
   },
   {
+    type: 'document_type',
+    label: 'Type de Document',
+    icon: '📄',
+    description: 'Type du document (Facture, Devis, Bon de commande, etc.)',
+    category: 'woocommerce',
+    defaultProps: {
+      x: 50,
+      y: 20,
+      width: 150,
+      height: 40,
+      fontSize: 18,
+      fontFamily: 'Arial',
+      fontWeight: 'bold',
+      textAlign: 'left',
+      backgroundColor: 'transparent',
+      textColor: '#000000'
+    }
+  },
+  {
     type: 'dynamic-text',
     label: 'Texte Dynamique',
     icon: '📝',

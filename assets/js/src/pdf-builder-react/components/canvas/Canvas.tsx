@@ -121,6 +121,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
       case 'order_number':
         drawOrderNumber(ctx, element);
         break;
+      case 'document_type':
+        drawDocumentType(ctx, element);
+        break;
       case 'dynamic-text':
         drawDynamicText(ctx, element);
         break;
@@ -806,6 +809,38 @@ export function Canvas({ width, height, className }: CanvasProps) {
       ctx.fillText(mention, x, y);
       y += fontSize + 2;
     });
+  };
+
+  const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element) => {
+    const props = element as any;
+    const fontSize = props.fontSize || 18;
+    const fontWeight = props.fontWeight || 'bold';
+    const textAlign = props.textAlign || 'left';
+    const textColor = props.textColor || '#000000';
+
+    ctx.fillStyle = props.backgroundColor || 'transparent';
+    ctx.fillRect(0, 0, element.width, element.height);
+
+    ctx.fillStyle = textColor;
+    ctx.font = `${fontWeight} ${fontSize}px Arial`;
+    ctx.textAlign = textAlign as CanvasTextAlign;
+
+    // Type de document fictif ou réel selon le mode
+    let documentType: string;
+
+    if (state.previewMode === 'command') {
+      // En mode commande réel, on pourrait récupérer le type depuis WooCommerce
+      // Pour l'instant, on utilise une valeur par défaut
+      documentType = 'FACTURE';
+    } else {
+      // Données fictives pour le mode éditeur
+      documentType = 'FACTURE';
+    }
+
+    const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width - 10 : 10;
+    const y = element.height / 2 + fontSize / 3; // Centrer verticalement
+
+    ctx.fillText(documentType, x, y);
   };
 
   // Fonction pour dessiner la sélection
