@@ -960,6 +960,468 @@ function renderSpecificProperties(
                         borderColor: '#4b5563',
                         textColor: '#f9fafb'
                       }
+                    },
+                    {
+                      id: 'ocean',
+                      name: 'Océan',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #0ea5e9',
+                          borderRadius: '8px',
+                          backgroundColor: '#f0f9ff',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#0284c7',
+                            borderRadius: '3px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#bae6fd',
+                            borderRadius: '3px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f0f9ff',
+                        headerBackgroundColor: '#0284c7',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#bae6fd',
+                        borderColor: '#0ea5e9',
+                        textColor: '#0c4a6e'
+                      }
+                    },
+                    {
+                      id: 'sunset',
+                      name: 'Coucher',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #f97316',
+                          borderRadius: '12px',
+                          backgroundColor: '#fff7ed',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#ea580c',
+                            borderRadius: '4px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#fed7aa',
+                            borderRadius: '4px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fff7ed',
+                        headerBackgroundColor: '#ea580c',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#fed7aa',
+                        borderColor: '#f97316',
+                        textColor: '#9a3412'
+                      }
+                    },
+                    {
+                      id: 'forest',
+                      name: 'Forêt',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #22c55e',
+                          borderRadius: '6px',
+                          backgroundColor: '#f0fdf4',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#16a34a',
+                            borderRadius: '2px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#bbf7d0',
+                            borderRadius: '2px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f0fdf4',
+                        headerBackgroundColor: '#16a34a',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#bbf7d0',
+                        borderColor: '#22c55e',
+                        textColor: '#14532d'
+                      }
+                    },
+                    {
+                      id: 'royal',
+                      name: 'Royal',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #7c2d12',
+                          borderRadius: '4px',
+                          backgroundColor: '#fef2f2',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#991b1b',
+                            borderRadius: '1px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#fecaca',
+                            borderRadius: '1px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fef2f2',
+                        headerBackgroundColor: '#991b1b',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#fecaca',
+                        borderColor: '#7c2d12',
+                        textColor: '#450a0a'
+                      }
+                    },
+                    {
+                      id: 'clean',
+                      name: 'Propre',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '2px',
+                          backgroundColor: '#ffffff',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '1px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '2px',
+                            backgroundColor: '#f3f4f6'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '2px',
+                            backgroundColor: '#ffffff'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#ffffff',
+                        headerBackgroundColor: '#f3f4f6',
+                        alternateRowColor: '#f9fafb',
+                        borderColor: '#d1d5db',
+                        textColor: '#374151',
+                        headerTextColor: '#111827'
+                      }
+                    },
+                    {
+                      id: 'tech',
+                      name: 'Tech',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #6366f1',
+                          borderRadius: '0px',
+                          backgroundColor: '#f8fafc',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#4f46e5'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#e0e7ff'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f8fafc',
+                        headerBackgroundColor: '#4f46e5',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#e0e7ff',
+                        borderColor: '#6366f1',
+                        textColor: '#312e81'
+                      }
+                    },
+                    {
+                      id: 'vintage',
+                      name: 'Vintage',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '2px solid #92400e',
+                          borderRadius: '0px',
+                          backgroundColor: '#fef3c7',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#b45309',
+                            borderRadius: '0px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#fde68a',
+                            borderRadius: '0px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fef3c7',
+                        headerBackgroundColor: '#b45309',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#fde68a',
+                        borderColor: '#92400e',
+                        textColor: '#78350f'
+                      }
+                    },
+                    {
+                      id: 'berry',
+                      name: 'Baies',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #be185d',
+                          borderRadius: '10px',
+                          backgroundColor: '#fdf2f8',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#db2777',
+                            borderRadius: '5px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#fce7f3',
+                            borderRadius: '5px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fdf2f8',
+                        headerBackgroundColor: '#db2777',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#fce7f3',
+                        borderColor: '#be185d',
+                        textColor: '#831843'
+                      }
+                    },
+                    {
+                      id: 'mint',
+                      name: 'Menthe',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #059669',
+                          borderRadius: '8px',
+                          backgroundColor: '#ecfdf5',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#047857',
+                            borderRadius: '4px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#a7f3d0',
+                            borderRadius: '4px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#ecfdf5',
+                        headerBackgroundColor: '#047857',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#a7f3d0',
+                        borderColor: '#059669',
+                        textColor: '#064e3b'
+                      }
+                    },
+                    {
+                      id: 'lavender',
+                      name: 'Lavande',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #7c3aed',
+                          borderRadius: '12px',
+                          backgroundColor: '#faf5ff',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#6d28d9',
+                            borderRadius: '6px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#e9d5ff',
+                            borderRadius: '6px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#faf5ff',
+                        headerBackgroundColor: '#6d28d9',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#e9d5ff',
+                        borderColor: '#7c3aed',
+                        textColor: '#581c87'
+                      }
+                    },
+                    {
+                      id: 'stone',
+                      name: 'Pierre',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #6b7280',
+                          borderRadius: '0px',
+                          backgroundColor: '#f9fafb',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#4b5563'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#e5e7eb'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f9fafb',
+                        headerBackgroundColor: '#4b5563',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#e5e7eb',
+                        borderColor: '#6b7280',
+                        textColor: '#111827'
+                      }
+                    },
+                    {
+                      id: 'sunshine',
+                      name: 'Soleil',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #f59e0b',
+                          borderRadius: '16px',
+                          backgroundColor: '#fffbeb',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#d97706',
+                            borderRadius: '8px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#fef3c7',
+                            borderRadius: '8px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fffbeb',
+                        headerBackgroundColor: '#d97706',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#fef3c7',
+                        borderColor: '#f59e0b',
+                        textColor: '#92400e'
+                      }
                     }
                   ].map(theme => (
                     <button
