@@ -500,9 +500,31 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
+    // S'assurer que elements est un array (gérer les données stockées de manière incohérente)
+    $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+    if (is_string($elements)) {
+        // Si elements est une string JSON, la décoder
+        $elements = json_decode($elements, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder: Erreur JSON decode elements - ' . json_last_error_msg() . ' - Raw elements: ' . substr($elements, 0, 200));
+            $elements = [];
+        }
+    }
+
+    // S'assurer que canvas est un objet (gérer les données stockées de manière incohérente)
+    $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+    if (is_string($canvas)) {
+        // Si canvas est une string JSON, la décoder
+        $canvas = json_decode($canvas, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder: Erreur JSON decode canvas - ' . json_last_error_msg() . ' - Raw canvas: ' . substr($canvas, 0, 200));
+            $canvas = null;
+        }
+    }
+
     // Vérifier que elements et canvas sont présents
-    if (!isset($template_data['elements']) || !isset($template_data['canvas'])) {
-        error_log('PDF Builder: Missing elements or canvas in template data: ' . print_r($template_data, true));
+    if (empty($elements)) {
+        error_log('PDF Builder: No elements found in template data: ' . print_r($template_data, true));
         wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
     }
@@ -511,8 +533,8 @@ function pdf_builder_ajax_get_template() {
     wp_send_json_success(array(
         'id' => $template['id'],
         'name' => $template['name'],
-        'elements' => isset($template_data['elements']) ? $template_data['elements'] : [],
-        'canvas' => isset($template_data['canvas']) ? $template_data['canvas'] : null,
+        'elements' => $elements,
+        'canvas' => $canvas,
         'created_at' => $template['created_at'],
         'updated_at' => $template['updated_at']
     ));
