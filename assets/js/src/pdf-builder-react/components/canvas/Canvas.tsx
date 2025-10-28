@@ -378,18 +378,21 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.textBaseline = 'middle';
 
     products.forEach((product, index) => {
+      // Calcul de la position Y absolue pour cette ligne
+      const rowY = 45 + index * (rowHeight + 4);
+
       // Ligne de séparation au début de chaque ligne
       ctx.strokeStyle = '#f3f4f6';
       ctx.lineWidth = 0.5;
       ctx.beginPath();
-      ctx.moveTo(8, currentY - 2);
-      ctx.lineTo(element.width - 8, currentY - 2);
+      ctx.moveTo(8, rowY - 2);
+      ctx.lineTo(element.width - 8, rowY - 2);
       ctx.stroke();
 
       // Fond alterné pour les lignes
       if (showAlternatingRows && index % 2 === 1) {
         ctx.fillStyle = props.alternateRowColor || '#f9fafb';
-        ctx.fillRect(1, currentY, element.width - 2, rowHeight);
+        ctx.fillRect(1, rowY, element.width - 2, rowHeight);
       }
 
       ctx.fillStyle = '#000000';
@@ -422,14 +425,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
           text = truncated + '...';
         }
 
-        ctx.fillText(text, textX, currentY + rowHeight / 2);
+        ctx.fillText(text, textX, rowY + rowHeight / 2);
       });
 
-      currentY += rowHeight + 4;
     });
 
+    // Positionnement pour la section des totaux (après toutes les lignes de produits)
+    currentY = 45 + products.length * (rowHeight + 4) + 8;
+
     // Section des totaux
-    currentY += 8;
 
     // Ligne de séparation avant les totaux
     ctx.strokeStyle = '#d1d5db';
