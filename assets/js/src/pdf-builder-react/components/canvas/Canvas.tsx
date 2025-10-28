@@ -501,41 +501,98 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const props = element as any;
     const fontSize = props.fontSize || 12;
     const layout = props.layout || 'vertical';
+    const showHeaders = props.showHeaders !== false;
+    const showBorders = props.showBorders !== false;
+    const showFullName = props.showFullName !== false;
+    const showAddress = props.showAddress !== false;
+    const showEmail = props.showEmail !== false;
+    const showPhone = props.showPhone !== false;
 
-    ctx.fillStyle = props.backgroundColor || 'transparent';
+    // Fond
+    ctx.fillStyle = props.backgroundColor || '#ffffff';
     ctx.fillRect(0, 0, element.width, element.height);
 
-    ctx.fillStyle = '#000000';
+    // Bordures
+    if (showBorders) {
+      ctx.strokeStyle = props.borderColor || '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, element.width, element.height);
+    }
+
+    ctx.fillStyle = props.textColor || '#000000';
     ctx.font = `bold ${fontSize + 2}px Arial`;
     ctx.textAlign = 'left';
 
-    let y = 20;
+    let y = showHeaders ? 25 : 15;
+
+    // En-tête
+    if (showHeaders) {
+      ctx.fillStyle = props.headerTextColor || '#111827';
+      ctx.fillText('Informations Client', 10, y);
+      y += 20;
+      ctx.fillStyle = props.textColor || '#000000';
+    }
 
     // Informations client fictives
     const customerData = {
       name: 'Marie Dupont',
-      address: '15 rue des Lilas',
-      city: '75001 Paris',
+      address: '15 rue des Lilas, 75001 Paris',
       email: 'marie.dupont@email.com',
       phone: '+33 6 12 34 56 78'
     };
 
-    if (layout === 'vertical') {
-      ctx.fillText(customerData.name, 0, y);
-      y += 18;
+    ctx.font = `${fontSize}px Arial`;
 
-      ctx.font = `${fontSize}px Arial`;
-      ctx.fillText(customerData.address, 0, y);
-      y += 15;
-      ctx.fillText(customerData.city, 0, y);
-      y += 18;
-      ctx.fillText(customerData.email, 0, y);
-      y += 15;
-      ctx.fillText(customerData.phone, 0, y);
-    } else {
-      // Layout horizontal
-      ctx.fillText(`${customerData.name} - ${customerData.email}`, 0, y);
-      ctx.fillText(customerData.phone, element.width - 100, y);
+    if (layout === 'vertical') {
+      if (showFullName) {
+        ctx.fillText(customerData.name, 10, y);
+        y += 18;
+      }
+      if (showAddress) {
+        ctx.fillText(customerData.address, 10, y);
+        y += 18;
+      }
+      if (showEmail) {
+        ctx.fillText(customerData.email, 10, y);
+        y += 18;
+      }
+      if (showPhone) {
+        ctx.fillText(customerData.phone, 10, y);
+      }
+    } else if (layout === 'horizontal') {
+      let text = '';
+      if (showFullName) text += customerData.name;
+      if (showEmail) text += (text ? ' - ' : '') + customerData.email;
+      if (text) ctx.fillText(text, 10, y);
+
+      if (showPhone) {
+        ctx.fillText(customerData.phone, element.width - ctx.measureText(customerData.phone).width - 10, y);
+      }
+    } else if (layout === 'compact') {
+      let compactText = '';
+      if (showFullName) compactText += customerData.name;
+      if (showAddress) compactText += (compactText ? ' • ' : '') + customerData.address.split(',')[0];
+      if (showEmail) compactText += (compactText ? ' • ' : '') + customerData.email;
+      if (showPhone) compactText += (compactText ? ' • ' : '') + customerData.phone;
+
+      // Wrap text if too long
+      const maxWidth = element.width - 20;
+      const words = compactText.split(' ');
+      let line = '';
+      let compactY = y;
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && i > 0) {
+          ctx.fillText(line, 10, compactY);
+          line = words[i] + ' ';
+          compactY += 16;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, 10, compactY);
     }
   };
 

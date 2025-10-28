@@ -30,3 +30,10 @@ describe('Grid Example Integration', () => {
     test('should handle snap toggle', () => {
         mockCanvas.toggleSnapToGrid();
         expect(mockCanvas.toggleSnapToGrid).toHaveBeenCalled();
+    });
+
+    test('should handle grid size change', () => {
+        mockCanvas.setGridSize(20);
+        expect(mockCanvas.setGridSize).toHaveBeenCalledWith(20);
+    });
+});

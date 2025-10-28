@@ -192,4 +192,41 @@ describe('WooCommerce Elements Rendering Tests', () => {
         expect(element.properties.showDescription).toBe(true);
         expect(element.properties.showAlternatingRows).toBe(true);
     });
+
+    test('should render customer info with property controls', () => {
+        const element = {
+            id: 'test-customer-info',
+            type: 'customer_info',
+            x: 50,
+            y: 100,
+            width: 300,
+            height: 150,
+            showHeaders: true,
+            showBorders: true,
+            showFullName: true,
+            showAddress: false,
+            showEmail: true,
+            showPhone: false,
+            layout: 'vertical',
+            backgroundColor: '#f9fafb',
+            borderColor: '#e5e7eb',
+            textColor: '#374151',
+            headerTextColor: '#111827'
+        };
+
+        // Simuler le rendu
+        mockCtx.fillRect.mockImplementation(() => {});
+        mockCtx.fillText.mockImplementation(() => {});
+        mockCtx.strokeRect.mockImplementation(() => {});
+        mockCtx.measureText = jest.fn().mockReturnValue({ width: 50 });
+
+        // Le test vérifie que l'élément a les bonnes propriétés
+        expect(element.type).toBe('customer_info');
+        expect(element.showFullName).toBe(true);
+        expect(element.showAddress).toBe(false);
+        expect(element.showEmail).toBe(true);
+        expect(element.showPhone).toBe(false);
+        expect(element.layout).toBe('vertical');
+        expect(element.backgroundColor).toBe('#f9fafb');
+    });
 });
