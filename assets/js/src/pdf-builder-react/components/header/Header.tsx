@@ -22,6 +22,7 @@ export function Header({
   onNewTemplate
 }: HeaderProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const buttonBaseStyles = {
     padding: '10px 16px',
@@ -196,6 +197,21 @@ export function Header({
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
 
         <button
+          onClick={() => setShowSettingsModal(true)}
+          onMouseEnter={() => setHoveredButton('settings')}
+          onMouseLeave={() => setHoveredButton(null)}
+          style={{
+            ...secondaryButtonStyles,
+            opacity: isSaving ? 0.6 : 1,
+            pointerEvents: isSaving ? 'none' : 'auto'
+          }}
+          title="Paramètres du modèle"
+        >
+          <span>⚙️</span>
+          <span>Paramètres</span>
+        </button>
+
+        <button
           onClick={async () => {
             try {
               await onSave();
@@ -218,6 +234,153 @@ export function Header({
           <span>{isSaving ? 'Enregistrement...' : (isEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
         </button>
       </div>
+
+      {/* Modale des paramètres */}
+      {showSettingsModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '500px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+              borderBottom: '1px solid #e0e0e0',
+              paddingBottom: '16px'
+            }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#1a1a1a' }}>
+                Paramètres du modèle
+              </h3>
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666',
+                  padding: '4px'
+                }}
+                title="Fermer"
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Nom du modèle
+                </label>
+                <input
+                  type="text"
+                  value={templateName}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    backgroundColor: '#f8f8f8'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Statut
+                </label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {isNewTemplate && (
+                    <span style={{
+                      padding: '4px 8px',
+                      backgroundColor: '#e3f2fd',
+                      color: '#1565c0',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '500'
+                    }}>
+                      Nouveau modèle
+                    </span>
+                  )}
+                  {isModified && (
+                    <span style={{
+                      padding: '4px 8px',
+                      backgroundColor: '#fff3e0',
+                      color: '#f57c00',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '500'
+                    }}>
+                      Modifié
+                    </span>
+                  )}
+                  {isEditingExistingTemplate && (
+                    <span style={{
+                      padding: '4px 8px',
+                      backgroundColor: '#f3e5f5',
+                      color: '#7b1fa2',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '500'
+                    }}>
+                      Édition existante
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Informations système
+                </label>
+                <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.5' }}>
+                  <div>Modèle ID: {templateName || 'N/A'}</div>
+                  <div>Dernière modification: {new Date().toLocaleString('fr-FR')}</div>
+                  <div>État: {isSaving ? 'Enregistrement...' : isModified ? 'Modifié' : 'Sauvegardé'}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '20px' }}>
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  style={{
+                    padding: '8px 16px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    backgroundColor: '#f8f8f8',
+                    color: '#333',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes spin {
