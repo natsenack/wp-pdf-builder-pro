@@ -104,7 +104,7 @@ function PDFBuilderContent({
         </div>
 
         {/* Panneau de propriétés à droite */}
-        <div style={{ flexShrink: 0, width: '280px' }}>
+        <div style={{ flexShrink: 0, width: '380px' }}>
           <PropertiesPanel />
         </div>
       </div>
