@@ -481,6 +481,27 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 <option value="oblique">Oblique</option>
               </select>
             </div>
+
+            <div style={{ marginBottom: '0', marginTop: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement du texte
+              </label>
+              <select
+                value={(element as any).labelTextAlign || (element as any).textAlign || 'left'}
+                onChange={(e) => onChange(element.id, 'labelTextAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="left">Gauche</option>
+                <option value="center">Centre</option>
+                <option value="right">Droite</option>
+              </select>
+            </div>
           </div>
 
           {/* Police du numéro */}
@@ -579,6 +600,27 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 <option value="oblique">Oblique</option>
               </select>
             </div>
+
+            <div style={{ marginBottom: '0', marginTop: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement du texte
+              </label>
+              <select
+                value={(element as any).numberTextAlign || (element as any).textAlign || 'left'}
+                onChange={(e) => onChange(element.id, 'numberTextAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="left">Gauche</option>
+                <option value="center">Centre</option>
+                <option value="right">Droite</option>
+              </select>
+            </div>
           </div>
 
           {/* Police de la date */}
@@ -675,6 +717,27 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 <option value="normal">Normal</option>
                 <option value="italic">Italique</option>
                 <option value="oblique">Oblique</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '0', marginTop: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement du texte
+              </label>
+              <select
+                value={(element as any).dateTextAlign || (element as any).textAlign || 'left'}
+                onChange={(e) => onChange(element.id, 'dateTextAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="left">Gauche</option>
+                <option value="center">Centre</option>
+                <option value="right">Droite</option>
               </select>
             </div>
           </div>

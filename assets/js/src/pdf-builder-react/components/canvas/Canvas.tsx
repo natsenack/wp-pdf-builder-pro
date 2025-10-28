@@ -933,6 +933,10 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const dateFontWeight = props.dateFontWeight || fontWeight;
     const dateFontStyle = props.dateFontStyle || fontStyle;
     const textAlign = props.textAlign || 'left'; // left, center, right
+    // Propriétés d'alignement spécifiques
+    const labelTextAlign = props.labelTextAlign || textAlign;
+    const numberTextAlign = props.numberTextAlign || textAlign;
+    const dateTextAlign = props.dateTextAlign || textAlign;
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
@@ -973,18 +977,20 @@ export function Canvas({ width, height, className }: CanvasProps) {
       if (labelPosition === 'above') {
         // Libellé au-dessus, numéro en-dessous
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.textAlign = labelTextAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', x, y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
+        ctx.textAlign = numberTextAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, x, y);
       } else if (labelPosition === 'below') {
         // Numéro au-dessus, libellé en-dessous
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.textAlign = numberTextAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, x, y);
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+        ctx.textAlign = labelTextAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', x, y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro à droite (centré)
@@ -1008,14 +1014,14 @@ export function Canvas({ width, height, className }: CanvasProps) {
     } else {
       // Pas de libellé, juste le numéro
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = textAlign as CanvasTextAlign;
+      ctx.textAlign = numberTextAlign as CanvasTextAlign;
       ctx.fillText(orderNumber, x, y);
     }
 
     // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
     if (showDate) {
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
-      ctx.textAlign = textAlign as CanvasTextAlign;
+      ctx.textAlign = dateTextAlign as CanvasTextAlign;
       ctx.fillText(`Date: ${orderDate}`, x, y + 20);
     }
   };
