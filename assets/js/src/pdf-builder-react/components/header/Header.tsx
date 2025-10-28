@@ -488,15 +488,21 @@ export function Header({
                     <input
                       type="number"
                       value={editedCanvasWidth}
-                      onChange={(e) => setEditedCanvasWidth(Number(e.target.value))}
+                      disabled={true}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
-                        border: '1px solid #ddd',
+                        border: '1px solid #ccc',
                         borderRadius: '3px',
-                        fontSize: '12px'
+                        fontSize: '12px',
+                        backgroundColor: '#f5f5f5',
+                        color: '#999',
+                        cursor: 'not-allowed'
                       }}
                     />
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>
+                      Non modifiable
+                    </div>
                   </div>
 
                   <div>
@@ -506,15 +512,21 @@ export function Header({
                     <input
                       type="number"
                       value={editedCanvasHeight}
-                      onChange={(e) => setEditedCanvasHeight(Number(e.target.value))}
+                      disabled={true}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
-                        border: '1px solid #ddd',
+                        border: '1px solid #ccc',
                         borderRadius: '3px',
-                        fontSize: '12px'
+                        fontSize: '12px',
+                        backgroundColor: '#f5f5f5',
+                        color: '#999',
+                        cursor: 'not-allowed'
                       }}
                     />
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>
+                      Non modifiable
+                    </div>
                   </div>
 
                   <div>
