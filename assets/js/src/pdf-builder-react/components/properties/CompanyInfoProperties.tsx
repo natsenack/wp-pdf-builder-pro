@@ -419,6 +419,19 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             />
             <span style={{ fontSize: '11px', color: '#666' }}>Numéro SIRET de l'entreprise</span>
           </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Afficher le numéro TVA
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showTva !== false}
+              onChange={(e) => onChange(element.id, 'showTva', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Numéro TVA de l'entreprise</span>
+          </div>
         </>
       )}
 
@@ -504,6 +517,60 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
               <option value="center">Centre</option>
               <option value="right">Droite</option>
             </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur de fond
+            </label>
+            <input
+              type="color"
+              value={(element as any).backgroundColor || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur des bordures
+            </label>
+            <input
+              type="color"
+              value={(element as any).borderColor || '#e5e7eb'}
+              onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur du texte
+            </label>
+            <input
+              type="color"
+              value={(element as any).textColor || '#000000'}
+              onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            />
           </div>
         </>
       )}

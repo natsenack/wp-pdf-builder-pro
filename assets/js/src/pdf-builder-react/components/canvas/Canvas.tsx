@@ -673,6 +673,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showPhone = props.showPhone !== false; // Par défaut true
     const showEmail = props.showEmail !== false; // Par défaut true
     const showSiret = props.showSiret !== false; // Par défaut true
+    const showTva = props.showTva !== false; // Par défaut true
 
     // Définition des thèmes
     const themes = {
@@ -710,17 +711,23 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     const currentTheme = themes[theme] || themes.corporate;
 
-    ctx.fillStyle = currentTheme.backgroundColor;
+    // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
+    const bgColor = props.backgroundColor || currentTheme.backgroundColor;
+    const borderCol = props.borderColor || currentTheme.borderColor;
+    const txtColor = props.textColor || currentTheme.textColor;
+    const headerTxtColor = props.headerTextColor || currentTheme.headerTextColor;
+
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, element.width, element.height);
 
     // Appliquer les bordures si demandé
     if (showBorders) {
-      ctx.strokeStyle = currentTheme.borderColor;
+      ctx.strokeStyle = borderCol;
       ctx.lineWidth = 1;
       ctx.strokeRect(0, 0, element.width, element.height);
     }
 
-    ctx.fillStyle = currentTheme.textColor;
+    ctx.fillStyle = txtColor;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
     let y = 20;
@@ -746,11 +753,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Afficher le nom de l'entreprise si demandé
     if (showCompanyName) {
-      ctx.fillStyle = currentTheme.headerTextColor;
+      ctx.fillStyle = headerTxtColor;
       ctx.font = `bold ${Math.round(fontSize * 1.2)}px Arial`;
       ctx.fillText(companyData.name, x, y);
       y += Math.round(fontSize * 1.5);
-      ctx.fillStyle = currentTheme.textColor;
+      ctx.fillStyle = txtColor;
     }
 
     // Afficher l'adresse si demandée
@@ -768,9 +775,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
       y += Math.round(fontSize * 1.2);
     }
 
-    // Afficher la TVA (toujours affichée pour le moment)
-    ctx.fillText(companyData.tva, x, y);
-    y += Math.round(fontSize * 1.2);
+    // Afficher la TVA si demandée
+    if (showTva) {
+      ctx.fillText(companyData.tva, x, y);
+      y += Math.round(fontSize * 1.2);
+    }
 
     // Afficher l'email si demandé
     if (showEmail) {
