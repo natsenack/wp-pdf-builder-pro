@@ -1032,6 +1032,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
     const fontStyle = props.fontStyle || 'normal';
+    const autoWrap = props.autoWrap !== false; // Par défaut activé
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
@@ -1055,7 +1056,56 @@ export function Canvas({ width, height, className }: CanvasProps) {
       .replace(/\[capital\]/g, '10 000')
       .replace(/\[rcs\]/g, 'Paris B 123 456 789');
 
-    ctx.fillText(processedText, 10, 25);
+    if (autoWrap) {
+      // Fonction pour diviser le texte en lignes selon la largeur disponible
+      const wrapText = (text: string, maxWidth: number): string[] => {
+        const words = text.split(' ');
+        const lines: string[] = [];
+        let currentLine = '';
+
+        for (const word of words) {
+          const testLine = currentLine + (currentLine ? ' ' : '') + word;
+          const metrics = ctx.measureText(testLine);
+
+          if (metrics.width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+        }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        return lines;
+      };
+
+      // Gérer les sauts de ligne existants (\n)
+      const paragraphs = processedText.split('\n');
+      let y = 25;
+
+      paragraphs.forEach((paragraph: string) => {
+        if (paragraph.trim()) {
+          const lines = wrapText(paragraph, element.width - 20); // Marge de 10px de chaque côté
+          lines.forEach((line: string) => {
+            ctx.fillText(line, 10, y);
+            y += fontSize + 4; // Espacement entre lignes
+          });
+        } else {
+          y += fontSize + 4; // Ligne vide
+        }
+      });
+    } else {
+      // Comportement original : gérer uniquement les \n existants
+      const lines = processedText.split('\n');
+      let y = 25;
+      lines.forEach((line: string) => {
+        ctx.fillText(line, 10, y);
+        y += fontSize + 4;
+      });
+    }
   };
 
   const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
