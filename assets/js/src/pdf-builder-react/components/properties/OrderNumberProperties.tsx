@@ -382,6 +382,326 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="right">Droite</option>
             </select>
           </div>
+
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+          {/* Police du label */}
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+              Police du label
+            </h4>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="24"
+                value={(element as any).labelFontSize || (element as any).fontSize || 14}
+                onChange={(e) => onChange(element.id, 'labelFontSize', parseInt(e.target.value) || 14)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police
+              </label>
+              <select
+                value={(element as any).labelFontFamily || (element as any).fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'labelFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police
+              </label>
+              <select
+                value={(element as any).labelFontWeight || 'bold'}
+                onChange={(e) => onChange(element.id, 'labelFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '0' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police
+              </label>
+              <select
+                value={(element as any).labelFontStyle || (element as any).fontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'labelFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Police du numéro */}
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+              Police du numéro
+            </h4>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="24"
+                value={(element as any).numberFontSize || (element as any).fontSize || 14}
+                onChange={(e) => onChange(element.id, 'numberFontSize', parseInt(e.target.value) || 14)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police
+              </label>
+              <select
+                value={(element as any).numberFontFamily || (element as any).fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'numberFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police
+              </label>
+              <select
+                value={(element as any).numberFontWeight || (element as any).fontWeight || 'normal'}
+                onChange={(e) => onChange(element.id, 'numberFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '0' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police
+              </label>
+              <select
+                value={(element as any).numberFontStyle || (element as any).fontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'numberFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Police de la date */}
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+              Police de la date
+            </h4>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police
+              </label>
+              <input
+                type="number"
+                min="6"
+                max="20"
+                value={(element as any).dateFontSize || ((element as any).fontSize || 14) - 2}
+                onChange={(e) => onChange(element.id, 'dateFontSize', parseInt(e.target.value) || 12)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police
+              </label>
+              <select
+                value={(element as any).dateFontFamily || (element as any).fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'dateFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police
+              </label>
+              <select
+                value={(element as any).dateFontWeight || (element as any).fontWeight || 'normal'}
+                onChange={(e) => onChange(element.id, 'dateFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '0' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police
+              </label>
+              <select
+                value={(element as any).dateFontStyle || (element as any).fontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'dateFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Anciens contrôles de police (pour compatibilité) */}
+          <div style={{ marginBottom: '12px', opacity: 0.6 }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px', color: '#666' }}>
+              ⚠️ Paramètres généraux (obsolètes - utilisez les sections ci-dessus)
+            </label>
+            <select
+              value={(element as any).fontSize || '14'}
+              onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="12">Petit (12px)</option>
+              <option value="14">Normal (14px)</option>
+              <option value="16">Moyen (16px)</option>
+              <option value="18">Grand (18px)</option>
+              <option value="20">Très grand (20px)</option>
+            </select>
+          </div>
         </>
       )}
 

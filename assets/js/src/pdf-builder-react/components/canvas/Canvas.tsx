@@ -917,6 +917,21 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
     const fontStyle = props.fontStyle || 'normal';
+    // Propriétés de police pour le label
+    const labelFontSize = props.labelFontSize || fontSize;
+    const labelFontFamily = props.labelFontFamily || fontFamily;
+    const labelFontWeight = props.labelFontWeight || 'bold';
+    const labelFontStyle = props.labelFontStyle || fontStyle;
+    // Propriétés de police pour le numéro
+    const numberFontSize = props.numberFontSize || fontSize;
+    const numberFontFamily = props.numberFontFamily || fontFamily;
+    const numberFontWeight = props.numberFontWeight || fontWeight;
+    const numberFontStyle = props.numberFontStyle || fontStyle;
+    // Propriétés de police pour la date
+    const dateFontSize = props.dateFontSize || (fontSize - 2);
+    const dateFontFamily = props.dateFontFamily || fontFamily;
+    const dateFontWeight = props.dateFontWeight || fontWeight;
+    const dateFontStyle = props.dateFontStyle || fontStyle;
     const textAlign = props.textAlign || 'left'; // left, center, right
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
@@ -927,7 +942,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillRect(0, 0, element.width, element.height);
 
     ctx.fillStyle = '#000000';
-    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 
     // Numéro de commande et date fictifs ou réels selon le mode
     let orderNumber: string;
@@ -958,40 +972,49 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (showLabel) {
       if (labelPosition === 'above') {
         // Libellé au-dessus, numéro en-dessous
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', x, y);
         y += 18;
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.fillText(orderNumber, x, y);
       } else if (labelPosition === 'below') {
         // Numéro au-dessus, libellé en-dessous
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, x, y);
         y += 18;
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.fillText('N° de commande:', x, y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro à droite (centré)
         ctx.textAlign = 'left';
         const labelX = 10;
         const numberX = element.width / 2;
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.fillText('N° de commande:', labelX, y);
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.fillText(orderNumber, numberX, y);
       } else if (labelPosition === 'right') {
         // Numéro à gauche, libellé à droite (centré)
         ctx.textAlign = 'left';
         const numberX = 10;
         const labelX = element.width / 2;
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.fillText(orderNumber, numberX, y);
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.fillText('N° de commande:', labelX, y);
       }
     } else {
       // Pas de libellé, juste le numéro
+      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = textAlign as CanvasTextAlign;
       ctx.fillText(orderNumber, x, y);
     }
 
     // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
     if (showDate) {
-      ctx.font = `${fontStyle} ${fontWeight} ${fontSize - 2}px ${fontFamily}`;
+      ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
       ctx.textAlign = textAlign as CanvasTextAlign;
       ctx.fillText(`Date: ${orderDate}`, x, y + 20);
     }
