@@ -69,26 +69,26 @@ export function useTemplate() {
       const templateId = getTemplateIdFromUrl();
 
       // Préparer les données à envoyer
-      const templateData = {
-        template_id: templateId || 0,
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_save_template');
+      formData.append('template_id', templateId || '0');
+      formData.append('template_name', state.template.name || 'Template sans nom');
+      formData.append('elements', JSON.stringify(state.elements));
+      formData.append('canvas', JSON.stringify(state.canvas));
+      formData.append('nonce', window.pdfBuilderData.nonce);
+
+      console.log('Sauvegarde du template:', {
+        template_id: templateId || '0',
         template_name: state.template.name || 'Template sans nom',
         elements: state.elements,
         canvas: state.canvas,
         nonce: window.pdfBuilderData.nonce
-      };
-
-      console.log('Sauvegarde du template:', templateData);
+      });
 
       // Faire un appel API pour sauvegarder le template
       const response = await fetch(window.pdfBuilderData.ajaxUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'pdf_builder_save_template',
-          ...templateData
-        })
+        body: formData
       });
 
       if (!response.ok) {
