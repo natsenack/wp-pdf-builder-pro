@@ -636,6 +636,247 @@ function renderSpecificProperties(
           {/* Onglet Personnalisation */}
           {currentTab === 'personnalisation' && (
             <>
+              {/* Section Thèmes avec aperçus */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  Thèmes prédéfinis
+                </label>
+                <div style={{ display: 'grid', gap: '8px' }}>
+                  {[
+                    {
+                      id: 'classic',
+                      name: 'Classique',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '40px',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '3px',
+                          backgroundColor: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: '#6b7280'
+                        }}>
+                          <div style={{
+                            width: '80%',
+                            height: '4px',
+                            backgroundColor: '#f9fafb',
+                            marginBottom: '2px',
+                            borderRadius: '1px'
+                          }}></div>
+                          <div style={{
+                            width: '60%',
+                            height: '4px',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '1px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#ffffff',
+                        headerBackgroundColor: '#f9fafb',
+                        alternateRowColor: '#f9fafb',
+                        borderColor: '#e5e7eb',
+                        textColor: '#111827',
+                        headerTextColor: '#374151'
+                      }
+                    },
+                    {
+                      id: 'modern',
+                      name: 'Moderne',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '40px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          backgroundColor: '#f8fafc',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: '#475569'
+                        }}>
+                          <div style={{
+                            width: '80%',
+                            height: '4px',
+                            backgroundColor: '#3b82f6',
+                            marginBottom: '2px',
+                            borderRadius: '2px'
+                          }}></div>
+                          <div style={{
+                            width: '60%',
+                            height: '4px',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '2px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f8fafc',
+                        headerBackgroundColor: '#3b82f6',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#f1f5f9',
+                        borderColor: '#cbd5e1',
+                        textColor: '#334155'
+                      }
+                    },
+                    {
+                      id: 'elegant',
+                      name: 'Élégant',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '40px',
+                          border: '2px solid #8b5cf6',
+                          borderRadius: '8px',
+                          backgroundColor: '#fefefe',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: '#7c3aed'
+                        }}>
+                          <div style={{
+                            width: '80%',
+                            height: '4px',
+                            backgroundColor: '#8b5cf6',
+                            marginBottom: '2px',
+                            borderRadius: '3px'
+                          }}></div>
+                          <div style={{
+                            width: '60%',
+                            height: '4px',
+                            backgroundColor: '#faf5ff',
+                            borderRadius: '3px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fefefe',
+                        headerBackgroundColor: '#8b5cf6',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#faf5ff',
+                        borderColor: '#c4b5fd',
+                        textColor: '#581c87'
+                      }
+                    },
+                    {
+                      id: 'minimal',
+                      name: 'Minimal',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '40px',
+                          border: '1px solid #f3f4f6',
+                          borderRadius: '0px',
+                          backgroundColor: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: '#9ca3af'
+                        }}>
+                          <div style={{
+                            width: '80%',
+                            height: '2px',
+                            backgroundColor: '#f9fafb',
+                            marginBottom: '1px'
+                          }}></div>
+                          <div style={{
+                            width: '60%',
+                            height: '2px',
+                            backgroundColor: '#ffffff'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#ffffff',
+                        headerBackgroundColor: '#f9fafb',
+                        alternateRowColor: '#f9fafb',
+                        borderColor: '#f3f4f6',
+                        textColor: '#374151',
+                        headerTextColor: '#111827'
+                      }
+                    },
+                    {
+                      id: 'corporate',
+                      name: 'Corporate',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '40px',
+                          border: '1px solid #374151',
+                          borderRadius: '0px',
+                          backgroundColor: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: '#374151'
+                        }}>
+                          <div style={{
+                            width: '80%',
+                            height: '4px',
+                            backgroundColor: '#1f2937',
+                            marginBottom: '2px'
+                          }}></div>
+                          <div style={{
+                            width: '60%',
+                            height: '4px',
+                            backgroundColor: '#f9fafb'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#ffffff',
+                        headerBackgroundColor: '#1f2937',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#f9fafb',
+                        borderColor: '#374151',
+                        textColor: '#111827'
+                      }
+                    }
+                  ].map(theme => (
+                    <button
+                      key={theme.id}
+                      onClick={() => {
+                        // Appliquer toutes les propriétés du thème
+                        Object.entries(theme.styles).forEach(([property, value]) => {
+                          onChange(element.id, property, value);
+                        });
+                      }}
+                      style={{
+                        padding: '8px',
+                        border: '2px solid #e0e0e0',
+                        borderRadius: '6px',
+                        backgroundColor: '#ffffff',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#007bff';
+                        e.currentTarget.style.backgroundColor = '#f8f9fa';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = '#e0e0e0';
+                        e.currentTarget.style.backgroundColor = '#ffffff';
+                      }}
+                    >
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#333' }}>
+                        {theme.name}
+                      </div>
+                      {theme.preview}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
               <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
                   Taille de police
