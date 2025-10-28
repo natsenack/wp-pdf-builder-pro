@@ -8,6 +8,7 @@ import { CompanyLogoProperties } from './CompanyLogoProperties';
 import { OrderNumberProperties } from './OrderNumberProperties';
 import { DynamicTextProperties } from './DynamicTextProperties';
 import { MentionsProperties } from './MentionsProperties';
+import { DocumentTypeProperties } from './DocumentTypeProperties';
 import { ElementProperties } from './ElementProperties';
 
 interface PropertiesPanelProps {
@@ -240,6 +241,14 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
           )}
           {element.type === 'order_number' && (
             <OrderNumberProperties
+              element={element}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {element.type === 'document_type' && (
+            <DocumentTypeProperties
               element={element}
               onChange={handlePropertyChange}
               activeTab={activeTab}

@@ -830,12 +830,24 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     if (state.previewMode === 'command') {
       // En mode commande réel, on pourrait récupérer le type depuis WooCommerce
-      // Pour l'instant, on utilise une valeur par défaut
-      documentType = 'FACTURE';
+      // Pour l'instant, on utilise la valeur configurée ou une valeur par défaut
+      documentType = props.documentType || 'FACTURE';
     } else {
       // Données fictives pour le mode éditeur
-      documentType = 'FACTURE';
+      documentType = props.documentType || 'FACTURE';
     }
+
+    // Convertir les valeurs techniques en texte lisible
+    const documentTypeLabels: { [key: string]: string } = {
+      'FACTURE': 'FACTURE',
+      'DEVIS': 'DEVIS',
+      'BON_COMMANDE': 'BON DE COMMANDE',
+      'AVOIR': 'AVOIR',
+      'RELEVE': 'RELEVE',
+      'CONTRAT': 'CONTRAT'
+    };
+
+    documentType = documentTypeLabels[documentType] || documentType;
 
     const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width - 10 : 10;
     const y = element.height / 2 + fontSize / 3; // Centrer verticalement
