@@ -16,56 +16,130 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
 
   // Liste des exemples prédéfinis
   const textExamples = [
+    // === PROFESSIONNEL ===
     {
-      id: 'signature',
-      label: 'Signature',
-      template: 'Cordialement,\n[Votre nom]'
+      id: 'signature_formal',
+      label: 'Signature formelle',
+      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise]\n[telephone] | [email]'
     },
     {
-      id: 'checkbox',
-      label: 'Case à cocher',
-      template: '☐ J\'accepte les conditions générales'
+      id: 'signature_simple',
+      label: 'Signature simple',
+      template: 'Bien à vous,\n[prenom] [nom]'
     },
     {
-      id: 'title',
-      label: 'Titre',
-      template: 'TITRE DU DOCUMENT'
+      id: 'document_title',
+      label: 'Titre de document',
+      template: 'CONTRAT DE PRESTATION DE SERVICES'
     },
     {
-      id: 'subtitle',
-      label: 'Sous-titre',
-      template: 'Sous-titre du document'
+      id: 'document_subtitle',
+      label: 'Sous-titre de document',
+      template: 'Entre les parties ci-dessous désignées'
+    },
+
+    // === FORMULAIRES ===
+    {
+      id: 'checkbox_terms',
+      label: 'Case - Conditions générales',
+      template: '☐ J\'ai lu et j\'accepte les conditions générales de vente'
     },
     {
-      id: 'paragraph',
-      label: 'Paragraphe',
-      template: 'Texte de paragraphe à personnaliser selon vos besoins.'
+      id: 'checkbox_privacy',
+      label: 'Case - Politique de confidentialité',
+      template: '☐ J\'accepte la politique de confidentialité'
     },
     {
-      id: 'bullet_list',
-      label: 'Liste à puces',
-      template: '• Premier élément\n• Deuxième élément\n• Troisième élément'
+      id: 'checkbox_newsletter',
+      label: 'Case - Newsletter',
+      template: '☐ Je souhaite m\'inscrire à la newsletter'
     },
     {
-      id: 'numbered_list',
-      label: 'Liste numérotée',
-      template: '1. Premier élément\n2. Deuxième élément\n3. Troisième élément'
+      id: 'checkbox_certification',
+      label: 'Case - Certification',
+      template: '☐ Je certifie l\'exactitude des informations fournies'
+    },
+
+    // === INFORMATIONS ===
+    {
+      id: 'contact_complete',
+      label: 'Contact complet',
+      template: '[entreprise]\n[Adresse ligne 1]\n[Code postal] [Ville]\n[telephone] | [email]\n[site]'
     },
     {
-      id: 'contact_info',
-      label: 'Informations de contact',
-      template: 'Téléphone: [Votre numéro]\nEmail: [Votre email]\nSite web: [Votre site]'
+      id: 'contact_minimal',
+      label: 'Contact minimal',
+      template: '[email] | [telephone]'
     },
     {
-      id: 'address',
-      label: 'Adresse',
-      template: '[Nom de l\'entreprise]\n[Adresse ligne 1]\n[Code postal] [Ville]\n[Pays]'
+      id: 'legal_mentions',
+      label: 'Mentions légales',
+      template: 'SIRET: [SIRET] | TVA: [TVA]\nCapital social: [capital]€'
+    },
+
+    // === DATES ===
+    {
+      id: 'date_today',
+      label: 'Date du jour',
+      template: 'Fait à [Ville], le [date]'
     },
     {
-      id: 'date',
-      label: 'Date',
-      template: 'Fait le [date]'
+      id: 'date_contract',
+      label: 'Date de contrat',
+      template: 'Contrat établi le [date]'
     },
+
+    // === TEXTES ===
+    {
+      id: 'paragraph_intro',
+      label: 'Introduction',
+      template: 'Par la présente, il est convenu ce qui suit entre les parties :'
+    },
+    {
+      id: 'paragraph_conclusion',
+      label: 'Conclusion',
+      template: 'Les parties déclarent avoir lu et approuvé l\'intégralité du présent document.'
+    },
+    {
+      id: 'paragraph_payment',
+      label: 'Paiement',
+      template: 'Le paiement s\'effectuera selon les modalités suivantes :'
+    },
+
+    // === LISTES ===
+    {
+      id: 'bullet_services',
+      label: 'Services (liste)',
+      template: '• Conseil et accompagnement\n• Formation personnalisée\n• Support technique'
+    },
+    {
+      id: 'numbered_steps',
+      label: 'Étapes (liste)',
+      template: '1. Validation du cahier des charges\n2. Réalisation du projet\n3. Livraison et recette'
+    },
+    {
+      id: 'bullet_features',
+      label: 'Fonctionnalités',
+      template: '• Interface intuitive\n• Performance optimisée\n• Sécurité renforcée'
+    },
+
+    // === PROFESSIONNEL AVANCÉ ===
+    {
+      id: 'confidentiality_clause',
+      label: 'Clause de confidentialité',
+      template: 'Les parties s\'engagent à garder confidentielles les informations échangées.'
+    },
+    {
+      id: 'jurisdiction_clause',
+      label: 'Clause de juridiction',
+      template: 'Tout litige sera soumis aux tribunaux de [Ville].'
+    },
+    {
+      id: 'termination_clause',
+      label: 'Clause de résiliation',
+      template: 'Le présent contrat peut être résilié par l\'une ou l\'autre des parties avec un préavis de 30 jours.'
+    },
+
     {
       id: 'custom',
       label: 'Personnalisé',
@@ -212,12 +286,17 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
 
   const availableVariables = [
     { key: '[date]', label: 'Date actuelle' },
-    { key: '[nom]', label: 'Nom personnalisé' },
-    { key: '[prenom]', label: 'Prénom personnalisé' },
+    { key: '[nom]', label: 'Nom' },
+    { key: '[prenom]', label: 'Prénom' },
     { key: '[entreprise]', label: 'Nom de l\'entreprise' },
-    { key: '[telephone]', label: 'Numéro de téléphone' },
-    { key: '[email]', label: 'Adresse email' },
-    { key: '[site]', label: 'Site web' }
+    { key: '[telephone]', label: 'Téléphone' },
+    { key: '[email]', label: 'Email' },
+    { key: '[site]', label: 'Site web' },
+    { key: '[ville]', label: 'Ville' },
+    { key: '[siret]', label: 'Numéro SIRET' },
+    { key: '[tva]', label: 'Numéro TVA' },
+    { key: '[capital]', label: 'Capital social' },
+    { key: '[rcs]', label: 'RCS' }
   ];
 
   return (

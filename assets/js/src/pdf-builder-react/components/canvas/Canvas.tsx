@@ -1048,7 +1048,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
       .replace(/\[entreprise\]/g, 'Ma Société')
       .replace(/\[telephone\]/g, '+33 1 23 45 67 89')
       .replace(/\[email\]/g, 'contact@masociete.com')
-      .replace(/\[site\]/g, 'www.masociete.com');
+      .replace(/\[site\]/g, 'www.masociete.com')
+      .replace(/\[ville\]/g, 'Paris')
+      .replace(/\[siret\]/g, '123 456 789 00012')
+      .replace(/\[tva\]/g, 'FR 12 345 678 901')
+      .replace(/\[capital\]/g, '10 000')
+      .replace(/\[rcs\]/g, 'Paris B 123 456 789');
 
     ctx.fillText(processedText, 10, 25);
   };
