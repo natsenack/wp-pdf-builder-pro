@@ -747,9 +747,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Afficher le nom de l'entreprise si demandé
     if (showCompanyName) {
       ctx.fillStyle = currentTheme.headerTextColor;
-      ctx.font = `bold ${fontSize + 2}px Arial`;
+      ctx.font = `bold ${Math.round(fontSize * 1.2)}px Arial`;
       ctx.fillText(companyData.name, x, y);
-      y += 18;
+      y += Math.round(fontSize * 1.5);
       ctx.fillStyle = currentTheme.textColor;
     }
 
@@ -757,25 +757,25 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (showAddress) {
       ctx.font = `${fontSize}px Arial`;
       ctx.fillText(companyData.address, x, y);
-      y += 15;
+      y += Math.round(fontSize * 1.2);
       ctx.fillText(companyData.city, x, y);
-      y += 18;
+      y += Math.round(fontSize * 1.5);
     }
 
     // Afficher le SIRET si demandé
     if (showSiret) {
       ctx.fillText(companyData.siret, x, y);
-      y += 15;
+      y += Math.round(fontSize * 1.2);
     }
 
     // Afficher la TVA (toujours affichée pour le moment)
     ctx.fillText(companyData.tva, x, y);
-    y += 15;
+    y += Math.round(fontSize * 1.2);
 
     // Afficher l'email si demandé
     if (showEmail) {
       ctx.fillText(companyData.email, x, y);
-      y += 15;
+      y += Math.round(fontSize * 1.2);
     }
 
     // Afficher le téléphone si demandé
