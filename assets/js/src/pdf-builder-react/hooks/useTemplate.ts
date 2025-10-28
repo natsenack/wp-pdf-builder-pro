@@ -92,7 +92,6 @@ export function useTemplate() {
   }, []);
 
   const saveTemplate = async () => {
-    console.log('Début de la sauvegarde, isSaving va être mis à true');
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
@@ -144,7 +143,6 @@ export function useTemplate() {
       console.error('Erreur lors de la sauvegarde:', error);
       throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
-      console.log('Finally: remise de isSaving à false');
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
   };
