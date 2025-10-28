@@ -89,6 +89,46 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
       label: 'Case - Certification',
       template: '☐ Je certifie l\'exactitude des informations fournies'
     },
+    {
+      id: 'checkbox_quote_acceptance',
+      label: 'Case - Acceptation devis',
+      template: '☐ J\'accepte ce devis et souhaite passer commande'
+    },
+    {
+      id: 'checkbox_order_confirmation',
+      label: 'Case - Confirmation commande',
+      template: '☐ Je confirme ma commande selon les termes du devis'
+    },
+    {
+      id: 'checkbox_payment_terms',
+      label: 'Case - Conditions de paiement',
+      template: '☐ J\'accepte les conditions de paiement proposées'
+    },
+    {
+      id: 'checkbox_delivery_terms',
+      label: 'Case - Conditions de livraison',
+      template: '☐ J\'accepte les conditions de livraison et délais'
+    },
+    {
+      id: 'checkbox_price_acceptance',
+      label: 'Case - Acceptation tarif',
+      template: '☐ J\'accepte le tarif proposé pour cette prestation'
+    },
+    {
+      id: 'checkbox_liability_waiver',
+      label: 'Case - Décharge responsabilité',
+      template: '☐ Je dégage l\'entreprise de toute responsabilité en cas de...'
+    },
+    {
+      id: 'checkbox_data_processing',
+      label: 'Case - Traitement données',
+      template: '☐ J\'autorise le traitement de mes données personnelles'
+    },
+    {
+      id: 'checkbox_contract_acceptance',
+      label: 'Case - Acceptation contrat',
+      template: '☐ J\'accepte les termes du contrat ci-dessus'
+    },
 
     // === INFORMATIONS ===
     {
