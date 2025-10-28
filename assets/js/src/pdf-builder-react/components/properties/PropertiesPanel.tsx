@@ -8,7 +8,7 @@ interface PropertiesPanelProps {
 
 export function PropertiesPanel({ className }: PropertiesPanelProps) {
   const { state, updateElement, removeElement } = useBuilder();
-  const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' }>({});
+  const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }>({});
 
   const selectedElements = state.elements.filter(el =>
     state.selection.selectedElements.includes(el.id)
@@ -207,8 +207,8 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
 function renderSpecificProperties(
   element: Element,
   onChange: (elementId: string, property: string, value: any) => void,
-  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' },
-  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' }) => void
+  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' },
+  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void
 ) {
   switch (element.type) {
     case 'rectangle':
@@ -434,14 +434,14 @@ function renderSpecificProperties(
 
     case 'product_table':
       const currentTab = activeTab[element.id] || 'fonctionnalites';
-      const setCurrentTab = (tab: 'fonctionnalites' | 'personnalisation') => {
+      const setCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
         setActiveTab({ ...activeTab, [element.id]: tab });
       };
       
       return (
         <>
           {/* Système d'onglets pour Product Table */}
-          <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd' }}>
+          <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '4px' }}>
             <button
               onClick={() => setCurrentTab('fonctionnalites')}
               style={{
@@ -454,7 +454,7 @@ function renderSpecificProperties(
                 fontSize: '12px',
                 fontWeight: 'bold',
                 borderRadius: '3px 3px 0 0',
-                marginRight: '4px'
+                minWidth: '0'
               }}
             >
               Fonctionnalités
@@ -470,10 +470,28 @@ function renderSpecificProperties(
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 'bold',
-                borderRadius: '3px 3px 0 0'
+                borderRadius: '3px 3px 0 0',
+                minWidth: '0'
               }}
             >
               Personnalisation
+            </button>
+            <button
+              onClick={() => setCurrentTab('positionnement')}
+              style={{
+                flex: 1,
+                padding: '8px',
+                backgroundColor: currentTab === 'positionnement' ? '#007bff' : '#f0f0f0',
+                color: currentTab === 'positionnement' ? '#fff' : '#333',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                borderRadius: '3px 3px 0 0',
+                minWidth: '0'
+              }}
+            >
+              Positionnement
             </button>
           </div>
 
@@ -711,6 +729,119 @@ function renderSpecificProperties(
                     fontSize: '12px'
                   }}
                 />
+              </div>
+            </>
+          )}
+
+          {/* Onglet Positionnement */}
+          {currentTab === 'positionnement' && (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Position X
+                </label>
+                <input
+                  type="number"
+                  value={element.x}
+                  onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Position Y
+                </label>
+                <input
+                  type="number"
+                  value={element.y}
+                  onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Largeur
+                </label>
+                <input
+                  type="number"
+                  value={element.width}
+                  onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Hauteur
+                </label>
+                <input
+                  type="number"
+                  value={element.height}
+                  onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Rotation (°)
+                </label>
+                <input
+                  type="number"
+                  value={element.rotation || 0}
+                  onChange={(e) => onChange(element.id, 'rotation', parseFloat(e.target.value) || 0)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Opacité
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={element.opacity || 1}
+                  onChange={(e) => onChange(element.id, 'opacity', parseFloat(e.target.value))}
+                  style={{ width: '100%' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>
+                  {Math.round((element.opacity || 1) * 100)}%
+                </span>
               </div>
             </>
           )}
