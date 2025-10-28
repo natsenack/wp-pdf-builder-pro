@@ -33,9 +33,9 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight }: UseCanva
       const newElement = {
         id: `element_${Date.now()}`,
         type: elementData.type,
+        ...elementData.defaultProps,
         x: Math.max(0, x - 50), // Centrer l'élément sur le point de drop
-        y: Math.max(0, y - 25),
-        ...elementData.defaultProps
+        y: Math.max(0, y - 25)
       };
 
       console.log('Adding new element to canvas:', newElement);

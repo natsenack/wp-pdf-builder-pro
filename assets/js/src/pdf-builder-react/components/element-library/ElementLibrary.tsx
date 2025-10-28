@@ -9,8 +9,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Tableau des produits commandés avec quantités et prix',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 100,
       width: 500,
       height: 200,
       showHeaders: true,
@@ -28,8 +26,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Informations détaillées du client (nom, adresse, email)',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 50,
       width: 250,
       height: 120,
       showHeaders: true,
@@ -46,8 +42,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Nom, adresse, contact et TVA de l\'entreprise',
     category: 'woocommerce',
     defaultProps: {
-      x: 320,
-      y: 50,
       width: 250,
       height: 120,
       showHeaders: true,
@@ -64,8 +58,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Logo et identité visuelle de l\'entreprise',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 200,
       width: 150,
       height: 80,
       fit: 'contain',
@@ -79,8 +71,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Référence de commande avec date',
     category: 'woocommerce',
     defaultProps: {
-      x: 450,
-      y: 20,
       width: 100,
       height: 30,
       fontSize: 14,
@@ -96,8 +86,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Type du document (Facture, Devis, Bon de commande, etc.)',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 20,
       width: 150,
       height: 40,
       fontSize: 18,
@@ -115,8 +103,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Texte avec variables dynamiques',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 320,
       width: 200,
       height: 40,
       template: 'Commande #{order_number}',
@@ -132,8 +118,6 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Informations légales (email, SIRET, téléphone, etc.)',
     category: 'woocommerce',
     defaultProps: {
-      x: 50,
-      y: 380,
       width: 500,
       height: 60,
       fontSize: 10,
