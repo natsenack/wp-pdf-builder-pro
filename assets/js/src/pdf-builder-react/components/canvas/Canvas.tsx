@@ -793,6 +793,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const props = element as any;
     const fontSize = props.fontSize || 14;
     const textAlign = props.textAlign || 'right';
+    const showLabel = props.showLabel !== false; // Par défaut true
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
@@ -816,7 +817,10 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     let x = textAlign === 'right' ? element.width - 10 : textAlign === 'center' ? element.width / 2 : 10;
 
-    ctx.fillText(`Commande: ${orderNumber}`, x, 20);
+    // Afficher le libellé seulement si demandé
+    const labelText = showLabel ? `N° de commande: ${orderNumber}` : orderNumber;
+    ctx.fillText(labelText, x, 20);
+
     ctx.font = `${fontSize - 2}px Arial`;
     ctx.fillText(`Date: ${orderDate}`, x, 40);
   };
