@@ -15,6 +15,7 @@ if (!is_user_logged_in()) {
 }
 
 echo '<h1>Débogage API Templates</h1>';
+echo '<p>Dernière mise à jour: ' . date('Y-m-d H:i:s') . '</p>';
 
 // Vérifier si la fonction existe
 echo '<h2>1. Fonction AJAX</h2>';
