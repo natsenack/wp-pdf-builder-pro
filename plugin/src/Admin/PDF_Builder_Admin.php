@@ -5647,7 +5647,7 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
         // Localize script with data
-        wp_localize_script('pdf-builder-react', 'pdfBuilderReactData', [
+        wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
             'nonce' => wp_create_nonce('pdf_builder_react_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'strings' => [
