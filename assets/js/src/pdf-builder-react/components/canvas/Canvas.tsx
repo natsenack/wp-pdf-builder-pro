@@ -1027,7 +1027,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    const template = props.template || 'Commande #{order_number}';
+    const text = props.text || 'Commande #{order_number}';
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
@@ -1063,11 +1063,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
       total = '279.96€';
     }
 
-    const processedText = template
-      .replace('#{order_number}', orderNumber)
-      .replace('#{customer_name}', customerName)
-      .replace('#{order_date}', orderDate)
-      .replace('#{total}', total);
+    const processedText = text
+      .replace('{order_number}', orderNumber)
+      .replace('{customer_name}', customerName)
+      .replace('{order_date}', orderDate)
+      .replace('{total}', total);
 
     ctx.fillText(processedText, 10, 25);
   };

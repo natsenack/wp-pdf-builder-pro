@@ -19,7 +19,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     {
       id: 'order_reference',
       label: 'Référence de commande',
-      template: 'Commande #{order_number}'
+      template: 'Commande {order_number}'
     },
     {
       id: 'customer_greeting',
@@ -29,7 +29,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     {
       id: 'order_summary',
       label: 'Résumé de commande',
-      template: 'Votre commande #{order_number} du {order_date}'
+      template: 'Votre commande {order_number} du {order_date}'
     },
     {
       id: 'signature',
@@ -202,15 +202,9 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
 
   const availableVariables = [
     { key: '{order_number}', label: 'Numéro de commande' },
-    { key: '{order_date}', label: 'Date de commande' },
     { key: '{customer_name}', label: 'Nom du client' },
-    { key: '{customer_email}', label: 'Email du client' },
-    { key: '{total_amount}', label: 'Montant total' },
-    { key: '{payment_method}', label: 'Méthode de paiement' },
-    { key: '{shipping_address}', label: 'Adresse de livraison' },
-    { key: '{billing_address}', label: 'Adresse de facturation' },
-    { key: '{order_status}', label: 'Statut de la commande' },
-    { key: '{current_date}', label: 'Date actuelle' },
+    { key: '{order_date}', label: 'Date de commande' },
+    { key: '{total}', label: 'Montant total' },
     { key: '{company_name}', label: 'Nom de l\'entreprise' }
   ];
 
