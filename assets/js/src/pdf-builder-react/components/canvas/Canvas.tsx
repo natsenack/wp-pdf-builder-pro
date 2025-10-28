@@ -367,7 +367,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
       ctx.lineTo(element.width - 4, 24);
       ctx.stroke();
 
-      currentY = 45;
+      currentY = 33; // Ajusté pour uniformité avec les autres lignes
     }
 
     // Calcul de la hauteur uniforme des lignes
@@ -379,7 +379,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     products.forEach((product, index) => {
       // Calcul de la position Y absolue pour cette ligne
-      const rowY = 45 + index * (rowHeight + 4);
+      const rowY = currentY + index * (rowHeight + 4);
 
       // Ligne de séparation au début de chaque ligne
       ctx.strokeStyle = '#f3f4f6';
