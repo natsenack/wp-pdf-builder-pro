@@ -792,7 +792,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 14;
-    const textAlign = props.textAlign || 'right';
+    const textAlign = props.textAlign || 'left'; // left, center, right
     const showLabel = props.showLabel !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
     const numberPosition = props.numberPosition || 'inline'; // inline, below
@@ -802,7 +802,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     ctx.fillStyle = '#000000';
     ctx.font = `bold ${fontSize}px Arial`;
-    ctx.textAlign = textAlign as CanvasTextAlign;
 
     // Numéro de commande et date fictifs ou réels selon le mode
     let orderNumber: string;
@@ -817,30 +816,41 @@ export function Canvas({ width, height, className }: CanvasProps) {
       orderDate = '27/10/2024';
     }
 
-    let x = textAlign === 'right' ? element.width - 10 : textAlign === 'center' ? element.width / 2 : 10;
+    // Calcul de la position X selon l'alignement
+    let x: number;
+    if (textAlign === 'left') {
+      x = 10;
+    } else if (textAlign === 'center') {
+      x = element.width / 2;
+    } else { // right
+      x = element.width - 10;
+    }
+
     let y = 20;
 
     // Afficher selon la position du libellé et du numéro
     if (showLabel) {
       if (labelPosition === 'above') {
         // Libellé au-dessus, numéro en-dessous
+        ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', x, y);
         y += 18;
         ctx.fillText(orderNumber, x, y);
       } else if (labelPosition === 'below') {
         // Numéro au-dessus, libellé en-dessous
+        ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, x, y);
         y += 18;
         ctx.fillText('N° de commande:', x, y);
       } else if (labelPosition === 'left') {
-        // Libellé à gauche, numéro à droite
+        // Libellé à gauche, numéro à droite (centré)
         ctx.textAlign = 'left';
         const labelX = 10;
         const numberX = element.width / 2;
         ctx.fillText('N° de commande:', labelX, y);
         ctx.fillText(orderNumber, numberX, y);
       } else if (labelPosition === 'right') {
-        // Numéro à gauche, libellé à droite
+        // Numéro à gauche, libellé à droite (centré)
         ctx.textAlign = 'left';
         const numberX = 10;
         const labelX = element.width / 2;
@@ -849,10 +859,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
       }
     } else {
       // Pas de libellé, juste le numéro
+      ctx.textAlign = textAlign as CanvasTextAlign;
       ctx.fillText(orderNumber, x, y);
     }
 
-    // Afficher la date sur une nouvelle ligne
+    // Afficher la date sur une nouvelle ligne avec le même alignement
     ctx.font = `${fontSize - 2}px Arial`;
     ctx.textAlign = textAlign as CanvasTextAlign;
     ctx.fillText(`Date: ${orderDate}`, x, y + 20);
