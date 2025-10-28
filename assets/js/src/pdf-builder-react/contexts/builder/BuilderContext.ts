@@ -14,7 +14,7 @@ import {
 const initialCanvasState: CanvasState = {
   zoom: 1,
   pan: { x: 0, y: 0 },
-  showGrid: true,
+  showGrid: false,
   gridSize: 20,
   snapToGrid: true,
   backgroundColor: '#ffffff'
