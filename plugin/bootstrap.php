@@ -504,13 +504,14 @@ function pdf_builder_ajax_get_template() {
     $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
     if (is_string($elements)) {
         error_log('PDF Builder: Decoding elements string, length: ' . strlen($elements));
-        // Si elements est une string JSON, la décoder
-        $decoded_elements = json_decode($elements, true);
+        // D'abord supprimer les slashes d'échappement, puis décoder
+        $unescaped_elements = stripslashes($elements);
+        $decoded_elements = json_decode($unescaped_elements, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             $elements = $decoded_elements;
-            error_log('PDF Builder: Successfully decoded ' . count($elements) . ' elements');
+            error_log('PDF Builder: Successfully decoded ' . count($elements) . ' elements after stripslashes');
         } else {
-            error_log('PDF Builder: Failed to decode elements string: ' . json_last_error_msg() . ' - First 500 chars: ' . substr($elements, 0, 500));
+            error_log('PDF Builder: Failed to decode elements after stripslashes: ' . json_last_error_msg() . ' - First 500 chars: ' . substr($unescaped_elements, 0, 500));
             $elements = [];
         }
     } elseif (!is_array($elements)) {
@@ -522,7 +523,8 @@ function pdf_builder_ajax_get_template() {
     // S'assurer que canvas est un objet
     $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
     if (is_string($canvas)) {
-        $decoded_canvas = json_decode($canvas, true);
+        $unescaped_canvas = stripslashes($canvas);
+        $decoded_canvas = json_decode($unescaped_canvas, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             $canvas = $decoded_canvas;
         } else {
