@@ -1027,7 +1027,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    const text = props.text || 'Commande #{order_number}';
+    const text = props.text || 'Commande {order_number}';
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';

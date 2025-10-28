@@ -32,29 +32,14 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
       template: 'Votre commande {order_number} du {order_date}'
     },
     {
-      id: 'signature',
-      label: 'Signature',
-      template: 'Cordialement,\n{company_name}'
-    },
-    {
-      id: 'delivery_info',
-      label: 'Informations de livraison',
-      template: 'Livraison prévue le {delivery_date}'
-    },
-    {
-      id: 'payment_info',
-      label: 'Informations de paiement',
-      template: 'Paiement de {total} effectué le {payment_date}'
-    },
-    {
       id: 'thank_you',
       label: 'Message de remerciement',
       template: 'Merci pour votre confiance, {customer_name}'
     },
     {
-      id: 'contact_info',
-      label: 'Informations de contact',
-      template: 'Contact: {company_email} - {company_phone}'
+      id: 'total_amount',
+      label: 'Montant total',
+      template: 'Montant total: {total}'
     },
     {
       id: 'custom',
@@ -204,8 +189,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     { key: '{order_number}', label: 'Numéro de commande' },
     { key: '{customer_name}', label: 'Nom du client' },
     { key: '{order_date}', label: 'Date de commande' },
-    { key: '{total}', label: 'Montant total' },
-    { key: '{company_name}', label: 'Nom de l\'entreprise' }
+    { key: '{total}', label: 'Montant total' }
   ];
 
   return (
