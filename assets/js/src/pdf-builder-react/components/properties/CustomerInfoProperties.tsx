@@ -588,6 +588,78 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Position X
+            </label>
+            <input
+              type="number"
+              value={element.x}
+              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Position Y
+            </label>
+            <input
+              type="number"
+              value={element.y}
+              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Largeur
+            </label>
+            <input
+              type="number"
+              value={element.width}
+              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 100)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Hauteur
+            </label>
+            <input
+              type="number"
+              value={element.height}
+              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 100)}
+              style={{
+                width: '100%',
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
               Alignement horizontal
             </label>
             <select
