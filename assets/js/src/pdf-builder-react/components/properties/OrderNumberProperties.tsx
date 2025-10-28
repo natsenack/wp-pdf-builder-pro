@@ -247,26 +247,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position du numéro
-            </label>
-            <select
-              value={(element as any).numberPosition || 'inline'}
-              onChange={(e) => onChange(element.id, 'numberPosition', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="inline">Sur la même ligne</option>
-              <option value="below">Sur une nouvelle ligne</option>
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Alignement du texte
             </label>
             <select
@@ -385,11 +365,12 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          {/* Police du label */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-              Police du label
-            </h4>
+          {/* Police du label - Uniquement si le libellé est affiché */}
+          {(element as any).showLabel !== false && (
+            <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Police du label
+              </h4>
 
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -503,6 +484,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               </select>
             </div>
           </div>
+          )}
 
           {/* Police du numéro */}
           <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
@@ -623,11 +605,12 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
           </div>
 
-          {/* Police de la date */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-              Police de la date
-            </h4>
+          {/* Police de la date - Uniquement si la date est affichée */}
+          {(element as any).showDate !== false && (
+            <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Police de la date
+              </h4>
 
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -741,6 +724,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               </select>
             </div>
           </div>
+          )}
 
           {/* Anciens contrôles de police (pour compatibilité) */}
           <div style={{ marginBottom: '12px', opacity: 0.6 }}>

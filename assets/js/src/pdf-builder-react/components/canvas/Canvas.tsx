@@ -940,7 +940,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
-    const numberPosition = props.numberPosition || 'inline'; // inline, below
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
