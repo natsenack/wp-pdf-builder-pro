@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 
@@ -8,6 +8,7 @@ interface PropertiesPanelProps {
 
 export function PropertiesPanel({ className }: PropertiesPanelProps) {
   const { state, updateElement, removeElement } = useBuilder();
+  const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' }>({});
 
   const selectedElements = state.elements.filter(el =>
     state.selection.selectedElements.includes(el.id)
@@ -194,7 +195,7 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
             </div>
 
             {/* Propriétés spécifiques selon le type */}
-            {renderSpecificProperties(element, handlePropertyChange)}
+            {renderSpecificProperties(element, handlePropertyChange, activeTab, setActiveTab)}
           </div>
         </div>
       ))}
@@ -205,7 +206,9 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
 // Fonction pour rendre les propriétés spécifiques au type d'élément
 function renderSpecificProperties(
   element: Element,
-  onChange: (elementId: string, property: string, value: any) => void
+  onChange: (elementId: string, property: string, value: any) => void,
+  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' },
+  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' }) => void
 ) {
   switch (element.type) {
     case 'rectangle':
@@ -430,238 +433,287 @@ function renderSpecificProperties(
       );
 
     case 'product_table':
+      const currentTab = activeTab[element.id] || 'fonctionnalites';
+      const setCurrentTab = (tab: 'fonctionnalites' | 'personnalisation') => {
+        setActiveTab({ ...activeTab, [element.id]: tab });
+      };
+      
       return (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les en-têtes
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showHeaders !== false}
-              onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les noms des colonnes</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les bordures
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showBorders !== false}
-              onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures du tableau</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Lignes alternées
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showAlternatingRows !== false}
-              onChange={(e) => onChange(element.id, 'showAlternatingRows', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Alterne les couleurs des lignes</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les SKU
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showSku !== false}
-              onChange={(e) => onChange(element.id, 'showSku', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des références produit</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les descriptions
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showDescription !== false}
-              onChange={(e) => onChange(element.id, 'showDescription', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des descriptions courtes</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la quantité
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showQuantity !== false}
-              onChange={(e) => onChange(element.id, 'showQuantity', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
-          </div>
-
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les frais de port
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showShipping !== false}
-              onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les frais de livraison</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la TVA
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showTax !== false}
-              onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les taxes sur le total</span>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la remise globale
-            </label>
-            <input
-              type="checkbox"
-              checked={(element as any).showGlobalDiscount !== false}
-              onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche la remise globale appliquée</span>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Taille de police
-            </label>
-            <input
-              type="number"
-              min="8"
-              max="24"
-              value={(element as any).fontSize || 11}
-              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 11)}
+          {/* Système d'onglets pour Product Table */}
+          <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd' }}>
+            <button
+              onClick={() => setCurrentTab('fonctionnalites')}
               style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
+                flex: 1,
+                padding: '8px',
+                backgroundColor: currentTab === 'fonctionnalites' ? '#007bff' : '#f0f0f0',
+                color: currentTab === 'fonctionnalites' ? '#fff' : '#333',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                borderRadius: '3px 3px 0 0',
+                marginRight: '4px'
               }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur de fond
-            </label>
-            <input
-              type="color"
-              value={(element as any).backgroundColor || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+            >
+              Fonctionnalités
+            </button>
+            <button
+              onClick={() => setCurrentTab('personnalisation')}
               style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
+                flex: 1,
+                padding: '8px',
+                backgroundColor: currentTab === 'personnalisation' ? '#007bff' : '#f0f0f0',
+                color: currentTab === 'personnalisation' ? '#fff' : '#333',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                borderRadius: '3px 3px 0 0'
               }}
-            />
+            >
+              Personnalisation
+            </button>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Fond des en-têtes
-            </label>
-            <input
-              type="color"
-              value={(element as any).headerBackgroundColor || '#f9fafb'}
-              onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+          {/* Onglet Fonctionnalités */}
+          {currentTab === 'fonctionnalites' && (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher les en-têtes
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showHeaders !== false}
+                  onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Affiche les noms des colonnes</span>
+              </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur lignes alternées
-            </label>
-            <input
-              type="color"
-              value={(element as any).alternateRowColor || '#f9fafb'}
-              onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher les bordures
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showBorders !== false}
+                  onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures du tableau</span>
+              </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur des bordures
-            </label>
-            <input
-              type="color"
-              value={(element as any).borderColor || '#d1d5db'}
-              onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Lignes alternées
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showAlternatingRows !== false}
+                  onChange={(e) => onChange(element.id, 'showAlternatingRows', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Alterne les couleurs des lignes</span>
+              </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Épaisseur des bordures
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="5"
-              step="0.5"
-              value={(element as any).borderWidth || 1}
-              onChange={(e) => onChange(element.id, 'borderWidth', parseFloat(e.target.value) || 1)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-            />
-          </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher les SKU
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showSku !== false}
+                  onChange={(e) => onChange(element.id, 'showSku', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Colonne des références produit</span>
+              </div>
 
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher les descriptions
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showDescription !== false}
+                  onChange={(e) => onChange(element.id, 'showDescription', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Colonne des descriptions courtes</span>
+              </div>
 
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher la quantité
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showQuantity !== false}
+                  onChange={(e) => onChange(element.id, 'showQuantity', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
+              </div>
+
+              <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher les frais de port
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showShipping !== false}
+                  onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Affiche les frais de livraison</span>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher la TVA
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showTax !== false}
+                  onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Affiche les taxes sur le total</span>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Afficher la remise globale
+                </label>
+                <input
+                  type="checkbox"
+                  checked={(element as any).showGlobalDiscount !== false}
+                  onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '11px', color: '#666' }}>Affiche la remise globale appliquée</span>
+              </div>
+            </>
+          )}
+
+          {/* Onglet Personnalisation */}
+          {currentTab === 'personnalisation' && (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Taille de police
+                </label>
+                <input
+                  type="number"
+                  min="8"
+                  max="24"
+                  value={(element as any).fontSize || 11}
+                  onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 11)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Couleur de fond
+                </label>
+                <input
+                  type="color"
+                  value={(element as any).backgroundColor || '#ffffff'}
+                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Fond des en-têtes
+                </label>
+                <input
+                  type="color"
+                  value={(element as any).headerBackgroundColor || '#f9fafb'}
+                  onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Couleur lignes alternées
+                </label>
+                <input
+                  type="color"
+                  value={(element as any).alternateRowColor || '#f9fafb'}
+                  onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Couleur des bordures
+                </label>
+                <input
+                  type="color"
+                  value={(element as any).borderColor || '#d1d5db'}
+                  onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Épaisseur des bordures
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.5"
+                  value={(element as any).borderWidth || 1}
+                  onChange={(e) => onChange(element.id, 'borderWidth', parseFloat(e.target.value) || 1)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+            </>
+          )}
         </>
       );
 
