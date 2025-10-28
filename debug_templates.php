@@ -13,7 +13,15 @@ if (!defined('ABSPATH')) {
 }
 
 if (!is_user_logged_in()) {
-    wp_die('Vous devez être connecté pour accéder à cette page.');
+    echo '<p style="color: red;">Vous devez être connecté pour accéder à cette page.</p>';
+    echo '<p><a href="' . wp_login_url($_SERVER['REQUEST_URI']) . '">Se connecter</a></p>';
+
+    // En développement, permettre l'accès si on force le paramètre
+    if (isset($_GET['force_debug'])) {
+        echo '<p style="color: orange; background: yellow; padding: 10px;">⚠️ MODE DEBUG FORCÉ - Accessible sans connexion</p>';
+    } else {
+        exit;
+    }
 }
 
 echo '<h1>Débogage API Templates</h1>';
