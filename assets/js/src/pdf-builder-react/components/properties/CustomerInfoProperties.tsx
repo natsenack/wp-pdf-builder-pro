@@ -557,11 +557,12 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          {/* Police de l'en-tête */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-              Police de l'en-tête
-            </h4>
+          {/* Police de l'en-tête - Uniquement si les en-têtes sont affichés */}
+          {(element as any).showHeaders !== false && (
+            <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Police de l'en-tête
+              </h4>
 
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -654,6 +655,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </select>
             </div>
           </div>
+          )}
 
           {/* Police du corps du texte */}
           <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
