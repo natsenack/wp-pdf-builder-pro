@@ -54,6 +54,39 @@ if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") == $table_templates) {
     echo '📊 Nombre de templates: ' . $count . '<br>';
 
     if ($count > 0) {
+        // Vérifier la structure de la table
+        $columns = $wpdb->get_results("DESCRIBE $table_templates", ARRAY_A);
+        echo '<h3>Structure de la table:</h3>';
+        echo '<table border="1" style="border-collapse: collapse;">';
+        echo '<tr><th>Champ</th><th>Type</th><th>Null</th><th>Clé</th><th>Défaut</th><th>Extra</th></tr>';
+        foreach ($columns as $column) {
+            echo '<tr>';
+            echo '<td>' . $column['Field'] . '</td>';
+            echo '<td>' . $column['Type'] . '</td>';
+            echo '<td>' . $column['Null'] . '</td>';
+            echo '<td>' . $column['Key'] . '</td>';
+            echo '<td>' . $column['Default'] . '</td>';
+            echo '<td>' . $column['Extra'] . '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+
+        // Vérifier si template_data est LONGTEXT
+        $template_data_column = null;
+        foreach ($columns as $column) {
+            if ($column['Field'] === 'template_data') {
+                $template_data_column = $column;
+                break;
+            }
+        }
+
+        if ($template_data_column && strpos($template_data_column['Type'], 'longtext') === false) {
+            echo '<p style="color: red;">⚠️ Le champ template_data est de type ' . $template_data_column['Type'] . '. Il devrait être LONGTEXT pour supporter des templates complexes.</p>';
+            echo '<p><a href="?fix_table=1" style="background: #007cba; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Corriger la table (TEXT → LONGTEXT)</a></p>';
+        } else {
+            echo '<p style="color: green;">✅ Le champ template_data est correctement configuré en LONGTEXT.</p>';
+        }
+
         // Lister les templates
         $templates = $wpdb->get_results("SELECT id, name, LENGTH(template_data) as data_length FROM $table_templates ORDER BY id", ARRAY_A);
 
@@ -89,6 +122,20 @@ if (isset($_GET['test_template'])) {
         pdf_builder_ajax_get_template();
     } catch (Exception $e) {
         echo '❌ Erreur lors du test: ' . $e->getMessage() . '<br>';
+    }
+}
+
+// Corriger la table si demandé
+if (isset($_GET['fix_table'])) {
+    echo '<h2>Correction de la table</h2>';
+
+    $result = $wpdb->query("ALTER TABLE $table_templates MODIFY COLUMN template_data LONGTEXT");
+
+    if ($result !== false) {
+        echo '✅ Table corrigée avec succès. Le champ template_data est maintenant LONGTEXT.<br>';
+        echo '<p><a href="' . remove_query_arg('fix_table') . '">Actualiser la page</a></p>';
+    } else {
+        echo '❌ Erreur lors de la correction de la table: ' . $wpdb->last_error . '<br>';
     }
 }
 
