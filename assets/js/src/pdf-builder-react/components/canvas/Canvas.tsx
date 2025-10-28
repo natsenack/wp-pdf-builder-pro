@@ -15,6 +15,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
+  // Cache pour les images chargées
+  const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
+
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver } = useCanvasDrop({
     canvasRef,
@@ -682,6 +685,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
   const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
+    const logoUrl = props.logoUrl || '';
     const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
@@ -689,7 +693,57 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillStyle = 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
 
-    // Dessiner un logo fictif (rectangle avec texte)
+    if (logoUrl) {
+      // Vérifier si l'image est en cache
+      let img = imageCache.current.get(logoUrl);
+
+      if (!img) {
+        // Créer une nouvelle image et la mettre en cache
+        img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = logoUrl;
+        imageCache.current.set(logoUrl, img);
+      }
+
+      // Si l'image est chargée, la dessiner
+      if (img.complete && img.naturalHeight !== 0) {
+        // Calculer les dimensions et position
+        let logoWidth = element.width - 20;
+        let logoHeight = element.height - 20;
+
+        // Respecter les proportions si demandé
+        if (props.maintainAspectRatio !== false) {
+          const aspectRatio = img.naturalWidth / img.naturalHeight;
+          if (logoWidth / logoHeight > aspectRatio) {
+            logoWidth = logoHeight * aspectRatio;
+          } else {
+            logoHeight = logoWidth / aspectRatio;
+          }
+        }
+
+        let x = 10;
+        if (alignment === 'center') {
+          x = (element.width - logoWidth) / 2;
+        } else if (alignment === 'right') {
+          x = element.width - logoWidth - 10;
+        }
+
+        const y = (element.height - logoHeight) / 2;
+
+        // Dessiner l'image
+        ctx.drawImage(img, x, y, logoWidth, logoHeight);
+      } else {
+        // Image en cours de chargement ou erreur, dessiner un placeholder
+        drawLogoPlaceholder(ctx, element, alignment, img.complete ? 'Erreur' : 'Chargement...');
+      }
+    } else {
+      // Pas d'URL, dessiner un placeholder
+      drawLogoPlaceholder(ctx, element, alignment, 'LOGO');
+    }
+  };
+
+  // Fonction helper pour dessiner un placeholder de logo
+  const drawLogoPlaceholder = (ctx: CanvasRenderingContext2D, element: Element, alignment: string, text: string) => {
     const logoWidth = Math.min(element.width - 20, 120);
     const logoHeight = Math.min(element.height - 20, 60);
 
@@ -703,14 +757,17 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const y = (element.height - logoHeight) / 2;
 
     // Rectangle du logo
-    ctx.fillStyle = '#007acc';
+    ctx.fillStyle = '#f0f0f0';
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
     ctx.fillRect(x, y, logoWidth, logoHeight);
+    ctx.strokeRect(x, y, logoWidth, logoHeight);
 
-    // Texte du logo
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 16px Arial';
+    // Texte du placeholder
+    ctx.fillStyle = '#666';
+    ctx.font = '12px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('LOGO', x + logoWidth / 2, y + logoHeight / 2 + 6);
+    ctx.fillText(text, x + logoWidth / 2, y + logoHeight / 2 + 4);
   };
 
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
