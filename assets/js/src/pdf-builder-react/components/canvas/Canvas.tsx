@@ -794,6 +794,8 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const fontSize = props.fontSize || 14;
     const textAlign = props.textAlign || 'right';
     const showLabel = props.showLabel !== false; // Par défaut true
+    const labelPosition = props.labelPosition || 'above'; // above, left, right, below
+    const numberPosition = props.numberPosition || 'inline'; // inline, below
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
@@ -816,13 +818,44 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     let x = textAlign === 'right' ? element.width - 10 : textAlign === 'center' ? element.width / 2 : 10;
+    let y = 20;
 
-    // Afficher le libellé seulement si demandé
-    const labelText = showLabel ? `N° de commande: ${orderNumber}` : orderNumber;
-    ctx.fillText(labelText, x, 20);
+    // Afficher selon la position du libellé et du numéro
+    if (showLabel) {
+      if (labelPosition === 'above') {
+        // Libellé au-dessus, numéro en-dessous
+        ctx.fillText('N° de commande:', x, y);
+        y += 18;
+        ctx.fillText(orderNumber, x, y);
+      } else if (labelPosition === 'below') {
+        // Numéro au-dessus, libellé en-dessous
+        ctx.fillText(orderNumber, x, y);
+        y += 18;
+        ctx.fillText('N° de commande:', x, y);
+      } else if (labelPosition === 'left') {
+        // Libellé à gauche, numéro à droite
+        ctx.textAlign = 'left';
+        const labelX = 10;
+        const numberX = element.width / 2;
+        ctx.fillText('N° de commande:', labelX, y);
+        ctx.fillText(orderNumber, numberX, y);
+      } else if (labelPosition === 'right') {
+        // Numéro à gauche, libellé à droite
+        ctx.textAlign = 'left';
+        const numberX = 10;
+        const labelX = element.width / 2;
+        ctx.fillText(orderNumber, numberX, y);
+        ctx.fillText('N° de commande:', labelX, y);
+      }
+    } else {
+      // Pas de libellé, juste le numéro
+      ctx.fillText(orderNumber, x, y);
+    }
 
+    // Afficher la date sur une nouvelle ligne
     ctx.font = `${fontSize - 2}px Arial`;
-    ctx.fillText(`Date: ${orderDate}`, x, 40);
+    ctx.textAlign = textAlign as CanvasTextAlign;
+    ctx.fillText(`Date: ${orderDate}`, x, y + 20);
   };
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
