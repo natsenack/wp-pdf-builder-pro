@@ -495,7 +495,15 @@ function pdf_builder_ajax_get_template() {
     $template_data = json_decode($template['template_data'], true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log('PDF Builder: Erreur JSON decode - ' . json_last_error_msg() . ' - Raw data: ' . substr($template['template_data'], 0, 500));
         wp_send_json_error(__('Erreur lors du décodage des données du template.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier que elements et canvas sont présents
+    if (!isset($template_data['elements']) || !isset($template_data['canvas'])) {
+        error_log('PDF Builder: Missing elements or canvas in template data: ' . print_r($template_data, true));
+        wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
     }
 
@@ -556,6 +564,9 @@ function pdf_builder_ajax_save_template() {
         wp_send_json_error(__('Erreur lors de l\'encodage des données JSON.', 'pdf-builder-pro'));
         return;
     }
+
+    // Debug: log what we're storing
+    error_log('PDF Builder: Storing template data - Length: ' . strlen($json_data) . ' - First 500 chars: ' . substr($json_data, 0, 500));
 
     if ($template_id > 0) {
         // Mettre à jour un template existant
