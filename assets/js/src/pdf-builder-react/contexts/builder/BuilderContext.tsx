@@ -7,7 +7,8 @@ import {
   DragState,
   Element,
   BuilderMode,
-  HistoryState
+  HistoryState,
+  LoadTemplatePayload
 } from '../../types/elements';
 
 // État initial
@@ -242,6 +243,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       return {
         ...state,
         elements: action.payload.elements || [],
+        canvas: action.payload.canvas ? { ...state.canvas, ...action.payload.canvas } : state.canvas,
         template: {
           id: action.payload.id,
           name: action.payload.name,
@@ -252,7 +254,8 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         },
         history: updateHistory(state, {
           ...state,
-          elements: action.payload.elements || []
+          elements: action.payload.elements || [],
+          canvas: action.payload.canvas ? { ...state.canvas, ...action.payload.canvas } : state.canvas
         })
       };
 

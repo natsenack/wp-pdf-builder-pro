@@ -448,6 +448,69 @@ function pdf_builder_ajax_get_fresh_nonce() {
 }
 
 /**
+ * AJAX handler pour récupérer un template par ID
+ */
+function pdf_builder_ajax_get_template() {
+    // Vérifier le nonce
+    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_nonce')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Récupérer l'ID du template
+    $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+
+    if (!$template_id) {
+        wp_send_json_error(__('ID du template manquant.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Charger le core si nécessaire
+    if (!class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
+        pdf_builder_load_core_when_needed();
+    }
+
+    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+
+    // Récupérer le template
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    $template = $wpdb->get_row(
+        $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+        ARRAY_A
+    );
+
+    if (!$template) {
+        wp_send_json_error(__('Template non trouvé.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Décoder les données JSON du template
+    $template_data = json_decode($template['template_data'], true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        wp_send_json_error(__('Erreur lors du décodage des données du template.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Retourner les données du template
+    wp_send_json_success(array(
+        'id' => $template['id'],
+        'name' => $template['name'],
+        'elements' => isset($template_data['elements']) ? $template_data['elements'] : [],
+        'canvas' => isset($template_data['canvas']) ? $template_data['canvas'] : null,
+        'created_at' => $template['created_at'],
+        'updated_at' => $template['updated_at']
+    ));
+}
+
+/**
  * Actions AJAX fallback
  */
 add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
@@ -456,6 +519,8 @@ add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fa
 add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
 add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
 add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
+add_action('wp_ajax_nopriv_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
 add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
 add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
 

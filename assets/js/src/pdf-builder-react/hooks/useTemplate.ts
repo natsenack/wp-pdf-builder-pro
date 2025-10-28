@@ -17,35 +17,39 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = async (templateId: string) => {
     try {
-      // Simulation du chargement d'un template existant
-      // À remplacer par un vrai appel API
       console.log('Chargement du template:', templateId);
 
-      // Simulation d'un délai de chargement
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Faire un appel API pour récupérer les données du template
+      const response = await fetch(`${window.pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData.nonce}`);
 
-      // Données fictives du template (à remplacer par les vraies données)
-      const templateData = {
-        id: templateId,
-        name: `Template ${templateId}`,
-        elements: [
-          // Éléments du template chargés depuis la DB
-        ],
-        lastSaved: new Date()
-      };
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.data || 'Erreur lors du chargement du template');
+      }
+
+      const templateData = result.data;
 
       dispatch({
         type: 'LOAD_TEMPLATE',
         payload: {
           id: templateId,
           name: templateData.name,
-          elements: templateData.elements,
-          lastSaved: templateData.lastSaved
+          elements: templateData.elements || [],
+          canvas: templateData.canvas || null,
+          lastSaved: new Date(templateData.updated_at)
         }
       });
 
+      console.log('Template chargé avec succès:', templateData);
+
     } catch (error) {
       console.error('Erreur lors du chargement du template:', error);
+      // En cas d'erreur, on peut afficher un message d'erreur à l'utilisateur
     }
   };
 
