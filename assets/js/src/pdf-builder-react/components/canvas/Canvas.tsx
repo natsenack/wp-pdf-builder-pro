@@ -379,8 +379,8 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     products.forEach((product, index) => {
 
-      // Fond alterné pour les lignes
-      if (showAlternatingRows && index % 2 === 1) {
+      // Fond alterné pour les lignes (commence par la première ligne pour uniformité)
+      if (showAlternatingRows && index % 2 === 0) {
         ctx.fillStyle = props.alternateRowColor || '#f9fafb';
         ctx.fillRect(1, currentY - 2, element.width - 2, rowHeight);
       }
