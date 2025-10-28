@@ -522,9 +522,9 @@ function pdf_builder_ajax_get_template() {
         }
     }
 
-    // Vérifier que elements et canvas sont présents
-    if (empty($elements)) {
-        error_log('PDF Builder: No elements found in template data: ' . print_r($template_data, true));
+    // Vérifier que elements est défini (peut être un array vide pour un nouveau template)
+    if (!isset($template_data['elements'])) {
+        error_log('PDF Builder: Missing elements in template data: ' . print_r($template_data, true));
         wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
     }
