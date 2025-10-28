@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
-import { LoadTemplatePayload } from '../types/elements';
+import { LoadTemplatePayload, TemplateState } from '../types/elements';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -160,6 +160,10 @@ export function useTemplate() {
     dispatch({ type: 'SET_TEMPLATE_MODIFIED', payload: modified });
   };
 
+  const updateTemplateSettings = (settings: Partial<TemplateState>) => {
+    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: settings });
+  };
+
   return {
     templateName: state.template.name,
     templateDescription: state.template.description,
@@ -178,6 +182,7 @@ export function useTemplate() {
     saveTemplate,
     previewTemplate,
     newTemplate,
-    setTemplateModified
+    setTemplateModified,
+    updateTemplateSettings
   };
 }

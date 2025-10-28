@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TemplateState } from '../../types/elements';
 
 interface HeaderProps {
   templateName: string;
@@ -17,6 +18,7 @@ interface HeaderProps {
   onSave: () => void;
   onPreview: () => void;
   onNewTemplate: () => void;
+  onUpdateTemplateSettings: (settings: Partial<TemplateState>) => void;
 }
 
 export function Header({
@@ -35,7 +37,8 @@ export function Header({
   isEditingExistingTemplate,
   onSave,
   onPreview,
-  onNewTemplate
+  onNewTemplate,
+  onUpdateTemplateSettings
 }: HeaderProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -663,13 +666,11 @@ export function Header({
                 </button>
                 <button
                   onClick={() => {
-                    // Ici on pourrait sauvegarder les paramètres
-                    console.log('Sauvegarde des paramètres:', {
+                    // Sauvegarder les paramètres du template
+                    onUpdateTemplateSettings({
                       name: editedTemplateName,
                       description: editedTemplateDescription,
                       tags: editedTemplateTags,
-                      canvasWidth: editedCanvasWidth,
-                      canvasHeight: editedCanvasHeight,
                       marginTop: editedMarginTop,
                       marginBottom: editedMarginBottom,
                       showGuides: editedShowGuides,

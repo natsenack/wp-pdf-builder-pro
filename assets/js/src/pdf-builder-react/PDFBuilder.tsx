@@ -37,7 +37,8 @@ function PDFBuilderContent({
     isEditingExistingTemplate,
     saveTemplate,
     previewTemplate,
-    newTemplate
+    newTemplate,
+    updateTemplateSettings
   } = useTemplate();
 
   console.log('useTemplate hook returned:', { templateName, isNewTemplate, isModified, isSaving });
@@ -74,6 +75,7 @@ function PDFBuilderContent({
         onSave={saveTemplate}
         onPreview={previewTemplate}
         onNewTemplate={newTemplate}
+        onUpdateTemplateSettings={updateTemplateSettings}
       />
 
       {/* Toolbar sous le header */}

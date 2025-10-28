@@ -259,6 +259,16 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         }
       };
 
+    case 'UPDATE_TEMPLATE_SETTINGS':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          ...action.payload,
+          isModified: true
+        }
+      };
+
     case 'LOAD_TEMPLATE':
       console.log('LOAD_TEMPLATE action dispatched with', (action.payload as any).elements?.length || 0, 'elements');
       return {

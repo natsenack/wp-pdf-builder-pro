@@ -146,6 +146,7 @@ export type BuilderAction =
   | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string } }
   | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
   | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
+  | { type: 'UPDATE_TEMPLATE_SETTINGS'; payload: Partial<TemplateState> }
   | { type: 'LOAD_TEMPLATE'; payload: { id?: string; name?: string; elements?: Element[]; lastSaved?: Date } }
   | { type: 'NEW_TEMPLATE' };
 
