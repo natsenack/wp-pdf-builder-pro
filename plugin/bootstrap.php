@@ -190,8 +190,15 @@ function pdf_builder_editor_page_simple() {
     echo '<div class="wrap"><h1>Éditeur Canvas</h1><p>Éditeur en cours de développement.</p></div>';
 }
 
-// Inclusion différée de la classe principale
-function pdf_builder_load_core_when_needed() {
+// Charger les scripts nécessaires pour l'éditeur
+add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_editor_scripts');
+
+function pdf_builder_enqueue_editor_scripts($hook) {
+    // Charger wp_enqueue_media seulement sur les pages du PDF builder
+    if (strpos($hook, 'pdf-builder') !== false || isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) {
+        wp_enqueue_media();
+    }
+}
     static $core_loaded = false;
     if ($core_loaded) return;
 
@@ -826,5 +833,15 @@ function pdf_builder_ajax_save_settings_fallback() {
         'spacing' => $settings['canvas_border_spacing']
     ));
     exit;
+}
+
+// Charger les scripts nécessaires pour l'éditeur
+add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_editor_scripts');
+
+function pdf_builder_enqueue_editor_scripts($hook) {
+    // Charger wp_enqueue_media seulement sur les pages du PDF builder
+    if (strpos($hook, 'pdf-builder') !== false || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
+        wp_enqueue_media();
+    }
 }
 
