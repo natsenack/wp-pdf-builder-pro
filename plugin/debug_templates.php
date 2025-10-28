@@ -10,12 +10,17 @@ if (!defined('ABSPATH')) {
     require_once ABSPATH . 'wp-load.php';
 }
 
+// Headers pour éviter le cache
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 if (!is_user_logged_in()) {
     wp_die('Vous devez être connecté pour accéder à cette page.');
 }
 
 echo '<h1>Débogage API Templates</h1>';
-echo '<p>Dernière mise à jour: ' . date('Y-m-d H:i:s') . '</p>';
+echo '<p>Dernière mise à jour: ' . date('Y-m-d H:i:s') . ' (v' . time() . ')</p>';
 
 // Vérifier si la fonction existe
 echo '<h2>1. Fonction AJAX</h2>';
