@@ -7,20 +7,28 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  let state, setMode, undo, redo, reset, toggleGrid;
-  try {
-    const builder = useBuilder();
-    state = builder.state;
-    setMode = builder.setMode;
-    undo = builder.undo;
-    redo = builder.redo;
-    reset = builder.reset;
-    toggleGrid = builder.toggleGrid;
-    console.log('Builder context available:', !!state); // Debug log
-  } catch (error) {
-    console.error('Error accessing builder context:', error);
+  const builder = useBuilder();
+  const { state, setMode, undo, redo, reset, toggleGrid } = builder;
+
+  console.log('Builder context available:', !!state); // Debug log
+  console.log('Toolbar state:', state); // Debug log
+
+  // Vérifications de sécurité
+  if (!state) {
     return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
-      Erreur: Contexte Builder non disponible
+      Erreur: État Builder non disponible
+    </div>;
+  }
+
+  if (!state.history) {
+    return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
+      Erreur: Historique non disponible
+    </div>;
+  }
+
+  if (!state.canvas) {
+    return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
+      Erreur: Canvas non disponible
     </div>;
   }
 
@@ -34,7 +42,43 @@ export function Toolbar({ className }: ToolbarProps) {
   ];
 
   const handleModeChange = (mode: BuilderMode) => {
-    setMode(mode);
+    if (setMode) {
+      setMode(mode);
+    } else {
+      console.error('setMode function not available');
+    }
+  };
+
+  const handleUndo = () => {
+    if (undo) {
+      undo();
+    } else {
+      console.error('undo function not available');
+    }
+  };
+
+  const handleRedo = () => {
+    if (redo) {
+      redo();
+    } else {
+      console.error('redo function not available');
+    }
+  };
+
+  const handleReset = () => {
+    if (reset) {
+      reset();
+    } else {
+      console.error('reset function not available');
+    }
+  };
+
+  const handleToggleGrid = () => {
+    if (toggleGrid) {
+      toggleGrid();
+    } else {
+      console.error('toggleGrid function not available');
+    }
   };
 
   return (
@@ -87,7 +131,7 @@ export function Toolbar({ className }: ToolbarProps) {
         </h4>
         <div style={{ display: 'flex', gap: '4px' }}>
           <button
-            onClick={undo}
+            onClick={handleUndo}
             disabled={!state.history.canUndo}
             style={{
               padding: '6px 12px',
@@ -102,7 +146,7 @@ export function Toolbar({ className }: ToolbarProps) {
             ↶ Annuler
           </button>
           <button
-            onClick={redo}
+            onClick={handleRedo}
             disabled={!state.history.canRedo}
             style={{
               padding: '6px 12px',
@@ -117,7 +161,7 @@ export function Toolbar({ className }: ToolbarProps) {
             ↷ Rétablir
           </button>
           <button
-            onClick={reset}
+            onClick={handleReset}
             style={{
               padding: '6px 12px',
               border: '1px solid #ccc',
@@ -131,7 +175,7 @@ export function Toolbar({ className }: ToolbarProps) {
             🔄 Réinitialiser
           </button>
           <button
-            onClick={toggleGrid}
+            onClick={handleToggleGrid}
             style={{
               padding: '6px 12px',
               border: '1px solid #ccc',
