@@ -198,16 +198,14 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
   const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
     const strokeColor = (element as any).strokeColor || '#000000';
-    const strokeWidth = (element as any).strokeWidth || 1;
-    const x2 = (element as any).x2 || element.width;
-    const y2 = (element as any).y2 || element.height;
+    const strokeWidth = (element as any).strokeWidth || 2;
 
     ctx.strokeStyle = strokeColor;
     ctx.lineWidth = strokeWidth;
 
     ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(0, element.height / 2); // Centre verticalement
+    ctx.lineTo(element.width, element.height / 2); // Ligne horizontale droite
     ctx.stroke();
   };
 

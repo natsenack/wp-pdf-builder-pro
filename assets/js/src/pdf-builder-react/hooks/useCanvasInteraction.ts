@@ -63,9 +63,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           id: elementId,
           type: 'line',
           x: x - 50,
-          y: y - 25,
+          y: y - 1, // Centrer verticalement sur le clic
           width: 100,
-          height: 2,
+          height: 2, // Épaisseur de la ligne
           strokeColor: '#000000',
           strokeWidth: 2,
           rotation: 0,
