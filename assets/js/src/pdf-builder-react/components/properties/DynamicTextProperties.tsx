@@ -14,6 +14,69 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
+  // Liste des exemples prédéfinis
+  const textExamples = [
+    {
+      id: 'order_reference',
+      label: 'Référence de commande',
+      template: 'Commande #{order_number}'
+    },
+    {
+      id: 'customer_greeting',
+      label: 'Salutation client',
+      template: 'Bonjour {customer_name},'
+    },
+    {
+      id: 'order_summary',
+      label: 'Résumé de commande',
+      template: 'Votre commande #{order_number} du {order_date}'
+    },
+    {
+      id: 'signature',
+      label: 'Signature',
+      template: 'Cordialement,\n{company_name}'
+    },
+    {
+      id: 'delivery_info',
+      label: 'Informations de livraison',
+      template: 'Livraison prévue le {delivery_date}'
+    },
+    {
+      id: 'payment_info',
+      label: 'Informations de paiement',
+      template: 'Paiement de {total} effectué le {payment_date}'
+    },
+    {
+      id: 'thank_you',
+      label: 'Message de remerciement',
+      template: 'Merci pour votre confiance, {customer_name}'
+    },
+    {
+      id: 'contact_info',
+      label: 'Informations de contact',
+      template: 'Contact: {company_email} - {company_phone}'
+    },
+    {
+      id: 'custom',
+      label: 'Personnalisé',
+      template: ''
+    }
+  ];
+
+  // Détecter le template actuel
+  const currentText = (element as any).text || '';
+  const currentTemplate = (element as any).textTemplate || 
+    textExamples.find((ex: any) => ex.template === currentText)?.id || 'custom';
+
+  // Fonction pour changer de template
+  const handleTemplateChange = (templateId: string) => {
+    const selectedExample = textExamples.find((ex: any) => ex.id === templateId);
+    if (selectedExample) {
+      onChange(element.id, 'text', selectedExample.template);
+      onChange(element.id, 'textTemplate', selectedExample.id);
+    }
+  };
+
   const dynamicTextThemes = [
     {
       id: 'clean',
@@ -225,13 +288,36 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Texte avec variables
+              Modèle de texte
+            </label>
+            <select
+              value={currentTemplate}
+              onChange={(e) => handleTemplateChange(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              {textExamples.map((example: any) => (
+                <option key={example.id} value={example.id}>
+                  {example.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Texte personnalisé
             </label>
             <textarea
               value={(element as any).text || ''}
               onChange={(e) => onChange(element.id, 'text', e.target.value)}
-              placeholder="Entrez votre texte avec des variables comme {customer_name}"
-              rows={4}
+              placeholder="Modifiez le texte ou utilisez les variables disponibles"
+              rows={3}
               style={{
                 width: '100%',
                 padding: '6px',
