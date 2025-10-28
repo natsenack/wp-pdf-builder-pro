@@ -94,7 +94,7 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
           </h5>
 
           {/* Propriétés communes - masquées pour les éléments WooCommerce qui ont leurs propres onglets */}
-          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'dynamic-text' && element.type !== 'mentions' && (
+          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
