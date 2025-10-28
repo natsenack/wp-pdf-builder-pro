@@ -5648,7 +5648,7 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Localize script with data
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
-            'nonce' => wp_create_nonce('pdf_builder_react_nonce'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'strings' => [
                 'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
