@@ -378,18 +378,18 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.textBaseline = 'middle';
 
     products.forEach((product, index) => {
-      // Ligne de séparation avant chaque ligne
+      // Ligne de séparation au début de chaque ligne
       ctx.strokeStyle = '#f3f4f6';
       ctx.lineWidth = 0.5;
       ctx.beginPath();
-      ctx.moveTo(8, currentY - 6);
-      ctx.lineTo(element.width - 8, currentY - 6);
+      ctx.moveTo(8, currentY - 2);
+      ctx.lineTo(element.width - 8, currentY - 2);
       ctx.stroke();
 
       // Fond alterné pour les lignes
       if (showAlternatingRows && index % 2 === 1) {
         ctx.fillStyle = props.alternateRowColor || '#f9fafb';
-        ctx.fillRect(1, currentY - 2, element.width - 2, rowHeight);
+        ctx.fillRect(1, currentY, element.width - 2, rowHeight);
       }
 
       ctx.fillStyle = '#000000';
