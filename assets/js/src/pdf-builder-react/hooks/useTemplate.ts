@@ -162,6 +162,14 @@ export function useTemplate() {
 
   return {
     templateName: state.template.name,
+    templateDescription: state.template.description,
+    templateTags: state.template.tags,
+    canvasWidth: state.template.canvasWidth,
+    canvasHeight: state.template.canvasHeight,
+    marginTop: state.template.marginTop,
+    marginBottom: state.template.marginBottom,
+    showGuides: state.template.showGuides,
+    snapToGrid: state.template.snapToGrid,
     isNewTemplate: state.template.isNew,
     isModified: state.template.isModified,
     isSaving: state.template.isSaving,

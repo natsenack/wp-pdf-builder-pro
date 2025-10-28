@@ -23,6 +23,14 @@ function PDFBuilderContent({
 
   const {
     templateName,
+    templateDescription,
+    templateTags,
+    canvasWidth,
+    canvasHeight,
+    marginTop,
+    marginBottom,
+    showGuides,
+    snapToGrid,
     isNewTemplate,
     isModified,
     isSaving,
@@ -51,6 +59,14 @@ function PDFBuilderContent({
       {/* Header en haut */}
       <Header
         templateName={templateName || ''}
+        templateDescription={templateDescription || ''}
+        templateTags={templateTags || []}
+        canvasWidth={canvasWidth || 595}
+        canvasHeight={canvasHeight || 842}
+        marginTop={marginTop || 20}
+        marginBottom={marginBottom || 20}
+        showGuides={showGuides || true}
+        snapToGrid={snapToGrid || false}
         isNewTemplate={isNewTemplate}
         isModified={isModified}
         isSaving={isSaving}

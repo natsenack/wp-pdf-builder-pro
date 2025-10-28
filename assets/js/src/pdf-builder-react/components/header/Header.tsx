@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface HeaderProps {
   templateName: string;
+  templateDescription: string;
+  templateTags: string[];
+  canvasWidth: number;
+  canvasHeight: number;
+  marginTop: number;
+  marginBottom: number;
+  showGuides: boolean;
+  snapToGrid: boolean;
   isNewTemplate: boolean;
   isModified: boolean;
   isSaving: boolean;
@@ -13,6 +21,14 @@ interface HeaderProps {
 
 export function Header({
   templateName,
+  templateDescription,
+  templateTags,
+  canvasWidth,
+  canvasHeight,
+  marginTop,
+  marginBottom,
+  showGuides,
+  snapToGrid,
   isNewTemplate,
   isModified,
   isSaving,
@@ -24,9 +40,52 @@ export function Header({
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
-  const [templateDescription, setTemplateDescription] = useState('');
-  const [templateTags, setTemplateTags] = useState<string[]>([]);
+  const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
+  const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
+  const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
+  const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
+  const [editedMarginTop, setEditedMarginTop] = useState(marginTop);
+  const [editedMarginBottom, setEditedMarginBottom] = useState(marginBottom);
+  const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
+  const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [newTag, setNewTag] = useState('');
+
+  // Synchroniser les états locaux avec les props quand elles changent
+  useEffect(() => {
+    setEditedTemplateName(templateName);
+  }, [templateName]);
+
+  useEffect(() => {
+    setEditedTemplateDescription(templateDescription);
+  }, [templateDescription]);
+
+  useEffect(() => {
+    setEditedTemplateTags(templateTags);
+  }, [templateTags]);
+
+  useEffect(() => {
+    setEditedCanvasWidth(canvasWidth);
+  }, [canvasWidth]);
+
+  useEffect(() => {
+    setEditedCanvasHeight(canvasHeight);
+  }, [canvasHeight]);
+
+  useEffect(() => {
+    setEditedMarginTop(marginTop);
+  }, [marginTop]);
+
+  useEffect(() => {
+    setEditedMarginBottom(marginBottom);
+  }, [marginBottom]);
+
+  useEffect(() => {
+    setEditedShowGuides(showGuides);
+  }, [showGuides]);
+
+  useEffect(() => {
+    setEditedSnapToGrid(snapToGrid);
+  }, [snapToGrid]);
 
   const buttonBaseStyles = {
     padding: '10px 16px',
@@ -316,8 +375,8 @@ export function Header({
                   Description
                 </label>
                 <textarea
-                  value={templateDescription}
-                  onChange={(e) => setTemplateDescription(e.target.value)}
+                  value={editedTemplateDescription}
+                  onChange={(e) => setEditedTemplateDescription(e.target.value)}
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -336,7 +395,7 @@ export function Header({
                   Étiquettes (Tags)
                 </label>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                  {templateTags.map((tag, index) => (
+                  {editedTemplateTags.map((tag, index) => (
                     <span
                       key={index}
                       style={{
@@ -353,7 +412,7 @@ export function Header({
                     >
                       {tag}
                       <button
-                        onClick={() => setTemplateTags(templateTags.filter((_, i) => i !== index))}
+                        onClick={() => setEditedTemplateTags(editedTemplateTags.filter((_, i) => i !== index))}
                         style={{
                           background: 'none',
                           border: 'none',
@@ -378,7 +437,7 @@ export function Header({
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && newTag.trim()) {
                         e.preventDefault();
-                        setTemplateTags([...templateTags, newTag.trim()]);
+                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
                         setNewTag('');
                       }
                     }}
@@ -394,7 +453,7 @@ export function Header({
                   <button
                     onClick={() => {
                       if (newTag.trim()) {
-                        setTemplateTags([...templateTags, newTag.trim()]);
+                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
                         setNewTag('');
                       }
                     }}
@@ -428,7 +487,8 @@ export function Header({
                     </label>
                     <input
                       type="number"
-                      defaultValue="595"
+                      value={editedCanvasWidth}
+                      onChange={(e) => setEditedCanvasWidth(Number(e.target.value))}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
@@ -445,7 +505,8 @@ export function Header({
                     </label>
                     <input
                       type="number"
-                      defaultValue="842"
+                      value={editedCanvasHeight}
+                      onChange={(e) => setEditedCanvasHeight(Number(e.target.value))}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
@@ -462,7 +523,8 @@ export function Header({
                     </label>
                     <input
                       type="number"
-                      defaultValue="20"
+                      value={editedMarginTop}
+                      onChange={(e) => setEditedMarginTop(Number(e.target.value))}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
@@ -479,7 +541,8 @@ export function Header({
                     </label>
                     <input
                       type="number"
-                      defaultValue="20"
+                      value={editedMarginBottom}
+                      onChange={(e) => setEditedMarginBottom(Number(e.target.value))}
                       style={{
                         width: '100%',
                         padding: '6px 8px',
@@ -495,7 +558,8 @@ export function Header({
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
                     <input
                       type="checkbox"
-                      defaultChecked={true}
+                      checked={editedShowGuides}
+                      onChange={(e) => setEditedShowGuides(e.target.checked)}
                       style={{ margin: 0 }}
                     />
                     Afficher les guides d'alignement
@@ -506,7 +570,8 @@ export function Header({
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
                     <input
                       type="checkbox"
-                      defaultChecked={false}
+                      checked={editedSnapToGrid}
+                      onChange={(e) => setEditedSnapToGrid(e.target.checked)}
                       style={{ margin: 0 }}
                     />
                     Mode grille magnétique
@@ -589,8 +654,14 @@ export function Header({
                     // Ici on pourrait sauvegarder les paramètres
                     console.log('Sauvegarde des paramètres:', {
                       name: editedTemplateName,
-                      description: templateDescription,
-                      tags: templateTags
+                      description: editedTemplateDescription,
+                      tags: editedTemplateTags,
+                      canvasWidth: editedCanvasWidth,
+                      canvasHeight: editedCanvasHeight,
+                      marginTop: editedMarginTop,
+                      marginBottom: editedMarginBottom,
+                      showGuides: editedShowGuides,
+                      snapToGrid: editedSnapToGrid
                     });
                     setShowSettingsModal(false);
                   }}

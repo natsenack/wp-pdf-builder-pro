@@ -14,6 +14,14 @@ export interface Bounds extends Point, Size {}
 export interface TemplateState {
   id?: string;
   name?: string;
+  description?: string;
+  tags?: string[];
+  canvasWidth?: number;
+  canvasHeight?: number;
+  marginTop?: number;
+  marginBottom?: number;
+  showGuides?: boolean;
+  snapToGrid?: boolean;
   isNew: boolean;
   isModified: boolean;
   isSaving: boolean;
@@ -170,24 +178,3 @@ export interface LoadTemplatePayload {
   canvas?: Partial<CanvasState>;
   lastSaved?: Date;
 }
-
-export type BuilderAction =
-  | { type: 'ADD_ELEMENT'; payload: Element }
-  | { type: 'UPDATE_ELEMENT'; payload: { id: string; updates: Partial<Element> } }
-  | { type: 'REMOVE_ELEMENT'; payload: string }
-  | { type: 'SET_ELEMENTS'; payload: Element[] }
-  | { type: 'SET_SELECTION'; payload: string[] }
-  | { type: 'CLEAR_SELECTION' }
-  | { type: 'SET_CANVAS'; payload: Partial<CanvasState> }
-  | { type: 'SET_MODE'; payload: BuilderMode }
-  | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
-  | { type: 'SET_PREVIEW_MODE'; payload: 'editor' | 'command' }
-  | { type: 'SET_ORDER_ID'; payload: string }
-  | { type: 'UNDO' }
-  | { type: 'REDO' }
-  | { type: 'RESET' }
-  | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string } }
-  | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
-  | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
-  | { type: 'LOAD_TEMPLATE'; payload: LoadTemplatePayload }
-  | { type: 'NEW_TEMPLATE' };

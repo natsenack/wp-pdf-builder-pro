@@ -64,7 +64,15 @@ const initialState: BuilderState = {
   template: {
     isNew: true,
     isModified: false,
-    isSaving: false
+    isSaving: false,
+    description: '',
+    tags: [],
+    canvasWidth: 595,
+    canvasHeight: 842,
+    marginTop: 20,
+    marginBottom: 20,
+    showGuides: true,
+    snapToGrid: false
   },
   previewMode: 'editor',
   history: initialHistoryState
