@@ -249,7 +249,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           id: (action.payload as any).id,
           name: (action.payload as any).name,
           isNew: false,
-          isModified: false,
+          isModified: true, // Template chargé est considéré comme modifiable
           isSaving: false,
           lastSaved: (action.payload as any).lastSaved
         },
