@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { LoadTemplatePayload } from '../types/elements';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -34,19 +35,31 @@ export function useTemplate() {
 
       const templateData = result.data;
 
+      // Parse JSON strings
+      let elements = [];
+      let canvas = null;
+      try {
+        elements = templateData.elements ? JSON.parse(templateData.elements) : [];
+        canvas = templateData.canvas ? JSON.parse(templateData.canvas) : null;
+      } catch (parseError) {
+        console.error('Erreur lors du parsing des données du template:', parseError);
+        elements = [];
+        canvas = null;
+      }
+
       dispatch({
         type: 'LOAD_TEMPLATE',
         payload: {
           id: templateId,
           name: templateData.name,
-          elements: templateData.elements || [],
-          canvas: templateData.canvas || null,
+          elements: elements,
+          canvas: canvas,
           lastSaved: new Date(templateData.updated_at)
-        }
+        } as LoadTemplatePayload
       });
 
       console.log('Template chargé avec succès:', templateData);
-      console.log('Éléments chargés:', templateData.elements?.length || 0, 'éléments');
+      console.log('Éléments chargés:', elements.length, 'éléments');
 
     } catch (error) {
       console.error('Erreur lors du chargement du template:', error);
