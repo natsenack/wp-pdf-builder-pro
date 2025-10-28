@@ -441,55 +441,67 @@ function renderSpecificProperties(
       return (
         <>
           {/* Système d'onglets pour Product Table */}
-          <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '4px' }}>
+          <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setCurrentTab('fonctionnalites')}
               style={{
-                flex: 1,
-                padding: '8px',
+                flex: '1 1 30%',
+                padding: '8px 6px',
                 backgroundColor: currentTab === 'fonctionnalites' ? '#007bff' : '#f0f0f0',
                 color: currentTab === 'fonctionnalites' ? '#fff' : '#333',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 borderRadius: '3px 3px 0 0',
-                minWidth: '0'
+                minWidth: '0',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}
+              title="Fonctionnalités"
             >
               Fonctionnalités
             </button>
             <button
               onClick={() => setCurrentTab('personnalisation')}
               style={{
-                flex: 1,
-                padding: '8px',
+                flex: '1 1 30%',
+                padding: '8px 6px',
                 backgroundColor: currentTab === 'personnalisation' ? '#007bff' : '#f0f0f0',
                 color: currentTab === 'personnalisation' ? '#fff' : '#333',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 borderRadius: '3px 3px 0 0',
-                minWidth: '0'
+                minWidth: '0',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}
+              title="Personnalisation"
             >
               Personnalisation
             </button>
             <button
               onClick={() => setCurrentTab('positionnement')}
               style={{
-                flex: 1,
-                padding: '8px',
+                flex: '1 1 30%',
+                padding: '8px 6px',
                 backgroundColor: currentTab === 'positionnement' ? '#007bff' : '#f0f0f0',
                 color: currentTab === 'positionnement' ? '#fff' : '#333',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 borderRadius: '3px 3px 0 0',
-                minWidth: '0'
+                minWidth: '0',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}
+              title="Positionnement"
             >
               Positionnement
             </button>
