@@ -25,7 +25,47 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     {
       id: 'signature_simple',
       label: 'Signature simple',
-      template: 'Bien à vous,\n[prenom] [nom]'
+      template: 'Bien à vous,\n\n[prenom] [nom]'
+    },
+    {
+      id: 'signature_executive',
+      label: 'Signature cadre',
+      template: 'Veuillez agréer, Madame, Monsieur, l\'expression de mes salutations distinguées.\n\n[prenom] [nom]\nDirecteur Général\n[entreprise]'
+    },
+    {
+      id: 'signature_business',
+      label: 'Signature commerciale',
+      template: 'Restant à votre entière disposition pour tout renseignement complémentaire.\n\nCordialement,\n\n[prenom] [nom]\n[entreprise]\n[telephone]\n[email]'
+    },
+    {
+      id: 'signature_minimalist',
+      label: 'Signature minimaliste',
+      template: 'Bien cordialement,\n\n[prenom] [nom]'
+    },
+    {
+      id: 'signature_complete',
+      label: 'Signature complète',
+      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise]\n[Adresse ligne 1]\n[Code postal] [Ville]\n[telephone]\n[email]\n[site]'
+    },
+    {
+      id: 'signature_contract',
+      label: 'Signature contrat',
+      template: 'Fait à [Ville], le [date]\n\n[prenom] [nom]\n[entreprise]\nSIRET: [siret]'
+    },
+    {
+      id: 'signature_email',
+      label: 'Signature email',
+      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise] | [email] | [telephone]'
+    },
+    {
+      id: 'signature_legal',
+      label: 'Signature juridique',
+      template: 'Maître [prenom] [nom]\nAvocat au Barreau de [Ville]\n[entreprise]\n[telephone] | [email]'
+    },
+    {
+      id: 'signature_informal',
+      label: 'Signature informelle',
+      template: 'Amicalement,\n\n[prenom] [nom]'
     },
     {
       id: 'document_title',
