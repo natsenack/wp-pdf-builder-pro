@@ -17,29 +17,54 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
   // Liste des exemples prédéfinis
   const textExamples = [
     {
-      id: 'order_reference',
-      label: 'Référence de commande',
-      template: 'Commande {order_number}'
+      id: 'signature',
+      label: 'Signature',
+      template: 'Cordialement,\n[Votre nom]'
     },
     {
-      id: 'customer_greeting',
-      label: 'Salutation client',
-      template: 'Bonjour {customer_name},'
+      id: 'checkbox',
+      label: 'Case à cocher',
+      template: '☐ J\'accepte les conditions générales'
     },
     {
-      id: 'order_summary',
-      label: 'Résumé de commande',
-      template: 'Votre commande {order_number} du {order_date}'
+      id: 'title',
+      label: 'Titre',
+      template: 'TITRE DU DOCUMENT'
     },
     {
-      id: 'thank_you',
-      label: 'Message de remerciement',
-      template: 'Merci pour votre confiance, {customer_name}'
+      id: 'subtitle',
+      label: 'Sous-titre',
+      template: 'Sous-titre du document'
     },
     {
-      id: 'total_amount',
-      label: 'Montant total',
-      template: 'Montant total: {total}'
+      id: 'paragraph',
+      label: 'Paragraphe',
+      template: 'Texte de paragraphe à personnaliser selon vos besoins.'
+    },
+    {
+      id: 'bullet_list',
+      label: 'Liste à puces',
+      template: '• Premier élément\n• Deuxième élément\n• Troisième élément'
+    },
+    {
+      id: 'numbered_list',
+      label: 'Liste numérotée',
+      template: '1. Premier élément\n2. Deuxième élément\n3. Troisième élément'
+    },
+    {
+      id: 'contact_info',
+      label: 'Informations de contact',
+      template: 'Téléphone: [Votre numéro]\nEmail: [Votre email]\nSite web: [Votre site]'
+    },
+    {
+      id: 'address',
+      label: 'Adresse',
+      template: '[Nom de l\'entreprise]\n[Adresse ligne 1]\n[Code postal] [Ville]\n[Pays]'
+    },
+    {
+      id: 'date',
+      label: 'Date',
+      template: 'Fait le [date]'
     },
     {
       id: 'custom',
@@ -186,10 +211,13 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
   ];
 
   const availableVariables = [
-    { key: '{order_number}', label: 'Numéro de commande' },
-    { key: '{customer_name}', label: 'Nom du client' },
-    { key: '{order_date}', label: 'Date de commande' },
-    { key: '{total}', label: 'Montant total' }
+    { key: '[date]', label: 'Date actuelle' },
+    { key: '[nom]', label: 'Nom personnalisé' },
+    { key: '[prenom]', label: 'Prénom personnalisé' },
+    { key: '[entreprise]', label: 'Nom de l\'entreprise' },
+    { key: '[telephone]', label: 'Numéro de téléphone' },
+    { key: '[email]', label: 'Adresse email' },
+    { key: '[site]', label: 'Site web' }
   ];
 
   return (

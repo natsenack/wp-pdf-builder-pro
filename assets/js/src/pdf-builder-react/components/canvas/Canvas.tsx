@@ -1027,7 +1027,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    const text = props.text || 'Commande {order_number}';
+    const text = props.text || 'Texte personnalisable';
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
@@ -1040,34 +1040,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = 'left';
 
-    // Remplacer les variables par des valeurs fictives ou réelles selon le mode
-    let orderNumber: string;
-    let customerName: string;
-    let orderDate: string;
-    let total: string;
-
-    if (state.previewMode === 'command') {
-      const orderData = wooCommerceManager.getOrderData();
-      const customerInfo = wooCommerceManager.getCustomerInfo();
-      const orderTotals = wooCommerceManager.getOrderTotals();
-
-      orderNumber = wooCommerceManager.getOrderNumber();
-      customerName = customerInfo.name;
-      orderDate = wooCommerceManager.getOrderDate();
-      total = `${orderTotals.total.toFixed(2)}${orderTotals.currency}`;
-    } else {
-      // Données fictives pour le mode éditeur
-      orderNumber = 'CMD-2024-01234';
-      customerName = 'Marie Dupont';
-      orderDate = '27/10/2024';
-      total = '279.96€';
-    }
-
+    // Remplacer les variables génériques par des valeurs par défaut
     const processedText = text
-      .replace('{order_number}', orderNumber)
-      .replace('{customer_name}', customerName)
-      .replace('{order_date}', orderDate)
-      .replace('{total}', total);
+      .replace(/\[date\]/g, new Date().toLocaleDateString('fr-FR'))
+      .replace(/\[nom\]/g, 'Dupont')
+      .replace(/\[prenom\]/g, 'Marie')
+      .replace(/\[entreprise\]/g, 'Ma Société')
+      .replace(/\[telephone\]/g, '+33 1 23 45 67 89')
+      .replace(/\[email\]/g, 'contact@masociete.com')
+      .replace(/\[site\]/g, 'www.masociete.com');
 
     ctx.fillText(processedText, 10, 25);
   };

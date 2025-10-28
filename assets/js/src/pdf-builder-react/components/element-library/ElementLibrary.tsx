@@ -105,7 +105,7 @@ const WOOCOMMERCE_ELEMENTS = [
     defaultProps: {
       width: 200,
       height: 40,
-      text: 'Commande {order_number}',
+      text: 'Texte personnalisable',
       fontSize: 14,
       fontFamily: 'Arial',
       backgroundColor: 'transparent'
