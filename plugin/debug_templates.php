@@ -245,6 +245,54 @@ if (isset($_GET['fix_table'])) {
 }
 
 echo '<hr>';
-echo '<p><a href="?debug_raw=1">Debug données brutes du template 1</a></p>';
+echo '<h2>Debug: Données brutes du template 1</h2>';
+
+$raw_template = $wpdb->get_row(
+    $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", 1),
+    ARRAY_A
+);
+
+if ($raw_template) {
+    echo '<h3>Données template_data brutes (premiers 1000 caractères):</h3>';
+    echo '<pre style="background: #f5f5f5; padding: 10px; max-height: 300px; overflow: auto; font-size: 12px;">' . esc_html(substr($raw_template['template_data'], 0, 1000)) . '...</pre>';
+
+    echo '<h3>Tentative de décodage JSON:</h3>';
+    $decoded = json_decode($raw_template['template_data'], true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        echo '<p style="color: green;">✅ JSON valide</p>';
+
+        if (isset($decoded['elements'])) {
+            echo '<h4>Champ elements:</h4>';
+            if (is_string($decoded['elements'])) {
+                echo '<p>Type: String (longueur: ' . strlen($decoded['elements']) . ')</p>';
+                echo '<p>Premiers 200 caractères:</p>';
+                echo '<pre style="background: #f5f5f5; padding: 10px; font-size: 11px;">' . esc_html(substr($decoded['elements'], 0, 200)) . '...</pre>';
+
+                // Tester le décodage de elements
+                $elements_decoded = json_decode($decoded['elements'], true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    echo '<p style="color: green;">✅ Elements décodés avec succès: ' . count($elements_decoded) . ' éléments</p>';
+                    echo '<h5>Premier élément:</h5>';
+                    echo '<pre style="background: #f5f5f5; padding: 10px; font-size: 11px;">' . esc_html(print_r($elements_decoded[0], true)) . '</pre>';
+                } else {
+                    echo '<p style="color: red;">❌ Erreur décodage elements: ' . json_last_error_msg() . '</p>';
+                    echo '<p>Caractère problématique autour de la position ' . json_last_error() . '</p>';
+                }
+            } else {
+                echo '<p>Type: ' . gettype($decoded['elements']) . '</p>';
+                echo '<pre style="background: #f5f5f5; padding: 10px;">' . esc_html(print_r($decoded['elements'], true)) . '</pre>';
+            }
+        } else {
+            echo '<p style="color: red;">❌ Champ elements manquant</p>';
+        }
+    } else {
+        echo '<p style="color: red;">❌ JSON invalide: ' . json_last_error_msg() . '</p>';
+        echo '<p>Position approximative de l\'erreur: analyser les données brutes</p>';
+    }
+} else {
+    echo '<p style="color: red;">Template 1 non trouvé</p>';
+}
+
+echo '<hr>';
 echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '">Retour à la liste des templates</a></p>';
 ?>
