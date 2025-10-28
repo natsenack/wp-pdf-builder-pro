@@ -503,16 +503,19 @@ function pdf_builder_ajax_get_template() {
     // S'assurer que elements est un array
     $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
     if (is_string($elements)) {
+        error_log('PDF Builder: Decoding elements string, length: ' . strlen($elements));
         // Si elements est une string JSON, la décoder
         $decoded_elements = json_decode($elements, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             $elements = $decoded_elements;
+            error_log('PDF Builder: Successfully decoded ' . count($elements) . ' elements');
         } else {
-            error_log('PDF Builder: Failed to decode elements string: ' . substr($elements, 0, 200));
+            error_log('PDF Builder: Failed to decode elements string: ' . json_last_error_msg() . ' - First 500 chars: ' . substr($elements, 0, 500));
             $elements = [];
         }
     } elseif (!is_array($elements)) {
         // Si ce n'est ni un array ni une string, initialiser comme array vide
+        error_log('PDF Builder: Elements is not string or array: ' . gettype($elements));
         $elements = [];
     }
 
