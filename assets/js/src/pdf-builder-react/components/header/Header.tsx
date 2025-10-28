@@ -196,7 +196,14 @@ export function Header({
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
 
         <button
-          onClick={onSave}
+          onClick={async () => {
+            try {
+              await onSave();
+            } catch (error) {
+              console.error('Erreur lors de la sauvegarde:', error);
+              alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
+            }
+          }}
           disabled={isSaving || !isModified}
           onMouseEnter={() => setHoveredButton('save')}
           onMouseLeave={() => setHoveredButton(null)}
