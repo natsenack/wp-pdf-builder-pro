@@ -77,6 +77,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       return {
         ...state,
         elements: [...state.elements, action.payload],
+        template: {
+          ...state.template,
+          isModified: true
+        },
         history: updateHistory(state, {
           ...state,
           elements: [...state.elements, action.payload]
@@ -91,6 +95,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
             ? { ...el, ...action.payload.updates, updatedAt: new Date() }
             : el
         ),
+        template: {
+          ...state.template,
+          isModified: true
+        },
         history: updateHistory(state, {
           ...state,
           elements: state.elements.map(el =>
@@ -108,6 +116,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         selection: {
           ...state.selection,
           selectedElements: state.selection.selectedElements.filter(id => id !== action.payload)
+        },
+        template: {
+          ...state.template,
+          isModified: true
         },
         history: updateHistory(state, {
           ...state,
