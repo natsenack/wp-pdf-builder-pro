@@ -168,6 +168,53 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Informations entreprise (pour factures B2B)
+            </label>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Afficher le nom de l'entreprise
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showCompanyName !== false}
+              onChange={(e) => onChange(element.id, 'showCompanyName', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Nom de l'entreprise du client</span>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Afficher le numéro TVA
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showVatNumber !== false}
+              onChange={(e) => onChange(element.id, 'showVatNumber', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Numéro de TVA intracommunautaire</span>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Afficher l'adresse de l'entreprise
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showCompanyAddress !== false}
+              onChange={(e) => onChange(element.id, 'showCompanyAddress', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Adresse de l'entreprise (si différente)</span>
+          </div>
+
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Disposition
             </label>
             <select

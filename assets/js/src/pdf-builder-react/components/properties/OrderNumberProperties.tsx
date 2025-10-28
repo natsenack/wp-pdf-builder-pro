@@ -199,69 +199,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Préfixe
-            </label>
-            <input
-              type="text"
-              value={(element as any).prefix || '#'}
-              onChange={(e) => onChange(element.id, 'prefix', e.target.value)}
-              placeholder="#"
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Format du numéro
-            </label>
-            <select
-              value={(element as any).numberFormat || 'auto'}
-              onChange={(e) => onChange(element.id, 'numberFormat', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="auto">Automatique (depuis WooCommerce)</option>
-              <option value="padded">Avec zéros (00123)</option>
-              <option value="plain">Simple (123)</option>
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Longueur minimale
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={(element as any).minLength || 1}
-              onChange={(e) => onChange(element.id, 'minLength', parseInt(e.target.value) || 1)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            />
-            <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
-              Pour le format avec zéros
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher le libellé
             </label>
             <input
@@ -271,6 +208,16 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               style={{ marginRight: '8px' }}
             />
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche "N° de commande:"</span>
+          </div>
+
+          <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
+              ℹ️ Information
+            </div>
+            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.4' }}>
+              Le numéro de commande est automatiquement récupéré depuis WooCommerce.
+              Le format et la numérotation sont gérés par votre configuration WooCommerce.
+            </div>
           </div>
         </>
       )}
