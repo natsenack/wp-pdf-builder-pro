@@ -6,7 +6,9 @@
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(__FILE__) . '/');
+    // Depuis le dossier plugin, remonter de 3 niveaux pour atteindre la racine WordPress
+    $wp_root = dirname(__FILE__, 3);
+    define('ABSPATH', $wp_root . '/');
     require_once ABSPATH . 'wp-load.php';
 }
 
