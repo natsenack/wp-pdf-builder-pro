@@ -133,6 +133,53 @@ if (isset($_GET['test_template'])) {
     }
 }
 
+// Test rapide de l'API pour tous les templates
+echo '<h2>5. Test rapide de l\'API pour tous les templates</h2>';
+$templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY id", ARRAY_A);
+
+echo '<table border="1" style="border-collapse: collapse; margin-bottom: 20px;">';
+echo '<tr><th>ID</th><th>Nom</th><th>Status API</th><th>Aperçu données</th></tr>';
+
+foreach ($templates as $template) {
+    echo '<tr>';
+    echo '<td>' . $template['id'] . '</td>';
+    echo '<td>' . esc_html($template['name']) . '</td>';
+
+    // Tester l'API pour ce template
+    $_GET['template_id'] = $template['id'];
+    $_GET['nonce'] = wp_create_nonce('pdf_builder_nonce');
+
+    ob_start();
+    try {
+        pdf_builder_ajax_get_template();
+        $api_output = ob_get_clean();
+
+        // Analyser la réponse
+        $response = json_decode($api_output, true);
+        if ($response && isset($response['success']) && $response['success']) {
+            echo '<td style="color: green;">✅ OK</td>';
+            // Aperçu des données
+            if (isset($response['data']['elements'])) {
+                $elements_count = is_array($response['data']['elements']) ? count($response['data']['elements']) : 'N/A';
+                echo '<td>' . $elements_count . ' éléments</td>';
+            } else {
+                echo '<td>Pas d\'éléments</td>';
+            }
+        } else {
+            $error_msg = isset($response['data']) ? $response['data'] : 'Erreur inconnue';
+            echo '<td style="color: red;">❌ ' . esc_html($error_msg) . '</td>';
+            echo '<td>-</td>';
+        }
+    } catch (Exception $e) {
+        ob_end_clean();
+        echo '<td style="color: red;">❌ Exception: ' . esc_html($e->getMessage()) . '</td>';
+        echo '<td>-</td>';
+    }
+
+    echo '</tr>';
+}
+echo '</table>';
+
 // Corriger la table si demandé
 if (isset($_GET['fix_table'])) {
     echo '<h2>Correction de la table</h2>';
