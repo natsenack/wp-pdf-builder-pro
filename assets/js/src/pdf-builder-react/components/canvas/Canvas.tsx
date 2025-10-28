@@ -664,13 +664,64 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 12;
+    const textAlign = props.textAlign || 'left';
+    const theme = (props.theme || 'corporate') as keyof typeof themes;
+    const showHeaders = props.showHeaders !== false; // Par défaut true
+    const showBorders = props.showBorders !== false; // Par défaut true
+    const showCompanyName = props.showCompanyName !== false; // Par défaut true
+    const showAddress = props.showAddress !== false; // Par défaut true
+    const showPhone = props.showPhone !== false; // Par défaut true
+    const showEmail = props.showEmail !== false; // Par défaut true
+    const showSiret = props.showSiret !== false; // Par défaut true
 
-    ctx.fillStyle = props.backgroundColor || 'transparent';
+    // Définition des thèmes
+    const themes = {
+      corporate: {
+        backgroundColor: '#ffffff',
+        borderColor: '#1f2937',
+        textColor: '#374151',
+        headerTextColor: '#111827'
+      },
+      modern: {
+        backgroundColor: '#ffffff',
+        borderColor: '#3b82f6',
+        textColor: '#1e40af',
+        headerTextColor: '#1e3a8a'
+      },
+      elegant: {
+        backgroundColor: '#ffffff',
+        borderColor: '#8b5cf6',
+        textColor: '#6d28d9',
+        headerTextColor: '#581c87'
+      },
+      minimal: {
+        backgroundColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        textColor: '#374151',
+        headerTextColor: '#111827'
+      },
+      professional: {
+        backgroundColor: '#ffffff',
+        borderColor: '#059669',
+        textColor: '#047857',
+        headerTextColor: '#064e3b'
+      }
+    };
+
+    const currentTheme = themes[theme] || themes.corporate;
+
+    ctx.fillStyle = currentTheme.backgroundColor;
     ctx.fillRect(0, 0, element.width, element.height);
 
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${fontSize + 2}px Arial`;
-    ctx.textAlign = 'left';
+    // Appliquer les bordures si demandé
+    if (showBorders) {
+      ctx.strokeStyle = currentTheme.borderColor;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, element.width, element.height);
+    }
+
+    ctx.fillStyle = currentTheme.textColor;
+    ctx.textAlign = textAlign as CanvasTextAlign;
 
     let y = 20;
 
@@ -685,21 +736,52 @@ export function Canvas({ width, height, className }: CanvasProps) {
       phone: props.companyPhone || '+33 4 12 34 56 78'
     };
 
-    ctx.fillText(companyData.name, 0, y);
-    y += 18;
+    // Calcul de la position X selon l'alignement
+    let x = 10;
+    if (textAlign === 'center') {
+      x = element.width / 2;
+    } else if (textAlign === 'right') {
+      x = element.width - 10;
+    }
 
-    ctx.font = `${fontSize}px Arial`;
-    ctx.fillText(companyData.address, 0, y);
+    // Afficher le nom de l'entreprise si demandé
+    if (showCompanyName) {
+      ctx.fillStyle = currentTheme.headerTextColor;
+      ctx.font = `bold ${fontSize + 2}px Arial`;
+      ctx.fillText(companyData.name, x, y);
+      y += 18;
+      ctx.fillStyle = currentTheme.textColor;
+    }
+
+    // Afficher l'adresse si demandée
+    if (showAddress) {
+      ctx.font = `${fontSize}px Arial`;
+      ctx.fillText(companyData.address, x, y);
+      y += 15;
+      ctx.fillText(companyData.city, x, y);
+      y += 18;
+    }
+
+    // Afficher le SIRET si demandé
+    if (showSiret) {
+      ctx.fillText(companyData.siret, x, y);
+      y += 15;
+    }
+
+    // Afficher la TVA (toujours affichée pour le moment)
+    ctx.fillText(companyData.tva, x, y);
     y += 15;
-    ctx.fillText(companyData.city, 0, y);
-    y += 18;
-    ctx.fillText(companyData.siret, 0, y);
-    y += 15;
-    ctx.fillText(companyData.tva, 0, y);
-    y += 15;
-    ctx.fillText(companyData.email, 0, y);
-    y += 15;
-    ctx.fillText(companyData.phone, 0, y);
+
+    // Afficher l'email si demandé
+    if (showEmail) {
+      ctx.fillText(companyData.email, x, y);
+      y += 15;
+    }
+
+    // Afficher le téléphone si demandé
+    if (showPhone) {
+      ctx.fillText(companyData.phone, x, y);
+    }
   };
 
   const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
