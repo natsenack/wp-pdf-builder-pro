@@ -500,8 +500,13 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
+    // Debug: Log des données décodées
+    error_log('PDF Builder: Template data decoded: ' . print_r($template_data, true));
+
     // S'assurer que elements est un array (gérer les données stockées de manière incohérente)
     $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+    error_log('PDF Builder: Elements before processing: ' . (is_string($elements) ? 'STRING: ' . substr($elements, 0, 200) : 'ARRAY/OTHER: ' . print_r($elements, true)));
+
     if (is_string($elements)) {
         // Si elements est une string JSON, la décoder
         $elements = json_decode($elements, true);
@@ -510,6 +515,9 @@ function pdf_builder_ajax_get_template() {
             $elements = [];
         }
     }
+
+    // Debug: Log des éléments finaux
+    error_log('PDF Builder: Final elements: ' . print_r($elements, true));
 
     // S'assurer que canvas est un objet (gérer les données stockées de manière incohérente)
     $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
