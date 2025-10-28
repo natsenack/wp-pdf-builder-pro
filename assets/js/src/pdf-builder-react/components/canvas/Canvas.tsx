@@ -237,6 +237,8 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showShipping = props.showShipping !== false;
     const showTax = props.showTax !== false;
     const showGlobalDiscount = props.showGlobalDiscount !== false;
+    const textColor = props.textColor || '#000000';
+    const borderRadius = props.borderRadius || 0;
 
     let products: Array<{
       sku: string;
@@ -368,7 +370,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
     if (showBorders) {
       ctx.strokeStyle = props.borderColor || '#d1d5db';
       ctx.lineWidth = props.borderWidth || 1;
-      ctx.strokeRect(0, 0, element.width, element.height);
+      if (borderRadius > 0) {
+        roundedRect(ctx, 0, 0, element.width, element.height, borderRadius);
+        ctx.stroke();
+      } else {
+        ctx.strokeRect(0, 0, element.width, element.height);
+      }
     }
 
     ctx.textAlign = 'left';
@@ -377,7 +384,13 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // En-têtes avec style professionnel
     if (showHeaders) {
       ctx.fillStyle = props.headerBackgroundColor || '#f9fafb';
-      ctx.fillRect(1, 1, element.width - 2, 22);
+      // Utiliser roundedRect si borderRadius > 0, sinon fillRect normal
+      if (borderRadius > 0) {
+        roundedRect(ctx, 1, 1, element.width - 2, 32, borderRadius);
+        ctx.fill();
+      } else {
+        ctx.fillRect(1, 1, element.width - 2, 32);
+      }
 
       ctx.fillStyle = props.headerTextColor || '#374151';
       ctx.font = `bold ${fontSize + 1}px Arial`;
@@ -388,22 +401,24 @@ export function Canvas({ width, height, className }: CanvasProps) {
         const textX = col.align === 'right' ? col.x + col.width * (element.width - 16) - 4 :
                      col.align === 'center' ? col.x + (col.width * (element.width - 16)) / 2 :
                      col.x;
-        ctx.fillText(col.label, textX, 6);
+        ctx.fillText(col.label, textX, 10); // Ajusté pour centrer dans la hauteur plus grande
       });
 
       // Ligne de séparation sous les en-têtes
       ctx.strokeStyle = '#e5e7eb';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(4, 24);
-      ctx.lineTo(element.width - 4, 24);
+      ctx.moveTo(4, 34); // Ajusté pour la nouvelle hauteur
+      ctx.lineTo(element.width - 4, 34);
       ctx.stroke();
 
-      currentY = 33; // Ajusté pour uniformité avec les autres lignes
+      currentY = 42; // Ajusté pour la nouvelle hauteur d'entête
+    } else {
+      currentY = 15;
     }
 
-    // Calcul de la hauteur uniforme des lignes
-    const rowHeight = showDescription ? 40 : 28;
+    // Calcul de la hauteur uniforme des lignes (augmentée)
+    const rowHeight = showDescription ? 50 : 35;
 
     // Produits avec alternance de couleurs
     ctx.font = `${fontSize}px Arial`;
@@ -416,10 +431,16 @@ export function Canvas({ width, height, className }: CanvasProps) {
       // Fond alterné pour les lignes (sans bordures)
       if (showAlternatingRows && index % 2 === 1) {
         ctx.fillStyle = props.alternateRowColor || '#f9fafb';
-        ctx.fillRect(1, rowY, element.width - 2, rowHeight);
+        // Utiliser roundedRect si borderRadius > 0
+        if (borderRadius > 0) {
+          roundedRect(ctx, 1, rowY, element.width - 2, rowHeight, borderRadius);
+          ctx.fill();
+        } else {
+          ctx.fillRect(1, rowY, element.width - 2, rowHeight);
+        }
       }
 
-      ctx.fillStyle = '#000000';
+      ctx.fillStyle = textColor; // Utiliser la couleur du texte depuis les propriétés
 
       columns.forEach(col => {
         ctx.textAlign = col.align as CanvasTextAlign;
@@ -455,7 +476,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     });
 
     // Positionnement pour la section des totaux (après toutes les lignes de produits)
-    currentY = 45 + products.length * (rowHeight + 4) + 8;
+    currentY = 55 + products.length * (rowHeight + 4) + 8;
 
     // Section des totaux
 
@@ -471,7 +492,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Affichage des totaux
     ctx.font = `bold ${fontSize}px Arial`;
-    ctx.fillStyle = '#374151';
+    ctx.fillStyle = textColor; // Utiliser la couleur du texte
     ctx.textAlign = 'left';
 
     const totalsY = currentY;
@@ -485,7 +506,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const totalDiscounts = itemDiscounts + (showGlobalDiscount ? globalDiscountAmount : 0);
     if (totalDiscounts > 0) {
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#059669'; // Vert pour la remise
+      ctx.fillStyle = '#059669'; // Garder le vert pour la remise (couleur spéciale)
       ctx.fillText('Coupon:', element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`-${totalDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
@@ -495,7 +516,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Frais de port
     if (shippingCost > 0 && showShipping) {
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#374151';
+      ctx.fillStyle = textColor; // Utiliser la couleur du texte
       ctx.fillText('Frais de port:', element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`${shippingCost.toFixed(2)}${currency}`, element.width - 8, currentY);
@@ -505,7 +526,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     // Taxes
     if (taxAmount > 0 && showTax) {
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#374151';
+      ctx.fillStyle = textColor; // Utiliser la couleur du texte
       ctx.fillText(`TVA (${taxRate}%):`, element.width - 200, currentY);
       ctx.textAlign = 'right';
       ctx.fillText(`${taxAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
@@ -513,7 +534,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     }
 
     currentY += 8; // Plus d'espace avant la ligne de séparation du total
-    ctx.strokeStyle = '#374151';
+    ctx.strokeStyle = textColor; // Utiliser la couleur du texte pour la ligne
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(element.width - 200, currentY - 5);
@@ -522,7 +543,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     currentY += 8; // Plus d'espace après la ligne de séparation
     ctx.font = `bold ${fontSize + 2}px Arial`;
-    ctx.fillStyle = '#111827';
+    ctx.fillStyle = textColor; // Utiliser la couleur du texte pour le total
     ctx.textAlign = 'left';
     ctx.fillText('TOTAL:', element.width - 200, currentY);
     ctx.textAlign = 'right';
