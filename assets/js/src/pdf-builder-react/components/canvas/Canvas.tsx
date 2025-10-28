@@ -612,7 +612,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
       };
     }
 
-    ctx.font = `${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 
     if (layout === 'vertical') {
       if (showFullName) {
@@ -774,7 +774,6 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Afficher l'adresse si demandée
     if (showAddress) {
-      ctx.font = `${fontSize}px Arial`;
       ctx.fillText(companyData.address, x, y);
       y += Math.round(fontSize * 1.2);
       ctx.fillText(companyData.city, x, y);
@@ -895,6 +894,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 14;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
     const textAlign = props.textAlign || 'left'; // left, center, right
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
@@ -905,7 +907,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillRect(0, 0, element.width, element.height);
 
     ctx.fillStyle = '#000000';
-    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 
     // Numéro de commande et date fictifs ou réels selon le mode
     let orderNumber: string;
@@ -969,7 +971,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
 
     // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
     if (showDate) {
-      ctx.font = `${fontSize - 2}px Arial`;
+      ctx.font = `${fontStyle} ${fontWeight} ${fontSize - 2}px ${fontFamily}`;
       ctx.textAlign = textAlign as CanvasTextAlign;
       ctx.fillText(`Date: ${orderDate}`, x, y + 20);
     }
@@ -979,12 +981,15 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const props = element as any;
     const template = props.template || 'Commande #{order_number}';
     const fontSize = props.fontSize || 14;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
 
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
 
     ctx.fillStyle = '#000000';
-    ctx.font = `${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = 'left';
 
     // Remplacer les variables par des valeurs fictives ou réelles selon le mode
@@ -1022,6 +1027,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 10;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
     const textAlign = props.textAlign || 'left';
     const text = props.text || 'SARL au capital de 10 000€ - RCS Lyon 123 456 789\nTVA FR 12 345 678 901 - SIRET 123 456 789 00012\ncontact@maboutique.com - +33 4 12 34 56 78';
 
@@ -1029,7 +1037,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillRect(0, 0, element.width, element.height);
 
     ctx.fillStyle = props.textColor || '#666666';
-    ctx.font = `${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
     const mentions = text.split('\n');
@@ -1044,7 +1052,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
     const fontSize = props.fontSize || 18;
+    const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'bold';
+    const fontStyle = props.fontStyle || 'normal';
     const textAlign = props.textAlign || 'left';
     const textColor = props.textColor || '#000000';
 
@@ -1052,7 +1062,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.fillRect(0, 0, element.width, element.height);
 
     ctx.fillStyle = textColor;
-    ctx.font = `${fontWeight} ${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
     // Type de document fictif ou réel selon le mode
