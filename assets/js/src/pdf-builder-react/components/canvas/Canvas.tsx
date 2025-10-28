@@ -231,6 +231,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const showBorders = props.showBorders !== false;
     const showAlternatingRows = props.showAlternatingRows !== false;
     const fontSize = props.fontSize || 11;
+    const fontFamily = props.fontFamily || 'Arial';
+    const fontWeight = props.fontWeight || 'normal';
+    const fontStyle = props.fontStyle || 'normal';
     const showSku = props.showSku !== false;
     const showDescription = props.showDescription !== false;
     const showQuantity = props.showQuantity !== false;
@@ -393,7 +396,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
       }
 
       ctx.fillStyle = props.headerTextColor || '#374151';
-      ctx.font = `bold ${fontSize + 1}px Arial`;
+      ctx.font = `${fontStyle} ${fontWeight} ${fontSize + 1}px ${fontFamily}`;
       ctx.textBaseline = 'top';
 
       columns.forEach(col => {
@@ -421,7 +424,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const rowHeight = showDescription ? 50 : 35;
 
     // Produits avec alternance de couleurs
-    ctx.font = `${fontSize}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textBaseline = 'middle';
 
     products.forEach((product, index) => {
@@ -542,7 +545,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     ctx.stroke();
 
     currentY += 8; // Plus d'espace après la ligne de séparation
-    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.font = `${fontStyle} bold ${fontSize + 2}px ${fontFamily}`;
     ctx.fillStyle = textColor; // Utiliser la couleur du texte pour le total
     ctx.textAlign = 'left';
     ctx.fillText('TOTAL:', element.width - 200, currentY);
