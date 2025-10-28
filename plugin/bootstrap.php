@@ -511,6 +511,100 @@ function pdf_builder_ajax_get_template() {
 }
 
 /**
+ * AJAX handler pour sauvegarder un template
+ */
+function pdf_builder_ajax_save_template() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Récupérer les données
+    $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+    $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+    $elements = isset($_POST['elements']) ? $_POST['elements'] : [];
+    $canvas = isset($_POST['canvas']) ? $_POST['canvas'] : [];
+
+    if (empty($template_name)) {
+        wp_send_json_error(__('Nom du template requis.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Charger le core si nécessaire
+    if (!class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
+        pdf_builder_load_core_when_needed();
+    }
+
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+    // Préparer les données du template
+    $template_data = [
+        'elements' => $elements,
+        'canvas' => $canvas
+    ];
+
+    $json_data = wp_json_encode($template_data);
+    if ($json_data === false) {
+        wp_send_json_error(__('Erreur lors de l\'encodage des données JSON.', 'pdf-builder-pro'));
+        return;
+    }
+
+    if ($template_id > 0) {
+        // Mettre à jour un template existant
+        $result = $wpdb->update(
+            $table_templates,
+            [
+                'name' => $template_name,
+                'template_data' => $json_data,
+                'updated_at' => current_time('mysql')
+            ],
+            ['id' => $template_id],
+            ['%s', '%s', '%s'],
+            ['%d']
+        );
+
+        if ($result === false) {
+            wp_send_json_error(__('Erreur lors de la mise à jour du template.', 'pdf-builder-pro'));
+            return;
+        }
+    } else {
+        // Créer un nouveau template
+        $result = $wpdb->insert(
+            $table_templates,
+            [
+                'name' => $template_name,
+                'template_data' => $json_data,
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql')
+            ],
+            ['%s', '%s', '%s', '%s']
+        );
+
+        if ($result === false) {
+            wp_send_json_error(__('Erreur lors de la création du template.', 'pdf-builder-pro'));
+            return;
+        }
+
+        $template_id = $wpdb->insert_id;
+    }
+
+    // Retourner le succès
+    wp_send_json_success([
+        'id' => $template_id,
+        'name' => $template_name,
+        'message' => $template_id > 0 ? __('Template mis à jour avec succès.', 'pdf-builder-pro') : __('Template créé avec succès.', 'pdf-builder-pro')
+    ]);
+}
+
+/**
  * Actions AJAX fallback
  */
 add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
@@ -519,6 +613,8 @@ add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fa
 add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
 add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
 add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
+add_action('wp_ajax_nopriv_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
 add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
 add_action('wp_ajax_nopriv_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
 add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');

@@ -68,18 +68,51 @@ export function useTemplate() {
     try {
       const templateId = getTemplateIdFromUrl();
 
-      // Simulation d'une sauvegarde (à remplacer par l'appel API réel)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Préparer les données à envoyer
+      const templateData = {
+        template_id: templateId || 0,
+        template_name: state.template.name || 'Template sans nom',
+        elements: state.elements,
+        canvas: state.canvas,
+        nonce: window.pdfBuilderData.nonce
+      };
+
+      console.log('Sauvegarde du template:', templateData);
+
+      // Faire un appel API pour sauvegarder le template
+      const response = await fetch(window.pdfBuilderData.ajaxUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'pdf_builder_save_template',
+          ...templateData
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
+      }
+
+      console.log('Template sauvegardé avec succès:', result.data);
 
       dispatch({
         type: 'SAVE_TEMPLATE',
         payload: {
-          id: templateId || undefined, // Inclure l'ID si on modifie un template existant
-          name: state.template.name || 'Template sauvegardé'
+          id: result.data.id,
+          name: result.data.name
         }
       });
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
+      throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
