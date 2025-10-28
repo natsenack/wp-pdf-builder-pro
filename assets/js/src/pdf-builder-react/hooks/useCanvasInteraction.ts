@@ -16,7 +16,115 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
 
-  // Gestionnaire de clic pour la sélection
+  // Fonction pour créer un élément selon le mode à une position donnée
+  const createElementAtPosition = useCallback((x: number, y: number, mode: string) => {
+    const elementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    let newElement: any;
+
+    switch (mode) {
+      case 'rectangle':
+        newElement = {
+          id: elementId,
+          type: 'rectangle',
+          x: x - 50, // Centrer sur le clic
+          y: y - 50,
+          width: 100,
+          height: 100,
+          fillColor: '#ffffff',
+          strokeColor: '#000000',
+          strokeWidth: 1,
+          borderRadius: 0,
+          rotation: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        break;
+
+      case 'circle':
+        newElement = {
+          id: elementId,
+          type: 'circle',
+          x: x - 50,
+          y: y - 50,
+          width: 100,
+          height: 100,
+          fillColor: '#ffffff',
+          strokeColor: '#000000',
+          strokeWidth: 1,
+          rotation: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        break;
+
+      case 'line':
+        newElement = {
+          id: elementId,
+          type: 'line',
+          x: x - 50,
+          y: y - 25,
+          width: 100,
+          height: 2,
+          strokeColor: '#000000',
+          strokeWidth: 2,
+          rotation: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        break;
+
+      case 'text':
+        newElement = {
+          id: elementId,
+          type: 'text',
+          x: x - 50,
+          y: y - 10,
+          width: 100,
+          height: 30,
+          text: 'Texte',
+          fontSize: 16,
+          color: '#000000',
+          align: 'left',
+          rotation: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        break;
+
+      case 'image':
+        newElement = {
+          id: elementId,
+          type: 'image',
+          x: x - 50,
+          y: y - 50,
+          width: 100,
+          height: 100,
+          src: '', // URL de l'image à définir
+          rotation: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        break;
+
+      default:
+        console.warn(`Mode de création d'élément non supporté: ${mode}`);
+        return;
+    }
+
+    // Ajouter l'élément au state
+    dispatch({ type: 'ADD_ELEMENT', payload: newElement });
+
+    // Sélectionner le nouvel élément
+    dispatch({ type: 'SET_SELECTION', payload: [elementId] });
+    selectedElementRef.current = elementId;
+
+    // Remettre en mode sélection après création
+    dispatch({ type: 'SET_MODE', payload: 'select' });
+
+  }, [dispatch]);
+
+  // Gestionnaire de clic pour la sélection et création d'éléments
   const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -32,11 +140,18 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     );
 
     if (clickedElement) {
+      // Sélectionner l'élément existant
       dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
       selectedElementRef.current = clickedElement.id;
     } else {
-      dispatch({ type: 'CLEAR_SELECTION' });
-      selectedElementRef.current = null;
+      // Aucun élément cliqué - vérifier si on doit créer un nouvel élément selon le mode
+      if (state.mode !== 'select') {
+        createElementAtPosition(x, y, state.mode);
+      } else {
+        // Mode sélection - désélectionner
+        dispatch({ type: 'CLEAR_SELECTION' });
+        selectedElementRef.current = null;
+      }
     }
   }, [state, dispatch, canvasRef]);
 
