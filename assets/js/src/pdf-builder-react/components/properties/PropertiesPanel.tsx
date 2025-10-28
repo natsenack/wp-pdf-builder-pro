@@ -84,7 +84,8 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
             {element.type.charAt(0).toUpperCase() + element.type.slice(1)} - {element.id.slice(0, 8)}
           </h5>
 
-          {/* Propriétés communes */}
+          {/* Propriétés communes - masquées pour product_table qui a ses propres onglets */}
+          {element.type !== 'product_table' && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -193,10 +194,11 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
                 {Math.round((element.opacity || 1) * 100)}%
               </span>
             </div>
+          </div>
+          )}
 
             {/* Propriétés spécifiques selon le type */}
             {renderSpecificProperties(element, handlePropertyChange, activeTab, setActiveTab)}
-          </div>
         </div>
       ))}
     </div>
