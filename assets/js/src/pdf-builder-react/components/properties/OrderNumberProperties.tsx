@@ -212,6 +212,19 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Afficher la date
+            </label>
+            <input
+              type="checkbox"
+              checked={(element as any).showDate !== false}
+              onChange={(e) => onChange(element.id, 'showDate', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <span style={{ fontSize: '11px', color: '#666' }}>Affiche la date de commande</span>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position du libellé
             </label>
             <select

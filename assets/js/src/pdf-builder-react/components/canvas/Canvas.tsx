@@ -794,6 +794,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
     const fontSize = props.fontSize || 14;
     const textAlign = props.textAlign || 'left'; // left, center, right
     const showLabel = props.showLabel !== false; // Par défaut true
+    const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
     const numberPosition = props.numberPosition || 'inline'; // inline, below
 
@@ -863,10 +864,12 @@ export function Canvas({ width, height, className }: CanvasProps) {
       ctx.fillText(orderNumber, x, y);
     }
 
-    // Afficher la date sur une nouvelle ligne avec le même alignement
-    ctx.font = `${fontSize - 2}px Arial`;
-    ctx.textAlign = textAlign as CanvasTextAlign;
-    ctx.fillText(`Date: ${orderDate}`, x, y + 20);
+    // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
+    if (showDate) {
+      ctx.font = `${fontSize - 2}px Arial`;
+      ctx.textAlign = textAlign as CanvasTextAlign;
+      ctx.fillText(`Date: ${orderDate}`, x, y + 20);
+    }
   };
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
