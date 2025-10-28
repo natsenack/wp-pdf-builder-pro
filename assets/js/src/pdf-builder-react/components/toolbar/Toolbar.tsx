@@ -7,7 +7,7 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  let state, setMode, undo, redo, reset;
+  let state, setMode, undo, redo, reset, toggleGrid;
   try {
     const builder = useBuilder();
     state = builder.state;
@@ -15,6 +15,7 @@ export function Toolbar({ className }: ToolbarProps) {
     undo = builder.undo;
     redo = builder.redo;
     reset = builder.reset;
+    toggleGrid = builder.toggleGrid;
     console.log('Builder context available:', !!state); // Debug log
   } catch (error) {
     console.error('Error accessing builder context:', error);
@@ -128,6 +129,20 @@ export function Toolbar({ className }: ToolbarProps) {
             }}
           >
             🔄 Réinitialiser
+          </button>
+          <button
+            onClick={toggleGrid}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: state.canvas.showGrid ? '#007acc' : '#ffffff',
+              color: state.canvas.showGrid ? '#ffffff' : '#000000',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
           </button>
         </div>
       </div>

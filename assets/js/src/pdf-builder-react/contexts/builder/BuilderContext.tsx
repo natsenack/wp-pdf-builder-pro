@@ -306,6 +306,7 @@ interface BuilderContextType {
   undo: () => void;
   redo: () => void;
   reset: () => void;
+  toggleGrid: () => void;
 }
 
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
@@ -366,6 +367,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     dispatch({ type: 'RESET' });
   };
 
+  const toggleGrid = () => {
+    setCanvas({ showGrid: !state.canvas.showGrid });
+  };
+
   const value: BuilderContextType = {
     state,
     dispatch,
@@ -378,7 +383,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     setMode,
     undo,
     redo,
-    reset
+    reset,
+    toggleGrid
   };
 
   return (

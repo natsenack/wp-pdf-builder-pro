@@ -79,7 +79,9 @@ function PDFBuilderContent({
             border: '1px solid #e0e0e0',
             borderRadius: '4px',
             overflow: 'hidden',
-            position: 'relative'
+            position: 'relative',
+            paddingTop: '20px',
+            paddingBottom: '20px'
           }}>
             {/* Indicateur de dimensions A4 */}
             <div style={{
@@ -104,7 +106,7 @@ function PDFBuilderContent({
         </div>
 
         {/* Panneau de propriétés à droite */}
-        <div style={{ flexShrink: 0, width: '380px' }}>
+        <div style={{ flexShrink: 0, width: '430px' }}>
           <PropertiesPanel />
         </div>
       </div>
