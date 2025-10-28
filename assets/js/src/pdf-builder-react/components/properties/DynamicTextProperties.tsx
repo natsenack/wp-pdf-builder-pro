@@ -18,54 +18,44 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
   const textExamples = [
     // === PROFESSIONNEL ===
     {
-      id: 'signature_formal',
-      label: 'Signature formelle',
-      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise]\n[telephone] | [email]'
+      id: 'signature_zone',
+      label: 'Zone de signature',
+      template: 'Signature du client :\n\n______________________________\n\nDate :\n\n____/____/________'
     },
     {
-      id: 'signature_simple',
-      label: 'Signature simple',
-      template: 'Bien à vous,\n\n[prenom] [nom]'
+      id: 'signature_client',
+      label: 'Signature client',
+      template: 'Signature du client\n\n______________________________\n\nNom et prénom :\n\nDate : ____/____/________'
     },
     {
-      id: 'signature_executive',
-      label: 'Signature cadre',
-      template: 'Veuillez agréer, Madame, Monsieur, l\'expression de mes salutations distinguées.\n\n[prenom] [nom]\nDirecteur Général\n[entreprise]'
+      id: 'signature_entreprise',
+      label: 'Signature entreprise',
+      template: 'Pour l\'entreprise :\n\n______________________________\n\n[prenom] [nom]\n[entreprise]'
     },
     {
-      id: 'signature_business',
-      label: 'Signature commerciale',
-      template: 'Restant à votre entière disposition pour tout renseignement complémentaire.\n\nCordialement,\n\n[prenom] [nom]\n[entreprise]\n[telephone]\n[email]'
+      id: 'signature_double',
+      label: 'Double signature',
+      template: 'Signature du client :\n______________________________\n\nSignature de l\'entreprise :\n______________________________\n\nDate : ____/____/________'
     },
     {
-      id: 'signature_minimalist',
-      label: 'Signature minimaliste',
-      template: 'Bien cordialement,\n\n[prenom] [nom]'
-    },
-    {
-      id: 'signature_complete',
-      label: 'Signature complète',
-      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise]\n[Adresse ligne 1]\n[Code postal] [Ville]\n[telephone]\n[email]\n[site]'
+      id: 'signature_with_stamp',
+      label: 'Signature avec cachet',
+      template: 'Signature et cachet :\n\n______________________________\n\n[entreprise]\nCachet de l\'entreprise\n\nDate : ____/____/________'
     },
     {
       id: 'signature_contract',
       label: 'Signature contrat',
-      template: 'Fait à [Ville], le [date]\n\n[prenom] [nom]\n[entreprise]\nSIRET: [siret]'
+      template: 'Fait à [Ville], le [date]\n\nSignatures :\n\nLe Client :\n______________________________\n\nL\'Entreprise :\n______________________________\n\n[prenom] [nom]'
     },
     {
-      id: 'signature_email',
-      label: 'Signature email',
-      template: 'Cordialement,\n\n[prenom] [nom]\n[entreprise] | [email] | [telephone]'
+      id: 'signature_approval',
+      label: 'Approbation',
+      template: 'Lu et approuvé :\n\n______________________________\n\n[prenom] [nom]\n[date]'
     },
     {
-      id: 'signature_legal',
-      label: 'Signature juridique',
-      template: 'Maître [prenom] [nom]\nAvocat au Barreau de [Ville]\n[entreprise]\n[telephone] | [email]'
-    },
-    {
-      id: 'signature_informal',
-      label: 'Signature informelle',
-      template: 'Amicalement,\n\n[prenom] [nom]'
+      id: 'signature_witness',
+      label: 'Témoin',
+      template: 'Témoin :\n\n______________________________\n\nNom et prénom :\n\nAdresse :\n\nDate : ____/____/________'
     },
     {
       id: 'document_title',
