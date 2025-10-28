@@ -641,7 +641,17 @@ function renderSpecificProperties(
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
                   Thèmes prédéfinis
                 </label>
-                <div style={{ display: 'grid', gap: '8px' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '8px',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  padding: '4px',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '4px',
+                  backgroundColor: '#fafafa'
+                }}>
                   {[
                     {
                       id: 'classic',
@@ -649,26 +659,25 @@ function renderSpecificProperties(
                       preview: (
                         <div style={{
                           width: '100%',
-                          height: '40px',
+                          height: '35px',
                           border: '1px solid #e5e7eb',
-                          borderRadius: '3px',
+                          borderRadius: '2px',
                           backgroundColor: '#ffffff',
                           display: 'flex',
-                          alignItems: 'center',
+                          flexDirection: 'column',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: '#6b7280'
+                          alignItems: 'center',
+                          gap: '2px'
                         }}>
                           <div style={{
-                            width: '80%',
-                            height: '4px',
+                            width: '85%',
+                            height: '3px',
                             backgroundColor: '#f9fafb',
-                            marginBottom: '2px',
                             borderRadius: '1px'
                           }}></div>
                           <div style={{
-                            width: '60%',
-                            height: '4px',
+                            width: '70%',
+                            height: '3px',
                             backgroundColor: '#ffffff',
                             borderRadius: '1px'
                           }}></div>
@@ -689,28 +698,27 @@ function renderSpecificProperties(
                       preview: (
                         <div style={{
                           width: '100%',
-                          height: '40px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '6px',
+                          height: '35px',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '4px',
                           backgroundColor: '#f8fafc',
                           display: 'flex',
-                          alignItems: 'center',
+                          flexDirection: 'column',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: '#475569'
+                          alignItems: 'center',
+                          gap: '2px'
                         }}>
                           <div style={{
-                            width: '80%',
-                            height: '4px',
+                            width: '85%',
+                            height: '3px',
                             backgroundColor: '#3b82f6',
-                            marginBottom: '2px',
-                            borderRadius: '2px'
+                            borderRadius: '1px'
                           }}></div>
                           <div style={{
-                            width: '60%',
-                            height: '4px',
+                            width: '70%',
+                            height: '3px',
                             backgroundColor: '#ffffff',
-                            borderRadius: '2px'
+                            borderRadius: '1px'
                           }}></div>
                         </div>
                       ),
@@ -729,28 +737,27 @@ function renderSpecificProperties(
                       preview: (
                         <div style={{
                           width: '100%',
-                          height: '40px',
-                          border: '2px solid #8b5cf6',
-                          borderRadius: '8px',
+                          height: '35px',
+                          border: '1px solid #c4b5fd',
+                          borderRadius: '6px',
                           backgroundColor: '#fefefe',
                           display: 'flex',
-                          alignItems: 'center',
+                          flexDirection: 'column',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: '#7c3aed'
+                          alignItems: 'center',
+                          gap: '2px'
                         }}>
                           <div style={{
-                            width: '80%',
-                            height: '4px',
+                            width: '85%',
+                            height: '3px',
                             backgroundColor: '#8b5cf6',
-                            marginBottom: '2px',
-                            borderRadius: '3px'
+                            borderRadius: '2px'
                           }}></div>
                           <div style={{
-                            width: '60%',
-                            height: '4px',
+                            width: '70%',
+                            height: '3px',
                             backgroundColor: '#faf5ff',
-                            borderRadius: '3px'
+                            borderRadius: '2px'
                           }}></div>
                         </div>
                       ),
@@ -769,24 +776,23 @@ function renderSpecificProperties(
                       preview: (
                         <div style={{
                           width: '100%',
-                          height: '40px',
+                          height: '35px',
                           border: '1px solid #f3f4f6',
                           borderRadius: '0px',
                           backgroundColor: '#ffffff',
                           display: 'flex',
-                          alignItems: 'center',
+                          flexDirection: 'column',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: '#9ca3af'
+                          alignItems: 'center',
+                          gap: '1px'
                         }}>
                           <div style={{
-                            width: '80%',
+                            width: '85%',
                             height: '2px',
-                            backgroundColor: '#f9fafb',
-                            marginBottom: '1px'
+                            backgroundColor: '#f9fafb'
                           }}></div>
                           <div style={{
-                            width: '60%',
+                            width: '70%',
                             height: '2px',
                             backgroundColor: '#ffffff'
                           }}></div>
@@ -807,25 +813,24 @@ function renderSpecificProperties(
                       preview: (
                         <div style={{
                           width: '100%',
-                          height: '40px',
+                          height: '35px',
                           border: '1px solid #374151',
                           borderRadius: '0px',
                           backgroundColor: '#ffffff',
                           display: 'flex',
-                          alignItems: 'center',
+                          flexDirection: 'column',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: '#374151'
+                          alignItems: 'center',
+                          gap: '2px'
                         }}>
                           <div style={{
-                            width: '80%',
-                            height: '4px',
-                            backgroundColor: '#1f2937',
-                            marginBottom: '2px'
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#1f2937'
                           }}></div>
                           <div style={{
-                            width: '60%',
-                            height: '4px',
+                            width: '70%',
+                            height: '3px',
                             backgroundColor: '#f9fafb'
                           }}></div>
                         </div>
@@ -838,6 +843,123 @@ function renderSpecificProperties(
                         borderColor: '#374151',
                         textColor: '#111827'
                       }
+                    },
+                    {
+                      id: 'warm',
+                      name: 'Chaud',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #fed7aa',
+                          borderRadius: '4px',
+                          backgroundColor: '#fff7ed',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#ea580c',
+                            borderRadius: '1px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#ffedd5',
+                            borderRadius: '1px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#fff7ed',
+                        headerBackgroundColor: '#ea580c',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#ffedd5',
+                        borderColor: '#fed7aa',
+                        textColor: '#9a3412'
+                      }
+                    },
+                    {
+                      id: 'nature',
+                      name: 'Nature',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #bbf7d0',
+                          borderRadius: '6px',
+                          backgroundColor: '#f0fdf4',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#16a34a',
+                            borderRadius: '2px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#dcfce7',
+                            borderRadius: '2px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#f0fdf4',
+                        headerBackgroundColor: '#16a34a',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#dcfce7',
+                        borderColor: '#bbf7d0',
+                        textColor: '#14532d'
+                      }
+                    },
+                    {
+                      id: 'dark',
+                      name: 'Sombre',
+                      preview: (
+                        <div style={{
+                          width: '100%',
+                          height: '35px',
+                          border: '1px solid #374151',
+                          borderRadius: '4px',
+                          backgroundColor: '#1f2937',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '2px'
+                        }}>
+                          <div style={{
+                            width: '85%',
+                            height: '3px',
+                            backgroundColor: '#111827',
+                            borderRadius: '1px'
+                          }}></div>
+                          <div style={{
+                            width: '70%',
+                            height: '3px',
+                            backgroundColor: '#374151',
+                            borderRadius: '1px'
+                          }}></div>
+                        </div>
+                      ),
+                      styles: {
+                        backgroundColor: '#1f2937',
+                        headerBackgroundColor: '#111827',
+                        headerTextColor: '#ffffff',
+                        alternateRowColor: '#374151',
+                        borderColor: '#4b5563',
+                        textColor: '#f9fafb'
+                      }
                     }
                   ].map(theme => (
                     <button
@@ -849,24 +971,38 @@ function renderSpecificProperties(
                         });
                       }}
                       style={{
-                        padding: '8px',
-                        border: '2px solid #e0e0e0',
+                        padding: '6px',
+                        border: '2px solid transparent',
                         borderRadius: '6px',
                         backgroundColor: '#ffffff',
                         cursor: 'pointer',
-                        textAlign: 'left',
-                        transition: 'all 0.2s ease'
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        minHeight: '70px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = '#007bff';
                         e.currentTarget.style.backgroundColor = '#f8f9fa';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = '#e0e0e0';
+                        e.currentTarget.style.borderColor = 'transparent';
                         e.currentTarget.style.backgroundColor = '#ffffff';
+                        e.currentTarget.style.transform = 'translateY(0)';
                       }}
+                      title={`Appliquer le thème ${theme.name}`}
                     >
-                      <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#333' }}>
+                      <div style={{
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        color: '#333',
+                        textAlign: 'center',
+                        lineHeight: '1.2'
+                      }}>
                         {theme.name}
                       </div>
                       {theme.preview}
