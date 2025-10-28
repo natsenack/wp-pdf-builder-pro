@@ -1,6 +1,15 @@
 import React from 'react';
 import { Element } from '../../types/elements';
 
+// Déclaration des types WordPress pour TypeScript
+declare global {
+  interface Window {
+    wp?: {
+      media?: (options?: any) => any;
+    };
+  }
+}
+
 interface CompanyLogoPropertiesProps {
   element: Element;
   onChange: (elementId: string, property: string, value: any) => void;
@@ -90,19 +99,68 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               URL du logo
             </label>
-            <input
-              type="text"
-              value={(element as any).logoUrl || ''}
-              onChange={(e) => onChange(element.id, 'logoUrl', e.target.value)}
-              placeholder="https://exemple.com/logo.png"
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={(element as any).logoUrl || ''}
+                onChange={(e) => onChange(element.id, 'logoUrl', e.target.value)}
+                placeholder="https://exemple.com/logo.png"
+                style={{
+                  flex: 1,
+                  padding: '6px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              />
+              <button
+                onClick={() => {
+                  // Ouvrir la bibliothèque de médias WordPress
+                  if (window.wp && window.wp.media) {
+                    const mediaUploader = window.wp.media({
+                      title: 'Sélectionner un logo',
+                      button: {
+                        text: 'Utiliser ce logo'
+                      },
+                      multiple: false,
+                      library: {
+                        type: 'image'
+                      }
+                    });
+
+                    mediaUploader.on('select', function() {
+                      const attachment = mediaUploader.state().get('selection').first().toJSON();
+                      onChange(element.id, 'logoUrl', attachment.url);
+                      // Optionnellement, mettre à jour les dimensions si elles ne sont pas définies
+                      if (!(element as any).width || (element as any).width === 150) {
+                        onChange(element.id, 'width', attachment.width || 150);
+                      }
+                      if (!(element as any).height || (element as any).height === 80) {
+                        onChange(element.id, 'height', attachment.height || 80);
+                      }
+                    });
+
+                    mediaUploader.open();
+                  } else {
+                    alert('La bibliothèque de médias WordPress n\'est pas disponible. Veuillez saisir l\'URL manuellement.');
+                  }
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#007bff',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  whiteSpace: 'nowrap'
+                }}
+                title="Sélectionner depuis la bibliothèque WordPress"
+              >
+                📁 Choisir
+              </button>
+            </div>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
