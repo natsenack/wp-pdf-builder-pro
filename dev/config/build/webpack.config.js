@@ -28,6 +28,9 @@ module.exports = {
     // 'react': 'React',  // Commenté pour bundler React
     // 'react-dom': 'ReactDOM'  // Commenté pour bundler ReactDOM
   },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+  },
   module: {
     rules: [
       {
