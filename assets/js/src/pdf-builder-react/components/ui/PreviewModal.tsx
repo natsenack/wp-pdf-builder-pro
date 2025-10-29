@@ -13,6 +13,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [previewElements, setPreviewElements] = useState<any[]>([]);
+  const { state } = useBuilder();
+
   // Fonction pour remplacer les variables dynamiques dans le texte
   const replaceVariables = (text: string): string => {
     // Variables d'exemple pour l'aperçu (en mode éditeur)
