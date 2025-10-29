@@ -55,7 +55,8 @@ function PDFBuilderContent({
       padding: '12px',
       backgroundColor: '#ffffff',
       border: '1px solid #ddd',
-      borderRadius: '8px'
+      borderRadius: '8px',
+      paddingTop: '100px' // Espace pour le header fixe
     }}>
       {/* Header en haut */}
       <Header

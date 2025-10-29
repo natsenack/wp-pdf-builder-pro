@@ -131,7 +131,12 @@ export function Header({
       borderBottom: '2px solid #e0e0e0',
       borderRadius: '8px 8px 0 0',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-      gap: '16px'
+      gap: '16px',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
