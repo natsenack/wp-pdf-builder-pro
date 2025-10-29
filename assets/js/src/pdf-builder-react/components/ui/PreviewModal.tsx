@@ -11,7 +11,7 @@ interface PreviewModalProps {
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.5); // Zoom par défaut à 50% pour que le canvas A4 soit visible
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
   const { state } = useBuilder();
