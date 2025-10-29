@@ -116,6 +116,10 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         correctedElements.forEach((element, index) => {
           if (element.type === 'company_info' || element.type === 'order_number') {
             console.log(`[${element.type}] Position finale: x=${element.x}, y=${element.y}, width=${element.width}, height=${element.height}`);
+            console.log(`[${element.type}] Propriétés:`, element);
+            console.log(`[${element.type}] Texte à afficher:`, element.type === 'company_info' ?
+              replaceVariables(element.text || element.companyInfo || 'Informations entreprise') :
+              replaceVariables(element.text || element.orderNumber || 'N° de commande'));
           }
         });
       } else {
@@ -213,20 +217,24 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         break;
 
       case 'order_number':
+        console.log('Rendering order_number:', element);
         ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'bold'} ${props.fontSize || 16}px ${props.fontFamily || 'Arial'}`;
         ctx.textAlign = (props.textAlign || props.align || 'left') as CanvasTextAlign;
         ctx.textBaseline = 'top';
         const orderText = replaceVariables(props.text || props.orderNumber || 'N° de commande');
+        console.log('Order_number text to render:', orderText);
         ctx.fillText(orderText, 0, 0);
         break;
 
       case 'company_info':
+        console.log('Rendering company_info:', element);
         ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 12}px ${props.fontFamily || 'Arial'}`;
         ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
         ctx.textBaseline = 'top';
         const infoText = replaceVariables(props.text || props.companyInfo || 'Informations entreprise');
+        console.log('Company_info text to render:', infoText);
         const infoLines = infoText.split('\n');
         let infoY = 0;
         infoLines.forEach((line: string) => {
