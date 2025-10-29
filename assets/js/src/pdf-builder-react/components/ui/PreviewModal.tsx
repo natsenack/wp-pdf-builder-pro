@@ -13,8 +13,30 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [previewElements, setPreviewElements] = useState<any[]>([]);
-  const { state } = useBuilder();
+  // Fonction pour remplacer les variables dynamiques dans le texte
+  const replaceVariables = (text: string): string => {
+    // Variables d'exemple pour l'aperçu (en mode éditeur)
+    const variables = {
+      '{{customer_name}}': 'Jean Dupont',
+      '{{customer_email}}': 'jean.dupont@email.com',
+      '{{customer_phone}}': '+33 1 23 45 67 89',
+      '{{customer_address}}': '123 Rue de la Paix\n75001 Paris\nFrance',
+      '{{order_number}}': 'CMD-2025-001',
+      '{{order_date}}': '30 octobre 2025',
+      '{{order_total}}': '299,99 €',
+      '{{company_name}}': 'Ma Société SARL',
+      '{{company_address}}': '456 Avenue des Champs\n75008 Paris\nFrance',
+      '{{company_phone}}': '+33 1 98 76 54 32',
+      '{{company_email}}': 'contact@masociete.com',
+      '{{company_vat}}': 'FR 12 345 678 901'
+    };
+
+    let result = text;
+    Object.entries(variables).forEach(([variable, value]) => {
+      result = result.replace(new RegExp(variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+    });
+    return result;
+  };
 
   // Récupérer les éléments du template depuis la base de données
   useEffect(() => {
@@ -76,6 +98,8 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         });
 
         setPreviewElements(correctedElements);
+        console.log('Éléments chargés pour l\'aperçu:', correctedElements);
+        console.log('Premier élément exemple:', correctedElements[0]);
       } else {
         console.warn('Erreur lors de la récupération du template:', data.data);
         setPreviewElements(state.elements); // Fallback
@@ -125,19 +149,19 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
     switch (element.type) {
       case 'rectangle':
-        ctx.fillStyle = props.fillColor || '#ffffff';
-        ctx.strokeStyle = props.strokeColor || '#000000';
-        ctx.lineWidth = props.strokeWidth || 1;
+        ctx.fillStyle = props.fillColor || props.backgroundColor || '#ffffff';
+        ctx.strokeStyle = props.strokeColor || props.borderColor || '#000000';
+        ctx.lineWidth = props.strokeWidth || props.borderWidth || 1;
         ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeRect(0, 0, element.width, element.height);
         break;
 
       case 'text':
-        ctx.fillStyle = props.color || '#000000';
+        ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 14}px ${props.fontFamily || 'Arial'}`;
-        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
+        ctx.textAlign = (props.textAlign || props.align || 'left') as CanvasTextAlign;
         ctx.textBaseline = 'top';
-        const text = props.text || 'Texte';
+        const text = replaceVariables(props.text || 'Texte');
         const lines = text.split('\n');
         let y = 0;
         lines.forEach((line: string) => {
@@ -147,34 +171,44 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         break;
 
       case 'company_logo':
-        // Placeholder pour le logo
-        ctx.fillStyle = '#f0f0f0';
-        ctx.strokeStyle = '#ccc';
-        ctx.lineWidth = 1;
-        ctx.fillRect(0, 0, element.width, element.height);
-        ctx.strokeRect(0, 0, element.width, element.height);
-        ctx.fillStyle = '#666';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('Company Logo', element.width / 2, element.height / 2);
+        // Rendu amélioré pour le logo
+        if (props.src || props.imageUrl) {
+          // Si on a une image, essayer de la charger
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, element.width, element.height);
+          };
+          img.src = props.src || props.imageUrl;
+        } else {
+          // Placeholder si pas d'image
+          ctx.fillStyle = '#f0f0f0';
+          ctx.strokeStyle = '#ccc';
+          ctx.lineWidth = 1;
+          ctx.fillRect(0, 0, element.width, element.height);
+          ctx.strokeRect(0, 0, element.width, element.height);
+          ctx.fillStyle = '#666';
+          ctx.font = '12px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Company Logo', element.width / 2, element.height / 2);
+        }
         break;
 
       case 'order_number':
-        ctx.fillStyle = props.color || '#000000';
+        ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'bold'} ${props.fontSize || 16}px ${props.fontFamily || 'Arial'}`;
-        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
+        ctx.textAlign = (props.textAlign || props.align || 'left') as CanvasTextAlign;
         ctx.textBaseline = 'top';
-        const orderText = props.text || 'N° de commande';
+        const orderText = replaceVariables(props.text || props.orderNumber || 'N° de commande');
         ctx.fillText(orderText, 0, 0);
         break;
 
       case 'company_info':
-        ctx.fillStyle = props.color || '#000000';
+        ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 12}px ${props.fontFamily || 'Arial'}`;
         ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
         ctx.textBaseline = 'top';
-        const infoText = props.text || 'Informations entreprise';
+        const infoText = replaceVariables(props.text || props.companyInfo || 'Informations entreprise');
         const infoLines = infoText.split('\n');
         let infoY = 0;
         infoLines.forEach((line: string) => {
@@ -184,24 +218,46 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         break;
 
       case 'product_table':
-        // Placeholder simple pour le tableau
-        ctx.fillStyle = '#f9f9f9';
-        ctx.strokeStyle = '#ddd';
-        ctx.lineWidth = 1;
+        // Rendu amélioré pour le tableau
+        ctx.fillStyle = props.backgroundColor || '#f9f9f9';
+        ctx.strokeStyle = props.borderColor || '#ddd';
+        ctx.lineWidth = props.borderWidth || 1;
         ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeRect(0, 0, element.width, element.height);
-        ctx.fillStyle = '#666';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('Tableau produits', element.width / 2, element.height / 2);
+
+        // En-têtes du tableau
+        if (props.showHeaders !== false) {
+          ctx.fillStyle = '#666';
+          ctx.font = `${props.fontSize || 12}px Arial`;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'top';
+          ctx.fillText('Produit', 10, 10);
+          ctx.fillText('Qté', element.width - 60, 10);
+          ctx.fillText('Prix', element.width - 30, 10);
+        }
+
+        // Ligne de séparation
+        ctx.strokeStyle = '#ccc';
+        ctx.beginPath();
+        ctx.moveTo(0, 30);
+        ctx.lineTo(element.width, 30);
+        ctx.stroke();
         break;
 
       default:
-        // Élément générique
-        ctx.strokeStyle = '#000000';
+        // Élément générique avec fond gris
+        ctx.fillStyle = '#e0e0e0';
+        ctx.strokeStyle = '#999';
         ctx.lineWidth = 1;
+        ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeRect(0, 0, element.width, element.height);
+
+        // Texte du type d'élément
+        ctx.fillStyle = '#666';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(element.type, element.width / 2, element.height / 2);
     }
 
     ctx.restore();
