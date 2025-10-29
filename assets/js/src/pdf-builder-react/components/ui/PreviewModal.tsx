@@ -46,8 +46,8 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
       // Faire une requête AJAX pour récupérer les données du template
       const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
-      const nonce = (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
-      console.log('PreviewModal: Using nonce:', nonce, 'from pdfBuilderNonce:', (window as any).pdfBuilderNonce, 'or pdfBuilderReactData:', (window as any).pdfBuilderReactData?.nonce);
+      const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
+      console.log('PreviewModal: Using nonce:', nonce, 'from pdfBuilderData:', (window as any).pdfBuilderData?.nonce, 'pdfBuilderNonce:', (window as any).pdfBuilderNonce, 'pdfBuilderReactData:', (window as any).pdfBuilderReactData?.nonce);
       const response = await fetch(`${ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonce}`, {
         method: 'GET'
       });
