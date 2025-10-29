@@ -40,7 +40,9 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
         backgroundColor: '#f9f9f9',
         border: '1px solid #ddd',
         borderRadius: '4px',
-        minHeight: '200px'
+        minHeight: '200px',
+        maxHeight: 'calc(100vh - 32px)',
+        overflowY: 'auto'
       }}>
         <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold' }}>
           Propriétés
@@ -58,7 +60,7 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
       backgroundColor: '#f9f9f9',
       border: '1px solid #ddd',
       borderRadius: '4px',
-      maxHeight: '600px',
+      maxHeight: 'calc(100vh - 32px)',
       overflowY: 'auto'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
