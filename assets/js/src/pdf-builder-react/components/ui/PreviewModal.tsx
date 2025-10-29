@@ -25,15 +25,18 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
     setIsLoading(true);
 
-    // Définir la taille du canvas pour l'aperçu
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    // Définir la taille du canvas pour l'aperçu (avec zoom)
+    const displayWidth = canvasWidth * zoom;
+    const displayHeight = canvasHeight * zoom;
+
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
 
     // Clear canvas
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillRect(0, 0, displayWidth, displayHeight);
 
-    // Appliquer zoom
+    // Appliquer transformation pour centrer et zoomer
     ctx.save();
     ctx.scale(zoom, zoom);
 
@@ -54,35 +57,80 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       ctx.rotate((element.rotation * Math.PI) / 180);
     }
 
+    const props = element as any;
+
     switch (element.type) {
       case 'rectangle':
-        const rectProps = element as any;
-        ctx.fillStyle = rectProps.fillColor || '#ffffff';
-        ctx.strokeStyle = rectProps.strokeColor || '#000000';
-        ctx.lineWidth = rectProps.strokeWidth || 1;
+        ctx.fillStyle = props.fillColor || '#ffffff';
+        ctx.strokeStyle = props.strokeColor || '#000000';
+        ctx.lineWidth = props.strokeWidth || 1;
         ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeRect(0, 0, element.width, element.height);
         break;
 
       case 'text':
-        const textProps = element as any;
-        ctx.fillStyle = textProps.color || '#000000';
-        ctx.font = `${textProps.fontWeight || 'normal'} ${textProps.fontSize || 14}px ${textProps.fontFamily || 'Arial'}`;
-        ctx.textAlign = textProps.textAlign as CanvasTextAlign || 'left';
-        const text = textProps.text || 'Texte';
-        ctx.fillText(text, 0, textProps.fontSize || 14);
+        ctx.fillStyle = props.color || '#000000';
+        ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 14}px ${props.fontFamily || 'Arial'}`;
+        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
+        ctx.textBaseline = 'top';
+        const text = props.text || 'Texte';
+        const lines = text.split('\n');
+        let y = 0;
+        lines.forEach((line: string) => {
+          ctx.fillText(line, 0, y);
+          y += props.fontSize || 14;
+        });
         break;
 
       case 'company_logo':
         // Placeholder pour le logo
         ctx.fillStyle = '#f0f0f0';
-        ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1;
+        ctx.fillRect(0, 0, element.width, element.height);
         ctx.strokeRect(0, 0, element.width, element.height);
         ctx.fillStyle = '#666';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Company Logo', element.width / 2, element.height / 2 + 4);
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Company Logo', element.width / 2, element.height / 2);
+        break;
+
+      case 'order_number':
+        ctx.fillStyle = props.color || '#000000';
+        ctx.font = `${props.fontWeight || 'bold'} ${props.fontSize || 16}px ${props.fontFamily || 'Arial'}`;
+        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
+        ctx.textBaseline = 'top';
+        const orderText = props.text || 'N° de commande';
+        ctx.fillText(orderText, 0, 0);
+        break;
+
+      case 'company_info':
+        ctx.fillStyle = props.color || '#000000';
+        ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 12}px ${props.fontFamily || 'Arial'}`;
+        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
+        ctx.textBaseline = 'top';
+        const infoText = props.text || 'Informations entreprise';
+        const infoLines = infoText.split('\n');
+        let infoY = 0;
+        infoLines.forEach((line: string) => {
+          ctx.fillText(line, 0, infoY);
+          infoY += props.fontSize || 12;
+        });
+        break;
+
+      case 'product_table':
+        // Placeholder simple pour le tableau
+        ctx.fillStyle = '#f9f9f9';
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+        ctx.fillRect(0, 0, element.width, element.height);
+        ctx.strokeRect(0, 0, element.width, element.height);
+        ctx.fillStyle = '#666';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Tableau produits', element.width / 2, element.height / 2);
         break;
 
       default:
