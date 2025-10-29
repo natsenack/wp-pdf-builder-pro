@@ -234,6 +234,9 @@ class PDF_Builder_WooCommerce_Integration
 
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <?php if ($selected_template) : ?>
+                    <button type="button" id="pdf-preview-btn" class="button button-primary" style="padding: 8px 16px;">
+                        👁️ Aperçu
+                    </button>
                     <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
                         📄 Générer PDF
                     </button>
@@ -247,6 +250,11 @@ class PDF_Builder_WooCommerce_Integration
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
+
+            // Bouton aperçu
+            $('#pdf-preview-btn').on('click', function() {
+                previewPDF(orderId, templateId, nonce);
+            });
 
             // Bouton génération PDF
             $('#pdf-generate-btn').on('click', function() {
@@ -280,6 +288,80 @@ class PDF_Builder_WooCommerce_Integration
                 },
                 error: function() {
                     alert('Erreur lors de la génération du PDF');
+                }
+            });
+        }
+
+        function previewPDF(orderId, templateId, nonce) {
+            // Ouvrir une nouvelle fenêtre pour l'aperçu
+            var previewWindow = window.open('', 'pdf-preview', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+
+            if (!previewWindow) {
+                alert('Veuillez autoriser les popups pour cette page.');
+                return;
+            }
+
+            // Afficher un message de chargement
+            previewWindow.document.write(`
+                <html>
+                <head>
+                    <title>Aperçu PDF - Commande #${orderId}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                        .loading { font-size: 18px; color: #666; }
+                        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 20px auto; }
+                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                    </style>
+                </head>
+                <body>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Génération de l'aperçu PDF...<br>
+                        <small>Cela peut prendre quelques instants</small>
+                    </div>
+                </body>
+                </html>
+            `);
+
+            // Générer l'aperçu PDF
+            jQuery.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_generate_order_pdf',
+                    order_id: orderId,
+                    template_id: templateId,
+                    nonce: nonce,
+                    preview: true
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Ouvrir le PDF dans la fenêtre d'aperçu
+                        previewWindow.location.href = response.data.preview_url || response.data.download_url;
+                    } else {
+                        previewWindow.document.write(`
+                            <html>
+                            <head><title>Erreur d'aperçu</title></head>
+                            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; color: #dc3545;">
+                                <h2>Erreur lors de la génération de l'aperçu</h2>
+                                <p>${response.data || 'Une erreur inconnue s\'est produite'}</p>
+                                <button onclick="window.close()">Fermer</button>
+                            </body>
+                            </html>
+                        `);
+                    }
+                },
+                error: function() {
+                    previewWindow.document.write(`
+                        <html>
+                        <head><title>Erreur d'aperçu</title></head>
+                        <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; color: #dc3545;">
+                            <h2>Erreur de connexion</h2>
+                            <p>Impossible de contacter le serveur. Veuillez réessayer.</p>
+                            <button onclick="window.close()">Fermer</button>
+                        </body>
+                        </html>
+                    `);
                 }
             });
         }
@@ -325,6 +407,7 @@ class PDF_Builder_WooCommerce_Integration
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
         $custom_content = isset($_POST['content']) ? $_POST['content'] : '';
         $image_path = isset($_POST['image_path']) ? $_POST['image_path'] : '';
+        $is_preview = isset($_POST['preview']) && $_POST['preview'] === 'true';
 
         // Validation de l'order_id
         if (!$order_id || $order_id <= 0) {
@@ -418,14 +501,25 @@ class PDF_Builder_WooCommerce_Integration
             // Créer l'URL de téléchargement
             $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
 
-            wp_send_json_success(
-                [
-                'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
-                'url' => $download_url,
-                'html_url' => $download_url,
-                'pdf_url' => null
-                ]
-            );
+            if ($is_preview) {
+                // Mode aperçu - retourner l'URL pour affichage dans le navigateur
+                wp_send_json_success([
+                    'message' => 'Aperçu généré avec succès',
+                    'preview_url' => $download_url,
+                    'download_url' => $download_url,
+                    'filename' => $filename
+                ]);
+            } else {
+                // Mode téléchargement normal
+                wp_send_json_success([
+                    'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
+                    'url' => $download_url,
+                    'html_url' => $download_url,
+                    'pdf_url' => null,
+                    'download_url' => $download_url,
+                    'filename' => $filename
+                ]);
+            }
         } catch (Exception $e) {
             wp_send_json_error('Erreur Exception: ' . $e->getMessage());
         } catch (Error $e) {

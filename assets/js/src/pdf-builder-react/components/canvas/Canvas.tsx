@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
@@ -11,7 +11,7 @@ interface CanvasProps {
   className?: string;
 }
 
-export function Canvas({ width, height, className }: CanvasProps) {
+export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
@@ -1242,4 +1242,4 @@ export function Canvas({ width, height, className }: CanvasProps) {
       }}
     />
   );
-}
+});

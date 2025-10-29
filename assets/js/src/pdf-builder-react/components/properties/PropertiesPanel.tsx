@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { ProductTableProperties } from './ProductTableProperties';
@@ -15,23 +15,26 @@ interface PropertiesPanelProps {
   className?: string;
 }
 
-export function PropertiesPanel({ className }: PropertiesPanelProps) {
+export const PropertiesPanel = memo(function PropertiesPanel({ className }: PropertiesPanelProps) {
   const { state, updateElement, removeElement } = useBuilder();
   const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }>({});
 
-  const selectedElements = state.elements.filter(el =>
-    state.selection.selectedElements.includes(el.id)
+  // Optimisation: mémoriser les éléments sélectionnés
+  const selectedElements = useMemo(() =>
+    state.elements.filter(el => state.selection.selectedElements.includes(el.id)),
+    [state.elements, state.selection.selectedElements]
   );
 
-  const handlePropertyChange = (elementId: string, property: string, value: any) => {
+  // Optimisation: mémoriser les handlers
+  const handlePropertyChange = useCallback((elementId: string, property: string, value: any) => {
     updateElement(elementId, { [property]: value });
-  };
+  }, [updateElement]);
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = useCallback(() => {
     state.selection.selectedElements.forEach(id => {
       removeElement(id);
     });
-  };
+  }, [state.selection.selectedElements, removeElement]);
 
   if (selectedElements.length === 0) {
     return (
@@ -283,4 +286,4 @@ export function PropertiesPanel({ className }: PropertiesPanelProps) {
       ))}
     </div>
   );
-}
+});

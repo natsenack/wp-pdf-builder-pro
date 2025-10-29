@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { TemplateState } from '../../types/elements';
 import { PreviewModal } from '../ui/PreviewModal';
 
@@ -22,7 +22,7 @@ interface HeaderProps {
   onUpdateTemplateSettings: (settings: Partial<TemplateState>) => void;
 }
 
-export function Header({
+export const Header = memo(function Header({
   templateName,
   templateDescription,
   templateTags,
@@ -93,17 +93,18 @@ export function Header({
     setEditedSnapToGrid(snapToGrid);
   }, [snapToGrid]);
 
+  // Optimisation: mémoriser le handler de scroll
+  const handleScroll = useCallback(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    // Le header devient fixe après 100px de scroll
+    setIsHeaderFixed(scrollTop > 100);
+  }, []);
+
   // Effet pour gérer le scroll et rendre le header fixe
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      // Le header devient fixe après 100px de scroll
-      setIsHeaderFixed(scrollTop > 100);
-    };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   const buttonBaseStyles = {
     padding: '10px 16px',
@@ -736,4 +737,4 @@ export function Header({
       `}</style>
     </div>
   );
-}
+});
