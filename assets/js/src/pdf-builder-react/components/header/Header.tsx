@@ -152,8 +152,7 @@ export function Header({
       left: isHeaderFixed ? '160px' : 'auto', // Après le menu WordPress replié
       right: isHeaderFixed ? 0 : 'auto',
       zIndex: 1000,
-      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease',
-      width: isHeaderFixed ? 'calc(100vw - 160px)' : '100%'
+      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease'
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
