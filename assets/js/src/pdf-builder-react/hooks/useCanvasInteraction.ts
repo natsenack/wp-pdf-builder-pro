@@ -134,6 +134,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
 
     console.log(`Canvas click at screen (${event.clientX}, ${event.clientY}), canvas coords (${x}, ${y})`);
+    console.log(`Canvas rect: left=${rect.left}, top=${rect.top}, width=${rect.width}, height=${rect.height}`);
+    console.log(`Canvas pan: x=${state.canvas.pan.x}, y=${state.canvas.pan.y}, zoom=${state.canvas.zoom}`);
+    console.log(`Canvas element size: width=${canvas.width}, height=${canvas.height}`);
 
     // Trouver l'élément cliqué
     const clickedElement = state.elements.find(el => {
