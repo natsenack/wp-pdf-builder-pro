@@ -55,7 +55,33 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       const data = await response.json();
 
       if (data.success && data.data && data.data.elements) {
-        setPreviewElements(data.data.elements);
+        console.log('PreviewModal: Retrieved elements from DB:', data.data.elements);
+        console.log('PreviewModal: Canvas dimensions:', canvasWidth, 'x', canvasHeight);
+        // Corriger automatiquement les coordonnées des éléments qui dépassent A4
+        const correctedElements = data.data.elements.map((element: any) => {
+          const corrected = { ...element };
+
+          // S'assurer que l'élément ne dépasse pas à droite
+          if (corrected.x + corrected.width > canvasWidth) {
+            corrected.x = Math.max(0, canvasWidth - corrected.width);
+            console.log(`Corrected element ${element.type} x from ${element.x} to ${corrected.x}`);
+          }
+
+          // S'assurer que l'élément ne dépasse pas en bas
+          if (corrected.y + corrected.height > canvasHeight) {
+            corrected.y = Math.max(0, canvasHeight - corrected.height);
+            console.log(`Corrected element ${element.type} y from ${element.y} to ${corrected.y}`);
+          }
+
+          // S'assurer que les coordonnées ne sont pas négatives
+          corrected.x = Math.max(0, corrected.x);
+          corrected.y = Math.max(0, corrected.y);
+
+          return corrected;
+        });
+
+        console.log('PreviewModal: Corrected elements:', correctedElements);
+        setPreviewElements(correctedElements);
       } else {
         console.warn('Erreur lors de la récupération du template:', data.data);
         setPreviewElements(state.elements); // Fallback
