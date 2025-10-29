@@ -80,16 +80,25 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
       if (data.success && data.data && data.data.elements) {
         // Corriger automatiquement les coordonnées des éléments qui dépassent A4
+        // Mais seulement si nécessaire - la plupart des éléments devraient déjà être dans les bonnes proportions
         const correctedElements = data.data.elements.map((element: any) => {
           const corrected = { ...element };
 
-          // S'assurer que l'élément ne dépasse pas à droite
-          if (corrected.x + corrected.width > canvasWidth) {
+          // Vérifier si l'élément dépasse vraiment les limites (avec une marge de 10px)
+          const margin = 10;
+          const exceedsRight = corrected.x + corrected.width > canvasWidth + margin;
+          const exceedsBottom = corrected.y + corrected.height > canvasHeight + margin;
+
+          console.log(`Élément ${element.type}: position (${corrected.x}, ${corrected.y}), taille (${corrected.width}x${corrected.height}), canvas (${canvasWidth}x${canvasHeight})`);
+
+          // Seulement corriger si l'élément dépasse vraiment
+          if (exceedsRight) {
+            console.log(`Correction horizontale: ${corrected.x} -> ${Math.max(0, canvasWidth - corrected.width)}`);
             corrected.x = Math.max(0, canvasWidth - corrected.width);
           }
 
-          // S'assurer que l'élément ne dépasse pas en bas
-          if (corrected.y + corrected.height > canvasHeight) {
+          if (exceedsBottom) {
+            console.log(`Correction verticale: ${corrected.y} -> ${Math.max(0, canvasHeight - corrected.height)}`);
             corrected.y = Math.max(0, canvasHeight - corrected.height);
           }
 
