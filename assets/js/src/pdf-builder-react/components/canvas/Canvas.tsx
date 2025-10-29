@@ -18,6 +18,9 @@ export function Canvas({ width, height, className }: CanvasProps) {
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
 
+  // État pour forcer le re-rendu quand les images se chargent
+  const [forceUpdate, setForceUpdate] = React.useState(0);
+
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver } = useCanvasDrop({
     canvasRef,
@@ -848,14 +851,14 @@ export function Canvas({ width, height, className }: CanvasProps) {
         // Gérer les erreurs de chargement
         img.onerror = () => {
           console.warn(`Erreur de chargement de l'image: ${logoUrl}`);
-          // Forcer un re-rendu pour afficher le placeholder d'erreur
-          renderCanvas();
+          // Forcer un re-rendu du composant React
+          setForceUpdate(prev => prev + 1);
         };
 
         // Gérer le chargement réussi
         img.onload = () => {
-          // Forcer un re-rendu pour afficher l'image chargée
-          renderCanvas();
+          // Forcer un re-rendu du composant React
+          setForceUpdate(prev => prev + 1);
         };
       }
 
@@ -1218,7 +1221,7 @@ export function Canvas({ width, height, className }: CanvasProps) {
   // Redessiner quand l'état change
   useEffect(() => {
     renderCanvas();
-  }, [renderCanvas]);
+  }, [renderCanvas, forceUpdate]);
 
   return (
     <canvas
