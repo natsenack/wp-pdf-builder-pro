@@ -133,7 +133,7 @@ export function Header({
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
       gap: '16px',
       position: 'fixed',
-      top: 0,
+      top: '32px', // En dessous de la barre admin WordPress
       left: 0,
       right: 0,
       zIndex: 1000
