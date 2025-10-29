@@ -112,6 +112,12 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         setPreviewElements(correctedElements);
         console.log('Éléments chargés pour l\'aperçu:', correctedElements);
         console.log('Premier élément exemple:', correctedElements[0]);
+        // Log spécifique pour company_info et order_number
+        correctedElements.forEach((element, index) => {
+          if (element.type === 'company_info' || element.type === 'order_number') {
+            console.log(`[${element.type}] Position finale: x=${element.x}, y=${element.y}, width=${element.width}, height=${element.height}`);
+          }
+        });
       } else {
         console.warn('Erreur lors de la récupération du template:', data.data);
         setPreviewElements(state.elements); // Fallback
