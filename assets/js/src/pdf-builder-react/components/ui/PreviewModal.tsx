@@ -13,7 +13,57 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [previewElements, setPreviewElements] = useState<any[]>([]);
   const { state } = useBuilder();
+
+  // Récupérer les éléments du template depuis la base de données
+  useEffect(() => {
+    if (isOpen) {
+      loadTemplateElements();
+    }
+  }, [isOpen]);
+
+  // Re-rendre quand les éléments changent
+  useEffect(() => {
+    if (isOpen && previewElements.length > 0) {
+      renderPreview();
+    }
+  }, [isOpen, previewElements, zoom]);
+
+  const loadTemplateElements = async () => {
+    setIsLoading(true);
+    try {
+      // Récupérer l'ID du template depuis l'URL ou le state
+      const urlParams = new URLSearchParams(window.location.search);
+      const templateId = urlParams.get('template_id') || state.template?.id;
+
+      if (!templateId) {
+        console.warn('Aucun template ID trouvé pour l\'aperçu');
+        setPreviewElements(state.elements); // Fallback vers le state local
+        setIsLoading(false);
+        return;
+      }
+
+      // Faire une requête AJAX pour récupérer les données du template
+      const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+      const response = await fetch(`${ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${(window as any).pdfBuilderNonce || ''}`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data && data.data.elements) {
+        setPreviewElements(data.data.elements);
+      } else {
+        console.warn('Erreur lors de la récupération du template:', data.data);
+        setPreviewElements(state.elements); // Fallback
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement du template:', error);
+      setPreviewElements(state.elements); // Fallback
+    }
+    setIsLoading(false);
+  };
 
   // Fonction pour rendre l'aperçu
   const renderPreview = () => {
@@ -35,7 +85,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
     // Plus de transformation scale - le zoom est géré par CSS
     // Rendre tous les éléments avec leurs coordonnées absolues
-    state.elements.forEach(element => {
+    previewElements.forEach(element => {
       renderElement(ctx, element);
     });
     setIsLoading(false);
