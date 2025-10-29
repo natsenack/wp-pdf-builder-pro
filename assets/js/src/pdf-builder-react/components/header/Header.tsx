@@ -134,7 +134,7 @@ export function Header({
       gap: '16px',
       position: 'fixed',
       top: '32px', // En dessous de la barre admin WordPress
-      left: 0,
+      left: '160px', // Après le menu WordPress replié
       right: 0,
       zIndex: 1000
     }}>

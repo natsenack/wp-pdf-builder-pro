@@ -56,7 +56,8 @@ function PDFBuilderContent({
       backgroundColor: '#ffffff',
       border: '1px solid #ddd',
       borderRadius: '8px',
-      paddingTop: '132px' // Espace pour le header fixe (100px) + barre admin (32px)
+      paddingTop: '132px', // Espace pour le header fixe (100px) + barre admin (32px)
+      paddingLeft: '172px' // Espace pour le menu WordPress (160px) + marge (12px)
     }}>
       {/* Header en haut */}
       <Header
