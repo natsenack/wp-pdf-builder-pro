@@ -98,6 +98,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.rotate((element.rotation * Math.PI) / 180);
     }
 
+    console.log(`Rendering ${element.type} at translated position (${element.x}, ${element.y}), size (${element.width}, ${element.height})`);
+
     // Dessiner selon le type d'élément
     switch (element.type) {
       case 'rectangle':
@@ -682,6 +684,15 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
+    console.log(`Drawing company_info content:`, {
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height,
+      companyName: props.companyName,
+      text: props.text
+    });
+
     const fontSize = props.fontSize || 12;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
@@ -929,6 +940,15 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
+    console.log(`Drawing order_number content:`, {
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height,
+      orderNumber: props.orderNumber,
+      text: props.text
+    });
+
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
