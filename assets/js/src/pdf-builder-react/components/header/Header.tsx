@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TemplateState } from '../../types/elements';
+import { PreviewModal } from '../ui/PreviewModal';
 
 interface HeaderProps {
   templateName: string;
@@ -42,6 +43,7 @@ export function Header({
 }: HeaderProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
@@ -267,7 +269,7 @@ export function Header({
         </button>
 
         <button
-          onClick={onPreview}
+          onClick={() => setShowPreviewModal(true)}
           onMouseEnter={() => setHoveredButton('preview')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
@@ -717,6 +719,14 @@ export function Header({
           </div>
         </div>
       )}
+
+      {/* Modale d'aperçu */}
+      <PreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+      />
 
       <style>{`
         @keyframes spin {

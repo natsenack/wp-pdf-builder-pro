@@ -146,7 +146,7 @@ function PDFBuilderContent({
           flexShrink: 0,
           width: '430px',
           position: 'sticky',
-          top: '32px', // En dessous de la barre admin WordPress
+          top: '110px', // En dessous de la barre admin WordPress
           height: 'fit-content',
           maxHeight: 'calc(100vh - 32px)' // Hauteur maximale pour éviter le débordement
         }}>
