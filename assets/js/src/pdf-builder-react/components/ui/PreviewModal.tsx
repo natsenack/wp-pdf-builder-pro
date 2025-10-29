@@ -25,27 +25,19 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
     setIsLoading(true);
 
-    // Définir la taille du canvas pour l'aperçu (avec zoom)
-    const displayWidth = canvasWidth * zoom;
-    const displayHeight = canvasHeight * zoom;
+    // Définir la taille du canvas pour l'aperçu (dimensions de base, le zoom sera géré par CSS ou transformation)
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-
-    // Clear canvas
+    // Clear canvas avec fond blanc
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, displayWidth, displayHeight);
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    // Appliquer transformation pour centrer et zoomer
-    ctx.save();
-    ctx.scale(zoom, zoom);
-
-    // Rendre tous les éléments
+    // Plus de transformation scale - le zoom est géré par CSS
+    // Rendre tous les éléments avec leurs coordonnées absolues
     state.elements.forEach(element => {
       renderElement(ctx, element);
     });
-
-    ctx.restore();
     setIsLoading(false);
   };
 
@@ -254,7 +246,8 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           padding: '16px',
           backgroundColor: '#f9f9f9',
           overflow: 'auto',
-          maxHeight: '60vh'
+          maxHeight: '60vh',
+          maxWidth: '80vw'
         }}>
           {isLoading ? (
             <div style={{
@@ -273,7 +266,10 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
                 border: '1px solid #ddd',
                 borderRadius: '4px',
                 backgroundColor: '#ffffff',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top left',
+                imageRendering: 'pixelated'
               }}
             />
           )}
