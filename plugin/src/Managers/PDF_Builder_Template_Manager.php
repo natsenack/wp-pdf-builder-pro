@@ -90,12 +90,16 @@ class PDF_Builder_Template_Manager
                 wp_send_json_error('Données JSON invalides: ' . $json_error);
             }
 
-            // Log des positions des éléments company_info pour debug
+            // Log des positions des éléments company_info et order_number pour debug
             if (isset($decoded_test['elements']) && is_array($decoded_test['elements'])) {
                 error_log('PDF Builder SAVE: Template ' . $template_id . ' - Elements count: ' . count($decoded_test['elements']));
                 foreach ($decoded_test['elements'] as $index => $element) {
-                    if (isset($element['type']) && $element['type'] === 'company_info') {
-                        error_log('PDF Builder SAVE: Company_info element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+                    if (isset($element['type'])) {
+                        if ($element['type'] === 'company_info') {
+                            error_log('PDF Builder SAVE: Company_info element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+                        } elseif ($element['type'] === 'order_number') {
+                            error_log('PDF Builder SAVE: Order_number element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+                        }
                     }
                 }
             }

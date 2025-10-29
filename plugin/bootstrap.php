@@ -545,8 +545,12 @@ function pdf_builder_ajax_get_template() {
     // Log des positions des éléments pour debug
     error_log('PDF Builder: Template ' . $template_id . ' - Elements count: ' . count($elements));
     foreach ($elements as $index => $element) {
-        if (isset($element['type']) && $element['type'] === 'company_info') {
-            error_log('PDF Builder: Company_info element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+        if (isset($element['type'])) {
+            if ($element['type'] === 'company_info') {
+                error_log('PDF Builder: Company_info element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+            } elseif ($element['type'] === 'order_number') {
+                error_log('PDF Builder: Order_number element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+            }
         }
     }
 
