@@ -78,8 +78,8 @@ function PDFBuilderContent({
         templateName={templateName || ''}
         templateDescription={templateDescription || ''}
         templateTags={templateTags || []}
-        canvasWidth={canvasWidth || 595}
-        canvasHeight={canvasHeight || 842}
+        canvasWidth={canvasWidth || 794}
+        canvasHeight={canvasHeight || 1123}
         marginTop={marginTop || 20}
         marginBottom={marginBottom || 20}
         showGuides={showGuides || true}

@@ -67,8 +67,8 @@ const initialState: BuilderState = {
     isSaving: false,
     description: '',
     tags: [],
-    canvasWidth: 595,
-    canvasHeight: 842,
+    canvasWidth: 794,  // A4 width at 96 DPI for proper screen display
+    canvasHeight: 1123, // A4 height at 96 DPI for proper screen display
     marginTop: 20,
     marginBottom: 20,
     showGuides: true,
