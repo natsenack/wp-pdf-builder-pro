@@ -130,13 +130,14 @@ export function Header({
       backgroundColor: '#ffffff',
       borderBottom: '2px solid #e0e0e0',
       borderRadius: '8px 8px 0 0',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
       gap: '16px',
       position: 'fixed',
       top: '32px', // En dessous de la barre admin WordPress
       left: '160px', // Après le menu WordPress replié
       right: 0,
-      zIndex: 1000
+      zIndex: 1000,
+      transition: 'all 0.3s ease, box-shadow 0.2s ease'
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
