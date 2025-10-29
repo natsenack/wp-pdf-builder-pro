@@ -844,6 +844,19 @@ export function Canvas({ width, height, className }: CanvasProps) {
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
         imageCache.current.set(logoUrl, img);
+
+        // Gérer les erreurs de chargement
+        img.onerror = () => {
+          console.warn(`Erreur de chargement de l'image: ${logoUrl}`);
+          // Forcer un re-rendu pour afficher le placeholder d'erreur
+          renderCanvas();
+        };
+
+        // Gérer le chargement réussi
+        img.onload = () => {
+          // Forcer un re-rendu pour afficher l'image chargée
+          renderCanvas();
+        };
       }
 
       // Si l'image est chargée, la dessiner
@@ -875,11 +888,11 @@ export function Canvas({ width, height, className }: CanvasProps) {
         ctx.drawImage(img, x, y, logoWidth, logoHeight);
       } else {
         // Image en cours de chargement ou erreur, dessiner un placeholder
-        drawLogoPlaceholder(ctx, element, alignment, img.complete ? 'Erreur' : 'Chargement...');
+        drawLogoPlaceholder(ctx, element, alignment, img.complete ? 'Erreur' : 'Company_logo');
       }
     } else {
       // Pas d'URL, dessiner un placeholder
-      drawLogoPlaceholder(ctx, element, alignment, 'LOGO');
+      drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
   };
 
