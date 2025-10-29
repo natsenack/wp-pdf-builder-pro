@@ -133,11 +133,17 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
     const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
 
+    console.log(`Canvas click at screen (${event.clientX}, ${event.clientY}), canvas coords (${x}, ${y})`);
+
     // Trouver l'élément cliqué
-    const clickedElement = state.elements.find(el =>
-      x >= el.x && x <= el.x + el.width &&
-      y >= el.y && y <= el.y + el.height
-    );
+    const clickedElement = state.elements.find(el => {
+      const isInside = x >= el.x && x <= el.x + el.width &&
+                      y >= el.y && y <= el.y + el.height;
+      if (el.type === 'company_info' || el.type === 'order_number') {
+        console.log(`Checking ${el.type}: element bounds (${el.x}, ${el.y}, ${el.x + el.width}, ${el.y + el.height}), click at (${x}, ${y}), isInside: ${isInside}`);
+      }
+      return isInside;
+    });
 
     if (clickedElement) {
       // Sélectionner l'élément existant
