@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BuilderProvider } from './contexts/builder/BuilderContext.tsx';
 import { Canvas } from './components/canvas/Canvas.tsx';
 import { Toolbar } from './components/toolbar/Toolbar.tsx';
@@ -20,6 +20,8 @@ function PDFBuilderContent({
   className
 }: PDFBuilderProps) {
   console.log('PDFBuilderContent rendering...');
+
+  const [isHeaderFixed, setIsHeaderFixed] = useState(false);
 
   const {
     templateName,
@@ -43,6 +45,17 @@ function PDFBuilderContent({
 
   console.log('useTemplate hook returned:', { templateName, isNewTemplate, isModified, isSaving });
 
+  // Effet pour gérer le scroll et ajuster le padding
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setIsHeaderFixed(scrollTop > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   console.log('About to render Toolbar component');
 
   return (
@@ -56,8 +69,8 @@ function PDFBuilderContent({
       backgroundColor: '#ffffff',
       border: '1px solid #ddd',
       borderRadius: '8px',
-      paddingTop: '132px', // Espace pour le header fixe (100px) + barre admin (32px)
-      paddingLeft: '172px', // Espace pour le menu WordPress (160px) + marge (12px)
+      paddingTop: isHeaderFixed ? '132px' : '12px', // Ajustement dynamique du padding-top
+      paddingLeft: '0px', // Espace pour le menu WordPress (160px) + marge (12px)
       transition: 'padding 0.3s ease'
     }}>
       {/* Header en haut */}

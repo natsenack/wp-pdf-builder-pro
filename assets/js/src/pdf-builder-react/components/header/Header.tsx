@@ -42,6 +42,7 @@ export function Header({
 }: HeaderProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
@@ -90,6 +91,18 @@ export function Header({
     setEditedSnapToGrid(snapToGrid);
   }, [snapToGrid]);
 
+  // Effet pour gérer le scroll et rendre le header fixe
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      // Le header devient fixe après 100px de scroll
+      setIsHeaderFixed(scrollTop > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const buttonBaseStyles = {
     padding: '10px 16px',
     border: 'none',
@@ -129,15 +142,18 @@ export function Header({
       padding: '16px',
       backgroundColor: '#ffffff',
       borderBottom: '2px solid #e0e0e0',
-      borderRadius: '8px 8px 0 0',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+      borderRadius: isHeaderFixed ? '0' : '8px 8px 0 0',
+      boxShadow: isHeaderFixed
+        ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)'
+        : '0 2px 8px rgba(0, 0, 0, 0.05)',
       gap: '16px',
-      position: 'fixed',
-      top: '32px', // En dessous de la barre admin WordPress
-      left: '160px', // Après le menu WordPress replié
-      right: 0,
+      position: isHeaderFixed ? 'fixed' : 'relative',
+      top: isHeaderFixed ? '32px' : 'auto', // En dessous de la barre admin WordPress
+      left: isHeaderFixed ? '160px' : 'auto', // Après le menu WordPress replié
+      right: isHeaderFixed ? 0 : 'auto',
       zIndex: 1000,
-      transition: 'all 0.3s ease, box-shadow 0.2s ease'
+      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease',
+      width: isHeaderFixed ? 'calc(100vw - 160px)' : '100%'
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
