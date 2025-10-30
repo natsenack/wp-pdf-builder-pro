@@ -996,9 +996,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       orderNumber = wooCommerceManager.getOrderNumber();
       orderDate = wooCommerceManager.getOrderDate();
     } else {
-      // Données fictives pour le mode éditeur
-      orderNumber = 'CMD-2024-01234';
-      orderDate = '27/10/2024';
+      // Utiliser les données WooCommerce si disponibles, sinon valeurs par défaut
+      orderNumber = wooCommerceManager.getOrderNumber() || 'CMD-2024-01234';
+      orderDate = wooCommerceManager.getOrderDate() || '27/10/2024';
     }
 
     console.log(`Order data for rendering: orderNumber="${orderNumber}", orderDate="${orderDate}"`);
