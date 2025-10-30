@@ -10,6 +10,7 @@ import {
   HistoryState,
   LoadTemplatePayload
 } from '../../types/elements';
+import { useSaveState } from '../../hooks/useSaveState';
 
 // État initial
 const initialCanvasState: CanvasState = {
@@ -45,6 +46,7 @@ const initialHistoryState: HistoryState = {
       isSaving: false
     },
     previewMode: 'editor',
+    showPreviewModal: false,
     history: {} as HistoryState // Sera défini récursivement
   } as BuilderState,
   future: [],
@@ -361,6 +363,13 @@ interface BuilderContextType {
   redo: () => void;
   reset: () => void;
   toggleGrid: () => void;
+  // Auto-save state
+  saveState: 'idle' | 'saving' | 'saved' | 'error';
+  lastSavedAt: string | null;
+  saveError: string | null;
+  saveRetryCount: number;
+  saveNow: () => Promise<void>;
+  clearSaveError: () => void;
 }
 
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);

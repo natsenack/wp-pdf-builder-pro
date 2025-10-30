@@ -505,28 +505,28 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - [ ] Validation données WooCommerce réelles
   - [ ] Scénarios complexes (multi-éléments, variables dynamiques)
 
-- [ ] **Étape 3.1 : Tests unitaires (100% couverture)**
+- [ ] **Étape 3.3 : Tests unitaires (100% couverture)**
   - Écrire tests unitaires pour toutes les classes PHP et JS
   - Atteindre couverture 100% des fonctions critiques
   - Implémenter tests automatisés dans CI/CD
   - Documenter cas limites et edge cases
   - **Test** : Couverture 100% validée, tests passent
 
-- [ ] **Étape 3.2 : Tests d'intégration Canvas/Metabox**
+- [ ] **Étape 3.4 : Tests d'intégration Canvas/Metabox**
   - Tester intégration complète Canvas ↔ Metabox
   - Valider basculement de données fictives/réelles
   - Vérifier cohérence rendu visuel entre modes
   - Tester scénarios complexes (multi-éléments, variables)
   - **Test** : Intégration fluide, pas de régressions
 
-- [ ] **Étape 3.3 : Optimisation performance (< 2s)**
+- [ ] **Étape 3.5 : Optimisation performance (< 2s)**
   - Mesurer et optimiser temps de génération (< 2s)
   - Implémenter cache intelligent et lazy loading
   - Optimiser requêtes DB et calculs
   - Réduire utilisation mémoire (< 100MB)
   - **Test** : Performance < 2s validée, mémoire optimisée
 
-- [ ] **Étape 3.4 : Tests sécurité**
+- [ ] **Étape 3.6 : Tests sécurité**
   - Audit complet sécurité (nonces, sanitization, permissions)
   - Tests de pénétration sur endpoints AJAX
   - Validation anti-injection et XSS
