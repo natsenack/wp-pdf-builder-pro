@@ -93,7 +93,7 @@ export class PreviewRenderer {
     element: Element,
     dataProvider: DataProvider
   ): void {
-    console.log('🎯 [ELEMENT RENDER] Rendering element:', element.type, 'at position:', element.x, element.y, 'size:', element.width, 'x', element.height);
+    console.log('🎯 [ELEMENT RENDER] Rendering element:', element.type, 'at position:', element.x, element.y, 'size:', element.width, 'x', element.height, 'visible:', element.visible);
 
     ctx.save();
 
