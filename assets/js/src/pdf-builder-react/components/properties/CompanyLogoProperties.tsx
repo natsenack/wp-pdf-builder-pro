@@ -102,8 +102,8 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
               <input
                 type="text"
-                value={(element as any).logoUrl || ''}
-                onChange={(e) => onChange(element.id, 'logoUrl', e.target.value)}
+                value={(element as any).src || ''}
+                onChange={(e) => onChange(element.id, 'src', e.target.value)}
                 placeholder="https://exemple.com/logo.png"
                 style={{
                   flex: 1,
@@ -130,7 +130,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
 
                     mediaUploader.on('select', function() {
                       const attachment = mediaUploader.state().get('selection').first().toJSON();
-                      onChange(element.id, 'logoUrl', attachment.url);
+                      onChange(element.id, 'src', attachment.url);
                       // Optionnellement, mettre à jour les dimensions si elles ne sont pas définies
                       if (!(element as any).width || (element as any).width === 150) {
                         onChange(element.id, 'width', attachment.width || 150);

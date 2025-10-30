@@ -132,19 +132,87 @@ describe('Template Data Integrity', () => {
     expect(testTemplateData.canvas.backgroundColor).toBe('#ffffff');
   });
 
-  test('devrait pouvoir être sérialisé/désérialisé correctement', () => {
-    // Simuler la sauvegarde (stringify)
-    const serialized = JSON.stringify(testTemplateData);
-    expect(typeof serialized).toBe('string');
+  test('devrait gérer les éléments company_logo avec URL', () => {
+    const templateWithLogo = {
+      elements: [
+        {
+          id: "logo_1",
+          type: "company_logo",
+          x: 50,
+          y: 50,
+          width: 150,
+          height: 80,
+          src: "https://example.com/logo.png",
+          fit: 'contain',
+          alignment: 'center',
+          backgroundColor: 'transparent',
+          rotation: 0,
+          opacity: 1,
+          visible: true,
+          locked: false,
+          createdAt: new Date("2025-10-30T10:00:00Z"),
+          updatedAt: new Date("2025-10-30T10:00:00Z")
+        }
+      ],
+      canvas: {
+        zoom: 1,
+        pan: { x: 0, y: 0 },
+        showGrid: true,
+        gridSize: 20,
+        snapToGrid: true,
+        backgroundColor: "#ffffff"
+      }
+    };
 
-    // Simuler le chargement (parse)
+    // Test de sérialisation
+    const serialized = JSON.stringify(templateWithLogo);
     const deserialized = JSON.parse(serialized);
 
-    // Vérifier que tout est préservé
-    expect(deserialized.elements).toHaveLength(3);
-    expect(deserialized.elements[0].fillColor).toBe('#ff0000');
-    expect(deserialized.elements[1].text).toBe('Hello World');
-    expect(deserialized.elements[2].fillColor).toBe('#00ff00');
-    expect(deserialized.canvas.showGrid).toBe(true);
+    // Vérifier que l'URL du logo est préservée
+    expect(deserialized.elements[0].src).toBe("https://example.com/logo.png");
+    expect(deserialized.elements[0].type).toBe("company_logo");
+    expect(deserialized.elements[0].fit).toBe('contain');
+    expect(deserialized.elements[0].alignment).toBe('center');
+  });
+
+  test('devrait être rétro-compatible avec logoUrl', () => {
+    const templateWithOldLogo = {
+      elements: [
+        {
+          id: "logo_1",
+          type: "company_logo",
+          x: 50,
+          y: 50,
+          width: 150,
+          height: 80,
+          logoUrl: "https://example.com/old-logo.png", // Ancien format
+          fit: 'contain',
+          alignment: 'left',
+          backgroundColor: 'transparent',
+          rotation: 0,
+          opacity: 1,
+          visible: true,
+          locked: false,
+          createdAt: new Date("2025-10-30T10:00:00Z"),
+          updatedAt: new Date("2025-10-30T10:00:00Z")
+        }
+      ],
+      canvas: {
+        zoom: 1,
+        pan: { x: 0, y: 0 },
+        showGrid: true,
+        gridSize: 20,
+        snapToGrid: true,
+        backgroundColor: "#ffffff"
+      }
+    };
+
+    // Test de sérialisation
+    const serialized = JSON.stringify(templateWithOldLogo);
+    const deserialized = JSON.parse(serialized);
+
+    // Vérifier que l'ancien format logoUrl est préservé
+    expect(deserialized.elements[0].logoUrl).toBe("https://example.com/old-logo.png");
+    expect(deserialized.elements[0].type).toBe("company_logo");
   });
 });

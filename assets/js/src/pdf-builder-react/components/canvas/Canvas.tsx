@@ -824,7 +824,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    const logoUrl = props.logoUrl || '';
+    const logoUrl = props.src || props.logoUrl || '';
     const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 

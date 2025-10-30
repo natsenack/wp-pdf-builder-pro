@@ -204,7 +204,7 @@ export class PreviewRenderer {
    */
   private static renderCompanyLogo(ctx: CanvasRenderingContext2D, props: any): void {
     // Essayer de récupérer l'URL du logo depuis les paramètres WordPress
-    let logoUrl = props.src || props.imageUrl;
+    let logoUrl = props.src || props.logoUrl || props.imageUrl;
 
     // Si pas d'URL définie, essayer de récupérer depuis WordPress/WooCommerce
     if (!logoUrl) {

@@ -62,7 +62,7 @@ const WOOCOMMERCE_ELEMENTS = [
       height: 80,
       fit: 'contain',
       alignment: 'left',
-      src: '', // Sera rempli automatiquement depuis les paramètres WordPress
+      src: '', // URL du logo à définir
       backgroundColor: 'transparent'
     }
   },
