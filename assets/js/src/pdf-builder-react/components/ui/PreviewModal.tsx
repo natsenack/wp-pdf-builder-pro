@@ -311,8 +311,10 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         // Afficher la date sur une nouvelle ligne
         if (orderShowDate) {
           ctx.font = `${orderDateFontStyle} ${orderDateFontWeight} ${orderDateFontSize}px ${orderDateFontFamily}`;
-          ctx.textAlign = orderDateTextAlign as CanvasTextAlign;
-          ctx.fillText(`Date: ${orderDate}`, calculateOrderX(orderDateTextAlign), orderY + 20);
+          // Pour les positions left/right, aligner la date à gauche pour cohérence
+          const finalOrderDateAlign = (orderLabelPosition === 'left' || orderLabelPosition === 'right') ? 'left' : orderDateTextAlign;
+          ctx.textAlign = finalOrderDateAlign as CanvasTextAlign;
+          ctx.fillText(`Date: ${orderDate}`, calculateOrderX(finalOrderDateAlign), orderY + 20);
         }
         break;
 

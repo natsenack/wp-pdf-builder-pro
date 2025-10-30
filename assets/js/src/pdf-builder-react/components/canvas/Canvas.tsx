@@ -1040,8 +1040,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
     if (showDate) {
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
-      ctx.textAlign = dateTextAlign as CanvasTextAlign;
-      ctx.fillText(`Date: ${orderDate}`, calculateX(dateTextAlign), y + 20);
+      // Pour les positions left/right, aligner la date à gauche pour cohérence
+      const finalDateAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : dateTextAlign;
+      ctx.textAlign = finalDateAlign as CanvasTextAlign;
+      ctx.fillText(`Date: ${orderDate}`, calculateX(finalDateAlign), y + 20);
     }
     } catch (error) {
       // Erreur silencieuse dans drawOrderNumber
