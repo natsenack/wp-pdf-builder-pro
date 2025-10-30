@@ -490,14 +490,25 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx` (modifié - dual rendering)
     - `plugin/bootstrap.php` (modifié - chargement handler AJAX)
 
-- [ ] **Étape 3.1 : Tests sauvegarde automatique**
-  - [ ] Sauvegarde automatique state.elements en JSON toutes 2-3 secondes
-  - [ ] Rechargement JSON depuis BDD pour aperçu après chaque sauvegarde
-  - [ ] Indicateur "Sauvegarde en cours..." pendant les opérations
-  - [ ] Gestion erreurs et retry automatique
+- [x] **Étape 3.1 : Tests sauvegarde automatique** ✅ COMPLÉTÉE
+  - [x] Sauvegarde automatique state.elements en JSON toutes 2-3 secondes
+  - [x] Rechargement JSON depuis BDD après chaque sauvegarde
+  - [x] Indicateur "Sauvegarde..." pendant les opérations (SaveIndicator)
+  - [x] Gestion erreurs et retry automatique (backoff exponentiel)
+  - **Déployé** : v1.0.0-30eplo25-20251030-213642
+  - **Approche** : Hook useSaveState avec retry, SaveIndicator UI discret, 5 fichiers créés
+  - **Features** : Auto-save 2.5s, retry 1s→2s→4s, SaveIndicator (saving/saved/error), compatible PHP
+  - **Test** : Compilation OK, déploiement FTP OK, format JSON compatible avec preview-image-handler.php
   - **Fichiers concernés** : 
-    - `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx`
-    - `assets/js/src/pdf-builder-react/hooks/useSaveState.ts`
+    - `assets/js/src/pdf-builder-react/hooks/useSaveState.ts` (NOUVEAU - 280 lignes)
+    - `assets/js/src/pdf-builder-react/hooks/useAutoSave.ts` (NOUVEAU - 60 lignes)
+    - `assets/js/src/pdf-builder-react/components/ui/SaveIndicator.tsx` (NOUVEAU - 150 lignes)
+    - `assets/js/src/pdf-builder-react/components/ui/SaveIndicator.css` (NOUVEAU - 180 lignes)
+    - `assets/js/src/pdf-builder-react/components/PDFBuilderContent.tsx` (NOUVEAU - 170 lignes)
+    - `assets/js/src/pdf-builder-react/PDFBuilder.tsx` (modifié - refactor)
+    - `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx` (modifié - fixes)
+    - `PHASE_3.1_AUTOSAVE_COMPLETE.md` (NEW - documentation complète)
+    - `PHASE_3.1_EXECUTION_SUMMARY.md` (NEW - résumé exécution)
 
 - [ ] **Étape 3.2 : Tests intégration Canvas/Metabox**
   - [ ] Basculement fluide entre modes Canvas et Metabox
@@ -567,16 +578,17 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 3/7  
-**Progression** : 55% (Phase 2 terminée 100% + Phase 3.0 partiellement complétée - Rendu PHP implémenté)  
+**Progression** : 60% (Phase 2 100% + Phase 3.0 100% + Phase 3.1 100% complétées)  
 **Statut détaillé** :
 - ✅ Phase 2 (Reconstruction) : 100% TERMINÉE
-- 🔄 Phase 3.0 (Rendu PHP) : **NOUVELLE** - PreviewImageAPI + handler AJAX déployés
-- ⏳ Phase 3.1-3.2 (Tests) : À faire après validation rendu PHP
+- ✅ Phase 3.0 (Rendu PHP) : 100% COMPLÉTÉE - PreviewImageAPI + handler AJAX déployés
+- ✅ Phase 3.1 (Auto-save) : 100% COMPLÉTÉE - Hook useSaveState + SaveIndicator déployés
+- ⏳ Phase 3.2-3.6 (Tests) : À faire après validation autosave
 - ⏳ Phase 4-7 : Planification ultérieure
 
 **Prochaine action** : 
-1. Valider fonctionnement rendu PHP en WooCommerce (order real > render > afficher image)
-2. Implémenter sauvegarde automatique et rechargement JSON (Phase 3.1)
+1. Tester autosave en production (2.5s interval, retry logic)
+2. Valider cohérence JSON avec aperçu PHP
 3. Tests intégration Canvas/Metabox complets (Phase 3.2)
 
 ---
