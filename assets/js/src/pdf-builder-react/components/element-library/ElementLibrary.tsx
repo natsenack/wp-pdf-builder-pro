@@ -64,12 +64,12 @@ const WOOCOMMERCE_ELEMENTS = [
     description: 'Logo et identité visuelle de l\'entreprise',
     category: 'woocommerce',
     defaultProps: {
-      x: 350,
-      y: 50,
+      x: 322, // Centered horizontally (794/2 - 150/2 = 397 - 75 = 322)
+      y: 521, // Centered vertically (1123/2 - 80/2 = 561.5 - 40 = 521)
       width: 150,
       height: 80,
       fit: 'contain',
-      alignment: 'left',
+      alignment: 'center',
       src: '', // URL du logo à définir
       backgroundColor: 'transparent'
     }
