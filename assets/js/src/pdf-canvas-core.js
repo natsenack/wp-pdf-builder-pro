@@ -245,34 +245,49 @@ export class PDFCanvasCore {
     }
 
     /**
-     * Wrap text to fit within a given width
+     * Wrap text to fit within a given width, respecting existing line breaks
      * @private
      */
     _wrapText(text, maxWidth, fontSize) {
         if (!text) return '';
 
-        const words = text.split(' ');
-        const lines = [];
-        let currentLine = '';
+        // Traiter chaque paragraphe séparément (séparé par \n)
+        const paragraphs = text.split('\n');
+        const wrappedParagraphs = [];
 
-        for (const word of words) {
-            const testLine = currentLine ? currentLine + ' ' + word : word;
-            const metrics = this.ctx.measureText(testLine);
-
-            if (metrics.width > maxWidth && currentLine) {
-                // Le mot ne rentre pas, on passe à la ligne
-                lines.push(currentLine);
-                currentLine = word;
-            } else {
-                currentLine = testLine;
+        for (const paragraph of paragraphs) {
+            if (paragraph.trim() === '') {
+                // Ligne vide (séparateur), on la garde telle quelle
+                wrappedParagraphs.push('');
+                continue;
             }
+
+            // Wrapper le paragraphe comme avant
+            const words = paragraph.split(' ');
+            const lines = [];
+            let currentLine = '';
+
+            for (const word of words) {
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+                const metrics = this.ctx.measureText(testLine);
+
+                if (metrics.width > maxWidth && currentLine) {
+                    // Le mot ne rentre pas, on passe à la ligne
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            wrappedParagraphs.push(...lines);
         }
 
-        if (currentLine) {
-            lines.push(currentLine);
-        }
-
-        return lines.join('\n');
+        return wrappedParagraphs.join('\n');
     }
 
     /**
