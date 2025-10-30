@@ -164,6 +164,56 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       text: 'Droit de rétractation de 14 jours selon l\'article L221-18 du Code de la consommation.'
     },
     {
+      key: 'tva',
+      label: 'TVA et mentions fiscales',
+      text: 'TVA non applicable, art. 293 B du CGI. Mention : auto-entrepreneur soumise à l\'impôt sur le revenu.'
+    },
+    {
+      key: 'penalties',
+      label: 'Pénalités de retard',
+      text: 'Tout retard de paiement donnera lieu au paiement d\'une pénalité égale à 3 fois le taux d\'intérêt légal en vigueur.'
+    },
+    {
+      key: 'property',
+      label: 'Réserve de propriété',
+      text: 'Les biens vendus restent la propriété du vendeur jusqu\'au paiement intégral du prix.'
+    },
+    {
+      key: 'jurisdiction',
+      label: 'Juridiction compétente',
+      text: 'Tout litige sera soumis à la compétence exclusive des tribunaux de commerce français.'
+    },
+    {
+      key: 'rgpd',
+      label: 'RGPD - Protection des données',
+      text: 'Vos données personnelles sont traitées conformément au RGPD. Consultez notre politique de confidentialité.'
+    },
+    {
+      key: 'discount',
+      label: 'Escompte',
+      text: 'Escompte pour paiement anticipé : 2% du montant HT si paiement sous 8 jours.'
+    },
+    {
+      key: 'clause',
+      label: 'Clause de réserve',
+      text: 'Sous réserve d\'acceptation de votre commande et de disponibilité des produits.'
+    },
+    {
+      key: 'intellectual',
+      label: 'Propriété intellectuelle',
+      text: 'Tous droits de propriété intellectuelle réservés. Reproduction interdite sans autorisation.'
+    },
+    {
+      key: 'force',
+      label: 'Force majeure',
+      text: 'Aucun des parties ne pourra être tenu responsable en cas de force majeure.'
+    },
+    {
+      key: 'liability',
+      label: 'Limitation de responsabilité',
+      text: 'Notre responsabilité est limitée à la valeur de la commande en cas de faute prouvée.'
+    },
+    {
       key: 'custom',
       label: 'Personnalisé',
       text: ''
