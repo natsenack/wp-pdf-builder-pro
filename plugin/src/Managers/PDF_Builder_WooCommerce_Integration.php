@@ -252,6 +252,14 @@ class PDF_Builder_WooCommerce_Integration
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
+            // Passer les IDs globalement pour PreviewImageAPI
+            if (!window.pdf_builder) {
+                window.pdf_builder = {};
+            }
+            window.pdf_builder.orderId = orderId;
+            window.pdf_builder.templateId = templateId;
+            window.pdf_builder.nonce = nonce;
+
             // Bouton aperçu
             $('#pdf-preview-btn').on('click', function() {
                 previewPDF(orderId, templateId, nonce);

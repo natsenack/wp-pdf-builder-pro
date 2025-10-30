@@ -26,7 +26,7 @@ interface PreviewModalProps {
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
@@ -37,9 +37,30 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Récupérer les IDs de commande et template depuis le contexte
   const getOrderAndTemplateId = useCallback(() => {
-    // Depuis le contexte/données globales
-    const orderId = (window as any).pdf_builder?.orderId || 0;
-    const templateId = (window as any).pdf_builder?.templateId || 0;
+    // Essayer les sources dans cet ordre de priorité
+    let orderId = 0;
+    let templateId = 0;
+    
+    // 1. D'abord depuis window.pdf_builder (metabox WooCommerce)
+    if ((window as any).pdf_builder?.orderId) {
+      orderId = (window as any).pdf_builder.orderId;
+      templateId = (window as any).pdf_builder.templateId || 0;
+    }
+    
+    // 2. Fallback : depuis pdfBuilderData (éditeur)
+    if (!orderId) {
+      orderId = (window as any).pdfBuilderData?.orderId || 0;
+      templateId = (window as any).pdfBuilderData?.templateId || 0;
+    }
+    
+    // 3. Fallback : depuis les attributs data du DOM (metabox fallback)
+    if (!orderId) {
+      const generateBtn = document.getElementById('pdf-builder-generate-btn');
+      if (generateBtn) {
+        orderId = parseInt(generateBtn.getAttribute('data-order-id') || '0', 10);
+      }
+    }
+    
     return { orderId, templateId };
   }, []);
 
@@ -70,27 +91,76 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Écouter les changements du state pour mise à jour temps réel
   useEffect(() => {
-    if (isOpen && state.elements.length > 0) {
-      console.log('✅ [PREVIEW MODAL] Setting preview elements from state:', state.elements.length, 'éléments');
-      // Utiliser directement les éléments du state pour l'aperçu temps réel
-      setPreviewElements([...state.elements]); // Créer une copie pour forcer le re-render
-      // Créer un nouveau DataProvider avec les éléments du template
+    if (!isOpen) return;
+
+    const { orderId, templateId } = getOrderAndTemplateId();
+    const isMetabox = orderId > 0 && templateId > 0;
+
+    console.log('[PREVIEW MODAL] Context detected:', {
+      isMetabox,
+      orderId,
+      templateId,
+      stateElements: state.elements.length
+    });
+
+    if (isMetabox) {
+      // 🔴 METABOX WOOCOMMERCE : charger données réelles depuis PHP/TCPDF
+      console.log('[PREVIEW MODAL] Metabox mode - will load PHP preview');
+      setUsePhpRendering(true);
+      // Appel à loadPhpPreviewImage se fera dans un useEffect séparé
+    } else if (state.elements.length > 0) {
+      // ✅ ÉDITEUR CANVAS : utiliser state.elements avec Canvas 2D
+      console.log('[PREVIEW MODAL] Editor mode - using Canvas 2D rendering');
+      setUsePhpRendering(false);
+      setPreviewElements([...state.elements]);
       const provider = new TemplateDataProvider(state.elements);
       setDataProvider(provider);
-    } else if (isOpen && state.elements.length === 0) {
-      console.log('⚠️ [PREVIEW MODAL] Setting empty preview elements (modal open but no state elements)');
-      // Si la modal est ouverte mais qu'il n'y a pas d'éléments, utiliser un tableau vide
+    } else {
+      console.warn('[PREVIEW MODAL] No data available for preview');
       setPreviewElements([]);
       setDataProvider(null);
     }
   }, [isOpen, state.elements]);
 
+  // Charger l'aperçu PHP si on est en metabox WooCommerce
+  useEffect(() => {
+    if (!isOpen || !usePhpRendering) return;
+    
+    const { orderId, templateId } = getOrderAndTemplateId();
+    if (orderId > 0 && templateId > 0) {
+      console.log('[PREVIEW MODAL] Loading PHP preview for order', orderId, 'template', templateId);
+      (async () => {
+        setIsLoading(true);
+        try {
+          const result = await PreviewImageAPI.generatePreviewImage({
+            orderId,
+            templateId,
+            format: 'png'
+          });
+
+          if (result.success && result.data?.image) {
+            setPreviewImage(result.data.image);
+            console.log('[PREVIEW MODAL] ✅ Image PHP chargée');
+          } else {
+            console.warn('[PREVIEW MODAL] ❌ Erreur PHP rendu:', result.error);
+            setUsePhpRendering(false);
+          }
+        } catch (error) {
+          console.error('[PREVIEW MODAL] ❌ Erreur chargement PHP:', error);
+          setUsePhpRendering(false);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
+    }
+  }, [isOpen, usePhpRendering, getOrderAndTemplateId]);
+
   // Redessiner le canvas quand les éléments ou le zoom changent
   useEffect(() => {
-    if (isOpen && previewElements.length > 0) {
+    if (isOpen && previewElements.length > 0 && !usePhpRendering) {
       renderPreview();
     }
-  }, [previewElements, zoom, isOpen]);
+  }, [previewElements, zoom, isOpen, usePhpRendering]);
 
   const loadTemplateElements = async () => {
     setIsLoading(true);
@@ -156,39 +226,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     }
     setIsLoading(false);
   };
-
-  // Charger l'image rendue côté PHP
-  const loadPhpPreviewImage = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const { orderId, templateId } = getOrderAndTemplateId();
-
-      if (!orderId || !templateId) {
-        console.warn('[PreviewModal] Order ou template ID manquant pour rendu PHP');
-        setUsePhpRendering(false);
-        return;
-      }
-
-      const result = await PreviewImageAPI.generatePreviewImage({
-        orderId,
-        templateId,
-        format: 'png'
-      });
-
-      if (result.success && result.data?.image) {
-        setPreviewImage(result.data.image);
-        console.log('[PreviewModal] Image PHP chargée avec succès');
-      } else {
-        console.warn('[PreviewModal] Erreur PHP rendu:', result.error);
-        setUsePhpRendering(false);
-      }
-    } catch (error) {
-      console.error('[PreviewModal] Erreur chargement PHP:', error);
-      setUsePhpRendering(false);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getOrderAndTemplateId]);
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
@@ -860,7 +897,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           ) : usePhpRendering && previewImage ? (
             // Afficher l'image générée par PHP (plus précis)
             <img
-              ref={imageContainerRef}
+              ref={imageRef}
               src={previewImage}
               alt="Aperçu PDF"
               style={{
