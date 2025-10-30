@@ -456,6 +456,13 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                             .filter(Boolean)
                             .join(separator);
 
+                          console.log('🔄 GENERATED MEDLEY TEXT:', {
+                            selectedMentions: newSelected,
+                            separator: separator,
+                            combinedText: combinedText,
+                            lines: combinedText.split('\n').length
+                          });
+
                           onChange(element.id, 'text', combinedText);
 
                           // Ajuster automatiquement la hauteur et la largeur selon le contenu

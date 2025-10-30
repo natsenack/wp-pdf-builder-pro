@@ -467,6 +467,14 @@ export class PDFCanvasCore {
 
         // Pour les mentions avec du vrai texte, afficher le texte wrappé
         if (type === 'mentions' && p.text && p.text.trim()) {
+            console.log('🎯 RENDERING MENTIONS:', {
+                text: p.text,
+                width: width,
+                height: height,
+                fontSize: p.fontSize,
+                hasText: !!p.text.trim()
+            });
+
             // Wrapper le texte pour qu'il tienne dans la largeur disponible
             const fontSize = p.fontSize || 10;
             this.ctx.font = `${p.fontWeight || 'normal'} ${fontSize}px ${p.fontFamily || 'Arial'}`;
@@ -477,6 +485,15 @@ export class PDFCanvasCore {
             const wrappedText = this._wrapText(p.text, width - 20, fontSize); // 20px de marge totale
             const lines = wrappedText.split('\n');
             const lineHeight = fontSize * 1.3;
+
+            console.log('📝 WRAPPED TEXT:', {
+                originalText: p.text,
+                wrappedText: wrappedText,
+                linesCount: lines.length,
+                maxLines: Math.floor((height - 20) / lineHeight),
+                lineHeight: lineHeight,
+                availableHeight: height - 20
+            });
 
             // Appliquer le clipping pour éviter le débordement
             this.ctx.save();
@@ -490,6 +507,7 @@ export class PDFCanvasCore {
 
             lines.slice(0, maxLines).forEach((line, i) => {
                 const y = 20 + i * lineHeight; // 20px pour laisser de la place à l'icône
+                console.log(`📄 RENDERING LINE ${i}: "${line}" at y=${y}`);
                 this.ctx.fillText(line, 5, y);
             });
 
