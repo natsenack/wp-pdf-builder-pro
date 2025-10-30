@@ -10,9 +10,6 @@ export function Toolbar({ className }: ToolbarProps) {
   const builder = useBuilder();
   const { state, setMode, undo, redo, reset, toggleGrid } = builder;
 
-  console.log('Builder context available:', !!state); // Debug log
-  console.log('Toolbar state:', state); // Debug log
-
   // Vérifications de sécurité
   if (!state) {
     return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
@@ -44,40 +41,30 @@ export function Toolbar({ className }: ToolbarProps) {
   const handleModeChange = (mode: BuilderMode) => {
     if (setMode) {
       setMode(mode);
-    } else {
-      console.error('setMode function not available');
     }
   };
 
   const handleUndo = () => {
     if (undo) {
       undo();
-    } else {
-      console.error('undo function not available');
     }
   };
 
   const handleRedo = () => {
     if (redo) {
       redo();
-    } else {
-      console.error('redo function not available');
     }
   };
 
   const handleReset = () => {
     if (reset) {
       reset();
-    } else {
-      console.error('reset function not available');
     }
   };
 
   const handleToggleGrid = () => {
     if (toggleGrid) {
       toggleGrid();
-    } else {
-      console.error('toggleGrid function not available');
     }
   };
 

@@ -844,7 +844,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
         // Gérer les erreurs de chargement
         img.onerror = () => {
-          console.warn(`Erreur de chargement de l'image: ${logoUrl}`);
           // Forcer un re-rendu du composant React
           setForceUpdate(prev => prev + 1);
         };
@@ -1033,7 +1032,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.fillText(`Date: ${orderDate}`, calculateX(dateTextAlign), y + 20);
     }
     } catch (error) {
-      console.error('Error in drawOrderNumber:', error);
+      // Erreur silencieuse dans drawOrderNumber
     }
   };
 

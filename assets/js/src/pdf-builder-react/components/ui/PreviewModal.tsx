@@ -70,7 +70,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       const templateId = urlParams.get('template_id') || state.template?.id;
 
       if (!templateId) {
-        console.warn('Aucun template ID trouvé pour l\'aperçu');
         setPreviewElements(state.elements); // Fallback vers le state local
         setIsLoading(false);
         return;
@@ -114,11 +113,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
         setPreviewElements(correctedElements);
       } else {
-        console.warn('Erreur lors de la récupération du template:', data.data);
         setPreviewElements(state.elements); // Fallback
       }
     } catch (error) {
-      console.error('Erreur lors du chargement du template:', error);
       setPreviewElements(state.elements); // Fallback
     }
     setIsLoading(false);

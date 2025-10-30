@@ -19,7 +19,6 @@ function PDFBuilderContent({
   height = DEFAULT_CANVAS_HEIGHT, // A4 portrait height in pixels (297mm at 96 DPI)
   className
 }: PDFBuilderProps) {
-  console.log('PDFBuilderContent rendering...');
 
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
 
@@ -43,8 +42,6 @@ function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
-  console.log('useTemplate hook returned:', { templateName, isNewTemplate, isModified, isSaving });
-
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
     const handleScroll = () => {
@@ -55,8 +52,6 @@ function PDFBuilderContent({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  console.log('About to render Toolbar component');
 
   return (
     <div className={`pdf-builder ${className || ''}`} style={{

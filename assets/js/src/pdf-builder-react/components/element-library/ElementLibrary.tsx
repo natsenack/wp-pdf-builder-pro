@@ -135,14 +135,12 @@ interface ElementLibraryProps {
 
 export function ElementLibrary({ onElementSelect, className }: ElementLibraryProps) {
   const handleElementClick = (elementType: string) => {
-    console.log('Element selected:', elementType);
     if (onElementSelect) {
       onElementSelect(elementType);
     }
   };
 
   const handleDragStart = (e: React.DragEvent, element: any) => {
-    console.log('Drag started for element:', element.type);
     // Stocker les données de l'élément dans le transfert
     e.dataTransfer.setData('application/json', JSON.stringify({
       type: element.type,
@@ -153,7 +151,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
-    console.log('Drag ended');
+    // Drag terminé
   };
 
   return (

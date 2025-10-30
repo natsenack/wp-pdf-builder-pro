@@ -270,7 +270,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE':
-      console.log('LOAD_TEMPLATE action dispatched with', (action.payload as any).elements?.length || 0, 'elements');
       return {
         ...state,
         elements: (action.payload as any).elements || [],

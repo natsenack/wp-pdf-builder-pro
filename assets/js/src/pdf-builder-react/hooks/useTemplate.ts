@@ -18,8 +18,6 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = async (templateId: string) => {
     try {
-      console.log('Chargement du template:', templateId);
-
       // Faire un appel API pour récupérer les données du template
       const response = await fetch(`${window.pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData.nonce}`);
 
@@ -57,8 +55,6 @@ export function useTemplate() {
           canvas = null;
         }
       } catch (parseError) {
-        console.error('Erreur lors du parsing des données du template:', parseError);
-        console.error('Données reçues:', templateData);
         elements = [];
         canvas = null;
       }
@@ -74,11 +70,7 @@ export function useTemplate() {
         } as LoadTemplatePayload
       });
 
-      console.log('Template chargé avec succès:', templateData);
-      console.log('Éléments chargés:', elements.length, 'éléments');
-
     } catch (error) {
-      console.error('Erreur lors du chargement du template:', error);
       // En cas d'erreur, on peut afficher un message d'erreur à l'utilisateur
     }
   };
@@ -106,14 +98,6 @@ export function useTemplate() {
       formData.append('canvas', JSON.stringify(state.canvas));
       formData.append('nonce', window.pdfBuilderData.nonce);
 
-      console.log('Sauvegarde du template:', {
-        template_id: templateId || '0',
-        template_name: state.template.name || 'Template sans nom',
-        elements: state.elements,
-        canvas: state.canvas,
-        nonce: window.pdfBuilderData.nonce
-      });
-
       // Faire un appel API pour sauvegarder le template
       const response = await fetch(window.pdfBuilderData.ajaxUrl, {
         method: 'POST',
@@ -130,8 +114,6 @@ export function useTemplate() {
         throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
       }
 
-      console.log('Template sauvegardé avec succès:', result.data);
-
       dispatch({
         type: 'SAVE_TEMPLATE',
         payload: {
@@ -140,7 +122,6 @@ export function useTemplate() {
         }
       });
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
       throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
@@ -149,7 +130,6 @@ export function useTemplate() {
 
   const previewTemplate = () => {
     // Logique de prévisualisation (à implémenter)
-    console.log('Prévisualisation du template');
   };
 
   const newTemplate = () => {

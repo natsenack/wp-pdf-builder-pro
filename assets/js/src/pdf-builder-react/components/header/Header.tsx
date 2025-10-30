@@ -306,7 +306,6 @@ export const Header = memo(function Header({
             try {
               await onSave();
             } catch (error) {
-              console.error('Erreur lors de la sauvegarde:', error);
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}

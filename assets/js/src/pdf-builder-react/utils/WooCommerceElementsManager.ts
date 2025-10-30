@@ -19,7 +19,6 @@ export class WooCommerceElementsManager {
       this.orderData = response;
       return response;
     } catch (error) {
-      console.error('Erreur lors du chargement des données de commande:', error);
       throw error;
     }
   }
@@ -34,7 +33,6 @@ export class WooCommerceElementsManager {
       this.customerData = response;
       return response;
     } catch (error) {
-      console.error('Erreur lors du chargement des données client:', error);
       throw error;
     }
   }

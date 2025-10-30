@@ -25,7 +25,6 @@ export function initPDFBuilderReact() {
   const container = document.getElementById('pdf-builder-react-root');
 
   if (!container) {
-    console.error('Container #pdf-builder-react-root not found');
     return;
   }
 
@@ -45,7 +44,6 @@ export function initPDFBuilderReact() {
     );
 
   } catch (error) {
-    console.error('Failed to initialize PDF Builder React:', error);
     container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
   }
 }

@@ -12,11 +12,9 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight }: UseCanva
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    console.log('Element dropped on canvas');
 
     try {
       const elementData = JSON.parse(e.dataTransfer.getData('application/json'));
-      console.log('Dropped element data:', elementData);
 
       // Calculer la position relative au canvas
       const canvas = canvasRef.current;
@@ -38,13 +36,11 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight }: UseCanva
         y: Math.max(0, y - 25)
       };
 
-      console.log('Adding new element to canvas:', newElement);
-
       // Ajouter l'élément au state
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
 
     } catch (error) {
-      console.error('Error handling drop:', error);
+      // Erreur silencieuse lors du drop
     }
   }, [canvasRef, canvasWidth, canvasHeight, dispatch]);
 
