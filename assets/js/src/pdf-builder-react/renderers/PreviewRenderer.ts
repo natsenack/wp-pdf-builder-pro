@@ -40,8 +40,6 @@ export class PreviewRenderer {
       height = this.A4_HEIGHT_PX
     } = options;
 
-    console.log('🎨 [PREVIEW RENDER] Starting preview render - company_logo positions:', elements.filter(el => el.type === 'company_logo').map(el => ({ x: el.x, y: el.y })));
-
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       console.error('❌ [PREVIEW RENDER] Canvas 2D context not available');
@@ -71,8 +69,6 @@ export class PreviewRenderer {
     if (zoom !== 1.0) {
       ctx.restore();
     }
-
-    console.log('✅ [PREVIEW RENDER] Preview render completed');
   }
 
   /**
@@ -83,10 +79,6 @@ export class PreviewRenderer {
     element: Element,
     dataProvider: DataProvider
   ): void {
-    if (element.type === 'company_logo') {
-      console.log('🎯 [PREVIEW ELEMENT RENDER] company_logo at position:', element.x, element.y, 'size:', element.width, 'x', element.height);
-    }
-
     ctx.save();
 
     // Appliquer la transformation de base (position, rotation)
