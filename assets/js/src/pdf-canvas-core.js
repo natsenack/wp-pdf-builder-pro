@@ -217,25 +217,17 @@ export class PDFCanvasCore {
         const isMentionsElement = element.type === 'mentions';
 
         if (isMentionsElement) {
-            // Wrapper le texte pour qu'il tienne dans la largeur disponible
-            const wrappedText = this._wrapText(text, width - 10, fontSize); // 10px de marge
-            const lines = wrappedText.split('\n');
+            // Les mentions sont maintenant gérées dans _drawWooCommerceElement
+            // Cette logique est obsolète et peut être supprimée
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, width, height);
+            this.ctx.clip();
+
+            const lines = text.split('\n');
             const lineHeight = fontSize * 1.3;
 
-            // Appliquer le clipping seulement si le texte dépasse en hauteur
-            const totalTextHeight = lines.length * lineHeight;
-            if (totalTextHeight > height) {
-                this.ctx.beginPath();
-                this.ctx.rect(0, 0, width, height);
-                this.ctx.clip();
-            }
-
-            // Rendre le texte wrappé
             lines.forEach((line, i) => {
-                const y = 5 + i * lineHeight;
-                if (y + lineHeight <= height + 5) { // +5 pour un peu de tolérance
-                    this.ctx.fillText(line, 5, y);
-                }
+                this.ctx.fillText(line, 5, 5 + i * lineHeight);
             });
         } else {
             // Pour les autres éléments, comportement normal avec clipping
@@ -471,14 +463,17 @@ export class PDFCanvasCore {
             const lines = wrappedText.split('\n');
             const lineHeight = fontSize * 1.3;
 
-            // Toujours appliquer le clipping pour éviter le débordement
+            // Appliquer le clipping pour éviter le débordement
             this.ctx.save();
             this.ctx.beginPath();
             this.ctx.rect(0, 0, width, height);
             this.ctx.clip();
 
-            // Rendre le texte wrappé (commencer après l'icône)
-            lines.forEach((line, i) => {
+            // Rendre le texte wrappé (commencer après l'icône) avec vérification stricte des limites
+            // Calculer combien de lignes maximum peuvent tenir
+            const maxLines = Math.floor((height - 20) / lineHeight); // -20 pour l'icône
+
+            lines.slice(0, maxLines).forEach((line, i) => {
                 const y = 20 + i * lineHeight; // 20px pour laisser de la place à l'icône
                 this.ctx.fillText(line, 5, y);
             });
