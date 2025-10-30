@@ -3,6 +3,7 @@ import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
 import { TemplateDataProvider } from '../../providers/TemplateDataProvider';
+import PreviewImageAPI from '../../api/PreviewImageAPI';
 
 // Ajouter l'animation CSS globale
 if (typeof document !== 'undefined') {
@@ -25,11 +26,22 @@ interface PreviewModalProps {
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
   const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [usePhpRendering, setUsePhpRendering] = useState(true); // Passer à PHP par défaut
   const { state } = useBuilder();
+
+  // Récupérer les IDs de commande et template depuis le contexte
+  const getOrderAndTemplateId = useCallback(() => {
+    // Depuis le contexte/données globales
+    const orderId = (window as any).pdf_builder?.orderId || 0;
+    const templateId = (window as any).pdf_builder?.templateId || 0;
+    return { orderId, templateId };
+  }, []);
 
   // Fonction pour remplacer les variables dynamiques dans le texte
   const replaceVariables = (text: string): string => {
@@ -144,6 +156,39 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     }
     setIsLoading(false);
   };
+
+  // Charger l'image rendue côté PHP
+  const loadPhpPreviewImage = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { orderId, templateId } = getOrderAndTemplateId();
+
+      if (!orderId || !templateId) {
+        console.warn('[PreviewModal] Order ou template ID manquant pour rendu PHP');
+        setUsePhpRendering(false);
+        return;
+      }
+
+      const result = await PreviewImageAPI.generatePreviewImage({
+        orderId,
+        templateId,
+        format: 'png'
+      });
+
+      if (result.success && result.data?.image) {
+        setPreviewImage(result.data.image);
+        console.log('[PreviewModal] Image PHP chargée avec succès');
+      } else {
+        console.warn('[PreviewModal] Erreur PHP rendu:', result.error);
+        setUsePhpRendering(false);
+      }
+    } catch (error) {
+      console.error('[PreviewModal] Erreur chargement PHP:', error);
+      setUsePhpRendering(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getOrderAndTemplateId]);
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
@@ -812,7 +857,25 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             }}>
               Chargement de l'aperçu...
             </div>
+          ) : usePhpRendering && previewImage ? (
+            // Afficher l'image générée par PHP (plus précis)
+            <img
+              ref={imageContainerRef}
+              src={previewImage}
+              alt="Aperçu PDF"
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                backgroundColor: '#ffffff',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top left',
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
+            />
           ) : (
+            // Fallback : afficher le canvas (rendu Canvas 2D)
             <canvas
               ref={canvasRef}
               style={{

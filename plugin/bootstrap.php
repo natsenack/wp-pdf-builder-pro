@@ -92,6 +92,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Builder_Preview_API_Controller.php';
     }
 
+    // Charger le handler AJAX d'image de prévisualisation (Phase 3.0)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
+    }
+
     $loaded = true;
 }
 
