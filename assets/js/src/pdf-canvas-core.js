@@ -458,15 +458,44 @@ export class PDFCanvasCore {
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'top';
 
-        // Afficher l'icône et le type
-        this.ctx.fillText(icon + ' ' + type, 5, 5);
+        // Pour les mentions avec du vrai texte, afficher le texte wrappé
+        if (type === 'mentions' && p.text && p.text.trim()) {
+            // Wrapper le texte pour qu'il tienne dans la largeur disponible
+            const fontSize = p.fontSize || 10;
+            this.ctx.font = `${p.fontWeight || 'normal'} ${fontSize}px ${p.fontFamily || 'Arial'}`;
+            this.ctx.fillStyle = p.color || '#000000';
+            this.ctx.textAlign = p.textAlign || 'left';
+            this.ctx.textBaseline = 'top';
 
-        // Afficher des données fictives selon le type
-        this.ctx.font = '9px Arial';
-        this.ctx.fillStyle = '#666666';
+            const wrappedText = this._wrapText(p.text, width - 20, fontSize); // 20px de marge totale
+            const lines = wrappedText.split('\n');
+            const lineHeight = fontSize * 1.3;
 
-        let dummyText = '';
-        switch (type) {
+            // Appliquer le clipping seulement si le texte dépasse en hauteur
+            const totalTextHeight = lines.length * lineHeight;
+            if (totalTextHeight > height - 15) { // -15 pour laisser de la place à l'icône
+                this.ctx.beginPath();
+                this.ctx.rect(0, 0, width, height);
+                this.ctx.clip();
+            }
+
+            // Rendre le texte wrappé (commencer après l'icône)
+            lines.forEach((line, i) => {
+                const y = 20 + i * lineHeight; // 20px pour laisser de la place à l'icône
+                if (y + lineHeight <= height) {
+                    this.ctx.fillText(line, 5, y);
+                }
+            });
+        } else {
+            // Afficher l'icône et le type
+            this.ctx.fillText(icon + ' ' + type, 5, 5);
+
+            // Afficher des données fictives selon le type
+            this.ctx.font = '9px Arial';
+            this.ctx.fillStyle = '#666666';
+
+            let dummyText = '';
+            switch (type) {
             case 'order_number':
                 dummyText = 'Commande: #12345';
                 break;
