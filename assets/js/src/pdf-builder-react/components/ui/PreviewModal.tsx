@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
@@ -61,13 +61,14 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     console.log('🔄 [PREVIEW MODAL] State elements changed:', {
       stateElementsCount: state.elements.length,
       isOpen: isOpen,
-      currentPreviewElementsCount: previewElements.length
+      currentPreviewElementsCount: previewElements.length,
+      stateElements: state.elements.map(el => ({ type: el.type, x: el.x, y: el.y }))
     });
 
     if (isOpen && state.elements.length > 0) {
       console.log('✅ [PREVIEW MODAL] Setting preview elements from state:', state.elements.length, 'éléments');
       // Utiliser directement les éléments du state pour l'aperçu temps réel
-      setPreviewElements(state.elements);
+      setPreviewElements([...state.elements]); // Créer une copie pour forcer le re-render
     } else if (isOpen && state.elements.length === 0) {
       console.log('⚠️ [PREVIEW MODAL] Setting empty preview elements (modal open but no state elements)');
       // Si la modal est ouverte mais qu'il n'y a pas d'éléments, utiliser un tableau vide
@@ -76,6 +77,14 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       console.log('⏸️ [PREVIEW MODAL] Not updating preview elements:', { isOpen, stateElementsCount: state.elements.length });
     }
   }, [isOpen, state.elements]);
+
+  // S'assurer que les éléments sont chargés quand la modal s'ouvre
+  useEffect(() => {
+    if (isOpen && state.elements.length > 0 && previewElements.length === 0) {
+      console.log('🔄 [PREVIEW MODAL] Modal opened, loading elements:', state.elements.length, 'éléments');
+      setPreviewElements([...state.elements]);
+    }
+  }, [isOpen, state.elements.length, previewElements.length]);
 
   // Redessiner le canvas quand les éléments ou le zoom changent
   useEffect(() => {
@@ -159,7 +168,16 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   };
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
-  const renderPreview = () => {
+  const renderPreview = useCallback(() => {
+    console.log('🔍 [PREVIEW MODAL] renderPreview called with:', {
+      canvasExists: !!canvasRef.current,
+      previewElementsCount: previewElements.length,
+      isOpen,
+      zoom,
+      canvasWidth,
+      canvasHeight
+    });
+
     if (!canvasRef.current || previewElements.length === 0) {
       console.log('⚠️ [PREVIEW MODAL] Cannot render preview:', {
         hasCanvas: !!canvasRef.current,
@@ -173,10 +191,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     }
 
     console.log('🎨 [PREVIEW MODAL] Rendering preview with', previewElements.length, 'elements');
+    console.log('📋 [PREVIEW MODAL] Elements to render:', previewElements.map(el => ({ type: el.type, x: el.x, y: el.y, width: el.width, height: el.height })));
 
     setIsLoading(true);
 
     try {
+      // S'assurer que le canvas a les bonnes dimensions
+      canvasRef.current.width = canvasWidth;
+      canvasRef.current.height = canvasHeight;
+
       PreviewRenderer.render({
         canvas: canvasRef.current,
         elements: previewElements,
@@ -189,10 +212,18 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       console.log('✅ [PREVIEW MODAL] Preview rendered successfully');
     } catch (error) {
       console.error('❌ [PREVIEW MODAL] Erreur lors du rendu de l\'aperçu:', error);
+      console.error('🔍 [PREVIEW MODAL] Error details:', {
+        canvas: canvasRef.current,
+        elements: previewElements,
+        dataProvider,
+        zoom,
+        canvasWidth,
+        canvasHeight
+      });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [previewElements, isOpen, zoom, canvasWidth, canvasHeight, dataProvider, state.elements.length]);
 
   // Fonction simplifiée pour rendre un élément (version aperçu)
   const renderElement = (ctx: CanvasRenderingContext2D, element: Element) => {

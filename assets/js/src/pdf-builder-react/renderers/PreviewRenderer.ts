@@ -88,6 +88,8 @@ export class PreviewRenderer {
 
     const props = element as any;
 
+    console.log(`🎨 Rendering element: ${element.type} at (${element.x}, ${element.y})`);
+
     switch (element.type) {
       case 'rectangle':
         this.renderRectangle(ctx, props);
@@ -140,7 +142,8 @@ export class PreviewRenderer {
       // Ajouter d'autres types d'éléments selon les besoins
 
       default:
-        console.warn(`Unknown element type: ${element.type}`);
+        console.warn(`Unknown element type: ${element.type}, rendering as rectangle fallback`);
+        this.renderRectangle(ctx, { ...props, fillColor: '#ffcccc', strokeColor: '#ff0000' });
     }
 
     ctx.restore();
