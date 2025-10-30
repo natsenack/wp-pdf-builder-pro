@@ -40,17 +40,7 @@ export class PreviewRenderer {
       height = this.A4_HEIGHT_PX
     } = options;
 
-    console.log('🎨 [PREVIEW RENDER] Starting preview render');
-    console.log('🎨 [PREVIEW RENDER] Canvas dimensions:', width, 'x', height);
-    console.log('🎨 [PREVIEW RENDER] Number of elements:', elements.length);
-    console.log('🎨 [PREVIEW RENDER] Elements:', elements.map(el => ({
-      type: el.type,
-      x: el.x,
-      y: el.y,
-      width: el.width,
-      height: el.height,
-      visible: el.visible
-    })));
+    console.log('🎨 [PREVIEW RENDER] Starting preview render - company_logo positions:', elements.filter(el => el.type === 'company_logo').map(el => ({ x: el.x, y: el.y })));
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -93,7 +83,9 @@ export class PreviewRenderer {
     element: Element,
     dataProvider: DataProvider
   ): void {
-    console.log('🎯 [ELEMENT RENDER] Rendering element:', element.type, 'at position:', element.x, element.y, 'size:', element.width, 'x', element.height, 'visible:', element.visible);
+    if (element.type === 'company_logo') {
+      console.log('🎯 [PREVIEW ELEMENT RENDER] company_logo at position:', element.x, element.y, 'size:', element.width, 'x', element.height);
+    }
 
     ctx.save();
 
