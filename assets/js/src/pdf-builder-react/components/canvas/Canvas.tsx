@@ -1033,20 +1033,32 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         // Libellé au-dessus, numéro en-dessous - utiliser l'alignement général du contenu
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = contentAlign as CanvasTextAlign;
-        ctx.fillText(labelText, calculateContentX(contentAlign) + contentOffsetX, y);
+        const labelX = contentAlign === 'left' ? 10 + contentOffsetX :
+                      contentAlign === 'center' ? element.width / 2 :
+                      element.width - 10;
+        ctx.fillText(labelText, labelX, y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = contentAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
+        const numberX = contentAlign === 'left' ? 10 + contentOffsetX :
+                       contentAlign === 'center' ? element.width / 2 :
+                       element.width - 10;
+        ctx.fillText(orderNumber, numberX, y);
       } else if (labelPosition === 'below') {
         // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = contentAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
+        const numberX = contentAlign === 'left' ? 10 + contentOffsetX :
+                       contentAlign === 'center' ? element.width / 2 :
+                       element.width - 10;
+        ctx.fillText(orderNumber, numberX, y);
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = contentAlign as CanvasTextAlign;
-        ctx.fillText(labelText, calculateContentX(contentAlign) + contentOffsetX, y);
+        const labelX = contentAlign === 'left' ? 10 + contentOffsetX :
+                      contentAlign === 'center' ? element.width / 2 :
+                      element.width - 10;
+        ctx.fillText(labelText, labelX, y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;

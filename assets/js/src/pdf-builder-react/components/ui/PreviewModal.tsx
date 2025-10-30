@@ -303,20 +303,32 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             // Libellé au-dessus, numéro en-dessous - utiliser l'alignement général du contenu
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderContentAlign as CanvasTextAlign;
-            ctx.fillText(orderLabelText, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY);
+            const labelX = orderContentAlign === 'left' ? 10 + orderContentOffsetX :
+                          orderContentAlign === 'center' ? element.width / 2 :
+                          element.width - 10;
+            ctx.fillText(orderLabelText, labelX, orderY);
             orderY += 18;
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderContentAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY);
+            const numberX = orderContentAlign === 'left' ? 10 + orderContentOffsetX :
+                           orderContentAlign === 'center' ? element.width / 2 :
+                           element.width - 10;
+            ctx.fillText(orderNumber, numberX, orderY);
           } else if (orderLabelPosition === 'below') {
             // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderContentAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY);
+            const numberX = orderContentAlign === 'left' ? 10 + orderContentOffsetX :
+                           orderContentAlign === 'center' ? element.width / 2 :
+                           element.width - 10;
+            ctx.fillText(orderNumber, numberX, orderY);
             orderY += 18;
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderContentAlign as CanvasTextAlign;
-            ctx.fillText(orderLabelText, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY);
+            const labelX = orderContentAlign === 'left' ? 10 + orderContentOffsetX :
+                          orderContentAlign === 'center' ? element.width / 2 :
+                          element.width - 10;
+            ctx.fillText(orderLabelText, labelX, orderY);
           } else if (orderLabelPosition === 'left') {
             // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
