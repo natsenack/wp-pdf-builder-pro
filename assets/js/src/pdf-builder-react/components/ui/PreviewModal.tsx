@@ -3,6 +3,7 @@ import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
 import { TemplateDataProvider } from '../../providers/TemplateDataProvider';
+import { MetaboxDataProvider, WooCommerceData } from '../../providers/MetaboxDataProvider';
 import PreviewImageAPI from '../../api/PreviewImageAPI';
 
 // Ajouter l'animation CSS globale
@@ -130,33 +131,20 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const loadTemplateElements = async () => {
     setIsLoading(true);
     try {
-      // Essayer d'utiliser les éléments du state d'abord (pour aperçu temps réel)
-      if (state.elements.length > 0) {
-        setPreviewElements(state.elements);
-        setIsLoading(false);
-        return;
-      }
+      const { orderId, templateId } = getOrderAndTemplateId();
 
-      // Fallback : charger depuis la base de données seulement si nécessaire
-      const urlParams = new URLSearchParams(window.location.search);
-      const templateId = urlParams.get('template_id') || state.template?.id;
+      // Mode Metabox : toujours charger depuis la DB avec données réelles
+      if (orderId > 0 && templateId > 0) {
+        // Faire une requête AJAX pour récupérer les données du template depuis la DB
+        const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+        const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
+        const response = await fetch(`${ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonce}`, {
+          method: 'GET'
+        });
 
-      if (!templateId) {
-        setPreviewElements([]);
-        setIsLoading(false);
-        return;
-      }
+        const data = await response.json();
 
-      // Faire une requête AJAX pour récupérer les données du template
-      const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
-      const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
-      const response = await fetch(`${ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonce}`, {
-        method: 'GET'
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.data && data.data.elements) {
+        if (data.success && data.data && data.data.elements) {
         // Corriger automatiquement les coordonnées des éléments qui dépassent A4
         const correctedElements = data.data.elements.map((element: any) => {
           const corrected = { ...element };
@@ -186,7 +174,43 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       } else {
         setPreviewElements([]);
       }
+      }
+      // Mode Éditeur : utiliser les éléments du canvas pour aperçu avec données fictives
+      else if (state.elements.length > 0) {
+        setPreviewElements(state.elements);
+      }
+      else {
+        setPreviewElements([]);
+      }
+
+      // Créer le dataProvider approprié selon le contexte
+      if (orderId > 0 && templateId > 0) {
+        // Mode Metabox : charger les données WooCommerce réelles
+        try {
+          const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+          const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
+          const response = await fetch(`${ajaxUrl}?action=pdf_builder_get_order_data&order_id=${orderId}&nonce=${nonce}`, {
+            method: 'GET'
+          });
+
+          const wooData = await response.json();
+          if (wooData.success && wooData.data) {
+            setDataProvider(new MetaboxDataProvider(wooData.data));
+          } else {
+            // Fallback vers données fictives si échec
+            setDataProvider(new TemplateDataProvider(previewElements));
+          }
+        } catch (error) {
+          console.error('Erreur lors du chargement des données WooCommerce:', error);
+          // Fallback vers données fictives
+          setDataProvider(new TemplateDataProvider(previewElements));
+        }
+      } else {
+        // Mode Éditeur : données fictives depuis les éléments du template
+        setDataProvider(new TemplateDataProvider(previewElements));
+      }
     } catch (error) {
+      console.error('Erreur lors du chargement des éléments du template:', error);
       setPreviewElements([]);
     }
     setIsLoading(false);
