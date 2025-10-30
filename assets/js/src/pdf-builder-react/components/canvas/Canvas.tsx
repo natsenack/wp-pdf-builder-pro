@@ -1207,6 +1207,15 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
+    console.log('🎯 [REACT CANVAS] DRAWING MENTIONS:', {
+      id: element.id,
+      type: element.type,
+      text: (element as any).text,
+      width: element.width,
+      height: element.height,
+      fontSize: (element as any).fontSize
+    });
+
     const props = element as any;
     const fontSize = props.fontSize || 10;
     const fontFamily = props.fontFamily || 'Arial';
@@ -1282,11 +1291,62 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
-    const mentions = text.split('\n');
-    mentions.forEach((mention: string) => {
+    // Fonction de wrapping du texte
+    const wrapText = (text: string, maxWidth: number): string[] => {
+      if (!text) return [''];
+
+      // Traiter chaque paragraphe séparément (séparé par \n)
+      const paragraphs = text.split('\n');
+      const wrappedParagraphs: string[] = [];
+
+      for (const paragraph of paragraphs) {
+        if (paragraph.trim() === '') {
+          // Ligne vide (séparateur), on la garde telle quelle
+          wrappedParagraphs.push('');
+          continue;
+        }
+
+        // Wrapper le paragraphe comme avant
+        const words = paragraph.split(' ');
+        const lines: string[] = [];
+        let currentLine = '';
+
+        for (const word of words) {
+          const testLine = currentLine ? currentLine + ' ' + word : word;
+          const metrics = ctx.measureText(testLine);
+
+          if (metrics.width > maxWidth && currentLine) {
+            // Le mot ne rentre pas, on passe à la ligne
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+        }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        wrappedParagraphs.push(...lines);
+      }
+
+      return wrappedParagraphs;
+    };
+
+    // Wrapper le texte selon la largeur disponible
+    const maxWidth = element.width - 20; // Marge de 20px
+    const wrappedLines = wrapText(text, maxWidth);
+
+    // Calculer le nombre maximum de lignes qui peuvent tenir
+    const lineHeight = fontSize + 2;
+    const maxLines = Math.floor((element.height - (showSeparator ? 25 : 15)) / lineHeight);
+
+    // Rendre seulement les lignes qui tiennent
+    wrappedLines.slice(0, maxLines).forEach((line: string, index: number) => {
       const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width - 10 : 10;
-      ctx.fillText(mention, x, y);
-      y += fontSize + 2;
+      const lineY = (showSeparator ? 25 : 15) + index * lineHeight;
+      ctx.fillText(line, x, lineY);
     });
   };
 
