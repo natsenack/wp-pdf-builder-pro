@@ -213,12 +213,15 @@ export class PDFCanvasCore {
         this.ctx.textAlign = p.textAlign || 'left';
         this.ctx.textBaseline = 'top';
 
-        // Pour tous les éléments mentions, ne pas appliquer de clipping
-        // pour permettre au texte de dépasser si nécessaire
+        // Pour les éléments mentions, appliquer le clipping seulement si les dimensions
+        // ont été modifiées manuellement par l'utilisateur (pas automatiquement)
         const isMentionsElement = element.type === 'mentions';
+        const isManuallyResized = isMentionsElement &&
+          (p.width !== undefined && p.width !== 400) || // Largeur différente de la valeur par défaut
+          (p.height !== undefined && p.height !== 60);  // Hauteur différente de la valeur par défaut
 
-        if (!isMentionsElement) {
-            // Clip pour garder le texte dans les limites (pour les autres éléments)
+        if (!isMentionsElement || isManuallyResized) {
+            // Clip pour garder le texte dans les limites
             this.ctx.beginPath();
             this.ctx.rect(0, 0, width, height);
             this.ctx.clip();

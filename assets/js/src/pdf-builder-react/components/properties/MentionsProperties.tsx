@@ -504,7 +504,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 {(element as any).selectedMentions?.length || 0} mention(s) sélectionnée(s)
                 {(element as any).selectedMentions?.length > 0 && (
                   <span style={{ color: '#007bff', marginLeft: '8px' }}>
-                    • Dimensions ajustées automatiquement
+                    • Dimensions ajustables manuellement (avec clipping)
                   </span>
                 )}
               </div>
@@ -844,52 +844,46 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur {currentMentionType === 'medley' ? '(auto-ajustée)' : ''}
+              Largeur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
             </label>
             <input
               type="number"
               value={(element as any).width || 400}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 400)}
-              disabled={currentMentionType === 'medley'}
               style={{
                 width: '100%',
                 padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                fontSize: '12px',
-                backgroundColor: currentMentionType === 'medley' ? '#f5f5f5' : '#ffffff',
-                color: currentMentionType === 'medley' ? '#999' : '#333'
+                fontSize: '12px'
               }}
             />
             {currentMentionType === 'medley' && (
               <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-                La largeur s'ajuste automatiquement selon le contenu du medley
+                Redimensionner manuellement active le clipping du texte
               </div>
             )}
           </div>
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur {currentMentionType === 'medley' ? '(auto-ajustée)' : ''}
+              Hauteur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
             </label>
             <input
               type="number"
               value={(element as any).height || 80}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 80)}
-              disabled={currentMentionType === 'medley'}
               style={{
                 width: '100%',
                 padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                fontSize: '12px',
-                backgroundColor: currentMentionType === 'medley' ? '#f5f5f5' : '#ffffff',
-                color: currentMentionType === 'medley' ? '#999' : '#333'
+                fontSize: '12px'
               }}
             />
             {currentMentionType === 'medley' && (
               <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-                Les dimensions s'ajustent automatiquement selon le contenu du medley
+                Redimensionner manuellement active le clipping du texte
               </div>
             )}
           </div>
