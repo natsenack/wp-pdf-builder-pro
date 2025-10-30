@@ -471,21 +471,19 @@ export class PDFCanvasCore {
             const lines = wrappedText.split('\n');
             const lineHeight = fontSize * 1.3;
 
-            // Appliquer le clipping seulement si le texte dépasse en hauteur
-            const totalTextHeight = lines.length * lineHeight;
-            if (totalTextHeight > height - 15) { // -15 pour laisser de la place à l'icône
-                this.ctx.beginPath();
-                this.ctx.rect(0, 0, width, height);
-                this.ctx.clip();
-            }
+            // Toujours appliquer le clipping pour éviter le débordement
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, width, height);
+            this.ctx.clip();
 
             // Rendre le texte wrappé (commencer après l'icône)
             lines.forEach((line, i) => {
                 const y = 20 + i * lineHeight; // 20px pour laisser de la place à l'icône
-                if (y + lineHeight <= height) {
-                    this.ctx.fillText(line, 5, y);
-                }
+                this.ctx.fillText(line, 5, y);
             });
+
+            this.ctx.restore(); // Restaurer le contexte pour ne pas affecter les autres éléments
         } else {
             // Afficher l'icône et le type
             this.ctx.fillText(icon + ' ' + type, 5, 5);
