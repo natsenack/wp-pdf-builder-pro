@@ -145,6 +145,15 @@ export class PDFCanvasCore {
      * @private
      */
     _renderElementNormal(element) {
+        console.log('🎨 RENDERING ELEMENT:', {
+            type: element.type,
+            id: element.id,
+            hasText: !!(element.properties?.text),
+            textLength: element.properties?.text?.length || 0,
+            width: element.properties?.width,
+            height: element.properties?.height
+        });
+
         // Rendre selon le type
         switch (element.type) {
             case 'text':
@@ -186,9 +195,9 @@ export class PDFCanvasCore {
             case 'refund':
             case 'dynamic-text':
             case 'mentions':
-            case 'woocommerce-invoice-number':
-            case 'woocommerce-invoice-date':
+                console.log('📋 MENTIONS ELEMENT DETECTED:', element);
                 this._drawWooCommerceElement(element);
+                break;
                 break;
             default:
                 this._drawPlaceholder(element);
