@@ -210,6 +210,31 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche "N° de commande:"</span>
           </div>
 
+          {/* Texte du libellé - Uniquement si le libellé est affiché */}
+          {(element as any).showLabel !== false && (
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                Texte du libellé
+              </label>
+              <input
+                type="text"
+                value={(element as any).labelText || 'N° de commande:'}
+                onChange={(e) => onChange(element.id, 'labelText', e.target.value)}
+                placeholder="N° de commande:"
+                style={{
+                  width: '100%',
+                  padding: '6px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              />
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                Texte affiché avant le numéro de commande
+              </div>
+            </div>
+          )}
+
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher la date

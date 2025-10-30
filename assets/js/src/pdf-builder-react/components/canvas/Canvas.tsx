@@ -951,6 +951,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
+    const labelText = props.labelText || 'N° de commande:'; // Texte personnalisable du libellé
 
     // Fonction helper pour calculer la position X selon l'alignement
     const calculateX = (align: string) => {
@@ -987,7 +988,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', calculateX(textAlign), y);
+        ctx.fillText(labelText, calculateX(textAlign), y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
@@ -1000,12 +1001,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', calculateX(textAlign), y);
+        ctx.fillText(labelText, calculateX(textAlign), y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro à droite - alignements fixes pour cohérence visuelle
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = 'left' as CanvasTextAlign; // Toujours aligné à gauche pour le libellé
-        ctx.fillText('N° de commande:', 10, y); // Toujours à gauche
+        ctx.fillText(labelText, 10, y); // Toujours à gauche
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le numéro
         ctx.fillText(orderNumber, element.width - 10, y); // Toujours à droite
@@ -1016,7 +1017,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.fillText(orderNumber, 10, y); // Toujours à gauche
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le libellé
-        ctx.fillText('N° de commande:', element.width - 10, y); // Toujours à droite
+        ctx.fillText(labelText, element.width - 10, y); // Toujours à droite
       }
     } else {
       // Pas de libellé, juste le numéro

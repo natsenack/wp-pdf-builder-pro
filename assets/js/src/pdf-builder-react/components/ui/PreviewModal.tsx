@@ -229,6 +229,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         const orderShowLabel = props.showLabel !== false;
         const orderShowDate = props.showDate !== false;
         const orderLabelPosition = props.labelPosition || 'above';
+        const orderLabelText = props.labelText || 'N° de commande:'; // Texte personnalisable du libellé
 
         // Fonction helper pour calculer la position X selon l'alignement
         const calculateOrderX = (align: string) => {
@@ -258,7 +259,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', calculateOrderX(orderTextAlign), orderY);
+            ctx.fillText(orderLabelText, calculateOrderX(orderTextAlign), orderY);
             orderY += 18;
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderTextAlign as CanvasTextAlign;
@@ -271,12 +272,12 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             orderY += 18;
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', calculateOrderX(orderTextAlign), orderY);
+            ctx.fillText(orderLabelText, calculateOrderX(orderTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
             // Libellé à gauche, numéro à droite - alignements fixes pour cohérence visuelle
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = 'left' as CanvasTextAlign; // Toujours aligné à gauche pour le libellé
-            ctx.fillText('N° de commande:', 10, orderY); // Toujours à gauche
+            ctx.fillText(orderLabelText, 10, orderY); // Toujours à gauche
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le numéro
             ctx.fillText(orderNumber, element.width - 10, orderY); // Toujours à droite
@@ -287,7 +288,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             ctx.fillText(orderNumber, 10, orderY); // Toujours à gauche
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le libellé
-            ctx.fillText('N° de commande:', element.width - 10, orderY); // Toujours à droite
+            ctx.fillText(orderLabelText, element.width - 10, orderY); // Toujours à droite
           }
         } else {
           // Pas de libellé, juste le numéro
