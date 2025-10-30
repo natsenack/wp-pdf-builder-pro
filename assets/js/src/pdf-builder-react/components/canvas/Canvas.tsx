@@ -985,23 +985,23 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     let y = 20;
     if (showLabel) {
       if (labelPosition === 'above') {
-        // Libellé au-dessus, numéro en-dessous
+        // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
+        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.fillText('N° de commande:', calculateX(textAlign), y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
+        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateX(textAlign), y);
       } else if (labelPosition === 'below') {
-        // Numéro au-dessus, libellé en-dessous
+        // Numéro au-dessus, libellé en-dessous - utiliser l'alignement global
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
+        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateX(textAlign), y);
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
+        ctx.textAlign = textAlign as CanvasTextAlign;
+        ctx.fillText('N° de commande:', calculateX(textAlign), y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro au centre - respecter les alignements individuels
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;

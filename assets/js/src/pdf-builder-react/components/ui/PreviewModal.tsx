@@ -258,23 +258,23 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         // Afficher selon la position du libellé et du numéro
         if (orderShowLabel) {
           if (orderLabelPosition === 'above') {
-            // Libellé au-dessus, numéro en-dessous
+            // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
+            ctx.textAlign = orderTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', calculateOrderX(orderTextAlign), orderY);
             orderY += 18;
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
+            ctx.textAlign = orderTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, calculateOrderX(orderTextAlign), orderY);
           } else if (orderLabelPosition === 'below') {
-            // Numéro au-dessus, libellé en-dessous
+            // Numéro au-dessus, libellé en-dessous - utiliser l'alignement global
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
+            ctx.textAlign = orderTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, calculateOrderX(orderTextAlign), orderY);
             orderY += 18;
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
+            ctx.textAlign = orderTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', calculateOrderX(orderTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
             // Libellé à gauche, numéro au centre - respecter les alignements individuels
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
