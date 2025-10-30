@@ -350,14 +350,30 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           // Pas de libellé, juste le numéro avec alignement général du contenu
           ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
           ctx.textAlign = orderContentAlign as CanvasTextAlign;
-          ctx.fillText(orderNumber, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY);
+          // Pour le cas sans libellé, utiliser directement calculateOrderContentX sans orderContentOffsetX
+          // car orderContentOffsetX est calculé pour centrer le contenu total, mais ici on n'a que le numéro
+          if (orderContentAlign === 'left') {
+            ctx.fillText(orderNumber, 10, orderY);
+          } else if (orderContentAlign === 'center') {
+            ctx.fillText(orderNumber, element.width / 2, orderY);
+          } else { // right
+            ctx.fillText(orderNumber, element.width - 10, orderY);
+          }
         }
 
         // Afficher la date sur une nouvelle ligne avec le même alignement général
         if (orderShowDate) {
           ctx.font = `${orderDateFontStyle} ${orderDateFontWeight} ${orderDateFontSize}px ${orderDateFontFamily}`;
           ctx.textAlign = orderContentAlign as CanvasTextAlign;
-          ctx.fillText(`Date: ${orderDate}`, calculateOrderContentX(orderContentAlign) + orderContentOffsetX, orderY + 20);
+          // Pour la date, utiliser directement calculateOrderContentX sans orderContentOffsetX
+          // car orderContentOffsetX est calculé pour centrer le contenu total
+          if (orderContentAlign === 'left') {
+            ctx.fillText(`Date: ${orderDate}`, 10, orderY + 20);
+          } else if (orderContentAlign === 'center') {
+            ctx.fillText(`Date: ${orderDate}`, element.width / 2, orderY + 20);
+          } else { // right
+            ctx.fillText(`Date: ${orderDate}`, element.width - 10, orderY + 20);
+          }
         }
         break;
 

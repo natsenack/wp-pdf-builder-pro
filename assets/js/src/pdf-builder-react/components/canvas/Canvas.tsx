@@ -1080,14 +1080,30 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas de libellé, juste le numéro avec alignement général du contenu
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
-      ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
+      // Pour le cas sans libellé, utiliser directement calculateContentX sans contentOffsetX
+      // car contentOffsetX est calculé pour centrer le contenu total, mais ici on n'a que le numéro
+      if (contentAlign === 'left') {
+        ctx.fillText(orderNumber, 10, y);
+      } else if (contentAlign === 'center') {
+        ctx.fillText(orderNumber, element.width / 2, y);
+      } else { // right
+        ctx.fillText(orderNumber, element.width - 10, y);
+      }
     }
 
     // Afficher la date sur une nouvelle ligne avec le même alignement général
     if (showDate) {
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
-      ctx.fillText(`Date: ${orderDate}`, calculateContentX(contentAlign) + contentOffsetX, y + 20);
+      // Pour la date, utiliser directement calculateContentX sans contentOffsetX
+      // car contentOffsetX est calculé pour centrer le contenu total
+      if (contentAlign === 'left') {
+        ctx.fillText(`Date: ${orderDate}`, 10, y + 20);
+      } else if (contentAlign === 'center') {
+        ctx.fillText(`Date: ${orderDate}`, element.width / 2, y + 20);
+      } else { // right
+        ctx.fillText(`Date: ${orderDate}`, element.width - 10, y + 20);
+      }
     }
     } catch (error) {
       // Erreur silencieuse dans drawOrderNumber
