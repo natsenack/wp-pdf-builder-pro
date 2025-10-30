@@ -19,7 +19,13 @@ export class PDFCanvasCore {
      * @param {Object} options - Options du canvas
      */
     renderAll(elements, selectedIds = [], options = {}) {
-        // console.log('🎨 PDFCanvasCore.renderAll() CALLED - Éléments:', elements.size, 'Canvas:', this.canvasWidth + 'x' + this.canvasHeight);
+        console.log('🎨 PDFCanvasCore.renderAll() CALLED - Éléments:', elements.size);
+        console.log('📋 ELEMENTS RECEIVED:', Array.from(elements.values()).map(el => ({
+            id: el.id,
+            type: el.type,
+            hasText: !!(el.properties?.text),
+            textLength: el.properties?.text?.length || 0
+        })));
         
         // Étape 1: Nettoyer complètement
         this.ctx.fillStyle = options.backgroundColor || '#ffffff';
