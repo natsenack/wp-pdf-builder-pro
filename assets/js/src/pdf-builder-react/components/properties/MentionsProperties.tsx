@@ -457,6 +457,22 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                             .join(separator);
 
                           onChange(element.id, 'text', combinedText);
+
+                          // Ajuster automatiquement la hauteur selon le nombre de lignes
+                          const lines = combinedText.split('\n');
+                          const fontSize = (element as any).fontSize || 10;
+                          const lineHeight = fontSize * 1.3;
+                          const padding = 10; // marge interne
+                          const minHeight = 60; // hauteur minimale
+                          const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+
+                          // Ne pas dépasser une hauteur maximale raisonnable
+                          const maxHeight = 300;
+                          const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                          if ((element as any).height !== newHeight) {
+                            onChange(element.id, 'height', newHeight);
+                          }
                         }}
                         style={{ marginRight: '6px', marginTop: '1px' }}
                       />
@@ -472,6 +488,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               </div>
               <div style={{ marginTop: '8px', fontSize: '10px', color: '#666' }}>
                 {(element as any).selectedMentions?.length || 0} mention(s) sélectionnée(s)
+                {(element as any).selectedMentions?.length > 0 && (
+                  <span style={{ color: '#007bff', marginLeft: '8px' }}>
+                    • Hauteur ajustée automatiquement
+                  </span>
+                )}
               </div>
               {(element as any).selectedMentions?.length > 0 && (
                 <div style={{ marginTop: '8px' }}>
@@ -500,6 +521,20 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                         .join(separator);
 
                       onChange(element.id, 'text', combinedText);
+
+                      // Ajuster la hauteur selon le nouveau nombre de lignes
+                      const lines = combinedText.split('\n');
+                      const fontSize = (element as any).fontSize || 10;
+                      const lineHeight = fontSize * 1.3;
+                      const padding = 10;
+                      const minHeight = 60;
+                      const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+                      const maxHeight = 300;
+                      const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                      if ((element as any).height !== newHeight) {
+                        onChange(element.id, 'height', newHeight);
+                      }
                     }}
                     style={{
                       width: '100%',
@@ -624,7 +659,40 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <select
               value={(element as any).fontSize || '10'}
-              onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
+              onChange={(e) => {
+                onChange(element.id, 'fontSize', e.target.value);
+
+                // Si c'est un medley, ajuster la hauteur selon la nouvelle taille de police
+                if (currentMentionType === 'medley' && (element as any).selectedMentions?.length > 0) {
+                  const selectedMentions = (element as any).selectedMentions || [];
+                  const separatorMap = {
+                    'double_newline': '\n\n',
+                    'single_newline': '\n',
+                    'dash': ' - ',
+                    'bullet': ' • ',
+                    'pipe': ' | '
+                  };
+                  const separator = separatorMap[((element as any).medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
+
+                  const combinedText = selectedMentions
+                    .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
+                    .filter(Boolean)
+                    .join(separator);
+
+                  const lines = combinedText.split('\n');
+                  const fontSize = parseInt(e.target.value) || 10;
+                  const lineHeight = fontSize * 1.3;
+                  const padding = 10;
+                  const minHeight = 60;
+                  const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+                  const maxHeight = 300;
+                  const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                  if ((element as any).height !== newHeight) {
+                    onChange(element.id, 'height', newHeight);
+                  }
+                }
+              }}
               style={{
                 width: '100%',
                 padding: '6px',
@@ -748,20 +816,28 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur
+              Hauteur {currentMentionType === 'medley' ? '(auto-ajustée)' : ''}
             </label>
             <input
               type="number"
               value={(element as any).height || 80}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 80)}
+              disabled={currentMentionType === 'medley'}
               style={{
                 width: '100%',
                 padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                fontSize: '12px'
+                fontSize: '12px',
+                backgroundColor: currentMentionType === 'medley' ? '#f5f5f5' : '#ffffff',
+                color: currentMentionType === 'medley' ? '#999' : '#333'
               }}
             />
+            {currentMentionType === 'medley' && (
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                La hauteur s'ajuste automatiquement selon le contenu du medley
+              </div>
+            )}
           </div>
         </>
       )}
