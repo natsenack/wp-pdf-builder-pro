@@ -25,7 +25,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const { handleDrop, handleDragOver } = useCanvasDrop({
     canvasRef,
     canvasWidth: width,
-    canvasHeight: height
+    canvasHeight: height,
+    elements: state.elements || []
   });
 
   const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasInteraction({
