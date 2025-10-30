@@ -333,6 +333,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       const deltaX = x - dragStartRef.current.x;
       const deltaY = y - dragStartRef.current.y;
 
+      console.log('🎯 [DRAG] Moving element:', selectedElementRef.current, 'to:', { x: deltaX, y: deltaY });
+
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
