@@ -1013,22 +1013,22 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.fillText('N° de commande:', calculateX(textAlign), y);
       } else if (labelPosition === 'left') {
         console.log('Rendering order_number with position LEFT, labelAlign:', labelTextAlign, 'numberAlign:', numberTextAlign);
-        // Libellé à gauche, numéro au centre - respecter les alignements individuels
+        // Libellé à gauche, numéro à droite - positions fixes pour éviter superposition
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
+        ctx.fillText('N° de commande:', 10, y); // Toujours à gauche
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, element.width / 2, y);
+        ctx.fillText(orderNumber, element.width - 10, y); // Toujours à droite
       } else if (labelPosition === 'right') {
         console.log('Rendering order_number with position RIGHT, labelAlign:', labelTextAlign, 'numberAlign:', numberTextAlign);
-        // Numéro à gauche, libellé au centre - respecter les alignements individuels
+        // Numéro à gauche, libellé à droite - positions fixes pour éviter superposition
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
+        ctx.fillText(orderNumber, 10, y); // Toujours à gauche
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', element.width / 2, y);
+        ctx.fillText('N° de commande:', element.width - 10, y); // Toujours à droite
       }
     } else {
       // Pas de libellé, juste le numéro
