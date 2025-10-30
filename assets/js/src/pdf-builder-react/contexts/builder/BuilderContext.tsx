@@ -388,8 +388,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       // Nettoyer les éléments pour la sérialisation JSON
       const cleanElements = state.elements.map(element => ({
         ...element,
-        createdAt: element.createdAt?.toISOString(),
-        updatedAt: element.updatedAt?.toISOString()
+        createdAt: element.createdAt instanceof Date ? element.createdAt.toISOString() : new Date().toISOString(),
+        updatedAt: element.updatedAt instanceof Date ? element.updatedAt.toISOString() : new Date().toISOString()
       }));
 
       const response = await fetch(ajaxUrl, {
