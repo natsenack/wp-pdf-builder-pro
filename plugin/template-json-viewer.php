@@ -6,13 +6,39 @@
 
 // Charger WordPress si nécessaire
 if (!defined('ABSPATH')) {
-    // Chemin vers wp-load.php (à adapter selon votre installation)
-    $wp_load_path = dirname(__FILE__, 3) . '/wp-load.php'; // Remonter de 3 niveaux: plugin/ -> wp-content/plugins/ -> wp-content/ -> racine WordPress
+    echo '<h2>Débogage du chargement WordPress:</h2>';
+
+    // Essayer plusieurs chemins possibles
+    $possible_paths = [
+        dirname(__FILE__, 3) . '/wp-load.php', // wp-content/wp-load.php
+        dirname(__FILE__, 4) . '/wp-load.php', // racine/wp-load.php
+        dirname(__FILE__, 5) . '/wp-load.php', // au cas où
+        $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php', // depuis document root
+        realpath(__DIR__ . '/../../../wp-load.php'), // relatif
+        realpath(__DIR__ . '/../../../../wp-load.php'), // relatif +1
+    ];
+
+    echo '<ul>';
+    foreach ($possible_paths as $index => $path) {
+        $exists = file_exists($path) ? 'EXISTS' : 'NOT FOUND';
+        echo '<li>Path ' . ($index + 1) . ': ' . htmlspecialchars($path) . ' - <strong>' . $exists . '</strong></li>';
+    }
+    echo '</ul>';
+
+    echo '<p>Current dir: ' . __DIR__ . '</p>';
+    echo '<p>Document root: ' . $_SERVER['DOCUMENT_ROOT'] . '</p>';
+
+    // Essayer de charger depuis le document root
+    $wp_load_path = $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
 
     if (file_exists($wp_load_path)) {
+        echo '<p style="color: green;">✅ Trouvé wp-load.php à: ' . htmlspecialchars($wp_load_path) . '</p>';
         require_once($wp_load_path);
+        echo '<p style="color: green;">✅ WordPress chargé avec succès!</p>';
     } else {
-        die('Erreur: Impossible de charger WordPress. Vérifiez le chemin.');
+        echo '<p style="color: red;">❌ Aucun wp-load.php trouvé aux emplacements testés.</p>';
+        echo '<p>Essayez de définir manuellement le chemin correct dans le script.</p>';
+        exit;
     }
 }
 
