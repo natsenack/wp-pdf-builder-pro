@@ -93,13 +93,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     }
   }, [previewElements, zoom, isOpen]);
 
-  // Re-rendre quand les éléments changent
-  useEffect(() => {
-    if (isOpen && previewElements.length > 0) {
-      renderPreview();
-    }
-  }, [isOpen, previewElements, zoom]);
-
   const loadTemplateElements = async () => {
     setIsLoading(true);
     try {
@@ -687,12 +680,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
     ctx.restore();
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      renderPreview();
-    }
-  }, [isOpen, state.elements, zoom]);
 
   if (!isOpen) return null;
 
