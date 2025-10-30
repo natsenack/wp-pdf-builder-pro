@@ -575,7 +575,7 @@ export class PDFCanvasPropertiesManager {
         const element = this.canvasInstance.elements.get(elementId);
         if (!element) return false;
 
-        const defaultProps = elementCustomizationService.getDefaultProperties(element.type);
+        const defaultProps = elementCustomizationService.getDefaultProperties(element.type, this.canvasInstance.elements);
         const propertiesToReset = propertyNames || Object.keys(defaultProps);
 
         const resetProps = {};

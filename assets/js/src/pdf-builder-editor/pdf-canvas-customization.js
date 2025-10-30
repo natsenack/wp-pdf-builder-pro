@@ -360,11 +360,11 @@ export class ElementCustomizationService {
    */
   /**
    * Calcule la position initiale intelligente selon le type d'élément
-   * Stratégie de grille pour éviter les chevauchements
+   * Positionnement dynamique qui évite les chevauchements
    */
-  calculateInitialPosition(elementType) {
-    // Stratégie de positionnement par type d'élément
-    const positionStrategy = {
+  calculateInitialPosition(elementType, existingElements = new Map()) {
+    // Positions de base stratégiques par type d'élément
+    const basePositions = {
       // COLONNE GAUCHE (x: 50)
       'product_table': { x: 50, y: 50 },
       'customer_info': { x: 50, y: 220 },
@@ -392,13 +392,80 @@ export class ElementCustomizationService {
       'image': { x: 400, y: 500 }
     };
 
-    // Retourner la position stratégique ou défaut si non trouvée
-    return positionStrategy[elementType] || { x: 50, y: 50 };
+    // Obtenir la position de base
+    const basePosition = basePositions[elementType] || { x: 50, y: 50 };
+    
+    // Si pas d'éléments existants, retourner la position de base
+    if (existingElements.size === 0) {
+      return basePosition;
+    }
+
+    // Déterminer la colonne appropriée selon le type d'élément
+    const isLeftColumn = ['product_table', 'customer_info', 'company_info', 'document_type', 'mentions', 'dynamic-text', 'text', 'text-title', 'text-subtitle', 'rectangle'].includes(elementType);
+    const isRightColumn = ['company_logo', 'order_number', 'woocommerce-order-date', 'woocommerce-invoice-number'].includes(elementType);
+    
+    let columnX, columnWidth;
+    if (isLeftColumn) {
+      columnX = 0;
+      columnWidth = 300; // Largeur colonne gauche
+    } else if (isRightColumn) {
+      columnX = 300;
+      columnWidth = 300; // Largeur colonne droite
+    } else {
+      columnX = 0;
+      columnWidth = 600; // Toute la largeur pour les autres éléments
+    }
+
+    // Trouver tous les éléments dans cette colonne
+    const columnElements = [];
+    existingElements.forEach((element) => {
+      const props = element.properties || {};
+      const elementX = props.x || 0;
+      const elementWidth = props.width || 100;
+      
+      // Vérifier si l'élément chevauche cette colonne
+      if (elementX < columnX + columnWidth && elementX + elementWidth > columnX) {
+        columnElements.push({
+          y: props.y || 0,
+          height: props.height || 50,
+          x: elementX,
+          width: elementWidth
+        });
+      }
+    });
+
+    // Trier les éléments par position Y
+    columnElements.sort((a, b) => a.y - b.y);
+
+    // Trouver l'espace disponible le plus bas
+    let currentY = 10; // Marge supérieure
+    const elementHeight = this.getDefaultProperties(elementType).height || 50;
+    const spacing = 20; // Espace entre éléments
+
+    for (const element of columnElements) {
+      const elementBottom = element.y + element.height + spacing;
+      if (currentY + elementHeight <= element.y) {
+        // Il y a de l'espace avant cet élément
+        break;
+      }
+      currentY = Math.max(currentY, elementBottom);
+    }
+
+    // Assurer que la position reste dans les limites du canvas
+    const maxY = 800; // Hauteur maximale du canvas
+    if (currentY + elementHeight > maxY) {
+      currentY = maxY - elementHeight - 10;
+    }
+
+    return {
+      x: basePosition.x,
+      y: Math.max(10, currentY)
+    };
   }
 
-  getDefaultProperties(elementType = 'text') {
+  getDefaultProperties(elementType = 'text', existingElements = new Map()) {
     // Propriétés communes à tous les éléments
-    const position = this.calculateInitialPosition(elementType);
+    const position = this.calculateInitialPosition(elementType, existingElements);
     
     const defaults = {
       // Propriétés communes

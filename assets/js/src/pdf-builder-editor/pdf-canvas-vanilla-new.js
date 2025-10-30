@@ -427,7 +427,7 @@ export class PDFCanvasVanilla {
             return elementId;
         }
 
-        const defaultProps = this.customizationService.getDefaultProperties(type);
+        const defaultProps = this.customizationService.getDefaultProperties(type, this.elements);
         const elementProperties = { ...defaultProps, ...properties };
 
         const element = {
