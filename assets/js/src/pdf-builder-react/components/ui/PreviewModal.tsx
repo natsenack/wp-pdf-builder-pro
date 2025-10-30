@@ -1,6 +1,20 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
+import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
+import { CanvasDataProvider } from '../../providers/CanvasDataProvider';
+
+// Ajouter l'animation CSS globale
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -14,6 +28,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
+  const [dataProvider] = useState<DataProvider>(() => new CanvasDataProvider());
   const { state } = useBuilder();
 
   // Fonction pour remplacer les variables dynamiques dans le texte
@@ -41,12 +56,13 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     return result;
   };
 
-  // Récupérer les éléments du template depuis la base de données
+  // Écouter les changements du state pour mise à jour temps réel
   useEffect(() => {
-    if (isOpen) {
-      loadTemplateElements();
+    if (isOpen && state.elements.length > 0) {
+      // Utiliser directement les éléments du state pour l'aperçu temps réel
+      setPreviewElements(state.elements);
     }
-  }, [isOpen]);
+  }, [isOpen, state.elements]);
 
   // Redessiner le canvas quand les éléments ou le zoom changent
   useEffect(() => {
@@ -65,12 +81,19 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const loadTemplateElements = async () => {
     setIsLoading(true);
     try {
-      // Récupérer l'ID du template depuis l'URL ou le state
+      // Essayer d'utiliser les éléments du state d'abord (pour aperçu temps réel)
+      if (state.elements.length > 0) {
+        setPreviewElements(state.elements);
+        setIsLoading(false);
+        return;
+      }
+
+      // Fallback : charger depuis la base de données seulement si nécessaire
       const urlParams = new URLSearchParams(window.location.search);
       const templateId = urlParams.get('template_id') || state.template?.id;
 
       if (!templateId) {
-        setPreviewElements(state.elements); // Fallback vers le state local
+        setPreviewElements([]);
         setIsLoading(false);
         return;
       }
@@ -86,7 +109,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
       if (data.success && data.data && data.data.elements) {
         // Corriger automatiquement les coordonnées des éléments qui dépassent A4
-        // Mais seulement si nécessaire - la plupart des éléments devraient déjà être dans les bonnes proportions
         const correctedElements = data.data.elements.map((element: any) => {
           const corrected = { ...element };
 
@@ -113,38 +135,34 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
         setPreviewElements(correctedElements);
       } else {
-        setPreviewElements(state.elements); // Fallback
+        setPreviewElements([]);
       }
     } catch (error) {
-      setPreviewElements(state.elements); // Fallback
+      setPreviewElements([]);
     }
     setIsLoading(false);
   };
 
-  // Fonction pour rendre l'aperçu
+  // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = () => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!canvasRef.current || previewElements.length === 0) return;
 
     setIsLoading(true);
 
-    // Définir la taille du canvas pour l'aperçu (dimensions de base, le zoom sera géré par CSS ou transformation)
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-
-    // Clear canvas avec fond blanc
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-    // Plus de transformation scale - le zoom est géré par CSS
-    // Rendre tous les éléments avec leurs coordonnées absolues
-    previewElements.forEach(element => {
-      renderElement(ctx, element);
-    });
-    setIsLoading(false);
+    try {
+      PreviewRenderer.render({
+        canvas: canvasRef.current,
+        elements: previewElements,
+        dataProvider: dataProvider,
+        zoom: zoom,
+        width: canvasWidth,
+        height: canvasHeight
+      });
+    } catch (error) {
+      console.error('Erreur lors du rendu de l\'aperçu:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Fonction simplifiée pour rendre un élément (version aperçu)
@@ -738,6 +756,36 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             100%
           </button>
         </div>
+
+        {/* Indicateur de sauvegarde automatique */}
+        {state.template.isSaving && (
+          <div style={{
+            position: 'absolute',
+            top: '60px',
+            right: '20px',
+            backgroundColor: '#28a745',
+            color: 'white',
+            padding: '6px 12px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontWeight: '500',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              border: '2px solid rgba(255,255,255,0.3)',
+              borderTop: '2px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            Sauvegarde...
+          </div>
+        )}
 
         {/* Canvas d'aperçu */}
         <div style={{

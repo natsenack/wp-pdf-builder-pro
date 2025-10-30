@@ -143,7 +143,7 @@ export type BuilderAction =
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'RESET' }
-  | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string } }
+  | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string; lastSaved?: Date } }
   | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
   | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
   | { type: 'UPDATE_TEMPLATE_SETTINGS'; payload: Partial<TemplateState> }

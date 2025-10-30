@@ -48,6 +48,7 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
         add_action('wp_ajax_pdf_builder_get_company_data', [$this, 'ajax_get_company_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
+        add_action('wp_ajax_pdf_builder_get_preview_data', [$this, 'ajax_get_preview_data'], 1);
     }
     private function detect_document_type($order_status)
     {
@@ -262,6 +263,162 @@ class PDF_Builder_WooCommerce_Integration
             });
         });
 
+        // Fonction d'aperçu - ouvre une modal avec preview des données WooCommerce
+        function previewPDF(orderId, templateId, nonce) {
+            var previewWindow = window.open('', 'pdf-preview', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            
+            if (!previewWindow) {
+                alert('Veuillez autoriser les popups pour cette page.');
+                return;
+            }
+
+            // Charger les données de prévisualisation via AJAX
+            jQuery.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_get_preview_data',
+                    order_id: orderId,
+                    template_id: templateId,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        // Générer le HTML pour la modal
+                        var html = generatePreviewHTML(response.data, orderId, templateId);
+                        previewWindow.document.write(html);
+                        previewWindow.document.close();
+                    } else {
+                        previewWindow.document.write('<h1>Erreur</h1><p>' + (response.data || 'Erreur inconnue') + '</p>');
+                        previewWindow.document.close();
+                    }
+                },
+                error: function() {
+                    previewWindow.document.write('<h1>Erreur réseau</h1><p>Impossible de charger l\'aperçu</p>');
+                    previewWindow.document.close();
+                }
+            });
+        }
+
+        // Génère le HTML de prévisualisation
+        function generatePreviewHTML(previewData, orderId, templateId) {
+            var customerName = (previewData.billing.first_name || '') + ' ' + (previewData.billing.last_name || '');
+            var orderNumber = previewData.order.number || ('CMD-' + previewData.order.id);
+            var orderDate = previewData.order.date || new Date().toLocaleDateString('fr-FR');
+            
+            return `<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Aperçu PDF - Commande #` + orderId + `</title>
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+                    .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                    .header { border-bottom: 2px solid #007cba; padding-bottom: 20px; margin-bottom: 20px; }
+                    .header h1 { color: #333; margin-bottom: 10px; }
+                    .header .info { display: flex; justify-content: space-between; color: #666; font-size: 14px; }
+                    .section { margin-bottom: 30px; }
+                    .section h2 { color: #007cba; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
+                    .info-box { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                    .info-block { }
+                    .info-block strong { color: #333; }
+                    .info-block p { color: #666; font-size: 14px; margin-top: 5px; line-height: 1.6; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                    thead { background: #f0f0f0; }
+                    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                    th { font-weight: bold; color: #333; }
+                    td { font-size: 14px; color: #666; }
+                    .total-section { text-align: right; margin-top: 20px; }
+                    .total-section .total-row { font-size: 18px; font-weight: bold; color: #333; }
+                    .button-group { margin-top: 30px; display: flex; gap: 10px; justify-content: flex-end; }
+                    .button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+                    .button-primary { background: #007cba; color: white; }
+                    .button-secondary { background: #ddd; color: #333; }
+                    .button:hover { opacity: 0.8; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Aperçu de la commande</h1>
+                        <div class="info">
+                            <span>Commande #` + orderId + `</span>
+                            <span>Date: ` + orderDate + `</span>
+                            <span>Template ID: ` + templateId + `</span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Informations client</h2>
+                        <div class="info-box">
+                            <div class="info-block">
+                                <strong>Facturation</strong>
+                                <p>` + customerName + `<br>
+                                ` + (previewData.billing.address_1 || '') + `<br>
+                                ` + (previewData.billing.postcode || '') + ` ` + (previewData.billing.city || '') + `<br>
+                                ` + (previewData.billing.email || '') + `<br>
+                                ` + (previewData.billing.phone || '') + `</p>
+                            </div>
+                            <div class="info-block">
+                                <strong>Livraison</strong>
+                                <p>` + ((previewData.shipping.first_name || '') + ' ' + (previewData.shipping.last_name || '')).trim() + `<br>
+                                ` + (previewData.shipping.address_1 || '') + `<br>
+                                ` + (previewData.shipping.postcode || '') + ` ` + (previewData.shipping.city || '') + `</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Articles de la commande</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unit.</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>` + generateItemsRows(previewData.items) + `
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-row">Sous-total: ` + (previewData.order.subtotal || 0).toFixed(2) + ` €</div>
+                        <div class="total-row">Livraison: ` + (previewData.order.shipping_total || 0).toFixed(2) + ` €</div>
+                        <div class="total-row">Taxes: ` + (previewData.order.tax_total || 0).toFixed(2) + ` €</div>
+                        <div class="total-row" style="color: #007cba; border-top: 2px solid #007cba; padding-top: 10px; margin-top: 10px;">
+                            TOTAL: ` + (previewData.order.total || 0).toFixed(2) + ` €
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="button button-secondary" onclick="window.print()">🖨️ Imprimer</button>
+                        <button class="button button-secondary" onclick="window.close()">❌ Fermer</button>
+                    </div>
+                </div>
+            </body>
+            </html>`;
+        }
+
+        // Génère les lignes du tableau des articles
+        function generateItemsRows(items) {
+            if (!items || items.length === 0) {
+                return '<tr><td colspan="4">Aucun article</td></tr>';
+            }
+
+            return items.map(function(item) {
+                return `<tr>
+                    <td>` + (item.name || 'Produit') + `</td>
+                    <td>` + (item.quantity || 0) + `</td>
+                    <td>` + ((item.total / (item.quantity || 1)) || 0).toFixed(2) + ` €</td>
+                    <td>` + (item.total || 0).toFixed(2) + ` €</td>
+                </tr>`;
+            }).join('');
+        }
+
         function generatePDF(orderId, templateId, nonce) {
             // Générer le PDF
             jQuery.ajax({
@@ -291,12 +448,7 @@ class PDF_Builder_WooCommerce_Integration
                 }
             });
         }
-
-        function previewPDF(orderId, templateId, nonce) {
-            // Ouvrir une nouvelle fenêtre pour l'aperçu
-            var previewWindow = window.open('', 'pdf-preview', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-
-            if (!previewWindow) {
+        </script>
                 alert('Veuillez autoriser les popups pour cette page.');
                 return;
             }
@@ -1654,6 +1806,114 @@ class PDF_Builder_WooCommerce_Integration
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
+        }
+    }
+
+    /**
+     * AJAX: Récupère les données formatées pour l'aperçu PreviewModal
+     * Utilisé par la metabox WooCommerce pour afficher l'aperçu en temps réel
+     */
+    public function ajax_get_preview_data()
+    {
+        try {
+            // Vérifier les permissions utilisateur
+            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce de sécurité
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+                return;
+            }
+
+            // Valider les données d'entrée
+            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+            if (!$order_id || !$template_id) {
+                wp_send_json_error('Paramètres manquants');
+                return;
+            }
+
+            // Récupération et validation de la commande
+            $order = $this->get_and_validate_order($order_id);
+            if (is_wp_error($order)) {
+                wp_send_json_error($order->get_error_message());
+                return;
+            }
+
+            // Charger le template
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $template = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT id, data FROM $table_templates WHERE id = %d",
+                    $template_id
+                )
+            );
+
+            if (!$template) {
+                wp_send_json_error('Template non trouvé');
+                return;
+            }
+
+            // Décoder les données du template
+            $template_data = json_decode($template->data, true);
+            if (!$template_data) {
+                wp_send_json_error('Données du template invalides');
+                return;
+            }
+
+            // Préparer les données pour le rendu
+            $preview_data = [
+                'order_id' => $order_id,
+                'template_id' => $template_id,
+                'template_data' => $template_data,
+                'elements' => $template_data['elements'] ?? [],
+                'mode' => 'metabox',
+                // Données de commande réelles
+                'order' => [
+                    'id' => $order->get_id(),
+                    'number' => $order->get_order_number(),
+                    'status' => $order->get_status(),
+                    'date' => $order->get_date_created()->format('d/m/Y'),
+                    'total' => $order->get_total(),
+                    'subtotal' => $order->get_subtotal(),
+                    'shipping_total' => $order->get_shipping_total(),
+                    'tax_total' => $order->get_total_tax(),
+                ],
+                // Données client
+                'billing' => [
+                    'first_name' => $order->get_billing_first_name(),
+                    'last_name' => $order->get_billing_last_name(),
+                    'address_1' => $order->get_billing_address_1(),
+                    'address_2' => $order->get_billing_address_2(),
+                    'city' => $order->get_billing_city(),
+                    'postcode' => $order->get_billing_postcode(),
+                    'country' => $order->get_billing_country(),
+                    'email' => $order->get_billing_email(),
+                    'phone' => $order->get_billing_phone(),
+                ],
+                // Données d'expédition
+                'shipping' => [
+                    'first_name' => $order->get_shipping_first_name(),
+                    'last_name' => $order->get_shipping_last_name(),
+                    'address_1' => $order->get_shipping_address_1(),
+                    'address_2' => $order->get_shipping_address_2(),
+                    'city' => $order->get_shipping_city(),
+                    'postcode' => $order->get_shipping_postcode(),
+                    'country' => $order->get_shipping_country(),
+                ],
+                // Articles de la commande
+                'items' => $this->get_order_items_complete_data($order),
+            ];
+
+            wp_send_json_success($preview_data);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur interne lors de la récupération des données d\'aperçu: ' . $e->getMessage());
         }
     }
 }

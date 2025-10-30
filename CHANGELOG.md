@@ -11,6 +11,14 @@ et ce projet respecte le [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### 🚀 **Nouvelles Fonctionnalités**
 
+#### **Aperçu PDF Amélioré (Phase 2.2.4)**
+- ✨ **Qualité d'aperçu** : Rendu haute qualité (`imageRendering: auto`) au lieu de rendu pixelisé
+- ✨ **Aperçu dans metabox WooCommerce** : Nouveau bouton "👁️ Aperçu" affichant les données réelles de la commande
+- ✨ **Endpoint AJAX** : Nouvel endpoint `pdf_builder_get_preview_data` pour récupérer données WooCommerce formatées
+- ✨ **Modal réactive** : Fenêtre popup avec zoom, impression, et fermeture
+- ✨ **Variables dynamiques** : Remplacement automatique {{order_number}}, {{customer_name}}, {{order_total}}, etc.
+- ✨ **Sécurité renforcée** : Vérification nonce + permissions utilisateur pour AJAX metabox
+
 #### **Sécurité et Robustesse**
 - 🛡️ **Système de sécurité complet** : Health checks automatiques, validations, monitoring intégré
 - 🔍 **Health checks** : Vérification des dépendances React, ReactDOM, PDFCanvasEditor au chargement

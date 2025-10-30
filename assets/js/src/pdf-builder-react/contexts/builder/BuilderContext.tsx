@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import {
   BuilderState,
   BuilderAction,
@@ -372,6 +372,66 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   };
 
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
+
+  // Sauvegarde automatique toutes les 2.5 secondes
+  useEffect(() => {
+    if (!state.elements.length || !state.template.id) return;
+
+    const saveTimer = setTimeout(async () => {
+      try {
+        await autoSaveTemplate();
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde automatique:', error);
+      }
+    }, 2500); // 2.5 secondes
+
+    return () => clearTimeout(saveTimer);
+  }, [state.elements, state.template.id]);
+
+  // Fonction de sauvegarde automatique
+  const autoSaveTemplate = async (): Promise<void> => {
+    if (!state.template.id || state.template.isSaving) return;
+
+    dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
+
+    try {
+      const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+      const nonce = (window as any).pdfBuilderData?.nonce ||
+                   (window as any).pdfBuilderNonce ||
+                   (window as any).pdfBuilderReactData?.nonce || '';
+
+      const response = await fetch(ajaxUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_auto_save_template',
+          template_id: state.template.id.toString(),
+          elements: JSON.stringify(state.elements),
+          nonce: nonce
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        dispatch({
+          type: 'SAVE_TEMPLATE',
+          payload: {
+            id: state.template.id,
+            lastSaved: new Date()
+          }
+        });
+      } else {
+        console.error('Erreur sauvegarde automatique:', data.data);
+      }
+    } catch (error) {
+      console.error('Erreur réseau sauvegarde automatique:', error);
+    } finally {
+      dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
+    }
+  };
 
   // Actions helpers
   const addElement = (element: Element) => {

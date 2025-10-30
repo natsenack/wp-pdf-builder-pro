@@ -62,6 +62,7 @@ class PDF_Builder_Core
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_save_settings', array($this, 'ajax_save_settings'));
         add_action('wp_ajax_pdf_builder_get_settings', array($this, 'ajax_get_settings'));
+        add_action('wp_ajax_pdf_builder_auto_save_template', array($this, 'ajax_auto_save_template'));
 
         // Hooks d'activation/désactivation
         \register_activation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'activate'));
@@ -861,6 +862,68 @@ class PDF_Builder_Core
 
         // Retourner les paramètres
         wp_send_json_success($settings);
+        exit;
+    }
+
+    /**
+     * Action AJAX pour la sauvegarde automatique des templates
+     */
+    public function ajax_auto_save_template()
+    {
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+            wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Récupérer les données
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+        $elements_json = isset($_POST['elements']) ? $_POST['elements'] : '';
+
+        if (!$template_id || empty($elements_json)) {
+            wp_send_json_error(__('Données manquantes.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Valider le JSON
+        $elements = json_decode($elements_json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error(__('JSON invalide.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Sauvegarder dans la base de données
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $result = $wpdb->update(
+            $table_templates,
+            array(
+                'template_data' => $elements_json,
+                'updated_at' => current_time('mysql')
+            ),
+            array('id' => $template_id),
+            array('%s', '%s'),
+            array('%d')
+        );
+
+        if ($result === false) {
+            wp_send_json_error(__('Erreur lors de la sauvegarde.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Retourner le succès
+        wp_send_json_success(array(
+            'message' => __('Template sauvegardé automatiquement.', 'pdf-builder-pro'),
+            'template_id' => $template_id,
+            'saved_at' => current_time('mysql')
+        ));
         exit;
     }
 
