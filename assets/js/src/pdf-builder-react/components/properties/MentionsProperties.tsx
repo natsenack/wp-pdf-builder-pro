@@ -214,6 +214,56 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       text: 'Notre responsabilité est limitée à la valeur de la commande en cas de faute prouvée.'
     },
     {
+      key: 'tva_info',
+      label: 'Informations TVA',
+      text: 'TVA non applicable - article 293 B du CGI. Régime micro-entreprise.'
+    },
+    {
+      key: 'rcs_info',
+      label: 'Informations RCS',
+      text: 'RCS Paris 123 456 789 - SIRET 123 456 789 00012 - APE 1234Z'
+    },
+    {
+      key: 'siret_info',
+      label: 'Informations SIRET',
+      text: 'SIRET 123 456 789 00012 - NAF 1234Z - TVA FR 12 345 678 901'
+    },
+    {
+      key: 'legal_status',
+      label: 'Statut juridique',
+      text: 'Société à responsabilité limitée au capital de 10 000€ - RCS Paris 123 456 789'
+    },
+    {
+      key: 'insurance',
+      label: 'Assurance responsabilité',
+      text: 'Couvert par assurance responsabilité civile professionnelle - Police N° 123456789'
+    },
+    {
+      key: 'mediation',
+      label: 'Médiation consommateur',
+      text: 'En cas de litige, le consommateur peut saisir gratuitement le médiateur compétent.'
+    },
+    {
+      key: 'iban',
+      label: 'Coordonnées bancaires',
+      text: 'IBAN FR76 1234 5678 9012 3456 7890 123 - BIC BNPAFRPP'
+    },
+    {
+      key: 'delivery',
+      label: 'Conditions de livraison',
+      text: 'Livraison sous 3-5 jours ouvrés. Frais de port offerts à partir de 50€ HT.'
+    },
+    {
+      key: 'packaging',
+      label: 'Emballage et environnement',
+      text: 'Emballages recyclables. Respectueux de l\'environnement.'
+    },
+    {
+      key: 'medley',
+      label: 'Médley (Combinaison)',
+      text: ''
+    },
+    {
       key: 'custom',
       label: 'Personnalisé',
       text: ''
@@ -230,9 +280,14 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       return currentMentionType;
     }
 
+    // Pour le medley, vérifier s'il y a des mentions sélectionnées
+    if ((element as any).selectedMentions && (element as any).selectedMentions.length > 0) {
+      return 'medley';
+    }
+
     // Sinon, essayer de détecter automatiquement
     const matchingMention = predefinedMentions.find(mention =>
-      mention.key !== 'custom' && mention.text === currentText
+      mention.key !== 'custom' && mention.key !== 'medley' && mention.text === currentText
     );
 
     return matchingMention ? matchingMention.key : 'custom';
@@ -323,10 +378,10 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 onChange(element.id, 'mentionType', e.target.value);
 
                 // Ne mettre à jour le texte que si ce n'est pas "custom" et qu'il y a du texte prédéfini
-                if (selectedMention && selectedMention.key !== 'custom' && selectedMention.text) {
+                if (selectedMention && selectedMention.key !== 'custom' && selectedMention.key !== 'medley' && selectedMention.text) {
                   onChange(element.id, 'text', selectedMention.text);
                 }
-                // Pour "custom", on garde le texte actuel
+                // Pour "custom" et "medley", on garde le texte actuel
               }}
               style={{
                 width: '100%',
@@ -343,6 +398,127 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               ))}
             </select>
           </div>
+
+          {/* Section Médley - Sélection des mentions à combiner */}
+          {currentMentionType === 'medley' && (
+            <div style={{ marginBottom: '12px', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+                Sélectionnez les mentions à combiner :
+              </label>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '6px',
+                maxHeight: '200px',
+                overflowY: 'auto'
+              }}>
+                {predefinedMentions.filter(m => m.key !== 'medley' && m.key !== 'custom').map((mention) => {
+                  const selectedMentions = (element as any).selectedMentions || [];
+                  const isSelected = selectedMentions.includes(mention.key);
+
+                  return (
+                    <label key={mention.key} style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      borderRadius: '3px',
+                      backgroundColor: isSelected ? '#e3f2fd' : 'transparent'
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          const currentSelected = (element as any).selectedMentions || [];
+                          let newSelected;
+
+                          if (e.target.checked) {
+                            newSelected = [...currentSelected, mention.key];
+                          } else {
+                            newSelected = currentSelected.filter((key: string) => key !== mention.key);
+                          }
+
+                          onChange(element.id, 'selectedMentions', newSelected);
+
+                          // Générer le texte combiné avec le séparateur configuré
+                          const separatorMap = {
+                            'double_newline': '\n\n',
+                            'single_newline': '\n',
+                            'dash': ' - ',
+                            'bullet': ' • ',
+                            'pipe': ' | '
+                          };
+                          const separator = separatorMap[((element as any).medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
+
+                          const combinedText = newSelected
+                            .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
+                            .filter(Boolean)
+                            .join(separator);
+
+                          onChange(element.id, 'text', combinedText);
+                        }}
+                        style={{ marginRight: '6px', marginTop: '1px' }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>{mention.label}</div>
+                        <div style={{ fontSize: '10px', color: '#666', lineHeight: '1.3' }}>
+                          {mention.text.length > 60 ? mention.text.substring(0, 60) + '...' : mention.text}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              <div style={{ marginTop: '8px', fontSize: '10px', color: '#666' }}>
+                {(element as any).selectedMentions?.length || 0} mention(s) sélectionnée(s)
+              </div>
+              {(element as any).selectedMentions?.length > 0 && (
+                <div style={{ marginTop: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Séparateur entre mentions :
+                  </label>
+                  <select
+                    value={(element as any).medleySeparator || 'double_newline'}
+                    onChange={(e) => {
+                      onChange(element.id, 'medleySeparator', e.target.value);
+
+                      // Régénérer le texte avec le nouveau séparateur
+                      const selectedMentions = (element as any).selectedMentions || [];
+                      const separatorMap = {
+                        'double_newline': '\n\n',
+                        'single_newline': '\n',
+                        'dash': ' - ',
+                        'bullet': ' • ',
+                        'pipe': ' | '
+                      };
+
+                      const separator = separatorMap[e.target.value as keyof typeof separatorMap] || '\n\n';
+                      const combinedText = selectedMentions
+                        .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
+                        .filter(Boolean)
+                        .join(separator);
+
+                      onChange(element.id, 'text', combinedText);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '4px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '11px'
+                    }}
+                  >
+                    <option value="double_newline">Double saut de ligne</option>
+                    <option value="single_newline">Saut de ligne simple</option>
+                    <option value="dash">Tiret (-)</option>
+                    <option value="bullet">Point (•)</option>
+                    <option value="pipe">Barre verticale (|)</option>
+                  </select>
+                </div>
+              )}
+            </div>
+          )}
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
