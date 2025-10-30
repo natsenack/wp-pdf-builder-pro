@@ -707,7 +707,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const bodyFontFamily = props.bodyFontFamily || fontFamily;
     const bodyFontWeight = props.bodyFontWeight || fontWeight;
     const bodyFontStyle = props.bodyFontStyle || fontStyle;
-    const textAlign = props.textAlign || 'left';
+    const textAlign = 'left'; // Forcer alignement à gauche pour company_info
     const theme = (props.theme || 'corporate') as keyof typeof themes;
     const showHeaders = props.showHeaders !== false; // Par défaut true
     const showBorders = props.showBorders !== false; // Par défaut true
@@ -773,13 +773,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.fillStyle = txtColor;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
-    // Calcul de la position X selon l'alignement
+    // Calcul de la position X (toujours aligné à gauche pour company_info)
     let x = 10;
-    if (textAlign === 'center') {
-      x = element.width / 2;
-    } else if (textAlign === 'right') {
-      x = element.width - 10;
-    }
 
     let y = 20;
 
