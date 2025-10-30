@@ -218,29 +218,222 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
       case 'order_number':
         console.log('Rendering order_number:', element);
-        ctx.fillStyle = props.color || props.textColor || '#000000';
-        ctx.font = `${props.fontWeight || 'bold'} ${props.fontSize || 16}px ${props.fontFamily || 'Arial'}`;
-        ctx.textAlign = (props.textAlign || props.align || 'left') as CanvasTextAlign;
-        ctx.textBaseline = 'top';
-        const orderText = replaceVariables(props.text || props.orderNumber || 'N° de commande');
-        console.log('Order_number text to render:', orderText);
-        ctx.fillText(orderText, 0, 0);
+        // Copier la logique complète de Canvas.tsx pour cohérence
+        const orderFontSize = props.fontSize || 14;
+        const orderFontFamily = props.fontFamily || 'Arial';
+        const orderFontWeight = props.fontWeight || 'normal';
+        const orderFontStyle = props.fontStyle || 'normal';
+        const orderLabelFontSize = props.labelFontSize || orderFontSize;
+        const orderLabelFontFamily = props.labelFontFamily || orderFontFamily;
+        const orderLabelFontWeight = props.labelFontWeight || 'bold';
+        const orderLabelFontStyle = props.labelFontStyle || orderFontStyle;
+        const orderNumberFontSize = props.numberFontSize || orderFontSize;
+        const orderNumberFontFamily = props.numberFontFamily || orderFontFamily;
+        const orderNumberFontWeight = props.numberFontWeight || orderFontWeight;
+        const orderNumberFontStyle = props.numberFontStyle || orderFontStyle;
+        const orderDateFontSize = props.dateFontSize || (orderFontSize - 2);
+        const orderDateFontFamily = props.dateFontFamily || orderFontFamily;
+        const orderDateFontWeight = props.dateFontWeight || orderFontWeight;
+        const orderDateFontStyle = props.dateFontStyle || orderFontStyle;
+        const orderTextAlign = props.textAlign || 'left';
+        const orderLabelTextAlign = props.labelTextAlign || orderTextAlign;
+        const orderNumberTextAlign = props.numberTextAlign || orderTextAlign;
+        const orderDateTextAlign = props.dateTextAlign || orderTextAlign;
+        const orderShowLabel = props.showLabel !== false;
+        const orderShowDate = props.showDate !== false;
+        const orderLabelPosition = props.labelPosition || 'above';
+
+        ctx.fillStyle = props.backgroundColor || 'transparent';
+        ctx.fillRect(0, 0, element.width, element.height);
+
+        ctx.fillStyle = '#000000';
+
+        // Numéro de commande et date
+        const orderNumber = replaceVariables('{{order_number}}') || 'CMD-XXXX-XXXX';
+        const orderDate = replaceVariables('{{order_date}}') || '30/10/2025';
+
+        console.log('Order data for preview: orderNumber="' + orderNumber + '", orderDate="' + orderDate + '"');
+
+        // Calcul de la position X
+        let orderX: number;
+        if (orderTextAlign === 'left') {
+          orderX = 10;
+        } else if (orderTextAlign === 'center') {
+          orderX = element.width / 2;
+        } else { // right
+          orderX = element.width - 10;
+        }
+
+        let orderY = 20;
+
+        // Afficher selon la position du libellé et du numéro
+        if (orderShowLabel) {
+          if (orderLabelPosition === 'above') {
+            // Libellé au-dessus, numéro en-dessous
+            ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
+            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', orderX, orderY);
+            orderY += 18;
+            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, orderX, orderY);
+          } else if (orderLabelPosition === 'below') {
+            // Numéro au-dessus, libellé en-dessous
+            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, orderX, orderY);
+            orderY += 18;
+            ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
+            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', orderX, orderY);
+          } else if (orderLabelPosition === 'left') {
+            // Libellé à gauche, numéro à droite (centré)
+            ctx.textAlign = 'left';
+            const labelX = 10;
+            const numberX = element.width / 2;
+            ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
+            ctx.fillText('N° de commande:', labelX, orderY);
+            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+            ctx.fillText(orderNumber, numberX, orderY);
+          } else if (orderLabelPosition === 'right') {
+            // Numéro à gauche, libellé à droite (centré)
+            ctx.textAlign = 'left';
+            const numberX = 10;
+            const labelX = element.width / 2;
+            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+            ctx.fillText(orderNumber, numberX, orderY);
+            ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
+            ctx.fillText('N° de commande:', labelX, orderY);
+          }
+        } else {
+          // Pas de libellé, juste le numéro
+          ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+          ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
+          ctx.fillText(orderNumber, orderX, orderY);
+        }
+
+        // Afficher la date sur une nouvelle ligne
+        if (orderShowDate) {
+          ctx.font = `${orderDateFontStyle} ${orderDateFontWeight} ${orderDateFontSize}px ${orderDateFontFamily}`;
+          ctx.textAlign = orderDateTextAlign as CanvasTextAlign;
+          ctx.fillText(`Date: ${orderDate}`, orderX, orderY + 20);
+        }
         break;
 
       case 'company_info':
         console.log('Rendering company_info:', element);
-        ctx.fillStyle = props.color || props.textColor || '#000000';
-        ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 12}px ${props.fontFamily || 'Arial'}`;
-        ctx.textAlign = (props.textAlign || 'left') as CanvasTextAlign;
-        ctx.textBaseline = 'top';
-        const infoText = replaceVariables(props.text || props.companyInfo || 'Informations entreprise');
-        console.log('Company_info text to render:', infoText);
-        const infoLines = infoText.split('\n');
-        let infoY = 0;
-        infoLines.forEach((line: string) => {
-          ctx.fillText(line, 0, infoY);
-          infoY += props.fontSize || 12;
-        });
+        // Copier la logique complète de Canvas.tsx pour cohérence
+        const companyFontSize = props.fontSize || 12;
+        const companyFontFamily = props.fontFamily || 'Arial';
+        const companyFontWeight = props.fontWeight || 'normal';
+        const companyFontStyle = props.fontStyle || 'normal';
+        const companyHeaderFontSize = props.headerFontSize || Math.round(companyFontSize * 1.2);
+        const companyHeaderFontFamily = props.headerFontFamily || companyFontFamily;
+        const companyHeaderFontWeight = props.headerFontWeight || 'bold';
+        const companyHeaderFontStyle = props.headerFontStyle || companyFontStyle;
+        const companyBodyFontSize = props.bodyFontSize || companyFontSize;
+        const companyBodyFontFamily = props.bodyFontFamily || companyFontFamily;
+        const companyBodyFontWeight = props.bodyFontWeight || companyFontWeight;
+        const companyBodyFontStyle = props.bodyFontStyle || companyFontStyle;
+        const companyTextAlign = 'left'; // Forcer alignement à gauche comme dans Canvas.tsx
+        const companyTheme = (props.theme || 'corporate') as keyof typeof companyThemes;
+        const companyShowHeaders = props.showHeaders !== false;
+        const companyShowBorders = props.showBorders !== false;
+        const companyShowCompanyName = props.showCompanyName !== false;
+        const companyShowAddress = props.showAddress !== false;
+        const companyShowPhone = props.showPhone !== false;
+        const companyShowEmail = props.showEmail !== false;
+        const companyShowSiret = props.showSiret !== false;
+        const companyShowTva = props.showTva !== false;
+
+        // Définition des thèmes (simplifiée pour aperçu)
+        const companyThemes = {
+          corporate: { backgroundColor: '#ffffff', borderColor: '#1f2937', textColor: '#374151', headerTextColor: '#111827' },
+          modern: { backgroundColor: '#ffffff', borderColor: '#3b82f6', textColor: '#1e40af', headerTextColor: '#1e3a8a' },
+          elegant: { backgroundColor: '#ffffff', borderColor: '#8b5cf6', textColor: '#6d28d9', headerTextColor: '#581c87' },
+          minimal: { backgroundColor: '#ffffff', borderColor: '#e5e7eb', textColor: '#374151', headerTextColor: '#111827' },
+          professional: { backgroundColor: '#ffffff', borderColor: '#059669', textColor: '#047857', headerTextColor: '#064e3b' }
+        };
+
+        const companyCurrentTheme = companyThemes[companyTheme] || companyThemes.corporate;
+        const companyBgColor = props.backgroundColor || companyCurrentTheme.backgroundColor;
+        const companyBorderCol = props.borderColor || companyCurrentTheme.borderColor;
+        const companyTxtColor = props.textColor || companyCurrentTheme.textColor;
+        const companyHeaderTxtColor = props.headerTextColor || companyCurrentTheme.headerTextColor;
+
+        // Fond
+        ctx.fillStyle = companyBgColor;
+        ctx.fillRect(0, 0, element.width, element.height);
+
+        // Bordures
+        if (companyShowBorders) {
+          ctx.strokeStyle = companyBorderCol;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(0, 0, element.width, element.height);
+        }
+
+        ctx.fillStyle = companyTxtColor;
+        ctx.textAlign = companyTextAlign as CanvasTextAlign;
+
+        // Position X (toujours à gauche)
+        const companyX = 10;
+        let companyY = 20;
+
+        // Informations entreprise
+        const companyData = {
+          name: props.companyName || 'Ma Boutique En Ligne',
+          address: props.companyAddress || '25 avenue des Commerçants',
+          city: props.companyCity || '69000 Lyon',
+          siret: props.companySiret || 'SIRET: 123 456 789 00012',
+          tva: props.companyTva || 'TVA: FR 12 345 678 901',
+          email: props.companyEmail || 'contact@maboutique.com',
+          phone: props.companyPhone || '+33 4 12 34 56 78'
+        };
+
+        console.log('Company data for preview:', companyData);
+
+        // Afficher le nom de l'entreprise
+        if (companyShowCompanyName) {
+          ctx.fillStyle = companyHeaderTxtColor;
+          ctx.font = `${companyHeaderFontStyle} ${companyHeaderFontWeight} ${companyHeaderFontSize}px ${companyHeaderFontFamily}`;
+          ctx.fillText(companyData.name, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.5);
+          ctx.fillStyle = companyTxtColor;
+        }
+
+        // Police normale
+        ctx.font = `${companyBodyFontStyle} ${companyBodyFontWeight} ${companyBodyFontSize}px ${companyBodyFontFamily}`;
+
+        // Afficher l'adresse
+        if (companyShowAddress) {
+          ctx.fillText(companyData.address, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.2);
+          ctx.fillText(companyData.city, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.5);
+        }
+
+        // Afficher le SIRET
+        if (companyShowSiret) {
+          ctx.fillText(companyData.siret, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.2);
+        }
+
+        // Afficher la TVA
+        if (companyShowTva) {
+          ctx.fillText(companyData.tva, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.2);
+        }
+
+        // Afficher l'email
+        if (companyShowEmail) {
+          ctx.fillText(companyData.email, companyX, companyY);
+          companyY += Math.round(companyFontSize * 1.2);
+        }
+
+        // Afficher le téléphone
+        if (companyShowPhone) {
+          ctx.fillText(companyData.phone, companyX, companyY);
+        }
         break;
 
       case 'product_table':
