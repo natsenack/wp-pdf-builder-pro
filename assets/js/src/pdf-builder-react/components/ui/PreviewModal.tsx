@@ -274,23 +274,32 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             ctx.textAlign = orderTextAlign as CanvasTextAlign;
             ctx.fillText(orderLabelText, calculateOrderX(orderTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
-            // Libellé à gauche du numéro, tout aligné à droite
+            // Libellé à gauche, numéro à droite - avec espacement optimal
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.textAlign = 'right' as CanvasTextAlign;
-            ctx.fillText(orderLabelText, element.width - 10, orderY);
-            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.textAlign = 'right' as CanvasTextAlign;
-            // Calculer la position du numéro en fonction de la largeur du libellé
+            ctx.textAlign = 'left' as CanvasTextAlign;
+            ctx.fillText(orderLabelText, 10, orderY);
+
+            // Calculer l'espace disponible pour centrer le numéro ou l'aligner intelligemment
             const labelWidth = ctx.measureText(orderLabelText).width;
-            ctx.fillText(orderNumber, element.width - 10 - labelWidth - 5, orderY); // 5px d'espace
-          } else if (orderLabelPosition === 'right') {
-            // Numéro à gauche, libellé à droite - alignements fixes pour cohérence visuelle
+            const availableSpace = element.width - 20 - labelWidth; // 10px padding des deux côtés
+            const numberX = labelWidth + 15; // 15px d'espace après le libellé
+
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.textAlign = 'left' as CanvasTextAlign; // Toujours aligné à gauche pour le numéro
-            ctx.fillText(orderNumber, 10, orderY); // Toujours à gauche
+            ctx.textAlign = 'left' as CanvasTextAlign;
+            ctx.fillText(orderNumber, numberX, orderY);
+          } else if (orderLabelPosition === 'right') {
+            // Numéro à gauche, libellé à droite - avec espacement optimal
+            ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
+            ctx.textAlign = 'left' as CanvasTextAlign;
+            ctx.fillText(orderNumber, 10, orderY);
+
+            // Calculer la position du libellé après le numéro
+            const numberWidth = ctx.measureText(orderNumber).width;
+            const labelX = numberWidth + 15; // 15px d'espace après le numéro
+
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le libellé
-            ctx.fillText(orderLabelText, element.width - 10, orderY); // Toujours à droite
+            ctx.textAlign = 'left' as CanvasTextAlign;
+            ctx.fillText(orderLabelText, labelX, orderY);
           }
         } else {
           // Pas de libellé, juste le numéro

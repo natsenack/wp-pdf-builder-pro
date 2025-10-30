@@ -1003,23 +1003,32 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText(labelText, calculateX(textAlign), y);
       } else if (labelPosition === 'left') {
-        // Libellé à gauche du numéro, tout aligné à droite
+        // Libellé à gauche, numéro à droite - avec espacement optimal
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = 'right' as CanvasTextAlign;
-        ctx.fillText(labelText, element.width - 10, y);
-        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = 'right' as CanvasTextAlign;
-        // Calculer la position du numéro en fonction de la largeur du libellé
+        ctx.textAlign = 'left' as CanvasTextAlign;
+        ctx.fillText(labelText, 10, y);
+
+        // Calculer l'espace disponible pour centrer le numéro ou l'aligner intelligemment
         const labelWidth = ctx.measureText(labelText).width;
-        ctx.fillText(orderNumber, element.width - 10 - labelWidth - 5, y); // 5px d'espace
-      } else if (labelPosition === 'right') {
-        // Numéro à gauche, libellé à droite - alignements fixes pour cohérence visuelle
+        const availableSpace = element.width - 20 - labelWidth; // 10px padding des deux côtés
+        const numberX = labelWidth + 15; // 15px d'espace après le libellé
+
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = 'left' as CanvasTextAlign; // Toujours aligné à gauche pour le numéro
-        ctx.fillText(orderNumber, 10, y); // Toujours à gauche
+        ctx.textAlign = 'left' as CanvasTextAlign;
+        ctx.fillText(orderNumber, numberX, y);
+      } else if (labelPosition === 'right') {
+        // Numéro à gauche, libellé à droite - avec espacement optimal
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
+        ctx.textAlign = 'left' as CanvasTextAlign;
+        ctx.fillText(orderNumber, 10, y);
+
+        // Calculer la position du libellé après le numéro
+        const numberWidth = ctx.measureText(orderNumber).width;
+        const labelX = numberWidth + 15; // 15px d'espace après le numéro
+
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le libellé
-        ctx.fillText(labelText, element.width - 10, y); // Toujours à droite
+        ctx.textAlign = 'left' as CanvasTextAlign;
+        ctx.fillText(labelText, labelX, y);
       }
     } else {
       // Pas de libellé, juste le numéro
