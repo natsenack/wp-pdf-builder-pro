@@ -170,6 +170,26 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     }
   ];
 
+  // Détecter automatiquement le type de mention basé sur le texte actuel
+  const detectMentionType = () => {
+    const currentText = (element as any).text || '';
+    const currentMentionType = (element as any).mentionType || 'custom';
+
+    // Si un type est déjà défini et que ce n'est pas custom, le garder
+    if (currentMentionType && currentMentionType !== 'custom') {
+      return currentMentionType;
+    }
+
+    // Sinon, essayer de détecter automatiquement
+    const matchingMention = predefinedMentions.find(mention =>
+      mention.key !== 'custom' && mention.text === currentText
+    );
+
+    return matchingMention ? matchingMention.key : 'custom';
+  };
+
+  const currentMentionType = detectMentionType();
+
   return (
     <>
       {/* Système d'onglets pour Mentions */}
@@ -247,13 +267,16 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               Type de mentions
             </label>
             <select
-              value={(element as any).mentionType || 'custom'}
+              value={currentMentionType}
               onChange={(e) => {
                 const selectedMention = predefinedMentions.find(m => m.key === e.target.value);
                 onChange(element.id, 'mentionType', e.target.value);
-                if (selectedMention && selectedMention.text) {
+
+                // Ne mettre à jour le texte que si ce n'est pas "custom" et qu'il y a du texte prédéfini
+                if (selectedMention && selectedMention.key !== 'custom' && selectedMention.text) {
                   onChange(element.id, 'text', selectedMention.text);
                 }
+                // Pour "custom", on garde le texte actuel
               }}
               style={{
                 width: '100%',
