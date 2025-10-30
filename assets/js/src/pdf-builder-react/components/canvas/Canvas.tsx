@@ -953,6 +953,17 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
 
+    // Fonction helper pour calculer la position X selon l'alignement
+    const calculateX = (align: string) => {
+      if (align === 'left') {
+        return 10;
+      } else if (align === 'center') {
+        return element.width / 2;
+      } else { // right
+        return element.width; // Align to the right edge without margin
+      }
+    };
+
     ctx.fillStyle = props.backgroundColor || 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
 
@@ -971,36 +982,26 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       orderDate = wooCommerceManager.getOrderDate() || '27/10/2024';
     }
 
-    // Calcul de la position X selon l'alignement
-    let x: number;
-    if (textAlign === 'left') {
-      x = 10;
-    } else if (textAlign === 'center') {
-      x = element.width / 2;
-    } else { // right
-      x = element.width; // Align to the right edge without margin
-    }
-
     let y = 20;
     if (showLabel) {
       if (labelPosition === 'above') {
         // Libellé au-dessus, numéro en-dessous
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', x, y);
+        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, x, y);
+        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
       } else if (labelPosition === 'below') {
         // Numéro au-dessus, libellé en-dessous
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, x, y);
+        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
-        ctx.fillText('N° de commande:', x, y);
+        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
       } else if (labelPosition === 'left') {
         // Libellé à gauche, numéro à droite (centré)
         ctx.textAlign = 'left';
@@ -1024,14 +1025,14 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas de libellé, juste le numéro
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = numberTextAlign as CanvasTextAlign;
-      ctx.fillText(orderNumber, x, y);
+      ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
     }
 
     // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
     if (showDate) {
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
       ctx.textAlign = dateTextAlign as CanvasTextAlign;
-      ctx.fillText(`Date: ${orderDate}`, x, y + 20);
+      ctx.fillText(`Date: ${orderDate}`, calculateX(dateTextAlign), y + 20);
     }
     } catch (error) {
       console.error('Error in drawOrderNumber:', error);

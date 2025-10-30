@@ -233,6 +233,17 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         const orderShowDate = props.showDate !== false;
         const orderLabelPosition = props.labelPosition || 'above';
 
+        // Fonction helper pour calculer la position X selon l'alignement
+        const calculateOrderX = (align: string) => {
+          if (align === 'left') {
+            return 10;
+          } else if (align === 'center') {
+            return element.width / 2;
+          } else { // right
+            return element.width; // Align to the right edge without margin
+          }
+        };
+
         ctx.fillStyle = props.backgroundColor || 'transparent';
         ctx.fillRect(0, 0, element.width, element.height);
 
@@ -242,16 +253,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         const orderNumber = replaceVariables('{{order_number}}') || 'CMD-XXXX-XXXX';
         const orderDate = replaceVariables('{{order_date}}') || '30/10/2025';
 
-        // Calcul de la position X
-        let orderX: number;
-        if (orderTextAlign === 'left') {
-          orderX = 10;
-        } else if (orderTextAlign === 'center') {
-          orderX = element.width / 2;
-        } else { // right
-          orderX = element.width; // Align to the right edge without margin
-        }
-
         let orderY = 20;
 
         // Afficher selon la position du libellé et du numéro
@@ -260,20 +261,20 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             // Libellé au-dessus, numéro en-dessous
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', orderX, orderY);
+            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
             orderY += 18;
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, orderX, orderY);
+            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
           } else if (orderLabelPosition === 'below') {
             // Numéro au-dessus, libellé en-dessous
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, orderX, orderY);
+            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
             orderY += 18;
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', orderX, orderY);
+            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
             // Libellé à gauche, numéro à droite (centré)
             ctx.textAlign = 'left';
@@ -297,14 +298,14 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           // Pas de libellé, juste le numéro
           ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
           ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-          ctx.fillText(orderNumber, orderX, orderY);
+          ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
         }
 
         // Afficher la date sur une nouvelle ligne
         if (orderShowDate) {
           ctx.font = `${orderDateFontStyle} ${orderDateFontWeight} ${orderDateFontSize}px ${orderDateFontFamily}`;
           ctx.textAlign = orderDateTextAlign as CanvasTextAlign;
-          ctx.fillText(`Date: ${orderDate}`, orderX, orderY + 20);
+          ctx.fillText(`Date: ${orderDate}`, calculateOrderX(orderDateTextAlign), orderY + 20);
         }
         break;
 
