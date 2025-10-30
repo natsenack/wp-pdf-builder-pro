@@ -1,15 +1,16 @@
 # 🚀 Reconstruction Système d'Aperçu
 
 **📅 Date** : 30 octobre 2025  
-**🔄 Statut** : Phase 3.0 en cours - TemplateDataProvider implémenté (récupération variables depuis JSON template)
+**🔄 Statut** : Phase 3.0 en cours - Rendu PHP via TCPDF implémenté pour aperçu haute précision
 
 ---
 
 ## 🎯 Vue d'ensemble
 
 Reconstruction complète du système d'aperçu PDF avec architecture moderne :
-- **Canvas** : Éditeur avec données d'exemple
-- **Metabox** : WooCommerce avec données réelles
+- **Canvas 2D** : Éditeur avec données d'exemple et rendu Canvas (fallback)
+- **Metabox** : WooCommerce avec données réelles et rendu PHP/TCPDF (prioritaire)
+- **API Unifiée** : PreviewImageAPI pour générer images PNG côté serveur
 
 ---
 
@@ -472,18 +473,37 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 **🔄 Prochaines étapes** : Une fois la Phase 2 terminée, passer à la Phase 3 (Tests & optimisation) en s'appuyant sur cette analyse.
 
 ### ✅ Phase 3 : Tests & optimisation
-- [ ] **Étape 3.0 : Implémenter sauvegarde automatique + rechargement JSON**
-  - Sauvegarde automatique du state.elements en JSON dans BDD toutes les 2-3 secondes
-  - Rechargement du JSON depuis BDD pour l'aperçu après chaque sauvegarde
-  - Indicateur visuel "Sauvegarde en cours..." pendant les sauvegardes
-  - Gestion des erreurs de sauvegarde avec retry automatique
-  - **Nouveau** : `TemplateDataProvider` pour récupérer variables depuis JSON du template (et pas juste données fictives)
-  - **Test** : Modifications sauvegardées automatiquement, aperçu cohérent avec BDD, variables depuis JSON affichées
+- [x] **Étape 3.0 : Implémenter rendu PHP côté serveur avec PreviewImageAPI**
+  - ✅ Créé handler AJAX `pdf_builder_preview_image` dans `plugin/src/AJAX/preview-image-handler.php`
+  - ✅ Implémenté PreviewImageAPI.ts pour communication frontend ↔ backend
+  - ✅ Intégré dans PreviewModal.tsx avec support dual Canvas/PHP
+  - ✅ Rendu TCPDF pour product_table, company_logo, customer_info, company_info
+  - ✅ Conversion image PNG en base64 pour affichage modal
+  - ✅ Cache client pour éviter re-rendus inutiles
+  - **Déployé** : Fichiers déployés via FTP le 30/10 à 21:11:33
+  - **Approche** : Utilise système PHP/TCPDF existant au lieu de réinventer Canvas 2D
+  - **Avantage** : Rendu haute précision identique à génération PDF production
+  - **Test** : Aperçu PHP testable après déploiement (nécessite order_id + template_id valides)
   - **Fichiers concernés** : 
-    - `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx` (utilise TemplateDataProvider)
-    - `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts` (NOUVEAU - récupère variables depuis éléments du template)
+    - `plugin/src/AJAX/preview-image-handler.php` (NOUVEAU - handler AJAX PHP)
+    - `assets/js/src/pdf-builder-react/api/PreviewImageAPI.ts` (NOUVEAU - API frontend)
+    - `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx` (modifié - dual rendering)
+    - `plugin/bootstrap.php` (modifié - chargement handler AJAX)
+
+- [ ] **Étape 3.1 : Tests sauvegarde automatique**
+  - [ ] Sauvegarde automatique state.elements en JSON toutes 2-3 secondes
+  - [ ] Rechargement JSON depuis BDD pour aperçu après chaque sauvegarde
+  - [ ] Indicateur "Sauvegarde en cours..." pendant les opérations
+  - [ ] Gestion erreurs et retry automatique
+  - **Fichiers concernés** : 
     - `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx`
-    - `assets/js/src/pdf-builder-react/renderers/PreviewRenderer.ts` (amélioré pour meilleur rendu texte et variables)
+    - `assets/js/src/pdf-builder-react/hooks/useSaveState.ts`
+
+- [ ] **Étape 3.2 : Tests intégration Canvas/Metabox**
+  - [ ] Basculement fluide entre modes Canvas et Metabox
+  - [ ] Cohérence rendu visuel entre modes
+  - [ ] Validation données WooCommerce réelles
+  - [ ] Scénarios complexes (multi-éléments, variables dynamiques)
 
 - [ ] **Étape 3.1 : Tests unitaires (100% couverture)**
   - Écrire tests unitaires pour toutes les classes PHP et JS
@@ -547,8 +567,17 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 3/7  
-**Progression** : 45% (Phase 2 terminée 100% + Phase 3.0 TemplateDataProvider implémenté)  
-**Prochaine action** : Déploiement et tests TemplateDataProvider, puis continuer Phase 3.0 (sauvegarde auto, rechargement JSON)
+**Progression** : 55% (Phase 2 terminée 100% + Phase 3.0 partiellement complétée - Rendu PHP implémenté)  
+**Statut détaillé** :
+- ✅ Phase 2 (Reconstruction) : 100% TERMINÉE
+- 🔄 Phase 3.0 (Rendu PHP) : **NOUVELLE** - PreviewImageAPI + handler AJAX déployés
+- ⏳ Phase 3.1-3.2 (Tests) : À faire après validation rendu PHP
+- ⏳ Phase 4-7 : Planification ultérieure
+
+**Prochaine action** : 
+1. Valider fonctionnement rendu PHP en WooCommerce (order real > render > afficher image)
+2. Implémenter sauvegarde automatique et rechargement JSON (Phase 3.1)
+3. Tests intégration Canvas/Metabox complets (Phase 3.2)
 
 ---
 
