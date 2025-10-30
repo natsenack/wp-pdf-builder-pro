@@ -910,10 +910,21 @@ class PDF_Builder_Core
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+        // Préparer les données du template au bon format
+        $template_data = array(
+            'elements' => $elements,
+            'canvas' => array(
+                'width' => 794,
+                'height' => 1123,
+                'backgroundColor' => '#ffffff'
+            ),
+            'updated_at' => current_time('mysql')
+        );
+
         $result = $wpdb->update(
             $table_templates,
             array(
-                'template_data' => $elements_json,
+                'template_data' => wp_json_encode($template_data),
                 'updated_at' => current_time('mysql')
             ),
             array('id' => $template_id),

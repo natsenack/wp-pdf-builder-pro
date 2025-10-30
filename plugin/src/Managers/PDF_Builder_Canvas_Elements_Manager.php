@@ -1000,26 +1000,41 @@ class PDF_Builder_Canvas_Elements_Manager
     }
 
     /**
-     * Charger les éléments d'un template (implémentation temporaire avec WP options)
+     * Charger les éléments d'un template depuis la base de données
      */
     private function get_template_elements_from_db($template_id)
     {
-        $option_key = 'pdf_builder_template_' . $template_id . '_elements';
-        $json_data = get_option($option_key, false);
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        if ($json_data === false) {
+        // Récupérer les données depuis la table pdf_builder_templates
+        $template_data = $wpdb->get_var($wpdb->prepare(
+            "SELECT template_data FROM $table_templates WHERE id = %d",
+            $template_id
+        ));
+
+        if (!$template_data) {
             return [];
         }
 
-        // Utiliser la nouvelle validation robuste
-        $elements = $this->validate_and_clean_json_elements($json_data, "template_{$template_id}");
-
-        // Gérer les erreurs
-        if (is_wp_error($elements)) {
+        // Décoder le JSON avec gestion des erreurs
+        $decoded_data = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF BUILDER - Erreur décodage JSON template ' . $template_id . ': ' . json_last_error_msg());
             return [];
         }
 
-        return $elements ?: [];
+        // Extraire les éléments du tableau (le format sauvegardé est un tableau d'éléments)
+        if (is_array($decoded_data)) {
+            return $decoded_data;
+        }
+
+        // Si c'est un objet avec une clé 'elements', l'utiliser
+        if (is_array($decoded_data) && isset($decoded_data['elements'])) {
+            return $decoded_data['elements'];
+        }
+
+        return [];
     }
 
     /**
