@@ -1208,27 +1208,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
-    console.log('🎯 [REACT CANVAS] DRAWING MENTIONS:', {
-      id: element.id,
-      type: element.type,
-      text: (element as any).text,
-      width: element.width,
-      height: element.height,
-      fontSize: (element as any).fontSize,
-      fontSizeType: typeof (element as any).fontSize,
-      rawProps: element
-    });
-
     const props = element as any;
     const fontSizeRaw = props.fontSize || 10;
     // Parser la valeur fontSize pour gérer les strings comme '11px'
     const fontSize = typeof fontSizeRaw === 'string' ? parseFloat(fontSizeRaw.toString().replace('px', '')) : fontSizeRaw;
-    console.log('🔤 FONT SIZE DEBUG:', {
-      propsFontSize: props.fontSize,
-      fontSizeRaw: fontSizeRaw,
-      parsedFontSize: fontSize,
-      fontSizeType: typeof fontSize
-    });
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
     const fontStyle = props.fontStyle || 'normal';
@@ -1300,7 +1283,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-    console.log('🎨 FINAL FONT STRING:', ctx.font);
     ctx.textAlign = textAlign as CanvasTextAlign;
 
     // Fonction de wrapping du texte

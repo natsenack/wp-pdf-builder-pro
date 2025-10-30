@@ -95,7 +95,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     
     const { orderId, templateId } = getOrderAndTemplateId();
     if (orderId > 0 && templateId > 0) {
-      console.log('[PREVIEW MODAL] Loading PHP preview for order', orderId, 'template', templateId);
       (async () => {
         setIsLoading(true);
         try {
@@ -107,7 +106,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
           if (result.success && result.data?.image) {
             setPreviewImage(result.data.image);
-            console.log('[PREVIEW MODAL] ✅ Image PHP chargée');
           } else {
             console.warn('[PREVIEW MODAL] ❌ Erreur PHP rendu:', result.error);
             setUsePhpRendering(false);
@@ -196,19 +194,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
-    console.log('🔍 [PREVIEW MODAL] renderPreview called');
-    console.log('🔍 [PREVIEW MODAL] canvasRef.current:', !!canvasRef.current);
-    console.log('🔍 [PREVIEW MODAL] previewElements.length:', previewElements.length);
-    console.log('🔍 [PREVIEW MODAL] dataProvider:', !!dataProvider);
-
-    // Log de la position du logo dans previewElements
-    const companyLogo = previewElements.find(el => el.type === 'company_logo');
-    if (companyLogo) {
-      console.log('🔍 [PREVIEW MODAL] Company logo position in previewElements:', companyLogo.x, companyLogo.y);
-    }
-
     if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
-      console.log('🔍 [PREVIEW MODAL] Skipping render - missing requirements');
       return;
     }
 
@@ -219,13 +205,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       canvasRef.current.width = canvasWidth;
       canvasRef.current.height = canvasHeight;
 
-      console.log('🔍 [PREVIEW MODAL] Starting PreviewRenderer.render with:', {
-        canvasWidth,
-        canvasHeight,
-        elementCount: previewElements.length,
-        elements: previewElements.map(el => ({ type: el.type, x: el.x, y: el.y }))
-      });
-
       PreviewRenderer.render({
         canvas: canvasRef.current,
         elements: previewElements,
@@ -234,8 +213,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         width: canvasWidth,
         height: canvasHeight
       });
-
-      console.log('🔍 [PREVIEW MODAL] PreviewRenderer.render completed');
     } catch (error) {
       console.error('❌ [PREVIEW MODAL] Erreur lors du rendu de l\'aperçu:', error);
     } finally {
@@ -246,7 +223,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   // Forcer le re-rendu de l'aperçu quand les éléments changent
   useEffect(() => {
     if (isOpen && previewElements.length > 0 && canvasRef.current) {
-      console.log('🔄 [PREVIEW MODAL] previewElements changed, re-rendering preview');
       renderPreview();
     }
   }, [previewElements, renderPreview, isOpen]);
