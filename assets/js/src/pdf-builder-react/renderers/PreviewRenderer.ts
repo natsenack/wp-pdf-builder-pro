@@ -40,8 +40,21 @@ export class PreviewRenderer {
       height = this.A4_HEIGHT_PX
     } = options;
 
+    console.log('🎨 [PREVIEW RENDER] Starting preview render');
+    console.log('🎨 [PREVIEW RENDER] Canvas dimensions:', width, 'x', height);
+    console.log('🎨 [PREVIEW RENDER] Number of elements:', elements.length);
+    console.log('🎨 [PREVIEW RENDER] Elements:', elements.map(el => ({
+      type: el.type,
+      x: el.x,
+      y: el.y,
+      width: el.width,
+      height: el.height,
+      visible: el.visible
+    })));
+
     const ctx = canvas.getContext('2d');
     if (!ctx) {
+      console.error('❌ [PREVIEW RENDER] Canvas 2D context not available');
       throw new Error('Canvas 2D context not available');
     }
 
@@ -68,6 +81,8 @@ export class PreviewRenderer {
     if (zoom !== 1.0) {
       ctx.restore();
     }
+
+    console.log('✅ [PREVIEW RENDER] Preview render completed');
   }
 
   /**
@@ -78,6 +93,8 @@ export class PreviewRenderer {
     element: Element,
     dataProvider: DataProvider
   ): void {
+    console.log('🎯 [ELEMENT RENDER] Rendering element:', element.type, 'at position:', element.x, element.y, 'size:', element.width, 'x', element.height);
+
     ctx.save();
 
     // Appliquer la transformation de base (position, rotation)
@@ -98,7 +115,9 @@ export class PreviewRenderer {
         break;
 
       case 'company_logo':
+        console.log('🏢 [COMPANY LOGO] Starting company logo render');
         this.renderCompanyLogo(ctx, props);
+        console.log('🏢 [COMPANY LOGO] Company logo render completed');
         break;
 
       case 'order_number':
@@ -203,30 +222,46 @@ export class PreviewRenderer {
    * Rend le logo de l'entreprise
    */
   private static renderCompanyLogo(ctx: CanvasRenderingContext2D, props: any): void {
+    console.log('🏢 [COMPANY LOGO] Props received:', props);
+
     // Essayer de récupérer l'URL du logo depuis les paramètres WordPress
     let logoUrl = props.src || props.logoUrl || props.imageUrl;
+    console.log('🏢 [COMPANY LOGO] Initial logoUrl from props:', logoUrl);
 
     // Si pas d'URL définie, essayer de récupérer depuis WordPress/WooCommerce
     if (!logoUrl) {
       // Essayer depuis pdfBuilderData (paramètres personnalisés)
       if ((window as any).pdfBuilderData?.companyLogo) {
         logoUrl = (window as any).pdfBuilderData.companyLogo;
+        console.log('🏢 [COMPANY LOGO] Found logoUrl from pdfBuilderData:', logoUrl);
       }
 
       // Essayer depuis les options WooCommerce
       if (!logoUrl && (window as any).woocommerce_settings?.companyLogo) {
         logoUrl = (window as any).woocommerce_settings.companyLogo;
+        console.log('🏢 [COMPANY LOGO] Found logoUrl from woocommerce_settings:', logoUrl);
       }
 
       // Essayer depuis les options WordPress générales
       if (!logoUrl && (window as any).wpSettings?.siteLogo) {
         logoUrl = (window as any).wpSettings.siteLogo;
+        console.log('🏢 [COMPANY LOGO] Found logoUrl from wpSettings:', logoUrl);
+      }
+
+      // URL de fallback pour les tests - un logo générique
+      if (!logoUrl) {
+        logoUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTUwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiIHN0cm9rZS13aWR0aD0iMSIvPgo8dGV4dCB4PSI3NSIgeT0iNDAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zNWVtIj5Db21wYW55IExvZ288L3RleHQ+Cjwvc3ZnPgo=';
+        console.log('🏢 [COMPANY LOGO] Using fallback logo URL');
       }
     }
 
+    console.log('🏢 [COMPANY LOGO] Final logoUrl:', logoUrl);
+
     if (logoUrl) {
+      console.log('🏢 [COMPANY LOGO] Loading image from URL');
       const img = new Image();
       img.onload = () => {
+        console.log('🏢 [COMPANY LOGO] Image loaded successfully, size:', img.width, 'x', img.height);
         // Calculer les dimensions pour respecter le ratio et le fit
         const imgRatio = img.width / img.height;
         const containerRatio = props.width / props.height;
@@ -262,14 +297,17 @@ export class PreviewRenderer {
           drawX = props.width - drawWidth;
         }
 
+        console.log('🏢 [COMPANY LOGO] Drawing at:', drawX, drawY, 'Size:', drawWidth, 'x', drawHeight);
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
       };
       img.onerror = () => {
+        console.log('🏢 [COMPANY LOGO] Image failed to load, rendering placeholder');
         // En cas d'erreur de chargement, afficher le placeholder
         this.renderCompanyLogoPlaceholder(ctx, props);
       };
       img.src = logoUrl;
     } else {
+      console.log('🏢 [COMPANY LOGO] No logoUrl found, rendering placeholder');
       // Afficher le placeholder si pas d'URL
       this.renderCompanyLogoPlaceholder(ctx, props);
     }
