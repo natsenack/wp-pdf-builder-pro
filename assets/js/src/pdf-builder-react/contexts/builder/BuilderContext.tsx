@@ -386,11 +386,54 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                    (window as any).pdfBuilderReactData?.nonce || '';
 
       // Nettoyer les éléments pour la sérialisation JSON
-      const cleanElements = state.elements.map(element => ({
-        ...element,
-        createdAt: element.createdAt instanceof Date ? element.createdAt.toISOString() : new Date().toISOString(),
-        updatedAt: element.updatedAt instanceof Date ? element.updatedAt.toISOString() : new Date().toISOString()
-      }));
+      const cleanElements = state.elements.map(element => {
+        try {
+          // Créer une copie profonde nettoyée
+          const cleaned = JSON.parse(JSON.stringify(element, (key, value) => {
+            // Convertir les dates
+            if (value instanceof Date) {
+              return value.toISOString();
+            }
+            // Supprimer les fonctions et objets non sérialisables
+            if (typeof value === 'function') {
+              return undefined;
+            }
+            // Gérer les objets complexes
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+              // Supprimer les propriétés problématiques
+              const cleanObj: any = {};
+              for (const [k, v] of Object.entries(value)) {
+                if (typeof v !== 'function' && k !== 'canvas' && k !== 'context') {
+                  cleanObj[k] = v;
+                }
+              }
+              return cleanObj;
+            }
+            return value;
+          }));
+
+          // S'assurer que createdAt et updatedAt sont des strings ISO
+          cleaned.createdAt = cleaned.createdAt || new Date().toISOString();
+          cleaned.updatedAt = cleaned.updatedAt || new Date().toISOString();
+
+          return cleaned;
+        } catch (error) {
+          console.error('Erreur lors du nettoyage d\'un élément:', error, element);
+          // Retourner une version minimale en cas d'erreur
+          return {
+            id: element.id || 'unknown',
+            type: element.type || 'text',
+            x: element.x || 0,
+            y: element.y || 0,
+            width: element.width || 100,
+            height: element.height || 50,
+            visible: true,
+            locked: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+        }
+      });
 
       const response = await fetch(ajaxUrl, {
         method: 'POST',
