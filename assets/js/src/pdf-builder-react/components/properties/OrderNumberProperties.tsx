@@ -264,6 +264,12 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="center">Centre</option>
               <option value="right">Droite</option>
             </select>
+            <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+              {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') ?
+                'Pour les positions gauche/droite, les alignements sont automatiquement optimisés.' :
+                'Alignement appliqué au libellé et au numéro.'
+              }
+            </div>
           </div>
 
           <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
@@ -339,27 +345,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="16">Moyen (16px)</option>
               <option value="18">Grand (18px)</option>
               <option value="20">Très grand (20px)</option>
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Alignement du texte
-            </label>
-            <select
-              value={(element as any).textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">Gauche</option>
-              <option value="center">Centre</option>
-              <option value="right">Droite</option>
             </select>
           </div>
 
@@ -463,26 +448,35 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               </select>
             </div>
 
-            <div style={{ marginBottom: '0', marginTop: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Alignement du texte
-              </label>
-              <select
-                value={(element as any).labelTextAlign || (element as any).textAlign || 'left'}
-                onChange={(e) => onChange(element.id, 'labelTextAlign', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="left">Gauche</option>
-                <option value="center">Centre</option>
-                <option value="right">Droite</option>
-              </select>
-            </div>
+            {/* Alignement du label - Seulement pour positions above/below */}
+            {((element as any).labelPosition === 'above' || (element as any).labelPosition === 'below' || !(element as any).labelPosition) && (
+              <div style={{ marginBottom: '0', marginTop: '8px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Alignement du label
+                </label>
+                <select
+                  value={(element as any).labelTextAlign || (element as any).textAlign || 'left'}
+                  onChange={(e) => onChange(element.id, 'labelTextAlign', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="left">Gauche</option>
+                  <option value="center">Centre</option>
+                  <option value="right">Droite</option>
+                </select>
+              </div>
+            )}
+            {/* Message pour positions left/right */}
+            {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') && (
+              <div style={{ marginTop: '8px', fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
+                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", le label est automatiquement aligné à {(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}.
+              </div>
+            )}
           </div>
           )}
 
@@ -583,26 +577,35 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               </select>
             </div>
 
-            <div style={{ marginBottom: '0', marginTop: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Alignement du texte
-              </label>
-              <select
-                value={(element as any).numberTextAlign || (element as any).textAlign || 'left'}
-                onChange={(e) => onChange(element.id, 'numberTextAlign', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="left">Gauche</option>
-                <option value="center">Centre</option>
-                <option value="right">Droite</option>
-              </select>
-            </div>
+            {/* Alignement du numéro - Seulement pour positions above/below ou sans label */}
+            {(((element as any).labelPosition === 'above' || (element as any).labelPosition === 'below' || !(element as any).labelPosition) || (element as any).showLabel === false) && (
+              <div style={{ marginBottom: '0', marginTop: '8px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Alignement du numéro
+                </label>
+                <select
+                  value={(element as any).numberTextAlign || (element as any).textAlign || 'left'}
+                  onChange={(e) => onChange(element.id, 'numberTextAlign', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="left">Gauche</option>
+                  <option value="center">Centre</option>
+                  <option value="right">Droite</option>
+                </select>
+              </div>
+            )}
+            {/* Message pour positions left/right */}
+            {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') && (element as any).showLabel !== false && (
+              <div style={{ marginTop: '8px', fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
+                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", le numéro est automatiquement aligné à {(element as any).labelPosition === 'left' ? 'droite' : 'gauche'}.
+              </div>
+            )}
           </div>
 
           {/* Police de la date - Uniquement si la date est affichée */}
