@@ -4,21 +4,38 @@
  * À placer dans le répertoire du plugin WordPress
  */
 
-// Empêcher l'accès direct
+// Charger WordPress si nécessaire
 if (!defined('ABSPATH')) {
-    exit;
+    // Chemin vers wp-load.php (à adapter selon votre installation)
+    $wp_load_path = dirname(__FILE__, 3) . '/wp-load.php'; // Remonter de 3 niveaux: plugin/ -> wp-content/plugins/ -> wp-content/ -> racine WordPress
+
+    if (file_exists($wp_load_path)) {
+        require_once($wp_load_path);
+    } else {
+        die('Erreur: Impossible de charger WordPress. Vérifiez le chemin.');
+    }
 }
 
 // Vérifier les permissions (admin seulement)
 if (!current_user_can('manage_options')) {
-    wp_die('Accès refusé');
+    wp_die('Accès refusé - Vous devez être administrateur.');
 }
 
 echo '<h1>Template ID 1 - Données JSON</h1>';
 echo '<style>pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; }</style>';
 
+// Debug: Afficher les informations de base
+echo '<h2>Debug Information:</h2>';
+echo '<ul>';
+echo '<li>Current User ID: ' . get_current_user_id() . '</li>';
+echo '<li>Is Admin: ' . (current_user_can('manage_options') ? 'Yes' : 'No') . '</li>';
+echo '<li>ABSPATH: ' . ABSPATH . '</li>';
+echo '<li>Plugin File: ' . __FILE__ . '</li>';
+echo '</ul>';
+
 // Récupérer le nonce
 $nonce = wp_create_nonce('pdf_builder_nonce');
+echo '<p>Nonce généré: ' . $nonce . '</p>';
 
 echo '<h2>Récupération des données...</h2>';
 
