@@ -62,15 +62,18 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     if (isOpen && state.elements.length > 0) {
       // Utiliser directement les éléments du state pour l'aperçu temps réel
       setPreviewElements(state.elements);
+    } else if (isOpen && state.elements.length === 0) {
+      // Si la modal est ouverte mais qu'il n'y a pas d'éléments, utiliser un tableau vide
+      setPreviewElements([]);
     }
   }, [isOpen, state.elements]);
 
   // Redessiner le canvas quand les éléments ou le zoom changent
   useEffect(() => {
-    if (previewElements.length > 0) {
+    if (isOpen && previewElements.length > 0) {
       renderPreview();
     }
-  }, [previewElements, zoom]);
+  }, [previewElements, zoom, isOpen]);
 
   // Re-rendre quand les éléments changent
   useEffect(() => {
