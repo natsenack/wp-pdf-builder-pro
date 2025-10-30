@@ -924,13 +924,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
     try {
       const props = element as any;
-      console.log('drawOrderNumber called with props:', {
-        textAlign: props.textAlign,
-        labelTextAlign: props.labelTextAlign,
-        numberTextAlign: props.numberTextAlign,
-        labelPosition: props.labelPosition,
-        showLabel: props.showLabel
-      });
 
       const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
@@ -992,7 +985,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     let y = 20;
     if (showLabel) {
       if (labelPosition === 'above') {
-        console.log('Rendering order_number with position ABOVE, textAlign:', textAlign);
         // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
@@ -1002,7 +994,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, calculateX(textAlign), y);
       } else if (labelPosition === 'below') {
-        console.log('Rendering order_number with position BELOW, textAlign:', textAlign);
         // Numéro au-dessus, libellé en-dessous - utiliser l'alignement global
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = textAlign as CanvasTextAlign;
@@ -1012,7 +1003,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', calculateX(textAlign), y);
       } else if (labelPosition === 'left') {
-        console.log('Rendering order_number with position LEFT, labelAlign:', labelTextAlign, 'numberAlign:', numberTextAlign);
         // Libellé à gauche, numéro à droite - positions fixes pour éviter superposition
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
@@ -1021,7 +1011,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
         ctx.fillText(orderNumber, element.width - 10, y); // Toujours à droite
       } else if (labelPosition === 'right') {
-        console.log('Rendering order_number with position RIGHT, labelAlign:', labelTextAlign, 'numberAlign:', numberTextAlign);
         // Numéro à gauche, libellé à droite - positions fixes pour éviter superposition
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = numberTextAlign as CanvasTextAlign;
