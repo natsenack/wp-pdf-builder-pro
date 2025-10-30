@@ -61,9 +61,22 @@ echo '</ul>';
 
 // Récupérer le nonce
 $nonce = wp_create_nonce('pdf_builder_nonce');
-echo '<p>Nonce généré: ' . $nonce . '</p>';
 
 echo '<h2>Récupération des données...</h2>';
+
+// Debug du nonce
+echo '<h3>Debug du nonce:</h3>';
+echo '<ul>';
+echo '<li>Nonce généré: <code>' . $nonce . '</code></li>';
+echo '<li>Action du nonce: <code>pdf_builder_nonce</code></li>';
+echo '<li>Vérification locale: ' . (wp_verify_nonce($nonce, 'pdf_builder_nonce') ? '✅ VALIDE' : '❌ INVALIDE') . '</li>';
+echo '</ul>';
+
+// URL de l'API
+$url = admin_url('admin-ajax.php?action=pdf_builder_get_template&template_id=1&nonce=' . $nonce);
+echo '<p>URL appelée: <code>' . htmlspecialchars($url) . '</code></p>';
+
+echo '<h3>Réponse brute de l\'API:</h3>';
 
 // Faire l'appel AJAX
 $url = admin_url('admin-ajax.php?action=pdf_builder_get_template&template_id=1&nonce=' . $nonce);
