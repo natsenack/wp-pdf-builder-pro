@@ -213,10 +213,16 @@ export class PDFCanvasCore {
         this.ctx.textAlign = p.textAlign || 'left';
         this.ctx.textBaseline = 'top';
 
-        // Clip pour garder le texte dans les limites
-        this.ctx.beginPath();
-        this.ctx.rect(0, 0, width, height);
-        this.ctx.clip();
+        // Pour les mentions en mode medley, ne pas appliquer de clipping
+        // pour permettre au texte de dépasser si nécessaire
+        const isMedleyMentions = element.type === 'mentions' && p.mentionType === 'medley';
+
+        if (!isMedleyMentions) {
+            // Clip pour garder le texte dans les limites (pour les autres éléments)
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, width, height);
+            this.ctx.clip();
+        }
 
         const lines = text.split('\n');
         const lineHeight = fontSize * 1.3;

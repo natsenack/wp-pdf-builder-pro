@@ -461,13 +461,13 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           // Ajuster automatiquement la hauteur selon le nombre de lignes
                           const lines = combinedText.split('\n');
                           const fontSize = (element as any).fontSize || 10;
-                          const lineHeight = fontSize * 1.3;
-                          const padding = 10; // marge interne
-                          const minHeight = 60; // hauteur minimale
+                          const lineHeight = fontSize * 1.4; // Augmenté de 1.3 à 1.4 pour plus de marge
+                          const padding = 15; // Augmenté de 10 à 15 pour plus de marge
+                          const minHeight = 80; // Augmenté de 60 à 80 pour plus de marge
                           const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
 
-                          // Ne pas dépasser une hauteur maximale raisonnable
-                          const maxHeight = 300;
+                          // Limite maximale plus haute pour les medleys
+                          const maxHeight = 500; // Augmenté de 300 à 500
                           const newHeight = Math.min(calculatedHeight, maxHeight);
 
                           if ((element as any).height !== newHeight) {
@@ -525,11 +525,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                       // Ajuster la hauteur selon le nouveau nombre de lignes
                       const lines = combinedText.split('\n');
                       const fontSize = (element as any).fontSize || 10;
-                      const lineHeight = fontSize * 1.3;
-                      const padding = 10;
-                      const minHeight = 60;
+                      const lineHeight = fontSize * 1.4; // Augmenté pour plus de marge
+                      const padding = 15;
+                      const minHeight = 80;
                       const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
-                      const maxHeight = 300;
+                      const maxHeight = 500; // Limite plus haute pour les medleys
                       const newHeight = Math.min(calculatedHeight, maxHeight);
 
                       if ((element as any).height !== newHeight) {
@@ -681,11 +681,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                   const lines = combinedText.split('\n');
                   const fontSize = parseInt(e.target.value) || 10;
-                  const lineHeight = fontSize * 1.3;
-                  const padding = 10;
-                  const minHeight = 60;
+                  const lineHeight = fontSize * 1.4; // Augmenté pour plus de marge
+                  const padding = 15;
+                  const minHeight = 80;
                   const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
-                  const maxHeight = 300;
+                  const maxHeight = 500; // Limite plus haute pour les medleys
                   const newHeight = Math.min(calculatedHeight, maxHeight);
 
                   if ((element as any).height !== newHeight) {
