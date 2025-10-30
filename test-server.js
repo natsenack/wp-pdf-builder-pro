@@ -39,9 +39,5 @@ const server = http.createServer((req, res) => {
 
 const PORT = 3000;
 server.listen(PORT, () => {
-    console.log(`🚀 Serveur de test démarré sur http://localhost:${PORT}`);
-    console.log(`📁 Répertoire servi: ${__dirname}`);
-    console.log(`🎯 Test drag & drop: http://localhost:${PORT}/test-drag-drop.html`);
-    console.log(`🎯 Test fluidité: http://localhost:${PORT}/test-drag-fluidity.html`);
-    console.log(`💡 Appuyez sur Ctrl+C pour arrêter le serveur`);
+    // Serveur démarré
 });

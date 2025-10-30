@@ -54,9 +54,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     // Dessiner les éléments
-    console.log('Canvas rendering', state.elements.length, 'elements');
     state.elements.forEach((element, index) => {
-      console.log(`Drawing element ${index}:`, element.type, 'at', element.x, element.y);
       drawElement(ctx, element);
     });
 
@@ -97,8 +95,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     if (element.rotation) {
       ctx.rotate((element.rotation * Math.PI) / 180);
     }
-
-    console.log(`Rendering ${element.type} at translated position (${element.x}, ${element.y}), size (${element.width}, ${element.height})`);
 
     // Dessiner selon le type d'élément
     switch (element.type) {
@@ -684,14 +680,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    console.log(`Drawing company_info content:`, {
-      x: element.x,
-      y: element.y,
-      width: element.width,
-      height: element.height,
-      companyName: props.companyName,
-      text: props.text
-    });
 
     const fontSize = props.fontSize || 12;
     const fontFamily = props.fontFamily || 'Arial';
@@ -788,9 +776,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       email: props.companyEmail || 'contact@maboutique.com',
       phone: props.companyPhone || '+33 4 12 34 56 78'
     };
-
-    console.log(`Company data for rendering:`, companyData);
-    console.log(`Rendering company name: "${companyData.name}" at position (${element.x + x}, ${element.y + y})`);
 
     // Afficher le nom de l'entreprise si demandé
     if (showCompanyName) {
@@ -938,14 +923,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as any;
-    console.log(`Drawing order_number content:`, {
-      x: element.x,
-      y: element.y,
-      width: element.width,
-      height: element.height,
-      orderNumber: props.orderNumber,
-      text: props.text
-    });
 
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
@@ -992,8 +969,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       orderNumber = wooCommerceManager.getOrderNumber() || 'CMD-2024-01234';
       orderDate = wooCommerceManager.getOrderDate() || '27/10/2024';
     }
-
-    console.log(`Order data for rendering: orderNumber="${orderNumber}", orderDate="${orderDate}"`);
 
     // Calcul de la position X selon l'alignement
     let x: number;

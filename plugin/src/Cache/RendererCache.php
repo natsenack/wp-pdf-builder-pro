@@ -132,7 +132,7 @@ class RendererCache {
         }
 
         if ($cleaned > 0) {
-            error_log("RendererCache: Nettoyé {$cleaned} entrées expirées");
+            // Cache nettoyé
         }
     }
 

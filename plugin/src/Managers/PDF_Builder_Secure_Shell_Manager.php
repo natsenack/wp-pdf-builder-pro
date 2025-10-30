@@ -45,9 +45,6 @@ class PDF_Builder_Secure_Shell_Manager {
             $security_level
         );
 
-        // Log dans error_log
-        error_log($log_message);
-
         // Log aussi dans le logger du plugin si disponible
         if (class_exists('PDF_Builder_Logger')) {
             $method = $success ? 'log' : 'error';

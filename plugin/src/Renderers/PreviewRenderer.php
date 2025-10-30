@@ -150,7 +150,6 @@ class PreviewRenderer {
     public function render(array $elementData) {
         // Vérifier l'initialisation
         if (!$this->initialized) {
-            error_log('PreviewRenderer: Tentative de rendu sans initialisation');
             return false;
         }
 
@@ -166,7 +165,6 @@ class PreviewRenderer {
             return true;
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur de rendu - ' . $e->getMessage());
             return false;
         }
     }
@@ -293,12 +291,9 @@ class PreviewRenderer {
             $this->options['width'] = $newWidth;
             $this->options['height'] = $newHeight;
 
-            error_log('PreviewRenderer: Dimensions définies à ' . $newWidth . 'x' . $newHeight . 'px');
-
             return true;
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur lors de la définition des dimensions - ' . $e->getMessage());
             return false;
         }
     }
@@ -449,8 +444,6 @@ class PreviewRenderer {
         $this->responsive = $responsive;
         $this->options['responsive'] = $responsive;
 
-        error_log('PreviewRenderer: Mode responsive ' . ($responsive ? 'activé' : 'désactivé'));
-
         return true;
     }
 
@@ -472,7 +465,6 @@ class PreviewRenderer {
      */
     public function setContainerDimensions(int $width, int $height) {
         if ($width <= 0 || $height <= 0) {
-            error_log('PreviewRenderer: Dimensions de conteneur invalides');
             return false;
         }
 
@@ -480,8 +472,6 @@ class PreviewRenderer {
             'width' => $width,
             'height' => $height
         ];
-
-        error_log('PreviewRenderer: Dimensions de conteneur définies à ' . $width . 'x' . $height);
 
         return true;
     }
@@ -559,7 +549,6 @@ class PreviewRenderer {
     public function renderElement(array $elementData) {
         // Vérifier l'initialisation
         if (!$this->initialized) {
-            error_log('PreviewRenderer: Tentative de rendu d\'élément sans initialisation');
             return [
                 'success' => false,
                 'error' => 'Renderer non initialisé'
@@ -591,7 +580,6 @@ class PreviewRenderer {
             ]);
 
         } catch (\Exception $e) {
-            error_log('PreviewRenderer: Erreur rendu élément - ' . $e->getMessage());
             return [
                 'success' => false,
                 'error' => $e->getMessage(),

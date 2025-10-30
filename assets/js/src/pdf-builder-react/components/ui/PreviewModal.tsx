@@ -11,7 +11,7 @@ interface PreviewModalProps {
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [zoom, setZoom] = useState(0.5); // Zoom par défaut à 50% pour que le canvas A4 soit visible
+  const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
   const { state } = useBuilder();
@@ -47,6 +47,13 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       loadTemplateElements();
     }
   }, [isOpen]);
+
+  // Redessiner le canvas quand les éléments ou le zoom changent
+  useEffect(() => {
+    if (previewElements.length > 0) {
+      renderPreview();
+    }
+  }, [previewElements, zoom]);
 
   // Re-rendre quand les éléments changent
   useEffect(() => {
@@ -89,16 +96,12 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           const exceedsRight = corrected.x + corrected.width > canvasWidth + margin;
           const exceedsBottom = corrected.y + corrected.height > canvasHeight + margin;
 
-          console.log(`Élément ${element.type}: position (${corrected.x}, ${corrected.y}), taille (${corrected.width}x${corrected.height}), canvas (${canvasWidth}x${canvasHeight})`);
-
           // Seulement corriger si l'élément dépasse vraiment
           if (exceedsRight) {
-            console.log(`Correction horizontale: ${corrected.x} -> ${Math.max(0, canvasWidth - corrected.width)}`);
             corrected.x = Math.max(0, canvasWidth - corrected.width);
           }
 
           if (exceedsBottom) {
-            console.log(`Correction verticale: ${corrected.y} -> ${Math.max(0, canvasHeight - corrected.height)}`);
             corrected.y = Math.max(0, canvasHeight - corrected.height);
           }
 
@@ -110,18 +113,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         });
 
         setPreviewElements(correctedElements);
-        console.log('Éléments chargés pour l\'aperçu:', correctedElements);
-        console.log('Premier élément exemple:', correctedElements[0]);
-        // Log spécifique pour company_info et order_number
-        correctedElements.forEach((element, index) => {
-          if (element.type === 'company_info' || element.type === 'order_number') {
-            console.log(`[${element.type}] Position finale: x=${element.x}, y=${element.y}, width=${element.width}, height=${element.height}`);
-            console.log(`[${element.type}] Propriétés:`, element);
-            console.log(`[${element.type}] Texte à afficher:`, element.type === 'company_info' ?
-              replaceVariables(element.text || element.companyInfo || 'Informations entreprise') :
-              replaceVariables(element.text || element.orderNumber || 'N° de commande'));
-          }
-        });
       } else {
         console.warn('Erreur lors de la récupération du template:', data.data);
         setPreviewElements(state.elements); // Fallback
@@ -217,7 +208,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         break;
 
       case 'order_number':
-        console.log('Rendering order_number:', element);
         // Copier la logique complète de Canvas.tsx pour cohérence
         const orderFontSize = props.fontSize || 14;
         const orderFontFamily = props.fontFamily || 'Arial';
@@ -251,8 +241,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         // Numéro de commande et date
         const orderNumber = replaceVariables('{{order_number}}') || 'CMD-XXXX-XXXX';
         const orderDate = replaceVariables('{{order_date}}') || '30/10/2025';
-
-        console.log('Order data for preview: orderNumber="' + orderNumber + '", orderDate="' + orderDate + '"');
 
         // Calcul de la position X
         let orderX: number;
@@ -321,7 +309,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         break;
 
       case 'company_info':
-        console.log('Rendering company_info:', element);
         // Copier la logique complète de Canvas.tsx pour cohérence
         const companyFontSize = props.fontSize || 12;
         const companyFontFamily = props.fontFamily || 'Arial';
@@ -389,8 +376,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           email: props.companyEmail || 'contact@maboutique.com',
           phone: props.companyPhone || '+33 4 12 34 56 78'
         };
-
-        console.log('Company data for preview:', companyData);
 
         // Afficher le nom de l'entreprise
         if (companyShowCompanyName) {
@@ -507,8 +492,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         backgroundColor: '#ffffff',
         borderRadius: '8px',
         padding: '20px',
-        maxWidth: '90vw',
-        maxHeight: '90vh',
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        width: 'auto',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px'
@@ -593,8 +579,11 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           padding: '16px',
           backgroundColor: '#f9f9f9',
           overflow: 'auto',
-          maxHeight: '60vh',
-          maxWidth: '80vw'
+          maxHeight: '80vh',
+          maxWidth: '90vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start'
         }}>
           {isLoading ? (
             <div style={{
@@ -618,7 +607,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
                 transformOrigin: 'top left',
                 imageRendering: 'pixelated',
                 width: `${canvasWidth * zoom}px`,
-                height: `${canvasHeight * zoom}px`
+                height: `${canvasHeight * zoom}px`,
+                maxWidth: '100%',
+                maxHeight: '100%'
               }}
             />
           )}

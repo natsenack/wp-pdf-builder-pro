@@ -44,7 +44,6 @@ export function initPDFBuilderReact() {
       </React.StrictMode>
     );
 
-    console.log('PDF Builder React initialized successfully');
   } catch (error) {
     console.error('Failed to initialize PDF Builder React:', error);
     container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
