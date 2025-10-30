@@ -272,10 +272,19 @@ export class PDFCanvasVanilla {
     loadTemplateData(templateData) {
         if (!templateData.elements) return;
 
+        console.log('[📥 LOAD] loadTemplateData - elements count:', templateData.elements.length);
         this.elements.clear();
-        templateData.elements.forEach(elementData => {
+        templateData.elements.forEach((elementData, index) => {
             // Conversion des unités vers pixels si nécessaire
-            const properties = { ...elementData.properties };
+            // ✅ FUSION: Merger les données top-level avec properties
+            const properties = {
+                ...elementData.properties,
+                // Récupérer x, y, width, height du top-level si présents
+                x: elementData.x !== undefined ? elementData.x : elementData.properties?.x,
+                y: elementData.y !== undefined ? elementData.y : elementData.properties?.y,
+                width: elementData.width !== undefined ? elementData.width : elementData.properties?.width,
+                height: elementData.height !== undefined ? elementData.height : elementData.properties?.height,
+            };
             
             // Récupérer l'unité depuis les settings
             const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
@@ -290,6 +299,9 @@ export class PDFCanvasVanilla {
             
             const factor = conversions[unit] || conversions['mm'];
             
+            console.log(`[📥 LOAD] Element ${index}: type=${elementData.type}, unit=${unit}, factor=${factor.toFixed(3)}`);
+            console.log(`[📥 LOAD]   AVANT: x=${properties.x}, y=${properties.y}, w=${properties.width}, h=${properties.height}`);
+            
             // Convertir les dimensions vers pixels
             if (properties.x !== undefined) {
                 properties.x = Math.round(properties.x * factor * 100) / 100; // 2 décimales
@@ -303,6 +315,8 @@ export class PDFCanvasVanilla {
             if (properties.height !== undefined) {
                 properties.height = Math.round(properties.height * factor * 100) / 100;
             }
+            
+            console.log(`[📥 LOAD]   APRÈS: x=${properties.x}, y=${properties.y}, w=${properties.width}, h=${properties.height}`);
             
             this.addElement(elementData.type, properties);
         });
@@ -757,17 +771,26 @@ export class PDFCanvasVanilla {
         
         const factor = conversions[unit] || conversions['mm'];
         
+        console.log(`[💾 SAVE] serializeElements - unit=${unit}, factor=${factor.toFixed(4)}, elements=${this.elements.size}`);
+        
         for (const [id, element] of this.elements) {
             // Convertir les positions de pixels vers l'unité configurée
+            const xPixels = element.properties.x || 0;
+            const yPixels = element.properties.y || 0;
+            const wPixels = element.properties.width || 100;
+            const hPixels = element.properties.height || 50;
+            
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: Math.round((element.properties.x || 0) * factor * 100) / 100,
-                y: Math.round((element.properties.y || 0) * factor * 100) / 100,
-                width: Math.round((element.properties.width || 100) * factor * 100) / 100,
-                height: Math.round((element.properties.height || 50) * factor * 100) / 100,
+                x: Math.round(xPixels * factor * 100) / 100,
+                y: Math.round(yPixels * factor * 100) / 100,
+                width: Math.round(wPixels * factor * 100) / 100,
+                height: Math.round(hPixels * factor * 100) / 100,
                 ...element.properties  // Inclure toutes les autres propriétés
             };
+            
+            console.log(`[💾 SAVE]   ${element.type}: px(${xPixels},${yPixels},${wPixels},${hPixels}) → unit(${elementData.x},${elementData.y},${elementData.width},${elementData.height})`);
             
             serialized.push(elementData);
         }

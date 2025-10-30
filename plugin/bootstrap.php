@@ -97,6 +97,16 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
+    // Charger le diagnostic handler (debug)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-diagnostic.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-diagnostic.php';
+    }
+
+    // Charger le test handler (debug)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-test.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-test.php';
+    }
+
     $loaded = true;
 }
 
