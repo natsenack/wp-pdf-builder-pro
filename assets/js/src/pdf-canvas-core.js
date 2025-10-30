@@ -213,26 +213,74 @@ export class PDFCanvasCore {
         this.ctx.textAlign = p.textAlign || 'left';
         this.ctx.textBaseline = 'top';
 
-        // Pour les éléments mentions, appliquer le clipping seulement si les dimensions
-        // ont été modifiées manuellement par l'utilisateur (pas automatiquement)
+        // Pour les éléments mentions, adapter le texte pour qu'il reste dans les limites
         const isMentionsElement = element.type === 'mentions';
-        const isManuallyResized = isMentionsElement &&
-          (p.width !== undefined && p.width !== 500) || // Largeur différente de la valeur par défaut (500)
-          (p.height !== undefined && p.height !== 60);  // Hauteur différente de la valeur par défaut (60)
 
-        if (!isMentionsElement || isManuallyResized) {
-            // Clip pour garder le texte dans les limites
+        if (isMentionsElement) {
+            // Wrapper le texte pour qu'il tienne dans la largeur disponible
+            const wrappedText = this._wrapText(text, width - 10, fontSize); // 10px de marge
+            const lines = wrappedText.split('\n');
+            const lineHeight = fontSize * 1.3;
+
+            // Appliquer le clipping seulement si le texte dépasse en hauteur
+            const totalTextHeight = lines.length * lineHeight;
+            if (totalTextHeight > height) {
+                this.ctx.beginPath();
+                this.ctx.rect(0, 0, width, height);
+                this.ctx.clip();
+            }
+
+            // Rendre le texte wrappé
+            lines.forEach((line, i) => {
+                const y = 5 + i * lineHeight;
+                if (y + lineHeight <= height + 5) { // +5 pour un peu de tolérance
+                    this.ctx.fillText(line, 5, y);
+                }
+            });
+        } else {
+            // Pour les autres éléments, comportement normal avec clipping
             this.ctx.beginPath();
             this.ctx.rect(0, 0, width, height);
             this.ctx.clip();
+
+            const lines = text.split('\n');
+            const lineHeight = fontSize * 1.3;
+
+            lines.forEach((line, i) => {
+                this.ctx.fillText(line, 5, 5 + i * lineHeight);
+            });
+        }
+    }
+
+    /**
+     * Wrap text to fit within a given width
+     * @private
+     */
+    _wrapText(text, maxWidth, fontSize) {
+        if (!text) return '';
+
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = '';
+
+        for (const word of words) {
+            const testLine = currentLine ? currentLine + ' ' + word : word;
+            const metrics = this.ctx.measureText(testLine);
+
+            if (metrics.width > maxWidth && currentLine) {
+                // Le mot ne rentre pas, on passe à la ligne
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = testLine;
+            }
         }
 
-        const lines = text.split('\n');
-        const lineHeight = fontSize * 1.3;
+        if (currentLine) {
+            lines.push(currentLine);
+        }
 
-        lines.forEach((line, i) => {
-            this.ctx.fillText(line, 5, 5 + i * lineHeight);
-        });
+        return lines.join('\n');
     }
 
     /**

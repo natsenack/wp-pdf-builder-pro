@@ -685,7 +685,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Taille du texte
+              Taille du texte (auto-adaptée)
             </label>
             <select
               value={(element as any).fontSize || '10'}
