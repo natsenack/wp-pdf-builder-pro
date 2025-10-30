@@ -58,6 +58,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Écouter les changements du state pour mise à jour temps réel
   useEffect(() => {
+    console.log('🔄 [PREVIEW MODAL] State elements changed:', state.elements.length, 'éléments');
     if (isOpen && state.elements.length > 0) {
       // Utiliser directement les éléments du state pour l'aperçu temps réel
       setPreviewElements(state.elements);
@@ -145,7 +146,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = () => {
-    if (!canvasRef.current || previewElements.length === 0) return;
+    if (!canvasRef.current || previewElements.length === 0) {
+      console.log('⚠️ [PREVIEW MODAL] Cannot render preview:', {
+        hasCanvas: !!canvasRef.current,
+        elementCount: previewElements.length
+      });
+      return;
+    }
+
+    console.log('🎨 [PREVIEW MODAL] Rendering preview with', previewElements.length, 'elements');
 
     setIsLoading(true);
 
@@ -158,8 +167,10 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         width: canvasWidth,
         height: canvasHeight
       });
+
+      console.log('✅ [PREVIEW MODAL] Preview rendered successfully');
     } catch (error) {
-      console.error('Erreur lors du rendu de l\'aperçu:', error);
+      console.error('❌ [PREVIEW MODAL] Erreur lors du rendu de l\'aperçu:', error);
     } finally {
       setIsLoading(false);
     }
