@@ -78,68 +78,55 @@ echo '<p>URL appelée: <code>' . htmlspecialchars($url) . '</code></p>';
 
 echo '<h3>Réponse brute de l\'API:</h3>';
 
-// Faire l'appel AJAX
-$url = admin_url('admin-ajax.php?action=pdf_builder_get_template&template_id=1&nonce=' . $nonce);
+// Au lieu de faire un appel HTTP externe, appelons directement la fonction WordPress
+// Cela évite les problèmes de session/cookies
+echo '<h3>🔧 Méthode alternative : Appel direct de la fonction WordPress</h3>';
 
-$context = stream_context_create([
-    'http' => [
-        'method' => 'GET',
-        'header' => 'Content-Type: application/json',
-        'timeout' => 30,
-    ]
-]);
+// Simuler les paramètres GET comme si c'était une requête AJAX
+$_GET['nonce'] = $nonce;
+$_GET['template_id'] = '1';
 
-$response = file_get_contents($url, false, $context);
+// Démarrer la bufferisation de sortie pour capturer la réponse JSON
+ob_start();
 
-if ($response === false) {
-    echo '<p style="color: red;">Erreur : Impossible de récupérer les données du template.</p>';
-    echo '<p>Vérifiez que le plugin est activé et que l\'action AJAX fonctionne.</p>';
-    exit;
+// Appeler directement la fonction AJAX
+try {
+    pdf_builder_ajax_get_template();
+} catch (Exception $e) {
+    echo '<p style="color: red;">Erreur lors de l\'appel de la fonction: ' . htmlspecialchars($e->getMessage()) . '</p>';
 }
 
+// Récupérer la sortie bufferisée
+$response = ob_get_clean();
+
+echo '<h4>Réponse de la fonction WordPress:</h4>';
+echo '<pre>' . htmlspecialchars($response) . '</pre>';
+
+// Essayer de parser la réponse JSON
 $data = json_decode($response, true);
+if (json_last_error() === JSON_ERROR_NONE) {
+    echo '<h4>Données parsées:</h4>';
+    if ($data['success']) {
+        echo '<p style="color: green;">✅ Template chargé avec succès !</p>';
 
-if (json_last_error() !== JSON_ERROR_NONE) {
-    echo '<p style="color: red;">Erreur : Réponse JSON invalide.</p>';
-    echo '<pre>' . htmlspecialchars($response) . '</pre>';
-    exit;
-}
+        // Afficher les informations générales
+        echo '<h3>Informations générales :</h3>';
+        echo '<ul>';
+        echo '<li><strong>ID :</strong> ' . htmlspecialchars($data['data']['id']) . '</li>';
+        echo '<li><strong>Nom :</strong> ' . htmlspecialchars($data['data']['name']) . '</li>';
+        echo '<li><strong>Créé le :</strong> ' . htmlspecialchars($data['data']['created_at']) . '</li>';
+        echo '<li><strong>Modifié le :</strong> ' . htmlspecialchars($data['data']['updated_at']) . '</li>';
+        echo '<li><strong>Nombre d\'éléments :</strong> ' . count($data['data']['elements']) . '</li>';
+        echo '</ul>';
 
-if (!$data['success']) {
-    echo '<p style="color: red;">Erreur API : ' . htmlspecialchars($data['data']) . '</p>';
-    exit;
-}
+        // Afficher le JSON complet
+        echo '<h3>JSON complet du template :</h3>';
+        echo '<pre>' . json_encode($data['data'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 
-echo '<h2 style="color: green;">✅ Template chargé avec succès</h2>';
-
-echo '<h3>Informations générales :</h3>';
-echo '<ul>';
-echo '<li><strong>ID :</strong> ' . htmlspecialchars($data['data']['id']) . '</li>';
-echo '<li><strong>Nom :</strong> ' . htmlspecialchars($data['data']['name']) . '</li>';
-echo '<li><strong>Créé le :</strong> ' . htmlspecialchars($data['data']['created_at']) . '</li>';
-echo '<li><strong>Modifié le :</strong> ' . htmlspecialchars($data['data']['updated_at']) . '</li>';
-echo '<li><strong>Nombre d\'éléments :</strong> ' . count($data['data']['elements']) . '</li>';
-echo '</ul>';
-
-echo '<h3>Configuration Canvas :</h3>';
-echo '<pre>' . json_encode($data['data']['canvas'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-
-echo '<h3>Éléments (aperçu) :</h3>';
-foreach ($data['data']['elements'] as $index => $element) {
-    echo '<h4>Élément ' . ($index + 1) . ' : ' . htmlspecialchars($element['type']) . '</h4>';
-    echo '<ul>';
-    echo '<li><strong>ID :</strong> ' . htmlspecialchars($element['id']) . '</li>';
-    echo '<li><strong>Position :</strong> x=' . $element['x'] . ', y=' . $element['y'] . '</li>';
-    echo '<li><strong>Taille :</strong> ' . $element['width'] . ' x ' . $element['height'] . '</li>';
-    if (isset($element['text'])) {
-        echo '<li><strong>Texte :</strong> ' . htmlspecialchars(substr($element['text'], 0, 100)) . (strlen($element['text']) > 100 ? '...' : '') . '</li>';
+    } else {
+        echo '<p style="color: red;">❌ Erreur: ' . htmlspecialchars($data['data']) . '</p>';
     }
-    echo '</ul>';
+} else {
+    echo '<p style="color: orange;">⚠️ Réponse non-JSON reçue</p>';
 }
-
-echo '<h3>JSON complet du template :</h3>';
-echo '<pre>' . json_encode($data['data'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-
-echo '<hr>';
-echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=1') . '">Retour à l\'éditeur</a></p>';
 ?>
