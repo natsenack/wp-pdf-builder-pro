@@ -922,9 +922,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element) => {
-    const props = element as any;
+    try {
+      const props = element as any;
 
-    const fontSize = props.fontSize || 14;
+      const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
     const fontStyle = props.fontStyle || 'normal';
@@ -977,12 +978,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     } else if (textAlign === 'center') {
       x = element.width / 2;
     } else { // right
-      x = element.width - 10;
+      x = element.width; // Align to the right edge without margin
     }
 
     let y = 20;
-
-    // Afficher selon la position du libellé et du numéro
     if (showLabel) {
       if (labelPosition === 'above') {
         // Libellé au-dessus, numéro en-dessous
@@ -1033,6 +1032,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
       ctx.textAlign = dateTextAlign as CanvasTextAlign;
       ctx.fillText(`Date: ${orderDate}`, x, y + 20);
+    }
+    } catch (error) {
+      console.error('Error in drawOrderNumber:', error);
     }
   };
 

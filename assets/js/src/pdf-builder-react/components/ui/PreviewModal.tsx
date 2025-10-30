@@ -249,7 +249,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         } else if (orderTextAlign === 'center') {
           orderX = element.width / 2;
         } else { // right
-          orderX = element.width - 10;
+          orderX = element.width; // Align to the right edge without margin
         }
 
         let orderY = 20;
