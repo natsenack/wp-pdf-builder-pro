@@ -330,14 +330,35 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     if (isDraggingRef.current && selectedElementRef.current) {
       // Déplacer l'élément
+      const element = state.elements.find(el => el.id === selectedElementRef.current);
+      if (!element) return;
+
       const deltaX = x - dragStartRef.current.x;
       const deltaY = y - dragStartRef.current.y;
+
+      // Calculer la nouvelle position
+      let newX = deltaX;
+      let newY = deltaY;
+
+      // S'assurer que l'élément reste dans les limites du canvas
+      const canvasWidth = 794; // Largeur A4 en pixels
+      const canvasHeight = 1123; // Hauteur A4 en pixels
+
+      // Clamp X position (laisser au moins 20px visible)
+      const minVisibleWidth = Math.min(50, element.width * 0.3);
+      if (newX < 0) newX = 0;
+      if (newX + minVisibleWidth > canvasWidth) newX = canvasWidth - minVisibleWidth;
+
+      // Clamp Y position (laisser au moins 20px visible)
+      const minVisibleHeight = Math.min(30, element.height * 0.3);
+      if (newY < 0) newY = 0;
+      if (newY + minVisibleHeight > canvasHeight) newY = canvasHeight - minVisibleHeight;
 
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates: { x: deltaX, y: deltaY }
+          updates: { x: newX, y: newY }
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {

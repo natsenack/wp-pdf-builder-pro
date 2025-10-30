@@ -12,6 +12,33 @@ import {
 } from '../../types/elements';
 import { useSaveState } from '../../hooks/useSaveState';
 
+// Fonction helper pour corriger les positions des éléments hors limites
+const clampElementPositions = (elements: Element[]): Element[] => {
+  const canvasWidth = 794; // Largeur A4 en pixels
+  const canvasHeight = 1123; // Hauteur A4 en pixels
+
+  return elements.map(element => {
+    let newX = element.x;
+    let newY = element.y;
+
+    // Clamp X position (laisser au moins 20px visible)
+    const minVisibleWidth = Math.min(50, element.width * 0.3);
+    if (newX < 0) newX = 0;
+    if (newX + minVisibleWidth > canvasWidth) newX = Math.max(0, canvasWidth - minVisibleWidth);
+
+    // Clamp Y position (laisser au moins 20px visible)
+    const minVisibleHeight = Math.min(30, element.height * 0.3);
+    if (newY < 0) newY = 0;
+    if (newY + minVisibleHeight > canvasHeight) newY = Math.max(0, canvasHeight - minVisibleHeight);
+
+    if (newX !== element.x || newY !== element.y) {
+      return { ...element, x: newX, y: newY };
+    }
+
+    return element;
+  });
+};
+
 // État initial
 const initialCanvasState: CanvasState = {
   zoom: 1,
@@ -279,9 +306,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE':
+      const clampedElements = clampElementPositions((action.payload as any).elements || []);
       return {
         ...state,
-        elements: (action.payload as any).elements || [],
+        elements: clampedElements,
         canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas,
         template: {
           id: (action.payload as any).id,
@@ -293,7 +321,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         },
         history: updateHistory(state, {
           ...state,
-          elements: (action.payload as any).elements || [],
+          elements: clampedElements,
           canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas
         })
       };
