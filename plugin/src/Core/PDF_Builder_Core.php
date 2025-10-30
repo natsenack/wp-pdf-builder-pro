@@ -891,6 +891,9 @@ class PDF_Builder_Core
             exit;
         }
 
+        // Nettoyer les slashes automatiques ajoutés par PHP
+        $elements_json = stripslashes($elements_json);
+
         // Valider le JSON
         $elements = json_decode($elements_json, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
