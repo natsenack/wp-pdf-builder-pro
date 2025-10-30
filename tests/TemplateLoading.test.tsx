@@ -73,7 +73,7 @@ describe('Template Loading and Editing', () => {
 
     // Attendre que le template soit chargé
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Chargement du template:', '1');
+      expect(consoleSpy).toHaveBeenCalledWith('🔄 [LOAD TEMPLATE] Début du chargement du template:', '1');
     });
 
     consoleSpy.mockRestore();
