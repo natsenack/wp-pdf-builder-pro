@@ -274,13 +274,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             ctx.textAlign = orderTextAlign as CanvasTextAlign;
             ctx.fillText(orderLabelText, calculateOrderX(orderTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
-            // Libellé à gauche, numéro à droite - alignements fixes pour cohérence visuelle
+            // Libellé à gauche du numéro, tout aligné à droite
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.textAlign = 'left' as CanvasTextAlign; // Toujours aligné à gauche pour le libellé
-            ctx.fillText(orderLabelText, 10, orderY); // Toujours à gauche
+            ctx.textAlign = 'right' as CanvasTextAlign;
+            ctx.fillText(orderLabelText, element.width - 10, orderY);
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.textAlign = 'right' as CanvasTextAlign; // Toujours aligné à droite pour le numéro
-            ctx.fillText(orderNumber, element.width - 10, orderY); // Toujours à droite
+            ctx.textAlign = 'right' as CanvasTextAlign;
+            // Calculer la position du numéro en fonction de la largeur du libellé
+            const labelWidth = ctx.measureText(orderLabelText).width;
+            ctx.fillText(orderNumber, element.width - 10 - labelWidth - 5, orderY); // 5px d'espace
           } else if (orderLabelPosition === 'right') {
             // Numéro à gauche, libellé à droite - alignements fixes pour cohérence visuelle
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;

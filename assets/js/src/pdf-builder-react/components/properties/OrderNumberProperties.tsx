@@ -291,7 +291,10 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </select>
             <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
               {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') ?
-                'Pour les positions gauche/droite, les alignements sont automatiquement optimisés.' :
+                ((element as any).labelPosition === 'left' ?
+                  'Position "À gauche": le libellé et le numéro sont alignés à droite de l\'élément.' :
+                  'Position "À droite": le numéro est à gauche, le libellé à droite de l\'élément.'
+                ) :
                 'Alignement appliqué au libellé et au numéro.'
               }
             </div>
@@ -499,7 +502,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             {/* Message pour positions left/right */}
             {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') && (
               <div style={{ marginTop: '8px', fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
-                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", le label est automatiquement aligné à {(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}.
+                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", {(element as any).labelPosition === 'left' ? 'le libellé et le numéro sont alignés à droite' : 'le numéro est à gauche et le libellé à droite'}.
               </div>
             )}
           </div>
@@ -628,7 +631,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             {/* Message pour positions left/right */}
             {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') && (element as any).showLabel !== false && (
               <div style={{ marginTop: '8px', fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
-                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", le numéro est automatiquement aligné à {(element as any).labelPosition === 'left' ? 'droite' : 'gauche'}.
+                ℹ️ Pour la position "{(element as any).labelPosition === 'left' ? 'gauche' : 'droite'}", {(element as any).labelPosition === 'left' ? 'le numéro est aligné à droite avec le libellé' : 'le numéro est automatiquement aligné à gauche'}.
               </div>
             )}
           </div>
