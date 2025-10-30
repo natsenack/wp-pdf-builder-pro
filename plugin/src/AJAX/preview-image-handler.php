@@ -69,7 +69,7 @@ add_action('wp_ajax_pdf_builder_preview_image', function() {
     }
 
     // Décoder les données du template
-    $template_data = json_decode($template->data, true);
+    $template_data = json_decode($template->template_data, true);
     if (!$template_data) {
         wp_send_json_error(['message' => 'Invalid template data']);
         return;
@@ -80,6 +80,11 @@ add_action('wp_ajax_pdf_builder_preview_image', function() {
         if (!class_exists('TCPDF')) {
             require_once dirname(__FILE__) . '/vendor/autoload.php';
         }
+
+        // Logs de debug
+        error_log('[PREVIEW] Template data structure: ' . json_encode(array_keys($template_data)));
+        error_log('[PREVIEW] Elements count: ' . count($template_data['elements'] ?? []));
+        error_log('[PREVIEW] Canvas: ' . json_encode($template_data['canvas'] ?? []));
 
         // Créer une instance TCPDF
         $pdf = new \TCPDF(
@@ -157,31 +162,42 @@ function pdf_builder_render_element_preview($pdf, $element, $order) {
     $w = floatval($element['width'] ?? 50) / 3.78;
     $h = floatval($element['height'] ?? 10) / 3.78;
 
+    error_log('[PREVIEW] Rendering element: type=' . $type . ', x=' . $x . ', y=' . $y . ', w=' . $w . ', h=' . $h);
+
     switch ($type) {
         case 'rectangle':
+            error_log('[PREVIEW] Rendering rectangle');
             pdf_builder_render_rectangle($pdf, $element, $x, $y, $w, $h);
             break;
 
         case 'text':
         case 'dynamic-text':
+            error_log('[PREVIEW] Rendering text');
             pdf_builder_render_text($pdf, $element, $order, $x, $y, $w, $h);
             break;
 
         case 'product_table':
+            error_log('[PREVIEW] Rendering product_table');
             pdf_builder_render_product_table($pdf, $element, $order, $x, $y, $w, $h);
             break;
 
         case 'company_logo':
+            error_log('[PREVIEW] Rendering company_logo');
             pdf_builder_render_logo($pdf, $element, $x, $y, $w, $h);
             break;
 
         case 'customer_info':
+            error_log('[PREVIEW] Rendering customer_info');
             pdf_builder_render_customer_info($pdf, $element, $order, $x, $y, $w, $h);
             break;
 
         case 'company_info':
+            error_log('[PREVIEW] Rendering company_info');
             pdf_builder_render_company_info($pdf, $element, $x, $y, $w, $h);
             break;
+            
+        default:
+            error_log('[PREVIEW] Unknown element type: ' . $type);
     }
 }
 
@@ -217,6 +233,8 @@ function pdf_builder_render_text($pdf, $element, $order, $x, $y, $w, $h) {
 }
 
 function pdf_builder_render_product_table($pdf, $element, $order, $x, $y, $w, $h) {
+    error_log('[PREVIEW] Product table: order_id=' . $order->get_id() . ', items_count=' . count($order->get_items()));
+    
     $font_size = floatval($element['fontSize'] ?? 10) / 2.834;
     $pdf->SetFont('Arial', '', $font_size);
     $pdf->SetTextColor(0, 0, 0);
@@ -243,7 +261,12 @@ function pdf_builder_render_product_table($pdf, $element, $order, $x, $y, $w, $h
     $pdf->SetTextColor(0, 0, 0);
     foreach ($order->get_items() as $item) {
         $product = $item->get_product();
-        if (!$product) continue;
+        if (!$product) {
+            error_log('[PREVIEW] Skipping item - no product');
+            continue;
+        }
+
+        error_log('[PREVIEW] Item: ' . $product->get_name() . ', qty=' . $item->get_quantity());
 
         $data = [
             $product->get_name(),
