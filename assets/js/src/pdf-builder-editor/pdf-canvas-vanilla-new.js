@@ -312,10 +312,12 @@ export class PDFCanvasVanilla {
      * RENDU PRINCIPAL - Simple et efficace
      */
     render() {
+        console.log(`🎨 [VANILLA] RENDER CALLED - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}, elements: ${this.elements.size}`);
+        
         // console.log(`🎨 [render] RENDU APPELÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
         
         if (this.isRendering || !this.renderEngine) {
-            // console.log(`⚠️  [render] Rendu IGNORÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
+            console.log(`⚠️  [VANILLA] Rendu IGNORÉ - isRendering: ${this.isRendering}, renderEngine: ${!!this.renderEngine}`);
             return;
         }
 
