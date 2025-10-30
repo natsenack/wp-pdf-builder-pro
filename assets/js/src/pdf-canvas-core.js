@@ -217,8 +217,8 @@ export class PDFCanvasCore {
         // ont été modifiées manuellement par l'utilisateur (pas automatiquement)
         const isMentionsElement = element.type === 'mentions';
         const isManuallyResized = isMentionsElement &&
-          (p.width !== undefined && p.width !== 400) || // Largeur différente de la valeur par défaut
-          (p.height !== undefined && p.height !== 60);  // Hauteur différente de la valeur par défaut
+          (p.width !== undefined && p.width !== 500) || // Largeur différente de la valeur par défaut (500)
+          (p.height !== undefined && p.height !== 60);  // Hauteur différente de la valeur par défaut (60)
 
         if (!isMentionsElement || isManuallyResized) {
             // Clip pour garder le texte dans les limites

@@ -463,7 +463,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           const fontSize = (element as any).fontSize || 10;
                           const lineHeight = fontSize * 1.4;
                           const padding = 15;
-                          const minHeight = 80;
+                          const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
                           const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
                           const maxHeight = 500;
                           const newHeight = Math.min(calculatedHeight, maxHeight);
@@ -474,7 +474,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           if (ctx) {
                             ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
                             const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
-                            const minWidth = 200; // Largeur minimale
+                            const minWidth = 500; // Largeur minimale basée sur la valeur par défaut
                             const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
                             const maxWidth = 800; // Largeur maximale
                             const newWidth = Math.min(calculatedWidth, maxWidth);
@@ -541,7 +541,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                       const fontSize = (element as any).fontSize || 10;
                       const lineHeight = fontSize * 1.4;
                       const padding = 15;
-                      const minHeight = 80;
+                      const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
                       const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
                       const maxHeight = 500;
                       const newHeight = Math.min(calculatedHeight, maxHeight);
@@ -713,7 +713,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                   const fontSize = parseInt(e.target.value) || 10;
                   const lineHeight = fontSize * 1.4;
                   const padding = 15;
-                  const minHeight = 80;
+                  const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
                   const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
                   const maxHeight = 500;
                   const newHeight = Math.min(calculatedHeight, maxHeight);
@@ -848,8 +848,8 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).width || 400}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 400)}
+              value={(element as any).width || 500}
+              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 500)}
               style={{
                 width: '100%',
                 padding: '6px',
@@ -871,8 +871,8 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).height || 80}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 80)}
+              value={(element as any).height || 60}
+              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 60)}
               style={{
                 width: '100%',
                 padding: '6px',
