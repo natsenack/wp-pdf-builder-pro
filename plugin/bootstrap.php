@@ -500,8 +500,28 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
-    // S'assurer que elements est un array
-    $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+    // Gérer les deux formats de données (ancien et nouveau)
+    $elements = [];
+    $canvas = null;
+
+    // Vérifier si c'est le nouveau format (objet avec elements/canvas) ou l'ancien format (tableau direct)
+    if (is_array($template_data) && isset($template_data['elements'])) {
+        // Nouveau format : {"elements": [...], "canvas": {...}}
+        error_log('PDF Builder: Using new format template data');
+        $elements = $template_data['elements'];
+        $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+    } elseif (is_array($template_data)) {
+        // Ancien format : directement un tableau d'éléments
+        error_log('PDF Builder: Using old format template data (direct array)');
+        $elements = $template_data;
+        $canvas = null;
+    } else {
+        error_log('PDF Builder: Invalid template data format: ' . gettype($template_data));
+        wp_send_json_error(__('Format de données du template invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Traiter les éléments (même logique pour les deux formats)
     if (is_string($elements)) {
         error_log('PDF Builder: Decoding elements string, length: ' . strlen($elements));
         // D'abord supprimer les slashes d'échappement, puis décoder
@@ -520,23 +540,24 @@ function pdf_builder_ajax_get_template() {
         $elements = [];
     }
 
-    // S'assurer que canvas est un objet
-    $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
-    if (is_string($canvas)) {
-        $unescaped_canvas = stripslashes($canvas);
-        $decoded_canvas = json_decode($unescaped_canvas, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $canvas = $decoded_canvas;
-        } else {
+    // Traiter le canvas si présent
+    if ($canvas !== null) {
+        if (is_string($canvas)) {
+            $unescaped_canvas = stripslashes($canvas);
+            $decoded_canvas = json_decode($unescaped_canvas, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $canvas = $decoded_canvas;
+            } else {
+                $canvas = null;
+            }
+        } elseif (!is_array($canvas) && !is_null($canvas)) {
             $canvas = null;
         }
-    } elseif (!is_array($canvas) && !is_null($canvas)) {
-        $canvas = null;
     }
 
     // Vérifier que elements est défini (peut être un array vide pour un nouveau template)
-    if (!isset($template_data['elements'])) {
-        error_log('PDF Builder: Missing elements in template data: ' . print_r($template_data, true));
+    if (!isset($elements)) {
+        error_log('PDF Builder: Elements not set after processing');
         wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
     }
