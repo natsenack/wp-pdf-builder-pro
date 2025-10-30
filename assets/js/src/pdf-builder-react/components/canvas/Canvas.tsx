@@ -194,7 +194,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.font = `${fontSize}px Arial`;
     ctx.textAlign = align as CanvasTextAlign;
 
-    ctx.fillText(text, 0, fontSize);
+    const x = align === 'center' ? element.width / 2 : align === 'right' ? element.width : 0;
+    ctx.fillText(text, x, fontSize);
   };
 
   const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {

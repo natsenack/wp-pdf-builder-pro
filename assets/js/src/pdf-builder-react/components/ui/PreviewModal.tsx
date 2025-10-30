@@ -169,13 +169,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       case 'text':
         ctx.fillStyle = props.color || props.textColor || '#000000';
         ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 14}px ${props.fontFamily || 'Arial'}`;
-        ctx.textAlign = (props.textAlign || props.align || 'left') as CanvasTextAlign;
+        const textAlign = props.textAlign || props.align || 'left';
+        ctx.textAlign = textAlign as CanvasTextAlign;
         ctx.textBaseline = 'top';
         const text = replaceVariables(props.text || 'Texte');
         const lines = text.split('\n');
         let y = 0;
         lines.forEach((line: string) => {
-          ctx.fillText(line, 0, y);
+          const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width : 0;
+          ctx.fillText(line, x, y);
           y += props.fontSize || 14;
         });
         break;
