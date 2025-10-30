@@ -203,27 +203,131 @@ export class PreviewRenderer {
    * Rend le logo de l'entreprise
    */
   private static renderCompanyLogo(ctx: CanvasRenderingContext2D, props: any): void {
-    if (props.src || props.imageUrl) {
+    // Essayer de récupérer l'URL du logo depuis les paramètres WordPress
+    let logoUrl = props.src || props.imageUrl;
+
+    // Si pas d'URL définie, essayer de récupérer depuis WordPress/WooCommerce
+    if (!logoUrl) {
+      // Essayer depuis pdfBuilderData (paramètres personnalisés)
+      if ((window as any).pdfBuilderData?.companyLogo) {
+        logoUrl = (window as any).pdfBuilderData.companyLogo;
+      }
+
+      // Essayer depuis les options WooCommerce
+      if (!logoUrl && (window as any).woocommerce_settings?.companyLogo) {
+        logoUrl = (window as any).woocommerce_settings.companyLogo;
+      }
+
+      // Essayer depuis les options WordPress générales
+      if (!logoUrl && (window as any).wpSettings?.siteLogo) {
+        logoUrl = (window as any).wpSettings.siteLogo;
+      }
+    }
+
+    if (logoUrl) {
       const img = new Image();
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, props.width, props.height);
-      };
-      img.src = props.src || props.imageUrl;
-    } else {
-      // Placeholder
-      ctx.fillStyle = '#f0f0f0';
-      ctx.strokeStyle = '#ccc';
-      ctx.lineWidth = 1;
-      ctx.fillRect(0, 0, props.width, props.height);
-      ctx.strokeRect(0, 0, props.width, props.height);
+        // Calculer les dimensions pour respecter le ratio et le fit
+        const imgRatio = img.width / img.height;
+        const containerRatio = props.width / props.height;
+        let drawWidth = props.width;
+        let drawHeight = props.height;
+        let drawX = 0;
+        let drawY = 0;
 
-      // Texte placeholder
-      ctx.fillStyle = '#666';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('LOGO', props.width / 2, props.height / 2);
+        if (props.fit === 'contain') {
+          if (imgRatio > containerRatio) {
+            // Image plus large que le conteneur
+            drawHeight = props.width / imgRatio;
+            drawY = (props.height - drawHeight) / 2;
+          } else {
+            // Image plus haute que le conteneur
+            drawWidth = props.height * imgRatio;
+            drawX = (props.width - drawWidth) / 2;
+          }
+        } else if (props.fit === 'cover') {
+          if (imgRatio > containerRatio) {
+            drawWidth = props.height * imgRatio;
+            drawX = (props.width - drawWidth) / 2;
+          } else {
+            drawHeight = props.width / imgRatio;
+            drawY = (props.height - drawHeight) / 2;
+          }
+        }
+
+        // Gestion de l'alignement
+        if (props.alignment === 'center') {
+          drawX = (props.width - drawWidth) / 2;
+        } else if (props.alignment === 'right') {
+          drawX = props.width - drawWidth;
+        }
+
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+      };
+      img.onerror = () => {
+        // En cas d'erreur de chargement, afficher le placeholder
+        this.renderCompanyLogoPlaceholder(ctx, props);
+      };
+      img.src = logoUrl;
+    } else {
+      // Afficher le placeholder si pas d'URL
+      this.renderCompanyLogoPlaceholder(ctx, props);
     }
+  }
+
+  /**
+   * Rend le placeholder du logo de l'entreprise
+   */
+  private static renderCompanyLogoPlaceholder(ctx: CanvasRenderingContext2D, props: any): void {
+    // Fond gris clair
+    ctx.fillStyle = '#f8f9fa';
+    ctx.strokeStyle = '#dee2e6';
+    ctx.lineWidth = 1;
+    ctx.fillRect(0, 0, props.width, props.height);
+    ctx.strokeRect(0, 0, props.width, props.height);
+
+    // Icône de bâtiment simplifiée
+    ctx.fillStyle = '#6c757d';
+    ctx.strokeStyle = '#6c757d';
+    ctx.lineWidth = 2;
+
+    const centerX = props.width / 2;
+    const centerY = props.height / 2;
+    const iconSize = Math.min(props.width, props.height) * 0.4;
+
+    // Dessiner un bâtiment simple
+    const buildingWidth = iconSize * 0.8;
+    const buildingHeight = iconSize * 0.6;
+    const buildingX = centerX - buildingWidth / 2;
+    const buildingY = centerY - buildingHeight / 2;
+
+    // Contour du bâtiment
+    ctx.strokeRect(buildingX, buildingY, buildingWidth, buildingHeight);
+
+    // Lignes horizontales pour les étages
+    const floorHeight = buildingHeight / 3;
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(buildingX, buildingY + i * floorHeight);
+      ctx.lineTo(buildingX + buildingWidth, buildingY + i * floorHeight);
+      ctx.stroke();
+    }
+
+    // Lignes verticales pour les fenêtres
+    const windowWidth = buildingWidth / 3;
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(buildingX + i * windowWidth, buildingY);
+      ctx.lineTo(buildingX + i * windowWidth, buildingY + buildingHeight);
+      ctx.stroke();
+    }
+
+    // Texte "LOGO"
+    ctx.fillStyle = '#495057';
+    ctx.font = `bold ${Math.max(10, iconSize * 0.15)}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('LOGO ENTREPRISE', centerX, centerY + iconSize * 0.4);
   }
 
   /**

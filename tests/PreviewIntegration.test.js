@@ -46,6 +46,8 @@ describe('Preview Integration', () => {
         rotate: jest.fn(),
         scale: jest.fn(),
         clearRect: jest.fn(),
+        moveTo: jest.fn(),
+        lineTo: jest.fn(),
         font: '',
         textAlign: 'left',
         textBaseline: 'top'
@@ -178,6 +180,65 @@ describe('Preview Integration', () => {
         updatedAt: new Date()
       }
     ];
+
+    expect(() => {
+      PreviewRenderer.render({
+        canvas,
+        elements,
+        dataProvider
+      });
+    }).not.toThrow();
+  });
+
+  test('devrait gérer les éléments company_logo avec placeholder', () => {
+    const elements = [{
+      id: "logo_1",
+      type: "company_logo",
+      x: 50,
+      y: 50,
+      width: 150,
+      height: 80,
+      fit: 'contain',
+      alignment: 'left',
+      backgroundColor: 'transparent',
+      rotation: 0,
+      opacity: 1,
+      visible: true,
+      locked: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }];
+
+    expect(() => {
+      PreviewRenderer.render({
+        canvas,
+        elements,
+        dataProvider
+      });
+    }).not.toThrow();
+  });
+
+  test('devrait gérer les éléments company_logo avec URL d\'image', () => {
+    // Mock d'une URL d'image
+    const mockImageUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+    const elements = [{
+      id: "logo_2",
+      type: "company_logo",
+      x: 50,
+      y: 50,
+      width: 150,
+      height: 80,
+      fit: 'contain',
+      alignment: 'center',
+      src: mockImageUrl,
+      rotation: 0,
+      opacity: 1,
+      visible: true,
+      locked: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }];
 
     expect(() => {
       PreviewRenderer.render({

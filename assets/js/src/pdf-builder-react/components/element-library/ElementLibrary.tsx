@@ -61,7 +61,9 @@ const WOOCOMMERCE_ELEMENTS = [
       width: 150,
       height: 80,
       fit: 'contain',
-      alignment: 'left'
+      alignment: 'left',
+      src: '', // Sera rempli automatiquement depuis les paramètres WordPress
+      backgroundColor: 'transparent'
     }
   },
   {
