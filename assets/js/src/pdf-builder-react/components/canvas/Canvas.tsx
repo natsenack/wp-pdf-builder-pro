@@ -56,7 +56,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner les éléments
     state.elements.forEach((element, index) => {
-      console.log(`🎨 [CANVAS RENDER] Element ${index}:`, element.type, 'at position:', element.x, element.y, 'size:', element.width, 'x', element.height);
       drawElement(ctx, element);
     });
 
