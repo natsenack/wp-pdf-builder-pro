@@ -786,6 +786,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       phone: props.companyPhone || '+33 4 12 34 56 78'
     };
 
+    console.log(`Company data for rendering:`, companyData);
+    console.log(`Rendering company name: "${companyData.name}" at position (${element.x + x}, ${element.y + y})`);
+
     // Calcul de la position X selon l'alignement
     let x = 10;
     if (textAlign === 'center') {
@@ -793,6 +796,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     } else if (textAlign === 'right') {
       x = element.width - 10;
     }
+
+    console.log(`Company data for rendering:`, companyData);
+    console.log(`Rendering company name: "${companyData.name}" at position (${element.x + x}, ${element.y + y})`);
 
     // Afficher le nom de l'entreprise si demandé
     if (showCompanyName) {
@@ -994,6 +1000,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       orderNumber = 'CMD-2024-01234';
       orderDate = '27/10/2024';
     }
+
+    console.log(`Order data for rendering: orderNumber="${orderNumber}", orderDate="${orderDate}"`);
 
     // Calcul de la position X selon l'alignement
     let x: number;
