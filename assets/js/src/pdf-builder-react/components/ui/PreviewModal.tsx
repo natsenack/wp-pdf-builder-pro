@@ -935,8 +935,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
                 borderRadius: '4px',
                 backgroundColor: '#ffffff',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top left',
                 imageRendering: 'pixelated',
                 width: `${canvasWidth * zoom}px`,
                 height: `${canvasHeight * zoom}px`,

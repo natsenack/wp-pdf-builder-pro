@@ -54,21 +54,10 @@ export class PreviewRenderer {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
-    // Appliquer le zoom si nécessaire
-    if (zoom !== 1.0) {
-      ctx.save();
-      ctx.scale(zoom, zoom);
-    }
-
     // Rendre chaque élément
     elements.forEach(element => {
       this.renderElement(ctx, element, dataProvider);
     });
-
-    // Restaurer le contexte si zoom appliqué
-    if (zoom !== 1.0) {
-      ctx.restore();
-    }
   }
 
   /**
