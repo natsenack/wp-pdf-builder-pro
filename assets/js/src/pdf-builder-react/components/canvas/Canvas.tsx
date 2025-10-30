@@ -1003,23 +1003,21 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = labelTextAlign as CanvasTextAlign;
         ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
       } else if (labelPosition === 'left') {
-        // Libellé à gauche, numéro à droite (centré)
-        ctx.textAlign = 'left';
-        const labelX = 10;
-        const numberX = element.width / 2;
+        // Libellé à gauche, numéro à droite - utiliser les alignements individuels
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.fillText('N° de commande:', labelX, y);
+        ctx.textAlign = labelTextAlign as CanvasTextAlign;
+        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.fillText(orderNumber, numberX, y);
+        ctx.textAlign = numberTextAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
       } else if (labelPosition === 'right') {
-        // Numéro à gauche, libellé à droite (centré)
-        ctx.textAlign = 'left';
-        const numberX = 10;
-        const labelX = element.width / 2;
+        // Numéro à gauche, libellé à droite - utiliser les alignements individuels
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.fillText(orderNumber, numberX, y);
+        ctx.textAlign = numberTextAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.fillText('N° de commande:', labelX, y);
+        ctx.textAlign = labelTextAlign as CanvasTextAlign;
+        ctx.fillText('N° de commande:', calculateX(labelTextAlign), y);
       }
     } else {
       // Pas de libellé, juste le numéro

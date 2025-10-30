@@ -276,23 +276,21 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
             ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
-            // Libellé à gauche, numéro à droite (centré)
-            ctx.textAlign = 'left';
-            const labelX = 10;
-            const numberX = element.width / 2;
+            // Libellé à gauche, numéro à droite - utiliser les alignements individuels
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.fillText('N° de commande:', labelX, orderY);
+            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.fillText(orderNumber, numberX, orderY);
+            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
           } else if (orderLabelPosition === 'right') {
-            // Numéro à gauche, libellé à droite (centré)
-            ctx.textAlign = 'left';
-            const numberX = 10;
-            const labelX = element.width / 2;
+            // Numéro à gauche, libellé à droite - utiliser les alignements individuels
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
-            ctx.fillText(orderNumber, numberX, orderY);
+            ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
+            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
-            ctx.fillText('N° de commande:', labelX, orderY);
+            ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
+            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
           }
         } else {
           // Pas de libellé, juste le numéro
