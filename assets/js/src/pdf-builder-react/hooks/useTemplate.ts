@@ -148,7 +148,7 @@ export function useTemplate() {
   };
 
   const previewTemplate = () => {
-    // Logique de prévisualisation (à implémenter)
+    dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
   };
 
   const newTemplate = () => {

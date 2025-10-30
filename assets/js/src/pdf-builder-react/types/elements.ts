@@ -85,6 +85,7 @@ export interface BuilderState {
   template: TemplateState;
   // Mode de prévisualisation (éditeur vs commande)
   previewMode: 'editor' | 'command';
+  showPreviewModal: boolean;
   orderId?: string;
 }
 
@@ -139,6 +140,7 @@ export type BuilderAction =
   | { type: 'SET_MODE'; payload: BuilderMode }
   | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
   | { type: 'SET_PREVIEW_MODE'; payload: 'editor' | 'command' }
+  | { type: 'SET_SHOW_PREVIEW_MODAL'; payload: boolean }
   | { type: 'SET_ORDER_ID'; payload: string | undefined }
   | { type: 'UNDO' }
   | { type: 'REDO' }

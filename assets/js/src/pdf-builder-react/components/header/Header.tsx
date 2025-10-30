@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { TemplateState } from '../../types/elements';
 import { PreviewModal } from '../ui/PreviewModal';
+import { useBuilder } from '../../contexts/builder/BuilderContext';
 
 interface HeaderProps {
   templateName: string;
@@ -41,9 +42,9 @@ export const Header = memo(function Header({
   onNewTemplate,
   onUpdateTemplateSettings
 }: HeaderProps) {
+  const { state, dispatch } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
@@ -270,7 +271,7 @@ export const Header = memo(function Header({
         </button>
 
         <button
-          onClick={() => setShowPreviewModal(true)}
+          onClick={onPreview}
           onMouseEnter={() => setHoveredButton('preview')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
@@ -722,8 +723,8 @@ export const Header = memo(function Header({
 
       {/* Modale d'aperçu */}
       <PreviewModal
-        isOpen={showPreviewModal}
-        onClose={() => setShowPreviewModal(false)}
+        isOpen={state.showPreviewModal}
+        onClose={() => dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: false })}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
       />
