@@ -461,10 +461,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           // Ajuster automatiquement la hauteur et la largeur selon le contenu
                           const lines = combinedText.split('\n');
                           const fontSize = (element as any).fontSize || 10;
-                          const lineHeight = fontSize * 1.4;
-                          const padding = 15;
+                          const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                          const padding = 10; // Réduire pour cohérence
+                          const iconSpace = 20; // Espace pour l'icône
                           const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                          const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+                          const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding);
                           const maxHeight = 500;
                           const newHeight = Math.min(calculatedHeight, maxHeight);
 
@@ -474,8 +475,9 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           if (ctx) {
                             ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
                             const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                            const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                             const minWidth = 500; // Largeur minimale basée sur la valeur par défaut
-                            const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                            const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
                             const maxWidth = 800; // Largeur maximale
                             const newWidth = Math.min(calculatedWidth, maxWidth);
 
@@ -539,10 +541,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                       // Ajuster la hauteur et la largeur selon le nouveau nombre de lignes
                       const lines = combinedText.split('\n');
                       const fontSize = (element as any).fontSize || 10;
-                      const lineHeight = fontSize * 1.4;
-                      const padding = 15;
+                      const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                      const padding = 10; // Réduire pour cohérence
+                      const iconSpace = 20; // Espace pour l'icône
                       const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                      const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+                      const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding);
                       const maxHeight = 500;
                       const newHeight = Math.min(calculatedHeight, maxHeight);
 
@@ -552,8 +555,9 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                       if (ctx) {
                         ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
                         const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                        const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                         const minWidth = 200;
-                        const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                        const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
                         const maxWidth = 800;
                         const newWidth = Math.min(calculatedWidth, maxWidth);
 
@@ -685,7 +689,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Taille du texte (auto-adaptée)
+              Taille du texte
             </label>
             <select
               value={(element as any).fontSize || '10'}
@@ -711,10 +715,11 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                   const lines = combinedText.split('\n');
                   const fontSize = parseInt(e.target.value) || 10;
-                  const lineHeight = fontSize * 1.4;
-                  const padding = 15;
+                  const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                  const padding = 10; // Réduire le padding pour être cohérent
+                  const iconSpace = 20; // Espace pour l'icône comme dans Canvas
                   const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                  const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
+                  const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding); // + iconSpace pour l'icône
                   const maxHeight = 500;
                   const newHeight = Math.min(calculatedHeight, maxHeight);
 
@@ -724,8 +729,9 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                   if (ctx) {
                     ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
                     const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                    const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                     const minWidth = 200;
-                    const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                    const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
                     const maxWidth = 800;
                     const newWidth = Math.min(calculatedWidth, maxWidth);
 
