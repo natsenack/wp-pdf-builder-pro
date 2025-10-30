@@ -750,14 +750,17 @@ export class PDFCanvasVanilla {
         const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
         
         // Facteurs de conversion depuis pixels
+        // A4: 794px = 210mm, donc 1px = 210/794 = 0.2645mm ≈ 1/3.78
         const conversions = {
-            'mm': 210 / 595,  // ≈ 0.353
-            'cm': 21 / 595,   // ≈ 0.0353
-            'in': 8.27 / 595, // ≈ 0.0139
+            'mm': 210 / 794,  // 0.2645 (1px = 0.2645mm)
+            'cm': 21 / 794,   // 0.02645
+            'in': 8.27 / 794, // 0.01042
             'px': 1            // Pas de conversion
         };
         
         const factor = conversions[unit] || conversions['mm'];
+        
+        console.log('[SERIALIZE] Unit:', unit, 'Factor:', factor.toFixed(4));
         
         for (const [id, element] of this.elements) {
             // Convertir les positions de pixels vers l'unité configurée
@@ -770,6 +773,8 @@ export class PDFCanvasVanilla {
                 height: Math.round((element.properties.height || 50) * factor * 100) / 100,
                 ...element.properties  // Inclure toutes les autres propriétés
             };
+            
+            console.log('[SERIALIZE] Element:', element.type, 'px pos:', element.properties.x, element.properties.y, '-> mm pos:', elementData.x, elementData.y);
             
             serialized.push(elementData);
         }

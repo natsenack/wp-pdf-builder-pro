@@ -116,9 +116,13 @@ add_action('wp_ajax_pdf_builder_preview_image', function() {
         // Convertir en image si Imagick est disponible
         if (extension_loaded('imagick')) {
             $image = new \Imagick();
-            $image->setResolution(150, 150);
-            $image->readImage($temp_file);
+            // Augmenter la résolution pour meilleure qualité (300 DPI au lieu de 150)
+            $image->setResolution(300, 300);
+            $image->readImage($temp_file . '[0]'); // [0] = première page uniquement
             $image->setImageFormat('png');
+            // Compresser légèrement pour rester raisonnable en taille
+            $image->setImageCompression(\Imagick::COMPRESSION_JPEG);
+            $image->setImageCompressionQuality(95);
             $image_data = $image->getImageBlob();
         } else {
             // Fallback: retourner le PDF
@@ -157,12 +161,14 @@ function pdf_builder_hex_to_rgb($hex) {
  */
 function pdf_builder_render_element_preview($pdf, $element, $order) {
     $type = $element['type'] ?? 'text';
-    $x = floatval($element['x'] ?? 10) / 3.78; // Conversion pixels -> mm
-    $y = floatval($element['y'] ?? 10) / 3.78;
-    $w = floatval($element['width'] ?? 50) / 3.78;
-    $h = floatval($element['height'] ?? 10) / 3.78;
+    // Les coordonnées sont DÉJÀ en mm depuis le JavaScript
+    // Pas besoin de conversion supplémentaire
+    $x = floatval($element['x'] ?? 10);
+    $y = floatval($element['y'] ?? 10);
+    $w = floatval($element['width'] ?? 50);
+    $h = floatval($element['height'] ?? 10);
 
-    error_log('[PREVIEW] Rendering element: type=' . $type . ', x=' . $x . ', y=' . $y . ', w=' . $w . ', h=' . $h);
+    error_log('[PREVIEW] Rendering element: type=' . $type . ', x=' . $x . 'mm, y=' . $y . 'mm, w=' . $w . 'mm, h=' . $h . 'mm');
 
     switch ($type) {
         case 'rectangle':
