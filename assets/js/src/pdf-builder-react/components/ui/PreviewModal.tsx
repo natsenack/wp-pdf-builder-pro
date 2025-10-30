@@ -276,21 +276,21 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
             ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
           } else if (orderLabelPosition === 'left') {
-            // Libellé à gauche, numéro à droite - utiliser les alignements individuels
+            // Libellé à gauche, numéro au centre - respecter les alignements individuels
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
             ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
-            ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
+            ctx.fillText(orderNumber, element.width / 2, orderY);
           } else if (orderLabelPosition === 'right') {
-            // Numéro à gauche, libellé à droite - utiliser les alignements individuels
+            // Numéro à gauche, libellé au centre - respecter les alignements individuels
             ctx.font = `${orderNumberFontStyle} ${orderNumberFontWeight} ${orderNumberFontSize}px ${orderNumberFontFamily}`;
             ctx.textAlign = orderNumberTextAlign as CanvasTextAlign;
             ctx.fillText(orderNumber, calculateOrderX(orderNumberTextAlign), orderY);
             ctx.font = `${orderLabelFontStyle} ${orderLabelFontWeight} ${orderLabelFontSize}px ${orderLabelFontFamily}`;
             ctx.textAlign = orderLabelTextAlign as CanvasTextAlign;
-            ctx.fillText('N° de commande:', calculateOrderX(orderLabelTextAlign), orderY);
+            ctx.fillText('N° de commande:', element.width / 2, orderY);
           }
         } else {
           // Pas de libellé, juste le numéro
