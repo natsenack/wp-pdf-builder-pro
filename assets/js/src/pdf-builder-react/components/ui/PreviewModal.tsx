@@ -531,6 +531,90 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         ctx.stroke();
         break;
 
+      case 'mentions':
+        // Copier la logique complète de Canvas.tsx pour cohérence
+        const mentionsFontSize = props.fontSize || 10;
+        const mentionsFontFamily = props.fontFamily || 'Arial';
+        const mentionsFontWeight = props.fontWeight || 'normal';
+        const mentionsFontStyle = props.fontStyle || 'normal';
+        const mentionsTextAlign = props.textAlign || 'left';
+        const mentionsText = props.text || 'SARL au capital de 10 000€ - RCS Lyon 123 456 789\nTVA FR 12 345 678 901 - SIRET 123 456 789 00012\ncontact@maboutique.com - +33 4 12 34 56 78';
+        const mentionsShowSeparator = props.showSeparator !== false;
+        const mentionsSeparatorStyle = props.separatorStyle || 'solid';
+        const mentionsTheme = (props.theme || 'legal') as keyof typeof mentionsThemes;
+
+        // Définition des thèmes pour les mentions
+        const mentionsThemes = {
+          legal: {
+            backgroundColor: '#ffffff',
+            borderColor: '#6b7280',
+            textColor: '#374151',
+            headerTextColor: '#111827'
+          },
+          subtle: {
+            backgroundColor: '#f9fafb',
+            borderColor: '#e5e7eb',
+            textColor: '#6b7280',
+            headerTextColor: '#374151'
+          },
+          minimal: {
+            backgroundColor: '#ffffff',
+            borderColor: '#f3f4f6',
+            textColor: '#9ca3af',
+            headerTextColor: '#6b7280'
+          }
+        };
+
+        const mentionsCurrentTheme = mentionsThemes[mentionsTheme] || mentionsThemes.legal;
+
+        // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
+        const mentionsBgColor = props.backgroundColor || mentionsCurrentTheme.backgroundColor;
+        const mentionsTxtColor = props.textColor || mentionsCurrentTheme.textColor;
+
+        ctx.fillStyle = mentionsBgColor;
+        ctx.fillRect(0, 0, element.width, element.height);
+
+        ctx.fillStyle = mentionsTxtColor;
+
+        let mentionsY = 15;
+
+        // Dessiner le séparateur si activé
+        if (mentionsShowSeparator) {
+          ctx.strokeStyle = mentionsTxtColor;
+          ctx.lineWidth = 1;
+
+          if (mentionsSeparatorStyle === 'double') {
+            ctx.beginPath();
+            ctx.moveTo(10, mentionsY - 5);
+            ctx.lineTo(element.width - 10, mentionsY - 5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(10, mentionsY - 2);
+            ctx.lineTo(element.width - 10, mentionsY - 2);
+            ctx.stroke();
+          } else {
+            ctx.setLineDash(mentionsSeparatorStyle === 'dashed' ? [5, 5] : mentionsSeparatorStyle === 'dotted' ? [2, 2] : []);
+            ctx.beginPath();
+            ctx.moveTo(10, mentionsY - 5);
+            ctx.lineTo(element.width - 10, mentionsY - 5);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+          }
+
+          mentionsY += 10; // Espace après le séparateur
+        }
+
+        ctx.font = `${mentionsFontStyle} ${mentionsFontWeight} ${mentionsFontSize}px ${mentionsFontFamily}`;
+        ctx.textAlign = mentionsTextAlign as CanvasTextAlign;
+
+        const mentions = mentionsText.split('\n');
+        mentions.forEach((mention: string) => {
+          const mentionsX = mentionsTextAlign === 'center' ? element.width / 2 : mentionsTextAlign === 'right' ? element.width - 10 : 10;
+          ctx.fillText(mention, mentionsX, mentionsY);
+          mentionsY += mentionsFontSize + 2;
+        });
+        break;
+
       default:
         // Élément générique avec fond gris
         ctx.fillStyle = '#e0e0e0';

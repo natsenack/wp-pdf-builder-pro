@@ -409,7 +409,6 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               <option value="left">Gauche</option>
               <option value="center">Centre</option>
               <option value="right">Droite</option>
-              <option value="justify">Justifié</option>
             </select>
           </div>
 

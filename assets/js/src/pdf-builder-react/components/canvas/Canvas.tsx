@@ -1214,16 +1214,75 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const fontStyle = props.fontStyle || 'normal';
     const textAlign = props.textAlign || 'left';
     const text = props.text || 'SARL au capital de 10 000€ - RCS Lyon 123 456 789\nTVA FR 12 345 678 901 - SIRET 123 456 789 00012\ncontact@maboutique.com - +33 4 12 34 56 78';
+    const showSeparator = props.showSeparator !== false;
+    const separatorStyle = props.separatorStyle || 'solid';
+    const theme = (props.theme || 'legal') as keyof typeof themes;
 
-    ctx.fillStyle = props.backgroundColor || 'transparent';
+    // Définition des thèmes pour les mentions
+    const themes = {
+      legal: {
+        backgroundColor: '#ffffff',
+        borderColor: '#6b7280',
+        textColor: '#374151',
+        headerTextColor: '#111827'
+      },
+      subtle: {
+        backgroundColor: '#f9fafb',
+        borderColor: '#e5e7eb',
+        textColor: '#6b7280',
+        headerTextColor: '#374151'
+      },
+      minimal: {
+        backgroundColor: '#ffffff',
+        borderColor: '#f3f4f6',
+        textColor: '#9ca3af',
+        headerTextColor: '#6b7280'
+      }
+    };
+
+    const currentTheme = themes[theme] || themes.legal;
+
+    // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
+    const bgColor = props.backgroundColor || currentTheme.backgroundColor;
+    const txtColor = props.textColor || currentTheme.textColor;
+
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, element.width, element.height);
 
-    ctx.fillStyle = props.textColor || '#666666';
+    ctx.fillStyle = txtColor;
+
+    let y = 15;
+
+    // Dessiner le séparateur si activé
+    if (showSeparator) {
+      ctx.strokeStyle = txtColor;
+      ctx.lineWidth = 1;
+
+      if (separatorStyle === 'double') {
+        ctx.beginPath();
+        ctx.moveTo(10, y - 5);
+        ctx.lineTo(element.width - 10, y - 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(10, y - 2);
+        ctx.lineTo(element.width - 10, y - 2);
+        ctx.stroke();
+      } else {
+        ctx.setLineDash(separatorStyle === 'dashed' ? [5, 5] : separatorStyle === 'dotted' ? [2, 2] : []);
+        ctx.beginPath();
+        ctx.moveTo(10, y - 5);
+        ctx.lineTo(element.width - 10, y - 5);
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset line dash
+      }
+
+      y += 10; // Espace après le séparateur
+    }
+
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
     const mentions = text.split('\n');
-    let y = 15;
     mentions.forEach((mention: string) => {
       const x = textAlign === 'center' ? element.width / 2 : textAlign === 'right' ? element.width - 10 : 10;
       ctx.fillText(mention, x, y);
