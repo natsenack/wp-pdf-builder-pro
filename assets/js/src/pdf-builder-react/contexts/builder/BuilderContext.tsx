@@ -385,43 +385,86 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                    (window as any).pdfBuilderNonce ||
                    (window as any).pdfBuilderReactData?.nonce || '';
 
-      // Nettoyer les éléments pour la sérialisation JSON
+      // Fonction de nettoyage ultra-robuste pour JSON
+      const deepCleanForJSON = (obj: any, visited = new WeakSet()): any => {
+        // Éviter les références circulaires
+        if (obj === null || typeof obj !== 'object') {
+          return obj;
+        }
+
+        if (visited.has(obj)) {
+          return '[Circular Reference]';
+        }
+
+        visited.add(obj);
+
+        try {
+          if (Array.isArray(obj)) {
+            return obj.map(item => deepCleanForJSON(item, visited));
+          }
+
+          if (obj instanceof Date) {
+            return obj.toISOString();
+          }
+
+          if (typeof obj === 'function') {
+            return undefined;
+          }
+
+          // Pour les objets, créer une copie propre
+          const cleanObj: any = {};
+          for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              const value = obj[key];
+
+              // Skip les propriétés problématiques
+              if (typeof value === 'function' ||
+                  key === 'canvas' ||
+                  key === 'context' ||
+                  key === '_reactInternalInstance' ||
+                  key === '_reactInternals' ||
+                  key.startsWith('__react')) {
+                continue;
+              }
+
+              // Nettoyer récursivement les valeurs
+              const cleanValue = deepCleanForJSON(value, visited);
+              if (cleanValue !== undefined) {
+                cleanObj[key] = cleanValue;
+              }
+            }
+          }
+
+          return cleanObj;
+        } finally {
+          visited.delete(obj);
+        }
+      };
+
+      // Nettoyer tous les éléments
       const cleanElements = state.elements.map(element => {
         try {
-          // Créer une copie profonde nettoyée
-          const cleaned = JSON.parse(JSON.stringify(element, (key, value) => {
-            // Convertir les dates
-            if (value instanceof Date) {
-              return value.toISOString();
-            }
-            // Supprimer les fonctions et objets non sérialisables
-            if (typeof value === 'function') {
-              return undefined;
-            }
-            // Gérer les objets complexes
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
-              // Supprimer les propriétés problématiques
-              const cleanObj: any = {};
-              for (const [k, v] of Object.entries(value)) {
-                if (typeof v !== 'function' && k !== 'canvas' && k !== 'context') {
-                  cleanObj[k] = v;
-                }
-              }
-              return cleanObj;
-            }
-            return value;
-          }));
+          const cleaned = deepCleanForJSON(element);
 
-          // S'assurer que createdAt et updatedAt sont des strings ISO
-          cleaned.createdAt = cleaned.createdAt || new Date().toISOString();
-          cleaned.updatedAt = cleaned.updatedAt || new Date().toISOString();
-
-          return cleaned;
+          // S'assurer que les propriétés essentielles sont présentes
+          return {
+            id: cleaned.id || `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: cleaned.type || 'text',
+            x: cleaned.x || 0,
+            y: cleaned.y || 0,
+            width: cleaned.width || 100,
+            height: cleaned.height || 50,
+            visible: cleaned.visible !== false,
+            locked: cleaned.locked || false,
+            createdAt: cleaned.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            ...cleaned // Garder toutes les autres propriétés nettoyées
+          };
         } catch (error) {
           console.error('Erreur lors du nettoyage d\'un élément:', error, element);
-          // Retourner une version minimale en cas d'erreur
+          // Retourner un élément minimal en cas d'échec
           return {
-            id: element.id || 'unknown',
+            id: element.id || `fallback_${Date.now()}`,
             type: element.type || 'text',
             x: element.x || 0,
             y: element.y || 0,
@@ -435,6 +478,17 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
       });
 
+      // Test final de sérialisation avant envoi
+      let serializedElements: string;
+      try {
+        serializedElements = JSON.stringify(cleanElements);
+        // Vérifier que c'est du JSON valide
+        JSON.parse(serializedElements);
+      } catch (jsonError) {
+        console.error('Erreur JSON même après nettoyage:', jsonError, cleanElements);
+        throw new Error('Impossible de sérialiser les éléments même après nettoyage');
+      }
+
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
@@ -443,7 +497,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         body: new URLSearchParams({
           action: 'pdf_builder_auto_save_template',
           template_id: state.template.id.toString(),
-          elements: JSON.stringify(cleanElements),
+          elements: serializedElements,
           nonce: nonce
         })
       });
