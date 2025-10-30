@@ -89,39 +89,6 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     return result;
   };
 
-  // Écouter les changements du state pour mise à jour temps réel
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const { orderId, templateId } = getOrderAndTemplateId();
-    const isMetabox = orderId > 0 && templateId > 0;
-
-    console.log('[PREVIEW MODAL] Context detected:', {
-      isMetabox,
-      orderId,
-      templateId,
-      stateElements: state.elements.length
-    });
-
-    if (isMetabox) {
-      // 🔴 METABOX WOOCOMMERCE : charger données réelles depuis PHP/TCPDF
-      console.log('[PREVIEW MODAL] Metabox mode - will load PHP preview');
-      setUsePhpRendering(true);
-      // Appel à loadPhpPreviewImage se fera dans un useEffect séparé
-    } else if (state.elements.length > 0) {
-      // ✅ ÉDITEUR CANVAS : utiliser state.elements avec Canvas 2D
-      console.log('[PREVIEW MODAL] Editor mode - using Canvas 2D rendering');
-      setUsePhpRendering(false);
-      setPreviewElements([...state.elements]);
-      const provider = new TemplateDataProvider(state.elements);
-      setDataProvider(provider);
-    } else {
-      console.warn('[PREVIEW MODAL] No data available for preview');
-      setPreviewElements([]);
-      setDataProvider(null);
-    }
-  }, [isOpen, state.elements]);
-
   // Charger l'aperçu PHP si on est en metabox WooCommerce
   useEffect(() => {
     if (!isOpen || !usePhpRendering) return;
@@ -234,6 +201,12 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     console.log('🔍 [PREVIEW MODAL] previewElements.length:', previewElements.length);
     console.log('🔍 [PREVIEW MODAL] dataProvider:', !!dataProvider);
 
+    // Log de la position du logo dans previewElements
+    const companyLogo = previewElements.find(el => el.type === 'company_logo');
+    if (companyLogo) {
+      console.log('🔍 [PREVIEW MODAL] Company logo position in previewElements:', companyLogo.x, companyLogo.y);
+    }
+
     if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
       console.log('🔍 [PREVIEW MODAL] Skipping render - missing requirements');
       return;
@@ -269,6 +242,14 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       setIsLoading(false);
     }
   }, [previewElements, zoom, canvasWidth, canvasHeight, dataProvider]);
+
+  // Forcer le re-rendu de l'aperçu quand les éléments changent
+  useEffect(() => {
+    if (isOpen && previewElements.length > 0 && canvasRef.current) {
+      console.log('🔄 [PREVIEW MODAL] previewElements changed, re-rendering preview');
+      renderPreview();
+    }
+  }, [previewElements, renderPreview, isOpen]);
 
   // Fonction simplifiée pour rendre un élément (version aperçu)
   const renderElement = (ctx: CanvasRenderingContext2D, element: Element) => {
