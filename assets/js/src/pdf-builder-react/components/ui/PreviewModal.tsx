@@ -58,20 +58,38 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Écouter les changements du state pour mise à jour temps réel
   useEffect(() => {
-    console.log('🔄 [PREVIEW MODAL] State elements changed:', state.elements.length, 'éléments');
+    console.log('🔄 [PREVIEW MODAL] State elements changed:', {
+      stateElementsCount: state.elements.length,
+      isOpen: isOpen,
+      currentPreviewElementsCount: previewElements.length
+    });
+
     if (isOpen && state.elements.length > 0) {
+      console.log('✅ [PREVIEW MODAL] Setting preview elements from state:', state.elements.length, 'éléments');
       // Utiliser directement les éléments du state pour l'aperçu temps réel
       setPreviewElements(state.elements);
     } else if (isOpen && state.elements.length === 0) {
+      console.log('⚠️ [PREVIEW MODAL] Setting empty preview elements (modal open but no state elements)');
       // Si la modal est ouverte mais qu'il n'y a pas d'éléments, utiliser un tableau vide
       setPreviewElements([]);
+    } else {
+      console.log('⏸️ [PREVIEW MODAL] Not updating preview elements:', { isOpen, stateElementsCount: state.elements.length });
     }
   }, [isOpen, state.elements]);
 
   // Redessiner le canvas quand les éléments ou le zoom changent
   useEffect(() => {
+    console.log('🎨 [PREVIEW MODAL] Render effect triggered:', {
+      isOpen,
+      previewElementsCount: previewElements.length,
+      zoom
+    });
+
     if (isOpen && previewElements.length > 0) {
+      console.log('🚀 [PREVIEW MODAL] Calling renderPreview with', previewElements.length, 'elements');
       renderPreview();
+    } else {
+      console.log('⏸️ [PREVIEW MODAL] Not rendering:', { isOpen, previewElementsCount: previewElements.length });
     }
   }, [previewElements, zoom, isOpen]);
 
