@@ -149,7 +149,11 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     if (!canvasRef.current || previewElements.length === 0) {
       console.log('⚠️ [PREVIEW MODAL] Cannot render preview:', {
         hasCanvas: !!canvasRef.current,
-        elementCount: previewElements.length
+        canvasElement: canvasRef.current,
+        elementCount: previewElements.length,
+        previewElements: previewElements,
+        isOpen: isOpen,
+        stateElementsCount: state.elements.length
       });
       return;
     }
