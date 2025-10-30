@@ -377,6 +377,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   const autoSaveTemplate = async (): Promise<void> => {
     if (!state.template.id || state.template.isSaving) return;
 
+    console.log('🔄 [AUTO SAVE] Début de la sauvegarde automatique');
+
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
@@ -385,14 +387,24 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                    (window as any).pdfBuilderNonce ||
                    (window as any).pdfBuilderReactData?.nonce || '';
 
+      console.log('📊 [AUTO SAVE] État des éléments avant nettoyage:', {
+        elementCount: state.elements.length,
+        elements: state.elements.map(el => ({
+          id: el.id,
+          type: el.type,
+          hasComplexProps: typeof el === 'object' && el !== null && Object.keys(el).length > 10
+        }))
+      });
+
       // Fonction de nettoyage ultra-robuste pour JSON
-      const deepCleanForJSON = (obj: any, visited = new WeakSet()): any => {
+      const deepCleanForJSON = (obj: any, visited = new WeakSet(), path = ''): any => {
         // Éviter les références circulaires
         if (obj === null || typeof obj !== 'object') {
           return obj;
         }
 
         if (visited.has(obj)) {
+          console.warn(`🔄 [CLEAN JSON] Référence circulaire détectée à ${path}`);
           return '[Circular Reference]';
         }
 
@@ -400,7 +412,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
         try {
           if (Array.isArray(obj)) {
-            return obj.map(item => deepCleanForJSON(item, visited));
+            return obj.map((item, index) => deepCleanForJSON(item, visited, `${path}[${index}]`));
           }
 
           if (obj instanceof Date) {
@@ -408,6 +420,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
           }
 
           if (typeof obj === 'function') {
+            console.warn(`⚠️ [CLEAN JSON] Fonction supprimée à ${path}`);
             return undefined;
           }
 
@@ -424,11 +437,12 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                   key === '_reactInternalInstance' ||
                   key === '_reactInternals' ||
                   key.startsWith('__react')) {
+                console.warn(`⚠️ [CLEAN JSON] Propriété problématique supprimée: ${key} à ${path}`);
                 continue;
               }
 
               // Nettoyer récursivement les valeurs
-              const cleanValue = deepCleanForJSON(value, visited);
+              const cleanValue = deepCleanForJSON(value, visited, `${path}.${key}`);
               if (cleanValue !== undefined) {
                 cleanObj[key] = cleanValue;
               }
@@ -442,12 +456,18 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       };
 
       // Nettoyer tous les éléments
-      const cleanElements = state.elements.map(element => {
+      const cleanElements = state.elements.map((element, index) => {
         try {
-          const cleaned = deepCleanForJSON(element);
+          console.log(`🧹 [CLEAN ELEMENT] Nettoyage élément ${index}:`, {
+            id: element.id,
+            type: element.type,
+            keys: Object.keys(element)
+          });
+
+          const cleaned = deepCleanForJSON(element, new WeakSet(), `element[${index}]`);
 
           // S'assurer que les propriétés essentielles sont présentes
-          return {
+          const finalElement = {
             id: cleaned.id || `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             type: cleaned.type || 'text',
             x: cleaned.x || 0,
@@ -460,8 +480,16 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
             updatedAt: new Date().toISOString(),
             ...cleaned // Garder toutes les autres propriétés nettoyées
           };
+
+          console.log(`✅ [CLEAN ELEMENT] Élément ${index} nettoyé avec succès:`, {
+            id: finalElement.id,
+            type: finalElement.type,
+            keyCount: Object.keys(finalElement).length
+          });
+
+          return finalElement;
         } catch (error) {
-          console.error('Erreur lors du nettoyage d\'un élément:', error, element);
+          console.error(`❌ [CLEAN ELEMENT] Erreur lors du nettoyage d'un élément ${index}:`, error, element);
           // Retourner un élément minimal en cas d'échec
           return {
             id: element.id || `fallback_${Date.now()}`,
@@ -478,16 +506,22 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
       });
 
+      console.log('🔍 [AUTO SAVE] Test de sérialisation JSON...');
+
       // Test final de sérialisation avant envoi
       let serializedElements: string;
       try {
         serializedElements = JSON.stringify(cleanElements);
         // Vérifier que c'est du JSON valide
         JSON.parse(serializedElements);
+        console.log('✅ [AUTO SAVE] Sérialisation JSON réussie, taille:', serializedElements.length);
       } catch (jsonError) {
-        console.error('Erreur JSON même après nettoyage:', jsonError, cleanElements);
+        console.error('❌ [AUTO SAVE] Erreur JSON même après nettoyage:', jsonError);
+        console.error('🔍 [AUTO SAVE] Éléments nettoyés qui causent le problème:', cleanElements);
         throw new Error('Impossible de sérialiser les éléments même après nettoyage');
       }
+
+      console.log('📡 [AUTO SAVE] Envoi de la requête AJAX...');
 
       const response = await fetch(ajaxUrl, {
         method: 'POST',
