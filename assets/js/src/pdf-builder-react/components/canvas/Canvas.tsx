@@ -773,6 +773,14 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.fillStyle = txtColor;
     ctx.textAlign = textAlign as CanvasTextAlign;
 
+    // Calcul de la position X selon l'alignement
+    let x = 10;
+    if (textAlign === 'center') {
+      x = element.width / 2;
+    } else if (textAlign === 'right') {
+      x = element.width - 10;
+    }
+
     let y = 20;
 
     // Informations entreprise hybrides : props configurables + valeurs par défaut
@@ -785,17 +793,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       email: props.companyEmail || 'contact@maboutique.com',
       phone: props.companyPhone || '+33 4 12 34 56 78'
     };
-
-    console.log(`Company data for rendering:`, companyData);
-    console.log(`Rendering company name: "${companyData.name}" at position (${element.x + x}, ${element.y + y})`);
-
-    // Calcul de la position X selon l'alignement
-    let x = 10;
-    if (textAlign === 'center') {
-      x = element.width / 2;
-    } else if (textAlign === 'right') {
-      x = element.width - 10;
-    }
 
     console.log(`Company data for rendering:`, companyData);
     console.log(`Rendering company name: "${companyData.name}" at position (${element.x + x}, ${element.y + y})`);
