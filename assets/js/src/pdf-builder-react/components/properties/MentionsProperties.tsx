@@ -458,17 +458,31 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                           onChange(element.id, 'text', combinedText);
 
-                          // Ajuster automatiquement la hauteur selon le nombre de lignes
+                          // Ajuster automatiquement la hauteur et la largeur selon le contenu
                           const lines = combinedText.split('\n');
                           const fontSize = (element as any).fontSize || 10;
-                          const lineHeight = fontSize * 1.4; // Augmenté de 1.3 à 1.4 pour plus de marge
-                          const padding = 15; // Augmenté de 10 à 15 pour plus de marge
-                          const minHeight = 80; // Augmenté de 60 à 80 pour plus de marge
+                          const lineHeight = fontSize * 1.4;
+                          const padding = 15;
+                          const minHeight = 80;
                           const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
-
-                          // Limite maximale plus haute pour les medleys
-                          const maxHeight = 500; // Augmenté de 300 à 500
+                          const maxHeight = 500;
                           const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                          // Calculer la largeur basée sur la ligne la plus longue
+                          const canvas = document.createElement('canvas');
+                          const ctx = canvas.getContext('2d');
+                          if (ctx) {
+                            ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                            const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                            const minWidth = 200; // Largeur minimale
+                            const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                            const maxWidth = 800; // Largeur maximale
+                            const newWidth = Math.min(calculatedWidth, maxWidth);
+
+                            if ((element as any).width !== newWidth) {
+                              onChange(element.id, 'width', newWidth);
+                            }
+                          }
 
                           if ((element as any).height !== newHeight) {
                             onChange(element.id, 'height', newHeight);
@@ -490,7 +504,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 {(element as any).selectedMentions?.length || 0} mention(s) sélectionnée(s)
                 {(element as any).selectedMentions?.length > 0 && (
                   <span style={{ color: '#007bff', marginLeft: '8px' }}>
-                    • Hauteur ajustée automatiquement
+                    • Dimensions ajustées automatiquement
                   </span>
                 )}
               </div>
@@ -522,15 +536,31 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                       onChange(element.id, 'text', combinedText);
 
-                      // Ajuster la hauteur selon le nouveau nombre de lignes
+                      // Ajuster la hauteur et la largeur selon le nouveau nombre de lignes
                       const lines = combinedText.split('\n');
                       const fontSize = (element as any).fontSize || 10;
-                      const lineHeight = fontSize * 1.4; // Augmenté pour plus de marge
+                      const lineHeight = fontSize * 1.4;
                       const padding = 15;
                       const minHeight = 80;
                       const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
-                      const maxHeight = 500; // Limite plus haute pour les medleys
+                      const maxHeight = 500;
                       const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                      // Calculer la largeur basée sur la ligne la plus longue
+                      const canvas = document.createElement('canvas');
+                      const ctx = canvas.getContext('2d');
+                      if (ctx) {
+                        ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                        const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                        const minWidth = 200;
+                        const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                        const maxWidth = 800;
+                        const newWidth = Math.min(calculatedWidth, maxWidth);
+
+                        if ((element as any).width !== newWidth) {
+                          onChange(element.id, 'width', newWidth);
+                        }
+                      }
 
                       if ((element as any).height !== newHeight) {
                         onChange(element.id, 'height', newHeight);
@@ -681,12 +711,28 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                   const lines = combinedText.split('\n');
                   const fontSize = parseInt(e.target.value) || 10;
-                  const lineHeight = fontSize * 1.4; // Augmenté pour plus de marge
+                  const lineHeight = fontSize * 1.4;
                   const padding = 15;
                   const minHeight = 80;
                   const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + padding * 2);
-                  const maxHeight = 500; // Limite plus haute pour les medleys
+                  const maxHeight = 500;
                   const newHeight = Math.min(calculatedHeight, maxHeight);
+
+                  // Calculer la largeur basée sur la ligne la plus longue
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d');
+                  if (ctx) {
+                    ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                    const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                    const minWidth = 200;
+                    const calculatedWidth = Math.max(minWidth, maxLineWidth + padding * 2);
+                    const maxWidth = 800;
+                    const newWidth = Math.min(calculatedWidth, maxWidth);
+
+                    if ((element as any).width !== newWidth) {
+                      onChange(element.id, 'width', newWidth);
+                    }
+                  }
 
                   if ((element as any).height !== newHeight) {
                     onChange(element.id, 'height', newHeight);
@@ -798,20 +844,28 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur
+              Largeur {currentMentionType === 'medley' ? '(auto-ajustée)' : ''}
             </label>
             <input
               type="number"
               value={(element as any).width || 400}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 400)}
+              disabled={currentMentionType === 'medley'}
               style={{
                 width: '100%',
                 padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                fontSize: '12px'
+                fontSize: '12px',
+                backgroundColor: currentMentionType === 'medley' ? '#f5f5f5' : '#ffffff',
+                color: currentMentionType === 'medley' ? '#999' : '#333'
               }}
             />
+            {currentMentionType === 'medley' && (
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                La largeur s'ajuste automatiquement selon le contenu du medley
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '12px' }}>
@@ -835,7 +889,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             />
             {currentMentionType === 'medley' && (
               <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-                La hauteur s'ajuste automatiquement selon le contenu du medley
+                Les dimensions s'ajustent automatiquement selon le contenu du medley
               </div>
             )}
           </div>

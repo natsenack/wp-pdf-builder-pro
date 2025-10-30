@@ -213,11 +213,11 @@ export class PDFCanvasCore {
         this.ctx.textAlign = p.textAlign || 'left';
         this.ctx.textBaseline = 'top';
 
-        // Pour les mentions en mode medley, ne pas appliquer de clipping
+        // Pour tous les éléments mentions, ne pas appliquer de clipping
         // pour permettre au texte de dépasser si nécessaire
-        const isMedleyMentions = element.type === 'mentions' && p.mentionType === 'medley';
+        const isMentionsElement = element.type === 'mentions';
 
-        if (!isMedleyMentions) {
+        if (!isMentionsElement) {
             // Clip pour garder le texte dans les limites (pour les autres éléments)
             this.ctx.beginPath();
             this.ctx.rect(0, 0, width, height);
