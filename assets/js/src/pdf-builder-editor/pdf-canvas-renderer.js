@@ -349,7 +349,13 @@ export class PDFCanvasRenderer {
      */
     renderByType(element) {
         
-        // Éléments WooCommerce - traiter comme du texte dynamique
+        // Traiter product_table comme un élément spécial (pas du texte)
+        if (element.type === 'product_table') {
+            this.renderProductTable(element);
+            return;
+        }
+
+        // Éléments WooCommerce (autres que product_table) - traiter comme du texte dynamique
         if (this.isWooCommerceElement(element.type)) {
             this.renderWooCommerceElement(element);
             return;
@@ -929,6 +935,129 @@ export class PDFCanvasRenderer {
     dispose() {
         this.clearCache();
         this.resetStats();
+    }
+
+    /**
+     * Rend un tableau produits avec en-têtes et lignes
+     */
+    renderProductTable(element) {
+        const props = element.properties;
+        if (!props || !props.width || !props.height) return;
+
+        this.ctx.save();
+
+        // Configuration du tableau
+        const headers = ['Produit', 'Qté', 'Prix', 'Total'];
+        const colWidths = [
+            props.width * 0.50,  // Produit: 50%
+            props.width * 0.15,  // Qté: 15%
+            props.width * 0.175, // Prix: 17.5%
+            props.width * 0.175  // Total: 17.5%
+        ];
+        
+        const rowHeight = 20;
+        const headerHeight = 25;
+        const borderColor = props.borderColor || props.strokeColor || '#333333';
+        const headerBg = props.headerBgColor || '#f0f8ff';
+        const rowBg = props.rowBgColor || '#ffffff';
+        const fontSize = props.fontSize || 11;
+
+        // Position de départ
+        let y = 0;
+
+        // Dessiner les en-têtes
+        this.ctx.fillStyle = headerBg;
+        this.ctx.fillRect(0, 0, props.width, headerHeight);
+
+        this.ctx.strokeStyle = borderColor;
+        this.ctx.lineWidth = 1.5;
+        this.ctx.strokeRect(0, 0, props.width, headerHeight);
+
+        // Remplir les colonnes d'en-têtes
+        this.ctx.font = `bold ${fontSize}px Arial`;
+        this.ctx.fillStyle = '#000000';
+        this.ctx.textAlign = 'center';
+
+        let x = 0;
+        for (let i = 0; i < headers.length; i++) {
+            const colWidth = colWidths[i];
+            // Dessiner les bordures de colonnes
+            if (i > 0) {
+                this.ctx.strokeStyle = borderColor;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, 0);
+                this.ctx.lineTo(x, headerHeight);
+                this.ctx.stroke();
+            }
+            // Afficher le texte d'en-tête
+            this.ctx.fillText(headers[i], x + colWidth / 2, headerHeight / 2 + fontSize / 3);
+            x += colWidth;
+        }
+
+        // Dessiner les lignes de produits (exemple: 3 lignes de données)
+        y = headerHeight;
+        const dummyProducts = [
+            { name: 'Produit A', qty: 1, price: '29.99€', total: '29.99€' },
+            { name: 'Produit B', qty: 2, price: '15.99€', total: '31.98€' },
+            { name: 'Produit C', qty: 1, price: '49.99€', total: '49.99€' }
+        ];
+
+        this.ctx.font = `${fontSize}px Arial`;
+        this.ctx.fillStyle = '#000000';
+
+        for (let row = 0; row < dummyProducts.length; row++) {
+            const product = dummyProducts[row];
+            
+            // Fond alterné
+            this.ctx.fillStyle = row % 2 === 0 ? rowBg : '#f5f5f5';
+            this.ctx.fillRect(0, y, props.width, rowHeight);
+
+            // Bordures
+            this.ctx.strokeStyle = borderColor;
+            this.ctx.lineWidth = 0.5;
+            this.ctx.strokeRect(0, y, props.width, rowHeight);
+
+            // Colonnes séparateurs
+            x = 0;
+            for (let i = 0; i < headers.length; i++) {
+                const colWidth = colWidths[i];
+                if (i > 0) {
+                    this.ctx.strokeStyle = borderColor;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y);
+                    this.ctx.lineTo(x, y + rowHeight);
+                    this.ctx.stroke();
+                }
+
+                // Afficher le texte
+                this.ctx.textAlign = i === 0 ? 'left' : 'center';
+                this.ctx.fillStyle = '#000000';
+                let text = product[Object.keys(product)[i]] || '';
+                this.ctx.fillText(text, x + (i === 0 ? 4 : colWidth / 2), y + rowHeight / 2 + fontSize / 3);
+                x += colWidth;
+            }
+
+            y += rowHeight;
+
+            // Limiter à la hauteur disponible
+            if (y > props.height) break;
+        }
+
+        // Total row
+        if (y < props.height) {
+            this.ctx.fillStyle = headerBg;
+            this.ctx.fillRect(0, y, props.width, rowHeight);
+            this.ctx.strokeStyle = borderColor;
+            this.ctx.lineWidth = 1.5;
+            this.ctx.strokeRect(0, y, props.width, rowHeight);
+
+            this.ctx.font = `bold ${fontSize}px Arial`;
+            this.ctx.fillStyle = '#000000';
+            this.ctx.textAlign = 'right';
+            this.ctx.fillText('TOTAL: 111.96€', props.width - 10, y + rowHeight / 2 + fontSize / 3);
+        }
+
+        this.ctx.restore();
     }
 }
 
