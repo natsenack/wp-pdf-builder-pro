@@ -175,16 +175,26 @@ export class PreviewRenderer {
     ctx.textBaseline = 'top';
 
     // Remplacer les variables dans le texte
-    const text = this.replaceVariables(props.text || 'Texte', dataProvider);
+    let text = this.replaceVariables(props.text || 'Texte', dataProvider);
 
     const lines = text.split('\n');
     let y = 0;
-    const lineHeight = props.fontSize || 14;
+    const lineHeight = (props.lineHeight || props.fontSize || 14) * 1.2; // Ajouter un espacement entre les lignes
 
-    lines.forEach((line: string) => {
-      const x = textAlign === 'center' ? props.width / 2 :
-                textAlign === 'right' ? props.width : 0;
-      ctx.fillText(line, x, y);
+    lines.forEach((line: string, index: number) => {
+      let x = 0;
+      
+      if (textAlign === 'center') {
+        x = props.width / 2;
+      } else if (textAlign === 'right') {
+        x = props.width;
+      }
+      
+      // Vérifier que le texte n'est pas vide
+      if (line.trim()) {
+        ctx.fillText(line, x, y);
+      }
+      
       y += lineHeight;
     });
   }

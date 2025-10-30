@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
-import { CanvasDataProvider } from '../../providers/CanvasDataProvider';
+import { TemplateDataProvider } from '../../providers/TemplateDataProvider';
 
 // Ajouter l'animation CSS globale
 if (typeof document !== 'undefined') {
@@ -28,7 +28,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
   const [isLoading, setIsLoading] = useState(false);
   const [previewElements, setPreviewElements] = useState<any[]>([]);
-  const [dataProvider] = useState<DataProvider>(() => new CanvasDataProvider());
+  const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
   const { state } = useBuilder();
 
   // Fonction pour remplacer les variables dynamiques dans le texte
@@ -62,10 +62,14 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       console.log('✅ [PREVIEW MODAL] Setting preview elements from state:', state.elements.length, 'éléments');
       // Utiliser directement les éléments du state pour l'aperçu temps réel
       setPreviewElements([...state.elements]); // Créer une copie pour forcer le re-render
+      // Créer un nouveau DataProvider avec les éléments du template
+      const provider = new TemplateDataProvider(state.elements);
+      setDataProvider(provider);
     } else if (isOpen && state.elements.length === 0) {
       console.log('⚠️ [PREVIEW MODAL] Setting empty preview elements (modal open but no state elements)');
       // Si la modal est ouverte mais qu'il n'y a pas d'éléments, utiliser un tableau vide
       setPreviewElements([]);
+      setDataProvider(null);
     }
   }, [isOpen, state.elements]);
 
@@ -143,7 +147,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
-    if (!canvasRef.current || previewElements.length === 0) {
+    if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
       return;
     }
 

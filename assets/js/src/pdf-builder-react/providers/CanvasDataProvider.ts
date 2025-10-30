@@ -26,6 +26,7 @@ export class CanvasDataProvider implements DataProvider {
       'order_date': '30 octobre 2025',
       'order_status': 'pending',
       'order_total': '299,99 €',
+      'document_type': 'FACTURE',
 
       // Variables entreprise fictives
       'company_name': 'Ma Société SARL',

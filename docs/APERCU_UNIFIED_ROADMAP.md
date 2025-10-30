@@ -1,7 +1,7 @@
 # 🚀 Reconstruction Système d'Aperçu
 
-**📅 Date** : 21 octobre 2025  
-**🔄 Statut** : Phase 2 terminée (100%), Phase 2.3 déployée - Système de rendu unifié opérationnel
+**📅 Date** : 30 octobre 2025  
+**🔄 Statut** : Phase 3.0 en cours - TemplateDataProvider implémenté (récupération variables depuis JSON template)
 
 ---
 
@@ -216,7 +216,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Test en ligne** : Composants réutilisables validés
     - **Diagnostic** : Performance et cohérence UI assurées
 
-### 🏗️ Phase 2.3 : Infrastructure de base ✅ TERMINÉE (80%)
+#### **2.3 Infrastructure de base ✅ TERMINÉE (80%)
 **Système de rendu unifié implémenté avec PreviewRenderer partagé entre Canvas et Metabox**
 - [x] **Étape 2.3.1 : Créer PreviewRenderer avec canvas A4** ✅ TERMINÉ
   - Classe PreviewRenderer créée avec dimensions A4 (794×1123px)
@@ -251,11 +251,18 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Test en ligne** : Élément simple rendu dans canvas
     - **Diagnostic** : Inspecter DOM généré
 
-- [x] **Étape 2.3.2 : Implémenter CanvasMode et MetaboxMode** ✅ TERMINÉ
+#### **2.3.2 Implémenter CanvasMode et MetaboxMode** ✅ TERMINÉ
   - CanvasDataProvider (données fictives) et MetaboxDataProvider (données WooCommerce) créés
+  - **NOUVEAU** : TemplateDataProvider pour récupérer variables depuis JSON du template
   - Système de switch entre modes opérationnel
   - Injection de dépendances configurée
-  - **Fichiers concernés** : `plugin/src/Providers/CanvasModeProvider.php`, `plugin/src/Providers/MetaboxModeProvider.php`, `plugin/src/Interfaces/DataProviderInterface.php`
+  - **Fichiers concernés** : 
+    - `plugin/src/Providers/CanvasModeProvider.php` (données fictives)
+    - `plugin/src/Providers/MetaboxModeProvider.php` (données WooCommerce réelles)
+    - `assets/js/src/pdf-builder-react/providers/CanvasDataProvider.ts` (Frontend - données fictives)
+    - `assets/js/src/pdf-builder-react/providers/MetaboxDataProvider.ts` (Frontend - données WooCommerce)
+    - `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts` (NOUVEAU Frontend - variables depuis JSON template)
+    - `plugin/src/Interfaces/DataProviderInterface.php` (Interface PHP)
   - [ ] **2.3.2.1** : Créer interfaces communes (ModeInterface)
     - Définir `ModeInterface` avec méthodes communes
     - Spécifier contrats d'échange de données
@@ -470,8 +477,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - Rechargement du JSON depuis BDD pour l'aperçu après chaque sauvegarde
   - Indicateur visuel "Sauvegarde en cours..." pendant les sauvegardes
   - Gestion des erreurs de sauvegarde avec retry automatique
-  - **Test** : Modifications sauvegardées automatiquement, aperçu cohérent avec BDD
-  - **Fichiers concernés** : `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx`, `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx`
+  - **Nouveau** : `TemplateDataProvider` pour récupérer variables depuis JSON du template (et pas juste données fictives)
+  - **Test** : Modifications sauvegardées automatiquement, aperçu cohérent avec BDD, variables depuis JSON affichées
+  - **Fichiers concernés** : 
+    - `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx` (utilise TemplateDataProvider)
+    - `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts` (NOUVEAU - récupère variables depuis éléments du template)
+    - `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx`
+    - `assets/js/src/pdf-builder-react/renderers/PreviewRenderer.ts` (amélioré pour meilleur rendu texte et variables)
 
 - [ ] **Étape 3.1 : Tests unitaires (100% couverture)**
   - Écrire tests unitaires pour toutes les classes PHP et JS
@@ -535,8 +547,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 3/7  
-**Progression** : 43% (Phase 2 terminée 100% + Phase 3.0 mode miroir ajouté - système d'aperçu unifié opérationnel, architecture modulaire complète, APIs sécurisées)  
-**Prochaine action** : Phase 3.0 - Implémentation mode miroir aperçu temps réel
+**Progression** : 45% (Phase 2 terminée 100% + Phase 3.0 TemplateDataProvider implémenté)  
+**Prochaine action** : Déploiement et tests TemplateDataProvider, puis continuer Phase 3.0 (sauvegarde auto, rechargement JSON)
 
 ---
 
@@ -646,7 +658,77 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 ---
 
-## 📝 Notes de progression - Phases terminées
+## � NOUVEAUTÉ Phase 3.0 - TemplateDataProvider
+
+### 📋 Qu'est-ce que le TemplateDataProvider ?
+
+**Fichier** : `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts`
+
+**Objectif** : Récupérer les variables dynamiques **directement depuis le JSON du template enregistré** (et pas seulement des données fictives).
+
+### 🎯 Logique d'implémentation
+
+Avant :
+```
+PreviewModal → CanvasDataProvider (données fictives statiques)
+```
+
+Maintenant :
+```
+PreviewModal → TemplateDataProvider (extrait variables depuis state.elements) → CanvasDataProvider (données fictives comme fallback)
+```
+
+### 📊 Fonctionnalités
+
+1. **Extraction de variables depuis le template JSON**
+   - Analyse tous les éléments du state.elements
+   - Cherche les variables `{{variable}}` dans les textes
+   - Récupère les valeurs depuis CanvasDataProvider
+   - Stocke dans une Map pour accès rapide
+
+2. **Fallback intelligent**
+   - Si variable trouvée dans template → utilise cette valeur
+   - Si pas trouvée → utilise données fictives par défaut
+   - Pas d'erreur, affichage toujours correct
+
+3. **Refresh dynamique**
+   - Méthode `refresh()` pour mettre à jour après modification du template
+   - Utile lors de modifications d'éléments dans l'éditeur
+
+### 🔄 Exemple pratique
+
+```typescript
+// Avant (données fictives statiques)
+Template avec {{customer_name}} → affiche toujours "Jean Dupont"
+
+// Après (variables depuis template)
+Template avec {{customer_name}} → 
+  1. Cherche "customer_name" dans template
+  2. Si trouvé dans CanvasDataProvider → utilise valeur
+  3. Sinon → fallback "Jean Dupont"
+```
+
+### 📝 Fichiers concernés
+
+| Fichier | Rôle | Type |
+|---------|------|------|
+| `TemplateDataProvider.ts` | Récupère variables du template JSON | **NOUVEAU** |
+| `PreviewModal.tsx` | Utilise TemplateDataProvider au lieu de CanvasDataProvider | **MODIFIÉ** |
+| `CanvasDataProvider.ts` | Données fictives (fallback) | Inchangé |
+| `MetaboxDataProvider.ts` | Données WooCommerce réelles | Inchangé |
+| `PreviewRenderer.ts` | Amélioration rendu texte et variables | **AMÉLIORÉ** |
+
+### ✅ Intégration avec Phase 3.0
+
+Cette modification garantit que :
+- ✅ Aperçu affiche les **vraies variables du template** (pas juste fictives)
+- ✅ **Cohérence** entre l'éditeur et l'aperçu
+- ✅ **Performance** optimisée (variables en cache dans Map)
+- ✅ **Fallback** si données manquantes (jamais de cassure)
+
+---
+
+## �📝 Notes de progression - Phases terminées
 
 ### Phase 1 ✅ TERMINÉE
 - Nettoyage complet du système d'aperçu

@@ -2,7 +2,7 @@
 
 ## 📅 **HISTORIQUE COMPLET DU PROJET**
 
-*Document mis à jour le 17 octobre 2025*
+*Document mis à jour le 30 octobre 2025*
 
 ---
 
