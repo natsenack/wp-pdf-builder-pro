@@ -894,7 +894,12 @@ class PDF_Builder_Core
         // Valider le JSON
         $elements = json_decode($elements_json, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_send_json_error(__('JSON invalide.', 'pdf-builder-pro'));
+            // Log détaillé de l'erreur JSON
+            error_log('PDF BUILDER DEBUG - JSON Error: ' . json_last_error_msg());
+            error_log('PDF BUILDER DEBUG - JSON Length: ' . strlen($elements_json));
+            error_log('PDF BUILDER DEBUG - JSON Preview: ' . substr($elements_json, 0, 500) . '...');
+
+            wp_send_json_error(__('JSON invalide: ', 'pdf-builder-pro') . json_last_error_msg());
             exit;
         }
 
