@@ -113,6 +113,30 @@ export class PreviewRenderer {
         this.renderProductTable(ctx, props, dataProvider);
         break;
 
+      case 'customer_info':
+        this.renderCustomerInfo(ctx, props, dataProvider);
+        break;
+
+      case 'company_info':
+        this.renderCompanyInfo(ctx, props, dataProvider);
+        break;
+
+      case 'mentions':
+        this.renderMentions(ctx, props, dataProvider);
+        break;
+
+      case 'document_type':
+        this.renderDocumentType(ctx, props, dataProvider);
+        break;
+
+      case 'line':
+        this.renderLine(ctx, props);
+        break;
+
+      case 'dynamic-text':
+        this.renderDynamicText(ctx, props, dataProvider);
+        break;
+
       // Ajouter d'autres types d'éléments selon les besoins
 
       default:
@@ -226,6 +250,93 @@ export class PreviewRenderer {
     // Version simplifiée - à améliorer selon les besoins
     const products = dataProvider.getVariableValue('products');
     this.renderText(ctx, { ...props, text: `Produits:\n${products}` }, dataProvider);
+  }
+
+  /**
+   * Rend les informations client
+   */
+  private static renderCustomerInfo(
+    ctx: CanvasRenderingContext2D,
+    props: any,
+    dataProvider: DataProvider
+  ): void {
+    const customerInfo = [
+      dataProvider.getVariableValue('customer_name'),
+      dataProvider.getVariableValue('customer_email'),
+      dataProvider.getVariableValue('customer_phone'),
+      dataProvider.getVariableValue('customer_address')
+    ].filter(info => info).join('\n');
+
+    this.renderText(ctx, { ...props, text: customerInfo }, dataProvider);
+  }
+
+  /**
+   * Rend les informations entreprise
+   */
+  private static renderCompanyInfo(
+    ctx: CanvasRenderingContext2D,
+    props: any,
+    dataProvider: DataProvider
+  ): void {
+    const companyInfo = [
+      dataProvider.getVariableValue('company_name'),
+      dataProvider.getVariableValue('company_address'),
+      dataProvider.getVariableValue('company_phone'),
+      dataProvider.getVariableValue('company_email'),
+      dataProvider.getVariableValue('company_vat')
+    ].filter(info => info).join('\n');
+
+    this.renderText(ctx, { ...props, text: companyInfo }, dataProvider);
+  }
+
+  /**
+   * Rend les mentions légales
+   */
+  private static renderMentions(
+    ctx: CanvasRenderingContext2D,
+    props: any,
+    dataProvider: DataProvider
+  ): void {
+    const mentions = props.text || dataProvider.getVariableValue('mentions') || 'Mentions légales';
+    this.renderText(ctx, { ...props, text: mentions }, dataProvider);
+  }
+
+  /**
+   * Rend le type de document
+   */
+  private static renderDocumentType(
+    ctx: CanvasRenderingContext2D,
+    props: any,
+    dataProvider: DataProvider
+  ): void {
+    const docType = dataProvider.getVariableValue('document_type') || 'Document';
+    this.renderText(ctx, { ...props, text: docType }, dataProvider);
+  }
+
+  /**
+   * Rend une ligne
+   */
+  private static renderLine(ctx: CanvasRenderingContext2D, props: any): void {
+    ctx.strokeStyle = props.color || props.borderColor || '#000000';
+    ctx.lineWidth = props.height || props.borderWidth || 1;
+
+    // Dessiner une ligne horizontale
+    const y = props.height ? props.height / 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(props.width, y);
+    ctx.stroke();
+  }
+
+  /**
+   * Rend du texte dynamique (alias pour renderText)
+   */
+  private static renderDynamicText(
+    ctx: CanvasRenderingContext2D,
+    props: any,
+    dataProvider: DataProvider
+  ): void {
+    this.renderText(ctx, props, dataProvider);
   }
 
   /**

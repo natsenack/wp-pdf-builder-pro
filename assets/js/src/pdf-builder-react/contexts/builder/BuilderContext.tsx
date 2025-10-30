@@ -373,21 +373,6 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
 
-  // Sauvegarde automatique toutes les 2.5 secondes
-  useEffect(() => {
-    if (!state.elements.length || !state.template.id) return;
-
-    const saveTimer = setTimeout(async () => {
-      try {
-        await autoSaveTemplate();
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde automatique:', error);
-      }
-    }, 2500); // 2.5 secondes
-
-    return () => clearTimeout(saveTimer);
-  }, [state.elements, state.template.id]);
-
   // Fonction de sauvegarde automatique
   const autoSaveTemplate = async (): Promise<void> => {
     if (!state.template.id || state.template.isSaving) return;
@@ -400,6 +385,13 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                    (window as any).pdfBuilderNonce ||
                    (window as any).pdfBuilderReactData?.nonce || '';
 
+      // Nettoyer les éléments pour la sérialisation JSON
+      const cleanElements = state.elements.map(element => ({
+        ...element,
+        createdAt: element.createdAt?.toISOString(),
+        updatedAt: element.updatedAt?.toISOString()
+      }));
+
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
@@ -408,7 +400,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         body: new URLSearchParams({
           action: 'pdf_builder_auto_save_template',
           template_id: state.template.id.toString(),
-          elements: JSON.stringify(state.elements),
+          elements: JSON.stringify(cleanElements),
           nonce: nonce
         })
       });
@@ -432,6 +424,21 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
   };
+
+  // Sauvegarde automatique toutes les 2.5 secondes
+  useEffect(() => {
+    if (!state.elements.length || !state.template.id) return;
+
+    const saveTimer = setTimeout(async () => {
+      try {
+        await autoSaveTemplate();
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde automatique:', error);
+      }
+    }, 2500); // 2.5 secondes
+
+    return () => clearTimeout(saveTimer);
+  }, [state.elements, state.template.id]);
 
   // Actions helpers
   const addElement = (element: Element) => {
