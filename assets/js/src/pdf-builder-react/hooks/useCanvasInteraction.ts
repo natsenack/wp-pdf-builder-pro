@@ -330,22 +330,14 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     if (isDraggingRef.current && selectedElementRef.current) {
       // Déplacer l'élément
-      const element = state.elements.find(el => el.id === selectedElementRef.current);
-      if (!element) return;
-
       const deltaX = x - dragStartRef.current.x;
       const deltaY = y - dragStartRef.current.y;
-
-      const newX = element.x + deltaX;
-      const newY = element.y + deltaY;
-
-      console.log('🎯 [DRAG] Moving element:', selectedElementRef.current, 'by:', { x: deltaX, y: deltaY }, 'to:', { x: newX, y: newY });
 
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates: { x: newX, y: newY }
+          updates: { x: deltaX, y: deltaY }
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
