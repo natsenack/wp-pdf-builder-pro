@@ -948,19 +948,31 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const labelTextAlign = props.labelTextAlign || textAlign;
     const numberTextAlign = props.numberTextAlign || textAlign;
     const dateTextAlign = props.dateTextAlign || textAlign;
+    const contentAlign = props.contentAlign || 'left'; // Alignement général du contenu dans l'élément
     const showLabel = props.showLabel !== false; // Par défaut true
     const showDate = props.showDate !== false; // Par défaut true
     const labelPosition = props.labelPosition || 'above'; // above, left, right, below
     const labelText = props.labelText || 'N° de commande:'; // Texte personnalisable du libellé
 
-    // Fonction helper pour calculer la position X selon l'alignement
+    // Fonction helper pour calculer la position X selon l'alignement général du contenu
+    const calculateContentX = (align: string) => {
+      if (align === 'left') {
+        return 10;
+      } else if (align === 'center') {
+        return element.width / 2;
+      } else { // right
+        return element.width - 10;
+      }
+    };
+
+    // Fonction helper pour calculer la position X selon l'alignement du texte
     const calculateX = (align: string) => {
       if (align === 'left') {
         return 10;
       } else if (align === 'center') {
         return element.width / 2;
       } else { // right
-        return element.width; // Align to the right edge without margin
+        return element.width - 10;
       }
     };
 
@@ -983,67 +995,99 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     let y = 20;
+
+    // Calculer la largeur totale du contenu pour l'alignement général
+    let totalContentWidth = 0;
+    if (showLabel) {
+      if (labelPosition === 'above' || labelPosition === 'below') {
+        // Pour les positions verticales, prendre la largeur maximale
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+        const labelWidth = ctx.measureText(labelText).width;
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
+        const numberWidth = ctx.measureText(orderNumber).width;
+        totalContentWidth = Math.max(labelWidth, numberWidth);
+      } else {
+        // Pour les positions latérales, calculer la largeur combinée
+        ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+        const labelWidth = ctx.measureText(labelText).width;
+        ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
+        const numberWidth = ctx.measureText(orderNumber).width;
+        totalContentWidth = labelWidth + numberWidth + 15; // 15px d'espace
+      }
+    } else {
+      // Juste le numéro
+      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
+      totalContentWidth = ctx.measureText(orderNumber).width;
+    }
+
+    // Calculer le décalage pour l'alignement général du contenu
+    let contentOffsetX = 0;
+    if (contentAlign === 'center') {
+      contentOffsetX = (element.width - totalContentWidth) / 2 - 10; // -10 car on commence à 10
+    } else if (contentAlign === 'right') {
+      contentOffsetX = element.width - totalContentWidth - 20; // -20 pour les marges
+    }
+
     if (showLabel) {
       if (labelPosition === 'above') {
-        // Libellé au-dessus, numéro en-dessous - utiliser l'alignement global
+        // Libellé au-dessus, numéro en-dessous - utiliser l'alignement général du contenu
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText(labelText, calculateX(textAlign), y);
+        ctx.textAlign = contentAlign as CanvasTextAlign;
+        ctx.fillText(labelText, calculateContentX(contentAlign) + contentOffsetX, y);
         y += 18;
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateX(textAlign), y);
+        ctx.textAlign = contentAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
       } else if (labelPosition === 'below') {
-        // Numéro au-dessus, libellé en-dessous - utiliser l'alignement global
+        // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText(orderNumber, calculateX(textAlign), y);
+        ctx.textAlign = contentAlign as CanvasTextAlign;
+        ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
         y += 18;
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-        ctx.textAlign = textAlign as CanvasTextAlign;
-        ctx.fillText(labelText, calculateX(textAlign), y);
+        ctx.textAlign = contentAlign as CanvasTextAlign;
+        ctx.fillText(labelText, calculateContentX(contentAlign) + contentOffsetX, y);
       } else if (labelPosition === 'left') {
-        // Libellé à gauche, numéro à droite - avec espacement optimal
+        // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = 'left' as CanvasTextAlign;
-        ctx.fillText(labelText, 10, y);
+        const labelX = 10 + contentOffsetX;
+        ctx.fillText(labelText, labelX, y);
 
         // Calculer l'espace disponible pour centrer le numéro ou l'aligner intelligemment
         const labelWidth = ctx.measureText(labelText).width;
-        const availableSpace = element.width - 20 - labelWidth; // 10px padding des deux côtés
-        const numberX = labelWidth + 15; // 15px d'espace après le libellé
+        const numberX = labelX + labelWidth + 15; // 15px d'espace après le libellé
 
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = 'left' as CanvasTextAlign;
         ctx.fillText(orderNumber, numberX, y);
       } else if (labelPosition === 'right') {
-        // Numéro à gauche, libellé à droite - avec espacement optimal
+        // Numéro à gauche, libellé à droite - avec espacement optimal et alignement général
         ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
         ctx.textAlign = 'left' as CanvasTextAlign;
-        ctx.fillText(orderNumber, 10, y);
+        const numberX = 10 + contentOffsetX;
+        ctx.fillText(orderNumber, numberX, y);
 
         // Calculer la position du libellé après le numéro
         const numberWidth = ctx.measureText(orderNumber).width;
-        const labelX = numberWidth + 15; // 15px d'espace après le numéro
+        const labelX = numberX + numberWidth + 15; // 15px d'espace après le numéro
 
         ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
         ctx.textAlign = 'left' as CanvasTextAlign;
         ctx.fillText(labelText, labelX, y);
       }
     } else {
-      // Pas de libellé, juste le numéro
+      // Pas de libellé, juste le numéro avec alignement général du contenu
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = numberTextAlign as CanvasTextAlign;
-      ctx.fillText(orderNumber, calculateX(numberTextAlign), y);
+      ctx.textAlign = contentAlign as CanvasTextAlign;
+      ctx.fillText(orderNumber, calculateContentX(contentAlign) + contentOffsetX, y);
     }
 
-    // Afficher la date sur une nouvelle ligne avec le même alignement (si activé)
+    // Afficher la date sur une nouvelle ligne avec le même alignement général
     if (showDate) {
       ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
-      // Pour les positions left/right, aligner la date à gauche pour cohérence
-      const finalDateAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : dateTextAlign;
-      ctx.textAlign = finalDateAlign as CanvasTextAlign;
-      ctx.fillText(`Date: ${orderDate}`, calculateX(finalDateAlign), y + 20);
+      ctx.textAlign = contentAlign as CanvasTextAlign;
+      ctx.fillText(`Date: ${orderDate}`, calculateContentX(contentAlign) + contentOffsetX, y + 20);
     }
     } catch (error) {
       // Erreur silencieuse dans drawOrderNumber

@@ -4,75 +4,90 @@ import { Element } from '../../types/elements';
 interface OrderNumberPropertiesProps {
   element: Element;
   onChange: (elementId: string, property: string, value: any) => void;
-  activeTab: { [key: string]: 'contenu' | 'style' | 'position' };
-  setActiveTab: (tabs: { [key: string]: 'contenu' | 'style' | 'position' }) => void;
+  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
+  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
 
 export function OrderNumberProperties({ element, onChange, activeTab, setActiveTab }: OrderNumberPropertiesProps) {
-  const currentTab = activeTab[element.id] || 'contenu';
-  const setCurrentTab = (tab: 'contenu' | 'style' | 'position') => {
+  const currentTab = activeTab[element.id] || 'fonctionnalites';
+  const setCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
   return (
-    <div style={{ padding: '8px' }}>
-      {/* Onglets simplifiés */}
-      <div style={{ display: 'flex', marginBottom: '16px', borderBottom: '2px solid #ddd', gap: '2px' }}>
+    <>
+      {/* Système d'onglets pour Order Number */}
+      <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px', flexWrap: 'wrap' }}>
         <button
-          onClick={() => setCurrentTab('contenu')}
+          onClick={() => setCurrentTab('fonctionnalites')}
           style={{
-            flex: 1,
-            padding: '8px 4px',
-            backgroundColor: currentTab === 'contenu' ? '#007bff' : '#f0f0f0',
-            color: currentTab === 'contenu' ? '#fff' : '#333',
+            flex: '1 1 30%',
+            padding: '8px 6px',
+            backgroundColor: currentTab === 'fonctionnalites' ? '#007bff' : '#f0f0f0',
+            color: currentTab === 'fonctionnalites' ? '#fff' : '#333',
             border: 'none',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0'
+            borderRadius: '3px 3px 0 0',
+            minWidth: '0',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
           }}
+          title="Fonctionnalités"
         >
-          Contenu
+          Fonctionnalités
         </button>
         <button
-          onClick={() => setCurrentTab('style')}
+          onClick={() => setCurrentTab('personnalisation')}
           style={{
-            flex: 1,
-            padding: '8px 4px',
-            backgroundColor: currentTab === 'style' ? '#007bff' : '#f0f0f0',
-            color: currentTab === 'style' ? '#fff' : '#333',
+            flex: '1 1 30%',
+            padding: '8px 6px',
+            backgroundColor: currentTab === 'personnalisation' ? '#007bff' : '#f0f0f0',
+            color: currentTab === 'personnalisation' ? '#fff' : '#333',
             border: 'none',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0'
+            borderRadius: '3px 3px 0 0',
+            minWidth: '0',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
           }}
+          title="Personnalisation"
         >
-          Style
+          Personnalisation
         </button>
         <button
-          onClick={() => setCurrentTab('position')}
+          onClick={() => setCurrentTab('positionnement')}
           style={{
-            flex: 1,
-            padding: '8px 4px',
-            backgroundColor: currentTab === 'position' ? '#007bff' : '#f0f0f0',
-            color: currentTab === 'position' ? '#fff' : '#333',
+            flex: '1 1 30%',
+            padding: '8px 6px',
+            backgroundColor: currentTab === 'positionnement' ? '#007bff' : '#f0f0f0',
+            color: currentTab === 'positionnement' ? '#fff' : '#333',
             border: 'none',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0'
+            borderRadius: '3px 3px 0 0',
+            minWidth: '0',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
           }}
+          title="Positionnement"
         >
-          Position
+          Positionnement
         </button>
       </div>
 
-      {/* Onglet Contenu */}
-      {currentTab === 'contenu' && (
-        <div>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+      {/* Onglet Fonctionnalités */}
+      {currentTab === 'fonctionnalites' && (
+        <>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher le numéro de commande
             </label>
             <input
@@ -84,8 +99,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             <span style={{ fontSize: '11px', color: '#666' }}>Toujours affiché</span>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher le libellé
             </label>
             <input
@@ -98,8 +113,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
           </div>
 
           {(element as any).showLabel !== false && (
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                 Texte du libellé
               </label>
               <input
@@ -109,39 +124,42 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 placeholder="N° de commande:"
                 style={{
                   width: '100%',
-                  padding: '8px',
+                  padding: '6px',
                   border: '1px solid #ccc',
                   borderRadius: '4px',
                   fontSize: '12px'
                 }}
               />
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                Texte affiché avant le numéro de commande
+              </div>
             </div>
           )}
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position du libellé
             </label>
             <select
-              value={(element as any).labelPosition || 'left'}
+              value={(element as any).labelPosition || 'above'}
               onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
               }}
             >
-              <option value="left">Libellé à gauche du numéro</option>
-              <option value="right">Numéro à gauche du libellé</option>
-              <option value="above">Libellé au-dessus du numéro</option>
-              <option value="below">Libellé en-dessous du numéro</option>
+              <option value="above">Au-dessus du numéro</option>
+              <option value="left">À gauche du numéro</option>
+              <option value="right">À droite du numéro</option>
+              <option value="below">En-dessous du numéro</option>
             </select>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Afficher la date
             </label>
             <input
@@ -152,13 +170,47 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             />
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche la date de commande</span>
           </div>
-        </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Alignement du contenu
+            </label>
+            <select
+              value={(element as any).contentAlign || 'left'}
+              onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="left">Aligner à gauche</option>
+              <option value="center">Centrer</option>
+              <option value="right">Aligner à droite</option>
+            </select>
+            <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+              Positionne tout le contenu (libellé, numéro, date) dans l'élément
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
+              ℹ️ Information
+            </div>
+            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.4' }}>
+              Le numéro de commande est automatiquement récupéré depuis WooCommerce.
+              Le format et la numérotation sont gérés par votre configuration WooCommerce.
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Onglet Style */}
-      {currentTab === 'style' && (
-        <div>
-          <div style={{ marginBottom: '16px' }}>
+      {/* Onglet Personnalisation */}
+      {currentTab === 'personnalisation' && (
+        <>
+          <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
               Taille du texte
             </label>
@@ -167,7 +219,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -181,8 +233,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </select>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Police
             </label>
             <select
@@ -190,7 +242,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -205,8 +257,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </select>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Style du texte
             </label>
             <select
@@ -214,7 +266,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -224,41 +276,14 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="bold">Gras</option>
             </select>
           </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
-              Alignement
-            </label>
-            <select
-              value={(element as any).textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">À gauche</option>
-              <option value="center">Centré</option>
-              <option value="right">À droite</option>
-            </select>
-            <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-              {((element as any).labelPosition === 'left' || (element as any).labelPosition === 'right') ?
-                'Pour les positions latérales, l\'alignement est optimisé automatiquement.' :
-                'Alignement appliqué au numéro et au libellé.'
-              }
-            </div>
-          </div>
-        </div>
+        </>
       )}
 
-      {/* Onglet Position */}
-      {currentTab === 'position' && (
-        <div>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+      {/* Onglet Positionnement */}
+      {currentTab === 'positionnement' && (
+        <>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position X
             </label>
             <input
@@ -267,7 +292,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -275,8 +300,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             />
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position Y
             </label>
             <input
@@ -285,7 +310,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -293,8 +318,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             />
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Largeur
             </label>
             <input
@@ -303,7 +328,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
@@ -311,8 +336,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             />
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Hauteur
             </label>
             <input
@@ -321,15 +346,15 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 40)}
               style={{
                 width: '100%',
-                padding: '8px',
+                padding: '6px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px'
               }}
             />
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
