@@ -277,8 +277,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         console.log('[PREVIEW MODAL] 🎨 Utilisation HtmlPreviewRenderer pour le mode éditeur');
         const canvas = { width: canvasWidth, height: canvasHeight, backgroundColor: '#ffffff' };
         const html = HtmlPreviewRenderer.renderPreview(previewElements, dataProvider, canvas);
+        console.log('[PREVIEW MODAL] ✅ HtmlPreviewRenderer terminé, HTML length:', html.length);
         setHtmlPreview(html);
-        console.log('[PREVIEW MODAL] ✅ HtmlPreviewRenderer terminé');
+        console.log('[PREVIEW MODAL] ✅ htmlPreview state updated');
       } else {
         // Mode metabox - utiliser Canvas ou PHP selon la logique existante
         if (!canvasRef.current) {
@@ -974,20 +975,23 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             />
           ) : !usePhpRendering && htmlPreview ? (
             // Afficher l'aperçu HTML (mode éditeur)
-            <div
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: '#ffffff',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top left',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                overflow: 'hidden'
-              }}
-              dangerouslySetInnerHTML={{ __html: htmlPreview }}
-            />
+            <>
+              {console.log('[PREVIEW MODAL] 🎨 Rendering HTML preview, length:', htmlPreview.length)}
+              <div
+                style={{
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  transform: `scale(${zoom})`,
+                  transformOrigin: 'top left',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  overflow: 'hidden'
+                }}
+                dangerouslySetInnerHTML={{ __html: htmlPreview }}
+              />
+            </>
           ) : (
             // Fallback : afficher le canvas (rendu Canvas 2D)
             <canvas

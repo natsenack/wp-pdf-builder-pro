@@ -8,6 +8,7 @@
 export class HtmlPreviewRenderer {
   static renderPreview(elements: any[], dataProvider: any, canvas: any): string {
     console.log('[HTML PREVIEW] 🔄 renderPreview called with', elements.length, 'elements');
+    console.log('[HTML PREVIEW] 📋 Elements:', elements.map(e => ({ type: e.type, id: e.id, text: e.text?.substring(0, 30) + '...' })));
 
     const canvasStyle = `
       position: relative;
@@ -23,11 +24,12 @@ export class HtmlPreviewRenderer {
     const elementsHtml = elements
       .filter(element => element.visible !== false)
       .map(element => {
-        console.log('[HTML PREVIEW] 🎨 Rendering element:', element.type, element.id);
+        console.log('[HTML PREVIEW] 🎨 Rendering element:', element.type, element.id, 'text:', element.text?.substring(0, 50));
         return this.renderElement(element, dataProvider);
       })
       .join('');
 
+    console.log('[HTML PREVIEW] ✅ Generated HTML length:', elementsHtml.length);
     return `
       <div style="${canvasStyle}" class="pdf-preview-canvas">
         ${elementsHtml}
@@ -260,7 +262,7 @@ export class HtmlPreviewRenderer {
 
     if (showHeaders) {
       tableHtml += `<thead><tr style="background-color: ${headerBackgroundColor}; color: ${headerTextColor};">`;
-      headers.forEach(header => {
+      (headers as string[]).forEach((header: string) => {
         tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? 'border: 1px solid #ddd;' : ''} font-weight: bold;">${header}</th>`;
       });
       tableHtml += `</tr></thead>`;
