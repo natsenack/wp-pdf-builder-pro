@@ -26,7 +26,7 @@ interface PreviewModalProps {
 }
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
-  console.log('[PREVIEW MODAL] 🔧 PreviewModal rendered - isOpen:', isOpen, 'usePhpRendering initial: true');
+  console.log('[PREVIEW MODAL] 🔧 PreviewModal rendered - isOpen:', isOpen);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
@@ -34,7 +34,11 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [previewElements, setPreviewElements] = useState<any[]>([]);
   const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [usePhpRendering, setUsePhpRendering] = useState(true); // Passer à PHP par défaut
+  const [usePhpRendering, setUsePhpRendering] = useState(() => {
+    // En mode éditeur (pas de orderId/templateId), utiliser directement le canvas
+    const { orderId, templateId } = getOrderAndTemplateId();
+    return orderId > 0 && templateId > 0; // PHP seulement pour metabox
+  });
   const { state } = useBuilder();
 
   // Surveiller les changements d'état d'ouverture
