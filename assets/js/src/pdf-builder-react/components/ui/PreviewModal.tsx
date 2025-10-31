@@ -26,6 +26,7 @@ interface PreviewModalProps {
 }
 
 export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: PreviewModalProps) {
+  console.log('[PREVIEW MODAL] 🔧 PreviewModal rendered - isOpen:', isOpen, 'usePhpRendering initial: true');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [zoom, setZoom] = useState(1.0); // Zoom par défaut à 100% pour voir le canvas aux vraies dimensions
@@ -35,6 +36,11 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [usePhpRendering, setUsePhpRendering] = useState(true); // Passer à PHP par défaut
   const { state } = useBuilder();
+
+  // Surveiller les changements d'état d'ouverture
+  useEffect(() => {
+    console.log('[PREVIEW MODAL] 📊 isOpen changed:', isOpen, 'usePhpRendering:', usePhpRendering);
+  }, [isOpen, usePhpRendering]);
 
   // Récupérer les IDs de commande et template depuis le contexte
   const getOrderAndTemplateId = useCallback(() => {
@@ -109,6 +115,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
             setPreviewImage(result.data.image);
           } else {
             console.warn('[PREVIEW MODAL] ❌ Erreur PHP rendu:', result.error);
+            console.log('[PREVIEW MODAL] 🔄 Passage au rendu canvas (usePhpRendering = false)');
             setUsePhpRendering(false);
           }
         } catch (error) {
@@ -227,8 +234,12 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Charger les éléments du template quand la modale s'ouvre
   useEffect(() => {
+    console.log('[PREVIEW MODAL] 🎯 useEffect loadTemplateElements - isOpen:', isOpen, 'usePhpRendering:', usePhpRendering);
     if (isOpen && !usePhpRendering) {
+      console.log('[PREVIEW MODAL] ✅ Conditions remplies, appel loadTemplateElements');
       loadTemplateElements();
+    } else {
+      console.log('[PREVIEW MODAL] ❌ Conditions non remplies pour loadTemplateElements');
     }
   }, [isOpen, usePhpRendering]);
 
