@@ -32,6 +32,9 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] ✅ Generated HTML length:', elementsHtml.length);
     return `
       <div style="${canvasStyle}" class="pdf-preview-canvas">
+        <div style="position: absolute; top: 10px; left: 10px; background: yellow; color: black; padding: 5px; font-size: 12px; z-index: 1000;">
+          HTML Preview - ${elements.length} éléments
+        </div>
         ${elementsHtml}
       </div>
     `;
