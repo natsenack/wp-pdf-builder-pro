@@ -174,12 +174,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       } else {
         setPreviewElements([]);
       }
-      }
-      // Mode Éditeur : utiliser les éléments du canvas pour aperçu avec données fictives
-      else if (state.elements.length > 0) {
+      } else if (state.elements.length > 0) {
         setPreviewElements(state.elements);
-      }
-      else {
+      } else {
         setPreviewElements([]);
       }
 
