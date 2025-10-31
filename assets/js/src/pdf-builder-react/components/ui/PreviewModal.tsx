@@ -129,12 +129,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   }, [previewElements, zoom, isOpen, usePhpRendering]);
 
   const loadTemplateElements = async () => {
+    console.log('[PREVIEW MODAL] 🔄 loadTemplateElements called');
     setIsLoading(true);
     try {
       const { orderId, templateId } = getOrderAndTemplateId();
+      console.log('[PREVIEW MODAL] 📋 Context:', { orderId, templateId });
 
       // Mode Metabox : toujours charger depuis la DB avec données réelles
       if (orderId > 0 && templateId > 0) {
+        console.log('[PREVIEW MODAL] 🏪 Mode Metabox - Chargement depuis DB');
         // Faire une requête AJAX pour récupérer les données du template depuis la DB
         const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
         const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
@@ -143,8 +146,10 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         });
 
         const data = await response.json();
+        console.log('[PREVIEW MODAL] 📡 Réponse template:', data);
 
         if (data.success && data.data && data.data.elements) {
+        console.log('[PREVIEW MODAL] ✅ Template chargé avec', data.data.elements.length, 'éléments');
         // Corriger automatiquement les coordonnées des éléments qui dépassent A4
         const correctedElements = data.data.elements.map((element: any) => {
           const corrected = { ...element };
@@ -170,18 +175,23 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           return corrected;
         });
 
+        console.log('[PREVIEW MODAL] 🔧 Éléments corrigés:', correctedElements.length);
         setPreviewElements(correctedElements);
       } else {
+        console.log('[PREVIEW MODAL] ❌ Pas d\'éléments dans la réponse');
         setPreviewElements([]);
       }
       } else if (state.elements.length > 0) {
+        console.log('[PREVIEW MODAL] 🎨 Mode Éditeur - Utilisation des éléments canvas:', state.elements.length);
         setPreviewElements(state.elements);
       } else {
+        console.log('[PREVIEW MODAL] ⚠️ Aucun élément trouvé');
         setPreviewElements([]);
       }
 
       // Créer le dataProvider approprié selon le contexte
       if (orderId > 0 && templateId > 0) {
+        console.log('[PREVIEW MODAL] 📊 Chargement données WooCommerce pour orderId:', orderId);
         // Mode Metabox : charger les données WooCommerce réelles
         try {
           const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
@@ -191,18 +201,20 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
           });
 
           const wooData = await response.json();
+          console.log('[PREVIEW MODAL] 🛒 Données WooCommerce:', wooData);
           if (wooData.success && wooData.data) {
+            console.log('[PREVIEW MODAL] ✅ DataProvider Metabox créé');
             setDataProvider(new MetaboxDataProvider(wooData.data));
           } else {
-            // Fallback vers données fictives si échec
+            console.log('[PREVIEW MODAL] ⚠️ Fallback vers données fictives');
             setDataProvider(new TemplateDataProvider(previewElements));
           }
         } catch (error) {
-          console.error('Erreur lors du chargement des données WooCommerce:', error);
-          // Fallback vers données fictives
+          console.error('[PREVIEW MODAL] ❌ Erreur chargement WooCommerce:', error);
           setDataProvider(new TemplateDataProvider(previewElements));
         }
       } else {
+        console.log('[PREVIEW MODAL] 🎭 Mode Éditeur - DataProvider Template créé');
         // Mode Éditeur : données fictives depuis les éléments du template
         setDataProvider(new TemplateDataProvider(previewElements));
       }
@@ -222,7 +234,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
+    console.log('[PREVIEW MODAL] 🎨 renderPreview called - canvas:', !!canvasRef.current, 'elements:', previewElements.length, 'dataProvider:', !!dataProvider);
     if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
+      console.log('[PREVIEW MODAL] ❌ Conditions non remplies pour le rendu');
       return;
     }
 
@@ -232,7 +246,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       // S'assurer que le canvas a les bonnes dimensions
       canvasRef.current.width = canvasWidth;
       canvasRef.current.height = canvasHeight;
+      console.log('[PREVIEW MODAL] 📐 Canvas dimensions set:', canvasWidth, 'x', canvasHeight);
 
+      console.log('[PREVIEW MODAL] 🎨 Appel PreviewRenderer.render avec', previewElements.length, 'éléments');
       PreviewRenderer.render({
         canvas: canvasRef.current,
         elements: previewElements,
@@ -241,8 +257,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
         width: canvasWidth,
         height: canvasHeight
       });
+      console.log('[PREVIEW MODAL] ✅ PreviewRenderer.render terminé');
     } catch (error) {
-      console.error('❌ [PREVIEW MODAL] Erreur lors du rendu de l\'aperçu:', error);
+      console.error('[PREVIEW MODAL] ❌ Erreur lors du rendu de l\'aperçu:', error);
     } finally {
       setIsLoading(false);
     }
