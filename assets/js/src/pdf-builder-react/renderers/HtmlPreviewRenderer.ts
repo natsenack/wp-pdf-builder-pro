@@ -43,6 +43,12 @@ export class HtmlPreviewRenderer {
   static renderElement(element: any, dataProvider: any): string {
     const baseStyle = this.getBaseStyle(element);
 
+    // Ajouter des bordures de debug pour voir les éléments
+    const debugStyle = `
+      border: 1px solid red !important;
+      background-color: rgba(255, 0, 0, 0.1) !important;
+    `;
+
     switch (element.type) {
       case 'text':
         return this.renderText(element, baseStyle);
@@ -108,7 +114,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 📝 Text element:', text.substring(0, 50) + '...');
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.2;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; border: 1px solid blue !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -121,7 +127,7 @@ export class HtmlPreviewRenderer {
     const borderRadius = element.borderRadius || 0;
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px; border: 2px solid green !important;">
       </div>
     `;
   }
@@ -131,7 +137,7 @@ export class HtmlPreviewRenderer {
     const strokeWidth = element.strokeWidth || element.height || 2;
 
     return `
-      <div style="${baseStyle}background-color: ${strokeColor}; height: ${strokeWidth}px;">
+      <div style="${baseStyle}background-color: ${strokeColor}; height: ${strokeWidth}px; border: 2px solid orange !important;">
       </div>
     `;
   }
@@ -146,14 +152,14 @@ export class HtmlPreviewRenderer {
 
     if (!src) {
       return `
-        <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">
+        <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: 2px solid purple !important;">
           Logo
         </div>
       `;
     }
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; overflow: hidden;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; overflow: hidden; border: 2px solid purple !important;">
         <img src="${src}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: ${objectFit};" />
       </div>
     `;
@@ -172,7 +178,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 📄 Document type:', documentType);
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign};">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; border: 2px solid cyan !important;">
         ${this.escapeHtml(documentType)}
       </div>
     `;
@@ -191,7 +197,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 🔢 Order number:', text);
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign};">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; border: 2px solid magenta !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -210,7 +216,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 👤 Customer info:', text.substring(0, 50) + '...');
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid yellow !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -229,7 +235,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 🏢 Company info:', text.substring(0, 50) + '...');
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid lime !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -293,7 +299,7 @@ export class HtmlPreviewRenderer {
     });
     tableHtml += '</tbody></table>';
 
-    return `<div style="${baseStyle}">${tableHtml}</div>`;
+    return `<div style="${baseStyle}border: 2px solid red !important;">${tableHtml}</div>`;
   }
 
   static renderMentions(element: any, baseStyle: string, dataProvider: any): string {
@@ -309,7 +315,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 📋 Mentions:', text.substring(0, 50) + '...');
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; line-height: 1.2;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; line-height: 1.2; border: 2px solid pink !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -326,7 +332,7 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 🔤 Dynamic text:', text.substring(0, 50) + '...');
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; white-space: pre-line; line-height: 1.4;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; white-space: pre-line; line-height: 1.4; border: 2px solid brown !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
