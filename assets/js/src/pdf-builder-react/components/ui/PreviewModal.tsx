@@ -39,7 +39,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   // Initialiser usePhpRendering correctement après le montage
   useEffect(() => {
     const { orderId, templateId } = getOrderAndTemplateId();
-    const shouldUsePhp = orderId > 0 && templateId > 0;
+    const shouldUsePhp = orderId > 0 && templateId > 0; // PHP seulement pour metabox avec orderId
     console.log('[PREVIEW MODAL] 🎯 Initialisation - orderId:', orderId, 'templateId:', templateId, 'usePhpRendering:', shouldUsePhp);
     setUsePhpRendering(shouldUsePhp);
   }, []); // Empty dependency array = run once on mount
@@ -156,9 +156,9 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
       const { orderId, templateId } = getOrderAndTemplateId();
       console.log('[PREVIEW MODAL] 📋 Context:', { orderId, templateId });
 
-      // Mode Metabox : toujours charger depuis la DB avec données réelles
-      if (orderId > 0 && templateId > 0) {
-        console.log('[PREVIEW MODAL] 🏪 Mode Metabox - Chargement depuis DB');
+      // Charger depuis la DB si on a un templateId (même en mode éditeur)
+      if (templateId > 0) {
+        console.log('[PREVIEW MODAL] 🏪 Chargement template depuis DB - templateId:', templateId);
         // Faire une requête AJAX pour récupérer les données du template depuis la DB
         const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
         const nonce = (window as any).pdfBuilderData?.nonce || (window as any).pdfBuilderNonce || (window as any).pdfBuilderReactData?.nonce || '';
