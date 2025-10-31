@@ -482,6 +482,21 @@ export class HtmlPreviewRenderer {
     const showDiscount = element.showDiscount !== false;
     const showTotal = element.showTotal !== false;
 
+    // Propriétés de style du tableau
+    const tableStyle = element.tableStyle || 'default';
+    const fontSize = element.fontSize || 12;
+    const fontFamily = element.fontFamily || 'Arial, sans-serif';
+    const fontWeight = element.fontWeight || 'normal';
+    const textAlign = element.textAlign || 'left';
+    const color = element.color || '#000000';
+    const backgroundColor = element.backgroundColor || 'transparent';
+    const dataSource = element.dataSource || 'order_items';
+    const padding = element.padding || 0;
+    const margin = element.margin || 0;
+    const opacity = element.opacity !== undefined ? element.opacity : 100;
+    const borderRadius = element.borderRadius || 0;
+    const boxShadow = element.boxShadow || 'none';
+
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
 
@@ -509,16 +524,32 @@ export class HtmlPreviewRenderer {
 
     const headerBackgroundColor = element.headerBackgroundColor || '#1f2937';
     const headerTextColor = element.headerTextColor || '#ffffff';
-    const textColor = element.textColor || '#111827';
+    const textColor = element.textColor || color || '#111827';
     const alternateRowColor = showAlternatingRows ? (element.alternateRowColor || '#f9f9f9') : 'transparent';
     const borderColor = element.borderColor || '#e5e7eb';
+    const rowHeight = element.rowHeight || 'auto';
 
-    let tableHtml = `<table style="width: 100%; border-collapse: collapse; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-size: 12px;">`;
+    // Appliquer le style du tableau
+    let tableStyleCss = `font-weight: ${fontWeight}; color: ${textColor}; background-color: ${backgroundColor};`;
+    switch (tableStyle) {
+      case 'minimal':
+        tableStyleCss += ' border: none;';
+        break;
+      case 'bordered':
+        tableStyleCss += ` border: 2px solid ${borderColor};`;
+        break;
+      case 'default':
+      default:
+        tableStyleCss += showBorders ? ` border: 1px solid ${borderColor};` : '';
+        break;
+    }
+
+    let tableHtml = `<table style="width: 100%; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign};">`;
 
     if (showHeaders && headers.length > 0) {
       tableHtml += `<thead><tr style="background-color: ${headerBackgroundColor}; color: ${headerTextColor};">`;
       headers.forEach((header: string) => {
-        tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold;">${header}</th>`;
+        tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold; ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''}">${header}</th>`;
       });
       tableHtml += `</tr></thead>`;
     }
@@ -531,7 +562,7 @@ export class HtmlPreviewRenderer {
 
       // Colonnes selon la configuration activée
       enabledColumns.forEach(col => {
-        const cellStyle = `padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}`;
+        const cellStyle = `padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''}`;
 
         switch (col) {
           case 'image':
@@ -603,7 +634,7 @@ export class HtmlPreviewRenderer {
     tableHtml += '</tbody></table>';
 
     console.log('[HTML PREVIEW] 📊 Generated table HTML length:', tableHtml.length);
-    return `<div style="${baseStyle}border: 2px solid red !important;">${tableHtml}</div>`;
+    return `<div style="${baseStyle}border: 2px solid red !important; padding: ${padding}px; margin: ${margin}px; background-color: ${backgroundColor}; opacity: ${opacity / 100}; border-radius: ${borderRadius}px; box-shadow: ${boxShadow};">${tableHtml}</div>`;
   }
 
   static renderMentions(element: any, baseStyle: string, dataProvider: any): string {
