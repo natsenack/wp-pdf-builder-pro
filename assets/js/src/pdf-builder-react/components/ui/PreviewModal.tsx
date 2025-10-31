@@ -213,6 +213,13 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     setIsLoading(false);
   };
 
+  // Charger les éléments du template quand la modale s'ouvre
+  useEffect(() => {
+    if (isOpen && !usePhpRendering) {
+      loadTemplateElements();
+    }
+  }, [isOpen, usePhpRendering]);
+
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
     if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
