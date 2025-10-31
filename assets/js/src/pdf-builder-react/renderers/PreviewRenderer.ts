@@ -68,6 +68,7 @@ export class PreviewRenderer {
     element: Element,
     dataProvider: DataProvider
   ): void {
+    console.log('🎨 [RENDER ELEMENT]', element.type, 'at', element.x, element.y, 'props:', element);
     ctx.save();
 
     // Appliquer la transformation de base (position, rotation)
@@ -159,6 +160,7 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
+    console.log('📝 [RENDER TEXT]', props.text, 'color:', props.color || props.textColor, 'font:', props.fontSize, props.fontFamily);
     ctx.fillStyle = props.color || props.textColor || '#000000';
     ctx.font = `${props.fontWeight || 'normal'} ${props.fontSize || 14}px ${props.fontFamily || 'Arial'}`;
 
@@ -184,6 +186,7 @@ export class PreviewRenderer {
       
       // Vérifier que le texte n'est pas vide
       if (line.trim()) {
+        console.log('📝 [DRAWING TEXT]', line, 'at', x, y);
         ctx.fillText(line, x, y);
       }
       
@@ -382,9 +385,22 @@ export class PreviewRenderer {
       ).join('\n');
       this.renderText(ctx, { ...props, text: productText }, dataProvider);
     } else {
-      // Version simplifiée - à améliorer selon les besoins
-      const products = dataProvider.getVariableValue('products');
-      this.renderText(ctx, { ...props, text: `Produits:\n${products}` }, dataProvider);
+      // Utiliser la source de données spécifiée ou order_items par défaut
+      const dataSource = props.dataSource || 'order_items';
+      const products = dataProvider.getVariableValue(dataSource) || [];
+
+      let productText = 'Produits:';
+      if (Array.isArray(products)) {
+        productText += '\n' + products.map((product: any) =>
+          `${product.name || product.title || 'Produit'} - ${product.quantity || 1}x - ${product.price || product.total || '0€'}`
+        ).join('\n');
+      } else if (typeof products === 'string') {
+        productText += '\n' + products;
+      } else {
+        productText += '\nAucun produit';
+      }
+
+      this.renderText(ctx, { ...props, text: productText }, dataProvider);
     }
   }
 
