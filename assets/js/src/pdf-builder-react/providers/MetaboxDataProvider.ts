@@ -57,8 +57,8 @@ export class MetaboxDataProvider implements DataProvider {
     return 'metabox';
   }
 
-  getVariableValue(variable: string): string {
-    const variables: { [key: string]: string } = {
+  getVariableValue(variable: string): string | any {
+    const variables: { [key: string]: string | any } = {
       // Variables client réelles
       'customer_name': `${this.data.billing.first_name} ${this.data.billing.last_name}`.trim() || 'Client Inconnu',
       'customer_firstname': this.data.billing.first_name || 'Client',
@@ -88,6 +88,7 @@ export class MetaboxDataProvider implements DataProvider {
 
       // Variables produits
       'products': this.formatProducts(),
+      'order_items': this.data.items || [],
 
       // Variables de test
       'test_variable': 'Valeur de test Metabox'

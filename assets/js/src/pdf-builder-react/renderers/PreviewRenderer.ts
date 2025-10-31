@@ -10,7 +10,7 @@
 import { Element } from '../types/elements';
 
 export interface DataProvider {
-  getVariableValue(variable: string): string;
+  getVariableValue(variable: string): string | any;
   getMode(): 'canvas' | 'metabox';
 }
 

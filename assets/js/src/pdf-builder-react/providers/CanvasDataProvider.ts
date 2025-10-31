@@ -11,8 +11,8 @@ export class CanvasDataProvider implements DataProvider {
     return 'canvas';
   }
 
-  getVariableValue(variable: string): string {
-    const variables: { [key: string]: string } = {
+  getVariableValue(variable: string): string | any {
+    const variables: { [key: string]: string | any } = {
       // Variables client fictives
       'customer_name': 'Jean Dupont',
       'customer_firstname': 'Jean',
@@ -37,6 +37,10 @@ export class CanvasDataProvider implements DataProvider {
 
       // Variables produit fictives
       'products': 'Produit A - 99,99 €\nProduit B - 199,99 €\nSous-total: 299,99 €',
+      'order_items': [
+        { name: 'Produit A', quantity: 1, price: 99.99, total: 99.99 },
+        { name: 'Produit B', quantity: 1, price: 199.99, total: 199.99 }
+      ],
 
       // Variables de test
       'test_variable': 'Valeur de test Canvas'
