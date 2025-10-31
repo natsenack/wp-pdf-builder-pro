@@ -552,9 +552,13 @@ export class HtmlPreviewRenderer {
       // Colonnes
       columns: element.columns,
       headers: element.headers,
-      // Couleurs et styles
-      headerBackgroundColor, headerTextColor, textColor, alternateRowColor,
-      backgroundColor, borderColor,
+      // Couleurs et styles (avec valeurs du JSON)
+      headerBackgroundColor: element.headerBackgroundColor,
+      headerTextColor: element.headerTextColor,
+      alternateRowColor: element.alternateRowColor,
+      textColor: element.textColor,
+      backgroundColor: element.backgroundColor,
+      borderColor: element.borderColor,
       // Dimensions
       tableWidth, tableHeight, rowHeight, spacing,
       // Police
@@ -611,11 +615,18 @@ export class HtmlPreviewRenderer {
     }
 
     if (showHeaders && headers.length > 0) {
+      console.log('[HTML PREVIEW] 🎨 Rendering headers with styles:', {
+        headerBackgroundColor,
+        headerTextColor,
+        headersCount: headers.length,
+        enabledColumnsCount: enabledColumns.length
+      });
       tableHtml += `<thead><tr style="background-color: ${headerBackgroundColor}; color: ${headerTextColor};">`;
       headers.forEach((header: string, index: number) => {
         const col = enabledColumns[index];
         const width = columnWidths[col] || 'auto';
         const align = columnAlignments[col] || 'left';
+        console.log(`[HTML PREVIEW] 🎨 Header ${index}: "${header}" col:"${col}" width:"${width}" align:"${align}"`);
         tableHtml += `<th style="text-align: ${align}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold; ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''} ${width !== 'auto' ? `width: ${width};` : ''}">${header}</th>`;
       });
       tableHtml += `</tr></thead>`;
@@ -625,6 +636,7 @@ export class HtmlPreviewRenderer {
     products.forEach((product: any, index: number) => {
       console.log('[HTML PREVIEW] 📊 Rendering product:', index, product.name || 'unnamed', 'with columns:', enabledColumns);
       const rowStyle = index % 2 === 1 && showAlternatingRows ? `background-color: ${alternateRowColor};` : '';
+      console.log(`[HTML PREVIEW] 🎨 Row ${index} style: "${rowStyle}" (alternating: ${showAlternatingRows}, alternateRowColor: "${alternateRowColor}")`);
       tableHtml += `<tr style="${rowStyle}">`;
 
       // Colonnes selon la configuration activée
