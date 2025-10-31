@@ -532,6 +532,21 @@ export class HtmlPreviewRenderer {
     const rowHeight = element.rowHeight || element.properties?.rowHeight || element.style?.rowHeight || 'auto';
     const spacing = element.spacing || element.properties?.spacing || element.style?.spacing || 8;
 
+    console.log('[HTML PREVIEW] 🎨 Final color values used:', {
+      headerBackgroundColor,
+      headerTextColor,
+      alternateRowColor,
+      textColor,
+      backgroundColor,
+      borderColor,
+      source: {
+        headerBackgroundColor: element.headerBackgroundColor ? 'direct' : element.properties?.headerBackgroundColor ? 'properties' : element.style?.headerBackgroundColor ? 'style' : 'default',
+        headerTextColor: element.headerTextColor ? 'direct' : element.properties?.headerTextColor ? 'properties' : element.style?.headerTextColor ? 'style' : 'default',
+        alternateRowColor: element.alternateRowColor ? 'direct' : element.properties?.alternateRowColor ? 'properties' : element.style?.alternateRowColor ? 'style' : 'default',
+        textColor: element.textColor ? 'direct' : element.properties?.textColor ? 'properties' : element.style?.textColor ? 'style' : element.color ? 'color' : 'default'
+      }
+    });
+
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
 
@@ -575,7 +590,11 @@ export class HtmlPreviewRenderer {
       fontSize, fontFamily, fontWeight, textAlign,
       // Autres
       dataSource, showProductImages, showProductLinks, maxDescriptionLength,
-      numberFormat, currency, currencyPosition
+      numberFormat, currency, currencyPosition,
+      // Debug des chemins de propriétés
+      elementKeys: Object.keys(element),
+      hasProperties: !!element.properties,
+      propertiesKeys: element.properties ? Object.keys(element.properties) : 'none'
     });
 
     const borderColor = element.borderColor || '#e5e7eb';
@@ -614,7 +633,8 @@ export class HtmlPreviewRenderer {
       boxShadow,
       opacity,
       tableStyle,
-      tableStyleCss: tableStyleCss.substring(0, 100) + '...'
+      tableStyleCss: tableStyleCss.substring(0, 100) + '...',
+      containerStyle: `padding: ${padding}px; margin: ${margin}px; background-color: ${backgroundColor}; opacity: ${opacity / 100}; border-radius: ${borderRadius}px; box-shadow: ${boxShadow}; display: inline-block; min-width: ${minWidth}; max-width: ${maxWidth}; min-height: ${minHeight}; max-height: ${maxHeight};`
     });
 
     let tableHtml = `<table style="width: ${tableWidth}; height: ${tableHeight}; min-width: ${minWidth}; max-width: ${maxWidth}; min-height: ${minHeight}; max-height: ${maxHeight}; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign}; vertical-align: ${verticalAlign};" cellpadding="${cellPadding}" cellspacing="${cellSpacing}" summary="${summary}">`;
@@ -751,6 +771,8 @@ export class HtmlPreviewRenderer {
     tableHtml += '</tbody></table>';
 
     console.log('[HTML PREVIEW] 📊 Generated table HTML length:', tableHtml.length);
+    console.log('[HTML PREVIEW] 📊 Table HTML preview:', tableHtml.substring(0, 200) + '...');
+
     return `<div style="${baseStyle}padding: ${padding}px; margin: ${margin}px; background-color: ${backgroundColor}; opacity: ${opacity / 100}; border-radius: ${borderRadius}px; box-shadow: ${boxShadow}; display: inline-block; min-width: ${minWidth}; max-width: ${maxWidth}; min-height: ${minHeight}; max-height: ${maxHeight};">${tableHtml}</div>`;
   }
 
