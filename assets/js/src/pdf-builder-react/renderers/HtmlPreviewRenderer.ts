@@ -500,6 +500,10 @@ export class HtmlPreviewRenderer {
     const cellSpacing = element.cellSpacing || element.cellspacing || 0;
     const tableWidth = element.tableWidth || element.width || '100%';
     const tableHeight = element.tableHeight || element.height || 'auto';
+    const minWidth = element.minWidth || 'auto';
+    const maxWidth = element.maxWidth || 'none';
+    const minHeight = element.minHeight || 'auto';
+    const maxHeight = element.maxHeight || 'none';
     const verticalAlign = element.verticalAlign || 'top';
     const caption = element.caption || '';
     const summary = element.summary || 'Tableau des produits commandés';
@@ -546,6 +550,12 @@ export class HtmlPreviewRenderer {
 
     // Appliquer le style du tableau
     let tableStyleCss = `font-weight: ${fontWeight}; color: ${textColor}; background-color: ${backgroundColor};`;
+    if (borderRadius > 0) {
+      tableStyleCss += ` border-radius: ${borderRadius}px;`;
+    }
+    if (boxShadow !== 'none') {
+      tableStyleCss += ` box-shadow: ${boxShadow};`;
+    }
     switch (tableStyle) {
       case 'minimal':
         tableStyleCss += ' border: none;';
@@ -559,7 +569,23 @@ export class HtmlPreviewRenderer {
         break;
     }
 
-    let tableHtml = `<table style="width: ${tableWidth}; height: ${tableHeight}; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign}; vertical-align: ${verticalAlign};" cellpadding="${cellPadding}" cellspacing="${cellSpacing}" summary="${summary}">`;
+    console.log('[HTML PREVIEW] 📏 Table sizing and style properties:', {
+      tableWidth,
+      tableHeight,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      padding,
+      margin,
+      borderRadius,
+      boxShadow,
+      opacity,
+      tableStyle,
+      tableStyleCss: tableStyleCss.substring(0, 100) + '...'
+    });
+
+    let tableHtml = `<table style="width: ${tableWidth}; height: ${tableHeight}; min-width: ${minWidth}; max-width: ${maxWidth}; min-height: ${minHeight}; max-height: ${maxHeight}; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign}; vertical-align: ${verticalAlign};" cellpadding="${cellPadding}" cellspacing="${cellSpacing}" summary="${summary}">`;
 
     // Ajouter la légende si définie
     if (caption) {
@@ -655,8 +681,9 @@ export class HtmlPreviewRenderer {
     });
 
     // Lignes supplémentaires si activées
-    if (showSubtotal && subtotal > 0) {
-      console.log('[HTML PREVIEW] 📊 Adding subtotal row');
+    // Forcer l'affichage du subtotal et total si valeurs > 0 (priorité sur les propriétés show*)
+    if ((showSubtotal || subtotal > 0) && subtotal > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding subtotal row (forced if value > 0)');
       tableHtml += `<tr style="font-weight: bold; background-color: #f8f9fa;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Sous-total:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(subtotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
@@ -675,15 +702,16 @@ export class HtmlPreviewRenderer {
       tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(discount, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
-    if (showTotal && grandTotal > 0) {
-      console.log('[HTML PREVIEW] 📊 Adding total row');
+    // Forcer l'affichage du total si valeur > 0 (priorité sur la propriété showTotal)
+    if ((showTotal || grandTotal > 0) && grandTotal > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding total row (forced if value > 0)');
       tableHtml += `<tr style="font-weight: bold; font-size: 14px; background-color: #e3f2fd;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TOTAL:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(grandTotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     tableHtml += '</tbody></table>';
 
     console.log('[HTML PREVIEW] 📊 Generated table HTML length:', tableHtml.length);
-    return `<div style="${baseStyle}border: 2px solid red !important; padding: ${padding}px; margin: ${margin}px; background-color: ${backgroundColor}; opacity: ${opacity / 100}; border-radius: ${borderRadius}px; box-shadow: ${boxShadow};">${tableHtml}</div>`;
+    return `<div style="${baseStyle}padding: ${padding}px; margin: ${margin}px; background-color: ${backgroundColor}; opacity: ${opacity / 100}; border-radius: ${borderRadius}px; box-shadow: ${boxShadow}; display: inline-block; min-width: ${minWidth}; max-width: ${maxWidth}; min-height: ${minHeight}; max-height: ${maxHeight};">${tableHtml}</div>`;
   }
 
   static renderMentions(element: any, baseStyle: string, dataProvider: any): string {
