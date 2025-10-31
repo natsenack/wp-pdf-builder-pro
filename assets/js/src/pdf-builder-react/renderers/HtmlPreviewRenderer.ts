@@ -418,37 +418,63 @@ export class HtmlPreviewRenderer {
       `;
     }
 
-    // Utiliser les propriétés sauvegardées pour déterminer les colonnes
-    const columns = element.columns || {};
-    const showImage = columns.image !== false;
-    const showName = columns.name !== false;
-    const showSku = columns.sku !== false || element.showSku !== false;
-    const showDescription = columns.description !== false || element.showDescription !== false;
-    const showQuantity = columns.quantity !== false || element.showQuantity !== false;
-    const showPrice = columns.price !== false;
-    const showTotal = columns.total !== false || element.showTotal !== false;
+    // Normaliser la configuration des colonnes
+    let columnsConfig = element.columns || {};
+    let enabledColumns: string[] = [];
+
+    // Si columns est un tableau (format array), convertir en objet
+    if (Array.isArray(columnsConfig)) {
+      const tempConfig: any = {};
+      columnsConfig.forEach(col => {
+        if (col === 'product' || col === 'name') tempConfig.name = true;
+        else if (col === 'qty' || col === 'quantity') tempConfig.quantity = true;
+        else if (col === 'price') tempConfig.price = true;
+        else if (col === 'total') tempConfig.total = true;
+        else if (col === 'image') tempConfig.image = true;
+        else if (col === 'sku') tempConfig.sku = true;
+        else if (col === 'description') tempConfig.description = true;
+      });
+      columnsConfig = tempConfig;
+    }
+
+    // Déterminer les colonnes activées selon la configuration sauvegardée
+    if (columnsConfig.name !== false) enabledColumns.push('name');
+    if (columnsConfig.image !== false) enabledColumns.push('image');
+    if (columnsConfig.sku !== false) enabledColumns.push('sku');
+    if (columnsConfig.description !== false) enabledColumns.push('description');
+    if (columnsConfig.quantity !== false) enabledColumns.push('quantity');
+    if (columnsConfig.price !== false) enabledColumns.push('price');
+    if (columnsConfig.total !== false) enabledColumns.push('total');
+
+    // Si aucune colonne n'est configurée, utiliser les valeurs par défaut
+    if (enabledColumns.length === 0) {
+      enabledColumns = ['image', 'name', 'quantity', 'price', 'total'];
+    }
+
+    console.log('[HTML PREVIEW] 📊 Enabled columns:', enabledColumns, 'from config:', columnsConfig);
 
     // Propriétés d'affichage générales
     const showHeaders = element.showHeaders !== false;
     const showBorders = element.showBorders !== false;
     const showAlternatingRows = element.showAlternatingRows !== false;
-    const showShipping = element.showShipping !== false;
-    const showTax = element.showTax !== false || element.showTaxes !== false;
-    const showDiscount = element.showDiscount !== false;
 
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
 
     // Construire les headers selon les colonnes activées
     if (!element.headers || element.headers.length === 0) {
-      const dynamicHeaders = [];
-      if (showImage) dynamicHeaders.push('Image');
-      if (showSku) dynamicHeaders.push('SKU');
-      if (showDescription) dynamicHeaders.push('Description');
-      if (showName) dynamicHeaders.push('Produit');
-      if (showQuantity) dynamicHeaders.push('Qté');
-      if (showPrice) dynamicHeaders.push('Prix');
-      if (showTotal) dynamicHeaders.push('Total');
+      const dynamicHeaders: any = [];
+      enabledColumns.forEach(col => {
+        switch (col) {
+          case 'image': dynamicHeaders.push('Image'); break;
+          case 'sku': dynamicHeaders.push('SKU'); break;
+          case 'description': dynamicHeaders.push('Description'); break;
+          case 'name': dynamicHeaders.push('Produit'); break;
+          case 'quantity': dynamicHeaders.push('Qté'); break;
+          case 'price': dynamicHeaders.push('Prix'); break;
+          case 'total': dynamicHeaders.push('Total'); break;
+        }
+      });
       headers = dynamicHeaders;
     }
 
@@ -473,50 +499,37 @@ export class HtmlPreviewRenderer {
       const rowStyle = index % 2 === 1 && showAlternatingRows ? `background-color: ${alternateRowColor};` : '';
       tableHtml += `<tr style="${rowStyle}">`;
 
-      // Colonnes selon la configuration
-      if (showImage) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: center; width: 60px;">${product.image ? `<img src="${product.image}" alt="" style="max-width: 50px; max-height: 50px;">` : ''}</td>`;
-      }
+      // Colonnes selon la configuration activée
+      enabledColumns.forEach(col => {
+        const cellStyle = `padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}`;
 
-      if (showSku) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.sku || '')}</td>`;
-      }
-
-      if (showDescription) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.description || '')}</td>`;
-      }
-
-      if (showName) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.name || 'Produit')}</td>`;
-      }
-
-      if (showQuantity) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: center;">${product.quantity || 1}</td>`;
-      }
-
-      if (showPrice) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: right;">${this.formatPrice(product.price)}</td>`;
-      }
-
-      if (showTotal) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: right; font-weight: bold;">${this.formatPrice(product.total)}</td>`;
-      }
+        switch (col) {
+          case 'image':
+            tableHtml += `<td style="${cellStyle} text-align: center; width: 60px;">${product.image ? `<img src="${product.image}" alt="" style="max-width: 50px; max-height: 50px;">` : ''}</td>`;
+            break;
+          case 'sku':
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.sku || '')}</td>`;
+            break;
+          case 'description':
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.description || '')}</td>`;
+            break;
+          case 'name':
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.name || 'Produit')}</td>`;
+            break;
+          case 'quantity':
+            tableHtml += `<td style="${cellStyle} text-align: center;">${product.quantity || 1}</td>`;
+            break;
+          case 'price':
+            tableHtml += `<td style="${cellStyle} text-align: right;">${this.formatPrice(product.price)}</td>`;
+            break;
+          case 'total':
+            tableHtml += `<td style="${cellStyle} text-align: right; font-weight: bold;">${this.formatPrice(product.total)}</td>`;
+            break;
+        }
+      });
 
       tableHtml += '</tr>';
     });
-
-    // Lignes supplémentaires si activées
-    if (showShipping && element.shipping) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Frais de port:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(element.shipping)}</td></tr>`;
-    }
-
-    if (showTax && element.tax) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TVA:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(element.tax)}</td></tr>`;
-    }
-
-    if (showDiscount && element.discount) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(element.discount)}</td></tr>`;
-    }
 
     tableHtml += '</tbody></table>';
 
