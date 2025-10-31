@@ -34,11 +34,15 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [previewElements, setPreviewElements] = useState<any[]>([]);
   const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [usePhpRendering, setUsePhpRendering] = useState(() => {
-    // En mode éditeur (pas de orderId/templateId), utiliser directement le canvas
+  const [usePhpRendering, setUsePhpRendering] = useState(true); // Sera corrigé dans useEffect
+
+  // Initialiser usePhpRendering correctement après le montage
+  useEffect(() => {
     const { orderId, templateId } = getOrderAndTemplateId();
-    return orderId > 0 && templateId > 0; // PHP seulement pour metabox
-  });
+    const shouldUsePhp = orderId > 0 && templateId > 0;
+    console.log('[PREVIEW MODAL] 🎯 Initialisation - orderId:', orderId, 'templateId:', templateId, 'usePhpRendering:', shouldUsePhp);
+    setUsePhpRendering(shouldUsePhp);
+  }, []); // Empty dependency array = run once on mount
   const { state } = useBuilder();
 
   // Surveiller les changements d'état d'ouverture
