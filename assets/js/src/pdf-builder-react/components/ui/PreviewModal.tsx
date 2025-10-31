@@ -98,10 +98,16 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Charger l'aperçu PHP si on est en metabox WooCommerce
   useEffect(() => {
-    if (!isOpen || !usePhpRendering) return;
+    console.log('[PREVIEW MODAL] 🌐 useEffect PHP rendering - isOpen:', isOpen, 'usePhpRendering:', usePhpRendering);
+    if (!isOpen || !usePhpRendering) {
+      console.log('[PREVIEW MODAL] 🌐 PHP rendering skipped - conditions not met');
+      return;
+    }
     
     const { orderId, templateId } = getOrderAndTemplateId();
+    console.log('[PREVIEW MODAL] 🌐 PHP rendering - orderId:', orderId, 'templateId:', templateId);
     if (orderId > 0 && templateId > 0) {
+      console.log('[PREVIEW MODAL] 🌐 Starting PHP preview generation...');
       (async () => {
         setIsLoading(true);
         try {
