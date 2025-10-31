@@ -349,7 +349,8 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    const orderNumber = dataProvider.getVariableValue('order_number');
+    // Utiliser le texte de l'élément en priorité, puis le dataProvider
+    const orderNumber = props.text || dataProvider.getVariableValue('order_number');
     this.renderText(ctx, { ...props, text: orderNumber }, dataProvider);
   }
 
@@ -361,7 +362,8 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    const customerName = dataProvider.getVariableValue('customer_name');
+    // Utiliser le texte de l'élément en priorité, puis le dataProvider
+    const customerName = props.text || dataProvider.getVariableValue('customer_name');
     this.renderText(ctx, { ...props, text: customerName }, dataProvider);
   }
 
@@ -373,9 +375,17 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    // Version simplifiée - à améliorer selon les besoins
-    const products = dataProvider.getVariableValue('products');
-    this.renderText(ctx, { ...props, text: `Produits:\n${products}` }, dataProvider);
+    // Utiliser les données de l'élément en priorité, puis construire depuis les variables
+    if (props.products && Array.isArray(props.products)) {
+      const productText = props.products.map((product: any) =>
+        `${product.name || 'Produit'} - ${product.quantity || 1}x - ${product.price || '0€'}`
+      ).join('\n');
+      this.renderText(ctx, { ...props, text: productText }, dataProvider);
+    } else {
+      // Version simplifiée - à améliorer selon les besoins
+      const products = dataProvider.getVariableValue('products');
+      this.renderText(ctx, { ...props, text: `Produits:\n${products}` }, dataProvider);
+    }
   }
 
   /**
@@ -386,14 +396,19 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    const customerInfo = [
-      dataProvider.getVariableValue('customer_name'),
-      dataProvider.getVariableValue('customer_email'),
-      dataProvider.getVariableValue('customer_phone'),
-      dataProvider.getVariableValue('customer_address')
-    ].filter(info => info).join('\n');
+    // Utiliser le texte de l'élément en priorité, puis construire depuis les variables
+    if (props.text) {
+      this.renderText(ctx, props, dataProvider);
+    } else {
+      const customerInfo = [
+        dataProvider.getVariableValue('customer_name'),
+        dataProvider.getVariableValue('customer_email'),
+        dataProvider.getVariableValue('customer_phone'),
+        dataProvider.getVariableValue('customer_address')
+      ].filter(info => info).join('\n');
 
-    this.renderText(ctx, { ...props, text: customerInfo }, dataProvider);
+      this.renderText(ctx, { ...props, text: customerInfo }, dataProvider);
+    }
   }
 
   /**
@@ -404,15 +419,20 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    const companyInfo = [
-      dataProvider.getVariableValue('company_name'),
-      dataProvider.getVariableValue('company_address'),
-      dataProvider.getVariableValue('company_phone'),
-      dataProvider.getVariableValue('company_email'),
-      dataProvider.getVariableValue('company_vat')
-    ].filter(info => info).join('\n');
+    // Utiliser le texte de l'élément en priorité, puis construire depuis les variables
+    if (props.text) {
+      this.renderText(ctx, props, dataProvider);
+    } else {
+      const companyInfo = [
+        dataProvider.getVariableValue('company_name'),
+        dataProvider.getVariableValue('company_address'),
+        dataProvider.getVariableValue('company_phone'),
+        dataProvider.getVariableValue('company_email'),
+        dataProvider.getVariableValue('company_vat')
+      ].filter(info => info).join('\n');
 
-    this.renderText(ctx, { ...props, text: companyInfo }, dataProvider);
+      this.renderText(ctx, { ...props, text: companyInfo }, dataProvider);
+    }
   }
 
   /**
@@ -435,7 +455,8 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
-    const docType = dataProvider.getVariableValue('document_type') || 'Document';
+    // Utiliser la valeur de l'élément en priorité, puis le dataProvider
+    const docType = props.documentType || props.text || dataProvider.getVariableValue('document_type') || 'Document';
     this.renderText(ctx, { ...props, text: docType }, dataProvider);
   }
 
@@ -462,6 +483,7 @@ export class PreviewRenderer {
     props: any,
     dataProvider: DataProvider
   ): void {
+    // Pour dynamic-text, utiliser le texte de l'élément directement
     this.renderText(ctx, props, dataProvider);
   }
 
