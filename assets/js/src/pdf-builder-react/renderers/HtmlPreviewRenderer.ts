@@ -409,6 +409,7 @@ export class HtmlPreviewRenderer {
     }
 
     console.log('[HTML PREVIEW] 📊 Products:', Array.isArray(products) ? products.length : 'not array', products);
+    console.log('[HTML PREVIEW] 📊 Element columns config:', element.columns);
 
     if (!Array.isArray(products) || products.length === 0) {
       return `
@@ -418,40 +419,58 @@ export class HtmlPreviewRenderer {
       `;
     }
 
-    // Normaliser la configuration des colonnes
-    let columnsConfig = element.columns || {};
+    // Normaliser la configuration des colonnes - gérer les deux formats
     let enabledColumns: string[] = [];
+    const columnsConfig = element.columns || {};
 
-    // Si columns est un tableau (format array), convertir en objet
     if (Array.isArray(columnsConfig)) {
-      const tempConfig: any = {};
+      // Format tableau : ["product", "qty", "price", "total"]
+      console.log('[HTML PREVIEW] 📊 Using array format for columns');
       columnsConfig.forEach(col => {
-        if (col === 'product' || col === 'name') tempConfig.name = true;
-        else if (col === 'qty' || col === 'quantity') tempConfig.quantity = true;
-        else if (col === 'price') tempConfig.price = true;
-        else if (col === 'total') tempConfig.total = true;
-        else if (col === 'image') tempConfig.image = true;
-        else if (col === 'sku') tempConfig.sku = true;
-        else if (col === 'description') tempConfig.description = true;
+        switch (col.toLowerCase()) {
+          case 'product':
+          case 'name':
+            enabledColumns.push('name');
+            break;
+          case 'qty':
+          case 'quantity':
+            enabledColumns.push('quantity');
+            break;
+          case 'price':
+            enabledColumns.push('price');
+            break;
+          case 'total':
+            enabledColumns.push('total');
+            break;
+          case 'image':
+            enabledColumns.push('image');
+            break;
+          case 'sku':
+            enabledColumns.push('sku');
+            break;
+          case 'description':
+            enabledColumns.push('description');
+            break;
+        }
       });
-      columnsConfig = tempConfig;
+    } else {
+      // Format objet : {name: true, quantity: true, price: true, total: true}
+      console.log('[HTML PREVIEW] 📊 Using object format for columns');
+      const columnOrder = ['image', 'sku', 'description', 'name', 'quantity', 'price', 'total'];
+      columnOrder.forEach(col => {
+        if (columnsConfig[col] !== false && columnsConfig[col] !== undefined) {
+          enabledColumns.push(col);
+        }
+      });
     }
-
-    // Déterminer les colonnes activées selon la configuration sauvegardée
-    if (columnsConfig.name !== false) enabledColumns.push('name');
-    if (columnsConfig.image !== false) enabledColumns.push('image');
-    if (columnsConfig.sku !== false) enabledColumns.push('sku');
-    if (columnsConfig.description !== false) enabledColumns.push('description');
-    if (columnsConfig.quantity !== false) enabledColumns.push('quantity');
-    if (columnsConfig.price !== false) enabledColumns.push('price');
-    if (columnsConfig.total !== false) enabledColumns.push('total');
 
     // Si aucune colonne n'est configurée, utiliser les valeurs par défaut
     if (enabledColumns.length === 0) {
+      console.log('[HTML PREVIEW] 📊 No columns configured, using defaults');
       enabledColumns = ['image', 'name', 'quantity', 'price', 'total'];
     }
 
-    console.log('[HTML PREVIEW] 📊 Enabled columns:', enabledColumns, 'from config:', columnsConfig);
+    console.log('[HTML PREVIEW] 📊 Final enabled columns:', enabledColumns);
 
     // Propriétés d'affichage générales
     const showHeaders = element.showHeaders !== false;
@@ -463,7 +482,7 @@ export class HtmlPreviewRenderer {
 
     // Construire les headers selon les colonnes activées
     if (!element.headers || element.headers.length === 0) {
-      const dynamicHeaders: any = [];
+      const dynamicHeaders: string[] = [];
       enabledColumns.forEach(col => {
         switch (col) {
           case 'image': dynamicHeaders.push('Image'); break;
@@ -477,6 +496,8 @@ export class HtmlPreviewRenderer {
       });
       headers = dynamicHeaders;
     }
+
+    console.log('[HTML PREVIEW] 📊 Headers:', headers);
 
     const headerBackgroundColor = element.headerBackgroundColor || '#1f2937';
     const headerTextColor = element.headerTextColor || '#ffffff';
@@ -496,6 +517,7 @@ export class HtmlPreviewRenderer {
 
     tableHtml += '<tbody>';
     products.forEach((product: any, index: number) => {
+      console.log('[HTML PREVIEW] 📊 Rendering product:', index, product.name || 'unnamed', 'with columns:', enabledColumns);
       const rowStyle = index % 2 === 1 && showAlternatingRows ? `background-color: ${alternateRowColor};` : '';
       tableHtml += `<tr style="${rowStyle}">`;
 
@@ -505,25 +527,30 @@ export class HtmlPreviewRenderer {
 
         switch (col) {
           case 'image':
-            tableHtml += `<td style="${cellStyle} text-align: center; width: 60px;">${product.image ? `<img src="${product.image}" alt="" style="max-width: 50px; max-height: 50px;">` : ''}</td>`;
+            const imageSrc = product.image || product.image_url || product.thumbnail || '';
+            tableHtml += `<td style="${cellStyle} text-align: center; width: 60px;">${imageSrc ? `<img src="${imageSrc}" alt="" style="max-width: 50px; max-height: 50px;">` : ''}</td>`;
             break;
           case 'sku':
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.sku || '')}</td>`;
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.sku || product.sku_code || '')}</td>`;
             break;
           case 'description':
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.description || '')}</td>`;
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.description || product.short_description || '')}</td>`;
             break;
           case 'name':
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.name || 'Produit')}</td>`;
+            const productName = product.name || product.title || product.product_name || 'Produit';
+            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(productName)}</td>`;
             break;
           case 'quantity':
-            tableHtml += `<td style="${cellStyle} text-align: center;">${product.quantity || 1}</td>`;
+            const qty = product.quantity || product.qty || product.amount || 1;
+            tableHtml += `<td style="${cellStyle} text-align: center;">${qty}</td>`;
             break;
           case 'price':
-            tableHtml += `<td style="${cellStyle} text-align: right;">${this.formatPrice(product.price)}</td>`;
+            const price = product.price || product.unit_price || product.cost || 0;
+            tableHtml += `<td style="${cellStyle} text-align: right;">${this.formatPrice(price)}</td>`;
             break;
           case 'total':
-            tableHtml += `<td style="${cellStyle} text-align: right; font-weight: bold;">${this.formatPrice(product.total)}</td>`;
+            const total = product.total || product.line_total || (product.price * product.quantity) || 0;
+            tableHtml += `<td style="${cellStyle} text-align: right; font-weight: bold;">${this.formatPrice(total)}</td>`;
             break;
         }
       });
@@ -533,6 +560,7 @@ export class HtmlPreviewRenderer {
 
     tableHtml += '</tbody></table>';
 
+    console.log('[HTML PREVIEW] 📊 Generated table HTML length:', tableHtml.length);
     return `<div style="${baseStyle}border: 2px solid red !important;">${tableHtml}</div>`;
   }
 
