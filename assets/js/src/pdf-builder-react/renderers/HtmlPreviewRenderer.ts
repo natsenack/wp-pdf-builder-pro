@@ -476,11 +476,11 @@ export class HtmlPreviewRenderer {
     const showHeaders = element.showHeaders !== false;
     const showBorders = element.showBorders !== false;
     const showAlternatingRows = element.showAlternatingRows !== false;
-    const showSubtotal = element.showSubtotal !== false;
-    const showShipping = element.showShipping !== false;
-    const showTax = element.showTax !== false || element.showTaxes !== false;
-    const showDiscount = element.showDiscount !== false;
-    const showTotal = element.showTotal !== false;
+    const showSubtotal = element.showSubtotal === undefined ? true : element.showSubtotal !== false;
+    const showShipping = element.showShipping === undefined ? true : element.showShipping !== false;
+    const showTax = element.showTax === undefined ? true : element.showTax !== false || element.showTaxes === undefined ? true : element.showTaxes !== false;
+    const showDiscount = element.showDiscount === undefined ? true : element.showDiscount !== false;
+    const showTotal = element.showTotal === undefined ? true : element.showTotal !== false;
 
     // Propriétés de style du tableau
     const tableStyle = element.tableStyle || 'default';
@@ -641,24 +641,42 @@ export class HtmlPreviewRenderer {
 
     console.log('[HTML PREVIEW] 📊 Totals calculated:', { subtotal, shipping, tax, discount, grandTotal });
 
+    console.log('[HTML PREVIEW] 📊 Display options:', {
+      showSubtotal,
+      showShipping,
+      showTax,
+      showDiscount,
+      showTotal,
+      subtotal: subtotal > 0,
+      shipping: shipping > 0,
+      tax: tax > 0,
+      discount: discount > 0,
+      grandTotal: grandTotal > 0
+    });
+
     // Lignes supplémentaires si activées
     if (showSubtotal && subtotal > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding subtotal row');
       tableHtml += `<tr style="font-weight: bold; background-color: #f8f9fa;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Sous-total:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(subtotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showShipping && shipping > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding shipping row');
       tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Frais de port:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(shipping, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showTax && tax > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding tax row');
       tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TVA:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(tax, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showDiscount && discount > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding discount row');
       tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(discount, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showTotal && grandTotal > 0) {
+      console.log('[HTML PREVIEW] 📊 Adding total row');
       tableHtml += `<tr style="font-weight: bold; font-size: 14px; background-color: #e3f2fd;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TOTAL:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(grandTotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
