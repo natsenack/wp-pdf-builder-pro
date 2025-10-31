@@ -90,13 +90,17 @@ export class HtmlPreviewRenderer {
   }
 
   static getBaseStyle(element: any): string {
+    const scale = element.scale || 100;
+    const scaleFactor = scale / 100;
+    const transform = `rotate(${element.rotation || 0}deg) scale(${scaleFactor})`;
+
     return `
       position: absolute;
       left: ${element.x || 0}px;
       top: ${element.y || 0}px;
       width: ${element.width || 100}px;
       height: ${element.height || 50}px;
-      transform: rotate(${element.rotation || 0}deg);
+      transform: ${transform};
       opacity: ${(element.opacity || 100) / 100};
       z-index: 1;
     `.trim();
@@ -144,22 +148,26 @@ export class HtmlPreviewRenderer {
 
   static renderCompanyLogo(element: any, baseStyle: string): string {
     const src = element.src || '';
-    const objectFit = element.objectFit || 'contain';
+    const objectFit = element.objectFit || element.fit || 'contain';
     const backgroundColor = element.backgroundColor || 'transparent';
     const borderRadius = element.borderRadius || 0;
+    const showBorder = element.showBorder !== false;
+    const borderColor = element.borderColor || '#000000';
+    const borderWidth = showBorder ? (element.borderWidth || 1) : 0;
+    const alignment = element.alignment || 'left';
 
     console.log('[HTML PREVIEW] 🏢 Company logo src:', src);
 
     if (!src) {
       return `
-        <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: 2px solid purple !important;">
+        <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: ${borderWidth}px solid ${borderColor}; border: 2px solid purple !important;">
           Logo
         </div>
       `;
     }
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; overflow: hidden; border: 2px solid purple !important;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; border-radius: ${borderRadius}px; overflow: hidden; border: ${borderWidth}px solid ${borderColor}; border: 2px solid purple !important;">
         <img src="${src}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: ${objectFit};" />
       </div>
     `;
@@ -185,35 +193,86 @@ export class HtmlPreviewRenderer {
   }
 
   static renderOrderNumber(element: any, baseStyle: string, dataProvider: any): string {
-    // Priorité aux propriétés sauvegardées
-    const text = element.text || dataProvider.getVariableValue('order_number') || 'Commande #WC-12345';
+    // Utiliser les propriétés sauvegardées pour construire le contenu
+    const showLabel = element.showLabel !== false;
+    const showDate = element.showDate !== false;
+    const labelText = element.labelText || 'N° de commande :';
+    const labelPosition = element.labelPosition || 'left';
+    const labelTextAlign = element.labelTextAlign || 'left';
+    const contentAlign = element.contentAlign || 'right';
+
+    // Contenu principal
+    const orderNumber = element.text || dataProvider.getVariableValue('order_number') || 'Commande #WC-12345';
+
+    // Date si activée
+    let datePart = '';
+    if (showDate) {
+      const orderDate = dataProvider.getVariableValue('order_date') || new Date().toLocaleDateString('fr-FR');
+      datePart = ` (${orderDate})`;
+    }
+
+    const fullContent = orderNumber + datePart;
+
+    // Styles
     const fontSize = element.fontSize || 14;
-    const fontFamily = element.fontFamily || 'Arial';
+    const fontFamily = element.fontFamily || 'Inter, sans-serif';
     const fontWeight = element.fontWeight || 'normal';
-    const textAlign = element.textAlign || 'right';
     const color = element.color || element.textColor || '#000000';
     const backgroundColor = element.backgroundColor || 'transparent';
 
-    console.log('[HTML PREVIEW] 🔢 Order number:', text);
+    console.log('[HTML PREVIEW] 🔢 Order number:', fullContent, 'showLabel:', showLabel, 'showDate:', showDate);
 
-    return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; border: 2px solid magenta !important;">
-        ${this.escapeHtml(text)}
-      </div>
-    `;
+    if (!showLabel) {
+      // Affichage simple sans label
+      return `
+        <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${contentAlign}; border: 2px solid magenta !important;">
+          ${this.escapeHtml(fullContent)}
+        </div>
+      `;
+    }
+
+    // Affichage avec label
+    const labelStyle = `font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; color: ${color}; text-align: ${labelTextAlign};`;
+    const contentStyle = `font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; color: ${color}; text-align: ${contentAlign};`;
+
+    if (labelPosition === 'top') {
+      return `
+        <div style="${baseStyle}background-color: ${backgroundColor}; border: 2px solid magenta !important;">
+          <div style="${labelStyle}">${this.escapeHtml(labelText)}</div>
+          <div style="${contentStyle}">${this.escapeHtml(fullContent)}</div>
+        </div>
+      `;
+    } else if (labelPosition === 'bottom') {
+      return `
+        <div style="${baseStyle}background-color: ${backgroundColor}; border: 2px solid magenta !important;">
+          <div style="${contentStyle}">${this.escapeHtml(fullContent)}</div>
+          <div style="${labelStyle}">${this.escapeHtml(labelText)}</div>
+        </div>
+      `;
+    } else {
+      // left or right
+      const flexDirection = labelPosition === 'left' ? 'row' : 'row-reverse';
+      return `
+        <div style="${baseStyle}background-color: ${backgroundColor}; display: flex; flex-direction: ${flexDirection}; align-items: center; border: 2px solid magenta !important;">
+          <div style="${labelStyle}flex: 1;">${this.escapeHtml(labelText)}</div>
+          <div style="${contentStyle}flex: 1;">${this.escapeHtml(fullContent)}</div>
+        </div>
+      `;
+    }
   }
 
   static renderCustomerInfo(element: any, baseStyle: string, dataProvider: any): string {
     // Priorité aux propriétés sauvegardées
     const text = element.text || this.buildCustomerInfoText(dataProvider);
     const fontSize = element.fontSize || 14;
-    const fontFamily = element.fontFamily || 'Inter, sans-serif';
-    const fontWeight = element.fontWeight || 'bold';
+    const fontFamily = element.fontFamily || element.bodyFontFamily || 'Inter, sans-serif';
+    const fontWeight = element.fontWeight || element.bodyFontWeight || 'bold';
     const textAlign = element.textAlign || 'left';
     const color = element.textColor || element.color || '#374151';
+    const headerTextColor = element.headerTextColor || color;
     const backgroundColor = element.backgroundColor || 'transparent';
 
-    console.log('[HTML PREVIEW] 👤 Customer info:', text.substring(0, 50) + '...');
+    console.log('[HTML PREVIEW] 👤 Customer info:', text.substring(0, 50) + '...', 'bodyFontWeight:', fontWeight);
 
     return `
       <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid yellow !important;">
@@ -235,16 +294,39 @@ export class HtmlPreviewRenderer {
     // Si du texte personnalisé est sauvegardé, l'utiliser en priorité
     if (element.text && element.text.trim()) {
       const fontSize = element.fontSize || 14;
-      const fontFamily = element.fontFamily || 'Inter, sans-serif';
+      const fontFamily = element.fontFamily || element.bodyFontFamily || 'Inter, sans-serif';
       const fontWeight = element.fontWeight || 'normal';
       const textAlign = element.textAlign || 'center';
       const color = element.color || '#000000';
       const backgroundColor = element.backgroundColor || 'transparent';
+      const theme = element.theme || 'classic';
 
-      console.log('[HTML PREVIEW] 🏢 Company info (custom text):', element.text.substring(0, 50) + '...');
+      // Appliquer les styles du thème
+      let themedStyles = '';
+      switch (theme) {
+        case 'corporate':
+          themedStyles = 'border: 1px solid #1f2937; border-radius: 4px; padding: 8px;';
+          break;
+        case 'modern':
+          themedStyles = 'border: 1px solid #3b82f6; border-radius: 4px; padding: 8px;';
+          break;
+        case 'elegant':
+          themedStyles = 'border: 1px solid #8b5cf6; border-radius: 4px; padding: 8px;';
+          break;
+        case 'minimal':
+          themedStyles = 'border: 1px solid #e5e7eb; border-radius: 4px; padding: 8px;';
+          break;
+        case 'professional':
+          themedStyles = 'border: 1px solid #059669; border-radius: 4px; padding: 8px;';
+          break;
+        default:
+          themedStyles = '';
+      }
+
+      console.log('[HTML PREVIEW] 🏢 Company info (custom text):', element.text.substring(0, 50) + '...', 'theme:', theme);
 
       return `
-        <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid lime !important;">
+        <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; ${themedStyles} border: 2px solid lime !important;">
           ${this.escapeHtml(element.text)}
         </div>
       `;
@@ -280,16 +362,39 @@ export class HtmlPreviewRenderer {
 
     const text = companyInfoParts.join('\n');
     const fontSize = element.fontSize || 14;
-    const fontFamily = element.fontFamily || 'Inter, sans-serif';
+    const fontFamily = element.fontFamily || element.bodyFontFamily || 'Inter, sans-serif';
     const fontWeight = element.fontWeight || 'normal';
     const textAlign = element.textAlign || 'center';
     const color = element.color || '#000000';
     const backgroundColor = element.backgroundColor || 'transparent';
+    const theme = element.theme || 'classic';
 
-    console.log('[HTML PREVIEW] 🏢 Company info (constructed):', text.substring(0, 50) + '...');
+    // Appliquer les styles du thème
+    let themedStyles = '';
+    switch (theme) {
+      case 'corporate':
+        themedStyles = 'border: 1px solid #1f2937; border-radius: 4px; padding: 8px;';
+        break;
+      case 'modern':
+        themedStyles = 'border: 1px solid #3b82f6; border-radius: 4px; padding: 8px;';
+        break;
+      case 'elegant':
+        themedStyles = 'border: 1px solid #8b5cf6; border-radius: 4px; padding: 8px;';
+        break;
+      case 'minimal':
+        themedStyles = 'border: 1px solid #e5e7eb; border-radius: 4px; padding: 8px;';
+        break;
+      case 'professional':
+        themedStyles = 'border: 1px solid #059669; border-radius: 4px; padding: 8px;';
+        break;
+      default:
+        themedStyles = '';
+    }
+
+    console.log('[HTML PREVIEW] 🏢 Company info (constructed):', text.substring(0, 50) + '...', 'theme:', theme);
 
     return `
-      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid lime !important;">
+      <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; ${themedStyles} border: 2px solid lime !important;">
         ${this.escapeHtml(text)}
       </div>
     `;
@@ -320,7 +425,7 @@ export class HtmlPreviewRenderer {
     const showDescription = element.showDescription !== false;
     const showQuantity = element.showQuantity !== false;
     const showShipping = element.showShipping !== false;
-    const showTax = element.showTax !== false;
+    const showTax = element.showTax !== false || element.showTaxes !== false;
     const showDiscount = element.showDiscount !== false;
     const showTotal = element.showTotal !== false;
 
@@ -406,8 +511,34 @@ export class HtmlPreviewRenderer {
   }
 
   static renderMentions(element: any, baseStyle: string, dataProvider: any): string {
-    // Priorité aux propriétés sauvegardées
-    const text = element.text || 'Mentions légales...';
+    // Utiliser les propriétés sauvegardées
+    const mentionType = element.mentionType || 'custom';
+    const selectedMentions = element.selectedMentions || [];
+    const medleySeparator = element.medleySeparator || ' | ';
+    const customText = element.text || '';
+
+    let text = customText;
+
+    // Si c'est un type medley avec des mentions sélectionnées, construire le texte
+    if (mentionType === 'medley' && selectedMentions.length > 0) {
+      const mentionTexts = selectedMentions.map((mention: string) => {
+        switch (mention) {
+          case 'cgv':
+            return 'Conditions Générales de Vente applicables. Consultez notre site web pour plus de détails.';
+          case 'legal':
+            return 'Document établi sous la responsabilité de l\'entreprise. Toutes les informations sont confidentielles.';
+          case 'tva_info':
+            return 'TVA non applicable - article 293 B du CGI. Régime micro-entreprise.';
+          case 'siret_info':
+            return `SIRET ${dataProvider.getVariableValue('company_vat') || '123 456 789 00012'}`;
+          default:
+            return mention;
+        }
+      });
+
+      text = mentionTexts.join(` ${medleySeparator} `);
+    }
+
     const fontSize = element.fontSize || 8;
     const fontFamily = element.fontFamily || 'Arial';
     const fontWeight = element.fontWeight || 'normal';
@@ -415,7 +546,7 @@ export class HtmlPreviewRenderer {
     const color = element.color || '#000000';
     const backgroundColor = element.backgroundColor || 'transparent';
 
-    console.log('[HTML PREVIEW] 📋 Mentions:', text.substring(0, 50) + '...');
+    console.log('[HTML PREVIEW] 📋 Mentions:', text.substring(0, 50) + '...', 'type:', mentionType, 'selected:', selectedMentions);
 
     return `
       <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; line-height: 1.2; border: 2px solid pink !important;">
@@ -425,14 +556,28 @@ export class HtmlPreviewRenderer {
   }
 
   static renderDynamicText(element: any, baseStyle: string, dataProvider: any): string {
-    // Priorité aux propriétés sauvegardées
-    const text = element.text || 'Texte dynamique...';
+    // Utiliser les propriétés sauvegardées
+    const textTemplate = element.textTemplate || '';
+    let text = element.text || 'Texte dynamique...';
+
+    // Si un template est défini, essayer de le résoudre
+    if (textTemplate && textTemplate.startsWith('checkbox_')) {
+      // Templates de cases à cocher
+      switch (textTemplate) {
+        case 'checkbox_order_confirmation':
+          text = '☐ Je confirme ma commande selon les termes du devis';
+          break;
+        default:
+          text = `☐ ${text}`;
+      }
+    }
+
     const fontSize = element.fontSize || 14;
     const fontFamily = element.fontFamily || 'Arial';
     const color = element.color || '#000000';
     const backgroundColor = element.backgroundColor || 'transparent';
 
-    console.log('[HTML PREVIEW] 🔤 Dynamic text:', text.substring(0, 50) + '...');
+    console.log('[HTML PREVIEW] 🔤 Dynamic text:', text.substring(0, 50) + '...', 'template:', textTemplate);
 
     return `
       <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; white-space: pre-line; line-height: 1.4; border: 2px solid brown !important;">
