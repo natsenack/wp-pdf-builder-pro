@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { Element } from '../../types/elements';
 import { PreviewRenderer, DataProvider } from '../../renderers/PreviewRenderer';
+import { HtmlPreviewRenderer } from '../../renderers/HtmlPreviewRenderer';
 import { TemplateDataProvider } from '../../providers/TemplateDataProvider';
 import { MetaboxDataProvider, WooCommerceData } from '../../providers/MetaboxDataProvider';
 import PreviewImageAPI from '../../api/PreviewImageAPI';
@@ -35,6 +36,7 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
   const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [usePhpRendering, setUsePhpRendering] = useState(true); // Sera corrigé dans useEffect
+  const [htmlPreview, setHtmlPreview] = useState<string>('');
 
   // Initialiser usePhpRendering correctement après le montage
   useEffect(() => {
@@ -261,8 +263,8 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
   // Fonction pour rendre l'aperçu en utilisant le PreviewRenderer unifié
   const renderPreview = useCallback(() => {
-    console.log('[PREVIEW MODAL] 🎨 renderPreview called - canvas:', !!canvasRef.current, 'elements:', previewElements.length, 'dataProvider:', !!dataProvider);
-    if (!canvasRef.current || previewElements.length === 0 || !dataProvider) {
+    console.log('[PREVIEW MODAL] 🎨 renderPreview called - canvas:', !!canvasRef.current, 'elements:', previewElements.length, 'dataProvider:', !!dataProvider, 'usePhpRendering:', usePhpRendering);
+    if (previewElements.length === 0 || !dataProvider) {
       console.log('[PREVIEW MODAL] ❌ Conditions non remplies pour le rendu');
       return;
     }
@@ -270,31 +272,46 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
     setIsLoading(true);
 
     try {
-      // S'assurer que le canvas a les bonnes dimensions
-      canvasRef.current.width = canvasWidth;
-      canvasRef.current.height = canvasHeight;
-      console.log('[PREVIEW MODAL] 📐 Canvas dimensions set:', canvasWidth, 'x', canvasHeight);
+      // Utiliser HTML renderer pour le mode éditeur (plus fiable que Canvas)
+      if (!usePhpRendering) {
+        console.log('[PREVIEW MODAL] 🎨 Utilisation HtmlPreviewRenderer pour le mode éditeur');
+        const canvas = { width: canvasWidth, height: canvasHeight, backgroundColor: '#ffffff' };
+        const html = HtmlPreviewRenderer.renderPreview(previewElements, dataProvider, canvas);
+        setHtmlPreview(html);
+        console.log('[PREVIEW MODAL] ✅ HtmlPreviewRenderer terminé');
+      } else {
+        // Mode metabox - utiliser Canvas ou PHP selon la logique existante
+        if (!canvasRef.current) {
+          console.log('[PREVIEW MODAL] ❌ Canvas non disponible pour le mode metabox');
+          return;
+        }
 
-      console.log('[PREVIEW MODAL] 🎨 Appel PreviewRenderer.render avec', previewElements.length, 'éléments');
-      PreviewRenderer.render({
-        canvas: canvasRef.current,
-        elements: previewElements,
-        dataProvider: dataProvider,
-        zoom: zoom,
-        width: canvasWidth,
-        height: canvasHeight
-      });
-      console.log('[PREVIEW MODAL] ✅ PreviewRenderer.render terminé');
+        // S'assurer que le canvas a les bonnes dimensions
+        canvasRef.current.width = canvasWidth;
+        canvasRef.current.height = canvasHeight;
+        console.log('[PREVIEW MODAL] 📐 Canvas dimensions set:', canvasWidth, 'x', canvasHeight);
+
+        console.log('[PREVIEW MODAL] 🎨 Appel PreviewRenderer.render avec', previewElements.length, 'éléments');
+        PreviewRenderer.render({
+          canvas: canvasRef.current,
+          elements: previewElements,
+          dataProvider: dataProvider,
+          zoom: zoom,
+          width: canvasWidth,
+          height: canvasHeight
+        });
+        console.log('[PREVIEW MODAL] ✅ PreviewRenderer.render terminé');
+      }
     } catch (error) {
       console.error('[PREVIEW MODAL] ❌ Erreur lors du rendu de l\'aperçu:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [previewElements, zoom, canvasWidth, canvasHeight, dataProvider]);
+  }, [previewElements, zoom, canvasWidth, canvasHeight, dataProvider, usePhpRendering]);
 
   // Forcer le re-rendu de l'aperçu quand les éléments changent
   useEffect(() => {
-    if (isOpen && previewElements.length > 0 && canvasRef.current) {
+    if (isOpen && previewElements.length > 0) {
       renderPreview();
     }
   }, [previewElements, renderPreview, isOpen]);
@@ -954,6 +971,22 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
                 maxWidth: '100%',
                 maxHeight: '100%'
               }}
+            />
+          ) : !usePhpRendering && htmlPreview ? (
+            // Afficher l'aperçu HTML (mode éditeur)
+            <div
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                backgroundColor: '#ffffff',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top left',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                overflow: 'hidden'
+              }}
+              dangerouslySetInnerHTML={{ __html: htmlPreview }}
             />
           ) : (
             // Fallback : afficher le canvas (rendu Canvas 2D)
