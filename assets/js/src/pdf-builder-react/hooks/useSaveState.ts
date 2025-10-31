@@ -80,24 +80,33 @@ export function useSaveState({
         setState('saving');
         onSaveStart?.();
 
-        // Nettoyage des éléments pour JSON
+        // Nettoyage des éléments pour JSON - version plus permissive
         const cleanElements = elements.map(el => {
           const cleaned: any = {};
           Object.keys(el).forEach(key => {
             const value = el[key];
-            // Skip les propriétés fonctionnelles ou React
+            // Skip seulement les propriétés vraiment problématiques
             if (
               typeof value !== 'function' &&
-              !key.startsWith('_') &&
-              !key.startsWith('__') &&
+              !key.startsWith('__') && // Garde les propriétés avec un seul _
               key !== 'canvas' &&
-              key !== 'context'
+              key !== 'context' &&
+              key !== 'ref' &&
+              key !== 'key' &&
+              key !== 'props' &&
+              key !== 'state' &&
+              key !== 'updater'
             ) {
               cleaned[key] = value;
             }
           });
           return cleaned;
         });
+
+        console.log('[SAVE STATE] Éléments originaux:', elements.length, 'éléments');
+        console.log('[SAVE STATE] Premier élément original:', elements[0]);
+        console.log('[SAVE STATE] Éléments nettoyés:', cleanElements.length, 'éléments');
+        console.log('[SAVE STATE] Premier élément nettoyé:', cleanElements[0]);
 
         // Sérialisation JSON
         const serializedElements = JSON.stringify(cleanElements);

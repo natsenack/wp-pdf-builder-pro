@@ -168,6 +168,8 @@ export function PreviewModal({ isOpen, onClose, canvasWidth, canvasHeight }: Pre
 
         const data = await response.json();
         console.log('[PREVIEW MODAL] 📡 Réponse template:', data);
+        console.log('[PREVIEW MODAL] 📊 Éléments chargés depuis DB:', data.data?.elements?.length, 'éléments');
+        console.log('[PREVIEW MODAL] 🔍 Premier élément DB:', data.data?.elements?.[0]);
 
         if (data.success && data.data && data.data.elements) {
         console.log('[PREVIEW MODAL] ✅ Template chargé avec', data.data.elements.length, 'éléments');
