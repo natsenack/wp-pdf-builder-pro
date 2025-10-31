@@ -223,8 +223,62 @@ export class HtmlPreviewRenderer {
   }
 
   static renderCompanyInfo(element: any, baseStyle: string, dataProvider: any): string {
-    // Priorité aux propriétés sauvegardées
-    const text = element.text || this.buildCompanyInfoText(dataProvider);
+    // Utiliser les propriétés sauvegardées pour déterminer quoi afficher
+    const showHeaders = element.showHeaders !== false;
+    const showBorders = element.showBorders !== false;
+    const showCompanyName = element.showCompanyName !== false;
+    const showAddress = element.showAddress !== false;
+    const showPhone = element.showPhone !== false;
+    const showEmail = element.showEmail !== false;
+    const showVat = element.showVat !== false;
+
+    // Si du texte personnalisé est sauvegardé, l'utiliser en priorité
+    if (element.text && element.text.trim()) {
+      const fontSize = element.fontSize || 14;
+      const fontFamily = element.fontFamily || 'Inter, sans-serif';
+      const fontWeight = element.fontWeight || 'normal';
+      const textAlign = element.textAlign || 'center';
+      const color = element.color || '#000000';
+      const backgroundColor = element.backgroundColor || 'transparent';
+
+      console.log('[HTML PREVIEW] 🏢 Company info (custom text):', element.text.substring(0, 50) + '...');
+
+      return `
+        <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid lime !important;">
+          ${this.escapeHtml(element.text)}
+        </div>
+      `;
+    }
+
+    // Sinon, construire le texte selon les propriétés sauvegardées
+    const companyInfoParts = [];
+
+    if (showCompanyName) {
+      const companyName = dataProvider.getVariableValue('company_name') || 'Ma Société SARL';
+      if (companyName) companyInfoParts.push(companyName);
+    }
+
+    if (showAddress) {
+      const companyAddress = dataProvider.getVariableValue('company_address') || '456 Avenue des Champs\n75008 Paris\nFrance';
+      if (companyAddress) companyInfoParts.push(companyAddress);
+    }
+
+    if (showPhone) {
+      const companyPhone = dataProvider.getVariableValue('company_phone') || '+33 1 98 76 54 32';
+      if (companyPhone) companyInfoParts.push(`Tél: ${companyPhone}`);
+    }
+
+    if (showEmail) {
+      const companyEmail = dataProvider.getVariableValue('company_email') || 'contact@masociete.com';
+      if (companyEmail) companyInfoParts.push(`Email: ${companyEmail}`);
+    }
+
+    if (showVat) {
+      const companyVat = dataProvider.getVariableValue('company_vat') || 'FR 12 345 678 901';
+      if (companyVat) companyInfoParts.push(`TVA: ${companyVat}`);
+    }
+
+    const text = companyInfoParts.join('\n');
     const fontSize = element.fontSize || 14;
     const fontFamily = element.fontFamily || 'Inter, sans-serif';
     const fontWeight = element.fontWeight || 'normal';
@@ -232,7 +286,7 @@ export class HtmlPreviewRenderer {
     const color = element.color || '#000000';
     const backgroundColor = element.backgroundColor || 'transparent';
 
-    console.log('[HTML PREVIEW] 🏢 Company info:', text.substring(0, 50) + '...');
+    console.log('[HTML PREVIEW] 🏢 Company info (constructed):', text.substring(0, 50) + '...');
 
     return `
       <div style="${baseStyle}background-color: ${backgroundColor}; color: ${color}; font-size: ${fontSize}px; font-family: ${fontFamily}; font-weight: ${fontWeight}; text-align: ${textAlign}; white-space: pre-line; line-height: 1.4; border: 2px solid lime !important;">
@@ -261,42 +315,91 @@ export class HtmlPreviewRenderer {
 
     const showHeaders = element.showHeaders !== false;
     const showBorders = element.showBorders || false;
-    const headers = element.headers || ['Produit', 'Qté', 'Prix'];
+    const showAlternatingRows = element.showAlternatingRows !== false;
+    const showSku = element.showSku !== false;
+    const showDescription = element.showDescription !== false;
+    const showQuantity = element.showQuantity !== false;
+    const showShipping = element.showShipping !== false;
+    const showTax = element.showTax !== false;
+    const showDiscount = element.showDiscount !== false;
+    const showTotal = element.showTotal !== false;
+
+    // Headers personnalisés ou par défaut
+    const defaultHeaders = ['Produit', 'Qté', 'Prix', 'Total'];
+    let headers = element.headers || defaultHeaders;
+
+    // Ajuster les headers selon les colonnes affichées
+    const dynamicHeaders = [];
+    if (showSku) dynamicHeaders.push('SKU');
+    if (showDescription) dynamicHeaders.push('Description');
+    dynamicHeaders.push('Produit');
+    if (showQuantity) dynamicHeaders.push('Qté');
+    dynamicHeaders.push('Prix');
+    if (showTotal) dynamicHeaders.push('Total');
+
+    if (!element.headers) {
+      headers = dynamicHeaders;
+    }
+
     const headerBackgroundColor = element.headerBackgroundColor || '#1f2937';
     const headerTextColor = element.headerTextColor || '#ffffff';
     const textColor = element.textColor || '#111827';
-    const alternateRowColor = element.alternateRowColor || '#f9f9f9';
+    const alternateRowColor = showAlternatingRows ? (element.alternateRowColor || '#f9f9f9') : 'transparent';
+    const borderColor = element.borderColor || '#e5e7eb';
 
-    let tableHtml = `<table style="width: 100%; border-collapse: collapse; ${showBorders ? 'border: 1px solid #ddd;' : ''} font-size: 12px;">`;
+    let tableHtml = `<table style="width: 100%; border-collapse: collapse; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-size: 12px;">`;
 
     if (showHeaders) {
       tableHtml += `<thead><tr style="background-color: ${headerBackgroundColor}; color: ${headerTextColor};">`;
-      (headers as string[]).forEach((header: string) => {
-        tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? 'border: 1px solid #ddd;' : ''} font-weight: bold;">${header}</th>`;
+      headers.forEach((header: string) => {
+        tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold;">${header}</th>`;
       });
       tableHtml += `</tr></thead>`;
     }
 
     tableHtml += '<tbody>';
     products.forEach((product: any, index: number) => {
-      const rowStyle = index % 2 === 1 ? `background-color: ${alternateRowColor};` : '';
+      const rowStyle = index % 2 === 1 && showAlternatingRows ? `background-color: ${alternateRowColor};` : '';
       tableHtml += `<tr style="${rowStyle}">`;
 
-      if (element.columns?.name !== false) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? 'border: 1px solid #ddd;' : ''}">${this.escapeHtml(product.name || 'Produit')}</td>`;
+      // Colonnes dynamiques selon les paramètres
+      if (showSku) {
+        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.sku || '')}</td>`;
       }
-      if (element.columns?.quantity !== false) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? 'border: 1px solid #ddd;' : ''} text-align: center;">${product.quantity || 1}</td>`;
+      if (showDescription) {
+        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.description || '')}</td>`;
       }
-      if (element.columns?.price !== false) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? 'border: 1px solid #ddd;' : ''} text-align: right;">${this.formatPrice(product.price) || '0€'}</td>`;
+
+      // Produit (toujours affiché)
+      tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.escapeHtml(product.name || 'Produit')}</td>`;
+
+      if (showQuantity) {
+        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: center;">${product.quantity || 1}</td>`;
       }
-      if (element.columns?.total !== false) {
-        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? 'border: 1px solid #ddd;' : ''} text-align: right; font-weight: bold;">${this.formatPrice(product.total) || '0€'}</td>`;
+
+      // Prix
+      tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: right;">${this.formatPrice(product.price)}</td>`;
+
+      if (showTotal) {
+        tableHtml += `<td style="padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} text-align: right; font-weight: bold;">${this.formatPrice(product.total)}</td>`;
       }
 
       tableHtml += '</tr>';
     });
+
+    // Lignes supplémentaires si activées
+    if (showShipping) {
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Frais de port:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(element.shipping || 0)}</td></tr>`;
+    }
+
+    if (showTax) {
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TVA:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(element.tax || 0)}</td></tr>`;
+    }
+
+    if (showDiscount) {
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; font-weight: bold; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(element.discount || 0)}</td></tr>`;
+    }
+
     tableHtml += '</tbody></table>';
 
     return `<div style="${baseStyle}border: 2px solid red !important;">${tableHtml}</div>`;
