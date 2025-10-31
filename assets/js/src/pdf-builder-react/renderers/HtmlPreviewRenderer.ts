@@ -496,6 +496,21 @@ export class HtmlPreviewRenderer {
     const opacity = element.opacity !== undefined ? element.opacity : 100;
     const borderRadius = element.borderRadius || 0;
     const boxShadow = element.boxShadow || 'none';
+    const cellPadding = element.cellPadding || element.cellpadding || 6;
+    const cellSpacing = element.cellSpacing || element.cellspacing || 0;
+    const tableWidth = element.tableWidth || element.width || '100%';
+    const tableHeight = element.tableHeight || element.height || 'auto';
+    const verticalAlign = element.verticalAlign || 'top';
+    const caption = element.caption || '';
+    const summary = element.summary || 'Tableau des produits commandés';
+    const columnWidths = element.columnWidths || {};
+    const columnAlignments = element.columnAlignments || {};
+    const showProductLinks = element.showProductLinks !== false;
+    const showProductImages = element.showProductImages !== false;
+    const maxDescriptionLength = element.maxDescriptionLength || 100;
+    const numberFormat = element.numberFormat || 'fr-FR';
+    const currency = element.currency || '€';
+    const currencyPosition = element.currencyPosition || 'after';
 
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
@@ -544,12 +559,20 @@ export class HtmlPreviewRenderer {
         break;
     }
 
-    let tableHtml = `<table style="width: 100%; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign};">`;
+    let tableHtml = `<table style="width: ${tableWidth}; height: ${tableHeight}; border-collapse: collapse; ${tableStyleCss} font-size: ${fontSize}px; font-family: ${fontFamily}; text-align: ${textAlign}; vertical-align: ${verticalAlign};" cellpadding="${cellPadding}" cellspacing="${cellSpacing}" summary="${summary}">`;
+
+    // Ajouter la légende si définie
+    if (caption) {
+      tableHtml += `<caption style="caption-side: top; margin-bottom: 8px; font-weight: bold; text-align: ${textAlign};">${this.escapeHtml(caption)}</caption>`;
+    }
 
     if (showHeaders && headers.length > 0) {
       tableHtml += `<thead><tr style="background-color: ${headerBackgroundColor}; color: ${headerTextColor};">`;
-      headers.forEach((header: string) => {
-        tableHtml += `<th style="padding: 6px 8px; text-align: left; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold; ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''}">${header}</th>`;
+      headers.forEach((header: string, index: number) => {
+        const col = enabledColumns[index];
+        const width = columnWidths[col] || 'auto';
+        const align = columnAlignments[col] || 'left';
+        tableHtml += `<th style="text-align: ${align}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} font-weight: bold; ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''} ${width !== 'auto' ? `width: ${width};` : ''}">${header}</th>`;
       });
       tableHtml += `</tr></thead>`;
     }
@@ -561,35 +584,43 @@ export class HtmlPreviewRenderer {
       tableHtml += `<tr style="${rowStyle}">`;
 
       // Colonnes selon la configuration activée
-      enabledColumns.forEach(col => {
-        const cellStyle = `padding: 6px 8px; color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''}`;
+      enabledColumns.forEach((col, index) => {
+        const width = columnWidths[col] || 'auto';
+        const align = columnAlignments[col] || (col === 'quantity' || col === 'price' || col === 'total' ? 'right' : 'left');
+        const cellStyle = `color: ${textColor}; ${showBorders ? `border: 1px solid ${borderColor};` : ''} ${rowHeight !== 'auto' ? `height: ${rowHeight}px;` : ''} ${width !== 'auto' ? `width: ${width};` : ''}`;
 
         switch (col) {
           case 'image':
             const imageSrc = product.image || product.image_url || product.thumbnail || '';
-            tableHtml += `<td style="${cellStyle} text-align: center; width: 60px;">${imageSrc ? `<img src="${imageSrc}" alt="" style="max-width: 50px; max-height: 50px;">` : ''}</td>`;
+            const imageHtml = showProductImages && imageSrc ? `<img src="${imageSrc}" alt="${product.name || 'Product'}" style="max-width: 50px; max-height: 50px; object-fit: contain;">` : '';
+            tableHtml += `<td style="${cellStyle} text-align: center;">${imageHtml}</td>`;
             break;
           case 'sku':
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.sku || product.sku_code || '')}</td>`;
+            tableHtml += `<td style="${cellStyle} text-align: ${align};">${this.escapeHtml(product.sku || product.sku_code || '')}</td>`;
             break;
           case 'description':
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(product.description || product.short_description || '')}</td>`;
+            let description = product.description || product.short_description || '';
+            if (description.length > maxDescriptionLength) {
+              description = description.substring(0, maxDescriptionLength) + '...';
+            }
+            tableHtml += `<td style="${cellStyle} text-align: ${align};">${this.escapeHtml(description)}</td>`;
             break;
           case 'name':
             const productName = product.name || product.title || product.product_name || 'Produit';
-            tableHtml += `<td style="${cellStyle}">${this.escapeHtml(productName)}</td>`;
+            const displayName = showProductLinks && product.url ? `<a href="${product.url}" target="_blank" style="color: ${textColor}; text-decoration: none;">${this.escapeHtml(productName)}</a>` : this.escapeHtml(productName);
+            tableHtml += `<td style="${cellStyle} text-align: ${align};">${displayName}</td>`;
             break;
           case 'quantity':
             const qty = product.quantity || product.qty || product.amount || 1;
-            tableHtml += `<td style="${cellStyle} text-align: center;">${qty}</td>`;
+            tableHtml += `<td style="${cellStyle} text-align: ${align};">${qty}</td>`;
             break;
           case 'price':
             const price = product.price || product.unit_price || product.cost || 0;
-            tableHtml += `<td style="${cellStyle} text-align: right;">${this.formatPrice(price)}</td>`;
+            tableHtml += `<td style="${cellStyle} text-align: ${align};">${this.formatPrice(price, currency, currencyPosition, numberFormat)}</td>`;
             break;
           case 'total':
             const total = product.total || product.line_total || (product.price * product.quantity) || 0;
-            tableHtml += `<td style="${cellStyle} text-align: right; font-weight: bold;">${this.formatPrice(total)}</td>`;
+            tableHtml += `<td style="${cellStyle} text-align: ${align}; font-weight: bold;">${this.formatPrice(total, currency, currencyPosition, numberFormat)}</td>`;
             break;
         }
       });
@@ -612,23 +643,23 @@ export class HtmlPreviewRenderer {
 
     // Lignes supplémentaires si activées
     if (showSubtotal && subtotal > 0) {
-      tableHtml += `<tr style="font-weight: bold; background-color: #f8f9fa;"><td colspan="${headers.length - 1}" style="padding: 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Sous-total:</td><td style="padding: 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(subtotal)}</td></tr>`;
+      tableHtml += `<tr style="font-weight: bold; background-color: #f8f9fa;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Sous-total:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(subtotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showShipping && shipping > 0) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Frais de port:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(shipping)}</td></tr>`;
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Frais de port:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(shipping, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showTax && tax > 0) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TVA:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(tax)}</td></tr>`;
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TVA:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(tax, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showDiscount && discount > 0) {
-      tableHtml += `<tr><td colspan="${headers.length - 1}" style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="padding: 6px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(discount)}</td></tr>`;
+      tableHtml += `<tr><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">Remise:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">-${this.formatPrice(discount, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     if (showTotal && grandTotal > 0) {
-      tableHtml += `<tr style="font-weight: bold; font-size: 14px; background-color: #e3f2fd;"><td colspan="${headers.length - 1}" style="padding: 10px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TOTAL:</td><td style="padding: 10px 8px; text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(grandTotal)}</td></tr>`;
+      tableHtml += `<tr style="font-weight: bold; font-size: 14px; background-color: #e3f2fd;"><td colspan="${headers.length - 1}" style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">TOTAL:</td><td style="text-align: right; ${showBorders ? `border: 1px solid ${borderColor};` : ''}">${this.formatPrice(grandTotal, currency, currencyPosition, numberFormat)}</td></tr>`;
     }
 
     tableHtml += '</tbody></table>';
@@ -731,14 +762,15 @@ export class HtmlPreviewRenderer {
     ].filter(info => info).join('\n');
   }
 
-  static formatPrice(price: any): string {
+  static formatPrice(price: any, currency: string = '€', currencyPosition: string = 'after', numberFormat: string = 'fr-FR'): string {
     if (typeof price === 'number') {
-      return price.toFixed(2) + '€';
+      const formatted = price.toLocaleString(numberFormat, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return currencyPosition === 'before' ? `${currency}${formatted}` : `${formatted}${currency}`;
     }
     if (typeof price === 'string') {
-      return price.includes('€') ? price : price + '€';
+      return price.includes(currency) ? price : (currencyPosition === 'before' ? `${currency}${price}` : `${price}${currency}`);
     }
-    return '0€';
+    return `0${currency}`;
   }
 
   static escapeHtml(text: string): string {
