@@ -515,6 +515,12 @@ export class HtmlPreviewRenderer {
     const numberFormat = element.numberFormat || 'fr-FR';
     const currency = element.currency || '€';
     const currencyPosition = element.currencyPosition || 'after';
+    const headerBackgroundColor = element.headerBackgroundColor || '#f8f9fa';
+    const headerTextColor = element.headerTextColor || '#000000';
+    const alternateRowColor = element.alternateRowColor || 'transparent';
+    const textColor = element.textColor || element.color || '#000000';
+    const rowHeight = element.rowHeight || 'auto';
+    const spacing = element.spacing || 8;
 
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
@@ -539,14 +545,26 @@ export class HtmlPreviewRenderer {
       console.log('[HTML PREVIEW] 📊 Using custom headers:', headers);
     }
 
-    console.log('[HTML PREVIEW] 📊 Headers:', headers);
+    console.log('[HTML PREVIEW] 📊 Product table properties from JSON:', {
+      // Propriétés d'affichage
+      showHeaders, showBorders, showAlternatingRows,
+      showSubtotal, showShipping, showTax, showDiscount, showTotal,
+      // Colonnes
+      columns: element.columns,
+      headers: element.headers,
+      // Couleurs et styles
+      headerBackgroundColor, headerTextColor, textColor, alternateRowColor,
+      backgroundColor, borderColor,
+      // Dimensions
+      tableWidth, tableHeight, rowHeight, spacing,
+      // Police
+      fontSize, fontFamily, fontWeight, textAlign,
+      // Autres
+      dataSource, showProductImages, showProductLinks, maxDescriptionLength,
+      numberFormat, currency, currencyPosition
+    });
 
-    const headerBackgroundColor = element.headerBackgroundColor || '#1f2937';
-    const headerTextColor = element.headerTextColor || '#ffffff';
-    const textColor = element.textColor || color || '#111827';
-    const alternateRowColor = showAlternatingRows ? (element.alternateRowColor || '#f9f9f9') : 'transparent';
     const borderColor = element.borderColor || '#e5e7eb';
-    const rowHeight = element.rowHeight || 'auto';
 
     // Appliquer le style du tableau
     let tableStyleCss = `font-weight: ${fontWeight}; color: ${textColor}; background-color: ${backgroundColor};`;
