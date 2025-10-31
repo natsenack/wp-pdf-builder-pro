@@ -411,6 +411,16 @@ export class HtmlPreviewRenderer {
     console.log('[HTML PREVIEW] 📊 Products:', Array.isArray(products) ? products.length : 'not array', products);
     console.log('[HTML PREVIEW] 📊 Element columns config:', element.columns);
 
+    console.log('[HTML PREVIEW] 🔍 Element structure for product_table:', {
+      id: element.id,
+      type: element.type,
+      hasProperties: !!element.properties,
+      propertiesKeys: element.properties ? Object.keys(element.properties) : [],
+      hasStyle: !!element.style,
+      styleKeys: element.style ? Object.keys(element.style) : [],
+      directKeys: Object.keys(element).filter(key => !['properties', 'style'].includes(key))
+    });
+
     if (!Array.isArray(products) || products.length === 0) {
       return `
         <div style="${baseStyle}color: #666; font-style: italic; border: 2px solid red !important;">
@@ -515,12 +525,12 @@ export class HtmlPreviewRenderer {
     const numberFormat = element.numberFormat || 'fr-FR';
     const currency = element.currency || '€';
     const currencyPosition = element.currencyPosition || 'after';
-    const headerBackgroundColor = element.headerBackgroundColor || '#f8f9fa';
-    const headerTextColor = element.headerTextColor || '#000000';
-    const alternateRowColor = element.alternateRowColor || 'transparent';
-    const textColor = element.textColor || element.color || '#000000';
-    const rowHeight = element.rowHeight || 'auto';
-    const spacing = element.spacing || 8;
+    const headerBackgroundColor = element.headerBackgroundColor || element.properties?.headerBackgroundColor || element.style?.headerBackgroundColor || '#f8f9fa';
+    const headerTextColor = element.headerTextColor || element.properties?.headerTextColor || element.style?.headerTextColor || '#000000';
+    const alternateRowColor = element.alternateRowColor || element.properties?.alternateRowColor || element.style?.alternateRowColor || 'transparent';
+    const textColor = element.textColor || element.properties?.textColor || element.style?.textColor || element.color || '#000000';
+    const rowHeight = element.rowHeight || element.properties?.rowHeight || element.style?.rowHeight || 'auto';
+    const spacing = element.spacing || element.properties?.spacing || element.style?.spacing || 8;
 
     // Headers personnalisés ou par défaut
     let headers = element.headers || [];
