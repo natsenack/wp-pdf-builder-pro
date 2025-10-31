@@ -481,7 +481,8 @@ export class HtmlPreviewRenderer {
     let headers = element.headers || [];
 
     // Construire les headers selon les colonnes activées
-    if (!element.headers || element.headers.length === 0) {
+    if (!element.headers || element.headers.length === 0 || element.headers.length !== enabledColumns.length) {
+      console.log('[HTML PREVIEW] 📊 Generating dynamic headers - custom headers missing or count mismatch');
       const dynamicHeaders: string[] = [];
       enabledColumns.forEach(col => {
         switch (col) {
@@ -495,6 +496,8 @@ export class HtmlPreviewRenderer {
         }
       });
       headers = dynamicHeaders;
+    } else {
+      console.log('[HTML PREVIEW] 📊 Using custom headers:', headers);
     }
 
     console.log('[HTML PREVIEW] 📊 Headers:', headers);
