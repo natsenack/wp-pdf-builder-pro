@@ -98,6 +98,36 @@ use const PDF_UNIT;
 class PDF_Builder_Admin {
 
     /**
+     * Instance unique de la classe
+     */
+    private static $instance = null;
+
+    /**
+     * Référence vers le core
+     */
+    private $core = null;
+
+    /**
+     * Obtenir l'instance unique de la classe (Singleton)
+     */
+    public static function getInstance($core = null)
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($core);
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructeur privé
+     */
+    private function __construct($core = null)
+    {
+        $this->core = $core;
+        $this->initHooks();
+    }
+
+    /**
      * Vérifie les permissions d'administration avec mise en cache
      */
     private function checkAdminPermissions()

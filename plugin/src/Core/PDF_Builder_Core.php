@@ -37,6 +37,18 @@ class PDF_Builder_Core
         $this->initHooks();
         $this->loadDependencies();
     }
+
+    /**
+     * Obtenir l'instance unique de la classe (Singleton)
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
         // Test pages removed
     private function initHooks()
     {
