@@ -1411,6 +1411,42 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.setLineDash([5, 5]);
     ctx.strokeRect(minX - 5, minY - 5, (maxX - minX) + 10, (maxY - minY) + 10);
     ctx.setLineDash([]);
+
+    // Ajouter les indicateurs de dimensions pour chaque élément sélectionné
+    const pxToMm = (px: number): number => Math.round(px * (210 / 595) * 10) / 10;
+    
+    selectedElements.forEach(el => {
+      if (selectedIds.includes(el.id)) {
+        // Coordonnées
+        const x = el.x;
+        const y = el.y;
+        const width = el.width;
+        const height = el.height;
+
+        // Convertir en MM pour affichage
+        const widthMm = pxToMm(width);
+        const heightMm = pxToMm(height);
+
+        // Afficher les dimensions sur le coin supérieur droit
+        ctx.font = '11px Arial';
+        ctx.fillStyle = '#007acc';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+
+        const dimensionText = `${widthMm}×${heightMm}mm`;
+        const padding = 4;
+        const textWidth = ctx.measureText(dimensionText).width;
+        
+        // Fond blanc pour meilleure lisibilité
+        ctx.fillStyle = 'white';
+        ctx.fillRect(x + width - textWidth - padding * 2, y - 20, textWidth + padding * 2, 18);
+        
+        // Texte
+        ctx.fillStyle = '#007acc';
+        ctx.font = 'bold 11px Arial';
+        ctx.fillText(dimensionText, x + width - padding, y - 16);
+      }
+    });
   };
 
   // Redessiner quand l'état change
