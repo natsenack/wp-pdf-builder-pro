@@ -24,8 +24,8 @@ const pxToMm = (px: number): number => Math.round(px * PX_TO_MM);
 
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
-  const canvasWidth = 210;  // Largeur A4 en MM
-  const canvasHeight = 297; // Hauteur A4 en MM
+  const canvasWidth = 210;  // Largeur A4 Portrait en MM
+  const canvasHeight = 297; // Hauteur A4 Portrait en MM
 
   return elements.map(element => {
     let newX = element.x;
