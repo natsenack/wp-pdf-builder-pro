@@ -298,11 +298,6 @@ class PDF_Builder_WooCommerce_Integration
                 },
                 success: function(response) {
                     if (response.success && response.data) {
-                        // DEBUG: Log des données reçues
-                        console.log('PDF Builder - Preview data received:', response.data);
-                        console.log('PDF Builder - Template data:', response.data.template_data);
-                        console.log('PDF Builder - Elements:', response.data.elements);
-
                         // Générer le HTML pour la modal
                         var html = generatePreviewHTML(response.data, orderId, templateId);
                         previewWindow.document.write(html);
@@ -321,11 +316,7 @@ class PDF_Builder_WooCommerce_Integration
 
         // Génère le HTML de prévisualisation
         function generatePreviewHTML(previewData, orderId, templateId) {
-            var customerName = (previewData.billing.first_name || '') + ' ' + (previewData.billing.last_name || '');
-            var orderNumber = previewData.order.number || ('CMD-' + previewData.order.id);
-            var orderDate = previewData.order.date || new Date().toLocaleDateString('fr-FR');
-            
-            return `<!DOCTYPE html>
+            var html = `<!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
@@ -333,24 +324,9 @@ class PDF_Builder_WooCommerce_Integration
                 <style>
                     * { margin: 0; padding: 0; box-sizing: border-box; }
                     body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-                    .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-                    .header { border-bottom: 2px solid #007cba; padding-bottom: 20px; margin-bottom: 20px; }
-                    .header h1 { color: #333; margin-bottom: 10px; }
-                    .header .info { display: flex; justify-content: space-between; color: #666; font-size: 14px; }
-                    .section { margin-bottom: 30px; }
-                    .section h2 { color: #007cba; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
-                    .info-box { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                    .info-block { }
-                    .info-block strong { color: #333; }
-                    .info-block p { color: #666; font-size: 14px; margin-top: 5px; line-height: 1.6; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                    thead { background: #f0f0f0; }
-                    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-                    th { font-weight: bold; color: #333; }
-                    td { font-size: 14px; color: #666; }
-                    .total-section { text-align: right; margin-top: 20px; }
-                    .total-section .total-row { font-size: 18px; font-weight: bold; color: #333; }
-                    .button-group { margin-top: 30px; display: flex; gap: 10px; justify-content: flex-end; }
+                    .container { position: relative; width: 210mm; height: 297mm; margin: 0 auto; background: white; border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+                    .template-element { position: absolute; }
+                    .button-group { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; }
                     .button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
                     .button-primary { background: #007cba; color: white; }
                     .button-secondary { background: #ddd; color: #333; }
@@ -358,84 +334,44 @@ class PDF_Builder_WooCommerce_Integration
                 </style>
             </head>
             <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>Aperçu de la commande</h1>
-                        <div class="info">
-                            <span>Commande #` + orderId + `</span>
-                            <span>Date: ` + orderDate + `</span>
-                            <span>Template ID: ` + templateId + `</span>
-                        </div>
-                    </div>
+                <div class="container">`;
 
-                    <div class="section">
-                        <h2>Informations client</h2>
-                        <div class="info-box">
-                            <div class="info-block">
-                                <strong>Facturation</strong>
-                                <p>` + customerName + `<br>
-                                ` + (previewData.billing.address_1 || '') + `<br>
-                                ` + (previewData.billing.postcode || '') + ` ` + (previewData.billing.city || '') + `<br>
-                                ` + (previewData.billing.email || '') + `<br>
-                                ` + (previewData.billing.phone || '') + `</p>
-                            </div>
-                            <div class="info-block">
-                                <strong>Livraison</strong>
-                                <p>` + ((previewData.shipping.first_name || '') + ' ' + (previewData.shipping.last_name || '')).trim() + `<br>
-                                ` + (previewData.shipping.address_1 || '') + `<br>
-                                ` + (previewData.shipping.postcode || '') + ` ` + (previewData.shipping.city || '') + `</p>
-                            </div>
-                        </div>
-                    </div>
+            // Render template elements
+            if (previewData.template_data && Array.isArray(previewData.template_data)) {
+                previewData.template_data.forEach(function(element) {
+                    var style = 'position: absolute; ';
+                    if (element.position) {
+                        style += 'top: ' + (element.position.top || 0) + 'px; ';
+                        style += 'left: ' + (element.position.left || 0) + 'px; ';
+                    }
+                    if (element.size) {
+                        style += 'width: ' + (element.size.width || 100) + 'px; ';
+                        style += 'height: ' + (element.size.height || 50) + 'px; ';
+                    }
+                    if (element.styles) {
+                        style += element.styles;
+                    }
+                    
+                    var content = element.content || '';
+                    if (element.type === 'text') {
+                        html += '<div class="template-element" style="' + style + '">' + content + '</div>';
+                    } else {
+                        // Handle other element types if needed
+                        html += '<div class="template-element" style="' + style + '">' + content + '</div>';
+                    }
+                });
+            }
 
-                    <div class="section">
-                        <h2>Articles de la commande</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Produit</th>
-                                    <th>Quantité</th>
-                                    <th>Prix unit.</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>` + generateItemsRows(previewData.items) + `
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="total-section">
-                        <div class="total-row">Sous-total: ` + (previewData.order.subtotal || 0).toFixed(2) + ` €</div>
-                        <div class="total-row">Livraison: ` + (previewData.order.shipping_total || 0).toFixed(2) + ` €</div>
-                        <div class="total-row">Taxes: ` + (previewData.order.tax_total || 0).toFixed(2) + ` €</div>
-                        <div class="total-row" style="color: #007cba; border-top: 2px solid #007cba; padding-top: 10px; margin-top: 10px;">
-                            TOTAL: ` + (previewData.order.total || 0).toFixed(2) + ` €
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="button button-secondary" onclick="window.print()">🖨️ Imprimer</button>
-                        <button class="button button-secondary" onclick="window.close()">❌ Fermer</button>
-                    </div>
+            html += `
+                </div>
+                <div class="button-group">
+                    <button class="button button-secondary" onclick="window.print()">🖨️ Imprimer</button>
+                    <button class="button button-secondary" onclick="window.close()">❌ Fermer</button>
                 </div>
             </body>
             </html>`;
-        }
-
-        // Génère les lignes du tableau des articles
-        function generateItemsRows(items) {
-            if (!items || items.length === 0) {
-                return '<tr><td colspan="4">Aucun article</td></tr>';
-            }
-
-            return items.map(function(item) {
-                return `<tr>
-                    <td>` + (item.name || 'Produit') + `</td>
-                    <td>` + (item.quantity || 0) + `</td>
-                    <td>` + ((item.total / (item.quantity || 1)) || 0).toFixed(2) + ` €</td>
-                    <td>` + (item.total || 0).toFixed(2) + ` €</td>
-                </tr>`;
-            }).join('');
+            
+            return html;
         }
 
         function generatePDF(orderId, templateId, nonce) {
@@ -1875,11 +1811,6 @@ class PDF_Builder_WooCommerce_Integration
                 wp_send_json_error('Données du template invalides');
                 return;
             }
-
-            // DEBUG: Log des données du template
-            error_log('PDF Builder - Template data from DB: ' . substr($template->data, 0, 500) . '...');
-            error_log('PDF Builder - Decoded template data keys: ' . json_encode(array_keys($template_data)));
-            error_log('PDF Builder - Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'no elements key'));
 
             // Préparer les données pour le rendu
             $preview_data = [
