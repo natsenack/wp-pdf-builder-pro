@@ -850,3 +850,4 @@ export function useCanvas() {
 }
 
 export { BuilderContext };
+export { mmToPx, pxToMm, MM_TO_PX, PX_TO_MM };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Element } from '../../types/elements';
+import { pxToMm, mmValueToPx } from '../../utils/unitConversion';
 
 interface ProductTablePropertiesProps {
   element: Element;
@@ -1232,12 +1233,13 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position X
+              Position X <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.x)} mm)</span>
             </label>
             <input
               type="number"
-              value={element.x}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
+              step="0.1"
+              value={parseFloat(pxToMm(element.x).toFixed(1))}
+              onChange={(e) => onChange(element.id, 'x', mmValueToPx(parseFloat(e.target.value) || 0))}
               style={{
                 width: '100%',
                 padding: '4px 8px',
@@ -1245,17 +1247,20 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 borderRadius: '3px',
                 fontSize: '12px'
               }}
+              placeholder="Entrer la valeur en mm"
             />
+            <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en millimètres</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position Y
+              Position Y <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.y)} mm)</span>
             </label>
             <input
               type="number"
-              value={element.y}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
+              step="0.1"
+              value={parseFloat(pxToMm(element.y).toFixed(1))}
+              onChange={(e) => onChange(element.id, 'y', mmValueToPx(parseFloat(e.target.value) || 0))}
               style={{
                 width: '100%',
                 padding: '4px 8px',
@@ -1263,17 +1268,20 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 borderRadius: '3px',
                 fontSize: '12px'
               }}
+              placeholder="Entrer la valeur en mm"
             />
+            <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en millimètres</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Largeur
+              Largeur <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.width)} mm)</span>
             </label>
             <input
               type="number"
-              value={element.width}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 100)}
+              step="0.1"
+              value={parseFloat(pxToMm(element.width).toFixed(1))}
+              onChange={(e) => onChange(element.id, 'width', mmValueToPx(parseFloat(e.target.value) || 100))}
               style={{
                 width: '100%',
                 padding: '4px 8px',
@@ -1281,17 +1289,20 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 borderRadius: '3px',
                 fontSize: '12px'
               }}
+              placeholder="Entrer la valeur en mm"
             />
+            <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en millimètres</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Hauteur
+              Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.height)} mm)</span>
             </label>
             <input
               type="number"
-              value={element.height}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 100)}
+              step="0.1"
+              value={parseFloat(pxToMm(element.height).toFixed(1))}
+              onChange={(e) => onChange(element.id, 'height', mmValueToPx(parseFloat(e.target.value) || 100))}
               style={{
                 width: '100%',
                 padding: '4px 8px',
@@ -1299,7 +1310,9 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 borderRadius: '3px',
                 fontSize: '12px'
               }}
+              placeholder="Entrer la valeur en mm"
             />
+            <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en millimètres</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
