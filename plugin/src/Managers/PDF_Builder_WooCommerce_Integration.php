@@ -568,6 +568,11 @@ class PDF_Builder_WooCommerce_Integration
 
             $valid_statuses = array_keys(wc_get_order_statuses());
 
+            // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
+            $status_templates = get_option('pdf_builder_order_status_templates', []);
+            $configured_statuses = array_keys($status_templates);
+            $valid_statuses = array_merge($valid_statuses, $configured_statuses);
+
             if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
                 wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
