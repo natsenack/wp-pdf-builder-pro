@@ -1,6 +1,0 @@
-open 65.108.242.181
-nats
-iZ6vU3zV2y
-cd /wp-content/plugins/wp-pdf-builder-pro
-put "D:\wp-pdf-builder-pro\plugin\lib\tcpdf\README.md" "lib\tcpdf\README.md"
-bye

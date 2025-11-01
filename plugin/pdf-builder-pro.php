@@ -16,6 +16,12 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Définir les constantes du plugin
+define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
+define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
+// PDF_BUILDER_PLUGIN_URL sera défini dans constants.php avec plugins_url()
+define('PDF_BUILDER_VERSION', '1.1.0');
+
 // Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
 error_reporting(error_reporting() & ~E_DEPRECATED);
 

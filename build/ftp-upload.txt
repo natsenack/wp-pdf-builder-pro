@@ -1,8 +1,0 @@
-open 65.108.242.181
-nats
-iZ6vU3zV2y
-cd /wp-content/plugins/wp-pdf-builder-pro
-binary
-prompt off
-mput ..\plugin\*
-bye

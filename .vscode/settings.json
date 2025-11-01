@@ -107,3 +107,13 @@
   "files.defaultLanguage": "fr",
   "accessibility.voice.speechLanguage": "fr-FR"
 }
+{
+    "ftp-simple.config": {
+        "host": "65.108.242.181",
+        "port": 21,
+        "username": "nats",
+        "password": "iZ6vU3zV2y",
+        "remotePath": "/wp-content/plugins/wp-pdf-builder-pro",
+        "protocol": "ftp"
+    }
+}
