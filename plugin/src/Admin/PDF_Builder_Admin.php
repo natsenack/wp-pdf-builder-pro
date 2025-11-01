@@ -91,8 +91,28 @@ use const PDF_BUILDER_DEV_MODE;
 use const WP_DEBUG;
 use const PDF_PAGE_ORIENTATION;
 use const PDF_UNIT;
-    // Diagnostic helper removed: diagnose_template_json()
-    // Removed to avoid exposing debug utilities in production.
+
+/**
+ * Classe principale d'administration du PDF Builder Pro
+ */
+class PDF_Builder_Admin {
+
+    /**
+     * Vérifie les permissions d'administration avec mise en cache
+     */
+    private function checkAdminPermissions()
+    {
+        // Créer une clé de cache basée sur l'ID utilisateur
+        $cache_key = 'pdf_builder_admin_access_' . get_current_user_id();
+
+        // Vérifier le cache d'abord
+        $cached_result = get_transient($cache_key);
+        if ($cached_result !== false) {
+            return $cached_result === 'allowed';
+        }
+
+        // Diagnostic helper removed: diagnose_template_json()
+        // Removed to avoid exposing debug utilities in production.
 
         // Récupérer les rôles autorisés depuis les options
         $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
