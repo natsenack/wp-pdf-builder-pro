@@ -18,6 +18,7 @@ use RecursiveDirectoryIterator;
 use PDF_Generator;
 use PDF_Builder_Cache_Manager;
 use PDF_Builder_Pro_Generator;
+use PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration;
 
 // Importer les fonctions WordPress globales
 use function is_user_logged_in;
