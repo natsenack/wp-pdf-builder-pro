@@ -34,7 +34,6 @@ class PDF_Builder_Core
      */
     private function __construct()
     {
-        $this->initHooks();
         $this->loadDependencies();
     }
 
@@ -47,6 +46,14 @@ class PDF_Builder_Core
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * Initialiser le plugin (appelé depuis bootstrap)
+     */
+    public function init()
+    {
+        $this->initHooks();
     }
 
     /**
