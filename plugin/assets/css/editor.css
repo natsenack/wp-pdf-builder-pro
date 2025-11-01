@@ -223,7 +223,7 @@
   position: relative;
   overflow: hidden;
   /* Dimensions A4 Portrait: 594px × 1123px */
-  width: 594px;
+  width: 794px;
   height: 1123px;
   /* Zoom géré par transform */
   transition: transform 0.2s ease;

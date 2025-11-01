@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- Canvas Area -->
                 <div class="pdf-builder-canvas-area">
                     <div id="pdf-canvas-container" class="pdf-canvas-container">
-                        <!-- A4 Portrait: 594px × 1123px -->
-                        <canvas id="pdf-builder-canvas" width="594" height="1123"></canvas>
+                        <!-- A4 Portrait: 794px × 1123px -->
+                                <canvas id="pdf-canvas" width="794" height="1123" style="border: 1px solid #ccc;"></canvas>
                     </div>
                 </div>
 
@@ -600,7 +600,7 @@ async function initializeCanvas() {
         containerId: 'pdf-canvas-container',
         templateId: templateId || null,
         templateName: templateName || 'Template',
-        width: 594,  // A4 width in pixels
+        width: 794,  // A4 width in pixels
         height: 1123, // A4 height in pixels
         zoom: 1,
         gridEnabled: true,

@@ -57,7 +57,7 @@ class TempConfig {
             'canvas_handle_color' => '#007cba',
             'canvas_handle_hover_color' => '#005a87',
             // Paramètres Canvas - nouveaux (Général)
-            'default_canvas_width' => 594,
+            'default_canvas_width' => 794,
             'default_canvas_height' => 1123,
             'default_canvas_unit' => 'px',
             'canvas_background_color' => '#ffffff',
@@ -196,7 +196,7 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
             'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
             // Paramètres Canvas - nouveaux sous-onglets
-            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 594,
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 794,
             'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 1123,
             'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'px',
             'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
@@ -1190,7 +1190,7 @@ window.addEventListener('load', function() {
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <div>
                                         <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr($config->get('default_canvas_width', 594)); ?>" class="small-text" min="50" max="2000"> px
+                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr($config->get('default_canvas_width', 794)); ?>" class="small-text" min="50" max="2000"> px
                                     </div>
                                     <div>
                                         <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
@@ -1291,7 +1291,7 @@ window.addEventListener('load', function() {
                     <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
                         <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
                         <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('Les dimensions A4 (594x1123px) sont standard pour les documents de format portrait', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Les dimensions A4 (794x1123px) sont standard pour les documents de format portrait', 'pdf-builder-pro'); ?></li>
                             <li><?php _e('L\'unité "px" (pixels) est utilisée pour le rendu canvas', 'pdf-builder-pro'); ?></li>
                             <li><?php _e('Activez l\'affichage des marges pour un meilleur contrôle de la mise en page', 'pdf-builder-pro'); ?></li>
                             <li><?php _e('Le motif de damier facilite la visualisation des zones transparentes', 'pdf-builder-pro'); ?></li>

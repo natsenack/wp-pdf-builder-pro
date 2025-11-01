@@ -14,7 +14,7 @@ import { useSaveState } from '../../hooks/useSaveState';
 
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
-  const canvasWidth = 594;  // Largeur A4 Portrait en PX
+  const canvasWidth = 794;  // Largeur A4 Portrait en PX
   const canvasHeight = 1123; // Hauteur A4 Portrait en PX
 
   return elements.map(element => {
@@ -180,7 +180,7 @@ const initialState: BuilderState = {
     isSaving: false,
     description: '',
     tags: [],
-    canvasWidth: 594,  // A4 width in PX
+    canvasWidth: 794,  // A4 width in PX (plus large)
     canvasHeight: 1123, // A4 height in PX
     marginTop: 28,     // ~10mm in PX
     marginBottom: 28,  // ~10mm in PX
