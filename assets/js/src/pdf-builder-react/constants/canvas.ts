@@ -1,13 +1,14 @@
 /**
  * Constantes pour les dimensions du PDF Builder
  * 
- * IMPORTANT: Le système utilise les PIXELS en interne (PX)
- * A4 Standard:
- *   - Portrait: 594px × 1123px (A4 210mm × 297mm)
- *   - Landscape: 1123px × 594px (A4 297mm × 210mm)
+ * IMPORTANT: Le système utilise UNIQUEMENT les PIXELS (PX)
+ * A4 Standard en pixels (pour correspondre au plugin WooCommerce PDF Invoice Builder):
+ *   - Portrait: 794px × 1123px
+ *   - Landscape: 1123px × 794px
  */
 
-// Dimensions A4 en PIXELS (comme l'autre plugin WooCommerce PDF Invoice Builder)
+// Dimensions A4 en PIXELS uniquement (comme l'autre plugin WooCommerce PDF Invoice Builder)
+// A4 Portrait: 794×1123px (optimisé pour la visibilité écran)
 // A4 Portrait: 794×1123px (plus large pour meilleure visibilité)
 export const CANVAS_DIMENSIONS = {
   A4_PORTRAIT: {

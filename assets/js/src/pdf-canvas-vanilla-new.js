@@ -286,37 +286,13 @@ export class PDFCanvasVanilla {
                 height: elementData.height !== undefined ? elementData.height : elementData.properties?.height,
             };
             
-            // Récupérer l'unité depuis les settings
-            const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+            // Toutes les valeurs sont déjà en pixels - pas de conversion nécessaire
+            const unit = 'px'; // Forcer l'unité à pixels
             
-            // Facteurs de conversion vers pixels (A4: 210mm = 595px)
-            const conversions = {
-                'mm': 595 / 210,  // ≈ 2.833
-                'cm': 595 / 21,   // ≈ 28.333
-                'in': 595 / 8.27, // ≈ 72.0 (1 inch = 25.4mm, 210mm/25.4 ≈ 8.27 inches)
-                'px': 1            // Pas de conversion
-            };
+            console.log(`[📥 LOAD] Element ${index}: type=${elementData.type}, unit=${unit} (pixels only)`);
+            console.log(`[📥 LOAD]   VALEURS: x=${properties.x}, y=${properties.y}, w=${properties.width}, h=${properties.height}`);
             
-            const factor = conversions[unit] || conversions['mm'];
-            
-            console.log(`[📥 LOAD] Element ${index}: type=${elementData.type}, unit=${unit}, factor=${factor.toFixed(3)}`);
-            console.log(`[📥 LOAD]   AVANT: x=${properties.x}, y=${properties.y}, w=${properties.width}, h=${properties.height}`);
-            
-            // Convertir les dimensions vers pixels
-            if (properties.x !== undefined) {
-                properties.x = Math.round(properties.x * factor * 100) / 100; // 2 décimales
-            }
-            if (properties.y !== undefined) {
-                properties.y = Math.round(properties.y * factor * 100) / 100;
-            }
-            if (properties.width !== undefined) {
-                properties.width = Math.round(properties.width * factor * 100) / 100;
-            }
-            if (properties.height !== undefined) {
-                properties.height = Math.round(properties.height * factor * 100) / 100;
-            }
-            
-            console.log(`[📥 LOAD]   APRÈS: x=${properties.x}, y=${properties.y}, w=${properties.width}, h=${properties.height}`);
+            // Pas de conversion nécessaire - les valeurs sont déjà en pixels
             
             this.addElement(elementData.type, properties);
         });
@@ -758,23 +734,13 @@ export class PDFCanvasVanilla {
     serializeElements() {
         const serialized = [];
         
-        // Récupérer l'unité depuis les settings
-        const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+        // Toutes les valeurs sont sauvegardées en pixels - pas de conversion
+        const unit = 'px'; // Forcer l'unité à pixels
         
-        // Facteurs de conversion depuis pixels
-        const conversions = {
-            'mm': 210 / 595,  // ≈ 0.353
-            'cm': 21 / 595,   // ≈ 0.0353
-            'in': 8.27 / 595, // ≈ 0.0139
-            'px': 1            // Pas de conversion
-        };
-        
-        const factor = conversions[unit] || conversions['mm'];
-        
-        console.log(`[💾 SAVE] serializeElements - unit=${unit}, factor=${factor.toFixed(4)}, elements=${this.elements.size}`);
+        console.log(`[💾 SAVE] serializeElements - unit=${unit} (pixels only), elements=${this.elements.size}`);
         
         for (const [id, element] of this.elements) {
-            // Convertir les positions de pixels vers l'unité configurée
+            // Sauvegarder directement les valeurs en pixels
             const xPixels = element.properties.x || 0;
             const yPixels = element.properties.y || 0;
             const wPixels = element.properties.width || 100;
@@ -783,14 +749,14 @@ export class PDFCanvasVanilla {
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: Math.round(xPixels * factor * 100) / 100,
-                y: Math.round(yPixels * factor * 100) / 100,
-                width: Math.round(wPixels * factor * 100) / 100,
-                height: Math.round(hPixels * factor * 100) / 100,
+                x: xPixels,
+                y: yPixels,
+                width: wPixels,
+                height: hPixels,
                 ...element.properties  // Inclure toutes les autres propriétés
             };
             
-            console.log(`[💾 SAVE]   ${element.type}: px(${xPixels},${yPixels},${wPixels},${hPixels}) → unit(${elementData.x},${elementData.y},${elementData.width},${elementData.height})`);
+            console.log(`[💾 SAVE]   ${element.type}: pixels(${xPixels},${yPixels},${wPixels},${hPixels})`);
             
             serialized.push(elementData);
         }

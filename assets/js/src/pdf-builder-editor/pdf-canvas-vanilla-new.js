@@ -277,32 +277,10 @@ export class PDFCanvasVanilla {
             // Conversion des unités vers pixels si nécessaire
             const properties = { ...elementData.properties };
             
-            // Récupérer l'unité depuis les settings
-            const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+            // Toutes les valeurs sont déjà en pixels - pas de conversion nécessaire
+            const unit = 'px'; // Forcer l'unité à pixels
             
-            // Facteurs de conversion vers pixels (A4: 210mm = 595px)
-            const conversions = {
-                'mm': 595 / 210,  // ≈ 2.833
-                'cm': 595 / 21,   // ≈ 28.333
-                'in': 595 / 8.27, // ≈ 72.0 (1 inch = 25.4mm, 210mm/25.4 ≈ 8.27 inches)
-                'px': 1            // Pas de conversion
-            };
-            
-            const factor = conversions[unit] || conversions['mm'];
-            
-            // Convertir les dimensions vers pixels
-            if (properties.x !== undefined) {
-                properties.x = Math.round(properties.x * factor * 100) / 100; // 2 décimales
-            }
-            if (properties.y !== undefined) {
-                properties.y = Math.round(properties.y * factor * 100) / 100;
-            }
-            if (properties.width !== undefined) {
-                properties.width = Math.round(properties.width * factor * 100) / 100;
-            }
-            if (properties.height !== undefined) {
-                properties.height = Math.round(properties.height * factor * 100) / 100;
-            }
+            // Pas de conversion nécessaire - les valeurs sont déjà en pixels
             
             this.addElement(elementData.type, properties);
         });
@@ -746,35 +724,24 @@ export class PDFCanvasVanilla {
     serializeElements() {
         const serialized = [];
         
-        // Récupérer l'unité depuis les settings
-        const unit = window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+        // Toutes les valeurs sont sauvegardées en pixels - pas de conversion
+        const unit = 'px'; // Forcer l'unité à pixels
         
-        // Facteurs de conversion depuis pixels
-        // A4: 794px = 210mm, donc 1px = 210/794 = 0.2645mm ≈ 1/3.78
-        const conversions = {
-            'mm': 210 / 794,  // 0.2645 (1px = 0.2645mm)
-            'cm': 21 / 794,   // 0.02645
-            'in': 8.27 / 794, // 0.01042
-            'px': 1            // Pas de conversion
-        };
-        
-        const factor = conversions[unit] || conversions['mm'];
-        
-        console.log('[SERIALIZE] Unit:', unit, 'Factor:', factor.toFixed(4));
+        console.log('[SERIALIZE] Unit:', unit, '(pixels only)');
         
         for (const [id, element] of this.elements) {
-            // Convertir les positions de pixels vers l'unité configurée
+            // Sauvegarder directement les valeurs en pixels
             const elementData = {
                 id: element.id,
                 type: element.type,
-                x: Math.round((element.properties.x || 0) * factor * 100) / 100,
-                y: Math.round((element.properties.y || 0) * factor * 100) / 100,
-                width: Math.round((element.properties.width || 100) * factor * 100) / 100,
-                height: Math.round((element.properties.height || 50) * factor * 100) / 100,
+                x: element.properties.x || 0,
+                y: element.properties.y || 0,
+                width: element.properties.width || 100,
+                height: element.properties.height || 50,
                 ...element.properties  // Inclure toutes les autres propriétés
             };
             
-            console.log('[SERIALIZE] Element:', element.type, 'px pos:', element.properties.x, element.properties.y, '-> mm pos:', elementData.x, elementData.y);
+            console.log('[SERIALIZE] Element:', element.type, 'pixels:', elementData.x, elementData.y, elementData.width, elementData.height);
             
             serialized.push(elementData);
         }
