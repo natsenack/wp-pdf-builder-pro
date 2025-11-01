@@ -533,10 +533,17 @@ class PDF_Builder_WooCommerce_Integration
                 return;
             }
 
-            // Validation du statut de commande - accepter tous les statuts WooCommerce valides
-            $valid_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+            // Validation du statut de commande - accepter tous les statuts WooCommerce enregistrés
+            $valid_statuses = array_keys(wc_get_order_statuses());
             $current_status = $order->get_status();
-            if (!in_array($current_status, $valid_statuses)) {
+
+            // WooCommerce peut retourner le statut avec ou sans préfixe "wc-"
+            $status_with_prefix = 'wc-' . $current_status;
+            $status_without_prefix = str_replace('wc-', '', $current_status);
+
+            if (!in_array($current_status, $valid_statuses) &&
+                !in_array($status_with_prefix, $valid_statuses) &&
+                !in_array($status_without_prefix, $valid_statuses)) {
                 wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
             }
