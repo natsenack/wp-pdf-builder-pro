@@ -1413,8 +1413,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.setLineDash([]);
 
     // Ajouter les indicateurs de dimensions pour chaque élément sélectionné
-    const pxToMm = (px: number): number => Math.round(px * (210 / 595) * 10) / 10;
-    
     selectedElements.forEach(el => {
       if (selectedIds.includes(el.id)) {
         // Coordonnées
@@ -1423,17 +1421,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const width = el.width;
         const height = el.height;
 
-        // Convertir en MM pour affichage
-        const widthMm = pxToMm(width);
-        const heightMm = pxToMm(height);
-
-        // Afficher les dimensions sur le coin supérieur droit
+        // Afficher les dimensions en pixels sur le coin supérieur droit
         ctx.font = '11px Arial';
         ctx.fillStyle = '#007acc';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
 
-        const dimensionText = `${widthMm}×${heightMm}mm`;
+        const dimensionText = `${width}×${height}px`;
         const padding = 4;
         const textWidth = ctx.measureText(dimensionText).width;
         
