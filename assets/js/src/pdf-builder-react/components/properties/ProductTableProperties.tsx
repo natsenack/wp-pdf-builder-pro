@@ -1236,7 +1236,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="number"
-              step="1"
+              step="0.1"
               value={element.x}
               onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
               style={{
@@ -1257,7 +1257,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="number"
-              step="1"
+              step="0.1"
               value={element.y}
               onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
               style={{
@@ -1278,7 +1278,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="number"
-              step="1"
+              step="0.1"
               value={element.width}
               onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 100)}
               style={{
@@ -1299,7 +1299,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="number"
-              step="1"
+              step="0.1"
               value={element.height}
               onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 100)}
               style={{
