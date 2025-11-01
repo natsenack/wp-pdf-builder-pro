@@ -244,6 +244,34 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Enqueue les scripts et styles pour l'administration
+     */
+    public function enqueue_admin_scripts($hook)
+    {
+        // Charger seulement sur les pages du plugin
+        if (strpos($hook, 'pdf-builder') === false) {
+            return;
+        }
+
+        // Styles CSS de base
+        wp_enqueue_style('pdf-builder-admin', plugin_dir_url(__FILE__) . '../../assets/css/admin.css', [], '1.0.0');
+
+        // Scripts JavaScript
+        wp_enqueue_script('pdf-builder-admin', plugin_dir_url(__FILE__) . '../../assets/js/admin.js', ['jquery'], '1.0.0', true);
+
+        // Localiser le script pour AJAX
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_admin_nonce'),
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+            ]
+        ]);
+    }
+
+    /**
      * Page principale d'administration - Tableau de bord
      */
     public function adminPage()
