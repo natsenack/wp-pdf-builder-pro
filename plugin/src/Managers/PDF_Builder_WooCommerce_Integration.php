@@ -298,6 +298,11 @@ class PDF_Builder_WooCommerce_Integration
                 },
                 success: function(response) {
                     if (response.success && response.data) {
+                        // DEBUG: Log des données reçues
+                        console.log('PDF Builder - Preview data received:', response.data);
+                        console.log('PDF Builder - Template data:', response.data.template_data);
+                        console.log('PDF Builder - Elements:', response.data.elements);
+
                         // Générer le HTML pour la modal
                         var html = generatePreviewHTML(response.data, orderId, templateId);
                         previewWindow.document.write(html);
@@ -1870,6 +1875,11 @@ class PDF_Builder_WooCommerce_Integration
                 wp_send_json_error('Données du template invalides');
                 return;
             }
+
+            // DEBUG: Log des données du template
+            error_log('PDF Builder - Template data from DB: ' . substr($template->data, 0, 500) . '...');
+            error_log('PDF Builder - Decoded template data keys: ' . json_encode(array_keys($template_data)));
+            error_log('PDF Builder - Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'no elements key'));
 
             // Préparer les données pour le rendu
             $preview_data = [
