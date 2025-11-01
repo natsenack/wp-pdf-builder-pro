@@ -556,24 +556,6 @@ class PDF_Builder_WooCommerce_Integration
 
             error_log('PDF Builder Debug - Statut commande: ' . json_encode($debug_info));
 
-            // TEMPORAIRE : Afficher les infos de debug dans la réponse AJAX TOUJOURS (pas seulement en debug mode)
-            echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px;">';
-            echo '<strong>DEBUG - Validation statut commande:</strong><br>';
-            echo 'Order ID: ' . $order_id . '<br>';
-            echo 'Current status: ' . $current_status . '<br>';
-            echo 'Valid statuses: ' . implode(', ', $valid_statuses) . '<br>';
-
-            // Calcul de la validation avec la nouvelle logique
-            $normalized_current = $current_status;
-            if (strpos($current_status, 'wc-') !== 0) {
-                $normalized_current = 'wc-' . $current_status;
-            }
-            $validation_pass = in_array($normalized_current, $valid_statuses) || in_array($current_status, $valid_statuses);
-
-            echo 'Normalized status: ' . $normalized_current . '<br>';
-            echo 'Validation: ' . ($validation_pass ? 'PASS' : 'FAIL') . '<br>';
-            echo '</div>';
-
             // Validation du statut de commande - gérer les statuts avec/sans préfixe wc-
             $current_status = $order->get_status();
 
@@ -587,17 +569,7 @@ class PDF_Builder_WooCommerce_Integration
             $valid_statuses = array_keys(wc_get_order_statuses());
 
             if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
-                error_log('PDF Builder: Validation statut échouée pour order ' . $order_id . ' avec statut ' . $current_status . ' (normalisé: ' . $normalized_current . ')');
-
-                // TEMPORAIRE : Afficher un message d'erreur plus visible avec détails
-                wp_send_json_error([
-                    'message' => 'DEBUG: Statut "' . $current_status . '" (normalisé: "' . $normalized_current . '") non valide. Statuts acceptés: ' . implode(', ', $valid_statuses),
-                    'debug_info' => [
-                        'original_status' => $current_status,
-                        'normalized_status' => $normalized_current,
-                        'valid_statuses' => $valid_statuses
-                    ]
-                ]);
+                wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
             }
 
