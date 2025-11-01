@@ -540,15 +540,32 @@ class PDF_Builder_WooCommerce_Integration
             $status_with_prefix = 'wc-' . $current_status;
             $status_without_prefix = str_replace('wc-', '', $current_status);
 
-            error_log('PDF Builder Debug - Statut commande:');
-            error_log('  - Order ID: ' . $order_id);
-            error_log('  - Current status: ' . $current_status);
-            error_log('  - Status with prefix: ' . $status_with_prefix);
-            error_log('  - Status without prefix: ' . $status_without_prefix);
-            error_log('  - Valid statuses: ' . implode(', ', $valid_statuses));
-            error_log('  - Is current in valid: ' . (in_array($current_status, $valid_statuses) ? 'YES' : 'NO'));
-            error_log('  - Is prefix in valid: ' . (in_array($status_with_prefix, $valid_statuses) ? 'YES' : 'NO'));
-            error_log('  - Is without prefix in valid: ' . (in_array($status_without_prefix, $valid_statuses) ? 'YES' : 'NO'));
+            // LOGGING DÉTAILLÉ pour debug - AFFICHAGE DANS LA RÉPONSE AJAX
+            $debug_info = [
+                'order_id' => $order_id,
+                'current_status' => $current_status,
+                'status_with_prefix' => $status_with_prefix,
+                'status_without_prefix' => $status_without_prefix,
+                'valid_statuses' => $valid_statuses,
+                'validation_checks' => [
+                    'current_in_valid' => in_array($current_status, $valid_statuses),
+                    'prefix_in_valid' => in_array($status_with_prefix, $valid_statuses),
+                    'without_prefix_in_valid' => in_array($status_without_prefix, $valid_statuses)
+                ]
+            ];
+
+            error_log('PDF Builder Debug - Statut commande: ' . json_encode($debug_info));
+
+            // TEMPORAIRE : Afficher les infos de debug dans la réponse AJAX pour faciliter le debug
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px;">';
+                echo '<strong>DEBUG - Validation statut commande:</strong><br>';
+                echo 'Order ID: ' . $order_id . '<br>';
+                echo 'Current status: ' . $current_status . '<br>';
+                echo 'Valid statuses: ' . implode(', ', $valid_statuses) . '<br>';
+                echo 'Validation: ' . (in_array($current_status, $valid_statuses) || in_array($status_with_prefix, $valid_statuses) || in_array($status_without_prefix, $valid_statuses) ? 'PASS' : 'FAIL') . '<br>';
+                echo '</div>';
+            }
 
             // Validation du statut de commande - accepter tous les statuts WooCommerce enregistrés
             if (!in_array($current_status, $valid_statuses) &&
