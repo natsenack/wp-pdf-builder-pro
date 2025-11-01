@@ -1435,13 +1435,14 @@ class PDF_Builder_Admin
             'pdf-builder-pro_page_pdf-builder-settings',
             'pdf-builder-pro_page_pdf-builder-diagnostic',
             // 'pdf-builder-pro_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
-            'pdf-builder-pro_page_pdf-builder-developer'
+            'pdf-builder-pro_page_pdf-builder-developer',
+            'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
         ];
 
-        // Temporairement désactiver la vérification des hooks pour debug
-        // if (!in_array($hook, $allowed_hooks)) {
-        //     return;
-        // }
+        // Vérification des hooks réactivée
+        if (!in_array($hook, $allowed_hooks)) {
+            return;
+        }
 
         error_log('PDF Builder: Hook validation passed, loading scripts...');
 
