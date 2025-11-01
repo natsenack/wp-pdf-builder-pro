@@ -529,24 +529,37 @@ class PDF_Builder_WooCommerce_Integration
             // Charger la commande WooCommerce
             $order = wc_get_order($order_id);
             if (!$order) {
+                error_log('PDF Builder: Commande introuvable - ID: ' . $order_id);
                 wp_send_json_error('Commande introuvable');
                 return;
             }
 
-            // Validation du statut de commande - accepter tous les statuts WooCommerce enregistrés
-            $valid_statuses = array_keys(wc_get_order_statuses());
+            // LOGGING DÉTAILLÉ pour debug
             $current_status = $order->get_status();
-
-            // WooCommerce peut retourner le statut avec ou sans préfixe "wc-"
+            $valid_statuses = array_keys(wc_get_order_statuses());
             $status_with_prefix = 'wc-' . $current_status;
             $status_without_prefix = str_replace('wc-', '', $current_status);
 
+            error_log('PDF Builder Debug - Statut commande:');
+            error_log('  - Order ID: ' . $order_id);
+            error_log('  - Current status: ' . $current_status);
+            error_log('  - Status with prefix: ' . $status_with_prefix);
+            error_log('  - Status without prefix: ' . $status_without_prefix);
+            error_log('  - Valid statuses: ' . implode(', ', $valid_statuses));
+            error_log('  - Is current in valid: ' . (in_array($current_status, $valid_statuses) ? 'YES' : 'NO'));
+            error_log('  - Is prefix in valid: ' . (in_array($status_with_prefix, $valid_statuses) ? 'YES' : 'NO'));
+            error_log('  - Is without prefix in valid: ' . (in_array($status_without_prefix, $valid_statuses) ? 'YES' : 'NO'));
+
+            // Validation du statut de commande - accepter tous les statuts WooCommerce enregistrés
             if (!in_array($current_status, $valid_statuses) &&
                 !in_array($status_with_prefix, $valid_statuses) &&
                 !in_array($status_without_prefix, $valid_statuses)) {
+                error_log('PDF Builder: Validation statut échouée pour order ' . $order_id . ' avec statut ' . $current_status);
                 wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
             }
+
+            error_log('PDF Builder: Validation statut réussie pour order ' . $order_id);
 
             // Charger le template
             if ($template_id > 0) {
