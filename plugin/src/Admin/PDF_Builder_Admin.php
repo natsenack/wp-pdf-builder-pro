@@ -4289,8 +4289,11 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
      */
     public function get_template_manager()
     {
-        if ($this->template_manager === null && class_exists('PDF_Builder_Template_Manager')) {
-            $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
+        if ($this->template_manager === null) {
+            // Vérifier si la classe existe dans le namespace global
+            if (class_exists('\PDF_Builder_Template_Manager')) {
+                $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
+            }
         }
         return $this->template_manager;
     }
