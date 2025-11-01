@@ -562,15 +562,42 @@ class PDF_Builder_WooCommerce_Integration
             echo 'Order ID: ' . $order_id . '<br>';
             echo 'Current status: ' . $current_status . '<br>';
             echo 'Valid statuses: ' . implode(', ', $valid_statuses) . '<br>';
-            echo 'Validation: ' . (in_array($current_status, $valid_statuses) || in_array($status_with_prefix, $valid_statuses) || in_array($status_without_prefix, $valid_statuses) ? 'PASS' : 'FAIL') . '<br>';
+
+            // Calcul de la validation avec la nouvelle logique
+            $normalized_current = $current_status;
+            if (strpos($current_status, 'wc-') !== 0) {
+                $normalized_current = 'wc-' . $current_status;
+            }
+            $validation_pass = in_array($normalized_current, $valid_statuses) || in_array($current_status, $valid_statuses);
+
+            echo 'Normalized status: ' . $normalized_current . '<br>';
+            echo 'Validation: ' . ($validation_pass ? 'PASS' : 'FAIL') . '<br>';
             echo '</div>';
 
-            // Validation du statut de commande - accepter tous les statuts WooCommerce enregistrés
-            if (!in_array($current_status, $valid_statuses) &&
-                !in_array($status_with_prefix, $valid_statuses) &&
-                !in_array($status_without_prefix, $valid_statuses)) {
-                error_log('PDF Builder: Validation statut échouée pour order ' . $order_id . ' avec statut ' . $current_status);
-                wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
+            // Validation du statut de commande - gérer les statuts avec/sans préfixe wc-
+            $current_status = $order->get_status();
+
+            // Normaliser les statuts pour la comparaison
+            $normalized_current = $current_status;
+            if (strpos($current_status, 'wc-') !== 0) {
+                // Si pas de préfixe, l'ajouter
+                $normalized_current = 'wc-' . $current_status;
+            }
+
+            $valid_statuses = array_keys(wc_get_order_statuses());
+
+            if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
+                error_log('PDF Builder: Validation statut échouée pour order ' . $order_id . ' avec statut ' . $current_status . ' (normalisé: ' . $normalized_current . ')');
+
+                // TEMPORAIRE : Afficher un message d'erreur plus visible avec détails
+                wp_send_json_error([
+                    'message' => 'DEBUG: Statut "' . $current_status . '" (normalisé: "' . $normalized_current . '") non valide. Statuts acceptés: ' . implode(', ', $valid_statuses),
+                    'debug_info' => [
+                        'original_status' => $current_status,
+                        'normalized_status' => $normalized_current,
+                        'valid_statuses' => $valid_statuses
+                    ]
+                ]);
                 return;
             }
 
