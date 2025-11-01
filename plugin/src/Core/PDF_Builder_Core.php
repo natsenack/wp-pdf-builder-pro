@@ -38,6 +38,64 @@ class PDF_Builder_Core
     }
 
     /**
+     * Charger les dépendances nécessaires
+     */
+    private function loadDependencies()
+    {
+        // Charger les managers essentiels
+        $managers = array(
+            'PDF_Builder_Cache_Manager.php',
+            'PDF_Builder_Canvas_Elements_Manager.php',
+            'PDF_Builder_Canvas_Interactions_Manager.php',
+            'PDF_Builder_Drag_Drop_Manager.php',
+            'PDF_Builder_Feature_Manager.php',
+            'PDF_Builder_License_Manager.php',
+            'PDF_Builder_Logger.php',
+            'PDF_Builder_PDF_Generator.php',
+            'PDF_Builder_Resize_Manager.php',
+            'PDF_Builder_Settings_Manager.php',
+            'PDF_Builder_Status_Manager.php',
+            'PDF_Builder_Template_Manager.php',
+            'PDF_Builder_Variable_Mapper.php',
+            'PDF_Builder_WooCommerce_Integration.php'
+        );
+
+        foreach ($managers as $manager) {
+            $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
+            if (file_exists($manager_path)) {
+                require_once $manager_path;
+            }
+        }
+
+        // Charger les classes Core essentielles
+        $core_classes = array(
+            'PDF_Builder_Security_Validator.php'
+        );
+
+        foreach ($core_classes as $core_class) {
+            $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
+            if (file_exists($core_path)) {
+                require_once $core_path;
+            }
+        }
+
+        // Charger la classe d'administration
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+        }
+
+        // Charger le contrôleur PDF
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
+        }
+
+        // Charger le handler AJAX d'image de prévisualisation
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
+        }
+    }
+
+    /**
      * Obtenir l'instance unique de la classe (Singleton)
      */
     public static function getInstance()
