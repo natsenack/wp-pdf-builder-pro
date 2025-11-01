@@ -4828,6 +4828,8 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Mapping des statuts WooCommerce vers les types de document
         $status_mapping = [
+            'wc-devis' => 'devis',          // Devis (avec préfixe)
+            'devis' => 'devis',             // Devis (sans préfixe)
             'wc-quote' => 'devis',           // Devis
             'wc-quotation' => 'devis',      // Devis (variante)
             'quote' => 'devis',             // Devis (sans préfixe)
@@ -4840,7 +4842,7 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             'wc-refunded' => 'facture',     // Remboursée -> Facture
             'wc-failed' => 'commande',      // Échec
         ];
-// Retourner le type mappé ou 'commande' par défaut
+        // Retourner le type mappé ou 'commande' par défaut
         $document_type = isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
         return $document_type;
     }

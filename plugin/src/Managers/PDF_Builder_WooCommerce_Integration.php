@@ -56,6 +56,10 @@ class PDF_Builder_WooCommerce_Integration
     {
         $status_mapping = [
             'pending' => 'devis',
+            'devis' => 'devis',
+            'quote' => 'devis',
+            'estimate' => 'devis',
+            'quotation' => 'devis',
             'processing' => 'commande',
             'on-hold' => 'commande',
             'completed' => 'facture',
