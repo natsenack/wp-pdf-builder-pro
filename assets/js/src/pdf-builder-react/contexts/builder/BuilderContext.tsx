@@ -12,6 +12,16 @@ import {
 } from '../../types/elements';
 import { useSaveState } from '../../hooks/useSaveState';
 
+// Conversions d'unités
+const MM_TO_PX = 595 / 210; // A4: 595px = 210mm
+const PX_TO_MM = 210 / 595;
+
+// Fonction helper pour convertir MM en PX
+const mmToPx = (mm: number): number => Math.round(mm * MM_TO_PX);
+
+// Fonction helper pour convertir PX en MM
+const pxToMm = (px: number): number => Math.round(px * PX_TO_MM);
+
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
   const canvasWidth = 794; // Largeur A4 en pixels
@@ -36,6 +46,29 @@ const clampElementPositions = (elements: Element[]): Element[] => {
     }
 
     return element;
+  });
+};
+
+// Fonction helper pour convertir tous les éléments de PX à MM
+const convertElementsToMM = (elements: Element[]): Element[] => {
+  return elements.map(element => {
+    const converted: any = { ...element };
+    
+    // Convertir les positions et dimensions
+    converted.x = pxToMm(element.x);
+    converted.y = pxToMm(element.y);
+    converted.width = pxToMm(element.width);
+    converted.height = pxToMm(element.height);
+    
+    // Convertir les propriétés de position si elles existent
+    if (converted.borderWidth && typeof converted.borderWidth === 'number') {
+      converted.borderWidth = Math.max(0.1, pxToMm(converted.borderWidth));
+    }
+    
+    // Marquer comme converti pour éviter les doubles conversions
+    converted._unitConverted = true;
+    
+    return converted;
   });
 };
 
@@ -180,10 +213,10 @@ const initialState: BuilderState = {
     isSaving: false,
     description: '',
     tags: [],
-    canvasWidth: 794,  // A4 width at 96 DPI for proper screen display
-    canvasHeight: 1123, // A4 height at 96 DPI for proper screen display
-    marginTop: 20,
-    marginBottom: 20,
+    canvasWidth: 210,  // A4 width in MM (210mm = 595px)
+    canvasHeight: 297, // A4 height in MM (297mm = 1123px)
+    marginTop: 10,     // 10mm = ~28px
+    marginBottom: 10,  // 10mm = ~28px
     showGuides: true,
     snapToGrid: false
   },
@@ -385,11 +418,31 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
     case 'LOAD_TEMPLATE':
       const rawElements = (action.payload as any).elements || [];
       const repairedElements = repairProductTableProperties(rawElements);
-      const clampedElements = clampElementPositions(repairedElements);
+      
+      // Convertir les éléments de PX à MM si pas déjà convertis
+      const convertedElements = repairedElements.map((el: any) => 
+        el._unitConverted ? el : {
+          ...el,
+          x: pxToMm(el.x),
+          y: pxToMm(el.y),
+          width: pxToMm(el.width),
+          height: pxToMm(el.height),
+          _unitConverted: true
+        }
+      );
+      
+      const clampedElements = clampElementPositions(convertedElements);
+      
+      // Convertir aussi les dimensions du canvas si présentes
+      const canvasData = (action.payload as any).canvas ? { 
+        ...state.canvas, 
+        ...(action.payload as any).canvas 
+      } : state.canvas;
+      
       return {
         ...state,
         elements: clampedElements,
-        canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas,
+        canvas: canvasData,
         template: {
           id: (action.payload as any).id,
           name: (action.payload as any).name,
@@ -401,7 +454,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         history: updateHistory(state, {
           ...state,
           elements: clampedElements,
-          canvas: (action.payload as any).canvas ? { ...state.canvas, ...(action.payload as any).canvas } : state.canvas
+          canvas: canvasData
         })
       };
 

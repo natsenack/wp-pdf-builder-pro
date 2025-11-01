@@ -32,11 +32,11 @@ export const repairProductTableProperties = (elements) => {
     borderColor: '#e5e7eb',
     textColor: '#374151',
     
-    // Positionnement
+    // Positionnement (en MM maintenant)
     x: 0,
     y: 0,
-    width: 500,
-    height: 200
+    width: 180,  // ~177mm (500px)
+    height: 70   // ~70mm (200px)
   };
 
   return elements.map(element => {
