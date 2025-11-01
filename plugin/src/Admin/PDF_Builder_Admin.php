@@ -140,10 +140,8 @@ class PDF_Builder_Admin {
             $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->core);
         }
         
-        // Initialiser le manager de templates
-        if (class_exists('PDF_Builder_Template_Manager')) {
-            $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
-        }
+        // NE PAS instancier le manager de templates immédiatement
+        // Il sera créé lazily à la demande via get_template_manager()
         
         $this->initHooks();
     }
@@ -197,27 +195,26 @@ class PDF_Builder_Admin {
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
-        // add_action('admin_head-pdf-builder-pro_page_pdf-builder-editor', [$this, 'add_preview_button_to_header']);
-// Hook supplémentaire pour les pages qui chargent du contenu dynamiquement - REMOVED: causing duplicate script loading
-        // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
-// Hooks WooCommerce - Délégation vers le manager
+        
+        // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
+        // Cela garantit que les handlers AJAX seront disponibles immédiatement
+        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajax_auto_save_template_wrapper']);
+        add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
+        add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
+        
+        // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
             add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
         }
-
-        // Les managers s'occupent de leurs propres hooks AJAX
-        // Les hooks AJAX sont maintenant gérés par les managers respectifs
 
 // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
-// Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
-        // add_action('init', [$this, 'add_debug_endpoint']);
-        // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
-        // add_filter('query_vars', [$this, 'add_debug_query_vars']);
     }
 
     /**
@@ -1383,7 +1380,21 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
      */
     public function ajax_save_template()
     {
-        return $this->template_manager->ajax_save_template();
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_save_template();
+        }
+    }
+
+    /**
+     * AJAX - Auto-sauvegarder le template (wrapper)
+     */
+    public function ajax_auto_save_template_wrapper()
+    {
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_auto_save_template();
+        }
     }
 
     /**
@@ -1391,7 +1402,10 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
      */
     public function ajax_load_template()
     {
-        return $this->template_manager->ajax_load_template();
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_load_template();
+        }
     }
 
     /**
@@ -1399,7 +1413,10 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
      */
     public function ajax_flush_rest_cache()
     {
-        return $this->template_manager->ajax_flush_rest_cache();
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_flush_rest_cache();
+        }
     }
 
     /**
@@ -4268,9 +4285,13 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
     /**
      * Méthodes publiques pour accéder aux modules (pour compatibilité)
+     * Le manager de templates est créé lazily
      */
     public function get_template_manager()
     {
+        if ($this->template_manager === null && class_exists('PDF_Builder_Template_Manager')) {
+            $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
+        }
         return $this->template_manager;
     }
 

@@ -22,11 +22,14 @@ class PDF_Builder_Template_Manager
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->init_hooks();
+        // Les hooks AJAX sont enregistrés par PDF_Builder_Admin, pas ici
+        // pour éviter que la traduction soit appelée trop tôt
     }
 
     /**
      * Initialiser les hooks
+     * NOTE: Cette méthode n'est plus appelée depuis le constructeur
+     * Les hooks AJAX sont enregistrés directement par PDF_Builder_Admin
      */
     private function init_hooks()
     {
