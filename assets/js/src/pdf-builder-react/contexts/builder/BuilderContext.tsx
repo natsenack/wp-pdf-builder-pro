@@ -55,6 +55,10 @@ const repairProductTableProperties = (elements: Element[]): Element[] => {
     currency: '€',
     tableStyle: 'default',
     
+    // Alignements
+    textAlign: 'left',
+    verticalAlign: 'top',
+    
     // Couleurs
     backgroundColor: '#ffffff',
     headerBackgroundColor: '#f9fafb',
@@ -91,6 +95,17 @@ const repairProductTableProperties = (elements: Element[]): Element[] => {
         repairedElement[prop] = (defaultProperties as any)[prop];
       }
     });
+
+    // Validation des alignements
+    const validHorizontalAligns = ['left', 'center', 'right'];
+    if (!validHorizontalAligns.includes(repairedElement.textAlign)) {
+      repairedElement.textAlign = defaultProperties.textAlign;
+    }
+
+    const validVerticalAligns = ['top', 'middle', 'bottom'];
+    if (!validVerticalAligns.includes(repairedElement.verticalAlign)) {
+      repairedElement.verticalAlign = defaultProperties.verticalAlign;
+    }
 
     // Validation des couleurs (format hexadécimal)
     const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor', 'headerTextColor', 'textColor'];

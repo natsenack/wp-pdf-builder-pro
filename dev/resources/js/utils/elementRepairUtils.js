@@ -20,6 +20,10 @@ export const repairProductTableProperties = (elements) => {
     currency: '€',
     tableStyle: 'default',
     
+    // Alignements
+    textAlign: 'left',
+    verticalAlign: 'top',
+    
     // Couleurs
     backgroundColor: '#ffffff',
     headerBackgroundColor: '#f9fafb',
@@ -63,8 +67,19 @@ export const repairProductTableProperties = (elements) => {
       }
     });
 
+    // Validation des alignements
+    const validHorizontalAligns = ['left', 'center', 'right'];
+    if (!validHorizontalAligns.includes(repairedElement.textAlign)) {
+      repairedElement.textAlign = defaultProperties.textAlign;
+    }
+
+    const validVerticalAligns = ['top', 'middle', 'bottom'];
+    if (!validVerticalAligns.includes(repairedElement.verticalAlign)) {
+      repairedElement.verticalAlign = defaultProperties.verticalAlign;
+    }
+
     // Validation des couleurs (format hexadécimal)
-    const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor'];
+    const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor', 'headerTextColor', 'textColor'];
     colorProperties.forEach(prop => {
       if (repairedElement[prop] && !/^#[0-9A-Fa-f]{6}$/.test(repairedElement[prop])) {
         repairedElement[prop] = defaultProperties[prop];
