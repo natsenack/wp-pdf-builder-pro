@@ -1391,9 +1391,90 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
      */
     public function ajax_auto_save_template_wrapper()
     {
-        $manager = $this->get_template_manager();
-        if ($manager) {
-            return $manager->ajax_auto_save_template();
+        try {
+            // Vérifier les permissions directement
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérifier le nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = \wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
+                              \wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
+                              \wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                \wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupération des données
+            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            $elements = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '[]';
+
+            if (!$template_id) {
+                \wp_send_json_error('ID template manquant');
+                return;
+            }
+
+            // Validation du JSON
+            $elements_decoded = \json_decode($elements, true);
+            if (\json_last_error() !== JSON_ERROR_NONE) {
+                \wp_send_json_error('JSON invalide: ' . \json_last_error_msg());
+                return;
+            }
+
+            // Sauvegarde en base de données
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Récupérer le template existant
+            $template = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+
+            if (!$template) {
+                \wp_send_json_error('Template non trouvé');
+                return;
+            }
+
+            // Décoder les données existantes
+            $template_data = \json_decode($template['template_data'], true);
+            if ($template_data === null) {
+                $template_data = [];
+            }
+
+            // Mettre à jour les éléments
+            $template_data['elements'] = $elements_decoded;
+
+            // Sauvegarder en base
+            $result = $wpdb->update(
+                $table_templates,
+                array(
+                    'template_data' => \wp_json_encode($template_data),
+                    'updated_at' => \current_time('mysql')
+                ),
+                array('id' => $template_id),
+                array('%s', '%s'),
+                array('%d')
+            );
+
+            if ($result === false) {
+                \wp_send_json_error('Erreur de sauvegarde en base de données');
+                return;
+            }
+
+            // Réponse de succès
+            \wp_send_json_success(array(
+                'message' => 'Auto-save réussi',
+                'template_id' => $template_id,
+                'saved_at' => \current_time('mysql'),
+                'element_count' => \count($elements_decoded)
+            ));
+        } catch (\Exception $e) {
+            \wp_send_json_error('Erreur lors de l\'auto-save: ' . $e->getMessage());
         }
     }
 
