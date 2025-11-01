@@ -176,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- Canvas Area -->
                 <div class="pdf-builder-canvas-area">
                     <div id="pdf-canvas-container" class="pdf-canvas-container">
-                        <canvas id="pdf-builder-canvas" width="595" height="842"></canvas>
+                        <!-- A4 Portrait: 210mm × 297mm = 595px × 1123px -->
+                        <canvas id="pdf-builder-canvas" width="595" height="1123"></canvas>
                     </div>
                 </div>
 

@@ -232,9 +232,9 @@
   border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
-  /* Dimensions A4 fixes */
+  /* Dimensions A4 Portrait: 210mm × 297mm = 595px × 1123px */
   width: 595px;
-  height: 842px;
+  height: 1123px;
   /* Zoom géré par transform */
   transition: transform 0.2s ease;
 }
