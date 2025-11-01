@@ -173,29 +173,6 @@ class DIContainer
         ));
     }
 
-    /**
-     * Obtient les informations de diagnostic
-     *
-     * @return array Informations de debug
-     */
-    public function getDiagnostics(): array
-    {
-        $services = [];
-        foreach ($this->getServices() as $name) {
-            $services[$name] = [
-                'has_instance' => isset($this->instances[$name]),
-                'has_definition' => isset($this->definitions[$name]),
-                'is_shared' => isset($this->shared[$name]),
-                'instance_class' => isset($this->instances[$name]) ? get_class($this->instances[$name]) : null,
-            ];
-        }
-
-        return [
-            'total_services' => count($services),
-            'services' => $services,
-        ];
-    }
-
     // Méthodes utilitaires pour l'injection de dépendances courantes
 
     /**

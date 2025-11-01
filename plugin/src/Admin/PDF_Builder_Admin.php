@@ -91,117 +91,8 @@ use const PDF_BUILDER_DEV_MODE;
 use const WP_DEBUG;
 use const PDF_PAGE_ORIENTATION;
 use const PDF_UNIT;
-use const PDF_PAGE_FORMAT;
-
-/**
- * Classe d'administration PDF Builder Pro
- */
-class PDF_Builder_Admin
-{
-    /**
-     * Instance singleton
-     */
-    private static $instance = null;
-/**
-     * Instance de la classe principale
-     */
-    private $main;
-/**
-     * Gestionnaire de templates
-     */
-    private $template_manager;
-/**
-     * Générateur de PDF
-     */
-    private $pdf_generator;
-/**
-     * Intégration WooCommerce
-     */
-    private $woocommerce_integration;
-/**
-     * Gestionnaire de paramètres
-     */
-    private $settings_manager;
-/**
-     * Gestionnaire de diagnostics
-     */
-    private $diagnostic_manager;
-/**
-     * Gestionnaire de statuts
-     */
-    private $status_manager;
-/**
-     * Mappeur de variables
-     */
-    private $variable_mapper;
-/**
-     * Obtenir l'instance unique
-     */
-    public static function getInstance($main_instance = null)
-    {
-        if (null === self::$instance) {
-            self::$instance = new self($main_instance);
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Constructeur privé pour singleton
-     */
-    private function __construct($main_instance)
-    {
-        $this->main = $main_instance;
-// Instancier les managers (autoloader gère les inclusions)
-        $this->initManagers();
-        $this->initHooks();
-    }
-
-    /**
-     * Instancier les managers
-     */
-    private function initManagers()
-    {
-        $this->template_manager = new \PDF_Builder_Template_Manager($this->main);
-        $this->pdf_generator = new \PDF_Builder_PDF_Generator($this->main);
-        $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->main);
-        $this->settings_manager = new \PDF_Builder_Settings_Manager($this->main);
-        $this->diagnostic_manager = new \PDF_Builder_Diagnostic_Manager($this->main);
-        $this->status_manager = new \PDF_Builder_Status_Manager($this->main);
-        $this->variable_mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper(null);
-    }
-
-    /**
-     * Vérifie les permissions d'administration
-     */
-    private function checkAdminPermissions()
-    {
-        if (!is_user_logged_in() || !current_user_can('read')) {
-            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-        }
-
-        // Vérifier si l'utilisateur a accès basé sur les rôles autorisés
-        if (!$this->userHasPdfAccess()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
-        }
-    }
-
-    /**
-     * Vérifie si l'utilisateur actuel a accès au PDF Builder basé sur les rôles autorisés
-     */
-    private function userHasPdfAccess()
-    {
-        // Les administrateurs ont toujours accès
-        if (current_user_can('administrator')) {
-            return true;
-        }
-
-        $user_id = get_current_user_id();
-// Vérifier le cache (valide pour 5 minutes)
-        $cache_key = 'pdf_builder_user_access_' . $user_id;
-        $cached_result = get_transient($cache_key);
-        if ($cached_result !== false) {
-            return $cached_result === 'allowed';
-        }
+    // Diagnostic helper removed: diagnose_template_json()
+    // Removed to avoid exposing debug utilities in production.
 
         // Récupérer les rôles autorisés depuis les options
         $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
@@ -247,8 +138,6 @@ class PDF_Builder_Admin
         // Les managers s'occupent de leurs propres hooks AJAX
         // Les hooks AJAX sont maintenant gérés par les managers respectifs
 
-        // Hook AJAX pour le debug PDF metabox
-        add_action('wp_ajax_pdf_debug_metabox', [$this, 'ajax_debug_pdf_metabox']);
 // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
@@ -291,12 +180,6 @@ class PDF_Builder_Admin
         //     'pdf-builder-test-tcpdf',
         //     [$this, 'test_tcpdf_page']
         // );
-
-        // Page développeur (uniquement pour l'utilisateur ID 1 et en mode dev)
-        $current_user = wp_get_current_user();
-        if ($current_user && $current_user->ID === 1 && defined('PDF_BUILDER_DEV_MODE') && PDF_BUILDER_DEV_MODE) {
-            add_submenu_page('pdf-builder-pro', __('Développeur - PDF Builder Pro', 'pdf-builder-pro'), __('🛠️ Développeur', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-developer', [$this, 'developer_page']);
-        }
     }
 
     /**
@@ -1014,274 +897,6 @@ class PDF_Builder_Admin
     }
 
     /**
-     * Diagnostic page
-     */
-    public function diagnostic_page() {
-        $this->checkAdminPermissions();
-
-        // Handle form submission
-        $diagnostic_output = '';
-        if (isset($_POST['diagnose_template']) && wp_verify_nonce($_POST['diagnostic_nonce'], 'pdf_builder_diagnostic')) {
-            $template_id = intval($_POST['template_id']);
-            if ($template_id > 0) {
-                $diagnostic_output = $this->diagnose_template_json($template_id);
-            }
-        }
-
-        ?>
-        <div class="wrap">
-            <h1><?php _e('🔧 Outil de Diagnostic - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-
-            <div class="pdf-builder-diagnostic">
-                <div class="diagnostic-header">
-                    <p><?php _e('Utilisez cet outil pour diagnostiquer les problèmes avec les templates PDF.', 'pdf-builder-pro'); ?></p>
-                </div>
-
-                <div class="diagnostic-form">
-                    <h2><?php _e('Diagnostiquer un Template', 'pdf-builder-pro'); ?></h2>
-                    <form method="post" action="">
-                        <?php wp_nonce_field('pdf_builder_diagnostic', 'diagnostic_nonce'); ?>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row">
-                                    <label for="template_id"><?php _e('ID du Template', 'pdf-builder-pro'); ?></label>
-                                </th>
-                                <td>
-                                    <input type="number" id="template_id" name="template_id" value="<?php echo isset($_POST['template_id']) ? intval($_POST['template_id']) : '131'; ?>" min="1" required>
-                                    <p class="description"><?php _e('Entrez l\'ID du template à diagnostiquer.', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p class="submit">
-                            <input type="submit" name="diagnose_template" class="button button-primary" value="<?php _e('Diagnostiquer', 'pdf-builder-pro'); ?>">
-                        </p>
-                    </form>
-                </div>
-
-                <?php if (!empty($diagnostic_output)) :
-                    ?>
-                <div class="diagnostic-results">
-                    <h2><?php _e('Résultats du Diagnostic', 'pdf-builder-pro'); ?></h2>
-                    <div class="diagnostic-output">
-                        <?php echo $diagnostic_output; ?>
-                    </div>
-                </div>
-                    <?php
-                endif; ?>
-            </div>
-        </div>
-
-        <style>
-        .pdf-builder-diagnostic {
-            max-width: 1200px;
-        }
-        .diagnostic-header {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-        }
-        .diagnostic-form {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-        }
-        .diagnostic-results {
-            background: #fff;
-            padding: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-        }
-        .diagnostic-output {
-            background: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #e1e1e1;
-            border-radius: 4px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        </style>
-        <?php
-    }
-
-    /**
-     * Page de test TCPDF
-     */
-    public function test_tcpdf_page()
-    {
-        // Pas de vérification de permissions pour la page de test (diagnostic)
-
-        // Test simple de TCPDF
-        $test_results = $this->run_simple_tcpdf_test();
-
-        ?>
-        <div class="wrap">
-            <h1><?php _e('🧪 Test TCPDF Simple - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-
-            <div class="pdf-builder-test-tcpdf">
-                <div class="test-header">
-                    <p><?php _e('Test simplifié de TCPDF pour diagnostiquer les problèmes.', 'pdf-builder-pro'); ?></p>
-                </div>
-
-                <div class="test-results">
-                    <?php echo $test_results; ?>
-                </div>
-            </div>
-        </div>
-
-        <script>
-        </script>
-
-        <script>
-        </script>
-
-        <style>
-        .pdf-builder-test-tcpdf {
-            max-width: 1200px;
-        }
-        .test-header {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-        }
-        .test-results {
-            background: #fff;
-            padding: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-        }
-        .test-section {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid;
-        }
-        .success { background-color: #d4edda; border-color: #28a745; }
-        .error { background-color: #f8d7da; border-color: #dc3545; }
-        .info { background-color: #d1ecf1; border-color: #17a2b8; }
-        .warning { background-color: #fff3cd; border-color: #ffc107; }
-        pre {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 3px;
-            overflow-x: auto;
-            font-size: 12px;
-            border: 1px solid #dee2e6;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary { background: #007cba; color: white; }
-        .btn-primary:hover { background: #005a87; }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-        .stat {
-            text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            flex: 1;
-            margin: 0 5px;
-        }
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007cba;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #6c757d;
-            text-transform: uppercase;
-        }
-        </style>
-        <?php
-    }
-
-    /**
-     * Exécute le test TCPDF
-     */
-    private function run_simple_tcpdf_test()
-    {
-
-        ob_start();
-        echo "<div class='test-section info'>";
-        echo "<h3>🚀 Test simple TCPDF...</h3>";
-        echo "<pre>";
-        try {
-            echo "📚 Définition des constantes TCPDF...\n";
-            $this->define_tcpdf_constants();
-            echo "✅ Constantes TCPDF définies\n";
-            echo "📚 Chargement de TCPDF...\n";
-        // Test de chargement TCPDF
-            include_once __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php';
-            echo "✅ TCPDF chargé\n";
-            echo "🔨 Création d'une instance TCPDF...\n";
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-            echo "✅ Instance TCPDF créée\n";
-            $version = TCPDF_STATIC::getTCPDFVersion();
-            echo "📊 Version TCPDF : {$version}\n";
-            echo "📝 Ajout d'une page...\n";
-            $pdf->AddPage();
-            echo "✅ Page ajoutée\n";
-            echo "✍️ Ajout de texte...\n";
-            $pdf->SetFont('helvetica', '', 12);
-            $pdf->SetFont('helvetica', '', 12);
-            $pdf->Cell(0, 10, 'Test TCPDF réussi - ' . date('d/m/Y H:i:s'), 0, 1, 'C');
-            echo "✅ Texte ajouté\n";
-            echo "💾 Génération du PDF...\n";
-            $pdf_content = $pdf->Output('', 'S');
-            $size = strlen($pdf_content);
-            echo "✅ PDF généré avec succès !\n";
-            echo "📊 Taille : " . number_format($size) . " octets\n";
-            echo "</pre>";
-            echo "</div>";
-            echo "<div class='test-section success'>";
-            echo "<h3>🎉 Test réussi !</h3>";
-            echo "<p>TCPDF fonctionne correctement.</p>";
-            echo "</div>";
-        } catch (Exception $e) {
-            echo "❌ Erreur : " . $e->getMessage() . "\n";
-            echo "📍 Fichier : " . $e->getFile() . " ligne " . $e->getLine() . "\n";
-            echo "</pre>";
-            echo "</div>";
-            echo "<div class='test-section error'>";
-            echo "<h3>💥 Erreur détectée</h3>";
-            echo "<p>Le test TCPDF a échoué. Vérifiez les détails ci-dessus.</p>";
-            echo "</div>";
-        }
-
-        $result = ob_get_clean();
-        return $result;
-    }
-
-    /**
-     * Page développeur (uniquement pour l'utilisateur ID 1)
-     */
-    public function developer_page()
-    {
-        $this->checkAdminPermissions();
-        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/developer-page.php';
-    }
-
-    /**
      * Template Editor page (React/TypeScript)
      */
     public function template_editor_page()
@@ -1311,36 +926,23 @@ class PDF_Builder_Admin
      */
     public function enqueue_admin_scripts($hook)
     {
-        // LOG PHP DE BASE - vérifier si la fonction est appelée
-        error_log('[PHP] enqueue_admin_scripts appelée avec hook: ' . $hook);
-
-        // DEBUG: Log pour vérifier que la méthode est appelée
-        error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
-
-        // DEBUG: Log de tous les paramètres GET et POST pour diagnostiquer
-        error_log('PDF Builder: GET params: ' . print_r($_GET, true));
-        error_log('PDF Builder: Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
-
-        // Charger seulement sur nos pages admin
+        // Charger seulement sur nos pages admin (diagnostic/test retirés)
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
             'pdf-builder-pro_page_pdf-builder-templates',
             'pdf-builder-pro_page_pdf-builder-editor',
             'pdf-builder-editor', // Hook direct pour l'éditeur
             'pdf-builder-pro_page_pdf-builder-settings',
-            'pdf-builder-pro_page_pdf-builder-diagnostic',
-            // 'pdf-builder-pro_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
             'pdf-builder-pro_page_pdf-builder-developer',
             'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
         ];
 
-        // Vérification des hooks réactivée
+        // Vérification des hooks
         if (!in_array($hook, $allowed_hooks)) {
             return;
         }
 
-        error_log('PDF Builder: Hook validation passed, loading scripts...');
-
+        // Charger les scripts
         $this->load_admin_scripts($hook);
     }
 
@@ -3442,147 +3044,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
     }
 
     /**
-     * AJAX - Debug PDF metabox generation
-     */
-    public function ajax_debug_pdf_metabox()
-    {
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce')) {
-            wp_die('Permissions insuffisantes');
-        }
-
-        $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        if (!$order_id) {
-            wp_die('Order ID manquant');
-        }
-
-        echo "<h1>Debug PDF Generation - Order #$order_id</h1>";
-        echo "<style>body { font-family: Arial, sans-serif; margin: 20px; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }</style>";
-// Charger la commande
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            wp_die('Commande non trouvée');
-        }
-
-        echo "<h2>Informations de la commande</h2>";
-        echo "<p><strong>ID:</strong> " . $order->get_id() . "</p>";
-        echo "<p><strong>Numéro:</strong> " . $order->get_order_number() . "</p>";
-        echo "<p><strong>Statut:</strong> " . $order->get_status() . "</p>";
-        echo "<p><strong>Client:</strong> " . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . "</p>";
-        echo "<p><strong>Total:</strong> " . wc_price($order->get_total()) . "</p>";
-// Produits de la commande
-        echo "<h2>Produits de la commande</h2>";
-        echo "<table>";
-        echo "<tr><th>Produit</th><th>Quantité</th><th>Prix</th><th>Total</th></tr>";
-        foreach ($order->get_items() as $item) {
-            echo "<tr>";
-            echo "<td>" . esc_html($item->get_name()) . "</td>";
-            echo "<td>" . $item->get_quantity() . "</td>";
-            echo "<td>" . wc_price($item->get_total() / $item->get_quantity()) . "</td>";
-            echo "<td>" . wc_price($item->get_total()) . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-// Charger le template
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        if ($template_id > 0) {
-            $template_data = $wpdb->get_var($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id));
-            if ($template_data) {
-                $template = json_decode($template_data, true);
-                echo "<h2>Template chargé (ID: $template_id)</h2>";
-            }
-        } else {
-        // Détection automatique du template
-            $order_status = $order->get_status();
-            $status_templates = get_option('pdf_builder_order_status_templates', []);
-            $selected_template_id = null;
-            $status_key = 'wc-' . $order_status;
-            if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                $selected_template_id = $status_templates[$status_key];
-                echo "<h2>Template détecté automatiquement (statut: $order_status)</h2>";
-            } else {
-    // Chercher un template par nom
-                $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-                foreach ($all_templates as $tpl) {
-                    if (stripos($tpl['name'], 'facture') !== false) {
-                        $selected_template_id = $tpl['id'];
-                        echo "<h2>Template trouvé par nom (contient 'facture')</h2>";
-                        break;
-                    }
-                }
-            }
-
-            if ($selected_template_id) {
-                $template_data = $wpdb->get_var($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $selected_template_id));
-                if ($template_data) {
-                    $template = json_decode($template_data, true);
-                    $template_id = $selected_template_id;
-                }
-            }
-        }
-
-        if (!isset($template) || !$template) {
-            echo "<h2 style='color: red;'>ERREUR: Aucun template trouvé !</h2>";
-            echo "<p>Templates disponibles:</p>";
-            $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-            echo "<ul>";
-            foreach ($all_templates as $tpl) {
-                echo "<li>" . $tpl['id'] . ": " . esc_html($tpl['name']) . "</li>";
-            }
-            echo "</ul>";
-            wp_die();
-        }
-
-        echo "<p><strong>Template ID:</strong> $template_id</p>";
-// Analyser la structure du template
-        echo "<h2>Structure du template</h2>";
-        echo "<p><strong>Clés du template:</strong> " . implode(', ', array_keys($template)) . "</p>";
-        if (isset($template['pages']) && is_array($template['pages'])) {
-            echo "<h3>Pages du template (" . count($template['pages']) . " pages)</h3>";
-            foreach ($template['pages'] as $page_index => $page) {
-                echo "<h4>Page " . ($page_index + 1) . "</h4>";
-                if (isset($page['elements']) && is_array($page['elements'])) {
-                    echo "<p><strong>Éléments (" . count($page['elements']) . "):</strong></p>";
-                    echo "<ul>";
-                    foreach ($page['elements'] as $element) {
-                        $type = $element['type'] ?? 'unknown';
-                        $content = isset($element['content']) ? substr($element['content'], 0, 50) . (strlen($element['content']) > 50 ? '...' : '') : '';
-                        echo "<li><strong>$type</strong>: " . esc_html($content) . "</li>";
-                    }
-                    echo "</ul>";
-                } else {
-                    echo "<p style='color: red;'>Aucun élément dans cette page !</p>";
-                }
-            }
-        } else {
-            echo "<p style='color: red;'>Structure de template invalide - pas de pages !</p>";
-        }
-
-        // Générer l'HTML
-        echo "<h2>Génération de l'HTML</h2>";
-        try {
-            $html_content = $this->generate_unified_html($template, $order);
-            echo "<p><strong>Longueur HTML généré:</strong> " . strlen($html_content) . " caractères</p>";
-            echo "<h3>HTML généré (tronqué)</h3>";
-            echo "<div style='border: 1px solid #ccc; padding: 10px; max-height: 400px; overflow: auto; background: #f9f9f9;'>";
-            echo substr($html_content, 0, 2000) . (strlen($html_content) > 2000 ? '<p><em>... [tronqué]</em></p>' : '');
-            echo "</div>";
-        // Vérifier si la table des produits est présente
-            if (strpos($html_content, '<table') !== false) {
-                echo "<p style='color: green;'>✅ Table des produits détectée dans le HTML</p>";
-            } else {
-                echo "<p style='color: red;'>❌ Aucune table détectée dans le HTML</p>";
-            }
-        } catch (Exception $e) {
-            echo "<p style='color: red;'>Erreur lors de la génération HTML: " . $e->getMessage() . "</p>";
-        }
-
-        wp_die();
-    }
-
-    /**
      * AJAX - Vérifier l'état de la base de données
      */
     public function ajax_check_database()
@@ -3824,75 +3285,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
                 ]);
         } catch (Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Diagnose template JSON issues
-     */
-    public function diagnose_template_json($template_id)
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'pdf_builder_templates';
-        $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table_name} WHERE id = %d", $template_id));
-        if (!$template) {
-            return "Template ID {$template_id} not found in database.";
-        }
-
-        $output = "<h3>Template ID {$template_id} Diagnostic</h3>";
-        $output .= "<p><strong>Name:</strong> {$template->name}</p>";
-        $output .= "<p><strong>Data Length:</strong> " . strlen($template->template_data) . " characters</p>";
-        $output .= "<p><strong>Created:</strong> {$template->created_at}</p>";
-        $output .= "<p><strong>Updated:</strong> {$template->updated_at}</p>";
-        $output .= "<h4>JSON Validation</h4>";
-        $json_test = json_decode($template->template_data, true);
-        if ($json_test === null) {
-            $error_msg = json_last_error_msg();
-            $error_code = json_last_error();
-            $output .= "<p style='color: red;'>❌ JSON is INVALID</p>";
-            $output .= "<p><strong>Error:</strong> {$error_msg} (code: {$error_code})</p>";
-        // Try cleaning
-            $output .= "<h4>Attempting JSON Cleaning</h4>";
-            $cleaned_json = $this->clean_json_data($template->template_data);
-            $clean_test = json_decode($cleaned_json, true);
-            if ($clean_test === null) {
-                $output .= "<p style='color: red;'>❌ Cleaning FAILED - JSON still invalid</p>";
-        // Show problematic sections
-                $output .= "<h4>Problematic Sections</h4>";
-                $lines = explode("\n", $template->template_data);
-                $problem_lines = [];
-                foreach ($lines as $i => $line) {
-                    if (strpos($line, '�') !== false || preg_match('/[\x00-\x1F\x7F]/', $line)) {
-                        $problem_lines[] = "Line " . ($i + 1) . ": " . htmlspecialchars(trim($line));
-                    }
-                }
-
-                if (!empty($problem_lines)) {
-                    $output .= "<ul>";
-                    foreach (array_slice($problem_lines, 0, 10) as $line) {
-                        $output .= "<li>{$line}</li>";
-                    }
-                    if (count($problem_lines) > 10) {
-                        $output .= "<li>... and " . (count($problem_lines) - 10) . " more problematic lines</li>";
-                    }
-                    $output .= "</ul>";
-                }
-
-                $output .= "<h4>Raw JSON Data</h4>";
-                $output .= "<textarea style='width: 100%; height: 300px; font-family: monospace;'>" . htmlspecialchars($template->template_data) . "</textarea>";
-            } else {
-                $output .= "<p style='color: green;'>✅ Cleaning SUCCESSFUL - JSON is now valid</p>";
-    // Update the database
-                $result = $wpdb->update($table_name, ['template_data' => $cleaned_json], ['id' => $template_id]);
-                if ($result !== false) {
-                    $output .= "<p style='color: green;'>✅ Template updated with cleaned JSON</p>";
-                } else {
-                    $output .= "<p style='color: red;'>❌ Failed to update template</p>";
-                }
-            }
-        } else {
-            $output .= "<p style='color: green;'>✅ JSON is VALID</p>";
-            $output .= "<p>Template structure appears correct.</p>";
         }
     }
 
@@ -4796,22 +4188,9 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         return $this->settings_manager;
     }
 
-    public function get_diagnostic_manager()
-    {
-        return $this->diagnostic_manager;
-    }
-
     public function get_status_manager()
     {
         return $this->status_manager;
-    }
-
-    /**
-     * Page de diagnostic (délégation au manager)
-     */
-    public function diagnostic_page()
-    {
-        return $this->diagnostic_manager->diagnostic_page();
     }
 
     /**

@@ -14,6 +14,10 @@ if (!defined('PDF_BUILDER_VERSION')) {
     define('PDF_BUILDER_VERSION', '1.0.0');
 }
 
+if (!defined('PDF_BUILDER_PRO_VERSION')) {
+    define('PDF_BUILDER_PRO_VERSION', '1.0.0');
+}
+
 // Plugin paths
 if (!defined('PDF_BUILDER_PLUGIN_FILE')) {
     define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
@@ -44,6 +48,10 @@ if (!defined('PDF_BUILDER_ASSETS_URL')) {
     define('PDF_BUILDER_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
 }
 
+if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
+    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
+}
+
 if (!defined('PDF_BUILDER_RESOURCES_DIR')) {
     define('PDF_BUILDER_RESOURCES_DIR', PDF_BUILDER_PLUGIN_DIR . 'resources/');
 }
@@ -63,6 +71,10 @@ if (!defined('PDF_BUILDER_LANGUAGES_DIR')) {
 // Upload paths
 if (!defined('PDF_BUILDER_UPLOAD_DIR')) {
     define('PDF_BUILDER_UPLOAD_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
+}
+
+if (!defined('PDF_BUILDER_PRO_UPLOADS_DIR')) {
+    define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
 }
 
 if (!defined('PDF_BUILDER_CACHE_DIR')) {

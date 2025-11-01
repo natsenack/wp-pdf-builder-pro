@@ -206,12 +206,6 @@ class PDF_Builder_Pro_Generator
 
     private function render_element_content($element, $style, $type)
     {
-        // LOG COMPLET DE DIAGNOSTIC POUR TOUS LES ÉLÉMENTS
-        
-        
-        
-        
-
         switch ($type) {
             case 'text':
             case 'dynamic-text':

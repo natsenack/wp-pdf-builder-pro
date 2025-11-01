@@ -92,13 +92,7 @@ function pdf_builder_init() {
         // Log si bootstrap n'existe pas
     }
 
-    // Charger les outils de test en mode développement
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        $test_tools_path = plugin_dir_path(__FILE__) . 'tools/security-tests-phase5.php';
-        if (file_exists($test_tools_path)) {
-            require_once $test_tools_path;
-        }
-    }
+    // Tools for development/tests removed from production bootstrap
 
     // Charger le moniteur de performance
     $performance_monitor_path = plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Performance_Monitor.php';

@@ -9,11 +9,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
-// Debug logging
-$debug_log = plugin_dir_path(__FILE__) . 'debug.log';
-file_put_contents($debug_log, "[" . date('Y-m-d H:i:s') . "] Bootstrap loaded. Version: " . PDF_BUILDER_PRO_VERSION . "\n", FILE_APPEND);
-error_log("[PDF-BUILDER] Bootstrap.php loaded. Version: " . PDF_BUILDER_PRO_VERSION);
-
 // Fonction pour charger le core du plugin
 function pdf_builder_load_core() {
     static $loaded = false;
@@ -44,7 +39,6 @@ function pdf_builder_load_core() {
         'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Canvas_Elements_Manager.php',
         'PDF_Builder_Canvas_Interactions_Manager.php',
-        'PDF_Builder_Diagnostic_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
         'PDF_Builder_Feature_Manager.php',
         'PDF_Builder_License_Manager.php',
@@ -90,16 +84,6 @@ function pdf_builder_load_core() {
     // Charger le handler AJAX d'image de prévisualisation (Phase 3.0)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-    }
-
-    // Charger le diagnostic handler (debug)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-diagnostic.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-diagnostic.php';
-    }
-
-    // Charger le test handler (debug)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-test.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-test.php';
     }
 
     $loaded = true;

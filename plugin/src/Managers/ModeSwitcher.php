@@ -241,22 +241,6 @@ class ModeSwitcher implements ModeInterface
         return $this;
     }
 
-    /**
-     * Obtient les informations de diagnostic
-     *
-     * @return array Informations de debug
-     */
-    public function getDiagnostics(): array
-    {
-        return [
-            'current_mode' => $this->currentMode,
-            'has_provider' => $this->currentProvider !== null,
-            'has_renderer' => $this->renderer !== null,
-            'cached_providers' => array_keys($this->providerCache),
-            'provider_class' => $this->currentProvider ? get_class($this->currentProvider) : null,
-        ];
-    }
-
     // Implémentation de l'interface ModeInterface
 
     /**

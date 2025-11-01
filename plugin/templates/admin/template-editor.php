@@ -3,31 +3,16 @@ if (!current_user_can('manage_options')) {
     wp_die('Unauthorized');
 }
 
-// LOG PHP - Vérifier que la page PHP est chargée
-error_log('[PHP] Template editor page loaded - PHP execution test');
-error_log('[PHP] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'unknown'));
-error_log('[PHP] Template ID: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'none'));
-error_log('[PHP] User: ' . get_current_user_id());
+// Debug logs removed for production
 ?>
 <script>
 // Créer le nonce global pour les appels AJAX
 window.pdfBuilderNonce = '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>';
 
-// Test if jQuery is loaded
-if (typeof jQuery !== 'undefined') {
-    // jQuery is loaded
-} else {
-    // jQuery is NOT loaded
-}
-
-// Test if our main script variables exist
-// pdfBuilderAjax and pdfBuilderPro checks removed
-
-// Check if the canvas container exists
+// Check if the canvas container exists and DOM ready
 var canvasContainer = document.getElementById('pdf-canvas-container');
-
 document.addEventListener('DOMContentLoaded', function() {
-    // DOMContentLoaded fired - page fully loaded
+    // Page loaded
 });
 </script>
 <div id="wpbody-content">

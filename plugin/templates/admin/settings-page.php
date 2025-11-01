@@ -1183,17 +1183,6 @@ window.addEventListener('load', function() {
                         <div class="modern-tab-panel active" data-tab="general">
                             <h3><?php _e('Paramètres Généraux du Canvas', 'pdf-builder-pro'); ?></h3>
 
-                            <!-- DEBUG INFO -->
-                            <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; font-size: 12px;">
-                                <strong>DEBUG - Valeurs actuelles:</strong><br>
-                                Largeur: <?php echo $config->get('default_canvas_width', 210); ?><br>
-                                Hauteur: <?php echo $config->get('default_canvas_height', 297); ?><br>
-                                Unité: <?php echo $config->get('default_canvas_unit', 'mm'); ?><br>
-                                Fond canvas: <?php echo $config->get('canvas_background_color', '#ffffff'); ?><br>
-                                Transparence: <?php echo $config->get('canvas_show_transparency', false) ? 'Oui' : 'Non'; ?><br>
-                                Marges: <?php echo $config->get('show_margins', true) ? 'Oui' : 'Non'; ?>
-                            </div>
-
                     <table class="form-table">
                         <tr>
                             <th scope="row"><?php _e('Dimensions par Défaut', 'pdf-builder-pro'); ?></th>
