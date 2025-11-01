@@ -113,6 +113,11 @@ class PDF_Builder_Admin {
     private $woocommerce_integration = null;
 
     /**
+     * Manager de templates
+     */
+    private $template_manager = null;
+
+    /**
      * Obtenir l'instance unique de la classe (Singleton)
      */
     public static function getInstance($core = null)
@@ -133,6 +138,11 @@ class PDF_Builder_Admin {
         // Initialiser l'intégration WooCommerce si disponible
         if (class_exists('\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->core);
+        }
+        
+        // Initialiser le manager de templates
+        if (class_exists('PDF_Builder_Template_Manager')) {
+            $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
         }
         
         $this->initHooks();
