@@ -1603,14 +1603,14 @@ class PDF_Builder_WooCommerce_Integration
             $item_data = [
                 'id' => $item_id,
                 'name' => $item->get_name(),
-                'quantity' => $item->get_quantity(),
-                'price' => $item->get_total() / max(1, $item->get_quantity()), // Prix unitaire
-                'regular_price' => $product ? $product->get_regular_price() : null,
-                'sale_price' => $product ? $product->get_sale_price() : null,
-                'total' => $item->get_total(),
-                'total_tax' => $item->get_total_tax(),
-                'subtotal' => $item->get_subtotal(),
-                'subtotal_tax' => method_exists($item, 'get_subtotal_tax') ? $item->get_subtotal_tax() : 0,
+                'quantity' => (float) $item->get_quantity(),
+                'price' => (float) ($item->get_total() / max(1, $item->get_quantity())), // Prix unitaire
+                'regular_price' => $product ? (float) $product->get_regular_price() : null,
+                'sale_price' => $product ? (float) $product->get_sale_price() : null,
+                'total' => (float) $item->get_total(),
+                'total_tax' => (float) $item->get_total_tax(),
+                'subtotal' => (float) $item->get_subtotal(),
+                'subtotal_tax' => method_exists($item, 'get_subtotal_tax') ? (float) $item->get_subtotal_tax() : 0.0,
                 'tax_class' => $item->get_tax_class(),
                 'sku' => $product ? $product->get_sku() : '',
                 'product_id' => $item->get_product_id(),
@@ -1884,10 +1884,10 @@ class PDF_Builder_WooCommerce_Integration
                     'number' => $order->get_order_number(),
                     'status' => $order->get_status(),
                     'date' => $order->get_date_created()->format('d/m/Y'),
-                    'total' => $order->get_total(),
-                    'subtotal' => $order->get_subtotal(),
-                    'shipping_total' => $order->get_shipping_total(),
-                    'tax_total' => $order->get_total_tax(),
+                    'total' => (float) $order->get_total(),
+                    'subtotal' => (float) $order->get_subtotal(),
+                    'shipping_total' => (float) $order->get_shipping_total(),
+                    'tax_total' => (float) $order->get_total_tax(),
                 ],
                 // Données client
                 'billing' => [

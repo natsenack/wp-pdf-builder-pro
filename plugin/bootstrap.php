@@ -77,6 +77,18 @@ function pdf_builder_load_core() {
         }
     }
 
+    // Charger les classes Core essentielles
+    $core_classes = array(
+        'PDF_Builder_Security_Validator.php'
+    );
+
+    foreach ($core_classes as $core_class) {
+        $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
+        if (file_exists($core_path)) {
+            require_once $core_path;
+        }
+    }
+
     // Charger la classe d'administration depuis src/ APRÈS les managers
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
