@@ -207,24 +207,14 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 120px 60px 120px 60px; /* Padding équilibré */
-  min-height: 1200px; /* Ajusté pour le canvas de 1000px */
+  padding: 40px 60px 40px 60px; /* Padding réduit pour voir le A4 complet */
+  min-height: calc(1123px + 80px); /* Canvas height + padding vertical */
   z-index: 0;
 }
 
 .canvas-zoom-wrapper {
   position: relative;
   transition: transform 0.2s ease;
-}
-
-.canvas {
-  background: white;
-  border: 1px solid #e2e8f0;
-  position: relative;
-  overflow: hidden;
-  /* Dimensions agrandies mais raisonnables */
-  width: 595px;
-  height: 1000px; /* Hauteur plus raisonnable */
 }
 
 .canvas {
