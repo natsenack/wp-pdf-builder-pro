@@ -73,7 +73,6 @@ const initialHistoryState: HistoryState = {
       isSaving: false
     },
     previewMode: 'editor',
-    showPreviewModal: false,
     history: {} as HistoryState // Sera défini récursivement
   } as BuilderState,
   future: [],
@@ -104,7 +103,6 @@ const initialState: BuilderState = {
     snapToGrid: false
   },
   previewMode: 'editor',
-  showPreviewModal: false,
   history: initialHistoryState
 };
 
@@ -218,12 +216,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       return {
         ...state,
         previewMode: action.payload
-      };
-
-    case 'SET_SHOW_PREVIEW_MODAL':
-      return {
-        ...state,
-        showPreviewModal: action.payload
       };
 
     case 'SET_ORDER_ID':

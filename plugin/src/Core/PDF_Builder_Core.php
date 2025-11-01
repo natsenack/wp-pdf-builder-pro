@@ -254,17 +254,6 @@ class PDF_Builder_Core
                 'pdf-builder-settings',
                 array($this, 'settings_page')
             );
-
-            // Page de test pour le débogage
-            add_menu_page(
-                __('🔧 Test Templates', 'pdf-builder-pro'),
-                __('🔧 Test Templates', 'pdf-builder-pro'),
-                'read',
-                'pdf-builder-test',
-                array($this, 'test_template_selection_page'),
-                'dashicons-admin-tools',
-                31
-            );
         } catch (\Exception $e) {
         }
     }
@@ -397,7 +386,9 @@ class PDF_Builder_Core
         // Définir les options par défaut
         add_option('pdf_builder_version', $this->version);
 
-        \pdf_builder_log('PDF Builder Pro activated', 1);
+        if (function_exists('\pdf_builder_log')) {
+            \pdf_builder_log('PDF Builder Pro activated', 1); // @phpstan-ignore-line
+        }
     }
 
     /**
@@ -406,7 +397,9 @@ class PDF_Builder_Core
     public function deactivate()
     {
         // Nettoyer si nécessaire
-        \pdf_builder_log('PDF Builder Pro deactivated', 1);
+        if (function_exists('\pdf_builder_log')) {
+            \pdf_builder_log('PDF Builder Pro deactivated', 1); // @phpstan-ignore-line
+        }
     }
 
     /**
@@ -523,7 +516,11 @@ class PDF_Builder_Core
     {
         // Simuler une commande WooCommerce
         $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 9275;
-        $order = wc_get_order($order_id);
+        if (!function_exists('\wc_get_order')) {
+            echo '<div class="wrap"><h1>❌ WooCommerce non disponible</h1></div>';
+            return;
+        }
+        $order = \wc_get_order($order_id); // @phpstan-ignore-line
 
         if (!$order) {
             echo '<div class="wrap"><h1>❌ Commande #' . $order_id . ' non trouvée</h1></div>';

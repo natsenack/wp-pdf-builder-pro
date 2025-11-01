@@ -50,7 +50,6 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
         add_action('wp_ajax_pdf_builder_get_company_data', [$this, 'ajax_get_company_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
-        add_action('wp_ajax_pdf_builder_get_preview_data', [$this, 'ajax_get_preview_data'], 1);
     }
     private function detect_document_type($order_status)
     {
@@ -241,9 +240,6 @@ class PDF_Builder_WooCommerce_Integration
 
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <?php if ($selected_template) : ?>
-                    <button type="button" id="pdf-preview-btn" class="button button-primary" style="padding: 8px 16px;">
-                        👁️ Aperçu
-                    </button>
                     <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
                         📄 Générer PDF
                     </button>
@@ -266,136 +262,11 @@ class PDF_Builder_WooCommerce_Integration
             window.pdf_builder.templateId = templateId;
             window.pdf_builder.nonce = nonce;
 
-            // Bouton aperçu
-            $('#pdf-preview-btn').on('click', function() {
-                previewPDF(orderId, templateId, nonce);
-            });
-
             // Bouton génération PDF
             $('#pdf-generate-btn').on('click', function() {
                 generatePDF(orderId, templateId, nonce);
             });
         });
-
-        // Fonction d'aperçu - ouvre une modal avec preview des données WooCommerce
-        function previewPDF(orderId, templateId, nonce) {
-            var previewWindow = window.open('', 'pdf-preview', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-            
-            if (!previewWindow) {
-                alert('Veuillez autoriser les popups pour cette page.');
-                return;
-            }
-
-            // Charger les données de prévisualisation via AJAX
-            jQuery.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_get_preview_data',
-                    order_id: orderId,
-                    template_id: templateId,
-                    nonce: nonce
-                },
-                success: function(response) {
-                    if (response.success && response.data) {
-                        // Générer le HTML pour la modal
-                        var html = generatePreviewHTML(response.data, orderId, templateId);
-                        previewWindow.document.write(html);
-                        previewWindow.document.close();
-                    } else {
-                        previewWindow.document.write('<h1>Erreur</h1><p>' + (response.data || 'Erreur inconnue') + '</p>');
-                        previewWindow.document.close();
-                    }
-                },
-                error: function() {
-                    previewWindow.document.write('<h1>Erreur réseau</h1><p>Impossible de charger l\'aperçu</p>');
-                    previewWindow.document.close();
-                }
-            });
-        }
-
-        // Génère le HTML de prévisualisation
-        function generatePreviewHTML(previewData, orderId, templateId) {
-            console.log('generatePreviewHTML called with:', { previewData, orderId, templateId });
-            
-            // Fonction pour remplacer les variables dans le contenu
-            function replaceVariables(content) {
-                return content
-                    .replace(/\[billing_city\]/g, 'Paris')
-                    .replace(/\[billing_postcode\]/g, '75001')
-                    .replace(/\[billing_email\]/g, 'client@example.com')
-                    .replace(/\[order_number\]/g, 'CMD-' + orderId)
-                    .replace(/\[order_total\]/g, '1250.00')
-                    .replace(/\[order_date\]/g, new Date().toLocaleDateString('fr-FR'))
-                    .replace(/\[order_items_table\]/g, `
-                        <tr><td>Produit 1</td><td>2</td><td>25.00 €</td><td>50.00 €</td></tr>
-                        <tr><td>Produit 2</td><td>1</td><td>1200.00 €</td><td>1200.00 €</td></tr>
-                    `);
-            }
-            
-            var html = `<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Aperçu PDF - Commande #` + orderId + `</title>
-                <style>
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-                    .container { position: relative; width: 210mm; height: 297mm; margin: 0 auto; background: white; border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
-                    .template-element { position: absolute; }
-                    .button-group { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; }
-                    .button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-                    .button-primary { background: #007cba; color: white; }
-                    .button-secondary { background: #ddd; color: #333; }
-                    .button:hover { opacity: 0.8; }
-                </style>
-            </head>
-            <body>
-                <div class="container">`;
-
-            // Render template elements
-            if (previewData.template_data && Array.isArray(previewData.template_data)) {
-                console.log('Rendering', previewData.template_data.length, 'template elements');
-                previewData.template_data.forEach(function(element, index) {
-                    console.log('Rendering element', index, element);
-                    var style = 'position: absolute; ';
-                    if (element.position) {
-                        style += 'top: ' + (element.position.top || 0) + 'px; ';
-                        style += 'left: ' + (element.position.left || 0) + 'px; ';
-                    }
-                    if (element.size) {
-                        style += 'width: ' + (element.size.width || 100) + 'px; ';
-                        style += 'height: ' + (element.size.height || 50) + 'px; ';
-                    }
-                    if (element.styles) {
-                        style += element.styles;
-                    }
-                    
-                    var content = replaceVariables(element.content || '');
-                    if (element.type === 'text') {
-                        html += '<div class="template-element" style="' + style + '">' + content + '</div>';
-                    } else {
-                        // Handle other element types if needed
-                        html += '<div class="template-element" style="' + style + '">' + content + '</div>';
-                    }
-                });
-            } else {
-                console.log('No template_data or not an array:', previewData.template_data);
-                html += '<div style="padding: 20px; color: red;">Aucune donnée de template trouvée</div>';
-            }
-
-            html += `
-                </div>
-                <div class="button-group">
-                    <button class="button button-secondary" onclick="window.print()">🖨️ Imprimer</button>
-                    <button class="button button-secondary" onclick="window.close()">❌ Fermer</button>
-                </div>
-            </body>
-            </html>`;
-            
-            console.log('Generated HTML length:', html.length);
-            return html;
-        }
 
         function generatePDF(orderId, templateId, nonce) {
             // Générer le PDF
@@ -1778,111 +1649,4 @@ class PDF_Builder_WooCommerce_Integration
         }
     }
 
-    /**
-     * AJAX: Récupère les données formatées pour l'aperçu PreviewModal
-     * Utilisé par la metabox WooCommerce pour afficher l'aperçu en temps réel
-     */
-    public function ajax_get_preview_data()
-    {
-        try {
-            // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
-                return;
-            }
-
-            // Valider les données d'entrée
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-            if (!$order_id || !$template_id) {
-                wp_send_json_error('Paramètres manquants');
-                return;
-            }
-
-            // Récupération et validation de la commande
-            $order = $this->get_and_validate_order($order_id);
-            if (is_wp_error($order)) {
-                wp_send_json_error($order->get_error_message());
-                return;
-            }
-
-            // Charger le template
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $template = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT id, data FROM $table_templates WHERE id = %d",
-                    $template_id
-                )
-            );
-
-            if (!$template) {
-                wp_send_json_error('Template non trouvé');
-                return;
-            }
-
-            // Décoder les données du template
-            $template_data = json_decode($template->data, true);
-            if (!$template_data) {
-                wp_send_json_error('Données du template invalides');
-                return;
-            }
-
-            // Préparer les données pour le rendu
-            $preview_data = [
-                'order_id' => $order_id,
-                'template_id' => $template_id,
-                'template_data' => $template_data,
-                'elements' => $template_data['elements'] ?? [],
-                'mode' => 'metabox',
-                // Données de commande réelles
-                'order' => [
-                    'id' => $order->get_id(),
-                    'number' => $order->get_order_number(),
-                    'status' => $order->get_status(),
-                    'date' => $order->get_date_created()->format('d/m/Y'),
-                    'total' => (float) $order->get_total(),
-                    'subtotal' => (float) $order->get_subtotal(),
-                    'shipping_total' => (float) $order->get_shipping_total(),
-                    'tax_total' => (float) $order->get_total_tax(),
-                ],
-                // Données client
-                'billing' => [
-                    'first_name' => $order->get_billing_first_name(),
-                    'last_name' => $order->get_billing_last_name(),
-                    'address_1' => $order->get_billing_address_1(),
-                    'address_2' => $order->get_billing_address_2(),
-                    'city' => $order->get_billing_city(),
-                    'postcode' => $order->get_billing_postcode(),
-                    'country' => $order->get_billing_country(),
-                    'email' => $order->get_billing_email(),
-                    'phone' => $order->get_billing_phone(),
-                ],
-                // Données d'expédition
-                'shipping' => [
-                    'first_name' => $order->get_shipping_first_name(),
-                    'last_name' => $order->get_shipping_last_name(),
-                    'address_1' => $order->get_shipping_address_1(),
-                    'address_2' => $order->get_shipping_address_2(),
-                    'city' => $order->get_shipping_city(),
-                    'postcode' => $order->get_shipping_postcode(),
-                    'country' => $order->get_shipping_country(),
-                ],
-                // Articles de la commande
-                'items' => $this->get_order_items_complete_data($order),
-            ];
-
-            wp_send_json_success($preview_data);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la récupération des données d\'aperçu: ' . $e->getMessage());
-        }
-    }
 }

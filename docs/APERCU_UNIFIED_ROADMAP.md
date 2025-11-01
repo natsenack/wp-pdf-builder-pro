@@ -87,28 +87,27 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 ---
 
-## � Phases de reconstruction
-
-### ✅ Phase 1 : Nettoyage complet
-- [x] Supprimer tous les composants React d'aperçu
-- [x] Nettoyer le code PHP backend
-- [x] Supprimer les styles CSS d'aperçu
-- [x] Recompiler les assets
-- [x] Valider la syntaxe PHP
-- [x] **Nettoyer le serveur distant**
-- [x] **Redéployer les fichiers nettoyés**
-
-### 🔍 Phase 2 : Analyse & conception ✅ TERMINÉE (100%)
-
-**📋 Ordre logique d'implémentation** : Les étapes sont organisées séquentiellement pour une implémentation fluide. Commencer par l'analyse des éléments existants, puis les données, l'architecture et enfin les interfaces.
-
-**🧪 Approche** : Tests intégrés à chaque étape pour valider au fur et à mesure (pas de tests groupés à la fin).
-
-**📋 Ordre logique d'implémentation** : Les étapes sont organisées séquentiellement pour une implémentation fluide. Commencer par l'analyse des éléments existants, puis les données, l'architecture et enfin les interfaces.
-
-**🧪 Approche** : Tests intégrés à chaque étape pour valider au fur et à mesure (pas de tests groupés à la fin).
-
-#### **2.1 Auditer les 7 types d'éléments**
+## �️ Phase 5 : Améliorations techniques
+- [ ] **Étape 6.1** : Migrer JavaScript vers TypeScript (interfaces pour éléments, variables)
+  - **Test** : Migration TypeScript réussie, interfaces validées
+- [ ] **Étape 6.2** : Implémenter ESLint + Prettier pour qualité code
+  - **Test** : Code formaté automatiquement, linting sans erreurs
+- [ ] **Étape 6.3** : Ajouter tests unitaires (Jest pour JS, PHPUnit pour PHP)
+  - **Test** : Tests unitaires opérationnels, couverture >80%
+- [ ] **Étape 6.4** : Optimiser performance (code splitting, caching)
+  - **Test** : Performance améliorée, bundle size réduit
+- [ ] **Étape 6.5** : Audit sécurité (nonces, sanitization)
+  - **Test** : Audit sécurité passé, vulnérabilités corrigées
+- [ ] **Étape 6.6** : Améliorer UX (cercle chargement multicolore, gestion erreurs adaptée)
+  - **Test** : UX améliorée, feedback utilisateur positif
+- [ ] **Étape 6.7** : Optimiser performance DB (index, commentaires structurés)
+  - **Test** : Requêtes DB optimisées, temps réponse réduit
+- [ ] **Étape 6.8** : Audit sécurité ciblé (permissions rôles existants)
+  - **Test** : Permissions sécurisées, accès contrôlé
+- [ ] **Étape 6.9** : Internationaliser (anglais, allemand, français avec .po/.mo)
+  - **Test** : Traductions complètes, interface localisée
+- [ ] **Étape 6.10** : Refactoriser modulaire (nouveaux modules, supprimer anciens local + serveur)
+  - **Test** : Refactorisation réussie, code modulaire
 - [x] **Étape 2.1.1 : Identifier et lister les 7 types d'éléments**  
   - Ouvrir le code source des éléments (probablement dans `src/` ou `resources/js/`)  
   - Chercher les classes ou composants pour chaque type (texte, image, rectangle, etc.)  
@@ -625,10 +624,6 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - **Test** : Refactorisation réussie, code modulaire
 
 ## 💰 Phase 6 : Monétisation Freemium
-- [ ] **Étape 7.1** : Créer système de licences (activation clé premium - 69€ à vie, validation API/site externe, option multisite)
-  - **Test** : Système de licences opérationnel, validation fonctionnelle
-- [ ] **Étape 7.2** : Limiter à 1 template actif (choix style) + watermark sur PDFs gratuits
-  - **Test** : Limitation template appliquée, watermark visible
 - [ ] **Étape 7.3** : Désactiver exports PNG/JPG en gratuit (PDF seulement)
   - **Test** : Exports PNG/JPG bloqués en gratuit
 - [ ] **Étape 7.4** : Restreindre à 15 variables dynamiques basiques (7 éléments primordiaux)
@@ -672,123 +667,3 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - [ ] **Analytics freemium** : Tableau de bord conversions gratuit→premium
 
 ---
-
-## 📝 Note de progression - 22 octobre 2025
-
-**✅ Phase 2.1.4 TERMINÉE** : Priorités d'implémentation définies avec plan détaillé en 3 phases :
-- **Phase 2.2** (2-3 sem.) : Éléments fondamentaux (company_logo, order_number, company_info)
-- **Phase 2.3** (3-4 sem.) : Éléments intermédiaires (customer_info, dynamic-text, mentions)  
-- **Phase 2.4** (4-6 sem.) : Élément critique (product_table)
-
-**🔧 Corrections appliquées** : 4 bugs de priorité moyenne corrigés (code mort nettoyé, propriétés texte unifiées, validation vérifiée).
-
-**✅ Phase 2.2.1 TERMINÉE** : company_logo entièrement amélioré :
-- **Gestion unifiée src/imageUrl** : Support des deux propriétés pour compatibilité maximale
-- **Redimensionnement automatique** : Calcul intelligent des dimensions selon ratio d'aspect naturel
-- **Validation formats d'image** : Support JPG, PNG, WebP, SVG, GIF, BMP, TIFF, ICO avec messages d'erreur explicites
-- **Propriétés de bordure complètes** : borderWidth, borderStyle, borderColor pour personnalisation avancée
-- **Tests complets** : 17 tests unitaires validés, build réussi sans régression
-
-**✅ Phase 2.2.2 TERMINÉE** : order_number entièrement amélioré :
-- **Formatage configurable étendu** : 6 formats prédéfinis (CMD-2025-XXX, Facture N°XXX, etc.)
-- **Variables avancées** : {order_year}, {order_month}, {order_day} en plus de {order_number}, {order_date}
-- **Validation des propriétés** : fontSize borné (8-72px), gestion d'erreurs de formatage
-- **Propriétés de style étendues** : labelColor, lineHeight, bordures, backgroundColor
-- **Données de prévisualisation** : previewOrderNumber, previewOrderDate, etc. personnalisables
-- **Tests complets** : 21 tests unitaires validés, build réussi sans régression
-
----
-
-## � NOUVEAUTÉ Phase 3.0 - TemplateDataProvider
-
-### 📋 Qu'est-ce que le TemplateDataProvider ?
-
-**Fichier** : `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts`
-
-**Objectif** : Récupérer les variables dynamiques **directement depuis le JSON du template enregistré** (et pas seulement des données fictives).
-
-### 🎯 Logique d'implémentation
-
-Avant :
-```
-PreviewModal → CanvasDataProvider (données fictives statiques)
-```
-
-Maintenant :
-```
-PreviewModal → TemplateDataProvider (extrait variables depuis state.elements) → CanvasDataProvider (données fictives comme fallback)
-```
-
-### 📊 Fonctionnalités
-
-1. **Extraction de variables depuis le template JSON**
-   - Analyse tous les éléments du state.elements
-   - Cherche les variables `{{variable}}` dans les textes
-   - Récupère les valeurs depuis CanvasDataProvider
-   - Stocke dans une Map pour accès rapide
-
-2. **Fallback intelligent**
-   - Si variable trouvée dans template → utilise cette valeur
-   - Si pas trouvée → utilise données fictives par défaut
-   - Pas d'erreur, affichage toujours correct
-
-3. **Refresh dynamique**
-   - Méthode `refresh()` pour mettre à jour après modification du template
-   - Utile lors de modifications d'éléments dans l'éditeur
-
-### 🔄 Exemple pratique
-
-```typescript
-// Avant (données fictives statiques)
-Template avec {{customer_name}} → affiche toujours "Jean Dupont"
-
-// Après (variables depuis template)
-Template avec {{customer_name}} → 
-  1. Cherche "customer_name" dans template
-  2. Si trouvé dans CanvasDataProvider → utilise valeur
-  3. Sinon → fallback "Jean Dupont"
-```
-
-### 📝 Fichiers concernés
-
-| Fichier | Rôle | Type |
-|---------|------|------|
-| `TemplateDataProvider.ts` | Récupère variables du template JSON | **NOUVEAU** |
-| `PreviewModal.tsx` | Utilise TemplateDataProvider au lieu de CanvasDataProvider | **MODIFIÉ** |
-| `CanvasDataProvider.ts` | Données fictives (fallback) | Inchangé |
-| `MetaboxDataProvider.ts` | Données WooCommerce réelles | Inchangé |
-| `PreviewRenderer.ts` | Amélioration rendu texte et variables | **AMÉLIORÉ** |
-
-### ✅ Intégration avec Phase 3.0
-
-Cette modification garantit que :
-- ✅ Aperçu affiche les **vraies variables du template** (pas juste fictives)
-- ✅ **Cohérence** entre l'éditeur et l'aperçu
-- ✅ **Performance** optimisée (variables en cache dans Map)
-- ✅ **Fallback** si données manquantes (jamais de cassure)
-
----
-
-## �📝 Notes de progression - Phases terminées
-
-### Phase 1 ✅ TERMINÉE
-- Nettoyage complet du système d'aperçu
-- Suppression composants React, code PHP backend, styles CSS
-- Recompilation assets et validation syntaxe
-- Serveur distant nettoyé et redéployé
-
-### Phase 2 ✅ TERMINÉE (100%)
-**Phase 2.1** : Audit complet des 7 éléments
-- 7 types d'éléments identifiés et listés
-- Propriétés actuelles analysées (150+ propriétés)
-- Limitations et bugs documentés
-- Priorités d'implémentation définies
-
-**Phase 2.2** : Éléments fondamentaux améliorés
-- **2.2.1** : company_logo amélioré (gestion unifiée, redimensionnement, validation formats, bordures)
-- **2.2.2** : order_number amélioré (6 formats configurables, validation, propriétés étendues)
-- **2.2.3** : company_info mapping complet (12 champs WooCommerce, 4 templates prédéfinis)
-
----
-
-*Document mis à jour le 30 octobre 2025 - État actuel : Phase 3 débutée (Phase 2 terminée 100%, mode miroir ajouté en 3.0)*

@@ -19,11 +19,6 @@ if (!defined('ABSPATH')) {
 // Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
 error_reporting(error_reporting() & ~E_DEPRECATED);
 
-// Charger le logger pour les hooks d'activation/désactivation
-if (file_exists(plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Logger.php')) {
-    require_once plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Logger.php';
-}
-
 // Hook d'activation
 register_activation_hook(__FILE__, 'pdf_builder_activate');
 
@@ -34,7 +29,21 @@ register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
  * Fonction d'activation
  */
 function pdf_builder_activate() {
-    update_option('pdf_builder_activated', true);
+    // Créer une table de logs si nécessaire
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pdf_builder_logs';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            log_message text NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+    update_option('pdf_builder_version', '1.1.0');
 }
 
 /**

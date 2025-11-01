@@ -217,7 +217,7 @@ Uploading src/Managers/PDF_Builder_Template_Manager.php...
 
 ---
 
-## �🚀 Workflow de Déploiement Recommandé
+## 🚀 Workflow de Déploiement Recommandé
 
 ### Phase 1: Pré-Déploiement (Avant FTP)
 

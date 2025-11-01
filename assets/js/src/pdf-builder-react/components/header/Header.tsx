@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { TemplateState } from '../../types/elements';
-import { PreviewModal } from '../ui/PreviewModal';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 
 interface HeaderProps {
@@ -720,14 +719,6 @@ export const Header = memo(function Header({
           </div>
         </div>
       )}
-
-      {/* Modale d'aperçu */}
-      <PreviewModal
-        isOpen={state.showPreviewModal}
-        onClose={() => dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: false })}
-        canvasWidth={canvasWidth}
-        canvasHeight={canvasHeight}
-      />
 
       <style>{`
         @keyframes spin {

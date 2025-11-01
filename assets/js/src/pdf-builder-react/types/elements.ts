@@ -85,7 +85,6 @@ export interface BuilderState {
   template: TemplateState;
   // Mode de prévisualisation (éditeur vs commande)
   previewMode: 'editor' | 'command';
-  showPreviewModal: boolean;
   orderId?: string;
 }
 

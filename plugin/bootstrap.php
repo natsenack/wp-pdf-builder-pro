@@ -9,23 +9,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
-// Définir les constantes essentielles du plugin
-if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
-    define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
-}
-
-if (!defined('PDF_BUILDER_PLUGIN_URL')) {
-    define('PDF_BUILDER_PLUGIN_URL', plugins_url('/', __FILE__));
-}
-
-if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
-    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
-}
-
-if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '2.0.1');
-}
-
 // Debug logging
 $debug_log = plugin_dir_path(__FILE__) . 'debug.log';
 file_put_contents($debug_log, "[" . date('Y-m-d H:i:s') . "] Bootstrap loaded. Version: " . PDF_BUILDER_PRO_VERSION . "\n", FILE_APPEND);
@@ -39,6 +22,11 @@ function pdf_builder_load_core() {
     // Charger le autoloader pour le nouveau système PSR-4
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
+    }
+
+    // Charger les constantes
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/constants.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'core/constants.php';
     }
 
     // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
@@ -99,11 +87,6 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
     }
 
-    // Charger le contrôleur API d'aperçu (Phase 2.5.1)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Builder_Preview_API_Controller.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Builder_Preview_API_Controller.php';
-    }
-
     // Charger le handler AJAX d'image de prévisualisation (Phase 3.0)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
@@ -127,16 +110,6 @@ function pdf_builder_load_bootstrap() {
     // Protection globale contre les chargements multiples
     if (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED) {
         return;
-    }
-
-    // Définir le répertoire du plugin si pas déjà fait
-    if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
-        define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
-    }
-
-    // Charger l'autoloader PSR-4
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
     }
 
     // Charger la configuration si pas déjà faite
@@ -184,15 +157,6 @@ function pdf_builder_register_admin_menu_simple() {
         'pdf-builder-templates',
         'pdf_builder_templates_page_simple'
     );
-
-    add_submenu_page(
-        'pdf-builder-pro',
-        __('Éditeur Canvas', 'pdf-builder-pro'),
-        __('🎨 Éditeur Canvas', 'pdf-builder-pro'),
-        'read',
-        'pdf-builder-editor',
-        'pdf_builder_editor_page_simple'
-    );
 }
 
 // Callbacks simples
@@ -208,13 +172,6 @@ function pdf_builder_templates_page_simple() {
         wp_die(__('Vous devez être connecté.', 'pdf-builder-pro'));
     }
     echo '<div class="wrap"><h1>Templates</h1><p>Page templates en cours de développement.</p></div>';
-}
-
-function pdf_builder_editor_page_simple() {
-    if (!is_user_logged_in()) {
-        wp_die(__('Vous devez être connecté.', 'pdf-builder-pro'));
-    }
-    echo '<div class="wrap"><h1>Éditeur Canvas</h1><p>Éditeur en cours de développement.</p></div>';
 }
 
 // Inclusion différée de la classe principale
