@@ -189,10 +189,10 @@ if (!defined('ABSPATH')) {
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Format de papier</label>
                             <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="A4">A4 (210 × 297 mm)</option>
-                                <option value="A3">A3 (297 × 420 mm)</option>
-                                <option value="Letter">Letter (8.5 × 11 pouces)</option>
-                                <option value="Legal">Legal (8.5 × 14 pouces)</option>
+                                <option value="A4">A4 (594 × 1123 px)</option>
+                                <option value="A3">A3 (840 × 1191 px)</option>
+                                <option value="Letter">Letter (612 × 792 px)</option>
+                                <option value="Legal">Legal (612 × 1008 px)</option>
                             </select>
                         </div>
 

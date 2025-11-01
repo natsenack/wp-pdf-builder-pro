@@ -1,6 +1,5 @@
 import React from 'react';
 import { Element } from '../../types/elements';
-import { pxToMm, mmValueToPx } from '../../utils/unitConversion';
 
 interface ElementPropertiesProps {
   element: Element;
@@ -13,14 +12,14 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
       {/* Propriétés communes à tous les éléments */}
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Largeur <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.width || 100)} mm)</span>
+          Largeur <span style={{ color: '#666', fontSize: '10px' }}>({element.width || 100}px)</span>
         </label>
         <input
           type="number"
-          min="0.1"
-          step="0.1"
-          value={parseFloat(pxToMm(element.width || 100).toFixed(1))}
-          onChange={(e) => onChange(element.id, 'width', mmValueToPx(parseFloat(e.target.value) || 100))}
+          min="1"
+          step="1"
+          value={element.width || 100}
+          onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 100)}
           style={{
             width: '100%',
             padding: '4px 8px',
@@ -28,21 +27,21 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             borderRadius: '3px',
             fontSize: '12px'
           }}
-          placeholder="Valeur en mm"
+          placeholder="Valeur en pixels"
         />
-        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la largeur en millimètres</small>
+        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la largeur en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.height || 50)} mm)</span>
+          Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({element.height || 50}px)</span>
         </label>
         <input
           type="number"
-          min="0.1"
-          step="0.1"
-          value={parseFloat(pxToMm(element.height || 50).toFixed(1))}
-          onChange={(e) => onChange(element.id, 'height', mmValueToPx(parseFloat(e.target.value) || 50))}
+          min="1"
+          step="1"
+          value={element.height || 50}
+          onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 50)}
           style={{
             width: '100%',
             padding: '4px 8px',
@@ -50,21 +49,21 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             borderRadius: '3px',
             fontSize: '12px'
           }}
-          placeholder="Valeur en mm"
+          placeholder="Valeur en pixels"
         />
-        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la hauteur en millimètres</small>
+        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la hauteur en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position X <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.x || 0)} mm)</span>
+          Position X <span style={{ color: '#666', fontSize: '10px' }}>({element.x || 0}px)</span>
         </label>
         <input
           type="number"
           min="0"
-          step="0.1"
-          value={parseFloat(pxToMm(element.x || 0).toFixed(1))}
-          onChange={(e) => onChange(element.id, 'x', mmValueToPx(parseFloat(e.target.value) || 0))}
+          step="1"
+          value={element.x || 0}
+          onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
           style={{
             width: '100%',
             padding: '4px 8px',
@@ -72,21 +71,21 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             borderRadius: '3px',
             fontSize: '12px'
           }}
-          placeholder="Valeur en mm"
+          placeholder="Valeur en pixels"
         />
-        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en millimètres</small>
+        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position Y <span style={{ color: '#666', fontSize: '10px' }}>({pxToMm(element.y || 0)} mm)</span>
+          Position Y <span style={{ color: '#666', fontSize: '10px' }}>({element.y || 0}px)</span>
         </label>
         <input
           type="number"
           min="0"
-          step="0.1"
-          value={parseFloat(pxToMm(element.y || 0).toFixed(1))}
-          onChange={(e) => onChange(element.id, 'y', mmValueToPx(parseFloat(e.target.value) || 0))}
+          step="1"
+          value={element.y || 0}
+          onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
           style={{
             width: '100%',
             padding: '4px 8px',
@@ -94,9 +93,9 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             borderRadius: '3px',
             fontSize: '12px'
           }}
-          placeholder="Valeur en mm"
+          placeholder="Valeur en pixels"
         />
-        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en millimètres</small>
+        <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en pixels</small>
       </div>
 
       {/* Propriétés spécifiques selon le type d'élément */}

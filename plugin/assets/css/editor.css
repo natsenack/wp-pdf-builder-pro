@@ -208,16 +208,13 @@
   justify-content: center;
   align-items: flex-start;
   padding: 40px 60px 40px 60px; /* Padding réduit pour voir le A4 complet */
-  min-height: calc((1123px * 1.5) + 80px); /* Canvas height with 1.5x scale + padding */
+  min-height: calc(1123px + 80px); /* Canvas height + padding */
   z-index: 0;
 }
 
 .canvas-zoom-wrapper {
   position: relative;
   transition: transform 0.2s ease;
-  /* Scale canvas to look like actual A4 on screen */
-  transform: scale(1.5);
-  transform-origin: top center;
 }
 
 .canvas {
@@ -225,8 +222,8 @@
   border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
-  /* Dimensions A4 Portrait: 210mm × 297mm = 595px × 1123px */
-  width: 595px;
+  /* Dimensions A4 Portrait: 594px × 1123px */
+  width: 594px;
   height: 1123px;
   /* Zoom géré par transform */
   transition: transform 0.2s ease;

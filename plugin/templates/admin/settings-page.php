@@ -57,17 +57,17 @@ class TempConfig {
             'canvas_handle_color' => '#007cba',
             'canvas_handle_hover_color' => '#005a87',
             // Paramètres Canvas - nouveaux (Général)
-            'default_canvas_width' => 210,
-            'default_canvas_height' => 297,
-            'default_canvas_unit' => 'mm',
+            'default_canvas_width' => 594,
+            'default_canvas_height' => 1123,
+            'default_canvas_unit' => 'px',
             'canvas_background_color' => '#ffffff',
             'canvas_show_transparency' => false,
             'container_background_color' => '#f8f9fa',
             'container_show_transparency' => false,
             'show_margins' => true,
-            'margin_top' => 10,
-            'margin_right' => 10,
-            'margin_bottom' => 10,
+            'margin_top' => 28,
+            'margin_right' => 28,
+            'margin_bottom' => 28,
             'margin_left' => 10,
             // Paramètres Canvas - Grille & Aimants
             'show_grid' => true,
@@ -196,18 +196,18 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
             'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
             // Paramètres Canvas - nouveaux sous-onglets
-            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 210,
-            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 297,
-            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'mm',
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 594,
+            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 1123,
+            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'px',
             'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
             'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
             'container_background_color' => isset($_POST['container_background_color']) ? sanitize_text_field($_POST['container_background_color']) : '#f8f9fa',
             'container_show_transparency' => isset($_POST['container_show_transparency']),
             'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 10,
-            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 10,
-            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 10,
-            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 10,
+            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 28,
+            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 28,
+            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 28,
+            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 28,
             'show_grid' => isset($_POST['show_grid']),
             'grid_size' => isset($_POST['grid_size']) ? intval($_POST['grid_size']) : 10,
             'grid_color' => isset($_POST['grid_color']) ? sanitize_text_field($_POST['grid_color']) : '#e0e0e0',
@@ -1190,11 +1190,11 @@ window.addEventListener('load', function() {
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <div>
                                         <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr($config->get('default_canvas_width', 210)); ?>" class="small-text" min="50" max="1000"> mm
+                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr($config->get('default_canvas_width', 594)); ?>" class="small-text" min="50" max="2000"> px
                                     </div>
                                     <div>
                                         <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr($config->get('default_canvas_height', 297)); ?>" class="small-text" min="50" max="1000"> mm
+                                        <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr($config->get('default_canvas_height', 1123)); ?>" class="small-text" min="50" max="2000"> px
                                     </div>
                                     <div>
                                         <label for="default_canvas_unit"><?php _e('Unité:', 'pdf-builder-pro'); ?></label>
@@ -1291,8 +1291,8 @@ window.addEventListener('load', function() {
                     <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
                         <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
                         <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
-                            <li><?php _e('Les dimensions A4 (210x297mm) sont recommandées pour la plupart des documents', 'pdf-builder-pro'); ?></li>
-                            <li><?php _e('L\'unité "mm" est idéale pour l\'impression professionnelle', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Les dimensions A4 (594x1123px) sont standard pour les documents de format portrait', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('L\'unité "px" (pixels) est utilisée pour le rendu canvas', 'pdf-builder-pro'); ?></li>
                             <li><?php _e('Activez l\'affichage des marges pour un meilleur contrôle de la mise en page', 'pdf-builder-pro'); ?></li>
                             <li><?php _e('Le motif de damier facilite la visualisation des zones transparentes', 'pdf-builder-pro'); ?></li>
                         </ul>

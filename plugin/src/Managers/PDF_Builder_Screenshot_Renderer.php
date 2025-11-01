@@ -88,8 +88,8 @@ class PDF_Builder_Screenshot_Renderer
             background: white;
         }
         .pdf-canvas {
-            width: 210mm;
-            min-height: 297mm;
+            width: 594px;
+            min-height: 1123px;
             background: white;
             margin: 0 auto;
             padding: 20px;

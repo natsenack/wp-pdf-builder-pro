@@ -12,31 +12,21 @@ import {
 } from '../../types/elements';
 import { useSaveState } from '../../hooks/useSaveState';
 
-// Conversions d'unités
-const MM_TO_PX = 595 / 210; // A4: 595px = 210mm
-const PX_TO_MM = 210 / 595;
-
-// Fonction helper pour convertir MM en PX
-const mmToPx = (mm: number): number => Math.round(mm * MM_TO_PX);
-
-// Fonction helper pour convertir PX en MM
-const pxToMm = (px: number): number => Math.round(px * PX_TO_MM);
-
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
-  const canvasWidth = 210;  // Largeur A4 Portrait en MM
-  const canvasHeight = 297; // Hauteur A4 Portrait en MM
+  const canvasWidth = 594;  // Largeur A4 Portrait en PX
+  const canvasHeight = 1123; // Hauteur A4 Portrait en PX
 
   return elements.map(element => {
     let newX = element.x;
     let newY = element.y;
 
-    // Clamp X position (laisser au moins 5mm visible)
+    // Clamp X position (laisser au moins 5px visible)
     const minVisibleWidth = Math.min(15, element.width * 0.3);
     if (newX < 0) newX = 0;
     if (newX + minVisibleWidth > canvasWidth) newX = Math.max(0, canvasWidth - minVisibleWidth);
 
-    // Clamp Y position (laisser au moins 5mm visible)
+    // Clamp Y position (laisser au moins 5px visible)
     const minVisibleHeight = Math.min(10, element.height * 0.3);
     if (newY < 0) newY = 0;
     if (newY + minVisibleHeight > canvasHeight) newY = Math.max(0, canvasHeight - minVisibleHeight);
@@ -46,29 +36,6 @@ const clampElementPositions = (elements: Element[]): Element[] => {
     }
 
     return element;
-  });
-};
-
-// Fonction helper pour convertir tous les éléments de PX à MM
-const convertElementsToMM = (elements: Element[]): Element[] => {
-  return elements.map(element => {
-    const converted: any = { ...element };
-    
-    // Convertir les positions et dimensions
-    converted.x = pxToMm(element.x);
-    converted.y = pxToMm(element.y);
-    converted.width = pxToMm(element.width);
-    converted.height = pxToMm(element.height);
-    
-    // Convertir les propriétés de position si elles existent
-    if (converted.borderWidth && typeof converted.borderWidth === 'number') {
-      converted.borderWidth = Math.max(0.1, pxToMm(converted.borderWidth));
-    }
-    
-    // Marquer comme converti pour éviter les doubles conversions
-    converted._unitConverted = true;
-    
-    return converted;
   });
 };
 
@@ -213,10 +180,10 @@ const initialState: BuilderState = {
     isSaving: false,
     description: '',
     tags: [],
-    canvasWidth: 210,  // A4 width in MM (210mm = 595px)
-    canvasHeight: 297, // A4 height in MM (297mm = 1123px)
-    marginTop: 10,     // 10mm = ~28px
-    marginBottom: 10,  // 10mm = ~28px
+    canvasWidth: 594,  // A4 width in PX
+    canvasHeight: 1123, // A4 height in PX
+    marginTop: 28,     // ~10mm in PX
+    marginBottom: 28,  // ~10mm in PX
     showGuides: true,
     snapToGrid: false
   },
@@ -419,21 +386,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       const rawElements = (action.payload as any).elements || [];
       const repairedElements = repairProductTableProperties(rawElements);
       
-      // Convertir les éléments de PX à MM si pas déjà convertis
-      const convertedElements = repairedElements.map((el: any) => 
-        el._unitConverted ? el : {
-          ...el,
-          x: pxToMm(el.x),
-          y: pxToMm(el.y),
-          width: pxToMm(el.width),
-          height: pxToMm(el.height),
-          _unitConverted: true
-        }
-      );
+      // Ne pas convertir, garder les PX directement
+      const clampedElements = clampElementPositions(repairedElements);
       
-      const clampedElements = clampElementPositions(convertedElements);
-      
-      // Convertir aussi les dimensions du canvas si présentes
+      // Garder les dimensions du canvas si présentes
       const canvasData = (action.payload as any).canvas ? { 
         ...state.canvas, 
         ...(action.payload as any).canvas 
@@ -850,4 +806,4 @@ export function useCanvas() {
 }
 
 export { BuilderContext };
-export { mmToPx, pxToMm, MM_TO_PX, PX_TO_MM };
+// Pas d'export de conversion MM/PX - on utilise que PX

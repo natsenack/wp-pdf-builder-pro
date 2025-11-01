@@ -1226,9 +1226,9 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $canvas_settings = get_option('pdf_builder_settings', []);
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderCanvasSettings', [
             // Paramètres généraux du canvas
-            'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 210,
-            'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 297,
-            'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'mm',
+            'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 594,
+            'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 1123,
+            'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'px',
             'default_orientation' => $canvas_settings['default_orientation'] ?? 'portrait',
             'canvas_background_color' => $canvas_settings['canvas_background_color'] ?? '#ffffff',
             'canvas_show_transparency' => $canvas_settings['canvas_show_transparency'] ?? false,
@@ -1236,8 +1236,8 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             'container_show_transparency' => $canvas_settings['container_show_transparency'] ?? false,
 
             // Marges de sécurité
-            'margin_top' => $canvas_settings['margin_top'] ?? 10,
-            'margin_right' => $canvas_settings['margin_right'] ?? 10,
+            'margin_top' => $canvas_settings['margin_top'] ?? 28,
+            'margin_right' => $canvas_settings['margin_right'] ?? 28,
             'margin_bottom' => $canvas_settings['margin_bottom'] ?? 10,
             'margin_left' => $canvas_settings['margin_left'] ?? 10,
             'show_margins' => $canvas_settings['show_margins'] ?? true,
@@ -3636,16 +3636,16 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
             'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
             // Paramètres Canvas - nouveaux sous-onglets
-            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 210,
-            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 297,
-            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'mm',
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 594,
+            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 1123,
+            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'px',
             'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
             'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
             'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 10,
-            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 10,
-            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 10,
-            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 10,
+            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 28,
+            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 28,
+            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 28,
+            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 28,
             'container_background_color' => isset($_POST['container_background_color']) ? sanitize_text_field($_POST['container_background_color']) : '#f8f9fa',
             'container_show_transparency' => isset($_POST['container_show_transparency']),
             'show_grid' => isset($_POST['show_grid']),
