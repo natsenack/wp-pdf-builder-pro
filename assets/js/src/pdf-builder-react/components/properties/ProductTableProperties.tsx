@@ -1232,7 +1232,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position X <span style={{ color: '#666', fontSize: '10px' }}>({element.x}px)</span>
+              Position X <span style={{ color: '#666', fontSize: '10px' }}>({((element.x) * 1).toFixed(1)}px)</span>
             </label>
             <input
               type="number"
@@ -1253,7 +1253,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position Y <span style={{ color: '#666', fontSize: '10px' }}>({element.y}px)</span>
+              Position Y <span style={{ color: '#666', fontSize: '10px' }}>({((element.y) * 1).toFixed(1)}px)</span>
             </label>
             <input
               type="number"
@@ -1274,7 +1274,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Largeur <span style={{ color: '#666', fontSize: '10px' }}>({element.width}px)</span>
+              Largeur <span style={{ color: '#666', fontSize: '10px' }}>({((element.width) * 1).toFixed(1)}px)</span>
             </label>
             <input
               type="number"
@@ -1295,7 +1295,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({element.height}px)</span>
+              Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({((element.height) * 1).toFixed(1)}px)</span>
             </label>
             <input
               type="number"

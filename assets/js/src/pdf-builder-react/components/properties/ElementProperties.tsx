@@ -12,7 +12,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
       {/* Propriétés communes à tous les éléments */}
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Largeur <span style={{ color: '#666', fontSize: '10px' }}>({element.width || 100}px)</span>
+          Largeur <span style={{ color: '#666', fontSize: '10px' }}>({((element.width || 100) * 1).toFixed(1)}px)</span>
         </label>
         <input
           type="number"
@@ -34,7 +34,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({element.height || 50}px)</span>
+          Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({((element.height || 50) * 1).toFixed(1)}px)</span>
         </label>
         <input
           type="number"
@@ -56,7 +56,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position X <span style={{ color: '#666', fontSize: '10px' }}>({element.x || 0}px)</span>
+          Position X <span style={{ color: '#666', fontSize: '10px' }}>({((element.x || 0) * 1).toFixed(1)}px)</span>
         </label>
         <input
           type="number"
@@ -78,7 +78,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
 
       <div style={{ marginBottom: '12px' }}>
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position Y <span style={{ color: '#666', fontSize: '10px' }}>({element.y || 0}px)</span>
+          Position Y <span style={{ color: '#666', fontSize: '10px' }}>({((element.y || 0) * 1).toFixed(1)}px)</span>
         </label>
         <input
           type="number"

@@ -1427,7 +1427,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
 
-        const dimensionText = `${width}×${height}px`;
+        const dimensionText = `${(width * 1).toFixed(1)}×${(height * 1).toFixed(1)}px`;
         const padding = 4;
         const textWidth = ctx.measureText(dimensionText).width;
         
