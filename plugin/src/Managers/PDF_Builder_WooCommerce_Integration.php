@@ -1579,11 +1579,24 @@ class PDF_Builder_WooCommerce_Integration
             }
         }
 
-        // Vérifier le statut de la commande (éviter les commandes en cours de traitement)
-        $valid_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+        // Vérifier le statut de la commande - gérer les statuts avec/sans préfixe wc-
         $current_status = $order->get_status();
 
-        if (!in_array($current_status, $valid_statuses)) {
+        // Normaliser les statuts pour la comparaison
+        $normalized_current = $current_status;
+        if (strpos($current_status, 'wc-') !== 0) {
+            // Si pas de préfixe, l'ajouter
+            $normalized_current = 'wc-' . $current_status;
+        }
+
+        $valid_statuses = array_keys(wc_get_order_statuses());
+
+        // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
+        $status_templates = get_option('pdf_builder_order_status_templates', []);
+        $configured_statuses = array_keys($status_templates);
+        $valid_statuses = array_merge($valid_statuses, $configured_statuses);
+
+        if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
             return new WP_Error('invalid_order_status', 'Statut de commande non valide pour le traitement');
         }
 
