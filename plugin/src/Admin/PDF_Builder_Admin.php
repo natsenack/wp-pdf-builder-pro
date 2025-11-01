@@ -200,7 +200,12 @@ class PDF_Builder_Admin {
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
-        add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajax_auto_save_template_wrapper']);
+        
+        // Auto-save handler AJAX - enregistré directement pour éviter les problèmes de namespace
+        add_action('wp_ajax_pdf_builder_auto_save_template', function() {
+            $this->ajax_auto_save_template_wrapper();
+        });
+        
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
         
