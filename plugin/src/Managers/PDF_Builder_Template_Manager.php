@@ -244,10 +244,13 @@ class PDF_Builder_Template_Manager
                 wp_send_json_error('Permissions insuffisantes');
             }
 
-            // Vérification du nonce
+            // Vérification du nonce (accepter les nonces des contextes autorisés)
             $nonce_valid = false;
             if (isset($_POST['nonce'])) {
-                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions');
+                // Vérifier contre les contextes possibles
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
+                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
+                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
             }
 
             if (!$nonce_valid) {
