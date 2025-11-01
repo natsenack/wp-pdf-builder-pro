@@ -318,6 +318,21 @@ class PDF_Builder_WooCommerce_Integration
         function generatePreviewHTML(previewData, orderId, templateId) {
             console.log('generatePreviewHTML called with:', { previewData, orderId, templateId });
             
+            // Fonction pour remplacer les variables dans le contenu
+            function replaceVariables(content) {
+                return content
+                    .replace(/\[billing_city\]/g, 'Paris')
+                    .replace(/\[billing_postcode\]/g, '75001')
+                    .replace(/\[billing_email\]/g, 'client@example.com')
+                    .replace(/\[order_number\]/g, 'CMD-' + orderId)
+                    .replace(/\[order_total\]/g, '1250.00')
+                    .replace(/\[order_date\]/g, new Date().toLocaleDateString('fr-FR'))
+                    .replace(/\[order_items_table\]/g, `
+                        <tr><td>Produit 1</td><td>2</td><td>25.00 €</td><td>50.00 €</td></tr>
+                        <tr><td>Produit 2</td><td>1</td><td>1200.00 €</td><td>1200.00 €</td></tr>
+                    `);
+            }
+            
             var html = `<!DOCTYPE html>
             <html>
             <head>
@@ -356,7 +371,7 @@ class PDF_Builder_WooCommerce_Integration
                         style += element.styles;
                     }
                     
-                    var content = element.content || '';
+                    var content = replaceVariables(element.content || '');
                     if (element.type === 'text') {
                         html += '<div class="template-element" style="' + style + '">' + content + '</div>';
                     } else {
