@@ -61,9 +61,7 @@ function pdf_builder_deactivate() {
 
 // Charger le plugin de manière standard
 add_action('plugins_loaded', 'pdf_builder_init');
-
-// Charger les traductions
-add_action('init', 'pdf_builder_load_textdomain');
+add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
 
 /**
  * Charger le domaine de traduction
