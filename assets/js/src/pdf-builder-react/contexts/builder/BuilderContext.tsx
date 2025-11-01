@@ -24,20 +24,20 @@ const pxToMm = (px: number): number => Math.round(px * PX_TO_MM);
 
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
-  const canvasWidth = 794; // Largeur A4 en pixels
-  const canvasHeight = 1123; // Hauteur A4 en pixels
+  const canvasWidth = 210;  // Largeur A4 en MM
+  const canvasHeight = 297; // Hauteur A4 en MM
 
   return elements.map(element => {
     let newX = element.x;
     let newY = element.y;
 
-    // Clamp X position (laisser au moins 20px visible)
-    const minVisibleWidth = Math.min(50, element.width * 0.3);
+    // Clamp X position (laisser au moins 5mm visible)
+    const minVisibleWidth = Math.min(15, element.width * 0.3);
     if (newX < 0) newX = 0;
     if (newX + minVisibleWidth > canvasWidth) newX = Math.max(0, canvasWidth - minVisibleWidth);
 
-    // Clamp Y position (laisser au moins 20px visible)
-    const minVisibleHeight = Math.min(30, element.height * 0.3);
+    // Clamp Y position (laisser au moins 5mm visible)
+    const minVisibleHeight = Math.min(10, element.height * 0.3);
     if (newY < 0) newY = 0;
     if (newY + minVisibleHeight > canvasHeight) newY = Math.max(0, canvasHeight - minVisibleHeight);
 
