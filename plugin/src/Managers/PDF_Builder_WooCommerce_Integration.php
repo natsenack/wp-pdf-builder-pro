@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
  * Gestion de l'intégration WooCommerce
  */
 
+use PDF_Builder\Controllers\PDF_Builder_Pro_Generator;
+
 class PDF_Builder_WooCommerce_Integration
 {
     /**
@@ -528,6 +530,14 @@ class PDF_Builder_WooCommerce_Integration
             $order = wc_get_order($order_id);
             if (!$order) {
                 wp_send_json_error('Commande introuvable');
+                return;
+            }
+
+            // Validation du statut de commande - accepter tous les statuts WooCommerce valides
+            $valid_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+            $current_status = $order->get_status();
+            if (!in_array($current_status, $valid_statuses)) {
+                wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
             }
 
