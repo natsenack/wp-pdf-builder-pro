@@ -316,6 +316,8 @@ class PDF_Builder_WooCommerce_Integration
 
         // Génère le HTML de prévisualisation
         function generatePreviewHTML(previewData, orderId, templateId) {
+            console.log('generatePreviewHTML called with:', { previewData, orderId, templateId });
+            
             var html = `<!DOCTYPE html>
             <html>
             <head>
@@ -338,7 +340,9 @@ class PDF_Builder_WooCommerce_Integration
 
             // Render template elements
             if (previewData.template_data && Array.isArray(previewData.template_data)) {
-                previewData.template_data.forEach(function(element) {
+                console.log('Rendering', previewData.template_data.length, 'template elements');
+                previewData.template_data.forEach(function(element, index) {
+                    console.log('Rendering element', index, element);
                     var style = 'position: absolute; ';
                     if (element.position) {
                         style += 'top: ' + (element.position.top || 0) + 'px; ';
@@ -360,6 +364,9 @@ class PDF_Builder_WooCommerce_Integration
                         html += '<div class="template-element" style="' + style + '">' + content + '</div>';
                     }
                 });
+            } else {
+                console.log('No template_data or not an array:', previewData.template_data);
+                html += '<div style="padding: 20px; color: red;">Aucune donnée de template trouvée</div>';
             }
 
             html += `
@@ -371,6 +378,7 @@ class PDF_Builder_WooCommerce_Integration
             </body>
             </html>`;
             
+            console.log('Generated HTML length:', html.length);
             return html;
         }
 
