@@ -131,8 +131,8 @@ class PDF_Builder_Admin {
         $this->core = $core;
         
         // Initialiser l'intégration WooCommerce si disponible
-        if (class_exists('PDF_Builder_WooCommerce_Integration')) {
-            $this->woocommerce_integration = new PDF_Builder_WooCommerce_Integration();
+        if (class_exists('\PDF_Builder_WooCommerce_Integration')) {
+            $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->core);
         }
         
         $this->initHooks();
