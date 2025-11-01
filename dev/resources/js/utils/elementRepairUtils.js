@@ -7,19 +7,32 @@
  */
 export const repairProductTableProperties = (elements) => {
   const defaultProperties = {
-    tableStyle: 'default',
-    columns: 'name,price,quantity',
+    // Fonctionnalités de base
     showHeaders: true,
     showBorders: true,
-    showSubtotal: true,
-    showShipping: true,
-    showTaxes: true,
-    showDiscount: false,
-    showTotal: true,
-    evenRowBg: '#ffffff',
-    evenRowTextColor: '#000000',
-    oddRowBg: '#f8fafc',
-    oddRowTextColor: '#000000'
+    showAlternatingRows: true,
+    showSku: true,
+    showDescription: true,
+    showQuantity: true,
+    
+    // Style et apparence
+    fontSize: 11,
+    currency: '€',
+    tableStyle: 'default',
+    
+    // Couleurs
+    backgroundColor: '#ffffff',
+    headerBackgroundColor: '#f9fafb',
+    headerTextColor: '#111827',
+    alternateRowColor: '#f9fafb',
+    borderColor: '#e5e7eb',
+    textColor: '#374151',
+    
+    // Positionnement
+    x: 0,
+    y: 0,
+    width: 500,
+    height: 200
   };
 
   return elements.map(element => {
@@ -34,22 +47,34 @@ export const repairProductTableProperties = (elements) => {
       }
     });
 
-    // Corriger les propriétés invalides
-    if (repairedElement.columns && typeof repairedElement.columns !== 'string') {
-      repairedElement.columns = defaultProperties.columns;
-    }
+    // Validation des booléens
+    const booleanProps = ['showHeaders', 'showBorders', 'showAlternatingRows', 'showSku', 'showDescription', 'showQuantity'];
+    booleanProps.forEach(prop => {
+      if (typeof repairedElement[prop] !== 'boolean') {
+        repairedElement[prop] = defaultProperties[prop];
+      }
+    });
 
-    if (repairedElement.tableStyle && typeof repairedElement.tableStyle !== 'string') {
-      repairedElement.tableStyle = defaultProperties.tableStyle;
-    }
+    // Validation des nombres
+    const numberProps = ['fontSize', 'x', 'y', 'width', 'height'];
+    numberProps.forEach(prop => {
+      if (typeof repairedElement[prop] !== 'number') {
+        repairedElement[prop] = defaultProperties[prop];
+      }
+    });
 
-    // Validation des couleurs
-    const colorProperties = ['evenRowBg', 'evenRowTextColor', 'oddRowBg', 'oddRowTextColor'];
+    // Validation des couleurs (format hexadécimal)
+    const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor'];
     colorProperties.forEach(prop => {
       if (repairedElement[prop] && !/^#[0-9A-Fa-f]{6}$/.test(repairedElement[prop])) {
         repairedElement[prop] = defaultProperties[prop];
       }
     });
+
+    // Validation de la devise
+    if (!repairedElement.currency || typeof repairedElement.currency !== 'string') {
+      repairedElement.currency = defaultProperties.currency;
+    }
 
     return repairedElement;
   });

@@ -39,6 +39,76 @@ const clampElementPositions = (elements: Element[]): Element[] => {
   });
 };
 
+// Fonction helper pour réparer les propriétés des éléments product_table
+const repairProductTableProperties = (elements: Element[]): Element[] => {
+  const defaultProperties = {
+    // Fonctionnalités de base
+    showHeaders: true,
+    showBorders: true,
+    showAlternatingRows: true,
+    showSku: true,
+    showDescription: true,
+    showQuantity: true,
+    
+    // Style et apparence
+    fontSize: 11,
+    currency: '€',
+    tableStyle: 'default',
+    
+    // Couleurs
+    backgroundColor: '#ffffff',
+    headerBackgroundColor: '#f9fafb',
+    headerTextColor: '#111827',
+    alternateRowColor: '#f9fafb',
+    borderColor: '#e5e7eb',
+    textColor: '#374151'
+  };
+
+  return elements.map(element => {
+    if (element.type !== 'product_table') return element;
+
+    const repairedElement: any = { ...element };
+
+    // Ajouter les propriétés manquantes
+    Object.keys(defaultProperties).forEach(prop => {
+      if (!(prop in repairedElement)) {
+        repairedElement[prop] = (defaultProperties as any)[prop];
+      }
+    });
+
+    // Validation des booléens
+    const booleanProps = ['showHeaders', 'showBorders', 'showAlternatingRows', 'showSku', 'showDescription', 'showQuantity'];
+    booleanProps.forEach(prop => {
+      if (typeof repairedElement[prop] !== 'boolean') {
+        repairedElement[prop] = (defaultProperties as any)[prop];
+      }
+    });
+
+    // Validation des nombres
+    const numberProps = ['fontSize'];
+    numberProps.forEach(prop => {
+      if (typeof repairedElement[prop] !== 'number') {
+        repairedElement[prop] = (defaultProperties as any)[prop];
+      }
+    });
+
+    // Validation des couleurs (format hexadécimal)
+    const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor', 'headerTextColor', 'textColor'];
+    colorProperties.forEach(prop => {
+      if (repairedElement[prop] && !/^#[0-9A-Fa-f]{6}$/.test(repairedElement[prop])) {
+        repairedElement[prop] = (defaultProperties as any)[prop];
+      }
+    });
+
+    // Validation de la devise
+    if (!repairedElement.currency || typeof repairedElement.currency !== 'string') {
+      repairedElement.currency = defaultProperties.currency;
+    }
+
+    return repairedElement;
+  });
+};
+
 // État initial
 const initialCanvasState: CanvasState = {
   zoom: 1,
@@ -298,7 +368,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE':
-      const clampedElements = clampElementPositions((action.payload as any).elements || []);
+      const rawElements = (action.payload as any).elements || [];
+      const repairedElements = repairProductTableProperties(rawElements);
+      const clampedElements = clampElementPositions(repairedElements);
       return {
         ...state,
         elements: clampedElements,
