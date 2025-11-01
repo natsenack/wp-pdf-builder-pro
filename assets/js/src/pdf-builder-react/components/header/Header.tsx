@@ -795,7 +795,10 @@ export const Header = memo(function Header({
               border: '1px solid #ddd',
               marginBottom: '16px'
             }}>
-              {JSON.stringify(state.template || {}, null, 2)}
+              {JSON.stringify({ 
+                ...state.template, 
+                elements: state.elements 
+              }, null, 2)}
             </div>
 
             {/* Footer with Buttons */}
@@ -807,7 +810,10 @@ export const Header = memo(function Header({
             }}>
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify(state.template || {}, null, 2));
+                  navigator.clipboard.writeText(JSON.stringify({ 
+                    ...state.template, 
+                    elements: state.elements 
+                  }, null, 2));
                   setCopySuccess(true);
                   setTimeout(() => setCopySuccess(false), 2000);
                 }}
@@ -829,7 +835,10 @@ export const Header = memo(function Header({
               </button>
               <button
                 onClick={() => {
-                  const jsonString = JSON.stringify(state.template || {}, null, 2);
+                  const jsonString = JSON.stringify({ 
+                    ...state.template, 
+                    elements: state.elements 
+                  }, null, 2);
                   const blob = new Blob([jsonString], { type: 'application/json' });
                   const url = URL.createObjectURL(blob);
                   const link = document.createElement('a');
