@@ -44,6 +44,8 @@ export const Header = memo(function Header({
   const { state, dispatch } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
@@ -270,7 +272,11 @@ export const Header = memo(function Header({
         </button>
 
         <button
-          onClick={onPreview}
+          onClick={() => {
+            // Ouvrir la modale JSON et aussi l'aperçu du preview
+            setShowJsonModal(true);
+            onPreview();
+          }}
           onMouseEnter={() => setHoveredButton('preview')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
@@ -278,7 +284,7 @@ export const Header = memo(function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Aperçu du template"
+          title="Aperçu du template (JSON brut)"
         >
           <span>👁️</span>
           <span>Aperçu</span>
@@ -715,6 +721,154 @@ export const Header = memo(function Header({
                   Sauvegarder
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale JSON brut du template */}
+      {showJsonModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1001
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '90vw',
+            width: '100%',
+            maxHeight: '85vh',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)'
+          }}>
+            {/* Header */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px',
+              borderBottom: '1px solid #e0e0e0',
+              paddingBottom: '12px'
+            }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#1a1a1a' }}>
+                📋 JSON Brut du Template (ID: {templateName || 'N/A'})
+              </h3>
+              <button
+                onClick={() => setShowJsonModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666',
+                  padding: '4px'
+                }}
+                title="Fermer"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* JSON Content */}
+            <div style={{
+              flex: 1,
+              overflow: 'auto',
+              backgroundColor: '#f5f5f5',
+              borderRadius: '6px',
+              padding: '16px',
+              fontFamily: "'Courier New', monospace",
+              fontSize: '12px',
+              lineHeight: '1.5',
+              color: '#333',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              border: '1px solid #ddd',
+              marginBottom: '16px'
+            }}>
+              {JSON.stringify(state.template || {}, null, 2)}
+            </div>
+
+            {/* Footer with Buttons */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end',
+              alignItems: 'center'
+            }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(state.template || {}, null, 2));
+                  setCopySuccess(true);
+                  setTimeout(() => setCopySuccess(false), 2000);
+                }}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#0073aa',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease',
+                  opacity: copySuccess ? 0.7 : 1
+                }}
+                title="Copier le JSON"
+              >
+                {copySuccess ? '✅ Copié!' : '📋 Copier JSON'}
+              </button>
+              <button
+                onClick={() => {
+                  const jsonString = JSON.stringify(state.template || {}, null, 2);
+                  const blob = new Blob([jsonString], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `template-${templateName || 'export'}-${new Date().getTime()}.json`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                }}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#10a37f',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease'
+                }}
+                title="Télécharger le JSON"
+              >
+                💾 Télécharger
+              </button>
+              <button
+                onClick={() => setShowJsonModal(false)}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  backgroundColor: '#f8f8f8',
+                  color: '#333',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Fermer
+              </button>
             </div>
           </div>
         </div>
