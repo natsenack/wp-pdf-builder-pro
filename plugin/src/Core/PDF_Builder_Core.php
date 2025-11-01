@@ -53,69 +53,15 @@ class PDF_Builder_Core
      */
     public function init()
     {
-        $this->initHooks();
+        // Enregistrer le menu admin au hook admin_menu (pas pendant plugins_loaded)
+        // Cela évite que les traductions soient appelées trop tôt
+        add_action('admin_menu', [$this, 'register_admin_menu']);
     }
 
     /**
-     * Charger les dépendances nécessaires
+     * Enregistrer le menu admin - appelé uniquement sur admin_menu
      */
-    private function loadDependencies()
-    {
-        // Charger les managers essentiels
-        $managers = array(
-            'PDF_Builder_Cache_Manager.php',
-            'PDF_Builder_Canvas_Elements_Manager.php',
-            'PDF_Builder_Canvas_Interactions_Manager.php',
-            'PDF_Builder_Drag_Drop_Manager.php',
-            'PDF_Builder_Feature_Manager.php',
-            'PDF_Builder_License_Manager.php',
-            'PDF_Builder_Logger.php',
-            'PDF_Builder_PDF_Generator.php',
-            'PDF_Builder_Resize_Manager.php',
-            'PDF_Builder_Settings_Manager.php',
-            'PDF_Builder_Status_Manager.php',
-            'PDF_Builder_Template_Manager.php',
-            'PDF_Builder_Variable_Mapper.php',
-            'PDF_Builder_WooCommerce_Integration.php'
-        );
-
-        foreach ($managers as $manager) {
-            $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
-            if (file_exists($manager_path)) {
-                require_once $manager_path;
-            }
-        }
-
-        // Charger les classes Core essentielles
-        $core_classes = array(
-            'PDF_Builder_Security_Validator.php'
-        );
-
-        foreach ($core_classes as $core_class) {
-            $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
-            if (file_exists($core_path)) {
-                require_once $core_path;
-            }
-        }
-
-        // Charger la classe d'administration
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
-        }
-
-        // Charger le contrôleur PDF
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-        }
-
-        // Charger le handler AJAX d'image de prévisualisation
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-        }
-    }
-
-        // Test pages removed
-    private function initHooks()
+    public function register_admin_menu()
     {
         if (self::$menu_added) {
             return;
@@ -141,16 +87,6 @@ class PDF_Builder_Core
                 'pdf-builder-templates',
                 array($this, 'templates_page')
             );
-
-            // Template Editor page is now handled by PDF_Builder_Admin class
-            // add_submenu_page(
-            //     null, // Hidden page
-            //     __('Template Editor', 'pdf-builder-pro'),
-            //     __('Template Editor', 'pdf-builder-pro'),
-            //     'manage_options',
-            //     'pdf-builder-editor',
-            //     array($this, 'template_editor_page')
-            // );
 
             add_submenu_page(
                 'pdf-builder-pro',
