@@ -3134,7 +3134,9 @@ echo '<style>
                     nonce: pdfBuilderMaintenanceNonce
                 },
                 success: function(response) {
-                    console.log('AJAX SUCCESS - Response:', response);
+                    console.log('AJAX SUCCESS - Full Response:', response);
+                    console.log('AJAX SUCCESS - Debug enabled from server:', response.data.debug_enabled);
+                    console.log('AJAX SUCCESS - Debug logs from server:', response.data.debug_logs);
                     if (response.success) {
                         console.log('AJAX SUCCESS - Setting button to:', newState ? 'Désactiver Debug' : 'Activer Debug');
                         $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');

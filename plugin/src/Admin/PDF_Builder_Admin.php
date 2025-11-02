@@ -4439,7 +4439,10 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         
         // Vérifier que c'est bien sauvegardé
         $saved_value = get_option('pdf_builder_debug_mode', false);
-        error_log('AJAX TOGGLE DEBUG - Saved value: ' . ($saved_value ? 'true' : 'false'));
+        error_log('AJAX TOGGLE DEBUG - After save, get_option returns: ' . ($saved_value ? 'true' : 'false'));
+        
+        // Forcer un refresh du cache des options si nécessaire
+        wp_cache_flush();
 
         // Retourner le succès
         wp_send_json_success([
