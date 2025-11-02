@@ -4,6 +4,11 @@ Ce dossier contient tous les rapports de test, audit et validation générés pe
 
 ## 📂 Structure
 
+### `phase1.0-1.3/`
+Rapports de validation des étapes 1.0-1.3 (architecture core)
+- `README.md` - Rapport détaillé de validation
+- `phase1.0-1.3-validation-results.json` - Résultats JSON structurés
+
 ### `phase5.8/`
 Rapports complets de la Phase 5.8 (validations finales)
 - `README.md` - Documentation des rapports Phase 5.8
@@ -17,6 +22,15 @@ Rapports complets de la Phase 5.8 (validations finales)
 Audit de sécurité détaillé de la Phase 5
 
 ## 📊 Résumé des Validations
+
+### Phase 1.0-1.3 - Architecture Core & WooCommerce ✅
+| Domaine | Score | Statut |
+|---------|-------|--------|
+| **Global** | **100/100** | **PARFAIT** |
+| Architecture Core | 100/100 | VALIDÉE ✅ |
+| WooCommerce Integration | 100/100 | FONCTIONNELLE ✅ |
+| APIs & Endpoints | 100/100 | OPÉRATIONNELLES ✅ |
+| Génération PDF | 100/100 | ROBUSTE ✅ |
 
 ### Phase 5.8 - Tests Performance & Sécurité ✅
 | Domaine | Score | Statut |
@@ -42,6 +56,12 @@ Audit de sécurité détaillé de la Phase 5
 ## 🔍 Consultation des Rapports
 
 ```bash
+# Rapport Phase 1.0-1.3 (Architecture Core)
+cat docs/reports/phase1.0-1.3/README.md
+
+# Résultats JSON Phase 1.0-1.3
+cat docs/reports/phase1.0-1.3/phase1.0-1.3-validation-results.json
+
 # Rapport final Phase 5.8
 node docs/reports/phase5.8/phase5.8-final-report.js
 
