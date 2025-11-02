@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
-import { flushSync } from 'react-dom';
 
 /**
  * Hook pour gérer la sauvegarde automatique avec retry logic
@@ -83,10 +82,8 @@ export function useSaveState({
       }
 
       try {
-        // Utiliser flushSync pour des updates synchrones
-        flushSync(() => {
-          setState('saving');
-        });
+        // Set saving state
+        setState('saving');
         onSaveStart?.();
 
         // Nettoyage des éléments pour JSON - version plus permissive
@@ -152,13 +149,11 @@ export function useSaveState({
         // Succès
         const savedAt = data.data?.saved_at || new Date().toISOString();
 
-        // Utiliser flushSync pour des updates synchrones qui ne conflict pas avec React
-        flushSync(() => {
-          setLastSavedAt(savedAt);
-          setState('saved');
-          setError(null);
-          setRetryCount(0);
-        });
+        // Update state
+        setLastSavedAt(savedAt);
+        setState('saved');
+        setError(null);
+        setRetryCount(0);
 
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
@@ -199,10 +194,8 @@ export function useSaveState({
         }
 
         // Échec définitif après tous les retries
-        flushSync(() => {
-          setState('error');
-          setError(errorMsg);
-        });
+        setState('error');
+        setError(errorMsg);
         onSaveError?.(errorMsg);
         console.error(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
@@ -231,10 +224,8 @@ export function useSaveState({
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
-    flushSync(() => {
-      setError(null);
-      setState('idle');
-    });
+    setError(null);
+    setState('idle');
   }, []);
 
   /**
