@@ -4920,18 +4920,43 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         // Debug: Log the script URL
         error_log('[REACT] Script URL: ' . $react_script_url);
 
-        // Add script error detection
+        // Add script error detection and React dependency check
         wp_add_inline_script('pdf-builder-react', '
+            // Check React dependencies first
+            console.log("🔍 Checking React dependencies...");
+            console.log("📦 React available:", typeof window.React);
+            console.log("📦 ReactDOM available:", typeof window.ReactDOM);
+
             // Detect script loading errors
             window.addEventListener("error", function(e) {
                 if (e.target && e.target.tagName === "SCRIPT" && e.target.src && e.target.src.includes("pdf-builder-react.js")) {
-                    console.error("❌ Failed to load pdf-builder-react.js script:", e.target.src);
+                    console.error("❌ Failed to load pdf-builder-react.js script:", e.target.src, e);
                     var loadingDiv = document.getElementById("pdf-builder-react-loading");
                     if (loadingDiv) {
-                        loadingDiv.innerHTML = "<p>❌ Erreur de chargement du script React: " + e.target.src + "</p><p>Vérifiez les permissions et l\'URL.</p>";
+                        loadingDiv.innerHTML = "<p>❌ Erreur de chargement du script React: " + e.target.src + "</p><p>Détails: " + e.message + "</p>";
                     }
                 }
             });
+
+            // Listen for script load events
+            var reactScript = document.querySelector("script[src*=\"pdf-builder-react.js\"]");
+            if (reactScript) {
+                reactScript.addEventListener("load", function() {
+                    console.log("✅ pdf-builder-react.js script loaded event fired");
+                    setTimeout(function() {
+                        console.log("🔍 Checking window.pdfBuilderReact after script load event:", typeof window.pdfBuilderReact);
+                        if (window.pdfBuilderReact) {
+                            console.log("✅ pdfBuilderReact object found:", window.pdfBuilderReact);
+                        } else {
+                            console.error("❌ pdfBuilderReact still undefined after script load");
+                        }
+                    }, 100);
+                });
+
+                reactScript.addEventListener("error", function(e) {
+                    console.error("❌ pdf-builder-react.js script error event:", e);
+                });
+            }
 
             // Check if script element exists and has loaded
             setTimeout(function() {
