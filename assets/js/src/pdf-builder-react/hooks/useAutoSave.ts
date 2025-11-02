@@ -40,7 +40,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     templateId: state.template.id as number | undefined,
     elements: state.elements,
     nonce,
-    autoSaveInterval: 2500, // 2.5 secondes
+    autoSaveInterval: 5000, // Increased to 5 seconds to reduce frequency
     maxRetries: 3,
     onSaveStart: () => {
       console.log('[AUTO SAVE] Sauvegarde commencée');

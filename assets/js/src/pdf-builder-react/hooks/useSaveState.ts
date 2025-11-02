@@ -54,6 +54,7 @@ export function useSaveState({
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSaveTimeRef = useRef<number>(0);
   const elementsHashRef = useRef<string>('');
+  const pendingSaveRef = useRef<boolean>(false);
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -210,7 +211,11 @@ export function useSaveState({
       clearTimeout(autoSaveTimeoutRef.current);
       autoSaveTimeoutRef.current = null;
     }
-    await performSave(0);
+    if (!pendingSaveRef.current) {
+      pendingSaveRef.current = true;
+      await performSave(0);
+      pendingSaveRef.current = false;
+    }
   }, [performSave]);
 
   /**
@@ -237,7 +242,7 @@ export function useSaveState({
     const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
     const minIntervalElapsed = timeSinceLastSave >= autoSaveInterval;
 
-    if (!hasChanged || !minIntervalElapsed) {
+    if (!hasChanged || !minIntervalElapsed || pendingSaveRef.current) {
       return;
     }
 
@@ -250,7 +255,12 @@ export function useSaveState({
 
     // Planifier la sauvegarde
     autoSaveTimeoutRef.current = setTimeout(() => {
-      performSave(0);
+      if (!pendingSaveRef.current) {
+        pendingSaveRef.current = true;
+        performSave(0).finally(() => {
+          pendingSaveRef.current = false;
+        });
+      }
     }, autoSaveInterval);
 
     // Cleanup
