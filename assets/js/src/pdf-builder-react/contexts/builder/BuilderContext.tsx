@@ -479,13 +479,6 @@ interface BuilderContextType {
   redo: () => void;
   reset: () => void;
   toggleGrid: () => void;
-  // Auto-save state
-  saveState: 'idle' | 'saving' | 'saved' | 'error';
-  lastSavedAt: string | null;
-  saveError: string | null;
-  saveRetryCount: number;
-  saveNow: () => Promise<void>;
-  clearSaveError: () => void;
 }
 
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
@@ -660,20 +653,20 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
   };
 
-  // Sauvegarde automatique toutes les 2.5 secondes
-  useEffect(() => {
-    if (!state.elements.length || !state.template.id) return;
+  // Sauvegarde automatique DÉSACTIVÉE - utilise useSaveState à la place
+  // useEffect(() => {
+  //   if (!state.elements.length || !state.template.id) return;
 
-    const saveTimer = setTimeout(async () => {
-      try {
-        await autoSaveTemplate();
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde automatique:', error);
-      }
-    }, 2500); // 2.5 secondes
+  //   const saveTimer = setTimeout(async () => {
+  //     try {
+  //       await autoSaveTemplate();
+  //     } catch (error) {
+  //       console.error('Erreur lors de la sauvegarde automatique:', error);
+  //     }
+  //   }, 2500); // 2.5 secondes
 
-    return () => clearTimeout(saveTimer);
-  }, [state.elements, state.template.id]);
+  //   return () => clearTimeout(saveTimer);
+  // }, [state.elements, state.template.id]);
 
   // Actions helpers
   const addElement = (element: Element) => {
