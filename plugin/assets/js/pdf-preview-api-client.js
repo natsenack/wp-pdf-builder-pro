@@ -5,10 +5,8 @@
 
 // Fonctions de debug conditionnel
 function isDebugEnabled() {
-    // Debug activé seulement si explicitement demandé
-    return window.location.hostname === 'localhost' ||
-           window.location.search.includes('debug=pdf') ||
-           (window.pdfBuilderDebug === true && window.location.search.includes('debug=on'));
+    // Debug activé seulement si explicitement forcé
+    return window.location.search.includes('debug=force');
 }
 
 function debugLog(...args) {
