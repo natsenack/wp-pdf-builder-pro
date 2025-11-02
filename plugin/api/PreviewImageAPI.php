@@ -32,6 +32,11 @@ class PreviewImageAPI {
     public function generate_preview() {
         $start_time = microtime(true);
 
+        // Debug logging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Preview] Starting preview generation - POST: ' . json_encode($_POST));
+        }
+
         try {
             // Validation sécurité multi-couches
             $this->validate_request();
@@ -454,18 +459,23 @@ class PreviewImageAPI {
         // Log détaillé de l'erreur
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log(sprintf(
-                '[PDF Builder Error] %s - Duration: %.3fs - File: %s:%d',
+                '[PDF Builder Error] %s - Duration: %.3fs - File: %s:%d - POST: %s',
                 $error_message,
                 $duration,
                 $exception->getFile(),
-                $exception->getLine()
+                $exception->getLine(),
+                json_encode($_POST)
             ));
         }
 
+        // Pour debug, log aussi dans les headers de réponse
+        header('X-PDF-Error: ' . substr($error_message, 0, 100));
+
         // Réponse d'erreur générique pour sécurité
         wp_send_json_error([
-            'message' => 'Preview generation failed',
-            'code' => 'PREVIEW_ERROR'
+            'message' => 'Preview generation failed: ' . substr($error_message, 0, 50),
+            'code' => 'PREVIEW_ERROR',
+            'debug' => defined('WP_DEBUG') && WP_DEBUG ? $error_message : null
         ]);
     }
 }
