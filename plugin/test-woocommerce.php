@@ -146,17 +146,45 @@ try {
 // Test 4: Tester avec un mock order (simuler un objet WC_Order)
 echo "4. Test avec mock order: ";
 try {
-    // Créer un mock order simple
-    $mock_order = new stdClass();
-    $mock_order->id = 12345;
-    $mock_order->get_order_number = function() { return '#12345'; };
-    $mock_order->get_formatted_order_total = function() { return '€99.99'; };
-    $mock_order->get_date_created = function() { return new DateTime('2025-11-02'); };
+    // Créer un mock order plus complet avec les méthodes nécessaires
+    $mock_order = new class {
+        public $id = 12345;
 
-    // Mock customer data
-    $mock_order->get_billing_first_name = function() { return 'Jean'; };
-    $mock_order->get_billing_last_name = function() { return 'Dupont'; };
-    $mock_order->get_billing_email = function() { return 'jean.dupont@email.com'; };
+        public function get_order_number() { return '#12345'; }
+        public function get_total() { return 99.99; }
+        public function get_subtotal() { return 89.99; }
+        public function get_total_tax() { return 10.00; }
+        public function get_shipping_total() { return 5.00; }
+        public function get_date_created() { return '2025-11-02 10:30:00'; }
+        public function get_status() { return 'completed'; }
+
+        // Méthodes customer
+        public function get_billing_first_name() { return 'Jean'; }
+        public function get_billing_last_name() { return 'Dupont'; }
+        public function get_billing_email() { return 'jean.dupont@email.com'; }
+        public function get_billing_address_1() { return '123 Rue de la Paix'; }
+        public function get_billing_city() { return 'Paris'; }
+        public function get_billing_postcode() { return '75001'; }
+        public function get_billing_country() { return 'FR'; }
+
+        public function get_shipping_first_name() { return 'Jean'; }
+        public function get_shipping_last_name() { return 'Dupont'; }
+        public function get_shipping_address_1() { return '123 Rue de la Paix'; }
+        public function get_shipping_city() { return 'Paris'; }
+        public function get_shipping_postcode() { return '75001'; }
+        public function get_shipping_country() { return 'FR'; }
+
+        // Méthodes pour les items
+        public function get_items() {
+            return [
+                (object)[
+                    'get_name' => function() { return 'Produit Test'; },
+                    'get_quantity' => function() { return 2; },
+                    'get_total' => function() { return 89.99; }
+                ]
+            ];
+        }
+    };
 
     // Tester setOrder et getVariableValue
     $woo_provider->setOrder($mock_order);
