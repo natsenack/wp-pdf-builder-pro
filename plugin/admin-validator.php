@@ -88,6 +88,24 @@ function pdf_builder_validator_page() {
             define('RUN_PDF_BUILDER_VALIDATION', true);
         }
 
+        // Vérifier que l'autoloader est chargé et que les classes nécessaires sont disponibles
+        error_log('🔍 PDF BUILDER VALIDATOR: Vérification autoloader et classes...');
+
+        // Vérifier que la classe PDF_Builder_Server_Validator peut être chargée
+        if (!class_exists('PDF_Builder_Server_Validator')) {
+            error_log('❌ PDF BUILDER VALIDATOR: Classe PDF_Builder_Server_Validator non trouvée, tentative de chargement manuel');
+            if (!file_exists(plugin_dir_path(__FILE__) . 'server-validator.php')) {
+                echo '<div class="notice notice-error"><p>❌ Erreur: Fichier server-validator.php introuvable.</p></div>';
+                return;
+            }
+            require_once plugin_dir_path(__FILE__) . 'server-validator.php';
+        }
+
+        if (!class_exists('PDF_Builder_Server_Validator')) {
+            echo '<div class="notice notice-error"><p>❌ Erreur: Impossible de charger la classe PDF_Builder_Server_Validator.</p></div>';
+            return;
+        }
+
         error_log('🏗️ PDF BUILDER VALIDATOR: Création instance PDF_Builder_Server_Validator');
         echo '<script>document.getElementById("progress-text").innerHTML = "Initialisation de la classe validateur...";</script>';
         if (ob_get_level()) {
