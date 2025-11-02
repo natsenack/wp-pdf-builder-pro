@@ -26,13 +26,6 @@ class PDF_Builder_Drag_Drop_Manager
     private static $instance = null;
 
     /**
-     * Gestionnaire des éléments du canvas
-     *
-     * @var PDF_Builder_Canvas_Elements_Manager
-     */
-    private $elements_manager = null;
-
-    /**
      * État des sessions de drag actives
      *
      * @var array
@@ -63,9 +56,7 @@ class PDF_Builder_Drag_Drop_Manager
      */
     private function init_dependencies()
     {
-        if (class_exists('PDF_Builder_Canvas_Elements_Manager')) {
-            $this->elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
-        }
+        // Plus de dépendances canvas
     }
 
     /**
@@ -136,7 +127,9 @@ class PDF_Builder_Drag_Drop_Manager
 
             // Appliquer l'alignement sur la grille si demandé
             if ($snap_to_grid) {
-                $new_pos = $this->elements_manager->snap_to_grid($new_pos, $grid_size);
+                // Alignement simplifié sur la grille (sans canvas manager)
+                $new_pos['x'] = round($new_pos['x'] / $grid_size) * $grid_size;
+                $new_pos['y'] = round($new_pos['y'] / $grid_size) * $grid_size;
             }
 
             // Appliquer les contraintes du canvas
@@ -273,8 +266,9 @@ class PDF_Builder_Drag_Drop_Manager
                 }
             }
 
-            // Calculer les collisions
-            $element_collisions = $this->elements_manager->check_collisions($temp_element, $all_elements, 5);
+            // Calculer les collisions (simplifié sans canvas manager)
+            // Pour l'instant, pas de vérification de collision avancée
+            $element_collisions = [];
             if (!empty($element_collisions)) {
                 $collisions[$element_id] = $element_collisions;
             }

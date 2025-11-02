@@ -2,17 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-admin': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
-    'pdf-builder-admin-debug': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
-    'pdf-builder-react': './assets/js/src/pdf-builder-react/index.js',
-    'pdf-builder-nonce-fix': './dev/resources/js/pdf-builder-nonce-fix.js',
-    'pdf-preview-api-client': './assets/js/pdf-preview-api-client.js',
-    'pdf-preview-integration': './assets/js/pdf-preview-integration.js'
+    'pdf-builder-react': './assets/js/src/pdf-builder-react/index.js'
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
   output: {
@@ -56,14 +50,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, '../../../dev/resources/js/ScriptLoader.js'),
-          to: path.resolve(__dirname, '../../../plugin/assets/js/dist/pdf-builder-script-loader.js')
-        }
-      ]
-    }),
     new CompressionPlugin({
       algorithm: 'gzip',
       test: /\.(js|css)$/,

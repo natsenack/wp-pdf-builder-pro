@@ -275,7 +275,7 @@ public function GeneratePreview($saveToDatabase = false) {
 - [x] Formats adaptés selon contexte (aperçu vs export)
 - [x] Métadonnées et optimisation fichiers
 
-**� Système Fallback Robuste :**
+**� Système Fallback Robuste :**est ce qued juq
 - [x] Fallback automatique DomPDF → Canvas
 - [x] Gestion timeouts et limites mémoire (100MB)
 - [x] Métriques performance intégrées

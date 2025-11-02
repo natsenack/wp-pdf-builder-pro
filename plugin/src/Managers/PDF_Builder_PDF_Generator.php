@@ -31,58 +31,10 @@ class PDF_Builder_PDF_Generator
     private function init_hooks()
     {
         // AJAX handlers pour la génération PDF
-        add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajax_download_pdf']);
     }
 
-    /**
-     * AJAX - Générer PDF depuis les données canvas
-     */
-    public function ajax_generate_pdf_from_canvas()
-    {
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
-        }
 
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        $canvas_data = isset($_POST['canvas_data']) ? $_POST['canvas_data'] : '';
-
-        if (empty($canvas_data)) {
-            wp_send_json_error('Données canvas manquantes');
-        }
-
-        try {
-            // Décoder les données canvas
-            $canvas_elements = json_decode($canvas_data, true);
-
-            if (!$canvas_elements || !is_array($canvas_elements)) {
-                wp_send_json_error('Format JSON invalide pour les données canvas');
-            }
-
-            $pdf_path = $this->generate_pdf_from_template_data($canvas_elements, 'canvas-' . time() . '.pdf');
-
-            if ($pdf_path && file_exists($pdf_path)) {
-                $upload_dir = wp_upload_dir();
-                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
-
-                wp_send_json_success(
-                    array(
-                    'url' => $pdf_url,
-                    'path' => $pdf_path
-                    )
-                );
-            } else {
-                wp_send_json_error('Erreur lors de la génération du PDF');
-            }
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
-    }
 
     /**
      * AJAX - Prévisualiser PDF

@@ -91,17 +91,6 @@ function pdf_builder_init() {
         // Démarrer le plugin
         if (function_exists('pdf_builder_load_bootstrap')) {
             pdf_builder_load_bootstrap();
-        }
-    } else {
-        // Fallback vers la version minimale si bootstrap complet n'existe pas
-        $bootstrap_minimal_path = plugin_dir_path(__FILE__) . 'bootstrap-minimal.php';
-        if (file_exists($bootstrap_minimal_path)) {
-            require_once $bootstrap_minimal_path;
-
-            // Démarrer le plugin
-            if (function_exists('pdf_builder_load_bootstrap')) {
-                pdf_builder_load_bootstrap();
-            }
         } else {
             // Log si bootstrap n'existe pas
             error_log('PDF Builder Pro: Bootstrap introuvable');

@@ -51,23 +51,7 @@ class PDF_Builder_Settings_Manager
         include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/settings-page.php';
     }
 
-    /**
-     * Page de paramètres de rendu canvas
-     */
-    public function canvas_render_settings_page()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
-        }
 
-        if (isset($_POST['save_canvas_render_settings']) && wp_verify_nonce($_POST['canvas_render_nonce'], 'pdf_builder_canvas_render')) {
-            $this->save_canvas_render_settings();
-            echo '<div class="notice notice-success"><p>Paramètres de rendu sauvegardés avec succès.</p></div>';
-        }
-
-        // TODO: Créer le fichier canvas-render-settings-page.php dans templates/admin/
-        // include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/canvas-render-settings-page.php';
-    }
 
     /**
      * Enregistrer les paramètres
@@ -79,11 +63,6 @@ class PDF_Builder_Settings_Manager
         register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
         register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
         register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
-
-        // Paramètres de rendu canvas
-        register_setting('pdf_builder_canvas_render', 'pdf_builder_canvas_dpi');
-        register_setting('pdf_builder_canvas_render', 'pdf_builder_canvas_quality');
-        register_setting('pdf_builder_canvas_render', 'pdf_builder_canvas_format');
 
         // Paramètres des templates par statut de commande
         register_setting('pdf_builder_order_status_templates', 'pdf_builder_order_status_templates');
@@ -117,27 +96,7 @@ class PDF_Builder_Settings_Manager
         update_option('pdf_builder_order_status_templates', $status_templates);
     }
 
-    /**
-     * Sauvegarder les paramètres de rendu canvas
-     */
-    private function save_canvas_render_settings()
-    {
-        $dpi = isset($_POST['canvas_dpi']) ? intval($_POST['canvas_dpi']) : 300;
-        $quality = isset($_POST['canvas_quality']) ? intval($_POST['canvas_quality']) : 90;
-        $format = isset($_POST['canvas_format']) ? sanitize_text_field($_POST['canvas_format']) : 'png';
 
-        // Validation des valeurs
-        $dpi = max(72, min(600, $dpi)); // Entre 72 et 600 DPI
-        $quality = max(1, min(100, $quality)); // Entre 1 et 100%
-        $allowed_formats = ['png', 'jpg', 'jpeg', 'webp'];
-        if (!in_array($format, $allowed_formats)) {
-            $format = 'png';
-        }
-
-        update_option('pdf_builder_canvas_dpi', $dpi);
-        update_option('pdf_builder_canvas_quality', $quality);
-        update_option('pdf_builder_canvas_format', $format);
-    }
 
     /**
      * Sanitiser une valeur de paramètre

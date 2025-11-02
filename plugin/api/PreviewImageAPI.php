@@ -269,7 +269,7 @@ class PreviewImageAPI {
             return new \WP_PDF_Builder_Pro\Generators\PDFGenerator($params['template_data'], $data_provider, $use_fallback);
         } else {
             // Données fictives pour aperçu design
-            $data_provider = new \WP_PDF_Builder_Pro\Data\CanvasDataProvider();
+            $data_provider = new \WP_PDF_Builder_Pro\Data\SampleDataProvider();
             return new \WP_PDF_Builder_Pro\Generators\PDFGenerator($params['template_data'], $data_provider, $use_fallback);
         }
     }

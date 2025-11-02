@@ -53,11 +53,15 @@ function initPDFBuilderReact() {
   return true;
 }
 
-// Export temporaire pour test
-const testExport = 'Hello from React Builder';
-
 // Export default pour webpack
-export default {
+const exports = {
   initPDFBuilderReact,
   testExport
 };
+
+// Assigner la fonction à window pour l'accès global depuis WordPress
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = exports;
+}
+
+export default exports;

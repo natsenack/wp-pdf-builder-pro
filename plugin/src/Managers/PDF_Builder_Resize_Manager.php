@@ -26,13 +26,6 @@ class PDF_Builder_Resize_Manager
     private static $instance = null;
 
     /**
-     * Gestionnaire des éléments du canvas
-     *
-     * @var PDF_Builder_Canvas_Elements_Manager
-     */
-    private $elements_manager = null;
-
-    /**
      * État des sessions de redimensionnement actives
      *
      * @var array
@@ -63,9 +56,7 @@ class PDF_Builder_Resize_Manager
      */
     private function init_dependencies()
     {
-        if (class_exists('PDF_Builder_Canvas_Elements_Manager')) {
-            $this->elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
-        }
+        // Plus de dépendances canvas
     }
 
     /**
@@ -135,14 +126,21 @@ class PDF_Builder_Resize_Manager
             'size' => $session['initial_size']
         ];
 
-        // Calculer les nouvelles dimensions
-        $result = $this->elements_manager->calculate_resize_dimensions(
-            $temp_element,
-            $session['handle'],
-            $delta_x,
-            $delta_y,
-            $session['constraints']
-        );
+        // Calculer les nouvelles dimensions (simplifié sans canvas manager)
+        $current_size = $session['current_size'];
+        $new_width = $current_size['width'] + $delta_x;
+        $new_height = $current_size['height'] + $delta_y;
+
+        // Appliquer les contraintes de taille minimale
+        $min_width = $session['constraints']['min_width'] ?? 10;
+        $min_height = $session['constraints']['min_height'] ?? 10;
+        $new_width = max($min_width, $new_width);
+        $new_height = max($min_height, $new_height);
+
+        $result = [
+            'size' => ['width' => $new_width, 'height' => $new_height],
+            'position' => $session['current_position']
+        ];
 
         // Appliquer le ratio d'aspect si nécessaire
         if ($session['constraints']['maintain_aspect_ratio'] && $session['constraints']['aspect_ratio']) {
@@ -305,7 +303,19 @@ class PDF_Builder_Resize_Manager
      */
     public function get_resize_cursor($handle)
     {
-        return $this->elements_manager->get_resize_cursor($handle);
+        // Logique simplifiée pour les curseurs de redimensionnement
+        $cursors = [
+            'nw' => 'nw-resize',
+            'n' => 'n-resize',
+            'ne' => 'ne-resize',
+            'e' => 'e-resize',
+            'se' => 'se-resize',
+            's' => 's-resize',
+            'sw' => 'sw-resize',
+            'w' => 'w-resize'
+        ];
+
+        return $cursors[$handle] ?? 'default';
     }
 
     /**
