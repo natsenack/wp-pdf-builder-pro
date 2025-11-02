@@ -3,6 +3,31 @@
  * Intégration complète de l'API Preview 1.4
  */
 
+// Fonctions de debug conditionnel
+function isDebugEnabled() {
+    return window.location.hostname === 'localhost' ||
+           window.location.search.includes('debug=pdf') ||
+           (window.pdfBuilderDebug === true);
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        console.log(...args);
+    }
+}
+
+function debugError(...args) {
+    if (isDebugEnabled()) {
+        console.error(...args);
+    }
+}
+
+function debugWarn(...args) {
+    if (isDebugEnabled()) {
+        console.warn(...args);
+    }
+}
+
 class PDFPreviewAPI {
     constructor() {
         this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
@@ -16,7 +41,7 @@ class PDFPreviewAPI {
      */
     async generateEditorPreview(templateData, options = {}) {
         if (this.isGenerating) {
-            console.warn('⚠️ Génération déjà en cours...');
+            debugWarn('⚠️ Génération déjà en cours...');
             return null;
         }
 
@@ -32,7 +57,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            console.log('📤 Envoi requête preview éditeur...');
+            debugLog('📤 Envoi requête preview éditeur...');
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -42,17 +67,17 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                console.log('✅ Aperçu éditeur généré:', result.data);
+                debugLog('✅ Aperçu éditeur généré:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-                console.error('❌ Erreur génération éditeur:', result.data);
+                debugError('❌ Erreur génération éditeur:', result.data);
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
         } catch (error) {
-            console.error('❌ Erreur réseau:', error);
+            debugError('❌ Erreur réseau:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -66,7 +91,7 @@ class PDFPreviewAPI {
      */
     async generateOrderPreview(templateData, orderId, options = {}) {
         if (this.isGenerating) {
-            console.warn('⚠️ Génération déjà en cours...');
+            debugWarn('⚠️ Génération déjà en cours...');
             return null;
         }
 
@@ -83,7 +108,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            console.log('📤 Envoi requête preview commande...', orderId);
+            debugLog('📤 Envoi requête preview commande...', orderId);
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -93,17 +118,17 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                console.log('✅ Aperçu commande généré:', result.data);
+                debugLog('✅ Aperçu commande généré:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
             } else {
-                console.error('❌ Erreur génération commande:', result.data);
+                debugError('❌ Erreur génération commande:', result.data);
                 this.showError('Erreur lors de la génération de l\'aperçu de commande');
                 return null;
             }
         } catch (error) {
-            console.error('❌ Erreur réseau:', error);
+            debugError('❌ Erreur réseau:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -184,7 +209,7 @@ class PDFPreviewAPI {
         // Afficher la modal
         previewModal.style.display = 'block';
 
-        console.log('🖼️ Aperçu affiché:', imageUrl);
+        debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
 
     /**
@@ -322,7 +347,7 @@ class PDFPreviewAPI {
         link.click();
         document.body.removeChild(link);
 
-        console.log('📥 Téléchargement démarré:', imageUrl);
+        debugLog('📥 Téléchargement démarré:', imageUrl);
     }
 
     /**
@@ -350,7 +375,7 @@ class PDFPreviewAPI {
         `);
         printWindow.document.close();
 
-        console.log('🖨️ Impression démarrée');
+        debugLog('🖨️ Impression démarrée');
     }
 
     /**
@@ -424,7 +449,7 @@ window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
 
-console.log('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
-console.log('📖 Utilisation:');
-console.log('   - generateEditorPreview(templateData)');
-console.log('   - generateOrderPreview(templateData, orderId)');
+debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
+debugLog('📖 Utilisation:');
+debugLog('   - generateEditorPreview(templateData)');
+debugLog('   - generateOrderPreview(templateData, orderId)');

@@ -3,6 +3,31 @@
  * À intégrer dans votre éditeur ou metabox WooCommerce
  */
 
+// Fonctions de debug conditionnel
+function isDebugEnabled() {
+    return window.location.hostname === 'localhost' ||
+           window.location.search.includes('debug=pdf') ||
+           (window.pdfBuilderDebug === true);
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        console.log(...args);
+    }
+}
+
+function debugError(...args) {
+    if (isDebugEnabled()) {
+        console.error(...args);
+    }
+}
+
+function debugWarn(...args) {
+    if (isDebugEnabled()) {
+        console.warn(...args);
+    }
+}
+
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
 // ==========================================
@@ -86,11 +111,11 @@ class PDFEditorPreviewIntegration {
             });
 
             if (result) {
-                console.log('✅ Aperçu éditeur généré avec succès');
+                debugLog('✅ Aperçu éditeur généré avec succès');
             }
 
         } catch (error) {
-            console.error('❌ Erreur génération aperçu éditeur:', error);
+            debugError('❌ Erreur génération aperçu éditeur:', error);
             alert('Erreur lors de la génération de l\'aperçu. Vérifiez la console pour plus de détails.');
         }
     }
@@ -229,11 +254,11 @@ class PDFMetaboxPreviewIntegration {
             });
 
             if (result) {
-                console.log('✅ Aperçu commande généré avec succès');
+                debugLog('✅ Aperçu commande généré avec succès');
             }
 
         } catch (error) {
-            console.error('❌ Erreur génération aperçu commande:', error);
+            debugError('❌ Erreur génération aperçu commande:', error);
             alert('Erreur lors de la génération de l\'aperçu. Vérifiez la console pour plus de détails.');
         }
     }
@@ -269,7 +294,7 @@ class PDFMetaboxPreviewIntegration {
             }
         }
 
-        console.warn('⚠️ ID de commande non trouvé automatiquement');
+        debugWarn('⚠️ ID de commande non trouvé automatiquement');
         return null;
     }
 
@@ -283,7 +308,7 @@ class PDFMetaboxPreviewIntegration {
             try {
                 return JSON.parse(templateDataElement.value || templateDataElement.dataset.templateData);
             } catch (e) {
-                console.warn('Données template mal formatées:', e);
+                debugWarn('Données template mal formatées:', e);
             }
         }
 
@@ -354,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.pdf-canvas-editor') ||
         window.location.href.includes('pdf-builder-editor')) {
 
-        console.log('🎨 Initialisation intégration éditeur...');
+        debugLog('🎨 Initialisation intégration éditeur...');
         window.pdfEditorPreview = new PDFEditorPreviewIntegration(window.pdfCanvasEditor);
     }
 
@@ -371,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
                            document.querySelector('.postbox');
 
             if (metabox) {
-                console.log('🛒 Initialisation intégration metabox...');
+                debugLog('🛒 Initialisation intégration metabox...');
                 window.pdfMetaboxPreview = new PDFMetaboxPreviewIntegration(metabox);
             }
         }, 1000);
@@ -398,28 +423,28 @@ window.generateQuickPreview = async function(templateData = null, orderId = null
                           window.location.href.includes('action=edit'));
 
         if (isEditor) {
-            console.log('🎨 Mode éditeur détecté');
+            debugLog('🎨 Mode éditeur détecté');
             const data = templateData || window.pdfEditorPreview?.getTemplateData();
             return await window.generateEditorPreview(data);
         }
 
         if (isMetabox) {
-            console.log('🛒 Mode metabox détecté');
+            debugLog('🛒 Mode metabox détecté');
             const data = templateData || window.pdfMetaboxPreview?.getTemplateData();
             const id = orderId || window.pdfMetaboxPreview?.getOrderId();
             return await window.generateOrderPreview(data, id);
         }
 
-        console.warn('⚠️ Contexte non reconnu pour l\'aperçu');
+        debugWarn('⚠️ Contexte non reconnu pour l\'aperçu');
         return null;
 
     } catch (error) {
-        console.error('❌ Erreur génération aperçu rapide:', error);
+        debugError('❌ Erreur génération aperçu rapide:', error);
         return null;
     }
 };
 
-console.log('🚀 Intégrations API Preview 1.4 chargées !');
-console.log('💡 Raccourcis:');
-console.log('   - Ctrl+P (Cmd+P) : Aperçu rapide');
-console.log('   - generateQuickPreview() : Détection automatique du contexte');
+debugLog('🚀 Intégrations API Preview 1.4 chargées !');
+debugLog('💡 Raccourcis:');
+debugLog('   - Ctrl+P (Cmd+P) : Aperçu rapide');
+debugLog('   - generateQuickPreview() : Détection automatique du contexte');
