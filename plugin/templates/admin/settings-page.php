@@ -1927,7 +1927,7 @@ window.addEventListener('load', function() {
                                 <?php echo get_option('pdf_builder_debug_mode', false) ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
                             </button>
                             <span style="margin-left: 10px; font-style: italic; color: #666;">
-                                <?php _e('Activer les logs de debug JavaScript', 'pdf-builder-pro'); ?>
+                                <?php echo get_option('pdf_builder_debug_mode', false) ? __('Logs de debug JavaScript activés', 'pdf-builder-pro') : __('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>
                             </span>
                         </div>
 
@@ -3129,11 +3129,11 @@ echo '<style>
                 success: function(response) {
                     if (response.success) {
                         $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
+                        $button.siblings('span').text(newState ? '<?php _e('Logs de debug JavaScript activés', 'pdf-builder-pro'); ?>' : '<?php _e('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>');
 
                         var message = newState ?
                             '<?php _e('Mode debug activé ! Les logs JavaScript seront maintenant visibles dans la console.', 'pdf-builder-pro'); ?>' :
                             '<?php _e('Mode debug désactivé ! Les logs JavaScript sont maintenant masqués.', 'pdf-builder-pro'); ?>';
-                        showMaintenanceStatus(message, 'success');
 
                         // Mettre à jour la variable globale si elle existe
                         if (typeof window !== 'undefined') {
