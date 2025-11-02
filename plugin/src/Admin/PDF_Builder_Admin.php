@@ -5157,6 +5157,25 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
+        // Ensure pdfBuilderReact is available globally
+        wp_add_inline_script('pdf-builder-react', '
+            if (typeof window.pdfBuilderReact === "undefined" && typeof window !== "undefined") {
+                // The UMD bundle should have set this, but let\'s ensure it
+                window.pdfBuilderReact = window.pdfBuilderReact || {};
+                if (typeof window !== "undefined" && window) {
+                    // Try to get the exported module
+                    try {
+                        var exportedModule = window.pdfBuilderReact;
+                        if (exportedModule && typeof exportedModule.initPDFBuilderReact === "function") {
+                            window.pdfBuilderReact = exportedModule;
+                        }
+                    } catch (e) {
+                        console.warn("Could not access React module export:", e);
+                    }
+                }
+            }
+        ', 'after');
+
         // Debug: Log the script URL
         error_log('[REACT] Script URL: ' . $react_script_url);
 
