@@ -25,8 +25,18 @@ export function initPDFBuilderReact() {
   const container = document.getElementById('pdf-builder-react-root');
 
   if (!container) {
-    return;
+    console.warn('PDF Builder React: Container element not found');
+    return false;
   }
+
+  // Check if React has already been initialized
+  if (container.hasAttribute('data-react-initialized')) {
+    console.log('PDF Builder React: Already initialized, skipping');
+    return true;
+  }
+
+  // Mark as initialized
+  container.setAttribute('data-react-initialized', 'true');
 
   // Masquer le loading et afficher l'éditeur
   const loadingEl = document.getElementById('pdf-builder-react-loading');
@@ -42,9 +52,15 @@ export function initPDFBuilderReact() {
         <PDFBuilder />
       </React.StrictMode>
     );
+    console.log('PDF Builder React: Successfully initialized');
+    return true;
 
   } catch (error) {
+    console.error('PDF Builder React: Initialization error:', error);
     container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
+    // Remove the initialized flag on error
+    container.removeAttribute('data-react-initialized');
+    return false;
   }
 }
 
