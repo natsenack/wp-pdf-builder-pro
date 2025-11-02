@@ -79,6 +79,15 @@ export const Header = memo(function Header({
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [newTag, setNewTag] = useState('');
 
+  // Debug logging
+  useEffect(() => {
+    console.log('🔧 Header component mounted/updated');
+  }, []);
+
+  useEffect(() => {
+    console.log('🪟 Preview modal state changed:', showPreviewModal);
+  }, [showPreviewModal]);
+
   // Synchroniser les états locaux avec les props quand elles changent
   useEffect(() => {
     setEditedTemplateName(templateName);
