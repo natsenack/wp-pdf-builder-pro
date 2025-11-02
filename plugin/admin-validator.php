@@ -44,12 +44,15 @@ function pdf_builder_validator_page() {
     echo '<br>Time: ' . microtime(true);
     echo '</div>';
 
-    if (isset($_POST['run_validation'])) {
-        // LOG PHP - Validation déclenchée
-        error_log('🚀 PDF BUILDER VALIDATOR: Validation déclenchée côté PHP');
-        echo '<script>console.log("📥 Validation reçue côté serveur");</script>';
+    if (isset($_POST['run_validation']) || isset($_POST['run_quick_validation'])) {
+        $is_quick = isset($_POST['run_quick_validation']);
 
-        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';
+        // LOG PHP - Validation déclenchée
+        error_log('🚀 PDF BUILDER VALIDATOR: Validation ' . ($is_quick ? 'rapide' : 'complète') . ' déclenchée côté PHP');
+        echo '<script>console.log("📥 Validation ' . ($is_quick ? 'rapide' : 'complète') . ' reçue côté serveur");</script>';
+
+        $duration_text = $is_quick ? '5 secondes' : '30 secondes';
+        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (' . $duration_text . ' environ).</p></div>';
         echo '<div id="validation-progress" style="background: #f1f1f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
             <h3>⏳ Progression de la validation</h3>
             <div id="progress-bar" style="background: #ddd; height: 20px; border-radius: 10px; overflow: hidden;">
@@ -94,8 +97,8 @@ function pdf_builder_validator_page() {
 
         $validator = new PDF_Builder_Server_Validator();
 
-        error_log('▶️ PDF BUILDER VALIDATOR: Lancement run_quick_tests()');
-        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests rapides...";</script>';
+        error_log('▶️ PDF BUILDER VALIDATOR: Lancement ' . ($is_quick ? 'run_quick_tests()' : 'run_all_tests()'));
+        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests ' . ($is_quick ? 'rapides' : '') . '...";</script>';
         echo '<script>document.getElementById("progress-fill").style.width = "25%";</script>';
         if (ob_get_level()) {
             ob_flush();
@@ -104,7 +107,11 @@ function pdf_builder_validator_page() {
 
         // Capturer la sortie du validateur
         ob_start();
-        $validator->run_quick_tests();
+        if ($is_quick) {
+            $validator->run_quick_tests();
+        } else {
+            $validator->run_all_tests();
+        }
         $validation_output = ob_get_clean();
 
         // Debug: Afficher ce qui a été capturé
@@ -243,6 +250,10 @@ function pdf_builder_validator_page() {
         <form method="post" action="" id="validation-form">
             <?php wp_nonce_field('pdf_builder_validation'); ?>
             <p>
+                <input type="submit" name="run_quick_validation" class="button button-secondary button-hero"
+                       value="⚡ Validation Rapide (3 tests - 5 sec)"
+                       onclick="prepareValidation(this);"
+                       style="margin-right: 10px;">
                 <input type="submit" name="run_validation" class="button button-primary button-hero"
                        value="🚀 Lancer la Validation Complète"
                        onclick="prepareValidation(this);">
