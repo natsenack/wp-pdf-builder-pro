@@ -60,14 +60,20 @@ class CanvasDataProvider implements DataProviderInterface {
     }
 
     /**
-     * {@inheritdoc}
+     * Vérifie si une variable est disponible
+     *
+     * @param string $variable Nom de la variable
+     * @return bool True si la variable existe
      */
     public function hasVariable(string $variable): bool {
-        return isset($this->mock_data[$variable]) || $this->isSupportedVariable($variable);
+        return array_key_exists($variable, $this->mock_data) ||
+               array_key_exists($variable, $this->getAllVariables());
     }
 
     /**
-     * {@inheritdoc}
+     * Retourne la liste de toutes les variables disponibles
+     *
+     * @return array Liste des noms de variables
      */
     public function getAllVariables(): array {
         return array_keys($this->mock_data);

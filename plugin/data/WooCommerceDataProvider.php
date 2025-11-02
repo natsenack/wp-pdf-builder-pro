@@ -3,6 +3,7 @@ namespace WP_PDF_Builder_Pro\Data;
 
 use WC_Order;
 use WC_Order_Item_Product;
+use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
 
 /**
  * Classe WooCommerceDataProvider
@@ -369,6 +370,35 @@ class WooCommerceDataProvider implements DataProviderInterface {
      */
     public function getContext(): string {
         return $this->context;
+    }
+
+    /**
+     * Vérifie si une variable est disponible
+     *
+     * @param string $variable Nom de la variable
+     * @return bool True si la variable existe
+     */
+    public function hasVariable(string $variable): bool {
+        return array_key_exists($variable, $this->getAllVariables());
+    }
+
+    /**
+     * Retourne la liste de toutes les variables disponibles
+     *
+     * @return array Liste des noms de variables
+     */
+    public function getAllVariables(): array {
+        return [
+            'order_number', 'order_date', 'order_status', 'order_total', 'order_subtotal',
+            'order_tax', 'order_shipping', 'order_discount', 'customer_name', 'customer_email',
+            'customer_phone', 'billing_first_name', 'billing_last_name', 'billing_company',
+            'billing_address', 'billing_address_1', 'billing_address_2', 'billing_city',
+            'billing_state', 'billing_postcode', 'billing_country', 'billing_email',
+            'billing_phone', 'shipping_first_name', 'shipping_last_name', 'shipping_company',
+            'shipping_address', 'shipping_address_1', 'shipping_address_2', 'shipping_city',
+            'shipping_state', 'shipping_postcode', 'shipping_country', 'currency',
+            'payment_method', 'transaction_id', 'order_notes', 'order_items'
+        ];
     }
 
     /**
