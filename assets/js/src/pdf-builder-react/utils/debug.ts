@@ -1,5 +1,15 @@
 // Configuration des logs
-const DEBUG_MODE = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
+const DEBUG_MODE = process.env.NODE_ENV === 'development' ||
+                   window.location.hostname === 'localhost' ||
+                   window.location.search.includes('debug=pdf') ||
+                   (window as any).pdfBuilderDebug === true;
+
+// Extension de Window pour le debug
+declare global {
+  interface Window {
+    pdfBuilderDebug?: boolean;
+  }
+}
 
 // Fonction de logging conditionnel
 export function debugLog(...args: any[]) {
