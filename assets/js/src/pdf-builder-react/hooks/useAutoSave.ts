@@ -1,5 +1,6 @@
 import { useBuilder } from '../contexts/builder/BuilderContext';
 import { useSaveState, SaveState } from './useSaveState';
+import { debugLog, debugError } from '../utils/debug';
 
 /**
  * Hook useAutoSave
@@ -43,13 +44,13 @@ export function useAutoSave(): UseAutoSaveReturn {
     autoSaveInterval: 5000, // Increased to 5 seconds to reduce frequency
     maxRetries: 3,
     onSaveStart: () => {
-      console.log('[AUTO SAVE] Sauvegarde commencée');
+      debugLog('[AUTO SAVE] Sauvegarde commencée');
     },
     onSaveSuccess: (savedAt: string) => {
-      console.log(`[AUTO SAVE] Succès le ${savedAt}`);
+      debugLog(`[AUTO SAVE] Succès le ${savedAt}`);
     },
     onSaveError: (error: string) => {
-      console.error(`[AUTO SAVE] Erreur: ${error}`);
+      debugError(`[AUTO SAVE] Erreur: ${error}`);
     }
   });
 

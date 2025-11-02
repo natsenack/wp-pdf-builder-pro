@@ -1,6 +1,7 @@
 import { useContext, useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
+import { debugLog, debugError } from '../utils/debug';
 
 // Extension de Window pour pdfBuilderData
 declare global {
@@ -27,7 +28,7 @@ export function useTemplate() {
 
   // Charger un template existant
   const loadExistingTemplate = async (templateId: string) => {
-    console.log('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
+    debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
     try {
       // Faire un appel API pour récupérer les données du template
       const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}`);
@@ -37,30 +38,30 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      console.log('📡 [LOAD TEMPLATE] Réponse API reçue:', result);
+      debugLog('📡 [LOAD TEMPLATE] Réponse API reçue:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
       const templateData = result.data;
-      console.log('📊 [LOAD TEMPLATE] Données du template:', templateData);
+      debugLog('📊 [LOAD TEMPLATE] Données du template:', templateData);
 
       // Parse JSON strings
       let elements = [];
       let canvas = null;
       try {
-        console.log('🔍 [LOAD TEMPLATE] Parsing elements:', typeof templateData.elements, templateData.elements);
+        debugLog('🔍 [LOAD TEMPLATE] Parsing elements:', typeof templateData.elements, templateData.elements);
         // Check if elements is already an object or needs parsing
         if (typeof templateData.elements === 'string') {
           elements = JSON.parse(templateData.elements);
-          console.log('✅ [LOAD TEMPLATE] Elements parsed from string:', elements.length, 'éléments');
+          debugLog('✅ [LOAD TEMPLATE] Elements parsed from string:', elements.length, 'éléments');
         } else if (Array.isArray(templateData.elements)) {
           elements = templateData.elements;
-          console.log('✅ [LOAD TEMPLATE] Elements already array:', elements.length, 'éléments');
+          debugLog('✅ [LOAD TEMPLATE] Elements already array:', elements.length, 'éléments');
         } else {
           elements = [];
-          console.log('⚠️ [LOAD TEMPLATE] Elements not string or array, using empty array');
+          debugLog('⚠️ [LOAD TEMPLATE] Elements not string or array, using empty array');
         }
 
         console.log('🔍 [LOAD TEMPLATE] Parsing canvas:', typeof templateData.canvas, templateData.canvas);

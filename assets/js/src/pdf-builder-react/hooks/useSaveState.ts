@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
+import { debugLog, debugError } from '../utils/debug';
 
 /**
  * Hook pour gérer la sauvegarde automatique avec retry logic
@@ -77,7 +78,7 @@ export function useSaveState({
   const performSave = useCallback(
     async (retryAttempt = 0): Promise<boolean> => {
       if (!templateId) {
-        console.warn('[SAVE STATE] Pas de templateId, sauvegarde annulée');
+      console.warn('[SAVE STATE] Pas de templateId, sauvegarde annulée');
         return false;
       }
 
@@ -111,10 +112,10 @@ export function useSaveState({
           return cleaned;
         });
 
-        console.log('[SAVE STATE] Éléments originaux:', elements.length, 'éléments');
-        console.log('[SAVE STATE] Premier élément original:', elements[0]);
-        console.log('[SAVE STATE] Éléments nettoyés:', cleanElements.length, 'éléments');
-        console.log('[SAVE STATE] Premier élément nettoyé:', cleanElements[0]);
+        debugLog('[SAVE STATE] Éléments originaux:', elements.length, 'éléments');
+        debugLog('[SAVE STATE] Premier élément original:', elements[0]);
+        debugLog('[SAVE STATE] Éléments nettoyés:', cleanElements.length, 'éléments');
+        debugLog('[SAVE STATE] Premier élément nettoyé:', cleanElements[0]);
 
         // Sérialisation JSON
         const serializedElements = JSON.stringify(cleanElements);
@@ -122,7 +123,7 @@ export function useSaveState({
         // Vérification JSON valide
         JSON.parse(serializedElements);
 
-        console.log(`[SAVE STATE] Tentative ${retryAttempt + 1}/${maxRetries + 1} - Envoi AJAX...`);
+        debugLog(`[SAVE STATE] Tentative ${retryAttempt + 1}/${maxRetries + 1} - Envoi AJAX...`);
 
         const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
         const response = await fetch(ajaxUrl, {
@@ -162,7 +163,7 @@ export function useSaveState({
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
 
-        console.log(`✅ [SAVE STATE] Sauvegarde réussie à ${savedAt}`);
+          debugLog(`✅ [SAVE STATE] Sauvegarde réussie à ${savedAt}`);
         onSaveSuccess?.(savedAt);
 
         // Réinitialiser l'état saved après 3 secondes (au lieu de 2)
@@ -175,12 +176,12 @@ export function useSaveState({
         return true;
       } catch (err: any) {
         const errorMsg = err?.message || 'Erreur inconnue';
-        console.error(`[SAVE STATE] Erreur ${retryAttempt + 1}/${maxRetries + 1}:`, errorMsg);
+        debugError(`[SAVE STATE] Erreur ${retryAttempt + 1}/${maxRetries + 1}:`, errorMsg);
 
         // Retry logic
         if (retryAttempt < maxRetries) {
           const delayMs = Math.min(1000 * Math.pow(2, retryAttempt), 10000); // Backoff exponentiel
-          console.log(`[SAVE STATE] Retry dans ${delayMs}ms...`);
+          debugLog(`[SAVE STATE] Retry dans ${delayMs}ms...`);
 
           startTransition(() => {
             setRetryCount(retryAttempt + 1);
@@ -205,7 +206,7 @@ export function useSaveState({
           setError(errorMsg);
         });
         onSaveError?.(errorMsg);
-        console.error(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
+        debugError(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
         return false;
       }
@@ -284,7 +285,7 @@ export function useSaveState({
           !pendingSaveRef.current &&
           operationId === saveOperationIdRef.current) {
 
-        console.log(`[SAVE STATE] Inactivité détectée (opération ${operationId}), planification sauvegarde...`);
+        debugLog(`[SAVE STATE] Inactivité détectée (opération ${operationId}), planification sauvegarde...`);
 
         // Marquer le cooldown
         saveCooldownRef.current = Date.now();

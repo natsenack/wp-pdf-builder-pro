@@ -6,6 +6,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
+import { debugLog } from './utils/debug';
 
 // Fonction d'initialisation appelée par WordPress
 declare global {
@@ -31,7 +32,7 @@ export function initPDFBuilderReact() {
 
   // Check if React has already been initialized
   if (container.hasAttribute('data-react-initialized')) {
-    console.log('PDF Builder React: Already initialized, skipping');
+    debugLog('PDF Builder React: Already initialized, skipping');
     return true;
   }
 
@@ -52,7 +53,7 @@ export function initPDFBuilderReact() {
         <PDFBuilder />
       </React.StrictMode>
     );
-    console.log('PDF Builder React: Successfully initialized');
+    debugLog('PDF Builder React: Successfully initialized');
     return true;
 
   } catch (error) {

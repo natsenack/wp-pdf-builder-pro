@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 'react';
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { debugLog } from '../../utils/debug';
 
 // Extension de Window pour l'API Preview
 declare global {
@@ -57,10 +58,10 @@ export const Header = memo(function Header({
   const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
     // Debug logging
   useEffect(() => {
-    console.log('🔧 Header component mounted/updated');
+    debugLog('🔧 Header component mounted/updated');
   }, []);
 
-  console.log('🎯 Rendering Header component');
+  debugLog('🎯 Rendering Header component');
   const { state, dispatch } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -85,11 +86,11 @@ export const Header = memo(function Header({
 
   // Debug logging
   useEffect(() => {
-    console.log('🔧 Header component mounted/updated');
+    debugLog('🔧 Header component mounted/updated');
   }, []);
 
   useEffect(() => {
-    console.log('🪟 Preview modal state changed:', showPreviewModal);
+    debugLog('🪟 Preview modal state changed:', showPreviewModal);
   }, [showPreviewModal]);
 
   // Synchroniser les états locaux avec les props quand elles changent
@@ -326,7 +327,7 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-            console.log('📸 Aperçu Image button clicked!');
+            debugLog('📸 Aperçu Image button clicked!');
             setShowPreviewModal(true);
           }}
           onMouseEnter={() => setHoveredButton('preview-image')}
