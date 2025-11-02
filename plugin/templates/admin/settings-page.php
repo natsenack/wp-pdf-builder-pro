@@ -3130,7 +3130,7 @@ echo '<style>
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_toggle_debug',
-                    debug_enabled: newState,
+                    debug_enabled: newState ? 1 : 0,
                     nonce: pdfBuilderMaintenanceNonce
                 },
                 success: function(response) {

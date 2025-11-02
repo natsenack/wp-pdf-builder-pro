@@ -4430,7 +4430,8 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         }
 
         // Récupérer l'état souhaité
-        $debug_enabled = isset($_POST['debug_enabled']) ? (bool) $_POST['debug_enabled'] : false;
+        $debug_enabled = isset($_POST['debug_enabled']) ? (int) $_POST['debug_enabled'] : 0;
+        $debug_enabled = (bool) $debug_enabled;
         
         error_log('AJAX TOGGLE DEBUG - Requested state: ' . ($debug_enabled ? 'true' : 'false'));
 
