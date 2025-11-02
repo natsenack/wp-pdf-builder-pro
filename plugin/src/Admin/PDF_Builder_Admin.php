@@ -4878,25 +4878,40 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             // Wait for the UMD bundle to load and set window.pdfBuilderReact
             function waitForPDFBuilderReact() {
                 if (typeof window !== "undefined" && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === "function") {
-                    console.log("React bundle loaded successfully, pdfBuilderReact.initPDFBuilderReact is available");
-                    return true;
+                    console.log("✅ React bundle loaded successfully, pdfBuilderReact.initPDFBuilderReact is available");
+                    // Initialize React immediately when available
+                    try {
+                        var result = window.pdfBuilderReact.initPDFBuilderReact();
+                        console.log("✅ React initialization result:", result);
+                        return true;
+                    } catch (error) {
+                        console.error("❌ Error initializing React:", error);
+                        return false;
+                    }
                 }
                 return false;
             }
 
             // Check immediately
             if (!waitForPDFBuilderReact()) {
+                console.log("⏳ React bundle not ready immediately, starting polling...");
                 // If not ready, check every 100ms for up to 5 seconds
                 var attempts = 0;
                 var maxAttempts = 50; // 50 * 100ms = 5 seconds
                 var checkInterval = setInterval(function() {
                     attempts++;
+                    console.log("🔄 Attempt " + attempts + "/" + maxAttempts + " - Checking for pdfBuilderReact...");
                     if (waitForPDFBuilderReact()) {
                         clearInterval(checkInterval);
-                        console.log("React bundle loaded after " + attempts + " attempts");
+                        console.log("✅ React bundle loaded after " + attempts + " attempts");
                     } else if (attempts >= maxAttempts) {
                         clearInterval(checkInterval);
-                        console.error("React bundle failed to load after 5 seconds");
+                        console.error("❌ React bundle failed to load after 5 seconds");
+                        // Show error in loading div
+                        var loadingDiv = document.getElementById("pdf-builder-react-loading");
+                        if (loadingDiv) {
+                            loadingDiv.innerHTML = "<p>❌ Erreur: Le script React n\'a pas pu être chargé après 5 secondes d\'attente.</p><p>Vérifiez la console pour plus de détails.</p>";
+                        }
                     }
                 }, 100);
             }
@@ -4904,6 +4919,30 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Debug: Log the script URL
         error_log('[REACT] Script URL: ' . $react_script_url);
+
+        // Add script error detection
+        wp_add_inline_script('pdf-builder-react', '
+            // Detect script loading errors
+            window.addEventListener("error", function(e) {
+                if (e.target && e.target.tagName === "SCRIPT" && e.target.src && e.target.src.includes("pdf-builder-react.js")) {
+                    console.error("❌ Failed to load pdf-builder-react.js script:", e.target.src);
+                    var loadingDiv = document.getElementById("pdf-builder-react-loading");
+                    if (loadingDiv) {
+                        loadingDiv.innerHTML = "<p>❌ Erreur de chargement du script React: " + e.target.src + "</p><p>Vérifiez les permissions et l\'URL.</p>";
+                    }
+                }
+            });
+
+            // Check if script element exists and has loaded
+            setTimeout(function() {
+                var scripts = document.querySelectorAll("script[src*=\"pdf-builder-react.js\"]");
+                console.log("📋 Found " + scripts.length + " pdf-builder-react script tags");
+                scripts.forEach(function(script, index) {
+                    console.log("📄 Script " + (index + 1) + " src:", script.src);
+                    console.log("📄 Script " + (index + 1) + " loaded:", !script.hasAttribute("data-loading"));
+                });
+            }, 500);
+        ', 'after');
 
         // Enqueue API Preview scripts for React editor
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd');
