@@ -79,26 +79,38 @@ console.log('🌐 Assigning to window...');
 if (typeof window !== 'undefined') {
   console.log('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
 
-  // Vérifier si la propriété existe déjà pour éviter les conflits
-  if (typeof window.pdfBuilderReact === 'undefined') {
-    try {
-      // Utiliser Object.defineProperty pour empêcher la suppression mais permettre la modification
-      Object.defineProperty(window, 'pdfBuilderReact', {
-        value: exports,
-        writable: true,  // Permettre les modifications futures
-        enumerable: true,
-        configurable: false  // Empêcher la suppression
-      });
+  // Utiliser une approche plus robuste avec un setter
+  let pdfBuilderReactValue = exports;
 
-      console.log('✅ window.pdfBuilderReact assigned successfully with Object.defineProperty');
-    } catch (error) {
-      console.error('❌ Failed to assign with Object.defineProperty:', error);
-      // Fallback: assignation directe
-      window.pdfBuilderReact = exports;
-      console.log('🔄 Fallback assignment used');
-    }
-  } else {
-    console.log('ℹ️ window.pdfBuilderReact already exists, skipping assignment');
+  try {
+    // Définir un getter/setter pour maintenir la valeur
+    Object.defineProperty(window, 'pdfBuilderReact', {
+      get: function() {
+        return pdfBuilderReactValue;
+      },
+      set: function(value) {
+        console.log('⚠️ Attempting to overwrite window.pdfBuilderReact, preserving original value');
+        // Ne pas permettre l'écrasement, garder notre valeur
+        return pdfBuilderReactValue;
+      },
+      enumerable: true,
+      configurable: false
+    });
+
+    console.log('✅ window.pdfBuilderReact assigned successfully with getter/setter');
+  } catch (error) {
+    console.error('❌ Failed to assign with getter/setter:', error);
+    // Fallback: assignation directe répétée
+    window.pdfBuilderReact = exports;
+    console.log('🔄 Fallback assignment used');
+
+    // Surveiller et réassigner périodiquement
+    setInterval(function() {
+      if (typeof window.pdfBuilderReact === 'undefined' || window.pdfBuilderReact !== exports) {
+        console.log('🔄 Reassigning window.pdfBuilderReact due to external interference');
+        window.pdfBuilderReact = exports;
+      }
+    }, 50); // Vérifier toutes les 50ms
   }
 
   console.log('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
