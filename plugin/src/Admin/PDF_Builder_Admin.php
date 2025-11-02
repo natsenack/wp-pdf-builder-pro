@@ -322,6 +322,8 @@ class PDF_Builder_Admin {
         );
 // Éditeur React (nouvelle version)
         add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
+// Éditeur Canvas (version vanilla JS)
+        add_submenu_page('pdf-builder-pro', __('Éditeur Canvas - PDF Builder Pro', 'pdf-builder-pro'), __('🎨 Éditeur Canvas', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-editor', [$this, 'template_editor_page']);
 // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 // Paramètres et configuration
