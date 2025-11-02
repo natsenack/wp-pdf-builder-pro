@@ -32,9 +32,29 @@ function pdf_builder_validator_page() {
     echo '<h1>🧪 PDF Builder Pro - Validation Serveur</h1>';
 
     if (isset($_POST['run_validation'])) {
-        echo '<div class="notice notice-info"><p>🔄 Validation en cours... Veuillez patienter.</p></div>';
+        // Debug: Afficher que la validation a commencé
+        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';
+        echo '<div id="validation-progress" style="background: #f1f1f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3>⏳ Progression de la validation</h3>
+            <div id="progress-bar" style="background: #ddd; height: 20px; border-radius: 10px; overflow: hidden;">
+                <div id="progress-fill" style="background: #3498db; height: 100%; width: 0%; transition: width 0.3s;"></div>
+            </div>
+            <p id="progress-text">Initialisation...</p>
+        </div>';
+
+        // Forcer l'affichage immédiat
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
 
         // Inclure et exécuter le validateur
+        echo '<script>document.getElementById("progress-text").innerHTML = "Chargement du validateur...";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
+
         require_once plugin_dir_path(__FILE__) . 'server-validator.php';
 
         // Forcer l'exécution
@@ -42,8 +62,29 @@ function pdf_builder_validator_page() {
             define('RUN_PDF_BUILDER_VALIDATION', true);
         }
 
+        echo '<script>document.getElementById("progress-text").innerHTML = "Initialisation de la classe validateur...";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
+
         $validator = new PDF_Builder_Server_Validator();
+
+        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests...";</script>';
+        echo '<script>document.getElementById("progress-fill").style.width = "25%";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
+
         $validator->run_all_tests();
+
+        echo '<script>document.getElementById("progress-text").innerHTML = "Tests terminés, génération du rapport...";</script>';
+        echo '<script>document.getElementById("progress-fill").style.width = "100%";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
 
         // Récupérer les erreurs et warnings pour les console.log
         $errors = $validator->get_errors();
@@ -60,6 +101,12 @@ function pdf_builder_validator_page() {
             }
             echo '</script>';
         }
+
+        echo '<script>document.getElementById("progress-text").innerHTML = "Validation terminée !";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
 
         exit;
     }
@@ -90,14 +137,37 @@ function pdf_builder_validator_page() {
             <p><strong>Score cible :</strong> 100/100 pour production</p>
         </div>
 
-        <form method="post" action="">
+        <form method="post" action="" id="validation-form">
             <?php wp_nonce_field('pdf_builder_validation'); ?>
             <p>
                 <input type="submit" name="run_validation" class="button button-primary button-hero"
                        value="🚀 Lancer la Validation Complète"
-                       onclick="this.value='🔄 Validation en cours...'; this.disabled=true;">
+                       onclick="startValidation(this);">
             </p>
         </form>
+
+        <script>
+        function startValidation(button) {
+            button.value = '🔄 Validation en cours...';
+            button.disabled = true;
+
+            // Empêcher la soumission multiple
+            document.getElementById('validation-form').onsubmit = function(e) {
+                e.preventDefault();
+                return false;
+            };
+
+            // Timeout de sécurité (60 secondes)
+            setTimeout(function() {
+                if (button.disabled) {
+                    alert('⚠️ La validation prend plus de temps que prévu. Vérifiez la console pour les erreurs.');
+                }
+            }, 60000);
+
+            // Soumettre le formulaire
+            document.getElementById('validation-form').submit();
+        }
+        </script>
 
         <div class="validation-links" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
             <h3>🔗 Liens Utiles</h3>
