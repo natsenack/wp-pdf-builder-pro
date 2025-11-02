@@ -50,9 +50,11 @@ class PDF_Builder_Autoloader {
 
             // Special handling for WP_PDF_Builder_Pro namespace
             if ($prefix === 'WP_PDF_Builder_Pro\\') {
-                // Convert namespace parts to lowercase directories
+                // Convert namespace parts to lowercase directories but keep class names as-is
                 $parts = explode('\\', $relative_class);
-                $relative_class = implode('/', array_map('lcfirst', $parts));
+                $lastPart = array_pop($parts); // Extract the class name
+                $dirs = array_map('lcfirst', $parts); // Convert directory names to lowercase
+                $relative_class = implode('/', $dirs) . '/' . $lastPart; // Rebuild path
             } else {
                 // Replace namespace separators with directory separators
                 $relative_class = str_replace('\\', '/', $relative_class);
