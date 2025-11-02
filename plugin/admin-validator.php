@@ -91,46 +91,48 @@ function pdf_builder_validator_page() {
         // Vérifier que l'autoloader est chargé et que les classes nécessaires sont disponibles
         error_log('🔍 PDF BUILDER VALIDATOR: Vérification autoloader et classes...');
 
-        // Vérifier que la classe PDF_Builder_Server_Validator peut être chargée
-        if (!class_exists('PDF_Builder_Server_Validator')) {
-            error_log('❌ PDF BUILDER VALIDATOR: Classe PDF_Builder_Server_Validator non trouvée, tentative de chargement manuel');
-            if (!file_exists(plugin_dir_path(__FILE__) . 'server-validator.php')) {
-                echo '<div class="notice notice-error"><p>❌ Erreur: Fichier server-validator.php introuvable.</p></div>';
-                return;
-            }
-            require_once plugin_dir_path(__FILE__) . 'server-validator.php';
-        }
-
-        if (!class_exists('PDF_Builder_Server_Validator')) {
-            echo '<div class="notice notice-error"><p>❌ Erreur: Impossible de charger la classe PDF_Builder_Server_Validator.</p></div>';
+        // TEST SIMPLE : Charger directement la classe sans autoloader
+        $server_validator_file = plugin_dir_path(__FILE__) . 'server-validator.php';
+        if (!file_exists($server_validator_file)) {
+            echo '<div class="notice notice-error"><p>❌ Erreur: Fichier server-validator.php introuvable à ' . $server_validator_file . '</p></div>';
             return;
         }
 
-        error_log('🏗️ PDF BUILDER VALIDATOR: Création instance PDF_Builder_Server_Validator');
-        echo '<script>document.getElementById("progress-text").innerHTML = "Initialisation de la classe validateur...";</script>';
+        // Inclure directement le fichier
+        error_log('📦 PDF BUILDER VALIDATOR: Chargement direct de server-validator.php');
+        require_once $server_validator_file;
+
+        if (!class_exists('PDF_Builder_Server_Validator')) {
+            echo '<div class="notice notice-error"><p>❌ Erreur: Classe PDF_Builder_Server_Validator toujours introuvable après inclusion directe.</p></div>';
+            return;
+        }
+
+        // TEST ULTRA SIMPLE : Juste pour vérifier que le PHP s'exécute
+        error_log('🚀 PDF BUILDER VALIDATOR: TEST PHP - Validation ' . ($is_quick ? 'rapide' : 'complète') . ' démarrée');
+        echo '<script>console.log("🔧 PHP: Code PHP exécuté avec succès à " + new Date().toLocaleTimeString());';
+        echo 'console.log("📊 PHP: Type de validation:", "' . ($is_quick ? 'rapide' : 'complète') . '");';
+        echo 'console.log("📂 PHP: Chemin plugin:", "' . plugin_dir_path(__FILE__) . '");';
+        echo '</script>';
+
+        echo '<div class="notice notice-success"><p>✅ TEST: Code PHP exécuté avec succès à ' . date('H:i:s') . '</p></div>';
+
+        echo '<script>document.getElementById("progress-text").innerHTML = "Test PHP réussi...";</script>';
+        echo '<script>document.getElementById("progress-fill").style.width = "50%";</script>';
+        echo '<script>console.log("📊 JS: Barre de progression mise à 50%");</script>';
         if (ob_get_level()) {
             ob_flush();
         }
         flush();
 
-        $validator = new PDF_Builder_Server_Validator();
+        // Attendre un peu pour voir le progrès
+        sleep(1);
 
-        error_log('▶️ PDF BUILDER VALIDATOR: Lancement ' . ($is_quick ? 'run_quick_tests()' : 'run_all_tests()'));
-        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests ' . ($is_quick ? 'rapides' : '') . '...";</script>';
-        echo '<script>document.getElementById("progress-fill").style.width = "25%";</script>';
-        if (ob_get_level()) {
-            ob_flush();
-        }
-        flush();
+        echo '<div class="notice notice-info"><p>🔄 Test terminé - Le code PHP fonctionne correctement.</p></div>';
+        echo '<script>document.getElementById("progress-text").innerHTML = "Test terminé";</script>';
+        echo '<script>document.getElementById("progress-fill").style.width = "100%";</script>';
+        echo '<script>console.log("✅ JS: Test PHP terminé avec succès");</script>';
 
-        // Capturer la sortie du validateur
-        ob_start();
-        if ($is_quick) {
-            $validator->run_quick_tests();
-        } else {
-            $validator->run_all_tests();
-        }
-        $validation_output = ob_get_clean();
+        return; // Arrêter ici pour le test
 
         // Debug: Afficher ce qui a été capturé
         echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
