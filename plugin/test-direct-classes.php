@@ -111,9 +111,9 @@ try {
 }
 
 // Test 6: Tester le chargement d'une implémentation
-echo "6. Classe WP_PDF_Builder_Pro\\SampleDataProvider: ";
+echo "6. Classe WP_PDF_Builder_Pro\\Data\\SampleDataProvider: ";
 try {
-    if (class_exists('WP_PDF_Builder_Pro\\SampleDataProvider')) {
+    if (class_exists('WP_PDF_Builder_Pro\\Data\\SampleDataProvider')) {
         echo "✅ OK\n";
     } else {
         echo "❌ NON\n";
@@ -123,9 +123,9 @@ try {
 }
 
 // Test 7: Tester le chargement du générateur PDF
-echo "7. Classe WP_PDF_Builder_Pro\\PDFGenerator: ";
+echo "7. Classe WP_PDF_Builder_Pro\\Generators\\PDFGenerator: ";
 try {
-    if (class_exists('WP_PDF_Builder_Pro\\PDFGenerator')) {
+    if (class_exists('WP_PDF_Builder_Pro\\Generators\\PDFGenerator')) {
         echo "✅ OK\n";
     } else {
         echo "❌ NON\n";
@@ -137,7 +137,7 @@ try {
 // Test 8: Tester l'instanciation SampleDataProvider
 echo "8. Instanciation SampleDataProvider: ";
 try {
-    $provider = new WP_PDF_Builder_Pro\SampleDataProvider();
+    $provider = new WP_PDF_Builder_Pro\Data\SampleDataProvider();
     echo "✅ OK\n";
 } catch (Exception $e) {
     echo "❌ ERREUR: " . $e->getMessage() . "\n";
@@ -146,7 +146,9 @@ try {
 // Test 9: Tester l'instanciation du générateur PDF
 echo "9. Instanciation PDFGenerator: ";
 try {
-    $generator = new WP_PDF_Builder_Pro\PDFGenerator();
+    $template_data = ['test' => 'data'];
+    $data_provider = new WP_PDF_Builder_Pro\Data\SampleDataProvider();
+    $generator = new WP_PDF_Builder_Pro\Generators\PDFGenerator($template_data, $data_provider);
     echo "✅ OK\n";
 } catch (Exception $e) {
     echo "❌ ERREUR: " . $e->getMessage() . "\n";
