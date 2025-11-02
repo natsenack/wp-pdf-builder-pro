@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 'react';
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 
@@ -51,6 +51,10 @@ export const Header = memo(function Header({
   onNewTemplate,
   onUpdateTemplateSettings
 }: HeaderProps) {
+  // Use deferred values for frequently changing props to prevent cascading re-renders
+  const deferredIsModified = useDeferredValue(isModified);
+  const deferredIsSaving = useDeferredValue(isSaving);
+  const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
     // Debug logging
   useEffect(() => {
     console.log('🔧 Header component mounted/updated');
@@ -222,7 +226,7 @@ export const Header = memo(function Header({
             gap: '8px',
             flexShrink: 0
           }}>
-            {isModified && (
+            {deferredIsModified && (
               <span style={{
                 fontSize: '12px',
                 padding: '4px 10px',
@@ -363,18 +367,18 @@ export const Header = memo(function Header({
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}
-          disabled={isSaving || !isModified}
+          disabled={deferredIsSaving || !deferredIsModified}
           onMouseEnter={() => setHoveredButton('save')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...primaryButtonStyles,
-            opacity: (isSaving || !isModified) ? 0.6 : 1,
-            pointerEvents: (isSaving || !isModified) ? 'none' : 'auto'
+            opacity: (deferredIsSaving || !deferredIsModified) ? 0.6 : 1,
+            pointerEvents: (deferredIsSaving || !deferredIsModified) ? 'none' : 'auto'
           }}
-          title={isModified ? (isEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') : 'Aucune modification'}
+          title={deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') : 'Aucune modification'}
         >
-          <span>{isSaving ? '⟳' : '💾'}</span>
-          <span>{isSaving ? 'Enregistrement...' : (isEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
+          <span>{deferredIsSaving ? '⟳' : '💾'}</span>
+          <span>{deferredIsSaving ? 'Enregistrement...' : (deferredIsEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
         </button>
       </div>
 
@@ -688,7 +692,7 @@ export const Header = memo(function Header({
                       Nouveau template
                     </span>
                   )}
-                  {isModified && (
+                  {deferredIsModified && (
                     <span style={{
                       padding: '4px 8px',
                       backgroundColor: '#fff3e0',
@@ -722,7 +726,7 @@ export const Header = memo(function Header({
                 <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.5' }}>
                   <div>Template ID: {templateName || 'N/A'}</div>
                   <div>Dernière modification: {new Date().toLocaleString('fr-FR')}</div>
-                  <div>État: {isSaving ? 'Enregistrement...' : isModified ? 'Modifié' : 'Sauvegardé'}</div>
+                  <div>État: {deferredIsSaving ? 'Enregistrement...' : deferredIsModified ? 'Modifié' : 'Sauvegardé'}</div>
                 </div>
               </div>
 
