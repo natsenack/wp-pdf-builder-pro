@@ -83,8 +83,8 @@ function pdf_builder_init() {
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
 
-    // Charger le bootstrap (version minimale - validée et fonctionnelle)
-    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap-minimal.php';
+    // Charger le bootstrap (version complète pour la production)
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
 
@@ -93,8 +93,19 @@ function pdf_builder_init() {
             pdf_builder_load_bootstrap();
         }
     } else {
-        // Log si bootstrap n'existe pas
-        error_log('PDF Builder Pro: Bootstrap minimal introuvable');
+        // Fallback vers la version minimale si bootstrap complet n'existe pas
+        $bootstrap_minimal_path = plugin_dir_path(__FILE__) . 'bootstrap-minimal.php';
+        if (file_exists($bootstrap_minimal_path)) {
+            require_once $bootstrap_minimal_path;
+
+            // Démarrer le plugin
+            if (function_exists('pdf_builder_load_bootstrap')) {
+                pdf_builder_load_bootstrap();
+            }
+        } else {
+            // Log si bootstrap n'existe pas
+            error_log('PDF Builder Pro: Bootstrap introuvable');
+        }
     }
 
     // Tools for development/tests removed from production bootstrap
