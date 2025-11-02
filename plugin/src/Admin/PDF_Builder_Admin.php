@@ -1108,6 +1108,7 @@ class PDF_Builder_Admin {
             'pdf-builder-pro_page_pdf-builder-templates',
             'pdf-builder-pro_page_pdf-builder-editor',
             'pdf-builder-editor', // Hook direct pour l'éditeur
+            'pdf-builder-pro_page_pdf-builder-react-editor', // Éditeur React
             'pdf-builder-pro_page_pdf-builder-settings',
             'pdf-builder-pro_page_pdf-builder-developer',
             'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
