@@ -4,6 +4,7 @@ namespace WP_PDF_Builder_Pro\Interfaces;
 /**
  * Interface DataProviderInterface
  * Définit le contrat pour les fournisseurs de données de template
+ * Updated: 2025-11-02 14:20
  */
 interface DataProviderInterface {
     /**
