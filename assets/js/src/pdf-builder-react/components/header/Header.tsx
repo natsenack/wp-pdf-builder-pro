@@ -51,6 +51,12 @@ export const Header = memo(function Header({
   onNewTemplate,
   onUpdateTemplateSettings
 }: HeaderProps) {
+    // Debug logging
+  useEffect(() => {
+    console.log('🔧 Header component mounted/updated');
+  }, []);
+
+  console.log('🎯 Rendering Header component');
   const { state, dispatch } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -306,7 +312,10 @@ export const Header = memo(function Header({
         </button>
 
         <button
-          onClick={() => setShowPreviewModal(true)}
+          onClick={() => {
+            console.log('📸 Aperçu Image button clicked!');
+            setShowPreviewModal(true);
+          }}
           onMouseEnter={() => setHoveredButton('preview-image')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
