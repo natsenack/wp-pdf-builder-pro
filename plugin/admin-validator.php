@@ -45,6 +45,22 @@ function pdf_builder_validator_page() {
         $validator = new PDF_Builder_Server_Validator();
         $validator->run_all_tests();
 
+        // Récupérer les erreurs et warnings pour les console.log
+        $errors = $validator->get_errors();
+        $warnings = $validator->get_warnings();
+
+        // Ajouter les console.log JavaScript pour les erreurs
+        if (!empty($errors) || !empty($warnings)) {
+            echo '<script>';
+            if (!empty($errors)) {
+                echo 'console.error("🚨 ERREURS DE VALIDATION PDF BUILDER PRO:", ' . json_encode($errors) . ');';
+            }
+            if (!empty($warnings)) {
+                echo 'console.warn("⚠️ AVERTISSEMENTS DE VALIDATION PDF BUILDER PRO:", ' . json_encode($warnings) . ');';
+            }
+            echo '</script>';
+        }
+
         exit;
     }
 

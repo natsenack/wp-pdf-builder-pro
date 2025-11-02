@@ -591,6 +591,20 @@ class PDF_Builder_Server_Validator {
         </html>
         <?php
     }
+
+    /**
+     * Récupérer les erreurs de validation
+     */
+    public function get_errors() {
+        return $this->errors;
+    }
+
+    /**
+     * Récupérer les avertissements de validation
+     */
+    public function get_warnings() {
+        return $this->warnings;
+    }
 }
 
 // Exécution de la validation
