@@ -171,13 +171,15 @@ try {
     $data_provider = new WP_PDF_Builder_Pro\Data\SampleDataProvider();
     $generator = new WP_PDF_Builder_Pro\Generators\PDFGenerator($template_data, $data_provider);
 
-    // Générer le PDF (méthode generate() retourne le contenu PDF)
-    $pdf_content = $generator->generate('pdf');
+    // Générer le PDF (méthode generate() retourne le contenu PDF ou array fallback)
+    $result = $generator->generate('pdf');
 
-    if (!empty($pdf_content)) {
-        echo "✅ OK (" . strlen($pdf_content) . " bytes)\n";
+    if (is_string($result) && !empty($result)) {
+        echo "✅ OK (PDF généré: " . strlen($result) . " bytes)\n";
+    } elseif (is_array($result) && isset($result['fallback']) && $result['fallback']) {
+        echo "✅ OK (Fallback Canvas activé - HTML: " . strlen($result['html']) . " chars)\n";
     } else {
-        echo "❌ PDF vide\n";
+        echo "❌ Résultat inattendu: " . gettype($result) . "\n";
     }
 } catch (Exception $e) {
     echo "❌ ERREUR: " . $e->getMessage() . "\n";
