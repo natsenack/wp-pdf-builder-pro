@@ -7,10 +7,15 @@
  * @date 2025-11-02
  */
 
-// Empêcher l'accès direct non autorisé
-if (!defined('ABSPATH')) {
+// Empêcher l'accès direct non autorisé (mais permettre le test direct)
+if (!defined('ABSPATH') && !isset($_GET['force_direct'])) {
     header('HTTP/1.0 403 Forbidden');
-    exit('Accès direct interdit');
+    echo "Accès direct interdit\n\n";
+    echo "Pour utiliser ce validateur :\n";
+    echo "1. Depuis WordPress : Inclure ce fichier dans un thème/plugin\n";
+    echo "2. Direct : Ajouter ?force_direct=1 à l'URL\n";
+    echo "3. WP-CLI : wp eval \"require_once 'server-validator.php';\"\n";
+    exit;
 }
 
 class PDF_Builder_Server_Validator {
