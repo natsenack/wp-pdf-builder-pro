@@ -178,7 +178,8 @@ export function useSaveState({
         savedStateTimeoutRef.current = setTimeout(() => {
           debugLog('[SAVE STATE] Remise à idle après succès');
           startTransition(() => {
-            setState(current => current === 'saved' ? 'idle' : current);
+            // Forcer le retour à idle même si l'état a changé
+            setState('idle');
           });
         }, 3000);
 
