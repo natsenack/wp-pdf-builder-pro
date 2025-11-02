@@ -71,13 +71,21 @@ function pdf_builder_validator_page() {
         }
         flush();
 
+        error_log('📦 PDF BUILDER VALIDATOR: Chargement server-validator.php');
         require_once plugin_dir_path(__FILE__) . 'server-validator.php';
+
+        echo '<script>document.getElementById("progress-text").innerHTML = "Initialisation du validateur...";</script>';
+        if (ob_get_level()) {
+            ob_flush();
+        }
+        flush();
 
         // Forcer l'exécution
         if (!defined('RUN_PDF_BUILDER_VALIDATION')) {
             define('RUN_PDF_BUILDER_VALIDATION', true);
         }
 
+        error_log('🏗️ PDF BUILDER VALIDATOR: Création instance PDF_Builder_Server_Validator');
         echo '<script>document.getElementById("progress-text").innerHTML = "Initialisation de la classe validateur...";</script>';
         if (ob_get_level()) {
             ob_flush();
@@ -86,6 +94,7 @@ function pdf_builder_validator_page() {
 
         $validator = new PDF_Builder_Server_Validator();
 
+        error_log('▶️ PDF BUILDER VALIDATOR: Lancement run_all_tests()');
         echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests...";</script>';
         echo '<script>document.getElementById("progress-fill").style.width = "25%";</script>';
         if (ob_get_level()) {
@@ -250,14 +259,14 @@ function pdf_builder_validator_page() {
             button.disabled = true;
             console.log('✅ Bouton modifié:', button.value, button.disabled);
 
-            // Timeout de sécurité (60 secondes)
+            // Timeout de sécurité (120 secondes)
             setTimeout(function() {
                 console.log('⏰ Timeout de sécurité déclenché');
                 if (button.disabled) {
                     console.warn('⚠️ Validation trop longue, alerte affichée');
-                    alert('⚠️ La validation prend plus de temps que prévu. Vérifiez la console pour les erreurs.');
+                    alert('⚠️ La validation prend plus de temps que prévu (2 minutes). Vérifiez les logs du serveur pour les erreurs.');
                 }
-            }, 60000);
+            }, 120000);
 
             console.log('📤 Soumission du formulaire...');
             // Laisser le formulaire se soumettre normalement
