@@ -64,7 +64,7 @@ class PreviewImageAPI {
      */
     private function validate_request() {
         // Vérification nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wp_pdf_preview_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
             $this->log_security_event('invalid_nonce', $_SERVER['REMOTE_ADDR']);
             wp_die('Security check failed', 403);
         }
