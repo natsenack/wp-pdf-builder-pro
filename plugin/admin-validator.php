@@ -45,13 +45,11 @@ function pdf_builder_validator_page() {
     echo '</div>';
 
     if (isset($_POST['run_validation'])) {
-        // Debug: Afficher que la validation a commencé
-        echo '    if (isset($_POST['run_validation'])) {
         // LOG PHP - Validation déclenchée
         error_log('🚀 PDF BUILDER VALIDATOR: Validation déclenchée côté PHP');
         echo '<script>console.log("📥 Validation reçue côté serveur");</script>';
 
-        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';';
+        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';
         echo '<div id="validation-progress" style="background: #f1f1f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
             <h3>⏳ Progression de la validation</h3>
             <div id="progress-bar" style="background: #ddd; height: 20px; border-radius: 10px; overflow: hidden;">
