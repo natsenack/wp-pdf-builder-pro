@@ -3112,8 +3112,11 @@ echo '<style>
             e.preventDefault();
 
             var $button = $(this);
-            var isCurrentlyEnabled = $button.text().includes('Désactiver');
+            var currentText = $button.text().trim();
+            var isCurrentlyEnabled = currentText === '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>';
             var newState = !isCurrentlyEnabled;
+
+            console.log('Debug toggle - Current text:', currentText, 'Is enabled:', isCurrentlyEnabled, 'New state:', newState);
 
             $button.prop('disabled', true);
             $button.text('<?php _e('Mise à jour...', 'pdf-builder-pro'); ?>');
