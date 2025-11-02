@@ -294,6 +294,7 @@ function pdf_builder_validator_page() {
         <div class="validation-links" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
             <h3>🔗 Liens Utiles</h3>
             <ul>
+                <li><a href="<?php echo plugins_url('diagnostic-autoloader.php', __FILE__); ?>" target="_blank">🔍 Diagnostic Autoloader</a> <small>(pour déboguer les problèmes de chargement)</small></li>
                 <li><a href="<?php echo plugins_url('server-validator.php', __FILE__); ?>?force_direct=1" target="_blank">Accès direct au validateur</a></li>
                 <li><a href="<?php echo plugins_url('SERVER-VALIDATION-GUIDE.md', __FILE__); ?>" target="_blank">Guide de validation complet</a></li>
                 <li><a href="https://github.com/natsenack/wp-pdf-builder-pro" target="_blank">Repository GitHub</a></li>
