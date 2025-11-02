@@ -11,6 +11,7 @@ import {
   LoadTemplatePayload
 } from '../../types/elements';
 import { useSaveState } from '../../hooks/useSaveState';
+import { debugLog, debugError, debugWarn } from '../../utils/debug';
 
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
@@ -518,7 +519,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
 
         if (visited.has(obj)) {
-          console.warn(`🔄 [CLEAN JSON] Référence circulaire détectée à ${path}`);
+          debugWarn(`🔄 [CLEAN JSON] Référence circulaire détectée à ${path}`);
           return '[Circular Reference]';
         }
 
@@ -534,7 +535,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
           }
 
           if (typeof obj === 'function') {
-            console.warn(`⚠️ [CLEAN JSON] Fonction supprimée à ${path}`);
+            debugWarn(`⚠️ [CLEAN JSON] Fonction supprimée à ${path}`);
             return undefined;
           }
 
@@ -551,7 +552,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                   key === '_reactInternalInstance' ||
                   key === '_reactInternals' ||
                   key.startsWith('__react')) {
-                console.warn(`⚠️ [CLEAN JSON] Propriété problématique supprimée: ${key} à ${path}`);
+                debugWarn(`⚠️ [CLEAN JSON] Propriété problématique supprimée: ${key} à ${path}`);
                 continue;
               }
 
@@ -591,7 +592,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
           return finalElement;
         } catch (error) {
-          console.error(`❌ [CLEAN ELEMENT] Erreur lors du nettoyage d'un élément ${index}:`, error, element);
+          debugError(`❌ [CLEAN ELEMENT] Erreur lors du nettoyage d'un élément ${index}:`, error, element);
           // Retourner un élément minimal en cas d'échec
           return {
             id: element.id || `fallback_${Date.now()}`,
@@ -615,8 +616,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         // Vérifier que c'est du JSON valide
         JSON.parse(serializedElements);
       } catch (jsonError) {
-        console.error('❌ [AUTO SAVE] Erreur JSON même après nettoyage:', jsonError);
-        console.error('🔍 [AUTO SAVE] Éléments nettoyés qui causent le problème:', cleanElements);
+        debugError('❌ [AUTO SAVE] Erreur JSON même après nettoyage:', jsonError);
+        debugError('🔍 [AUTO SAVE] Éléments nettoyés qui causent le problème:', cleanElements);
         throw new Error('Impossible de sérialiser les éléments même après nettoyage');
       }
 
@@ -644,10 +645,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
           }
         });
       } else {
-        console.error('Erreur sauvegarde automatique:', data.data);
+        debugError('Erreur sauvegarde automatique:', data.data);
       }
     } catch (error) {
-      console.error('Erreur réseau sauvegarde automatique:', error);
+      debugError('Erreur réseau sauvegarde automatique:', error);
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }

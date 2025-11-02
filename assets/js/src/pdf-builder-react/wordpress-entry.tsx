@@ -6,7 +6,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
-import { debugLog } from './utils/debug';
+import { debugLog, debugError, debugWarn } from './utils/debug';
 
 // Fonction d'initialisation appelée par WordPress
 declare global {
@@ -26,7 +26,7 @@ export function initPDFBuilderReact() {
   const container = document.getElementById('pdf-builder-react-root');
 
   if (!container) {
-    console.warn('PDF Builder React: Container element not found');
+    debugWarn('PDF Builder React: Container element not found');
     return false;
   }
 
@@ -57,7 +57,7 @@ export function initPDFBuilderReact() {
     return true;
 
   } catch (error) {
-    console.error('PDF Builder React: Initialization error:', error);
+    debugError('PDF Builder React: Initialization error:', error);
     container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
     // Remove the initialized flag on error
     container.removeAttribute('data-react-initialized');

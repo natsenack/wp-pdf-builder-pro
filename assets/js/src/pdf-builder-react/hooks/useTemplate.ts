@@ -64,25 +64,25 @@ export function useTemplate() {
           debugLog('⚠️ [LOAD TEMPLATE] Elements not string or array, using empty array');
         }
 
-        console.log('🔍 [LOAD TEMPLATE] Parsing canvas:', typeof templateData.canvas, templateData.canvas);
+        debugLog('🔍 [LOAD TEMPLATE] Parsing canvas:', typeof templateData.canvas, templateData.canvas);
         // Same for canvas
         if (typeof templateData.canvas === 'string') {
           canvas = JSON.parse(templateData.canvas);
-          console.log('✅ [LOAD TEMPLATE] Canvas parsed from string');
+          debugLog('✅ [LOAD TEMPLATE] Canvas parsed from string');
         } else if (templateData.canvas && typeof templateData.canvas === 'object') {
           canvas = templateData.canvas;
-          console.log('✅ [LOAD TEMPLATE] Canvas already object');
+          debugLog('✅ [LOAD TEMPLATE] Canvas already object');
         } else {
           canvas = null;
-          console.log('⚠️ [LOAD TEMPLATE] Canvas not valid, using null');
+          debugLog('⚠️ [LOAD TEMPLATE] Canvas not valid, using null');
         }
       } catch (parseError) {
-        console.error('❌ [LOAD TEMPLATE] Erreur de parsing:', parseError);
+        debugError('❌ [LOAD TEMPLATE] Erreur de parsing:', parseError);
         elements = [];
         canvas = null;
       }
 
-      console.log('🚀 [LOAD TEMPLATE] Dispatch LOAD_TEMPLATE avec:', {
+      debugLog('🚀 [LOAD TEMPLATE] Dispatch LOAD_TEMPLATE avec:', {
         id: templateId,
         name: templateData.name,
         elementsCount: elements.length,

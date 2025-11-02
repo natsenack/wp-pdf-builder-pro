@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
-import { debugLog, debugError } from '../utils/debug';
+import { debugLog, debugError, debugWarn } from '../utils/debug';
 
 /**
  * Hook pour gérer la sauvegarde automatique avec retry logic
@@ -78,7 +78,7 @@ export function useSaveState({
   const performSave = useCallback(
     async (retryAttempt = 0): Promise<boolean> => {
       if (!templateId) {
-      console.warn('[SAVE STATE] Pas de templateId, sauvegarde annulée');
+      debugWarn('[SAVE STATE] Pas de templateId, sauvegarde annulée');
         return false;
       }
 

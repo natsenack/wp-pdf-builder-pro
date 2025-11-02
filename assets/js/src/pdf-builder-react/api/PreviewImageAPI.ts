@@ -8,6 +8,8 @@
  * @since 1.1.0 (Phase 3.0)
  */
 
+import { debugLog, debugError, debugWarn } from '../utils/debug';
+
 export interface PreviewImageOptions {
   orderId: number;
   templateId: number;
@@ -62,7 +64,7 @@ export class PreviewImageAPI {
     // Vérifier le cache
     const cacheKey = this.getCacheKey(options);
     if (this.cachedImages.has(cacheKey)) {
-      console.log('[PreviewImageAPI] Image trouvée en cache');
+      debugLog('[PreviewImageAPI] Image trouvée en cache');
       return {
         success: true,
         data: {
@@ -75,7 +77,7 @@ export class PreviewImageAPI {
 
     // Éviter les appels multiples simultanés
     if (this.isGenerating) {
-      console.warn('[PreviewImageAPI] Génération déjà en cours');
+      debugWarn('[PreviewImageAPI] Génération déjà en cours');
       return {
         success: false,
         error: 'Génération déjà en cours'
@@ -117,7 +119,7 @@ export class PreviewImageAPI {
       const imageData = result.data.image;
       this.cachedImages.set(cacheKey, imageData);
 
-      console.log('[PreviewImageAPI] Image générée avec succès');
+      debugLog('[PreviewImageAPI] Image générée avec succès');
       return {
         success: true,
         data: result.data
@@ -125,7 +127,7 @@ export class PreviewImageAPI {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
-      console.error('[PreviewImageAPI] Erreur:', errorMessage);
+      debugError('[PreviewImageAPI] Erreur:', errorMessage);
 
       return {
         success: false,
@@ -142,17 +144,17 @@ export class PreviewImageAPI {
    */
   validateOptions(options: PreviewImageOptions): boolean {
     if (!options.orderId || options.orderId <= 0) {
-      console.error('[PreviewImageAPI] Order ID invalide');
+      debugError('[PreviewImageAPI] Order ID invalide');
       return false;
     }
 
     if (!options.templateId || options.templateId <= 0) {
-      console.error('[PreviewImageAPI] Template ID invalide');
+      debugError('[PreviewImageAPI] Template ID invalide');
       return false;
     }
 
     if (options.format && !['png', 'jpg', 'pdf'].includes(options.format)) {
-      console.warn('[PreviewImageAPI] Format invalide, utilisation de png par défaut');
+      debugWarn('[PreviewImageAPI] Format invalide, utilisation de png par défaut');
     }
 
     return true;
@@ -170,7 +172,7 @@ export class PreviewImageAPI {
    */
   clearCache(): void {
     this.cachedImages.clear();
-    console.log('[PreviewImageAPI] Cache vidé');
+    debugLog('[PreviewImageAPI] Cache vidé');
   }
 
   /**
@@ -184,7 +186,7 @@ export class PreviewImageAPI {
       }
     }
     keysToDelete.forEach(key => this.cachedImages.delete(key));
-    console.log(`[PreviewImageAPI] Cache vidé pour commande ${orderId}`);
+    debugLog(`[PreviewImageAPI] Cache vidé pour commande ${orderId}`);
   }
 
   /**
@@ -202,7 +204,7 @@ export class PreviewImageAPI {
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('[PreviewImageAPI] Erreur lors du téléchargement:', error);
+      debugError('[PreviewImageAPI] Erreur lors du téléchargement:', error);
       throw error;
     }
   }
