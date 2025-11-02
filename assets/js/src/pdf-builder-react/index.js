@@ -55,8 +55,7 @@ function initPDFBuilderReact() {
 
 // Export default pour webpack
 const exports = {
-  initPDFBuilderReact,
-  testExport
+  initPDFBuilderReact
 };
 
 // Assigner la fonction à window pour l'accès global depuis WordPress
