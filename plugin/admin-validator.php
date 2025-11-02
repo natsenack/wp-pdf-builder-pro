@@ -28,8 +28,21 @@ function pdf_builder_validator_page() {
         wp_die(__('Vous n\'avez pas les permissions suffisantes.'));
     }
 
+    // DEBUG BASIQUE - Premier point de contrôle
+    echo '<div style="background: #ff0; padding: 10px; margin: 10px 0; border: 2px solid #000;">';
+    echo '<strong>🚀 DEBUG: Fonction appelée à ' . date('H:i:s') . '</strong>';
+    echo '<br>POST data: ' . (isset($_POST['run_validation']) ? 'run_validation=OUI' : 'run_validation=NON');
+    echo '<br>REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD'];
+    echo '</div>';
+
     echo '<div class="wrap">';
     echo '<h1>🧪 PDF Builder Pro - Validation Serveur</h1>';
+
+    // DEBUG - Avant la vérification POST
+    echo '<div style="background: #ffa; padding: 10px; margin: 10px 0; border: 1px solid #f00;">';
+    echo '<strong>📋 DEBUG: Avant vérification POST</strong>';
+    echo '<br>Time: ' . microtime(true);
+    echo '</div>';
 
     if (isset($_POST['run_validation'])) {
         // Debug: Afficher que la validation a commencé
