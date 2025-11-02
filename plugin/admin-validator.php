@@ -82,6 +82,12 @@ function pdf_builder_validator_page() {
         $validator->run_all_tests();
         $validation_output = ob_get_clean();
 
+        // Debug: Afficher ce qui a été capturé
+        echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
+        echo '<strong>DEBUG - Sortie capturée:</strong><br>';
+        echo '<pre>' . htmlspecialchars(substr($validation_output, 0, 500)) . '...</pre>';
+        echo '</div>';
+
         echo '<script>document.getElementById("progress-text").innerHTML = "Tests terminés, génération du rapport...";</script>';
         echo '<script>document.getElementById("progress-fill").style.width = "100%";</script>';
         if (ob_get_level()) {
@@ -93,6 +99,16 @@ function pdf_builder_validator_page() {
         $errors = $validator->get_errors();
         $warnings = $validator->get_warnings();
         $results = $validator->get_results();
+
+        // Debug: Afficher les données récupérées
+        echo '<div style="background: #ffe0e0; padding: 10px; margin: 10px 0; border: 1px solid #f00;">';
+        echo '<strong>DEBUG - Données récupérées:</strong><br>';
+        echo 'Erreurs: ' . count($errors) . '<br>';
+        echo 'Warnings: ' . count($warnings) . '<br>';
+        echo 'Résultats success: ' . (isset($results['success']) ? count($results['success']) : 'N/A') . '<br>';
+        echo 'Résultats total: ' . count($results) . '<br>';
+        echo '<pre>' . htmlspecialchars(json_encode($results, JSON_PRETTY_PRINT)) . '</pre>';
+        echo '</div>';
 
         // Afficher les résultats de validation dans la page WordPress
         echo '<div class="validation-results" style="margin-top: 30px; padding: 20px; background: white; border: 1px solid #ddd; border-radius: 5px;">';
