@@ -302,6 +302,10 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
+// Hook AJAX pour toggle debug mode
+        add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']);
+// Hook AJAX pour toggle debug mode principal
+        add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
     }
 
     /**
@@ -4406,6 +4410,76 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * AJAX handler pour activer/désactiver le mode debug
+     */
+    public function ajax_toggle_debug()
+    {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+            wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Récupérer l'état souhaité
+        $debug_enabled = isset($_POST['debug_enabled']) ? (bool) $_POST['debug_enabled'] : false;
+
+        // Sauvegarder dans les options WordPress
+        update_option('pdf_builder_debug_mode', $debug_enabled);
+
+        // Retourner le succès
+        wp_send_json_success([
+            'message' => $debug_enabled ?
+                __('Mode debug activé', 'pdf-builder-pro') :
+                __('Mode debug désactivé', 'pdf-builder-pro'),
+            'debug_enabled' => $debug_enabled
+        ]);
+    }
+
+    /**
+     * AJAX handler pour toggle le mode debug principal
+     */
+    public function ajax_toggle_debug_mode()
+    {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+            wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Récupérer l'état souhaité
+        $debug_enabled = isset($_POST['debug_enabled']) ? (bool) $_POST['debug_enabled'] : false;
+
+        // Récupérer les settings actuels
+        $settings = get_option('pdf_builder_settings', []);
+
+        // Toggle debug_mode
+        $settings['debug_mode'] = $debug_enabled;
+
+        // Sauvegarder les settings
+        update_option('pdf_builder_settings', $settings);
+
+        // Retourner le succès
+        wp_send_json_success([
+            'message' => $debug_enabled ?
+                __('Mode debug principal activé', 'pdf-builder-pro') :
+                __('Mode debug principal désactivé', 'pdf-builder-pro'),
+            'debug_enabled' => $debug_enabled
+        ]);
     }
 
     /**

@@ -932,10 +932,13 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Mode Debug', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <label>
+                            <label style="display: inline-block; margin-right: 10px;">
                                 <input type="checkbox" name="debug_mode" value="1" <?php checked($config->get('debug_mode'), true); ?>>
                                 <?php _e('Activer le mode debug pour les logs détaillés', 'pdf-builder-pro'); ?>
                             </label>
+                            <button type="button" id="toggle-debug-mode-btn" class="button button-secondary">
+                                <?php echo $config->get('debug_mode') ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -1912,6 +1915,36 @@ window.addEventListener('load', function() {
                             <?php wp_nonce_field('reset_settings', 'reset_settings_nonce'); ?>
                             <input type="submit" name="reset_settings" id="reset-settings-btn" class="button button-warning" value="<?php esc_attr_e('Réinitialiser Paramètres', 'pdf-builder-pro'); ?>"
                                    onclick="return confirm('<?php _e('Attention: Cette action va réinitialiser tous les paramètres aux valeurs par défaut. Continuer ?', 'pdf-builder-pro'); ?>');">
+                        </form>
+                    </div>
+
+                    <div class="maintenance-section" style="margin-bottom: 30px;">
+                        <h3><?php _e('Outils de Développement', 'pdf-builder-pro'); ?></h3>
+                        <p><?php _e('Outils pour les développeurs et le débogage.', 'pdf-builder-pro'); ?></p>
+
+                        <div class="debug-controls" style="margin-bottom: 15px;">
+                            <label for="debug-mode-toggle" style="display: inline-block; margin-right: 10px;">
+                                <input type="checkbox" id="debug-mode-toggle" <?php checked(get_option('pdf_builder_debug_mode', false)); ?>>
+                                <?php _e('Activer les logs de debug JavaScript', 'pdf-builder-pro'); ?>
+                            </label>
+                            <button type="button" id="toggle-debug-btn" class="button button-secondary">
+                                <?php echo get_option('pdf_builder_debug_mode', false) ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
+                            </button>
+                        </div>
+
+                        <div class="debug-info" style="background: #f9f9f9; padding: 10px; border-left: 4px solid #007cba; margin-bottom: 15px;">
+                            <p><strong><?php _e('Comment utiliser les logs de debug :', 'pdf-builder-pro'); ?></strong></p>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li><?php _e('Activez les logs ci-dessus', 'pdf-builder-pro'); ?></li>
+                                <li><?php _e('Allez dans l\'éditeur React', 'pdf-builder-pro'); ?></li>
+                                <li><?php _e('Ouvrez la console du navigateur (F12)', 'pdf-builder-pro'); ?></li>
+                                <li><?php _e('Les logs apparaîtront avec des emojis (🚀, ✅, ❌, etc.)', 'pdf-builder-pro'); ?></li>
+                            </ul>
+                        </div>
+
+                        <form method="post" style="display: inline;" id="clear-debug-logs-form">
+                            <?php wp_nonce_field('clear_debug_logs', 'clear_debug_logs_nonce'); ?>
+                            <input type="submit" name="clear_debug_logs" id="clear-debug-logs-btn" class="button button-secondary" value="<?php esc_attr_e('Vider Logs Debug', 'pdf-builder-pro'); ?>">
                         </form>
                     </div>
 
@@ -3071,6 +3104,133 @@ echo '<style>
                 },
                 complete: function() {
                     setButtonState('reset-settings-btn', false);
+                }
+            });
+        });
+
+        // Action: Toggle Debug Mode
+        $('#toggle-debug-btn').on('click', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var $checkbox = $('#debug-mode-toggle');
+            var isCurrentlyEnabled = $checkbox.is(':checked');
+            var newState = !isCurrentlyEnabled;
+
+            $button.prop('disabled', true);
+            $button.text('<?php _e('Mise à jour...', 'pdf-builder-pro'); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_toggle_debug',
+                    debug_enabled: newState,
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $checkbox.prop('checked', newState);
+                        $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
+
+                        var message = newState ?
+                            '<?php _e('Mode debug activé ! Les logs JavaScript seront maintenant visibles dans la console.', 'pdf-builder-pro'); ?>' :
+                            '<?php _e('Mode debug désactivé ! Les logs JavaScript sont maintenant masqués.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(message, 'success');
+
+                        // Mettre à jour la variable globale si elle existe
+                        if (typeof window !== 'undefined') {
+                            window.pdfBuilderDebug = newState;
+                        }
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la mise à jour du mode debug.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors de la mise à jour du mode debug.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                }
+            });
+        });
+
+        // Action: Toggle Debug Mode Principal
+        $('#toggle-debug-mode-btn').on('click', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var $checkbox = $('input[name="debug_mode"]');
+            var isCurrentlyEnabled = $checkbox.is(':checked');
+            var newState = !isCurrentlyEnabled;
+
+            $button.prop('disabled', true);
+            $button.text('<?php _e('Mise à jour...', 'pdf-builder-pro'); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_toggle_debug_mode',
+                    debug_enabled: newState,
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $checkbox.prop('checked', newState);
+                        $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
+
+                        var message = newState ?
+                            '<?php _e('Mode debug principal activé ! Les logs détaillés seront maintenant enregistrés.', 'pdf-builder-pro'); ?>' :
+                            '<?php _e('Mode debug principal désactivé ! Les logs détaillés sont maintenant masqués.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(message, 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la mise à jour du mode debug.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors de la mise à jour du mode debug.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                }
+            });
+        });
+
+        // Action: Clear Debug Logs
+        $('#clear-debug-logs-btn').on('click', function(e) {
+            e.preventDefault();
+
+            if (!confirm('<?php _e('Êtes-vous sûr de vouloir vider les logs de debug ?', 'pdf-builder-pro'); ?>')) {
+                return;
+            }
+
+            setButtonState('clear-debug-logs-btn', true, '<?php _e('Nettoyage...', 'pdf-builder-pro'); ?>');
+            showMaintenanceStatus('<?php _e('Nettoyage des logs de debug en cours...', 'pdf-builder-pro'); ?>', 'info');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_maintenance',
+                    maintenance_action: 'clear_debug_logs',
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showMaintenanceStatus('<?php _e('Logs de debug vidés avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors du nettoyage des logs de debug.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors du nettoyage des logs de debug.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    setButtonState('clear-debug-logs-btn', false);
                 }
             });
         });
