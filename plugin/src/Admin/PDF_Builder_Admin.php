@@ -4873,53 +4873,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
-        // Ensure pdfBuilderReact is available globally - wait for UMD bundle to load
-        wp_add_inline_script('pdf-builder-react', '
-            // Wait for the UMD bundle to load and set window.pdfBuilderReact
-            function waitForPDFBuilderReact() {
-                console.log("🔍 waitForPDFBuilderReact called");
-                console.log("📦 Current window.pdfBuilderReact:", typeof window.pdfBuilderReact);
-                console.log("📦 window object in waitForPDFBuilderReact:", window);
-                if (typeof window !== "undefined" && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === "function") {
-                    console.log("✅ React bundle loaded successfully, pdfBuilderReact.initPDFBuilderReact is available");
-                    // Initialize React immediately when available
-                    try {
-                        var result = window.pdfBuilderReact.initPDFBuilderReact();
-                        console.log("✅ React initialization result:", result);
-                        return result === true; // Only return true if initialization succeeded
-                    } catch (error) {
-                        console.error("❌ Error initializing React:", error);
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            // Check immediately
-            if (!waitForPDFBuilderReact()) {
-                console.log("⏳ React bundle not ready immediately, starting polling...");
-                // If not ready, check every 100ms for up to 5 seconds
-                var attempts = 0;
-                var maxAttempts = 50; // 50 * 100ms = 5 seconds
-                var checkInterval = setInterval(function() {
-                    attempts++;
-                    console.log("🔄 Attempt " + attempts + "/" + maxAttempts + " - Checking for pdfBuilderReact...");
-                    if (waitForPDFBuilderReact()) {
-                        clearInterval(checkInterval);
-                        console.log("✅ React bundle loaded after " + attempts + " attempts");
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(checkInterval);
-                        console.error("❌ React bundle failed to load after 5 seconds");
-                        // Show error in loading div
-                        var loadingDiv = document.getElementById("pdf-builder-react-loading");
-                        if (loadingDiv) {
-                            loadingDiv.innerHTML = "<p>❌ Erreur: Le script React n\'a pas pu être chargé après 5 secondes d\'attente.</p><p>Vérifiez la console pour plus de détails.</p>";
-                        }
-                    }
-                }, 100);
-            }
-        ', 'after');
-
         // Enqueue API Preview scripts for React editor
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd');
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-api-client.js', ['jquery'], $version_param, true);
