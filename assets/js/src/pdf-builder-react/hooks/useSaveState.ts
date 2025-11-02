@@ -55,7 +55,8 @@ export function useSaveState({
   const lastSaveTimeRef = useRef<number>(0);
   const elementsHashRef = useRef<string>('');
   const pendingSaveRef = useRef<boolean>(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastChangeTimeRef = useRef<number>(0);
+  const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -230,51 +231,57 @@ export function useSaveState({
   }, []);
 
   /**
-   * Effect pour gérer la sauvegarde automatique
+   * Effect pour gérer la sauvegarde automatique avec détection d'inactivité
    */
   useEffect(() => {
     if (!templateId || elements.length === 0) {
       return;
     }
 
-    // Clear any existing debounce timeout
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+    // Mettre à jour le temps du dernier changement
+    lastChangeTimeRef.current = Date.now();
+    const currentHash = getElementsHash(elements);
+    const hasChanged = currentHash !== elementsHashRef.current;
+
+    if (!hasChanged) {
+      return;
     }
 
-    // Debounce element changes by 500ms to avoid rapid re-renders
-    debounceTimeoutRef.current = setTimeout(() => {
-      const currentHash = getElementsHash(elements);
-      const hasChanged = currentHash !== elementsHashRef.current;
+    // Annuler le timeout d'inactivité précédent
+    if (inactivityTimeoutRef.current) {
+      clearTimeout(inactivityTimeoutRef.current);
+    }
+
+    // Programmer une vérification d'inactivité
+    inactivityTimeoutRef.current = setTimeout(() => {
+      const timeSinceLastChange = Date.now() - lastChangeTimeRef.current;
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
-      const minIntervalElapsed = timeSinceLastSave >= autoSaveInterval;
 
-      if (!hasChanged || !minIntervalElapsed || pendingSaveRef.current) {
-        return;
-      }
+      // Sauvegarder seulement si inactif depuis 3 secondes et interval minimum écoulé
+      if (timeSinceLastChange >= 3000 && timeSinceLastSave >= autoSaveInterval && !pendingSaveRef.current) {
+        console.log('[SAVE STATE] Inactivité détectée, planification sauvegarde...');
 
-      console.log('[SAVE STATE] Changements détectés, planification sauvegarde...');
-
-      // Nettoyer le timeout précédent
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-
-      // Planifier la sauvegarde
-      autoSaveTimeoutRef.current = setTimeout(() => {
-        if (!pendingSaveRef.current) {
-          pendingSaveRef.current = true;
-          performSave(0).finally(() => {
-            pendingSaveRef.current = false;
-          });
+        // Nettoyer le timeout précédent
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
         }
-      }, autoSaveInterval);
-    }, 2000); // 2000ms debounce to prevent rapid re-renders
+
+        // Planifier la sauvegarde
+        autoSaveTimeoutRef.current = setTimeout(() => {
+          if (!pendingSaveRef.current) {
+            pendingSaveRef.current = true;
+            performSave(0).finally(() => {
+              pendingSaveRef.current = false;
+            });
+          }
+        }, 100); // Petit délai pour éviter les conflits
+      }
+    }, 3000); // Attendre 3 secondes d'inactivité
 
     // Cleanup
     return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+      if (inactivityTimeoutRef.current) {
+        clearTimeout(inactivityTimeoutRef.current);
       }
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
@@ -293,8 +300,8 @@ export function useSaveState({
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+      if (inactivityTimeoutRef.current) {
+        clearTimeout(inactivityTimeoutRef.current);
       }
     };
   }, []);
