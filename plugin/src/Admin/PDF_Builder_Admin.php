@@ -5157,22 +5157,32 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
-        // Ensure pdfBuilderReact is available globally
+        // Ensure pdfBuilderReact is available globally - wait for UMD bundle to load
         wp_add_inline_script('pdf-builder-react', '
-            if (typeof window.pdfBuilderReact === "undefined" && typeof window !== "undefined") {
-                // The UMD bundle should have set this, but let\'s ensure it
-                window.pdfBuilderReact = window.pdfBuilderReact || {};
-                if (typeof window !== "undefined" && window) {
-                    // Try to get the exported module
-                    try {
-                        var exportedModule = window.pdfBuilderReact;
-                        if (exportedModule && typeof exportedModule.initPDFBuilderReact === "function") {
-                            window.pdfBuilderReact = exportedModule;
-                        }
-                    } catch (e) {
-                        console.warn("Could not access React module export:", e);
-                    }
+            // Wait for the UMD bundle to load and set window.pdfBuilderReact
+            function waitForPDFBuilderReact() {
+                if (typeof window !== "undefined" && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === "function") {
+                    console.log("React bundle loaded successfully, pdfBuilderReact.initPDFBuilderReact is available");
+                    return true;
                 }
+                return false;
+            }
+
+            // Check immediately
+            if (!waitForPDFBuilderReact()) {
+                // If not ready, check every 100ms for up to 5 seconds
+                var attempts = 0;
+                var maxAttempts = 50; // 50 * 100ms = 5 seconds
+                var checkInterval = setInterval(function() {
+                    attempts++;
+                    if (waitForPDFBuilderReact()) {
+                        clearInterval(checkInterval);
+                        console.log("React bundle loaded after " + attempts + " attempts");
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(checkInterval);
+                        console.error("React bundle failed to load after 5 seconds");
+                    }
+                }, 100);
             }
         ', 'after');
 
@@ -5209,23 +5219,34 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         </div>
 
         <script>
-        // Script d'initialisation React
+        // Script d'initialisation React avec vérification périodique
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Initializing React PDF Builder...');
 
-            // Attendre que React soit chargé
-            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                window.pdfBuilderReact.initPDFBuilderReact();
-            } else {
-                // Fallback si le script n'est pas encore chargé
-                setTimeout(function() {
-                    if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                        window.pdfBuilderReact.initPDFBuilderReact();
-                    } else {
-                        console.error('PDF Builder React script not loaded');
-                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé.</p>';
+            function tryInitReact() {
+                if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
+                    console.log('React PDF Builder script loaded, initializing...');
+                    window.pdfBuilderReact.initPDFBuilderReact();
+                    return true;
+                }
+                return false;
+            }
+
+            // Essayer immédiatement
+            if (!tryInitReact()) {
+                // Si pas prêt, vérifier toutes les 200ms pendant 10 secondes maximum
+                var attempts = 0;
+                var maxAttempts = 50; // 50 * 200ms = 10 secondes
+                var initInterval = setInterval(function() {
+                    attempts++;
+                    if (tryInitReact()) {
+                        clearInterval(initInterval);
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(initInterval);
+                        console.error('PDF Builder React script not loaded after 10 seconds');
+                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé après 10 secondes d\'attente.</p>';
                     }
-                }, 1000);
+                }, 200);
             }
         });
         </script>
