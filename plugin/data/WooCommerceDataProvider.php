@@ -36,9 +36,9 @@ class WooCommerceDataProvider implements DataProviderInterface {
     /**
      * Définit la commande WooCommerce
      *
-     * @param WC_Order $order Commande WooCommerce
+     * @param object $order Commande WooCommerce ou objet compatible
      */
-    public function setOrder(WC_Order $order): void {
+    public function setOrder(object $order): void {
         $this->order = $order;
         $this->cachedValues = []; // Reset cache
     }

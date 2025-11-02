@@ -4,12 +4,74 @@
  * Teste l'injection de vraies données WooCommerce dans les templates PDF
  */
 
-// Simuler les constantes WordPress nécessaires
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(dirname(dirname(dirname(__FILE__)))) . '/');
+// Simuler les fonctions WordPress nécessaires pour les tests
+if (!function_exists('wp_create_nonce')) {
+    function wp_create_nonce($action) {
+        return 'test_nonce_' . $action;
+    }
 }
-if (!defined('WP_PLUGIN_DIR')) {
-    define('WP_PLUGIN_DIR', dirname(dirname(__FILE__)));
+
+if (!function_exists('wp_verify_nonce')) {
+    function wp_verify_nonce($nonce, $action) {
+        return $nonce === 'test_nonce_' . $action;
+    }
+}
+
+if (!function_exists('current_user_can')) {
+    function current_user_can($capability) {
+        return true; // Simuler un utilisateur avec tous les droits en test
+    }
+}
+
+if (!function_exists('wp_die')) {
+    function wp_die($message = '') {
+        throw new Exception('WordPress wp_die called: ' . $message);
+    }
+}
+
+if (!function_exists('wp_send_json_success')) {
+    function wp_send_json_success($data) {
+        echo json_encode(['success' => true, 'data' => $data]);
+        exit;
+    }
+}
+
+if (!function_exists('wp_send_json_error')) {
+    function wp_send_json_error($data) {
+        echo json_encode(['success' => false, 'data' => $data]);
+        exit;
+    }
+}
+
+if (!function_exists('sanitize_text_field')) {
+    function sanitize_text_field($str) {
+        return trim($str);
+    }
+}
+
+if (!function_exists('stripslashes')) {
+    function stripslashes($str) {
+        return $str; // Simplified for test
+    }
+}
+
+if (!function_exists('intval')) {
+    function intval($var) {
+        return (int)$var;
+    }
+}
+
+if (!function_exists('function_exists')) {
+    function function_exists($function_name) {
+        return true; // Simplified for test
+    }
+}
+
+if (!function_exists('wc_get_order')) {
+    function wc_get_order($order_id) {
+        // Return a mock order for testing
+        return (object)['id' => $order_id, 'test' => true];
+    }
 }
 
 // Définir les constantes du plugin nécessaires
