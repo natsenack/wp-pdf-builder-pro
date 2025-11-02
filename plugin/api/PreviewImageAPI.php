@@ -30,6 +30,10 @@ class PreviewImageAPI {
      * Point d'entrée unifié pour tous les aperçus
      */
     public function generate_preview() {
+        // Debug immédiat au début
+        error_log('[PDF Preview DEBUG] Function called with POST: ' . json_encode($_POST));
+        header('X-PDF-Debug: Function called');
+        
         $start_time = microtime(true);
 
         // Debug logging
