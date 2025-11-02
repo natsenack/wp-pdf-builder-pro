@@ -233,20 +233,14 @@ function pdf_builder_validator_page() {
             <p>
                 <input type="submit" name="run_validation" class="button button-primary button-hero"
                        value="🚀 Lancer la Validation Complète"
-                       onclick="startValidation(this);">
+                       onclick="prepareValidation(this);">
             </p>
         </form>
 
         <script>
-        function startValidation(button) {
+        function prepareValidation(button) {
             button.value = '🔄 Validation en cours...';
             button.disabled = true;
-
-            // Empêcher la soumission multiple
-            document.getElementById('validation-form').onsubmit = function(e) {
-                e.preventDefault();
-                return false;
-            };
 
             // Timeout de sécurité (60 secondes)
             setTimeout(function() {
@@ -255,8 +249,8 @@ function pdf_builder_validator_page() {
                 }
             }, 60000);
 
-            // Soumettre le formulaire
-            document.getElementById('validation-form').submit();
+            // Laisser le formulaire se soumettre normalement
+            return true;
         }
         </script>
 
