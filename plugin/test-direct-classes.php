@@ -161,11 +161,8 @@ try {
     $data_provider = new WP_PDF_Builder_Pro\Data\SampleDataProvider();
     $generator = new WP_PDF_Builder_Pro\Generators\PDFGenerator($template_data, $data_provider);
 
-    // HTML simple pour test
-    $html = '<html><body><h1>Test PDF</h1><p>Ceci est un test.</p></body></html>';
-
-    // Générer le PDF
-    $pdf_content = $generator->generatePDF($html, 'test.pdf');
+    // Générer le PDF (méthode generate() retourne le contenu PDF)
+    $pdf_content = $generator->generate('pdf');
 
     if (!empty($pdf_content)) {
         echo "✅ OK (" . strlen($pdf_content) . " bytes)\n";
