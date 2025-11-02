@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
+import { flushSync } from 'react-dom';
 
 /**
  * Hook pour gérer la sauvegarde automatique avec retry logic
@@ -57,7 +58,8 @@ export function useSaveState({
   const pendingSaveRef = useRef<boolean>(false);
   const lastChangeTimeRef = useRef<number>(0);
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const saveCooldownRef = useRef<number>(0); // Minimum time between saves
+  const saveCooldownRef = useRef<number>(0);
+  const saveOperationIdRef = useRef<number>(0); // Pour identifier les opérations de sauvegarde uniques // Minimum time between saves
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -81,7 +83,8 @@ export function useSaveState({
       }
 
       try {
-        startTransition(() => {
+        // Utiliser flushSync pour des updates synchrones
+        flushSync(() => {
           setState('saving');
         });
         onSaveStart?.();
@@ -148,12 +151,15 @@ export function useSaveState({
 
         // Succès
         const savedAt = data.data?.saved_at || new Date().toISOString();
-        startTransition(() => {
+
+        // Utiliser flushSync pour des updates synchrones qui ne conflict pas avec React
+        flushSync(() => {
           setLastSavedAt(savedAt);
           setState('saved');
           setError(null);
           setRetryCount(0);
         });
+
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
 
@@ -193,7 +199,7 @@ export function useSaveState({
         }
 
         // Échec définitif après tous les retries
-        startTransition(() => {
+        flushSync(() => {
           setState('error');
           setError(errorMsg);
         });
@@ -225,7 +231,7 @@ export function useSaveState({
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
-    startTransition(() => {
+    flushSync(() => {
       setError(null);
       setState('idle');
     });
@@ -259,6 +265,9 @@ export function useSaveState({
       clearTimeout(inactivityTimeoutRef.current);
     }
 
+    // Générer un ID unique pour cette opération de sauvegarde
+    const operationId = ++saveOperationIdRef.current;
+
     // Programmer une vérification d'inactivité
     inactivityTimeoutRef.current = setTimeout(() => {
       const timeSinceLastChange = Date.now() - lastChangeTimeRef.current;
@@ -267,12 +276,14 @@ export function useSaveState({
 
       // Sauvegarder seulement si inactif depuis 3 secondes, interval minimum écoulé,
       // pas de sauvegarde en cours, et cooldown écoulé (5 secondes minimum entre sauvegardes)
+      // Vérifier aussi que cette opération est toujours la plus récente
       if (timeSinceLastChange >= 3000 &&
           timeSinceLastSave >= autoSaveInterval &&
           timeSinceLastCooldown >= 5000 &&
-          !pendingSaveRef.current) {
+          !pendingSaveRef.current &&
+          operationId === saveOperationIdRef.current) {
 
-        console.log('[SAVE STATE] Inactivité détectée, planification sauvegarde...');
+        console.log(`[SAVE STATE] Inactivité détectée (opération ${operationId}), planification sauvegarde...`);
 
         // Marquer le cooldown
         saveCooldownRef.current = Date.now();
@@ -282,16 +293,16 @@ export function useSaveState({
           clearTimeout(autoSaveTimeoutRef.current);
         }
 
-        // Planifier la sauvegarde avec un petit délai pour laisser React finir ses updates
+        // Planifier la sauvegarde avec un délai plus long pour laisser React finir
         autoSaveTimeoutRef.current = setTimeout(() => {
-          if (!pendingSaveRef.current) {
+          if (!pendingSaveRef.current && operationId === saveOperationIdRef.current) {
             pendingSaveRef.current = true;
-            // Ajouter un micro-task pour s'assurer que React a fini ses updates
-            Promise.resolve().then(() => performSave(0)).finally(() => {
+            // Utiliser queueMicrotask pour s'assurer que React a fini ses updates
+            queueMicrotask(() => performSave(0).finally(() => {
               pendingSaveRef.current = false;
-            });
+            }));
           }
-        }, 200); // Augmenter le délai à 200ms
+        }, 500); // Augmenter à 500ms
       }
     }, 3000); // Attendre 3 secondes d'inactivité
 
