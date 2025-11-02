@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Canvas } from './canvas/Canvas.tsx';
 import { Toolbar } from './toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
@@ -15,7 +15,7 @@ interface PDFBuilderContentProps {
   className?: string;
 }
 
-export function PDFBuilderContent({
+export const PDFBuilderContent = memo(function PDFBuilderContent({
   width = DEFAULT_CANVAS_WIDTH,
   height = DEFAULT_CANVAS_HEIGHT,
   className
@@ -179,4 +179,4 @@ export function PDFBuilderContent({
       </div>
     </>
   );
-}
+});
