@@ -1,10 +1,10 @@
 <?php
 
 /**
- * PDF Builder Pro - Generateur PDF Ultra-Performant SANS TCPDF
+ * PDF Builder Pro - Generateur PDF Ultra-Performant avec Dompdf
  * Version: 3.0 - Migration complète vers approche moderne
  * Auteur: PDF Builder Pro Team
- * Description: Systeme plug-and-play pour generation PDF haute performance sans TCPDF
+ * Description: Systeme plug-and-play pour generation PDF haute performance avec Dompdf
  * Updated: 2025-10-19 - Force deployment v2
  */
 
@@ -78,7 +78,7 @@ class PDF_Builder_Pro_Generator
     }
 
     /**
-     * Generateur principal - Interface unifiee SANS TCPDF
+     * Generateur principal - Interface unifiee avec Dompdf
      */
     public function generate($elements, $options = [])
     {
@@ -760,7 +760,7 @@ class PDF_Builder_Pro_Generator
                 '{{order_shipping}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
                 '{{discount_total}}' => function_exists('wc_price') ? wc_price($order->get_discount_total()) : $order->get_discount_total(),
                 '{{payment_method}}' => $order->get_payment_method_title(),
-                '{{order_status}}' => function_exists('wc_get_order_status_name') ? wc_get_order_status_name($order->get_status()) : $order->get_status(),
+                '{{order_status}}' => function_exists('wc_get_order_status_name') ? call_user_func('wc_get_order_status_name', $order->get_status()) : $order->get_status(),
                 '{{currency}}' => $order->get_currency(),
                 '{{date}}' => date('d/m/Y'),
                 '{{due_date}}' => date('d/m/Y', strtotime('+30 days')),

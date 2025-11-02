@@ -235,8 +235,8 @@ class PDF_Builder_Screenshot_Renderer
             return $this->generate_with_puppeteer($html_file, $pdf_path);
         }
 
-        // Méthode 3: TCPDF comme fallback (qualité réduite)
-        return $this->generate_with_tcpdf_fallback($html_file, $pdf_path);
+        // Méthode 3: Dompdf comme fallback (qualité réduite)
+        return $this->generate_with_dompdf_fallback($html_file, $pdf_path);
     }
 
     /**
@@ -288,25 +288,25 @@ class PDF_Builder_Screenshot_Renderer
     }
 
     /**
-     * Fallback vers TCPDF (qualité réduite)
+     * Fallback vers Dompdf (qualité réduite)
      */
-    private function generate_with_tcpdf_fallback($html_file, $pdf_path)
+    private function generate_with_dompdf_fallback($html_file, $pdf_path)
     {
         try {
-            include_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php';
+            require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
 
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-            $pdf->SetCreator('PDF Builder Pro');
-            $pdf->SetAuthor('PDF Builder Pro');
-            $pdf->SetTitle('Document PDF');
-            $pdf->SetMargins(15, 15, 15);
-            $pdf->AddPage();
+            $dompdf = new Dompdf\Dompdf();
+            $dompdf->set_option('isRemoteEnabled', true);
+            $dompdf->set_option('isHtml5ParserEnabled', true);
+            $dompdf->set_option('defaultFont', 'Arial');
 
             // Lire le HTML et l'ajouter au PDF
             $html_content = file_get_contents($html_file);
-            $pdf->writeHTML($html_content, true, false, true, false, '');
+            $dompdf->loadHtml($html_content);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
 
-            $pdf->Output($pdf_path, 'F');
+            file_put_contents($pdf_path, $dompdf->output());
             return file_exists($pdf_path);
         } catch (Exception $e) {
             return false;
@@ -321,7 +321,7 @@ class PDF_Builder_Screenshot_Renderer
         return [
             'wkhtmltopdf' => $this->is_wkhtmltopdf_available(),
             'puppeteer' => $this->is_puppeteer_available(),
-            'tcpdf_fallback' => true
+            'dompdf_fallback' => true
         ];
     }
 }

@@ -2,11 +2,11 @@
 /**
  * Dependency Injection Container - Conteneur d'injection de dépendances
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @subpackage Core
  */
 
-namespace PDF_Builder_Pro\Core;
+namespace PDF_Builder\Core;
 
 /**
  * Classe DIContainer
@@ -184,7 +184,7 @@ class DIContainer
     public function registerModeSwitcher(string $initialMode = 'canvas'): self
     {
         return $this->set('mode_switcher', function () use ($initialMode) {
-            return new \PDF_Builder_Pro\Managers\ModeSwitcher($initialMode);
+            return new \PDF_Builder\Managers\ModeSwitcher($initialMode);
         }, true); // Singleton
     }
 

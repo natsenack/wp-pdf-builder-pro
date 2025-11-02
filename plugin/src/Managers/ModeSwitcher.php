@@ -6,13 +6,7 @@
  * @subpackage Managers
  */
 
-namespace PDF_Builder_Pro\Managers;
-
-use PDF_Builder_Pro\Interfaces\ModeInterface;
-use PDF_Builder_Pro\Interfaces\DataProviderInterface;
-use PDF_Builder_Pro\Interfaces\PreviewRendererInterface;
-use PDF_Builder_Pro\Providers\CanvasModeProvider;
-use PDF_Builder_Pro\Providers\MetaboxModeProvider;
+namespace PDF_Builder\Managers;
 
 /**
  * Classe ModeSwitcher
@@ -20,7 +14,7 @@ use PDF_Builder_Pro\Providers\MetaboxModeProvider;
  * Gère le basculement entre les modes Canvas (données fictives) et Metabox (données WooCommerce)
  * Implémente le pattern Strategy pour l'injection de dépendances
  */
-class ModeSwitcher implements ModeInterface
+class ModeSwitcher
 {
     /**
      * Modes disponibles
@@ -38,16 +32,16 @@ class ModeSwitcher implements ModeInterface
     /**
      * Instance du provider actuel
      *
-     * @var DataProviderInterface|null
+     * @var mixed|null
      */
-    private ?DataProviderInterface $currentProvider = null;
+    private mixed $currentProvider = null;
 
     /**
      * Instance du renderer
      *
-     * @var PreviewRendererInterface|null
+     * @var mixed|null
      */
-    private ?PreviewRendererInterface $renderer = null;
+    private mixed $renderer = null;
 
     /**
      * Cache des providers instanciés

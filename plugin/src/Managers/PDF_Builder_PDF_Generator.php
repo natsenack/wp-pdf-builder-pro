@@ -153,30 +153,21 @@ class PDF_Builder_PDF_Generator
 
         $pdf_path = $pdf_dir . '/' . $filename;
 
-        // Générer le PDF avec TCPDF
-        include_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php';
+        // Générer le PDF avec Dompdf
+        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
 
-        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $dompdf = new Dompdf\Dompdf();
+        $dompdf->set_option('isRemoteEnabled', true);
+        $dompdf->set_option('isHtml5ParserEnabled', true);
+        $dompdf->set_option('defaultFont', 'Arial');
 
         // Configuration PDF
-        $pdf->SetCreator('PDF Builder Pro');
-        $pdf->SetAuthor('PDF Builder Pro');
-        $pdf->SetTitle('Document PDF');
-        $pdf->SetSubject('Document généré par PDF Builder Pro');
-        $pdf->SetKeywords('PDF, Builder, Pro');
-
-        // Supprimer les headers par défaut
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
-        // Ajouter une page
-        $pdf->AddPage();
-
-        // Écrire le HTML
-        $pdf->writeHTML($html, true, false, true, false, '');
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
         // Sauvegarder le PDF
-        $pdf->Output($pdf_path, 'F');
+        file_put_contents($pdf_path, $dompdf->output());
 
         return $pdf_path;
     }
@@ -441,11 +432,11 @@ class PDF_Builder_PDF_Generator
     }
 
     /**
-     * Générer un PDF avec TCPDF pour un rendu fidèle
+     * Générer un PDF avec Dompdf pour un rendu fidèle
      */
 
     /**
-     * Rendre un élément dans le PDF avec TCPDF
+     * Rendre un élément dans le PDF avec Dompdf
      */
 
     /**

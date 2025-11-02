@@ -1,1 +1,0 @@
-Test rsync sans SSL - 11/01/2025 19:25:53

@@ -5,6 +5,8 @@ namespace PDF_Builder\Core;
 /**
  * PDF Builder Core
  * Classe principale du plugin PDF Builder Pro
+ *
+ * @method static void pdf_builder_log(string $message, int $level = 2, array $context = [])
  */
 
 class PDF_Builder_Core
@@ -114,6 +116,50 @@ class PDF_Builder_Core
         // Enregistrer le menu admin au hook admin_menu (pas pendant plugins_loaded)
         // Cela évite que les traductions soient appelées trop tôt
         add_action('admin_menu', [$this, 'register_admin_menu']);
+
+        // Initialiser les dossiers au hook WordPress 'init' (plus tardif)
+        add_action('init', [$this, 'initialize_directories']);
+    }
+
+    /**
+     * Initialiser les dossiers nécessaires pour le plugin
+     */
+    public function initialize_directories()
+    {
+        // Obtenir le répertoire d'upload WordPress
+        $upload_dir = wp_upload_dir();
+        $base_dir = $upload_dir['basedir'];
+
+        // Dossiers à créer
+        $directories = array(
+            $base_dir . '/pdf-builder',
+            $base_dir . '/pdf-builder/templates',
+            $base_dir . '/pdf-builder/previews',
+            $base_dir . '/pdf-builder/orders',
+            $base_dir . '/pdf-builder/temp',
+            $base_dir . '/pdf-builder/cache',
+            $base_dir . '/pdf-builder/logs'
+        );
+
+        // Créer chaque dossier s'il n'existe pas
+        foreach ($directories as $directory) {
+            if (!file_exists($directory)) {
+                wp_mkdir_p($directory);
+
+                // Créer un fichier .htaccess pour sécuriser les dossiers
+                $htaccess_path = $directory . '/.htaccess';
+                if (!file_exists($htaccess_path)) {
+                    $htaccess_content = "# Sécuriser l'accès aux fichiers PDF Builder\n<FilesMatch \"\\.(php|php3|php4|php5|phtml)$\">\nOrder Deny,Allow\nDeny from all\n</FilesMatch>\n";
+                    file_put_contents($htaccess_path, $htaccess_content);
+                }
+
+                // Créer un fichier index.php vide pour éviter le listage
+                $index_path = $directory . '/index.php';
+                if (!file_exists($index_path)) {
+                    file_put_contents($index_path, '<?php // Silence is golden');
+                }
+            }
+        }
     }
 
     /**
@@ -286,8 +332,8 @@ class PDF_Builder_Core
         // Définir les options par défaut
         add_option('pdf_builder_version', $this->version);
 
-        if (function_exists('\pdf_builder_log')) {
-            \pdf_builder_log('PDF Builder Pro activated', 1); // @phpstan-ignore-line
+        if (function_exists('pdf_builder_log')) {
+            call_user_func('pdf_builder_log', 'PDF Builder Pro activated', 1);
         }
     }
 
@@ -297,8 +343,8 @@ class PDF_Builder_Core
     public function deactivate()
     {
         // Nettoyer si nécessaire
-        if (function_exists('\pdf_builder_log')) {
-            \pdf_builder_log('PDF Builder Pro deactivated', 1); // @phpstan-ignore-line
+        if (function_exists('pdf_builder_log')) {
+            call_user_func('pdf_builder_log', 'PDF Builder Pro deactivated', 1);
         }
     }
 

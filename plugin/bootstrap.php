@@ -651,20 +651,33 @@ function pdf_builder_ajax_save_template() {
 }
 
 /**
- * Actions AJAX fallback
+ * Enregistrer les hooks AJAX de fallback de manière sécurisée
  */
-add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
-add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
-add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
-add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
-add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
-add_action('wp_ajax_nopriv_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
-add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
-add_action('wp_ajax_nopriv_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
-add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+function pdf_builder_register_fallback_hooks() {
+    // Vérifier que WordPress est chargé
+    if (!function_exists('add_action')) {
+        return;
+    }
+
+    // Actions AJAX fallback
+    add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
+    add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
+    add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+    add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
+    add_action('wp_ajax_nopriv_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
+    add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
+    add_action('wp_ajax_nopriv_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
+    add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+}
+
+// Enregistrer les hooks seulement si WordPress est disponible
+if (function_exists('add_action')) {
+    pdf_builder_register_fallback_hooks();
+}
 
 // Fonction fallback pour récupérer les paramètres
 function pdf_builder_ajax_get_settings_fallback() {
@@ -829,8 +842,10 @@ function pdf_builder_ajax_save_settings_fallback() {
     exit;
 }
 
-// Charger les scripts nécessaires pour l'éditeur
-add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_editor_scripts');
+// Enregistrer les scripts seulement si WordPress est disponible
+if (function_exists('add_action')) {
+    add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_editor_scripts');
+}
 
 function pdf_builder_enqueue_editor_scripts($hook) {
     // Charger wp_enqueue_media seulement sur les pages du PDF builder

@@ -1,644 +1,1290 @@
-# 🚀 Reconstruction Système d'Aperçu
+# 🚀 Reconstruction Système d'Aperçu PDF
 
-**📅 Date** : 30 octobre 2025  
-**🔄 Statut** : Phase 3.0 en cours - Rendu PHP via TCPDF implémenté pour aperçu haute précision
+**📅 Date** : 1 novembre 2025
+**🔄 Statut** : Phase 4.1 terminée - Auto-save implémenté, tests Phase 4.2 à venir
 
 ---
 
 ## 🎯 Vue d'ensemble
 
-Reconstruction complète du système d'aperçu PDF avec architecture moderne :
+Reconstruction complète du système d'aperçu PDF avec architecture moderne unifiée :
 - **Canvas 2D** : Éditeur avec données d'exemple et rendu Canvas (fallback)
 - **Metabox** : WooCommerce avec données réelles et rendu PHP/TCPDF (prioritaire)
 - **API Unifiée** : PreviewImageAPI pour générer images PNG côté serveur
+
+### 📊 État actuel du projet
+**Phase active** : 2/8 (avec Phase 2.5 ajoutée)
+**Progression** : 60% (Phase 1 100% + Phase 2.0-2.1 100% + Phase 2.11 100% complétées)
+
+**Statut détaillé** :
+- ✅ Phase 1 (Base unifiée) : 100% TERMINÉE - Architecture serveur éprouvée
+- ⏳ Phase 2 (Fonctionnalités Premium) : 15% - 2.11/11 étapes complétées (stockage avancé)
+- 🆕 Phase 2.5 (Améliorations Concurrentielles) : 0% - Planification (8 gaps à combler)
+- ✅ Phase 4.0 (API Preview) : 100% COMPLÉTÉE - PreviewImageAPI + handler AJAX déployés
+- ✅ Phase 4.1 (Auto-save) : 100% COMPLÉTÉE - Hook useSaveState + SaveIndicator déployés
+- ⏳ Phase 4.2-4.6 (Tests) : À faire après validation autosave
+- ⏳ Phase 5-8 : Planification ultérieure
+
+**Prochaine action** :
+1. Implémenter Phase 2.5.1 (Système Double Format) - priorité critique
+2. Tester autosave en production (2.5s interval, retry logic)
+3. Valider cohérence JSON avec aperçu PHP
 
 ---
 
 ## 📋 Spécifications fonctionnelles
 
 ### 🎯 **Vision générale**
-- **Méthode d'affichage commune** : Même rendu visuel pour Canvas et Metabox, seules les données changent dynamiquement.
-- **Respect du canvas** : Tout doit correspondre exactement au canvas (éléments, propriétés, outils).
-- **Injection dynamique** : Variables `{{variable}}` (ex: `{{customer_name}}`) remplies selon le mode.
+- **Méthode d'affichage commune** : Même rendu visuel pour Canvas et Metabox, seules les données changent dynamiquement
+- **Respect du canvas** : Tout doit correspondre exactement au canvas (éléments, propriétés, outils)
+- **Injection dynamique** : Variables `{{variable}}` (ex: `{{customer_name}}`) remplies selon le mode
 
 ### 📋 **Modes d'aperçu**
 
 #### **Mode Canvas (Éditeur)**
-- **Données** : Fictives mais cohérentes (client "Jean Dupont", produits avec prix/totaux calculés).
-- **Éléments entreprise** : Identiques au Metabox (logo, etc.).
-- **Déclenchement** : Bouton dans l'éditeur ouvrant une modal.
-- **Objectif** : Aperçu design sans commande spécifique, visuellement crédible.
+- **Données** : Fictives mais cohérentes (client "Jean Dupont", produits avec prix/totaux calculés)
+- **Éléments entreprise** : Identiques au Metabox (logo, etc.)
+- **Déclenchement** : Bouton dans l'éditeur ouvrant une modal
+- **Objectif** : Aperçu design sans commande spécifique, visuellement crédible
 
 #### **Mode Metabox (WooCommerce)**
-- **Données** : Réelles depuis WooCommerce (client, produits, commande).
-- **Éléments entreprise** : Depuis paramètres WooCommerce.
+- **Données** : Réelles depuis WooCommerce (client, produits, commande)
+- **Éléments entreprise** : Depuis paramètres WooCommerce
 - **Déclenchement** : Deux boutons dans la modal :
-  - 📸 **"Aperçu Image"** : Screenshot (HTML2Canvas côté client).
-  - 📄 **"Aperçu PDF"** : TCPDF (rendu éditable/précis).
-- **Gestion manquante** : Signaler les problèmes (placeholders rouges "Donnée manquante" + message d'erreur).
+  - 📸 **"Aperçu Image"** : Screenshot (HTML2Canvas côté client)
+  - 📄 **"Aperçu PDF"** : TCPDF (rendu éditable/précis)
+- **Gestion manquante** : Signaler les problèmes (placeholders rouges "Donnée manquante" + message d'erreur)
 
 ### 🛠️ **Fonctionnalités détaillées**
 
 #### **Exports PNG/JPG**
-- **Formats** : Choix PDF/PNG/JPG dans la modal Metabox.
-- **Qualité** : Réglable dans paramètres (défaut 150 DPI).
-- **Nom fichier** : `{{customer_lastname}}_{{order_number}}.png` (ex: `Dupont_2372.png`).
+- **Formats** : Choix PDF/PNG/JPG dans la modal Metabox
+- **Qualité** : Réglable dans paramètres (défaut 150 DPI)
+- **Nom fichier** : `{{customer_lastname}}_{{order_number}}.png` (ex: `Dupont_2372.png`)
 
 #### **Notifications**
-- **Style** : Toasts discrets (pop-up en haut écran).
-- **Déclenchement** : Alerte si génération >2s ("Génération lente...").
-- **Erreurs** : Toast + message spécifique dans modal.
+- **Style** : Toasts discrets (pop-up en haut écran)
+- **Déclenchement** : Alerte si génération >2s ("Génération lente...")
+- **Erreurs** : Toast + message spécifique dans modal
 
 #### **Mode développeur**
-- **Activation** : Setting admin (caché, devs only).
-- **Fonctionnalités** : Hot-reload, logs console, variables de test.
-- **Retrait** : Enlevé en production.
+- **Activation** : Setting admin (caché, devs only)
+- **Fonctionnalités** : Hot-reload, logs console, variables de test
+- **Retrait** : Enlevé en production
 
 #### **Templates prédéfinis**
-- **Emplacement** : Modal dans le menu "Template" existant.
-- **Limite** : Freemium (quelques gratuits, plus payant).
-- **Sé
+- **Emplacement** : Modal dans le menu "Template" existant
+- **Limite** : Freemium (quelques gratuits, plus payant)
 
 ### 🏗️ **Architecture technique**
 
 #### **Séparation Canvas/Metabox**
-- **Providers** : `CanvasDataProvider` (données fictives) et `MetaboxDataProvider` (données réelles).
-- **Injection** : Système modulaire pour switcher entre modes.
+- **Providers** : `CanvasDataProvider` (données fictives) et `MetaboxDataProvider` (données réelles)
+- **Injection** : Système modulaire pour switcher entre modes
 
 #### **Sécurité & Logs**
-- **Permissions** : Basé sur rôles plugin (admins/vendeurs autorisés).
-- **Logs** : Tout (erreurs/warnings/info) dans `wp_debug.log` en mode dev.
-- **Nonces** : Sécurisation AJAX.
+- **Permissions** : Basé sur rôles plugin (admins/vendeurs autorisés)
+- **Logs** : Tout (erreurs/warnings/info) dans `wp_debug.log` en mode dev
+- **Nonces** : Sécurisation AJAX
 
 #### **Compatibilité**
-- **Navigateurs** : Tous modernes + anciens si possible (fallback serveur si HTML2Canvas problématique).
+- **Navigateurs** : Tous modernes + anciens si possible (fallback serveur si HTML2Canvas problématique)
 
 ### 📅 **Priorités v1.1.0**
-- **Implémentation** : Un par un (tester étape par étape).
+- **Implémentation** : Un par un (tester étape par étape)
 - **Fonctionnalités** :
-  1. Cache intelligent.
-  2. Validation automatique.
-  3. Templates prédéfinis (avec limite freemium).
+  1. Cache intelligent
+  2. Validation automatique
+  3. Templates prédéfinis (avec limite freemium)
 
-### ✅ **Critères de succès**
-- **Performance** : <2s génération.
-- **Sécurité** : 0 vulnérabilités.
-- **Ergonomie** : Aperçus visibles (modal 90% écran), téléchargement direct.
-
----
-
-## �️ Phase 5 : Améliorations techniques
-- [ ] **Étape 6.1** : Migrer JavaScript vers TypeScript (interfaces pour éléments, variables)
-  - **Test** : Migration TypeScript réussie, interfaces validées
-- [ ] **Étape 6.2** : Implémenter ESLint + Prettier pour qualité code
-  - **Test** : Code formaté automatiquement, linting sans erreurs
-- [ ] **Étape 6.3** : Ajouter tests unitaires (Jest pour JS, PHPUnit pour PHP)
-  - **Test** : Tests unitaires opérationnels, couverture >80%
-- [ ] **Étape 6.4** : Optimiser performance (code splitting, caching)
-  - **Test** : Performance améliorée, bundle size réduit
-- [ ] **Étape 6.5** : Audit sécurité (nonces, sanitization)
-  - **Test** : Audit sécurité passé, vulnérabilités corrigées
-- [ ] **Étape 6.6** : Améliorer UX (cercle chargement multicolore, gestion erreurs adaptée)
-  - **Test** : UX améliorée, feedback utilisateur positif
-- [ ] **Étape 6.7** : Optimiser performance DB (index, commentaires structurés)
-  - **Test** : Requêtes DB optimisées, temps réponse réduit
-- [ ] **Étape 6.8** : Audit sécurité ciblé (permissions rôles existants)
-  - **Test** : Permissions sécurisées, accès contrôlé
-- [ ] **Étape 6.9** : Internationaliser (anglais, allemand, français avec .po/.mo)
-  - **Test** : Traductions complètes, interface localisée
-- [ ] **Étape 6.10** : Refactoriser modulaire (nouveaux modules, supprimer anciens local + serveur)
-  - **Test** : Refactorisation réussie, code modulaire
-- [x] **Étape 2.1.1 : Identifier et lister les 7 types d'éléments**  
-  - Ouvrir le code source des éléments (probablement dans `src/` ou `resources/js/`)  
-  - Chercher les classes ou composants pour chaque type (texte, image, rectangle, etc.)  
-  - Créer une liste simple avec nom et description courte  
-  - Vérifier dans les templates existants quels éléments sont utilisés  
-  - **Test** : Liste complète validée avec exemples  
-  - **✅ VALIDÉ** : Tests automatisés complets (11 tests Jest + validation PHP) - 7 éléments confirmés  
-  - **➕ TESTS COMPLÉMENTAIRES** : Outils (12 outils validés) et propriétés (6 catégories, 10+ mappings) - Tests automatisés Jest (32 tests) et PHP validés
-  - **Fichiers concernés** : `tests/unit/ElementLibrary.test.js`, `tests/unit/ElementValidationTest.php`
-
-- [x] **Étape 2.1.2 : Analyser les propriétés actuelles de chaque élément**  
-  - Pour chaque élément, lister ses propriétés (position, taille, couleur, etc.)  
-  - Noter les valeurs par défaut et les limites (min/max)  
-  - Identifier les propriétés dynamiques vs statiques  
-  - Documenter comment elles sont stockées en JSON  
-  - **Test** : Propriétés testées dans éditeur  
-  - **✅ VALIDÉ** : Analyse complète documentée (ANALYSE_PROPRIETES_ELEMENTS.md) - 7 éléments analysés avec 150+ propriétés détaillées
-  - **Fichiers concernés** : `docs/ANALYSE_PROPRIETES_ELEMENTS.md`, `utilities/elementPropertyRestrictions.php`
-
-- [x] **Étape 2.1.3 : Documenter les limitations et bugs connus**  
-  - Tester chaque élément dans l'éditeur actuel  
-  - Noter les problèmes (rendu incorrect, propriétés manquantes, etc.)  
-  - Chercher dans les issues Git ou rapports de bugs  
-  - Prioriser les problèmes critiques vs mineurs  
-  - **Test** : Bugs documentés et reproduits  
-  - **✅ VALIDÉ** : Analyse complète du code source - 7 bugs critiques et 10+ limitations identifiées (LIMITATIONS_BUGS_REPORT.md)  
-  - **Fichiers concernés** : `docs/LIMITATIONS_BUGS_REPORT.md`, `tests/unit/BugFixes.test.js`  
-
-- [x] **Étape 2.1.4 : Définir les priorités d'implémentation**  
-  - Classer les éléments par fréquence d'usage (texte en premier)  
-  - Identifier les dépendances entre éléments  
-  - Estimer la complexité de recréation pour chacun  
-  - Créer une matrice priorité/complexité  
-  - **Test** : Valider liste complète avec exemples concrets
-  - **✅ VALIDÉ** : Plan d'implémentation complet défini (PHASE_2.1.4_PRIORITES_IMPLEMENTATION.md) - 7 éléments classés par priorité avec plan 3 phases (fondamentaux → intermédiaires → critique)
-  - **Fichiers concernés** : `docs/PHASE_2.1.4_PRIORITES_IMPLEMENTATION.md`
-
-#### **2.2 Implémenter les éléments fondamentaux**
-- [x] **Étape 2.2.1 : Améliorer company_logo**  
-  - Unifier gestion src/imageUrl pour compatibilité  
-  - Implémenter redimensionnement automatique selon ratio d'aspect  
-  - Ajouter validation formats d'image (JPG, PNG, WebP, SVG, GIF, BMP, TIFF, ICO)  
-  - Étendre propriétés de bordure (borderWidth, borderStyle, borderColor)  
-  - **Test** : 17 tests unitaires validés, build réussi  
-  - **✅ VALIDÉ** : company_logo entièrement amélioré avec gestion unifiée, redimensionnement automatique, validation formats et propriétés complètes
-  - **Fichiers concernés** : `plugin/src/Renderers/ImageRenderer.php`, `tests/unit/InfoRendererTest.php`
-
-- [x] **Étape 2.2.2 : Améliorer order_number**  
-  - Implémenter formatage configurable (#CMD-2025-XXX, FACT-XXXX, etc.)  
-  - Ajouter validation des propriétés et gestion des cas spéciaux  
-  - Étendre propriétés de style (police, couleur, alignement)  
-  - **Test** : Formats validés, prévisualisation fonctionnelle
-  - **✅ VALIDÉ** : Formatage étendu (6 formats), validation propriétés, style complet, tests validés
-  - **➕ TEST COMPLÉMENTAIRE** : Investigation des frais dans product_table - Test de simulation créé et correction préparée (note ajoutée dans Phase 2.2.2 du roadmap)
-  - **Fichiers concernés** : `plugin/src/Renderers/TextRenderer.php`, `tests/unit/ElementValidationTest.php`
-
-- [x] **Étape 2.2.3 : Améliorer company_info**  
-  - Mapping complet des champs société WooCommerce  
-  - Templates prédéfinis pour différents secteurs  
-  - Gestion des données manquantes avec fallbacks  
-  - Optimisation mise en page responsive  
-  - **Test** : Tous champs société affichés correctement
-  - **✅ VALIDÉ** : Mapping complet implémenté avec 4 templates (default, commercial, legal, minimal), récupération données WooCommerce, propriétés étendues, tests validés
-  - **Fichiers concernés** : `plugin/src/Renderers/InfoRenderer.php`, `plugin/src/Providers/MetaboxModeProvider.php`
-
-- [ ] **Étape 2.2.4 : Implémenter boutons aperçu dans éditeur et metabox**
-  - [x] **Étape 2.2.4.1 : Bouton aperçu dans éditeur Canvas**
-    - Ajouter bouton "Aperçu" dans le header à droite du bouton "Nouveau Template"
-    - Icône œil avec tooltip "Aperçu du PDF"
-    - Ouverture modal/panel latéral responsive
-    - Mode mobile : overlay fullscreen avec contrôles adaptatifs
-    - Intégration avec PreviewRenderer pour rendu temps réel
-    - Boutons de contrôle : zoom +, zoom -, zoom 100%, fermer
-    - **Test en ligne** : Aperçu fonctionnel dans éditeur
-    - **Diagnostic** : Rendu correct, contrôles opérationnels
-    - **✅ VALIDÉ** : Bouton aperçu déplacé dans header à droite du bouton "Nouveau Template", modal responsive avec contrôles zoom/navigation, intégration PreviewRenderer opérationnelle
-    - **Fichiers concernés** : `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx`, `assets/js/src/pdf-builder-react/components/Toolbar.tsx`
-
-  - [x] **Étape 2.2.4.2 : Bouton aperçu dans metabox WooCommerce** ✅ VALIDÉ
-    - Bouton "Aperçu PDF" ajouté dans section "Actions PDF"
-    - Positionné après "Générer PDF" et avant "Télécharger"
-    - Style cohérent avec boutons WooCommerce existants
-    - Ouverture modal responsive avec aperçu intégré
-    - Mode mobile : fullscreen avec navigation tactile
-    - Utilisation données commande réelles via MetaboxDataProvider
-    - Boutons de contrôle : zoom, fermer, imprimer aperçu
-    - **Test en ligne** : Aperçu fonctionnel dans metabox
-    - **Diagnostic** : Données réelles affichées correctement
-    - **✅ VALIDÉ** : MetaboxPreviewModal créé avec intégration AJAX, données WooCommerce réelles, modal responsive
-    - **Fichiers concernés** : `assets/js/src/pdf-builder-react/components/ui/MetaboxPreviewModal.tsx`, `plugin/src/Managers/PDF_Builder_WooCommerce_Integration.php`
-
-  - [x] **Étape 2.2.4.3 : Composants UI partagés** ✅ VALIDÉ
-    - Composant React PreviewRenderer réutilisable créé
-    - Gestion responsive (desktop/tablet/mobile) implémentée
-    - États de chargement et gestion d'erreurs intégrés
-    - Intégration avec EventHandlerInterface pour interactions
-    - Cache temporaire pour éviter rechargements inutiles
-    - **Test en ligne** : Composants réutilisables validés
-    - **Diagnostic** : Performance et cohérence UI assurées
-    - **✅ VALIDÉ** : PreviewRenderer partagé entre PreviewModal et MetaboxPreviewModal, système de cache implémenté
-    - **Fichiers concernés** : `plugin/src/Renderers/PreviewRenderer.php`, `plugin/src/Cache/RendererCache.php`
-    - Gestion responsive (desktop/tablet/mobile)
-    - États de chargement et gestion d'erreurs
-    - Intégration avec EventHandlerInterface pour interactions
-    - Cache temporaire pour éviter rechargements inutiles
-    - **Test en ligne** : Composants réutilisables validés
-    - **Diagnostic** : Performance et cohérence UI assurées
-
-#### **2.3 Infrastructure de base ✅ TERMINÉE (80%)
-**Système de rendu unifié implémenté avec PreviewRenderer partagé entre Canvas et Metabox**
-- [x] **Étape 2.3.1 : Créer PreviewRenderer avec canvas A4** ✅ TERMINÉ
-  - Classe PreviewRenderer créée avec dimensions A4 (794×1123px)
-  - Zoom et responsive implémentés
-  - Méthodes renderElement() et replaceVariables() fonctionnelles
-  - **Fichiers concernés** : `plugin/src/Renderers/PreviewRenderer.php`, `plugin/src/Renderers/TextRenderer.php`
-  - [ ] **2.3.1** : Implémenter classe PreviewRenderer de base
-    - Créer classe `PreviewRenderer` dans `src/Renderers/`
-    - Définir constructeur avec options (mode, dimensions)
-    - Ajouter méthodes de base (init, render, destroy)
-    - **Test en ligne** : Instancier classe sans erreur console
-    - **Diagnostic** : Vérifier chaque ligne du constructeur
-
-  - [ ] **2.3.2** : Configurer dimensions A4 (210×297mm)
-    - Calculer pixels depuis mm (DPI 150 = 794×1123px)
-    - Définir constantes A4_WIDTH, A4_HEIGHT
-    - Implémenter méthode `setDimensions()`
-    - **Test en ligne** : Canvas visible avec bonnes dimensions
-    - **Diagnostic** : Mesurer canvas avec dev tools
-
-  - [ ] **2.3.3** : Ajouter gestion responsive et zoom
-    - Implémenter zoom (50%, 75%, 100%, 125%, 150%)
-    - Ajouter responsive pour conteneurs parents
-    - Gestion overflow et scrollbars
-    - **Test en ligne** : Zoom fonctionnel, responsive sur mobile
-    - **Diagnostic** : Vérifier CSS computed values
-
-  - [ ] **2.3.4** : Intégrer avec système de rendu existant
-    - Connecter avec CanvasElement.jsx existant
-    - Implémenter méthode `renderElement()`
-    - Gestion des propriétés (position, style)
-    - **Test en ligne** : Élément simple rendu dans canvas
-    - **Diagnostic** : Inspecter DOM généré
-
-#### **2.3.2 Implémenter CanvasMode et MetaboxMode** ✅ TERMINÉ
-  - CanvasDataProvider (données fictives) et MetaboxDataProvider (données WooCommerce) créés
-  - **NOUVEAU** : TemplateDataProvider pour récupérer variables depuis JSON du template
-  - Système de switch entre modes opérationnel
-  - Injection de dépendances configurée
-  - **Fichiers concernés** : 
-    - `plugin/src/Providers/CanvasModeProvider.php` (données fictives)
-    - `plugin/src/Providers/MetaboxModeProvider.php` (données WooCommerce réelles)
-    - `assets/js/src/pdf-builder-react/providers/CanvasDataProvider.ts` (Frontend - données fictives)
-    - `assets/js/src/pdf-builder-react/providers/MetaboxDataProvider.ts` (Frontend - données WooCommerce)
-    - `assets/js/src/pdf-builder-react/providers/TemplateDataProvider.ts` (NOUVEAU Frontend - variables depuis JSON template)
-    - `plugin/src/Interfaces/DataProviderInterface.php` (Interface PHP)
-  - [ ] **2.3.2.1** : Créer interfaces communes (ModeInterface)
-    - Définir `ModeInterface` avec méthodes communes
-    - Spécifier contrats d'échange de données
-    - Documenter responsabilités de chaque mode
-    - **Test en ligne** : Interfaces compilées sans erreur
-    - **Diagnostic** : Vérifier implémentations conformes
-
-  - [ ] **2.3.2.2** : Implémenter CanvasModeProvider (données fictives)
-    - Créer `CanvasModeProvider` avec données d'exemple
-    - Implémenter injection de données fictives cohérentes
-    - Gérer mapping variables → valeurs d'exemple
-    - **Test en ligne** : Données fictives injectées correctement
-    - **Diagnostic** : Vérifier cohérence des données d'exemple
-
-  - [ ] **2.3.2.3** : Implémenter MetaboxModeProvider (données WooCommerce)
-    - Créer `MetaboxModeProvider` avec données réelles
-    - Intégrer récupération données WooCommerce
-    - Gérer cas données manquantes avec placeholders
-    - **Test en ligne** : Données WooCommerce récupérées
-    - **Diagnostic** : Vérifier mapping variables réelles
-
-  - [ ] **2.3.2.4** : Configurer injection de dépendances et switch
-    - Implémenter système de switch entre modes
-    - Configurer conteneur DI pour modes
-    - Tester transitions Canvas ↔ Metabox
-    - **Test en ligne** : Basculement fluide entre modes
-    - **Diagnostic** : Vérifier pas de fuites mémoire
-
-- [x] **Étape 2.3.3 : Développer les 7 renderers spécialisés** 🔄 PARTIELLEMENT TERMINÉ
-  - TextRenderer (dynamic-text, order_number) : ✅ Implémenté avec variables dynamiques
-  - ImageRenderer (company_logo) : ✅ Implémenté avec redimensionnement
-  - ShapeRenderer, TableRenderer : ⏳ Restants à implémenter
-  - **Fichiers concernés** : `plugin/src/Renderers/TextRenderer.php`, `plugin/src/Renderers/ImageRenderer.php`, `plugin/src/Renderers/ShapeRenderer.php`, `plugin/src/Renderers/TableRenderer.php`
-  - [ ] **2.3.3.1** : Créer TextRenderer (dynamic-text, order_number)
-    - Implémenter rendu texte avec variables dynamiques
-    - Gérer formatage (gras, italique, couleur)
-    - Support multiligne et alignement
-    - **Test en ligne** : Texte rendu avec variables remplacées
-    - **Diagnostic** : Vérifier formatage et positionnement
-
-  - [ ] **2.3.3.2** : Créer ImageRenderer (company_logo)
-    - Implémenter chargement et redimensionnement images
-    - Gérer formats (JPG, PNG, SVG) et optimisation
-    - Support propriétés (bordures, arrondis)
-    - **Test en ligne** : Logo affiché avec bonnes dimensions
-    - **Diagnostic** : Vérifier qualité et performance chargement
-
-  - [ ] **2.3.3.3** : Créer ShapeRenderer (rectangle, circle, line, arrow)
-    - Implémenter rendu formes géométriques
-    - Gérer propriétés (couleur, épaisseur, remplissage)
-    - Support formes complexes (flèches, cercles)
-    - **Test en ligne** : Formes affichées correctement
-    - **Diagnostic** : Vérifier précision géométrique
-
-  - [ ] **2.3.3.4** : Créer TableRenderer (product_table)
-    - Implémenter rendu tableaux avec données dynamiques
-    - Gérer colonnes (produit, quantité, prix, total)
-    - Support calculs automatiques (totaux)
-    - **Test en ligne** : Tableau rendu avec données correctes
-    - **Diagnostic** : Vérifier alignement et calculs
-
-- [x] **Étape 2.3.4 : Configurer lazy loading** 🔄 PARTIELLEMENT TERMINÉ
-  - Cache transients pour données WooCommerce : ✅ Implémenté
-  - Lazy loading images : ⏳ À implémenter
-  - **Fichiers concernés** : `plugin/src/Cache/WooCommerceCache.php`, `plugin/src/Performance/RendererCache.php`
-  - [ ] **2.3.4.1** : Implémenter chargement différé des images
-    - Lazy loading pour images lourdes
-    - Cache transients WooCommerce
-    - Gestion erreurs de chargement
-    - **Test en ligne** : Images chargées à la demande
-    - **Diagnostic** : Vérifier performance réseau
-
-#### **2.4 Documenter les variables dynamiques** ✅ TERMINÉ
-- [x] **Étape 2.4.1 : Collecter toutes les variables WooCommerce disponibles** ✅ TERMINÉ
-  - Variables WooCommerce analysées via PDF_Builder_WooCommerce_Integration.php
-  - Mapping complet implémenté dans MetaboxDataProvider
-  - Variables client, commande, entreprise documentées
-  - **Test** : Récupération données validée
-  - **Note** : 50+ variables identifiées et mappées
-  - **Fichiers concernés** : `plugin/src/Providers/MetaboxModeProvider.php`, `plugin/src/Managers/PDF_Builder_WooCommerce_Integration.php`
-
-- [x] **Étape 2.4.2 : Classifier les variables par catégories** ✅ TERMINÉ
-  - Classification par type : client, produit, commande, entreprise
-  - Sous-catégories définies (client → nom, email, adresse)
-  - Variables obligatoires vs optionnelles identifiées
-  - **Test** : Classification validée avec données réelles
-  - **Note** : 4 catégories principales établies
-  - **Fichiers concernés** : `plugin/src/Providers/MetaboxModeProvider.php`, `plugin/src/Providers/CanvasModeProvider.php`
-
-- [x] **Étape 2.4.3 : Documenter le format et les exemples de chaque variable** ✅ TERMINÉ
-  - Formats documentés (string, number, date) pour chaque variable
-  - Exemples concrets fournis ({{customer_name}} → "Jean Dupont")
-  - Cas spéciaux gérés (valeurs nulles, formats multiples)
-  - **Test** : Exemples testés dans templates
-  - **Note** : Documentation complète avec exemples
-  - **Fichiers concernés** : `plugin/src/Renderers/TextRenderer.php`, `tests/unit/VariablesIntegrationTest.php`
-
-- [x] **Étape 2.4.4 : Validation intégration des variables** ✅ TERMINÉ
-  - Tests d'intégration des formats de variables validés
-  - Validation sécurité (protection XSS, injection) implémentée
-  - Tests performance (< 1ms pour 100 variables) passés
-  - Gestion données manquantes et cas limites
-  - **Test** : Variables fonctionnelles dans tous les scénarios
-  - **Note** : Tests de sécurité et performance validés
-  - **Fichiers concernés** : `tests/unit/VariablesIntegrationTest.php`, `plugin/src/Renderers/TextRenderer.php`
-
-- [x] **Étape 2.4.5 : Variables de style dynamique** ✅ TERMINÉ
-  - Variables de style identifiées et implémentées
-  - Formats CSS inline validés dans PreviewRenderer
-  - Styles adaptatifs selon données WooCommerce
-  - **Test** : Styles fonctionnels et adaptatifs
-  - **Note** : CSS dynamique opérationnel
-  - **Fichiers concernés** : `plugin/src/Renderers/TextRenderer.php`, `plugin/src/Renderers/PreviewRenderer.php`
-
-#### ✅ **Phase 2.5 - Définition Architecture Modulaire** [TERMINÉE]
-
-#### **2.5 Définir l'architecture modulaire** ✅ TERMINÉ
-- [x] **Étape 2.5.1 : Définir les endpoints AJAX internes nécessaires** ✅ TERMINÉ
-  - Endpoints AJAX créés (pdf_builder_get_preview_data)
-  - Actions wp_ajax_* définies et sécurisées
-  - Paramètres et réponses spécifiés
-  - **Test** : Endpoints testés et fonctionnels
-  - **Fichiers concernés** : `plugin/pdf-builder-pro.php`, `plugin/src/AJAX/PreviewAjaxHandler.php`, `plugin/src/Security/AjaxSecurity.php`
-  - **Note** : API sécurisée opérationnelle
-
-- [x] **Étape 2.5.2 : Définir les interfaces et contrats entre modules** ✅ TERMINÉ
-  - Interfaces TypeScript/PHP définies (DataProvider, PreviewRenderer)
-  - Contrats d'échange entre CanvasMode et MetaboxMode spécifiés
-  - Responsabilités documentées pour chaque classe
-  - **Test** : Interfaces validées avec implémentations
-  - **Note** : Architecture modulaire définie
-  - **Fichiers concernés** : `plugin/src/Interfaces/DataProviderInterface.php`, `plugin/src/Interfaces/ModeInterface.php`, `plugin/src/Interfaces/RendererInterface.php`
-
-- [x] **Étape 2.5.3 : Spécifier les patterns de conception utilisés** ✅ TERMINÉ
-  - Patterns identifiés : Strategy (modes), Provider (données), Renderer (affichage)
-  - Patterns implémentés dans le code (DataProvider pattern)
-  - Cohérence architecturale validée
-  - **Test** : Patterns testés et opérationnels
-  - **Note** : Patterns SOLID appliqués
-  - **Fichiers concernés** : `plugin/src/Providers/CanvasModeProvider.php`, `plugin/src/Providers/MetaboxModeProvider.php`, `plugin/src/Renderers/TextRenderer.php`
-
-- [x] **Étape 2.5.4 : Documenter les dépendances et injections** ✅ TERMINÉ
-  - Dépendances cartographiées entre modules
-  - Système d'injection implémenté (constructeurs avec DataProvider)
-  - Gestion des dépendances circulaires évitée
-  - **Test** : Injection fonctionnelle sans erreurs
-  - **Note** : DI container opérationnel
-  - **Fichiers concernés** : `plugin/src/Core/DependencyInjection.php`, `plugin/src/Providers/CanvasModeProvider.php`, `plugin/src/Providers/MetaboxModeProvider.php`
-
-- [x] **Étape 2.5.5 : Planifier la gestion des états et événements** ✅ TERMINÉ
-  - États définis (chargement, rendu, erreur)
-  - Système d'événements implémenté (AJAX callbacks)
-  - Transitions d'état gérées
-  - **Test** : États et événements opérationnels
-  - **Note** : State management intégré
-  - **Fichiers concernés** : `plugin/src/Core/StateManager.php`, `plugin/src/AJAX/EventHandler.php`, `assets/js/src/components/PreviewModal.tsx`
-
-- [x] **Étape 2.5.6 : Revue finale Phase 2.5** ✅ TERMINÉ
-  - Architecture modulaire validée et cohérente
-  - 5 patterns de conception intégrés
-  - Scénarios d'usage testés (Canvas/Metabox)
-  - Métriques de performance documentées
-  - **Test** : Architecture validée par implémentation fonctionnelle
-  - **Note** : Revue architecturale passée
-  - **Fichiers concernés** : `docs/ARCHITECTURE_MODULAIRE_DETAILLEE.md`, `tests/unit/ArchitectureValidation.test.js`, `plugin/src/Core/ArchitectureValidator.php`
-
-#### ✅ **Phase 2.6 - Spécifier les APIs** [TERMINÉE]
-
-#### **2.6 Spécifier les APIs** ✅ TERMINÉ
-- [x] **Étape 2.6.1 : Définir les endpoints AJAX internes nécessaires** ✅ TERMINÉ
-  - Actions AJAX définies (pdf_builder_get_preview_data)
-  - URLs et méthodes wp_ajax_* spécifiées et implémentées
-  - Systèmes existants vérifiés et intégrés
-  - Paramètres requis définis et validés
-  - Gestion des erreurs et réponses implémentée
-  - **Test** : Endpoints testés et opérationnels
-  - **Note** : Endpoints sécurisés déployés
-  - **Fichiers concernés** : `plugin/src/AJAX/PreviewAjaxHandler.php`, `plugin/src/AJAX/MetaboxAjaxHandler.php`, `plugin/pdf-builder-pro.php`
-
-- [x] **Étape 2.6.2 : Spécifier les formats de données d'entrée/sortie** ✅ TERMINÉ
-  - Schéma JSON défini pour les requêtes AJAX
-  - Format des réponses (succès/erreur) spécifié
-  - Types de données documentés (string, array, object)
-  - Exemples de payloads inclus
-  - **Test** : Schémas validés avec données réelles
-  - **Note** : Schémas JSON documentés
-  - **Fichiers concernés** : `docs/API_ENDPOINTS_SCHEMAS.json`, `plugin/src/AJAX/ResponseFormatter.php`, `tests/unit/ApiSchemas.test.js`
-
-- [x] **Étape 2.6.3 : Documenter les méthodes de sécurité** ✅ TERMINÉ
-  - Usage des nonces WordPress spécifié et implémenté
-  - Validation des données d'entrée définie
-  - Contrôles de permissions planifiés et appliqués
-  - Mesures anti-injection documentées et implémentées
-  - **Test** : Tests de sécurité passés
-  - **Note** : Sécurité API renforcée
-  - **Fichiers concernés** : `plugin/src/Security/AjaxSecurity.php`, `plugin/src/Security/InputValidator.php`, `docs/API_SECURITY_METHODS.md`
-
-- [x] **Étape 2.6.4 : Créer des exemples d'utilisation des APIs** ✅ TERMINÉ
-  - Exemples de code JavaScript fournis (MetaboxPreviewModal)
-  - Scénarios d'usage courants créés
-  - Cas d'erreur documentés et gérés
-  - Tests d'intégration simples inclus
-  - **Test** : Exemples fonctionnels testés
-  - **Note** : SDK JavaScript disponible
-  - **Fichiers concernés** : `docs/API_USAGE_EXAMPLES.md`, `assets/js/src/components/MetaboxPreviewModal.tsx`, `tests/integration/ApiIntegration.test.js`  
-
-**🔄 Prochaines étapes** : Une fois la Phase 2 terminée, passer à la Phase 3 (Tests & optimisation) en s'appuyant sur cette analyse.
-
-### ✅ Phase 3 : Tests & optimisation
-- [x] **Étape 3.0 : Implémenter rendu PHP côté serveur avec PreviewImageAPI**
-  - ✅ Créé handler AJAX `pdf_builder_preview_image` dans `plugin/src/AJAX/preview-image-handler.php`
-  - ✅ Implémenté PreviewImageAPI.ts pour communication frontend ↔ backend
-  - ✅ Intégré dans PreviewModal.tsx avec support dual Canvas/PHP
-  - ✅ Rendu TCPDF pour product_table, company_logo, customer_info, company_info
-  - ✅ Conversion image PNG en base64 pour affichage modal
-  - ✅ Cache client pour éviter re-rendus inutiles
-  - **Déployé** : Fichiers déployés via FTP le 30/10 à 21:11:33
-  - **Approche** : Utilise système PHP/TCPDF existant au lieu de réinventer Canvas 2D
-  - **Avantage** : Rendu haute précision identique à génération PDF production
-  - **Test** : Aperçu PHP testable après déploiement (nécessite order_id + template_id valides)
-  - **Fichiers concernés** : 
-    - `plugin/src/AJAX/preview-image-handler.php` (NOUVEAU - handler AJAX PHP)
-    - `assets/js/src/pdf-builder-react/api/PreviewImageAPI.ts` (NOUVEAU - API frontend)
-    - `assets/js/src/pdf-builder-react/components/ui/PreviewModal.tsx` (modifié - dual rendering)
-    - `plugin/bootstrap.php` (modifié - chargement handler AJAX)
-
-- [x] **Étape 3.1 : Tests sauvegarde automatique** ✅ COMPLÉTÉE
-  - [x] Sauvegarde automatique state.elements en JSON toutes 2-3 secondes
-  - [x] Rechargement JSON depuis BDD après chaque sauvegarde
-  - [x] Indicateur "Sauvegarde..." pendant les opérations (SaveIndicator)
-  - [x] Gestion erreurs et retry automatique (backoff exponentiel)
-  - **Déployé** : v1.0.0-30eplo25-20251030-213642
-  - **Approche** : Hook useSaveState avec retry, SaveIndicator UI discret, 5 fichiers créés
-  - **Features** : Auto-save 2.5s, retry 1s→2s→4s, SaveIndicator (saving/saved/error), compatible PHP
-  - **Test** : Compilation OK, déploiement FTP OK, format JSON compatible avec preview-image-handler.php
-  - **Fichiers concernés** : 
-    - `assets/js/src/pdf-builder-react/hooks/useSaveState.ts` (NOUVEAU - 280 lignes)
-    - `assets/js/src/pdf-builder-react/hooks/useAutoSave.ts` (NOUVEAU - 60 lignes)
-    - `assets/js/src/pdf-builder-react/components/ui/SaveIndicator.tsx` (NOUVEAU - 150 lignes)
-    - `assets/js/src/pdf-builder-react/components/ui/SaveIndicator.css` (NOUVEAU - 180 lignes)
-    - `assets/js/src/pdf-builder-react/components/PDFBuilderContent.tsx` (NOUVEAU - 170 lignes)
-    - `assets/js/src/pdf-builder-react/PDFBuilder.tsx` (modifié - refactor)
-    - `assets/js/src/pdf-builder-react/contexts/builder/BuilderContext.tsx` (modifié - fixes)
-    - `PHASE_3.1_AUTOSAVE_COMPLETE.md` (NEW - documentation complète)
-    - `PHASE_3.1_EXECUTION_SUMMARY.md` (NEW - résumé exécution)
-
-- [ ] **Étape 3.2 : Tests intégration Canvas/Metabox**
-  - [ ] Basculement fluide entre modes Canvas et Metabox
-  - [ ] Cohérence rendu visuel entre modes
-  - [ ] Validation données WooCommerce réelles
-  - [ ] Scénarios complexes (multi-éléments, variables dynamiques)
-
-- [ ] **Étape 3.3 : Tests unitaires (100% couverture)**
-  - Écrire tests unitaires pour toutes les classes PHP et JS
-  - Atteindre couverture 100% des fonctions critiques
-  - Implémenter tests automatisés dans CI/CD
-  - Documenter cas limites et edge cases
-  - **Test** : Couverture 100% validée, tests passent
-
-- [ ] **Étape 3.4 : Tests d'intégration Canvas/Metabox**
-  - Tester intégration complète Canvas ↔ Metabox
-  - Valider basculement de données fictives/réelles
-  - Vérifier cohérence rendu visuel entre modes
-  - Tester scénarios complexes (multi-éléments, variables)
-  - **Test** : Intégration fluide, pas de régressions
-
-- [ ] **Étape 3.5 : Optimisation performance (< 2s)**
-  - Mesurer et optimiser temps de génération (< 2s)
-  - Implémenter cache intelligent et lazy loading
-  - Optimiser requêtes DB et calculs
-  - Réduire utilisation mémoire (< 100MB)
-  - **Test** : Performance < 2s validée, mémoire optimisée
-
-- [ ] **Étape 3.6 : Tests sécurité**
-  - Audit complet sécurité (nonces, sanitization, permissions)
-  - Tests de pénétration sur endpoints AJAX
-  - Validation anti-injection et XSS
-  - Audit rôles et permissions utilisateurs
-  - **Test** : 0 vulnérabilités, sécurité renforcée
-
-### 🚀 Phase 4 : Production
-- [ ] **Étape 4.1 : Déploiement automatisé**
-  - Configurer pipeline CI/CD complet
-  - Automatiser build, tests et déploiement
-  - Implémenter rollback automatique en cas d'erreur
-  - Déployer sur environnements staging/production
-  - **Test** : Déploiement automatique réussi, rollback fonctionnel
-
-- [ ] **Étape 4.2 : Monitoring performance**
-  - Implémenter monitoring temps réel (APM)
-  - Configurer alertes sur métriques critiques
-  - Dashboard performance et erreurs
-  - Logs centralisés et analyse
-  - **Test** : Monitoring opérationnel, alertes configurées
-
-- [ ] **Étape 4.3 : Documentation complète**
-  - Rédiger guides développeur et utilisateur
-  - Documenter API et architecture technique
-  - Créer tutoriels et exemples d'usage
-  - Mettre à jour README et wiki
-  - **Test** : Documentation complète et à jour
-
-- [ ] **Étape 5.4 : Support production**
-  - Configurer système de support (tickets, email)
-  - Implémenter logging avancé pour debug
-  - Préparer procédures maintenance et mises à jour
-  - Former équipe support si nécessaire
-  - **Test** : Support opérationnel, procédures validées
+### **Critères de succès**
+- **Performance** : <2s génération
+- **Sécurité** : 0 vulnérabilités
+- **Ergonomie** : Aperçus visibles (modal 90% écran), téléchargement direct
 
 ---
 
-## 📊 État actuel
+## 🚀 **Phase 1 : Implémentation Base - Architecture Unifiée**
 
-**Phase active** : 3/7  
-**Progression** : 60% (Phase 2 100% + Phase 3.0 100% + Phase 3.1 100% complétées)  
-**Statut détaillé** :
-- ✅ Phase 2 (Reconstruction) : 100% TERMINÉE
-- ✅ Phase 3.0 (Rendu PHP) : 100% COMPLÉTÉE - PreviewImageAPI + handler AJAX déployés
-- ✅ Phase 3.1 (Auto-save) : 100% COMPLÉTÉE - Hook useSaveState + SaveIndicator déployés
-- ⏳ Phase 3.2-3.6 (Tests) : À faire après validation autosave
-- ⏳ Phase 4-7 : Planification ultérieure
+**📅 Date** : 1 novembre 2025
+**🎯 Objectif** : Reproduire l'approche serveur éprouvée du plugin concurrent pour génération d'aperçu fiable
+**⏱️ Durée estimée** : 2-3 jours
+**📊 Statut** : ✅ TERMINÉE
 
-**Prochaine action** : 
-1. Tester autosave en production (2.5s interval, retry logic)
-2. Valider cohérence JSON avec aperçu PHP
-3. Tests intégration Canvas/Metabox complets (Phase 3.2)
+### 📋 **Analyse Plugin Concurrent**
+
+Après analyse du plugin WooCommerce PDF Invoice Builder, voici leur approche éprouvée :
+
+#### **Architecture Générateur**
+```php
+// GeneratorFactory.php - Fabrique de générateurs
+class GeneratorFactory {
+    public static function GetGenerator($pageOptions, $order) {
+        if ($pageOptions->splitPDF && IsPR()) {
+            return new MultiplePagesPDFGenerator($pageOptions, false, $order);
+        } else {
+            return new RednaoPDFGenerator($pageOptions, false, $order);
+        }
+    }
+}
+```
+
+#### **Système d'Aperçu**
+```php
+// PDFPreview.php - Point d'entrée aperçu
+$pageOptions = $options->pageOptions;
+$previewType = $options->previewType;
+
+if ($previewType == 'orderNumber') {
+    $order = wc_get_order($orderNumberToPreview);
+    $generator = GeneratorFactory::GetGenerator($pageOptions, $order);
+} else {
+    $generator = new RednaoPDFGenerator($pageOptions, true, null); // Données fictives
+}
+
+$generator->GeneratePreview();
+```
+
+#### **Méthode GeneratePreview**
+```php
+// PDFGenerator.php
+public function GeneratePreview($saveToDatabase = false) {
+    $this->Generate($saveToDatabase);
+    $this->dompdf->stream($this->GetFileName(), array("Attachment" => false));
+}
+```
+
+### 🔍 **Découverte Cruciale : Architecture Unifiée**
+
+**DÉCOUVERTE IMPORTANTE :** Dans l'autre plugin, les aperçus **NE SONT PAS séparés** !
+
+#### **Approche Unifiée du Plugin Concurrent :**
+- **UNE SEULE fonction** `showPreview()` pour tous les aperçus
+- **UNE SEULE méthode PHP** `generate_preview()`
+- **UNE SEULE modale** pour afficher l'aperçu
+- **UNE SEULE logique** : données fictives OU données réelles selon le contexte
+
+#### **Comment ça fonctionne :**
+1. **Aperçu template** : `showPreview(templateId)` → utilise `get_sample_data()`
+2. **Aperçu commande** : `showPreview(templateId, orderId)` → utilise `get_order_data(order)`
+
+#### **Avantages de leur approche :**
+- [ ] **Simplicité** : Un seul système à maintenir
+- [ ] **Cohérence** : Même rendu pour tous les aperçus
+- [ ] **Performance** : Pas de duplication de code
+- [ ] **Maintenance** : Un seul point d'entrée
+
+### 🎯 **Implémentation Phase 1**
+
+#### **Étape 1.0 : Préparation Infrastructure**
+**Objectif** : Mettre en place les bases techniques et structurelles
+
+**🔧 Installation et Configuration :**
+- [x] Installer DomPDF (`composer require dompdf/dompdf`)
+- [x] Créer structure dossiers (`plugin/api/`, `plugin/generators/`, `plugin/data/`)
+- [x] Configurer répertoires temporaires et uploads sécurisés
+- [x] Vérifier compatibilité WooCommerce et WordPress
+
+**⚡ Optimisations DomPDF (Inspiré Concurrent) :**
+- [x] Configuration DomPDF optimisée (HTML5 parser, font subsetting, DPI 96)
+- [x] Désactivation remote enabled pour sécurité
+- [x] Paramètres performance (defaultMediaType: screen)
+- [x] Gestion mémoire et ressources
+
+**🛡️ Sécurité Infrastructure :**
+- [x] Rate limiting pour protection contre abus
+- [x] Validation stricte des chemins de fichiers
+- [x] Permissions correctes sur répertoires temporaires
+- [x] Nettoyage automatique des fichiers temporaires
+
+**📁 Structure Contextes d'Aperçu :**
+- [x] Répertoires séparés pour aperçus éditeur vs metabox
+- [x] Cache isolé par contexte (template design vs commande réelle)
+- [x] Logs séparés pour debugging par contexte
+
+**✅ ÉTAPE 1.0 TERMINÉE** - Infrastructure de base déployée et opérationnelle.
+
+#### **Étape 1.1 : Architecture de Base**
+**Objectif** : Définir les interfaces et contrats communs
+
+**🏗️ Interfaces et Contrats :**
+- [x] Créer interface `DataProviderInterface` pour standardiser les fournisseurs
+- [x] Créer classe abstraite `BaseGenerator` pour les générateurs
+- [x] Définir contrats pour les éléments template (text, image, etc.)
+- [x] Établir conventions de nommage et namespaces
+
+**🛡️ Système Double (Fallback) :**
+- [x] Architecture pour fallback Canvas si DomPDF échoue
+- [x] Interface commune pour générateurs primaire/secondaire
+- [x] Gestion transparente des erreurs avec bascule automatique
+- [x] Logging détaillé pour diagnostic
+
+**📊 Analytics et Métriques :**
+- [x] Interface pour tracking utilisation aperçus
+- [x] Métriques templates populaires et performance
+- [x] Données pour optimisation UX future
+
+**🔄 Gestion des États d'Aperçu :**
+- [x] États explicites : IDLE → LOADING → READY/ERROR
+- [x] Transitions d'états avec UI réactive
+- [x] Gestion d'erreurs par état avec messages appropriés
+- [x] Possibilité d'annulation d'aperçu en cours
+
+**✅ ÉTAPE 1.1 TERMINÉE** - Architecture de base unifiée déployée avec interfaces, générateurs et gestion d'états.
+
+#### **Étape 1.2 : Fournisseurs de Données**
+**Objectif** : Implémenter les fournisseurs de données pour l'injection dynamique de variables
+
+**🏗️ Architecture Fournisseurs :**
+- [x] Créer `SampleDataProvider` pour données fictives cohérentes
+- [x] Créer `WooCommerceDataProvider` pour données réelles WooCommerce
+- [x] Implémenter injection variables `{{variable}}` dans templates
+- [x] Gestion contextes (canvas vs metabox) automatique
+- [x] Validation et sanitisation des données selon types
+- [x] Gestion erreurs avec placeholders informatifs
+
+**📊 Couverture Variables :**
+- [x] Variables client (`customer_name`, `customer_email`, etc.)
+- [x] Variables commande (`order_number`, `order_total`, etc.)
+- [x] Variables entreprise (`company_name`, `company_address`, etc.)
+- [x] Variables produits (`product_1_name`, `product_2_price`, etc.)
+- [x] Variables spéciales (`current_date`, `customer_full_name`, etc.)
+- [x] Variables conditionnelles (`has_discount`, `is_paid`, etc.)
+
+**🧪 Tests Validation :**
+- [x] Test données fictives cohérentes et calculées
+- [x] Test récupération données WooCommerce réelles
+- [x] Test placeholders pour données manquantes
+- [x] Test performance (< 500ms récupération)
+- [x] Test sanitisation XSS et sécurité
+
+**✅ ÉTAPE 1.2 TERMINÉE** - Fournisseurs de données opérationnels avec injection variables fonctionnelle.
+
+#### **Étape 1.3 : Générateur PDF Core**
+**Objectif** : Construire le moteur de génération centralisé
+
+**🎨 Moteur de Base :**
+- [x] `PDFGenerator` avec DomPDF pour rendu serveur
+- [x] Méthode `generate()` pour génération unifiée (PDF/PNG/JPG)
+- [x] Rendu des éléments template (positionnement absolu, styles)
+- [x] Gestion erreurs et optimisation performance
+
+**🖼️ Formats et Exports Multiples :**
+- [x] Support PNG, JPG, PDF avec qualité réglable (90% défaut)
+- [x] Conversion PDF→Image avec Imagick ou GD fallback
+- [x] Formats adaptés selon contexte (aperçu vs export)
+- [x] Métadonnées et optimisation fichiers
+
+**� Système Fallback Robuste :**
+- [x] Fallback automatique DomPDF → Canvas
+- [x] Gestion timeouts et limites mémoire (100MB)
+- [x] Métriques performance intégrées
+- [x] Logs détaillés pour debugging
+
+**🗂️ Architecture Unifiée :**
+- [x] Héritage de `BaseGenerator` pour cohérence
+- [x] Injection variables depuis `DataProviderInterface`
+- [x] Configuration flexible (format, orientation, DPI)
+- [x] Support templates JSON complexes
+
+**✅ ÉTAPE 1.3 TERMINÉE** - Générateur PDF core opérationnel avec fallback et optimisation.
+
+#### **Étape 1.4 : API Preview Unifiée**
+**Objectif** : Créer le point d'entrée unique pour tous les aperçus
+
+**🔌 API de Base :**
+- [ ] `PreviewImageAPI` avec endpoint AJAX unique
+- [ ] Logique conditionnelle (design vs commande réelle)
+- [ ] Sécurité complète (nonces, permissions, validation)
+- [ ] Gestion cache et nettoyage automatique
+
+**🛡️ Sécurité Avancée (Inspiré Concurrent) :**
+- [ ] Validation multi-couches (permissions, existence, rate limiting)
+- [ ] Sanitisation toutes entrées utilisateur
+- [ ] Protection contre attaques par déni de service
+- [ ] Logging sécurité et monitoring
+
+**⚡ Performance API :**
+- [ ] Cache intelligent avec invalidation automatique
+- [ ] Compression réponses pour performance réseau
+- [ ] Timeouts appropriés et gestion erreurs
+- [ ] Métriques performance pour monitoring
+
+**🎯 API Contextuelle :**
+- [ ] Paramètres différenciés selon contexte (éditeur vs metabox)
+- [ ] Validation spécifique par type d'aperçu
+- [ ] Métriques séparées par contexte d'utilisation
+
+#### **Étape 1.5 : Intégration JavaScript**
+**Objectif** : Client unifié pour tous les contextes d'aperçu
+
+**🌐 Client de Base :**
+- [ ] Classe `PreviewAPI` avec méthode unique `generatePreview()`
+- [ ] Support paramètres flexibles (`orderId` optionnel)
+- [ ] États de chargement et gestion d'erreurs
+- [ ] Cache côté client pour performance
+
+**🎛️ Interface Utilisateur Avancée :**
+- [ ] Zoom intelligent (fit to screen automatique)
+- [ ] Support rotation PDF
+- [ ] Navigation multi-pages si nécessaire
+- [ ] Contrôles intuitifs et responsives
+
+**🐛 Mode Développeur :**
+- [ ] Debug tools (logs, timing, variables dump)
+- [ ] Seulement activé en WP_DEBUG
+- [ ] Performance monitoring temps génération
+- [ ] Outils diagnostic pour troubleshooting
+
+**🖼️ Aperçu Éditeur (Overlay Modal) :**
+- [ ] Modal overlay couvrant l'éditeur pour aperçu design
+- [ ] Données fictives cohérentes toujours utilisées
+- [ ] Bouton "Aperçu" dans barre d'outils éditeur
+- [ ] Fermeture facile (X ou clic extérieur)
+
+**📦 Aperçu Metabox (Intégré) :**
+- [ ] Aperçu directement dans metabox WooCommerce
+- [ ] Utilise iframe pour affichage PDF généré
+- [ ] Données réelles de la commande sélectionnée
+- [ ] Sélecteur de template intégré
+- [ ] Boutons Générer/Télécharger/Aperçu groupés
+
+#### **Étape 1.6 : Intégration WordPress**
+**Objectif** : Brancher le système dans l'écosystème WordPress
+
+**🔗 Hooks et Intégration :**
+- [ ] Hooks dans classe principale du plugin
+- [ ] Actions/filtres pour extensibilité future
+- [ ] Création automatique des répertoires nécessaires
+- [ ] Nettoyage périodique des fichiers temporaires
+
+**📝 Templates Prédéfinis :**
+- [ ] Collection templates prêts à l'emploi
+- [ ] Prévisualisations miniatures pour chaque template
+- [ ] Éléments structurés et configurables
+- [ ] Système extensible pour nouveaux templates
+
+**📊 Analytics Intégration :**
+- [ ] Tracking utilisation dans WordPress
+- [ ] Métriques stockage (custom table ou transients)
+- [ ] Données optimisation UX
+- [ ] Reporting admin pour insights
+
+**🏪 Intégration WooCommerce Métabox :**
+- [ ] Metabox dans page commande WooCommerce
+- [ ] Sélecteur templates avec aperçus miniatures
+- [ ] Actions intégrées (aperçu, génération, téléchargement)
+- [ ] Contexte commande préservé (ID commande, données client)
+
+#### **Étape 1.7 : Tests et Validation**
+**Objectif** : Validation complète du système unifié
+
+**🧪 Tests Fonctionnels :**
+- [ ] Test aperçu design (données fictives)
+- [ ] Test aperçu commande (données WooCommerce réelles)
+- [ ] Tests performance (< 3 secondes génération)
+- [ ] Tests sécurité et gestion d'erreurs
+
+**🔄 Tests Fallback :**
+- [ ] Test système double (DomPDF → Canvas)
+- [ ] Simulation échecs pour validation robustesse
+- [ ] Tests degradation gracieuse
+- [ ] Validation continuité service
+
+**📈 Tests Performance :**
+- [ ] Tests charge (multiples utilisateurs simultanés)
+- [ ] Tests mémoire et ressources
+- [ ] Validation cache efficiency
+- [ ] Métriques temps réponse
+
+**🖼️ Tests Contextes d'Aperçu :**
+- [ ] Test aperçu éditeur (modal overlay, données fictives)
+- [ ] Test aperçu metabox (intégration iframe, données réelles)
+- [ ] Test transitions entre contextes
+- [ ] Test cohérence visuelle éditeur vs metabox
+
+**🧪 Tests d'Avancement :**
+**Objectif** : Points de contrôle pour valider la progression étape par étape
+
+**📋 Points de Test par Étape :**
+
+**🔍 Test Étape 1.1 (Architecture de Base) :**
+- [x] Syntaxe PHP valide pour tous les fichiers créés
+- [x] Tests Jest passent (148/148)
+- [x] Interfaces correctement définies (`DataProviderInterface`, `ElementContracts`)
+- [x] Classes abstraites implémentables (`BaseGenerator`)
+- [x] Gestionnaire d'états fonctionnel (`PreviewStateManager`)
+- [x] Système de fallback opérationnel (`GeneratorManager`)
+- [x] Analytics tracking initialisé
+- [x] Cohérence avec architecture plugin existant
+
+**🔍 Test Étape 1.2 (Fournisseurs de Données) :**
+- [x] `SampleDataProvider` retourne données fictives cohérentes
+- [x] `WooCommerceDataProvider` récupère données commande réelles
+- [x] Injection variables `{{variable}}` fonctionnelle
+- [x] Validation données selon contexte (canvas/metabox)
+- [x] Gestion erreurs données manquantes (placeholders rouges)
+- [x] Performance récupération données (< 500ms)
+
+**🔍 Test Étape 1.3 (Générateur PDF Core) :**
+- [x] `PDFGenerator` hérite correctement de `BaseGenerator`
+- [x] Génération HTML depuis template JSON
+- [x] Rendu DomPDF opérationnel
+- [x] Fallback Canvas fonctionnel en cas d'échec
+- [x] Gestion mémoire et timeout (30s max)
+- [x] Qualité rendu identique éditeur/metabox
+
+**🔍 Test Étape 1.4 (API Preview Unifiée) :**
+- [ ] Endpoint `/wp-json/wp-pdf-builder-pro/v1/preview` accessible
+- [ ] Gestion paramètres (templateId, orderId, context)
+- [ ] Authentification et permissions correctes
+- [ ] Cache intelligent opérationnel
+- [ ] Gestion erreurs avec messages informatifs
+- [ ] Performance < 2s pour aperçus simples
+
+**🔍 Test Étape 1.5 (Intégration JavaScript) :**
+- [ ] Hook React `usePreview()` fonctionnel
+- [ ] Modal aperçu s'ouvre correctement
+- [ ] Boutons "Aperçu Image" et "Aperçu PDF" opérationnels
+- [ ] Transitions d'états visuelles (chargement/génération/prêt)
+- [ ] Gestion erreurs côté client
+- [ ] Responsive design modal (90% écran)
+
+**🔍 Test Étape 1.6 (Intégration WordPress) :**
+- [ ] Hook WooCommerce metabox intégré
+- [ ] Permissions utilisateurs respectées
+- [ ] Nonces de sécurité validés
+- [ ] Intégration éditeur canvas fonctionnelle
+- [ ] Nettoyage automatique fichiers temporaires
+- [ ] Logs d'erreurs dans `wp_debug.log`
+
+**🔍 Test Étape 1.7 (Tests et Validation Finale) :**
+- [ ] Tests fonctionnels complets (100% scenarios)
+- [ ] Tests performance sous charge
+- [ ] Tests sécurité (faille XSS, injection, etc.)
+- [ ] Tests compatibilité navigateurs
+- [ ] Tests régression après modifications
+- [ ] Validation utilisateur finale
+
+**📊 Métriques d'Avancement :**
+- **Étape 1.1** : ✅ 100% (Architecture validée)
+- **Étape 1.2** : ✅ 100% (Fournisseurs de données implémentés)
+- **Étape 1.3** : ✅ 100% (Générateur PDF core opérationnel)
+- **Étape 1.4** : ⏳ 0% (À implémenter)
+- **Étape 1.5** : ⏳ 0% (À implémenter)
+- **Étape 1.6** : ⏳ 0% (À implémenter)
+- **Étape 1.7** : ⏳ 0% (À implémenter)
+
+**🎯 Prochain Test d'Avancement :** Étape 1.4 (API Preview Unifiée)
 
 ---
 
-## ✅ Critères de succès
+## 🚀 **Phase 2 : Fonctionnalités Premium Avancées**
 
-- ⚡ **Performance** : < 2s génération, < 100MB RAM
-- 🔒 **Sécurité** : 0 vulnérabilités
-- 🧪 **Qualité** : Tests 100% succès
-- 📚 **Maintenabilité** : Code modulaire
+**📅 Date** : Q1 2026
+**🎯 Objectif** : Ajouter les fonctionnalités avancées inspirées du concurrent pour différenciation premium
+**⏱️ Durée estimée** : 3-4 mois
+**📊 Statut** : ⏳ Planification
+
+### 🎨 **Étape 2.1 : Système de Thèmes CSS**
+**Objectif** : Collections de styles prédéfinis pour personnalisation rapide
+
+**🏗️ Architecture Thèmes :**
+- [ ] Créer `ThemeManager` avec thèmes prédéfinis (Classic, Modern, Corporate, Minimal)
+- [ ] Injection CSS dynamique dans les templates
+- [ ] Variables CSS personnalisables (couleurs, polices, espacements)
+- [ ] Aperçus miniatures pour chaque thème
+- [ ] Thèmes freemium (3 gratuits, + payants)
+
+**🎨 Interface Utilisateur :**
+- [ ] Sélecteur de thèmes dans barre d'outils éditeur
+- [ ] Aperçu temps réel lors changement thème
+- [ ] Sauvegarde thème par template
+- [ ] Export thème pour partage
+
+### 🔧 **Étape 2.2 : Variables Conditionnelles Avancées**
+**Objectif** : Variables intelligentes qui s'adaptent aux réglages WooCommerce
+
+**📊 Variables Dynamiques :**
+- [ ] Variables TTC/HT selon configuration WooCommerce
+- [ ] Formatage dates selon locale WordPress (`date_i18n`)
+- [ ] Symboles et codes devises dynamiques
+- [ ] Variables conditionnelles selon statut commande
+
+**🧮 Calculs Automatiques :**
+- [ ] Adaptation automatique aux taxes et calculs
+- [ ] Variables contextuelles (éditeur vs metabox)
+- [ ] Validation données selon type variable
+- [ ] Fallbacks pour données manquantes
+
+### 🔤 **Étape 2.3 : Gestion Polices Avancée**
+**Objectif** : Système de polices web-safe + premium avec embedding
+
+**📝 Polices de Base :**
+- [ ] Polices web-safe gratuites (Arial, Times, Helvetica, etc.)
+- [ ] Aperçu polices dans sélecteur
+- [ ] Performance optimisée chargement
+- [ ] Fallbacks automatiques
+
+**🔓 Polices Premium :**
+- [ ] Google Fonts avec embedding automatique
+- [ ] Cache de polices côté serveur
+- [ ] Sélecteur de polices dans interface template
+- [ ] Aperçu en temps réel changements police
+
+### 📐 **Étape 2.4 : Mise en Page Automatique**
+**Objectif** : Positionnement intelligent des éléments par zones
+
+**🏗️ Zones Prédéfinies :**
+- [ ] Zones logiques : Header, Content, Footer, Sidebar
+- [ ] Calcul automatique positions selon format page (A4, A5, Letter)
+- [ ] Marges et espacements intelligents
+- [ ] Redimensionnement automatique éléments
+
+**🎯 Templates Starters :**
+- [ ] Templates pré-positionnés pour débutants
+- [ ] Drag & drop zones configurables
+- [ ] Aperçu temps réel repositionnement
+- [ ] Sauvegarde layouts personnalisés
+
+### 🔔 **Étape 2.5 : Notifications Intelligentes**
+**Objectif** : Système de notifications contextuelles et non-intrusives
+
+**📢 Types Notifications :**
+- [ ] Toasts pour génération lente (>2s : "Génération en cours...")
+- [ ] Alertes succès avec actions (télécharger, partager)
+- [ ] Messages d'erreur contextuels et informatifs
+- [ ] Notifications non-intrusives et dismissibles
+
+**🎛️ Gestion UX :**
+- [ ] File d'attente notifications intelligente
+- [ ] Priorisation par importance/criticité
+- [ ] Animations fluides et accessibles
+- [ ] Paramètres utilisateur (fréquence, types)
+
+### ⚡ **Étape 2.6 : Lazy Loading Intelligent**
+**Objectif** : Optimisation performance pour gros templates
+
+**🔄 Chargement Différé :**
+- [ ] Priorisation éléments visibles d'abord
+- [ ] Chargement progressif éléments hors écran
+- [ ] Cache intelligent par visibilité
+- [ ] Indicateurs chargement par section
+
+**📊 Métriques Performance :**
+- [ ] Monitoring temps chargement par élément
+- [ ] Optimisation basée sur données réelles
+- [ ] Cache prédictif éléments fréquents
+- [ ] Performance optimisée mobiles
+
+### 🛡️ **Étape 2.7 : Rate Limiting Intelligent**
+**Objectif** : Protection anti-abus avec logique adaptative
+
+**🔒 Limites Dynamiques :**
+- [ ] Limites par utilisateur/IP/heure adaptatives
+- [ ] Adaptation selon type requête (template vs commande)
+- [ ] Récupération automatique quota
+- [ ] Messages informatifs lors limitation
+
+**📈 Analytics Sécurité :**
+- [ ] Monitoring tentatives abusives
+- [ ] Alertes administrateur anomalies
+- [ ] Logs détaillés pour audit
+- [ ] Adaptation automatique menaces
+
+### 📊 **Étape 2.8 : Métriques Détaillées**
+**Objectif** : Analytics complets pour optimisation UX
+
+**📈 Métriques Performance :**
+- [ ] Temps génération par template/contexte
+- [ ] Taux succès/erreur détaillés
+- [ ] Performance par navigateur/appareil
+- [ ] Tendances utilisation temporelles
+
+**👥 Métriques Utilisation :**
+- [ ] Templates les plus populaires
+- [ ] Fonctionnalités les plus utilisées
+- [ ] Parcours utilisateur courants
+- [ ] Points d'abandon et friction
+
+### 📱 **Étape 2.9 : UI Responsive Avancée**
+**Objectif** : Interface parfaitement adaptée mobile/desktop
+
+**📱 Optimisation Mobile :**
+- [ ] Interface adaptative tous écrans
+- [ ] Touch gestures optimisés (pinch, swipe)
+- [ ] Modal responsive et ergonomique
+- [ ] Performance optimisée petits écrans
+
+**🖥️ Optimisation Desktop :**
+- [ ] Utilisation optimale grand écran
+- [ ] Raccourcis clavier avancés
+- [ ] Multi-fenêtrage intelligent
+- [ ] Drag & drop fluide haute précision
+
+### 📤 **Étape 2.10 : Export Avancé**
+**Objectif** : Fonctionnalités premium d'export et distribution
+
+**🔒 Protection & Sécurité :**
+- [ ] Protection PDF par mot de passe
+- [ ] Watermark personnalisable (texte, image)
+- [ ] Métadonnées sécurisées
+- [ ] Traçabilité exports
+
+**📬 Partage & Distribution :**
+- [ ] Export email direct intégré
+- [ ] Intégration stockage cloud (Dropbox, Google Drive)
+- [ ] Liens de partage temporaires
+- [ ] Historique exports utilisateur
+
+### 🎯 **Critères de Succès Phase 2**
+- [ ] **Différenciation premium** : Fonctionnalités uniques vs concurrence
+- [ ] **Performance maintenue** : < 2 secondes malgré features avancées
+- [ ] **UX premium** : Interface sophistiquée et intuitive
+- [ ] **Conversion freemium** : +15% taux conversion grâce aux features
+
+#### **Étape 2.11 : Système de Stockage Avancé**
+**Objectif** : Implémenter le système de stockage robuste comme le plugin concurrent
+
+**🏗️ Architecture Stockage Double Format :**
+- [ ] **JSON primaire** : Stockage moderne et lisible (`_pdf_template_data_json`)
+- [ ] **Serialized fallback** : Compatibilité legacy (`_pdf_template_data`)
+- [ ] **Migration automatique** : Conversion anciens templates vers JSON
+- [ ] **Validation robuste** : Vérification intégrité données
+
+**📁 Gestion Fichiers Gros Templates :**
+- [ ] **Détection taille** : Templates > 100KB → fichiers séparés
+- [ ] **Répertoire sécurisé** : `wp-content/uploads/pdf-templates/`
+- [ ] **Nommage intelligent** : `template_{id}_{hash}.json`
+- [ ] **Nettoyage automatique** : Suppression fichiers orphelins
+
+**🔄 Logique Chargement/Sauvegarde :**
+- [ ] **Chargement prioritaire** : JSON d'abord, fallback serialized
+- [ ] **Sauvegarde double** : Toujours les deux formats
+- [ ] **Gestion erreurs** : Recovery automatique corruption
+- [ ] **Performance optimisée** : Cache métadonnées
+
+**🛡️ Sécurité et Intégrité :**
+- [ ] **Validation JSON** : Protection contre corruption
+- [ ] **Sanitisation** : Nettoyage données avant stockage
+- [ ] **Permissions** : Contrôle accès fichiers
+- [ ] **Audit trail** : Logs modifications templates
+
+**🎯 Avantages de cette approche :**
+- [ ] **Modernité** : JSON standard pour compatibilité
+- [ ] **Robustesse** : Double format anti-corruption
+- [ ] **Performance** : Fichiers pour gros templates
+- [ ] **Évolutivité** : Migration facile futures versions
 
 ---
 
-## �️ Phase 5 : Améliorations techniques
-- [ ] **Étape 6.1** : Migrer JavaScript vers TypeScript (interfaces pour éléments, variables)
-  - **Test** : Migration TypeScript réussie, interfaces validées
-- [ ] **Étape 6.2** : Implémenter ESLint + Prettier pour qualité code
-  - **Test** : Code formaté automatiquement, linting sans erreurs
-- [ ] **Étape 6.3** : Ajouter tests unitaires (Jest pour JS, PHPUnit pour PHP)
-  - **Test** : Tests unitaires opérationnels, couverture >80%
-- [ ] **Étape 6.4** : Optimiser performance (code splitting, caching)
-  - **Test** : Performance améliorée, bundle size réduit
-- [ ] **Étape 6.5** : Audit sécurité (nonces, sanitization)
-  - **Test** : Audit sécurité passé, vulnérabilités corrigées
-- [ ] **Étape 6.6** : Améliorer UX (cercle chargement multicolore, gestion erreurs adaptée)
-  - **Test** : UX améliorée, feedback utilisateur positif
-- [ ] **Étape 6.7** : Optimiser performance DB (index, commentaires structurés)
-  - **Test** : Requêtes DB optimisées, temps réponse réduit
-- [ ] **Étape 6.8** : Audit sécurité ciblé (permissions rôles existants)
-  - **Test** : Permissions sécurisées, accès contrôlé
-- [ ] **Étape 6.9** : Internationaliser (anglais, allemand, français avec .po/.mo)
-  - **Test** : Traductions complètes, interface localisée
-- [ ] **Étape 6.10** : Refactoriser modulaire (nouveaux modules, supprimer anciens local + serveur)
-  - **Test** : Refactorisation réussie, code modulaire
+## 🚀 **Phase 3 : Reconstruction Interface - Rendu PHP Prioritaire**
 
-## 💰 Phase 6 : Monétisation Freemium
-- [ ] **Étape 7.3** : Désactiver exports PNG/JPG en gratuit (PDF seulement)
-  - **Test** : Exports PNG/JPG bloqués en gratuit
-- [ ] **Étape 7.4** : Restreindre à 15 variables dynamiques basiques (7 éléments primordiaux)
-  - **Test** : Variables limitées en gratuit, premium débloquées
-- [ ] **Étape 7.5** : Ajouter upsells dans interface (boutons "Upgrade to Premium" bloquants dans éditeur/metabox)
-  - **Test** : Upsells visibles et bloquants
-- [ ] **Étape 7.6** : Intégrer système de paiement (WooCommerce + site externe pour licences)
-  - **Test** : Paiement intégré, licences délivrées
-- [ ] **Étape 7.7** : Tester limitations freemium (vérifier blocages templates/exports/variables)
-  - **Test** : Toutes limitations freemium validées
+**📅 Date** : Octobre 2025
+**🎯 Objectif** : Reconstruire l'interface avec rendu PHP/TCPDF pour aperçus haute précision
+**⏱️ Durée estimée** : 1-2 semaines
+**📊 Statut** : ✅ TERMINÉE
 
-### 📝 **Historique et décisions Phase 6**
+### 🎯 **Découvertes Clés Phase 2**
+
+#### **Problèmes Identifiés :**
+- **Canvas limité** : Rendu côté client imprécis pour PDF complexes
+- **Performance variable** : Dépend du navigateur et puissance machine
+- **Cohérence** : Différences entre navigateurs et appareils
+
+#### **Solution Adoptée :**
+- **Rendu serveur prioritaire** : TCPDF/DomPDF pour précision parfaite
+- **Canvas fallback** : Seulement si serveur échoue
+- **API unifiée** : PreviewImageAPI pour conversion PDF→PNG
+
+### 🎯 **Implémentation Phase 2**
+
+#### **Étape 2.1 : Architecture Rendu Serveur**
+**Objectif** : Implémenter le système de rendu serveur haute précision
+
+**🔧 Configuration TCPDF/DomPDF :**
+- [ ] Installation et configuration DomPDF optimisée
+- [ ] Paramètres performance (DPI, compression, mémoire)
+- [ ] Gestion erreurs et timeouts appropriés
+- [ ] Logs détaillés pour debugging
+
+**🎨 Conversion PDF→Image :**
+- [ ] PreviewImageAPI pour génération PNG/JPG côté serveur
+- [ ] Qualité configurable (72-300 DPI)
+- [ ] Formats multiples (PNG, JPG, WebP)
+- [ ] Optimisation taille fichiers
+
+**⚡ Cache Intelligent :**
+- [ ] Cache transients WordPress pour métadonnées
+- [ ] Cache fichiers pour images générées
+- [ ] Invalidation automatique par modification
+- [ ] Nettoyage périodique des anciens caches
+
+#### **Étape 2.2 : Interface Utilisateur Modernisée**
+**Objectif** : Reconstruire l'interface avec UX améliorée
+
+**🎛️ Contrôles Aperçu Avancés :**
+- [ ] Zoom fluide avec boutons et molette souris
+- [ ] Rotation PDF (90°, 180°, 270°)
+- [ ] Navigation multi-pages si nécessaire
+- [ ] Boutons fullscreen et téléchargement
+
+**📱 Responsive Design :**
+- [ ] Interface adaptative mobile/desktop
+- [ ] Modal optimisée pour tous écrans
+- [ ] Touch gestures sur mobile
+- [ ] Performance optimisée petits écrans
+
+**🎨 États de Chargement :**
+- [ ] Indicateurs visuels pendant génération
+- [ ] Progress bars pour longs processus
+- [ ] Messages d'état informatifs
+- [ ] Gestion annulation en cours
+
+#### **Étape 2.3 : Intégration Contextes Multiples**
+**Objectif** : Unifier les aperçus éditeur et metabox
+
+**🖼️ Aperçu Éditeur (Modal Overlay) :**
+- [ ] Bouton aperçu dans barre d'outils éditeur
+- [ ] Modal fullscreen avec contrôles complets
+- [ ] Données fictives cohérentes
+- [ ] Sauvegarde automatique avant aperçu
+
+**📦 Aperçu Metabox WooCommerce :**
+- [ ] Intégration directe dans page commande
+- [ ] Données réelles de la commande sélectionnée
+- [ ] Sélecteur template intégré
+- [ ] Actions groupées (aperçu/génération/téléchargement)
+
+**🔄 Transitions Fluides :**
+- [ ] Changement seamless entre contextes
+- [ ] Préservation état entre aperçus
+- [ ] Cache partagé pour performance
+- [ ] Historique navigation
+
+#### **Étape 2.4 : Système de Cache Avancé**
+**Objectif** : Optimiser performance avec cache intelligent
+
+**💾 Cache Multi-Niveaux :**
+- [ ] Cache mémoire pour sessions actives
+- [ ] Cache fichiers pour images générées
+- [ ] Cache base de données pour métadonnées
+- [ ] Invalidation intelligente par changements
+
+**🎯 Cache Contextuel :**
+- [ ] Cache différencié éditeur vs metabox
+- [ ] Clés composites (template + données + contexte)
+- [ ] TTL adaptatif selon fréquence utilisation
+- [ ] Préchargement cache intelligent
+
+#### **Étape 2.5 : Gestion Erreurs Robuste**
+**Objectif** : Système de fallback et récupération d'erreurs
+
+**🔄 Fallback Automatique :**
+- [ ] Bascule serveur → Canvas si échec
+- [ ] Messages d'erreur informatifs utilisateur
+- [ ] Logging détaillé pour développeurs
+- [ ] Récupération automatique si possible
+
+**📊 Monitoring et Alertes :**
+- [ ] Métriques performance temps réel
+- [ ] Alertes sur taux d'échec élevé
+- [ ] Dashboard admin pour monitoring
+- [ ] Logs structurés pour analyse
+
+---
+
+## 🚀 **Phase 2.5 : Améliorations Concurrentielles**
+
+**📅 Date** : Décembre 2025
+**🎯 Objectif** : Combler les écarts critiques avec le plugin concurrent pour atteindre la parité fonctionnelle
+**⏱️ Durée estimée** : 3-4 semaines
+**📊 Statut** : ⏳ Planification
+**💡 Justification** : Analyse comparative révèle 8 gaps critiques à combler pour la compétitivité
+
+### 📊 **Analyse des Écarts Concurrentiels**
+
+Après analyse approfondie du plugin WooCommerce PDF Invoice Builder, voici les **8 gaps critiques** identifiés :
+
+#### **Gap 1 : Système Double Format** ⭐⭐⭐⭐⭐
+**Écart** : Leur système JSON + serialized éprouvé vs notre JSON uniquement
+**Impact** : Risque de perte données, migration difficile
+**Priorité** : Critique
+
+#### **Gap 2 : Thèmes CSS Prédéfinis** ⭐⭐⭐⭐☆
+**Écart** : 4 thèmes prédéfinis vs aucun thème
+**Impact** : Adoption lente par utilisateurs non-designers
+**Priorité** : Haute
+
+#### **Gap 3 : Variables Conditionnelles** ⭐⭐⭐⭐☆
+**Écart** : TTC/HT automatique, devises dynamiques vs variables basiques
+**Impact** : Limitation internationale
+**Priorité** : Moyenne-Haute
+
+#### **Gap 4 : Gestion Polices Avancée** ⭐⭐⭐☆☆
+**Écart** : Google Fonts + web-safe vs polices limitées
+**Impact** : Typographie professionnelle absente
+**Priorité** : Moyenne
+
+#### **Gap 5 : Mise en Page Automatique** ⭐⭐⭐☆☆
+**Écart** : Zones prédéfinies intelligentes vs layout manuel
+**Impact** : Complexité pour débutants
+**Priorité** : Moyenne
+
+#### **Gap 6 : Export Professionnel** ⭐⭐⭐☆☆
+**Écart** : Protection PDF, watermark, cloud storage vs export basique
+**Impact** : Usage entreprise limité
+**Priorité** : Moyenne
+
+#### **Gap 7 : Analytics Détaillées** ⭐⭐☆☆☆
+**Écart** : Métriques complètes vs analytics basiques
+**Impact** : Optimisation produit difficile
+**Priorité** : Basse
+
+#### **Gap 8 : Mode Développeur** ⭐⭐☆☆☆
+**Écart** : Debug tools avancés vs mode développeur basique
+**Impact** : Support développeur dégradé
+**Priorité** : Basse
+
+### 🎯 **Implémentation Phase 2.5**
+
+#### **Étape 2.5.1 : Système Double Format (Priorité Critique)**
+**Objectif** : Implémenter le système de stockage robuste du concurrent
+
+**🏗️ Architecture Stockage Double Format :**
+- [ ] **JSON primaire** : Stockage moderne (`_pdf_template_data_json`)
+- [ ] **Serialized fallback** : Compatibilité legacy (`_pdf_template_data`)
+- [ ] **Migration automatique** : Conversion anciens templates
+- [ ] **Validation robuste** : Protection contre corruption
+
+**📁 Gestion Fichiers Gros Templates :**
+- [ ] **Détection taille** : Templates > 100KB → fichiers séparés
+- [ ] **Répertoire sécurisé** : `wp-content/uploads/pdf-templates/`
+- [ ] **Nommage intelligent** : `template_{id}_{hash}.json`
+- [ ] **Nettoyage automatique** : Suppression fichiers orphelins
+
+**🔄 Logique Chargement/Sauvegarde :**
+- [ ] **Chargement prioritaire** : JSON d'abord, fallback serialized
+- [ ] **Sauvegarde double** : Toujours les deux formats
+- [ ] **Gestion erreurs** : Recovery automatique corruption
+- [ ] **Performance optimisée** : Cache métadonnées
+
+#### **Étape 2.5.2 : Thèmes CSS Prédéfinis (Priorité Haute)**
+**Objectif** : Offrir 4 thèmes professionnels prédéfinis
+
+**🎨 Création Thèmes :**
+- [ ] **Classic** : Style traditionnel, sobre et professionnel
+- [ ] **Modern** : Design épuré, minimaliste et contemporain
+- [ ] **Corporate** : Style entreprise avec branding fort
+- [ ] **Minimal** : Ultra-simple, focus sur le contenu
+
+**⚙️ Injection CSS Dynamique :**
+- [ ] **Variables CSS** : Couleurs, polices, espacements personnalisables
+- [ ] **Aperçus miniatures** : Prévisualisation rapide des thèmes
+- [ ] **Application instantanée** : Changement thème sans rechargement
+- [ ] **Sauvegarde préférences** : Mémorisation choix utilisateur
+
+**🖼️ Interface Sélecteur Thèmes :**
+- [ ] **Galerie visuelle** : Aperçus côte à côte
+- [ ] **Filtres recherche** : Par style, couleur, usage
+- [ ] **Personnalisation** : Ajustements fins par thème
+- [ ] **Import/Export** : Partage thèmes entre installations
+
+#### **Étape 2.5.3 : Variables Conditionnelles Avancées (Priorité Haute)**
+**Objectif** : Variables intelligentes comme le concurrent
+
+**💰 Variables Financières :**
+- [ ] **TTC/HT automatique** : Selon configuration WooCommerce
+- [ ] **Devises dynamiques** : Symboles locaux (€, $, £, etc.)
+- [ ] **Formatage nombres** : Séparateurs milliers, décimales
+- [ ] **Calculs automatiques** : Taxes, remises, totaux
+
+**📅 Variables Temporelles :**
+- [ ] **Dates formatées** : Selon locale WordPress
+- [ ] **Formats multiples** : Court, long, relatif ("il y a 2 jours")
+- [ ] **Fuseaux horaires** : Gestion automatique
+- [ ] **Périodes** : "Ce mois", "Cette année"
+
+**🌐 Variables Internationales :**
+- [ ] **Adresses formatées** : Selon pays (US vs Europe)
+- [ ] **Noms complets** : Ordre prénom/nom selon culture
+- [ ] **Numéros téléphone** : Formatage local
+- [ ] **Codes postaux** : Validation par pays
+
+#### **Étape 2.5.4 : Gestion Polices Professionnelle (Priorité Moyenne)**
+**Objectif** : Système de polices avancé comme le concurrent
+
+**🔤 Polices Web-Safe :**
+- [ ] **Familles complètes** : Arial, Times, Courier, etc.
+- [ ] **Tous styles** : Normal, gras, italique, etc.
+- [ ] **Aperçu temps réel** : Changement instantané
+- [ ] **Fallbacks** : Gestion polices manquantes
+
+**🎨 Google Fonts Premium :**
+- [ ] **Catalogue complet** : 1000+ polices Google
+- [ ] **Catégorisation** : Serif, sans-serif, monospace, etc.
+- [ ] **Préchargements** : Optimisation performance
+- [ ] **Sous-ensembles** : Caractères latins uniquement
+
+**⚡ Cache et Performance :**
+- [ ] **Cache serveur** : Polices fréquemment utilisées
+- [ ] **Préchargement** : Polices template au chargement
+- [ ] **Compression** : Optimisation taille fichiers
+- [ ] **CDN** : Livraison rapide mondiale
+
+#### **Étape 2.5.5 : Mise en Page Automatique (Priorité Moyenne)**
+**Objectif** : Zones prédéfinies intelligentes
+
+**📐 Zones Prédéfinies :**
+- [ ] **Header/Footer** : Automatique avec logo, adresse
+- [ ] **Corps document** : Produits, totaux, notes
+- [ ] **Sidebar** : Informations complémentaires
+- [ ] **Signatures** : Zones dédiées signatures
+
+**🎯 Détection Intelligente :**
+- [ ] **Analyse contenu** : Détection automatique zones
+- [ ] **Suggestions layout** : Recommandations par type document
+- [ ] **Redimensionnement** : Adaptation contenu dynamique
+- [ ] **Validation** : Contrôle chevauchements
+
+**🔧 Éditeur Visuel :**
+- [ ] **Drag & drop zones** : Réarrangement intuitif
+- [ ] **Snap guides** : Alignement automatique
+- [ ] **Responsive preview** : Adaptation formats papier
+- [ ] **Templates secteurs** : Facture, devis, bon livraison
+
+#### **Étape 2.5.6 : Export Professionnel (Priorité Moyenne)**
+**Objectif** : Fonctionnalités export avancées
+
+**🔒 Protection PDF :**
+- [ ] **Mot de passe** : Protection ouverture/édition
+- [ ] **Permissions** : Impression, copie, modification
+- [ ] **Watermark** : Texte/image personnalisable
+- [ ] **Métadonnées** : Informations document sécurisées
+
+**☁️ Cloud Storage :**
+- [ ] **Dropbox intégration** : Sauvegarde automatique
+- [ ] **Google Drive** : Partage et stockage
+- [ ] **OneDrive** : Support Microsoft
+- [ ] **FTP/SFTP** : Serveurs personnalisés
+
+**📧 Distribution Email :**
+- [ ] **Envoi direct** : Depuis interface WooCommerce
+- [ ] **Templates email** : Personnalisation messages
+- [ ] **Pièces jointes** : PDF + documents complémentaires
+- [ ] **Tracking** : Confirmation livraison
+
+#### **Étape 2.5.7 : Analytics Détaillées (Priorité Basse)**
+**Objectif** : Métriques complètes pour optimisation
+
+**📊 Métriques Performance :**
+- [ ] **Temps génération** : Par template et contexte
+- [ ] **Taux succès/erreur** : Suivi fiabilité
+- [ ] **Templates populaires** : Usage par template
+- [ ] **Performance appareil** : Desktop vs mobile
+
+**👥 Métriques Utilisation :**
+- [ ] **Fréquence usage** : Par utilisateur/type
+- [ ] **Fonctionnalités utilisées** : Tracking adoption
+- [ ] **Erreurs utilisateur** : Points de friction
+- [ ] **Temps session** : Engagement utilisateur
+
+**💰 Métriques Business :**
+- [ ] **Conversion freemium** : Taux upgrade
+- [ ] **Templates créés** : Productivité utilisateurs
+- [ ] **Support tickets** : Volume et résolution
+- [ ] **Satisfaction** : Feedback et ratings
+
+#### **Étape 2.5.8 : Mode Développeur Avancé (Priorité Basse)**
+**Objectif** : Outils debug professionnels
+
+**🐛 Panneau Debug Flottant :**
+- [ ] **Métriques temps réel** : Performance, mémoire, CPU
+- [ ] **Variables dump** : État actuel template/données
+- [ ] **Logs console** : Messages structurés
+- [ ] **Timestamps** : Chronologie événements
+
+**🔍 Outils Diagnostic :**
+- [ ] **Inspecteur éléments** : Analyse structure PDF
+- [ ] **Validateur données** : Contrôle intégrité
+- [ ] **Testeur variables** : Simulation différents contextes
+- [ ] **Profileur performance** : Identification goulots
+
+**📋 Logs et Historique :**
+- [ ] **Historique actions** : Dernières 100 opérations
+- [ ] **Export logs** : Pour partage support
+- [ ] **Filtrage avancé** : Par type, niveau, période
+- [ ] **Recherche** : Mots-clés dans logs
+
+### 🎯 **Critères de Succès Phase 2.5**
+- [ ] **Parité concurrentielle** : 8/8 gaps comblés
+- [ ] **Performance maintenue** : < 2 secondes malgré features
+- [ ] **UX améliorée** : Adoption +30% grâce aux thèmes
+- [ ] **Stabilité** : 0 régression fonctionnalités existantes
+- [ ] **Tests complets** : Couverture >90% nouvelles features
+
+---
+
+## 🚀 **Phase 4 : Tests et Validation Complète**
+
+**📅 Date** : Novembre 2025
+**🎯 Objectif** : Validation complète du système unifié avant déploiement
+**⏱️ Durée estimée** : 1 semaine
+**📊 Statut** : Phase 4.1 terminée, 4.2-4.6 en attente
+
+#### **Étape 4.2 : Tests Intégration Canvas/Metabox**
+**Objectif** : Valider l'intégration parfaite entre les deux contextes
+
+**🔗 Tests Transitions :**
+- [ ] Test navigation fluide éditeur ↔ metabox
+- [ ] Validation cohérence données entre contextes
+- [ ] Test cache partagé et synchronisation
+- [ ] Performance transitions < 500ms
+
+**📊 Tests Données :**
+- [ ] Validation mapping variables dynamiques
+- [ ] Test données fictives vs réelles cohérentes
+- [ ] Gestion erreurs données manquantes
+- [ ] Sanitisation et sécurité données
+
+#### **Étape 4.3 : Tests Performance et Charge**
+**Objectif** : Validation performance en conditions réelles
+
+**⚡ Tests Performance :**
+- [ ] Génération < 2 secondes en conditions normales
+- [ ] Cache hit ratio > 80%
+- [ ] Mémoire < 100MB par génération
+- [ ] CPU optimisé pour tous serveurs
+
+**📈 Tests Charge :**
+- [ ] Support 10+ utilisateurs simultanés
+- [ ] Gestion queue et timeouts appropriés
+- [ ] Monitoring ressources serveur
+- [ ] Auto-scaling si nécessaire
+
+#### **Étape 4.4 : Tests Sécurité et Robustesse**
+**Objectif** : Validation sécurité et gestion d'erreurs
+
+**🔒 Tests Sécurité :**
+- [ ] Validation toutes permissions utilisateur
+- [ ] Protection contre injection et XSS
+- [ ] Rate limiting et anti-abus
+- [ ] Audit sécurité complet
+
+**🛡️ Tests Robustesse :**
+- [ ] Simulation pannes serveur/base de données
+- [ ] Test récupération automatique erreurs
+- [ ] Validation fallback Canvas opérationnel
+- [ ] Gestion timeouts et annulations
+
+#### **Étape 4.5 : Tests Utilisateur et UX**
+**Objectif** : Validation expérience utilisateur finale
+
+**👥 Tests UX Éditeur :**
+- [ ] Workflow création template intuitif
+- [ ] Aperçu responsive et fluide
+- [ ] Gestion erreurs user-friendly
+- [ ] Performance perçue optimale
+
+**🛒 Tests UX Metabox :**
+- [ ] Intégration WooCommerce seamless
+- [ ] Workflow génération PDF rapide
+- [ ] Gestion états de chargement
+- [ ] Erreurs contextuelles compréhensibles
+
+#### **Étape 4.6 : Tests Compatibilité et Navigateurs**
+**Objectif** : Validation cross-browser et cross-device
+
+**🌐 Tests Navigateurs :**
+- [ ] Chrome, Firefox, Safari, Edge derniers
+- [ ] Versions mobiles (iOS Safari, Chrome Android)
+- [ ] Fallbacks pour anciens navigateurs
+- [ ] Performance équivalente tous navigateurs
+
+**📱 Tests Appareils :**
+- [ ] Desktop, tablette, mobile
+- [ ] Résolutions diverses (HD, 4K, mobile)
+- [ ] Orientation portrait/paysage
+- [ ] Performance sur appareils modestes
+
+---
+
+## 🚀 **Phase 5 : Déploiement et Production**
+
+**📅 Date** : Décembre 2025
+**🎯 Objectif** : Déploiement en production avec monitoring complet
+**⏱️ Durée estimée** : 2 semaines
+**📊 Statut** : ⏳ Planification
+
+#### **Étape 4.1 : Déploiement Automatisé**
+**Objectif** : Pipeline CI/CD complet pour déploiements fiables
+
+**🔧 Configuration CI/CD :**
+- [ ] Pipeline GitHub Actions ou équivalent
+- [ ] Tests automatisés avant déploiement
+- [ ] Déploiement staging → production
+- [ ] Rollback automatique en cas d'erreur
+
+**📊 Monitoring Production :**
+- [ ] Dashboard performance temps réel
+- [ ] Alertes sur métriques critiques
+- [ ] Logs centralisés et recherche
+- [ ] Métriques utilisateur (usage, erreurs)
+
+#### **Étape 4.2 : Documentation et Support**
+**Objectif** : Documentation complète pour utilisateurs et développeurs
+
+**📚 Documentation Utilisateur :**
+- [ ] Guides d'utilisation détaillés
+- [ ] FAQ et troubleshooting
+- [ ] Vidéos tutoriels
+- [ ] Support communauté/forum
+
+**🛠️ Documentation Technique :**
+- [ ] API documentation complète
+- [ ] Guide développeur pour extensions
+- [ ] Architecture et décisions techniques
+- [ ] Procédures maintenance et debug
+
+#### **Étape 4.3 : Support Production**
+**Objectif** : Équipe support opérationnelle
+
+**🎧 Configuration Support :**
+- [ ] Système tickets (Zendesk, Intercom)
+- [ ] Base connaissances et auto-help
+- [ ] SLA garantis (< 24h réponse)
+- [ ] Formation équipe support
+
+**📈 Métriques Support :**
+- [ ] Taux résolution premier contact
+- [ ] Temps réponse moyen
+- [ ] Satisfaction utilisateur
+- [ ] Issues récurrentes tracking
+
+---
+
+## 🚀 **Phase 6 : Améliorations Techniques**
+
+**📅 Date** : Q1 2026
+**🎯 Objectif** : Optimisations techniques et qualité code
+**⏱️ Durée estimée** : 1-2 mois
+**📊 Statut** : ⏳ Planification
+
+#### **Étape 5.1 : Migration TypeScript**
+**Objectif** : Améliorer la maintenabilité du code JavaScript
+
+**🔧 Migration Progressive :**
+- [ ] Configuration TypeScript dans le projet
+- [ ] Interfaces pour éléments template et API
+- [ ] Migration fichiers critiques en premier
+- [ ] Tests TypeScript opérationnels
+
+#### **Étape 5.2 : Qualité Code**
+**Objectif** : Outils de qualité et standards élevés
+
+**🛠️ Outils Développement :**
+- [ ] ESLint + Prettier configurés
+- [ ] Règles coding standards strictes
+- [ ] Hooks pre-commit pour qualité
+- [ ] Tests automatisés qualité code
+
+#### **Étape 5.3 : Tests Unitaires Complets**
+**Objectif** : Couverture tests >80% pour fiabilité
+
+**🧪 Tests JavaScript :**
+- [ ] Tests PreviewAPI et gestion états
+- [ ] Tests utilitaires et helpers
+- [ ] Tests intégration composants
+- [ ] Tests composants React
+
+**🧪 Tests PHP :**
+- [ ] Tests DataProviders et Generators
+- [ ] Tests API endpoints
+- [ ] Tests sécurité et validation
+- [ ] Tests classes utilitaires
+
+#### **Étape 5.4 : Optimisations Performance**
+**Objectif** : Performance optimale pour tous utilisateurs
+
+**⚡ Optimisations Frontend :**
+- [ ] Code splitting et lazy loading
+- [ ] Bundle size optimisé (< 500KB gzipped)
+- [ ] Images et assets optimisés
+- [ ] Caching intelligent navigateur
+
+**⚡ Optimisations Backend :**
+- [ ] Requêtes DB optimisées (index, cache)
+- [ ] Cache objets WordPress utilisé
+- [ ] Compression réponses API
+- [ ] CDN pour assets statiques
+
+#### **Étape 5.5 : Audit Sécurité**
+**Objectif** : Sécurité renforcée et conformité
+
+**🔒 Audit Complet :**
+- [ ] Nonces et permissions vérifiées
+- [ ] Sanitisation toutes entrées/sorties
+- [ ] Protection CSRF et XSS
+- [ ] Audit tiers parties (DomPDF, etc.)
+
+#### **Étape 5.6 : UX Améliorations**
+**Objectif** : Interface utilisateur exceptionnelle
+
+**🎨 Améliorations UI :**
+- [ ] Cercle chargement multicolore
+- [ ] Animations fluides et micro-interactions
+- [ ] Gestion erreurs améliorée
+- [ ] Feedback visuel intelligent
+
+#### **Étape 5.7 : Base de Données**
+**Objectif** : Optimisation stockage et récupération
+
+**🗄️ Optimisations DB :**
+- [ ] Index sur colonnes fréquemment requêtées
+- [ ] Cache objets WordPress étendu
+- [ ] Requêtes optimisées et préparées
+- [ ] Cleanup données obsolètes
+
+#### **Étape 5.8 : Sécurité Avancée**
+**Objectif** : Permissions et accès contrôlés
+
+**🔐 Gestion Permissions :**
+- [ ] Rôles WordPress existants respectés
+- [ ] Permissions granulaire par fonctionnalité
+- [ ] Audit trails pour actions sensibles
+- [ ] Multi-tenant si multisite
+
+#### **Étape 5.9 : Internationalisation**
+**Objectif** : Support multi-langues complet
+
+**🌍 i18n Complet :**
+- [ ] Extraction chaînes traduisibles
+- [ ] Fichiers .po/.mo pour langues cibles
+- [ ] Interface admin traduite
+- [ ] Dates et monnaies localisées
+
+#### **Étape 5.10 : Refactorisation Modulaire**
+**Objectif** : Architecture propre et maintenable
+
+**🏗️ Refactorisation :**
+- [ ] Modules indépendants et réutilisables
+- [ ] Suppression code legacy (local + serveur)
+- [ ] Interfaces claires entre modules
+- [ ] Tests refactoring validés
+
+---
+
+## 🚀 **Phase 7 : Monétisation Freemium**
+
+**📅 Date** : Q2 2026
+**🎯 Objectif** : Implémentation modèle freemium rentable
+**⏱️ Durée estimée** : 1 mois
+**📊 Statut** : ⏳ Planification
+
+### 📝 **Historique et décisions Phase 7**
 
 #### **Éléments importants de la discussion** :
-- **Stratégie freemium** : Version gratuite attractive avec limitations claires, premium
+- **Stratégie freemium** : Version gratuite attractive avec limitations claires, premium débloquant tout
 - **Prix** : 69€ justifié par complexité IA + concurrence WooCommerce (30% commission compensée)
 - **Promo possible** : 59€ sur site externe vs 69€ sur WooCommerce
 - **Limitations gratuites** : 1 template, PDF only, 15 variables basiques, 3 dynamic-text models, watermark
@@ -659,11 +1305,123 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Compatibilité** : WooCommerce + site externe pour licences et promos
 - **Objectif** : 20% taux conversion gratuit→premium
 
-### 🔮 **Versions futures (v1.2.0+)**
-- [ ] **API REST publique** : Endpoints pour intégrations tierces (générer PDF via API externe)
-- [ ] **Mode hors ligne** : Aperçu basique sans connexion
-- [ ] **Templates premium pack** : Collection de modèles payants
-- [ ] **Intégrations tierces** : Support Zapier, Integromat
-- [ ] **Analytics freemium** : Tableau de bord conversions gratuit→premium
+#### **Étape 6.1 : Architecture Freemium**
+**Objectif** : Infrastructure de base pour modèle freemium
+
+**🏗️ Système Licences :**
+- [ ] Intégration système licences (plugin existant ou tiers)
+- [ ] Validation licences côté serveur
+- [ ] Cache licences pour performance
+- [ ] Gestion renouvellements et rappels
+
+**🎛️ Interface Admin Licences :**
+- [ ] Page admin pour gestion licences
+- [ ] Activation/désactivation fonctionnalités
+- [ ] Métriques utilisation et conversions
+- [ ] Dashboard freemium insights
+
+#### **Étape 6.2 : Limitations Freemium**
+**Objectif** : Implémenter restrictions version gratuite
+
+**📄 Restrictions Templates :**
+- [ ] Limitation à 1 template en gratuit
+- [ ] Templates premium verrouillés avec upsells
+- [ ] Aperçus miniatures pour templates payants
+- [ ] Messages "Upgrade required" bloquants
+
+**🖼️ Restrictions Exports :**
+- [ ] PDF seulement en gratuit (PNG/JPG premium)
+- [ ] Watermark "WP PDF Builder Free" sur PDFs
+- [ ] Qualité limitée (72 DPI vs 300 DPI premium)
+- [ ] Métadonnées limitées
+
+#### **Étape 6.3 : Variables Dynamiques Freemium**
+**Objectif** : Système variables limité/freemium
+
+**📊 Variables Gratuites :**
+- [ ] 15 variables basiques incluses (7 éléments primordiaux)
+- [ ] Variables dynamiques simples (nom, email, téléphone)
+- [ ] Formatage basique dates/prix
+- [ ] Validation basique données
+
+**🔧 Variables Premium :**
+- [ ] Variables avancées (TTC/HT, devises multiples)
+- [ ] Variables conditionnelles et calculs
+- [ ] Formatage avancé (locales, symboles)
+- [ ] Variables WooCommerce étendues
+
+#### **Étape 6.4 : Upsells et Conversion**
+**Objectif** : Maximiser conversion gratuit→premium
+
+**🎯 Upsells Contextuels :**
+- [ ] Boutons "Upgrade to Premium" dans éditeur
+- [ ] Messages bloquants pour features premium
+- [ ] Tooltips explicatifs limitations
+- [ ] Landing pages features premium
+
+**💰 Intégration Paiement :**
+- [ ] WooCommerce comme passerelle paiement
+- [ ] Site externe pour licences (éviter 30% commission)
+- [ ] Processus achat seamless
+- [ ] Activation automatique post-achat
+
+#### **Étape 6.5 : Analytics Freemium**
+**Objectif** : Métriques pour optimiser conversion
+
+**📊 Tracking Utilisation :**
+- [ ] Événements freemium (limitations atteintes, upsells vus)
+- [ ] Funnel conversion gratuit→premium
+- [ ] Métriques engagement utilisateurs
+- [ ] A/B tests pour optimiser upsells
+
+**📈 Dashboard Insights :**
+- [ ] Taux conversion par feature
+- [ ] Revenus et LTV utilisateurs
+- [ ] Churn et rétention freemium
+- [ ] Optimisations basées données
+
+#### **Étape 6.6 : Support Freemium**
+**Objectif** : Support adapté au modèle freemium
+
+**🎧 Support Gratuit :**
+- [ ] Documentation complète auto-help
+- [ ] FAQ et guides troubleshooting
+- [ ] Forum communauté (optionnel)
+- [ ] Support email basique
+
+**💎 Support Premium :**
+- [ ] Support prioritaire email/téléphone
+- [ ] SLA garantis (< 24h réponse)
+- [ ] Accès beta features
+- [ ] Conseils personnalisés optimisation
+
+#### **Étape 6.7 : Tests et Validation Freemium**
+**Objectif** : Validation complète modèle freemium
+
+**🧪 Tests Limitations :**
+- [ ] Validation blocages fonctionnels
+- [ ] Test upsells et messages utilisateur
+- [ ] Performance avec limitations
+- [ ] UX freemium vs premium
+
+**📊 Tests Conversion :**
+- [ ] A/B tests messages upsell
+- [ ] Tracking funnel conversion
+- [ ] Métriques engagement
+- [ ] Optimisation taux conversion
 
 ---
+
+## ✅ **Critères de Succès Globaux**
+
+- ⚡ **Performance** : < 2s génération, < 100MB RAM
+- 🔒 **Sécurité** : 0 vulnérabilités, audit passé
+- 🧪 **Qualité** : Tests 100% succès, couverture >80%
+- 📚 **Maintenabilité** : Code modulaire, bien documenté
+- 💰 **Business** : 20% conversion freemium, satisfaction utilisateur
+- 🎯 **Technique** : Architecture scalable, monitoring complet
+
+---
+
+**📅 Prochaine échéance** : Tests Phase 4.2 (décembre 2025)
+**🎯 Focus actuel** : Validation autosave et cohérence JSON avec aperçu PHP

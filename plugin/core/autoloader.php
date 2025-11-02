@@ -27,7 +27,8 @@ class PDF_Builder_Autoloader {
      * Initialize the autoloader
      */
     public static function init($base_path) {
-        self::$base_path = trailingslashit($base_path);
+        // Add trailing slash if not present (equivalent to trailingslashit)
+        self::$base_path = rtrim($base_path, '/') . '/';
 
         spl_autoload_register([__CLASS__, 'autoload']);
     }
