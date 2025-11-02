@@ -15,7 +15,7 @@ module.exports = {
     clean: true,
     library: {
       name: 'pdfBuilderReact',
-      type: 'window'
+      type: 'var'
     },
     globalObject: 'this'
   },

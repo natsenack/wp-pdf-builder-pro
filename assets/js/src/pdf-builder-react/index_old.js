@@ -73,6 +73,11 @@ const exports = {
   initPDFBuilderReact
 };
 
+// Export default pour webpack
+const exports = {
+  initPDFBuilderReact
+};
+
 console.log('🌐 Assigning to window...');
 
 // Assigner la fonction à window pour l'accès global depuis WordPress
@@ -93,10 +98,10 @@ if (typeof window !== 'undefined') {
     console.error('❌ Failed to assign with Object.defineProperty:', error);
     // Fallback: assignation directe
     window.pdfBuilderReact = exports;
-    console.log('🔄 Fallback assignment used');
+    console.log('� Fallback assignment used');
   }
 
-  console.log('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  console.log('�🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
   console.log('🔍 window.pdfBuilderReact object:', window.pdfBuilderReact);
   console.log('🔍 window object:', window);
   console.log('🔍 window === globalThis:', window === globalThis);
@@ -113,6 +118,10 @@ if (typeof window !== 'undefined') {
 } else {
   console.error('❌ window is not available');
 }
+
+console.log('🎉 PDF Builder React bundle execution completed');
+
+export default exports;
 
 console.log('🎉 PDF Builder React bundle execution completed');
 
