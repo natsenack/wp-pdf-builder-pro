@@ -37,16 +37,13 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
     if (state !== 'idle') {
       setVisible(true);
 
-      // Masquer automatiquement après 3 secondes en état 'saved'
-      if (state === 'saved') {
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-        const timer = setTimeout(() => {
-          setVisible(false);
-        }, 3000);
-        setAutoHideTimer(timer);
-      } else {
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-      }
+      // Masquer automatiquement après 3 secondes en état 'saved', ou après 5 secondes pour les autres états
+      if (autoHideTimer) clearTimeout(autoHideTimer);
+      const hideDelay = state === 'saved' ? 3000 : 5000;
+      const timer = setTimeout(() => {
+        setVisible(false);
+      }, hideDelay);
+      setAutoHideTimer(timer);
     }
 
     return () => {

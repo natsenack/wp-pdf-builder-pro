@@ -59,7 +59,8 @@ export function useSaveState({
   const lastChangeTimeRef = useRef<number>(0);
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const saveCooldownRef = useRef<number>(0);
-  const saveOperationIdRef = useRef<number>(0); // Pour identifier les opérations de sauvegarde uniques // Minimum time between saves
+  const saveOperationIdRef = useRef<number>(0);
+  const savedStateTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Timer pour revenir à idle
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -160,14 +161,22 @@ export function useSaveState({
           setRetryCount(0);
         });
 
+        debugLog('[SAVE STATE] État changé à saved');
+
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
 
           debugLog(`✅ [SAVE STATE] Sauvegarde réussie à ${savedAt}`);
         onSaveSuccess?.(savedAt);
 
-        // Réinitialiser l'état saved après 3 secondes (au lieu de 2)
-        setTimeout(() => {
+        // Nettoyer le timer précédent pour revenir à idle
+        if (savedStateTimeoutRef.current) {
+          clearTimeout(savedStateTimeoutRef.current);
+        }
+
+        // Réinitialiser l'état saved après 3 secondes
+        savedStateTimeoutRef.current = setTimeout(() => {
+          debugLog('[SAVE STATE] Remise à idle après succès');
           startTransition(() => {
             setState(current => current === 'saved' ? 'idle' : current);
           });
@@ -332,6 +341,9 @@ export function useSaveState({
       }
       if (inactivityTimeoutRef.current) {
         clearTimeout(inactivityTimeoutRef.current);
+      }
+      if (savedStateTimeoutRef.current) {
+        clearTimeout(savedStateTimeoutRef.current);
       }
     };
   }, []);
