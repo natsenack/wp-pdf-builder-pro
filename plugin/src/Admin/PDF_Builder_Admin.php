@@ -1172,6 +1172,10 @@ class PDF_Builder_Admin {
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true);
         error_log('[PHP] Script enqueued successfully with version: ' . $version_param);
 
+        // Charger les scripts de l'API Preview 1.4
+        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-api-client.js', ['jquery'], $version_param, true);
+        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
+
         // Use wp_localize_script for AJAX configuration - safe method
 wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
     'ajaxurl' => admin_url('admin-ajax.php'),

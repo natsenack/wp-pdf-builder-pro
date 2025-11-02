@@ -208,6 +208,12 @@ function pdf_builder_load_bootstrap() {
     // CHARGER LES NOUVELLES CLASSES WP_PDF_Builder_Pro
     pdf_builder_load_new_classes();
 
+    // Initialiser l'API Preview (Étape 1.4 - API Preview Unifiée)
+    if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+        $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+        // L'API s'enregistre automatiquement dans son constructeur
+    }
+
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Core')) {
         $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();

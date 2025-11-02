@@ -1,0 +1,430 @@
+/**
+ * PDF Builder Pro - Preview API Client
+ * Intégration complète de l'API Preview 1.4
+ */
+
+class PDFPreviewAPI {
+    constructor() {
+        this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
+        this.nonce = pdfBuilderAjax?.nonce || '';
+        this.isGenerating = false;
+        this.cache = new Map();
+    }
+
+    /**
+     * Génère un aperçu depuis l'éditeur (données fictives)
+     */
+    async generateEditorPreview(templateData, options = {}) {
+        if (this.isGenerating) {
+            console.warn('⚠️ Génération déjà en cours...');
+            return null;
+        }
+
+        this.isGenerating = true;
+        this.showLoadingIndicator();
+
+        try {
+            const formData = new FormData();
+            formData.append('action', 'wp_pdf_preview_image');
+            formData.append('nonce', this.nonce);
+            formData.append('context', 'editor');
+            formData.append('template_data', JSON.stringify(templateData));
+            formData.append('quality', options.quality || 150);
+            formData.append('format', options.format || 'png');
+
+            console.log('📤 Envoi requête preview éditeur...');
+
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                console.log('✅ Aperçu éditeur généré:', result.data);
+                this.cachePreview(result.data);
+                this.displayPreview(result.data.image_url, 'editor');
+                return result.data;
+            } else {
+                console.error('❌ Erreur génération éditeur:', result.data);
+                this.showError('Erreur lors de la génération de l\'aperçu');
+                return null;
+            }
+        } catch (error) {
+            console.error('❌ Erreur réseau:', error);
+            this.showError('Erreur de connexion');
+            return null;
+        } finally {
+            this.isGenerating = false;
+            this.hideLoadingIndicator();
+        }
+    }
+
+    /**
+     * Génère un aperçu depuis la metabox WooCommerce (données réelles)
+     */
+    async generateOrderPreview(templateData, orderId, options = {}) {
+        if (this.isGenerating) {
+            console.warn('⚠️ Génération déjà en cours...');
+            return null;
+        }
+
+        this.isGenerating = true;
+        this.showLoadingIndicator();
+
+        try {
+            const formData = new FormData();
+            formData.append('action', 'wp_pdf_preview_image');
+            formData.append('nonce', this.nonce);
+            formData.append('context', 'metabox');
+            formData.append('template_data', JSON.stringify(templateData));
+            formData.append('order_id', orderId);
+            formData.append('quality', options.quality || 150);
+            formData.append('format', options.format || 'png');
+
+            console.log('📤 Envoi requête preview commande...', orderId);
+
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                console.log('✅ Aperçu commande généré:', result.data);
+                this.cachePreview(result.data);
+                this.displayPreview(result.data.image_url, 'metabox', orderId);
+                return result.data;
+            } else {
+                console.error('❌ Erreur génération commande:', result.data);
+                this.showError('Erreur lors de la génération de l\'aperçu de commande');
+                return null;
+            }
+        } catch (error) {
+            console.error('❌ Erreur réseau:', error);
+            this.showError('Erreur de connexion');
+            return null;
+        } finally {
+            this.isGenerating = false;
+            this.hideLoadingIndicator();
+        }
+    }
+
+    /**
+     * Met en cache les aperçus générés
+     */
+    cachePreview(data) {
+        const key = data.cache_key || this.generateCacheKey(data);
+        this.cache.set(key, {
+            url: data.image_url,
+            timestamp: Date.now(),
+            context: data.context || 'unknown'
+        });
+
+        // Nettoyer le cache ancien (garder seulement 10 derniers)
+        if (this.cache.size > 10) {
+            const oldestKey = this.cache.keys().next().value;
+            this.cache.delete(oldestKey);
+        }
+    }
+
+    /**
+     * Génère une clé de cache
+     */
+    generateCacheKey(data) {
+        return btoa(JSON.stringify({
+            context: data.context,
+            order_id: data.order_id,
+            template_hash: this.hashString(JSON.stringify(data.template_data))
+        })).slice(0, 32);
+    }
+
+    /**
+     * Hash simple pour les clés de cache
+     */
+    hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convertir en 32 bits
+        }
+        return Math.abs(hash).toString(36);
+    }
+
+    /**
+     * Affiche l'aperçu généré
+     */
+    displayPreview(imageUrl, context, orderId = null) {
+        // Créer ou mettre à jour la modal d'aperçu
+        let previewModal = document.getElementById('pdf-preview-modal');
+        if (!previewModal) {
+            previewModal = this.createPreviewModal();
+            document.body.appendChild(previewModal);
+        }
+
+        const img = previewModal.querySelector('#pdf-preview-image');
+        const title = previewModal.querySelector('#pdf-preview-title');
+
+        img.src = imageUrl;
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+
+        if (context === 'editor') {
+            title.textContent = '👁️ Aperçu du Template';
+        } else {
+            title.textContent = `📄 Aperçu Commande #${orderId}`;
+        }
+
+        // Ajouter des boutons d'action
+        this.addPreviewActions(previewModal, imageUrl, context);
+
+        // Afficher la modal
+        previewModal.style.display = 'block';
+
+        console.log('🖼️ Aperçu affiché:', imageUrl);
+    }
+
+    /**
+     * Crée la modal d'aperçu
+     */
+    createPreviewModal() {
+        const modal = document.createElement('div');
+        modal.id = 'pdf-preview-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        `;
+
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                max-width: 90%;
+                max-height: 90%;
+                overflow: auto;
+                position: relative;
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="pdf-preview-title" style="margin: 0; color: #1d2327;">Aperçu PDF</h3>
+                    <button id="pdf-preview-close" style="
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        color: #666;
+                    ">×</button>
+                </div>
+                <div id="pdf-preview-actions" style="margin-bottom: 15px;"></div>
+                <img id="pdf-preview-image" src="" alt="Aperçu PDF" style="max-width: 100%; height: auto; border: 1px solid #ddd;" />
+            </div>
+        `;
+
+        // Gestionnaire de fermeture
+        modal.querySelector('#pdf-preview-close').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Fermeture en cliquant en dehors
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        return modal;
+    }
+
+    /**
+     * Ajoute les boutons d'action à l'aperçu
+     */
+    addPreviewActions(modal, imageUrl, context) {
+        const actionsContainer = modal.querySelector('#pdf-preview-actions');
+        actionsContainer.innerHTML = '';
+
+        // Bouton de téléchargement
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = '📥 Télécharger';
+        downloadBtn.style.cssText = `
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        `;
+        downloadBtn.addEventListener('click', () => {
+            this.downloadPreview(imageUrl);
+        });
+
+        // Bouton d'impression
+        const printBtn = document.createElement('button');
+        printBtn.textContent = '🖨️ Imprimer';
+        printBtn.style.cssText = `
+            background: #46b450;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        `;
+        printBtn.addEventListener('click', () => {
+            this.printPreview(imageUrl);
+        });
+
+        // Bouton de régénération (pour metabox seulement)
+        if (context === 'metabox') {
+            const regenerateBtn = document.createElement('button');
+            regenerateBtn.textContent = '🔄 Régénérer';
+            regenerateBtn.style.cssText = `
+                background: #f56e28;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            `;
+            regenerateBtn.addEventListener('click', () => {
+                // Cette fonction devra être appelée depuis le contexte parent
+                if (typeof window.regenerateOrderPreview === 'function') {
+                    window.regenerateOrderPreview();
+                }
+            });
+            actionsContainer.appendChild(regenerateBtn);
+        }
+
+        actionsContainer.appendChild(downloadBtn);
+        actionsContainer.appendChild(printBtn);
+    }
+
+    /**
+     * Télécharge l'aperçu
+     */
+    downloadPreview(imageUrl) {
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `pdf-preview-${Date.now()}.png`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        console.log('📥 Téléchargement démarré:', imageUrl);
+    }
+
+    /**
+     * Imprime l'aperçu
+     */
+    printPreview(imageUrl) {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Aperçu PDF</title>
+                    <style>
+                        body { margin: 0; padding: 20px; text-align: center; }
+                        img { max-width: 100%; height: auto; }
+                        @media print {
+                            body { margin: 0; }
+                            img { max-width: 100%; height: auto; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img src="${imageUrl}" alt="Aperçu PDF" onload="window.print(); window.close();" />
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+
+        console.log('🖨️ Impression démarrée');
+    }
+
+    /**
+     * Affiche l'indicateur de chargement
+     */
+    showLoadingIndicator() {
+        let loader = document.getElementById('pdf-preview-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.id = 'pdf-preview-loader';
+            loader.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255,255,255,0.9);
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 20px;
+                z-index: 10000;
+                display: none;
+                text-align: center;
+            `;
+            loader.innerHTML = `
+                <div style="border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                <div>Génération de l'aperçu...</div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            document.body.appendChild(loader);
+        }
+        loader.style.display = 'block';
+    }
+
+    /**
+     * Cache l'indicateur de chargement
+     */
+    hideLoadingIndicator() {
+        const loader = document.getElementById('pdf-preview-loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }
+
+    /**
+     * Affiche un message d'erreur
+     */
+    showError(message) {
+        // Utiliser toastr si disponible, sinon alert
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+}
+
+// Initialisation globale
+window.pdfPreviewAPI = new PDFPreviewAPI();
+
+// Fonctions d'aide pour une utilisation facile
+window.generateEditorPreview = (templateData, options) => {
+    return window.pdfPreviewAPI.generateEditorPreview(templateData, options);
+};
+
+window.generateOrderPreview = (templateData, orderId, options) => {
+    return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
+};
+
+console.log('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
+console.log('📖 Utilisation:');
+console.log('   - generateEditorPreview(templateData)');
+console.log('   - generateOrderPreview(templateData, orderId)');

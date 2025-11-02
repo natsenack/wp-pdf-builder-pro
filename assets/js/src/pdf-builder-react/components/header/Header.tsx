@@ -2,6 +2,16 @@ import React, { useState, useEffect, useCallback, memo } from 'react';
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 
+// Extension de Window pour l'API Preview
+declare global {
+  interface Window {
+    pdfPreviewAPI?: {
+      generateEditorPreview: (templateData: any, options?: { format?: string; quality?: number }) => Promise<any>;
+      generateOrderPreview: (templateData: any, orderId: number, options?: { format?: string; quality?: number }) => Promise<any>;
+    };
+  }
+}
+
 interface HeaderProps {
   templateName: string;
   templateDescription: string;
@@ -47,6 +57,11 @@ export const Header = memo(function Header({
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFormat, setPreviewFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
@@ -288,6 +303,21 @@ export const Header = memo(function Header({
         >
           <span>👁️</span>
           <span>Aperçu</span>
+        </button>
+
+        <button
+          onClick={() => setShowPreviewModal(true)}
+          onMouseEnter={() => setHoveredButton('preview-image')}
+          onMouseLeave={() => setHoveredButton(null)}
+          style={{
+            ...secondaryButtonStyles,
+            opacity: isSaving ? 0.6 : 1,
+            pointerEvents: isSaving ? 'none' : 'auto'
+          }}
+          title="Générer un aperçu image du PDF"
+        >
+          <span>📸</span>
+          <span>Aperçu Image</span>
         </button>
 
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
@@ -879,6 +909,231 @@ export const Header = memo(function Header({
                 Fermer
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale d'aperçu PDF */}
+      {showPreviewModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1001
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflow: 'auto',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px'
+            }}>
+              <h3 style={{
+                margin: 0,
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1a1a1a'
+              }}>
+                Aperçu du PDF
+              </h3>
+              <button
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  setPreviewImageUrl(null);
+                  setPreviewError(null);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666',
+                  padding: '0',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title="Fermer"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Options de format */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#333',
+                marginBottom: '8px'
+              }}>
+                Format d'export :
+              </label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {[
+                  { value: 'png', label: 'PNG', icon: '🖼️' },
+                  { value: 'jpg', label: 'JPG', icon: '📷' },
+                  { value: 'pdf', label: 'PDF', icon: '📄' }
+                ].map(format => (
+                  <button
+                    key={format.value}
+                    onClick={() => setPreviewFormat(format.value as 'png' | 'jpg' | 'pdf')}
+                    style={{
+                      padding: '8px 16px',
+                      border: `2px solid ${previewFormat === format.value ? '#007cba' : '#ddd'}`,
+                      borderRadius: '6px',
+                      backgroundColor: previewFormat === format.value ? '#f0f8ff' : '#fff',
+                      color: previewFormat === format.value ? '#007cba' : '#333',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <span>{format.icon}</span>
+                    <span>{format.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Bouton de génération */}
+            <div style={{ marginBottom: '20px' }}>
+              <button
+                onClick={async () => {
+                  setIsGeneratingPreview(true);
+                  setPreviewError(null);
+                  setPreviewImageUrl(null);
+
+                  try {
+                    // Utiliser l'API Preview
+                    if (typeof window.pdfPreviewAPI !== 'undefined') {
+                      const result = await window.pdfPreviewAPI.generateEditorPreview({
+                        ...state.template,
+                        elements: state.elements
+                      }, {
+                        format: previewFormat,
+                        quality: 150
+                      });
+
+                      if (result && result.success && result.image_url) {
+                        if (previewFormat === 'pdf') {
+                          // Pour PDF, ouvrir dans un nouvel onglet
+                          window.open(result.image_url, '_blank');
+                        } else {
+                          // Pour PNG/JPG, afficher dans la modale
+                          setPreviewImageUrl(result.image_url);
+                        }
+                      } else {
+                        setPreviewError(result?.error || 'Erreur lors de la génération');
+                      }
+                    } else {
+                      setPreviewError('API Preview non disponible. Vérifiez que les scripts sont chargés.');
+                    }
+                  } catch (error) {
+                    setPreviewError('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
+                  } finally {
+                    setIsGeneratingPreview(false);
+                  }
+                }}
+                disabled={isGeneratingPreview}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: isGeneratingPreview ? '#ccc' : '#007cba',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: isGeneratingPreview ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {isGeneratingPreview ? (
+                  <>
+                    <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span>
+                    <span>Génération en cours...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🎨</span>
+                    <span>Générer l'aperçu</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Affichage de l'erreur */}
+            {previewError && (
+              <div style={{
+                padding: '12px',
+                backgroundColor: '#f8d7da',
+                border: '1px solid #f5c6cb',
+                borderRadius: '4px',
+                color: '#721c24',
+                marginBottom: '20px'
+              }}>
+                <strong>Erreur:</strong> {previewError}
+              </div>
+            )}
+
+            {/* Affichage de l'aperçu */}
+            {previewImageUrl && (
+              <div style={{ textAlign: 'center' }}>
+                <img
+                  src={previewImageUrl}
+                  alt="Aperçu du PDF"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '400px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <div style={{ marginTop: '10px' }}>
+                  <a
+                    href={previewImageUrl}
+                    download={`apercu-${templateName || 'template'}.${previewFormat}`}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#28a745',
+                      color: '#fff',
+                      textDecoration: 'none',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    💾 Télécharger
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

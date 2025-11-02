@@ -10,7 +10,9 @@ module.exports = {
     'pdf-builder-admin': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
     'pdf-builder-admin-debug': './assets/js/src/pdf-builder-editor/pdf-builder-vanilla-bundle.js',
     'pdf-builder-react': './assets/js/src/pdf-builder-react/index.js',
-    'pdf-builder-nonce-fix': './dev/resources/js/pdf-builder-nonce-fix.js'
+    'pdf-builder-nonce-fix': './dev/resources/js/pdf-builder-nonce-fix.js',
+    'pdf-preview-api-client': './assets/js/pdf-preview-api-client.js',
+    'pdf-preview-integration': './assets/js/pdf-preview-integration.js'
   },
   target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
   output: {
