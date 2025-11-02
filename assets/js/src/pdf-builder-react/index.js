@@ -79,28 +79,47 @@ console.log('🌐 Assigning to window...');
 if (typeof window !== 'undefined') {
   console.log('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
 
-  // Utiliser une approche plus robuste avec un setter
+  // Utiliser une approche plus robuste avec gestion des propriétés existantes
   let pdfBuilderReactValue = exports;
 
   try {
-    // Définir un getter/setter pour maintenir la valeur
-    Object.defineProperty(window, 'pdfBuilderReact', {
-      get: function() {
-        return pdfBuilderReactValue;
-      },
-      set: function(value) {
-        console.log('⚠️ Attempting to overwrite window.pdfBuilderReact, preserving original value');
-        // Ne pas permettre l'écrasement, garder notre valeur
-        return pdfBuilderReactValue;
-      },
-      enumerable: true,
-      configurable: false
-    });
+    // Vérifier si la propriété existe déjà et la gérer
+    if (window.hasOwnProperty('pdfBuilderReact')) {
+      console.log('ℹ️ window.pdfBuilderReact already exists, attempting to replace...');
 
-    console.log('✅ window.pdfBuilderReact assigned successfully with getter/setter');
+      // Essayer de supprimer la propriété existante si elle est configurable
+      try {
+        delete window.pdfBuilderReact;
+        console.log('✅ Successfully deleted existing pdfBuilderReact property');
+      } catch (deleteError) {
+        console.log('⚠️ Could not delete existing property, attempting direct assignment');
+        // Si on ne peut pas la supprimer, essayer l'assignation directe
+        window.pdfBuilderReact = exports;
+        console.log('🔄 Direct assignment used for existing property');
+      }
+    }
+
+    // Maintenant définir la propriété avec getter/setter si elle n'existe pas
+    if (!window.hasOwnProperty('pdfBuilderReact')) {
+      Object.defineProperty(window, 'pdfBuilderReact', {
+        get: function() {
+          return pdfBuilderReactValue;
+        },
+        set: function(value) {
+          console.log('⚠️ Attempting to overwrite window.pdfBuilderReact, preserving original value');
+          // Ne pas permettre l'écrasement, garder notre valeur
+          return pdfBuilderReactValue;
+        },
+        enumerable: true,
+        configurable: true  // Permettre la reconfiguration future si nécessaire
+      });
+
+      console.log('✅ window.pdfBuilderReact assigned successfully with getter/setter');
+    }
+
   } catch (error) {
     console.error('❌ Failed to assign with getter/setter:', error);
-    // Fallback: assignation directe répétée
+    // Fallback multiple: assignation directe répétée
     window.pdfBuilderReact = exports;
     console.log('🔄 Fallback assignment used');
 
