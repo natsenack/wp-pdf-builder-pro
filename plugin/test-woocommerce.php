@@ -67,11 +67,34 @@ if (!function_exists('function_exists')) {
     }
 }
 
-if (!function_exists('wc_get_order')) {
-    function wc_get_order($order_id) {
-        // Return a mock order for testing
-        return (object)['id' => $order_id, 'test' => true];
+if (!function_exists('wc_get_order_status_name')) {
+    function wc_get_order_status_name($status) {
+        $statuses = [
+            'pending' => 'En attente',
+            'processing' => 'En cours',
+            'on-hold' => 'En attente',
+            'completed' => 'Terminée',
+            'cancelled' => 'Annulée',
+            'refunded' => 'Remboursée',
+            'failed' => 'Échouée'
+        ];
+        return $statuses[$status] ?? $status;
     }
+}
+
+if (!function_exists('wc_price')) {
+    function wc_price($price, $args = []) {
+        $currency = $args['currency'] ?? 'EUR';
+        return number_format($price, 2, ',', ' ') . ' ' . $currency;
+    }
+}
+
+// Mock pour WC() global
+if (!class_exists('WC')) {
+    class WC {
+        public static $countries;
+    }
+    WC::$countries = (object)['countries' => ['FR' => 'France', 'US' => 'United States']];
 }
 
 // Définir les constantes du plugin nécessaires
@@ -155,17 +178,23 @@ try {
         public function get_subtotal() { return 89.99; }
         public function get_total_tax() { return 10.00; }
         public function get_shipping_total() { return 5.00; }
+        public function get_discount_total() { return 0.00; }
         public function get_date_created() { return '2025-11-02 10:30:00'; }
         public function get_status() { return 'completed'; }
+        public function get_currency() { return 'EUR'; }
 
         // Méthodes customer
+        public function get_formatted_billing_full_name() { return 'Jean Dupont'; }
         public function get_billing_first_name() { return 'Jean'; }
         public function get_billing_last_name() { return 'Dupont'; }
         public function get_billing_email() { return 'jean.dupont@email.com'; }
+        public function get_billing_phone() { return '+33123456789'; }
         public function get_billing_address_1() { return '123 Rue de la Paix'; }
+        public function get_billing_address_2() { return 'Appartement 4B'; }
         public function get_billing_city() { return 'Paris'; }
         public function get_billing_postcode() { return '75001'; }
         public function get_billing_country() { return 'FR'; }
+        public function get_billing_state() { return 'Île-de-France'; }
 
         public function get_shipping_first_name() { return 'Jean'; }
         public function get_shipping_last_name() { return 'Dupont'; }
