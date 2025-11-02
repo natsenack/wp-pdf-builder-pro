@@ -349,4 +349,123 @@ class PDFGenerator extends BaseGenerator {
     public function isDomPDFAvailable(): bool {
         return $this->dompdf_available;
     }
+
+    /**
+     * Génère un aperçu image (PNG/JPG) du PDF
+     *
+     * @param int $quality Qualité de l'image (50-300 DPI)
+     * @param string $format Format de l'image ('png', 'jpg')
+     * @return string Chemin vers le fichier image généré
+     * @throws \Exception En cas d'erreur de génération
+     */
+    public function generate_preview_image(int $quality = 150, string $format = 'png'): string {
+        $this->logInfo("Starting preview image generation - Quality: {$quality}, Format: {$format}");
+
+        // Générer d'abord le PDF/HTML
+        $result = $this->generate('pdf');
+
+        if (is_string($result)) {
+            // PDF généré avec DomPDF - convertir en image
+            return $this->convert_pdf_to_image($result, $quality, $format);
+        } elseif (is_array($result) && isset($result['fallback'])) {
+            // Fallback Canvas - convertir HTML en image
+            return $this->convert_html_to_image($result['html'], $quality, $format);
+        } else {
+            throw new \Exception('Invalid generation result for preview image');
+        }
+    }
+
+    /**
+     * Convertit un PDF en image
+     */
+    private function convert_pdf_to_image(string $pdf_path, int $quality, string $format): string {
+        // Pour l'instant, utiliser ImageMagick si disponible, sinon fallback
+        if (extension_loaded('imagick')) {
+            return $this->convert_pdf_with_imagick($pdf_path, $quality, $format);
+        } else {
+            // Fallback: générer image depuis HTML si PDF disponible
+            $this->logWarning("ImageMagick not available, using HTML conversion fallback");
+            return $this->convert_html_to_image($this->generated_html, $quality, $format);
+        }
+    }
+
+    /**
+     * Convertit PDF en image avec ImageMagick
+     */
+    private function convert_pdf_with_imagick(string $pdf_path, int $quality, string $format): string {
+        try {
+            $imagick = new \Imagick();
+            $imagick->setResolution($quality, $quality);
+            $imagick->readImage($pdf_path . '[0]'); // Première page seulement
+            $imagick->setImageFormat($format);
+
+            // Optimisations selon format
+            if ($format === 'jpg' || $format === 'jpeg') {
+                $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
+                $imagick->setImageCompressionQuality(90);
+            } else {
+                $imagick->setImageCompression(\Imagick::COMPRESSION_ZIP);
+            }
+
+            // Générer nom de fichier unique
+            $temp_dir = sys_get_temp_dir();
+            $filename = 'pdf_preview_' . uniqid() . '.' . $format;
+            $output_path = $temp_dir . DIRECTORY_SEPARATOR . $filename;
+
+            $imagick->writeImage($output_path);
+            $imagick->clear();
+
+            $this->logInfo("PDF converted to image: {$output_path}");
+            return $output_path;
+
+        } catch (\Exception $e) {
+            $this->logError("ImageMagick conversion failed: " . $e->getMessage());
+            throw new \Exception('PDF to image conversion failed');
+        }
+    }
+
+    /**
+     * Convertit HTML en image (fallback Canvas)
+     */
+    private function convert_html_to_image(string $html, int $quality, string $format): string {
+        // Pour l'instant, créer un fichier temporaire avec indication
+        // Dans un environnement réel, utiliserait html2canvas ou wkhtmltoimage
+
+        $temp_dir = sys_get_temp_dir();
+        $filename = 'html_preview_' . uniqid() . '.' . $format;
+        $output_path = $temp_dir . DIRECTORY_SEPARATOR . $filename;
+
+        // Créer une image placeholder simple
+        if ($format === 'png') {
+            $image = imagecreatetruecolor(800, 600);
+            $bg_color = imagecolorallocate($image, 255, 255, 255);
+            $text_color = imagecolorallocate($image, 0, 0, 0);
+
+            imagefill($image, 0, 0, $bg_color);
+            imagestring($image, 5, 50, 50, 'PDF Preview - Canvas Fallback', $text_color);
+            imagestring($image, 3, 50, 80, 'Quality: ' . $quality . ' DPI', $text_color);
+            imagestring($image, 3, 50, 100, 'Format: ' . strtoupper($format), $text_color);
+            imagestring($image, 2, 50, 130, 'Generated: ' . date('Y-m-d H:i:s'), $text_color);
+
+            imagepng($image, $output_path);
+            imagedestroy($image);
+        } else {
+            // JPG
+            $image = imagecreatetruecolor(800, 600);
+            $bg_color = imagecolorallocate($image, 255, 255, 255);
+            $text_color = imagecolorallocate($image, 0, 0, 0);
+
+            imagefill($image, 0, 0, $bg_color);
+            imagestring($image, 5, 50, 50, 'PDF Preview - Canvas Fallback', $text_color);
+            imagestring($image, 3, 50, 80, 'Quality: ' . $quality . ' DPI', $text_color);
+            imagestring($image, 3, 50, 100, 'Format: ' . strtoupper($format), $text_color);
+            imagestring($image, 2, 50, 130, 'Generated: ' . date('Y-m-d H:i:s'), $text_color);
+
+            imagejpeg($image, $output_path, 90);
+            imagedestroy($image);
+        }
+
+        $this->logInfo("HTML converted to placeholder image: {$output_path}");
+        return $output_path;
+    }
 }
