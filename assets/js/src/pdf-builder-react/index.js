@@ -42,7 +42,7 @@ class ErrorBoundary extends React.Component {
           React.createElement('summary', null, 'Détails de l\'erreur'),
           this.state.error && this.state.error.toString(),
           React.createElement('br'),
-          this.state.errorInfo.componentStack
+          this.state.errorInfo && this.state.errorInfo.componentStack
         )
       );
     }
