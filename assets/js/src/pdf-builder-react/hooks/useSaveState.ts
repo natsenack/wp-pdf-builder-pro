@@ -55,6 +55,7 @@ export function useSaveState({
   const lastSaveTimeRef = useRef<number>(0);
   const elementsHashRef = useRef<string>('');
   const pendingSaveRef = useRef<boolean>(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -236,35 +237,45 @@ export function useSaveState({
       return;
     }
 
-    // Déterminer si une sauvegarde est nécessaire
-    const currentHash = getElementsHash(elements);
-    const hasChanged = currentHash !== elementsHashRef.current;
-    const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
-    const minIntervalElapsed = timeSinceLastSave >= autoSaveInterval;
-
-    if (!hasChanged || !minIntervalElapsed || pendingSaveRef.current) {
-      return;
+    // Clear any existing debounce timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
 
-    console.log('[SAVE STATE] Changements détectés, planification sauvegarde...');
+    // Debounce element changes by 500ms to avoid rapid re-renders
+    debounceTimeoutRef.current = setTimeout(() => {
+      const currentHash = getElementsHash(elements);
+      const hasChanged = currentHash !== elementsHashRef.current;
+      const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
+      const minIntervalElapsed = timeSinceLastSave >= autoSaveInterval;
 
-    // Nettoyer le timeout précédent
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Planifier la sauvegarde
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      if (!pendingSaveRef.current) {
-        pendingSaveRef.current = true;
-        performSave(0).finally(() => {
-          pendingSaveRef.current = false;
-        });
+      if (!hasChanged || !minIntervalElapsed || pendingSaveRef.current) {
+        return;
       }
-    }, autoSaveInterval);
+
+      console.log('[SAVE STATE] Changements détectés, planification sauvegarde...');
+
+      // Nettoyer le timeout précédent
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Planifier la sauvegarde
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        if (!pendingSaveRef.current) {
+          pendingSaveRef.current = true;
+          performSave(0).finally(() => {
+            pendingSaveRef.current = false;
+          });
+        }
+      }, autoSaveInterval);
+    }, 500); // 500ms debounce
 
     // Cleanup
     return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
@@ -281,6 +292,9 @@ export function useSaveState({
       }
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
+      }
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
       }
     };
   }, []);
