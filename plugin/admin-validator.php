@@ -46,7 +46,12 @@ function pdf_builder_validator_page() {
 
     if (isset($_POST['run_validation'])) {
         // Debug: Afficher que la validation a commencé
-        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';
+        echo '    if (isset($_POST['run_validation'])) {
+        // LOG PHP - Validation déclenchée
+        error_log('🚀 PDF BUILDER VALIDATOR: Validation déclenchée côté PHP');
+        echo '<script>console.log("📥 Validation reçue côté serveur");</script>';
+
+        echo '<div class="notice notice-info"><p>🔄 Validation démarrée... Veuillez patienter (30 secondes environ).</p></div>';';
         echo '<div id="validation-progress" style="background: #f1f1f1; padding: 20px; border-radius: 5px; margin: 20px 0;">
             <h3>⏳ Progression de la validation</h3>
             <div id="progress-bar" style="background: #ddd; height: 20px; border-radius: 10px; overflow: hidden;">
@@ -238,20 +243,34 @@ function pdf_builder_validator_page() {
         </form>
 
         <script>
+        console.log('🔧 PDF Builder Validator: Script chargé');
+
         function prepareValidation(button) {
+            console.log('🚀 prepareValidation appelée', button);
+
             button.value = '🔄 Validation en cours...';
             button.disabled = true;
+            console.log('✅ Bouton modifié:', button.value, button.disabled);
 
             // Timeout de sécurité (60 secondes)
             setTimeout(function() {
+                console.log('⏰ Timeout de sécurité déclenché');
                 if (button.disabled) {
+                    console.warn('⚠️ Validation trop longue, alerte affichée');
                     alert('⚠️ La validation prend plus de temps que prévu. Vérifiez la console pour les erreurs.');
                 }
             }, 60000);
 
+            console.log('📤 Soumission du formulaire...');
             // Laisser le formulaire se soumettre normalement
             return true;
         }
+
+        // Vérifier que le formulaire existe
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('validation-form');
+            console.log('📋 Formulaire trouvé:', form ? 'OUI' : 'NON', form);
+        });
         </script>
 
         <div class="validation-links" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
