@@ -4955,11 +4955,18 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
             console.log('Initializing React PDF Builder...');
 
             function tryInitReact() {
+                console.log('Checking for pdfBuilderReact:', typeof window.pdfBuilderReact);
+                if (typeof window.pdfBuilderReact !== 'undefined') {
+                    console.log('pdfBuilderReact exists:', window.pdfBuilderReact);
+                    console.log('initPDFBuilderReact exists:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+                }
                 if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
                     console.log('React PDF Builder script loaded, initializing...');
-                    window.pdfBuilderReact.initPDFBuilderReact();
-                    return true;
+                    var result = window.pdfBuilderReact.initPDFBuilderReact();
+                    console.log('initPDFBuilderReact returned:', result);
+                    return result;
                 }
+                console.log('pdfBuilderReact not ready');
                 return false;
             }
 
