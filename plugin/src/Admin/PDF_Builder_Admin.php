@@ -309,9 +309,6 @@ class PDF_Builder_Admin {
      */
     public function addAdminMenu()
     {
-        // Menus désactivés - gérés par PDF_Builder_Core
-        return;
-
         // Menu principal avec icône distinctive
         add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 30);
 // Page d'accueil (sous-menu principal masqué)

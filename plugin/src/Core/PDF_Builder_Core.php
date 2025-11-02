@@ -163,10 +163,13 @@ class PDF_Builder_Core
     }
 
     /**
-     * Enregistrer le menu admin - appelé uniquement sur admin_menu
+     * Enregistrer le menu admin - appelé uniquement sur admin_menu (DÉSACTIVÉ - géré par PDF_Builder_Admin)
      */
     public function register_admin_menu()
     {
+        // Menus désactivés - gérés par PDF_Builder_Admin qui a le vrai contenu
+        return;
+
         if (self::$menu_added) {
             return;
         }
