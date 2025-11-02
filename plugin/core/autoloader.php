@@ -61,6 +61,9 @@ class PDF_Builder_Autoloader {
             $file = self::$base_path . $base_dir . $relative_class . '.php';
 
             // Debug: uncomment for troubleshooting
+            error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
+
+            // Debug: uncomment for troubleshooting
             // error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
 
             // If the file exists, require it
