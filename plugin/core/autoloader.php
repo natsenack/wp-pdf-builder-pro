@@ -51,12 +51,27 @@ class PDF_Builder_Autoloader {
             // Replace namespace separators with directory separators
             $file = self::$base_path . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
+            // Debug: uncomment for troubleshooting
+            // error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
+
             // If the file exists, require it
             if (file_exists($file)) {
-                require $file;
-                return;
+                require_once $file;
+
+                // Verify the class was loaded
+                if (class_exists($class, false)) {
+                    return true;
+                } else {
+                    // Class not found in file - this might indicate a namespace mismatch
+                    error_log("PDF_Builder_Autoloader: Class '$class' not found in expected file '$file'");
+                }
+            } else {
+                // File not found - log for debugging
+                error_log("PDF_Builder_Autoloader: File '$file' not found for class '$class'");
             }
         }
+
+        return false;
     }
 }
 
