@@ -12,6 +12,14 @@ if (!defined('WP_PLUGIN_DIR')) {
     define('WP_PLUGIN_DIR', dirname(dirname(__FILE__)));
 }
 
+// Définir les constantes du plugin nécessaires
+if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+    define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
+}
+if (!defined('PDF_BUILDER_PLUGIN_FILE')) {
+    define('PDF_BUILDER_PLUGIN_FILE', dirname(__FILE__) . '/pdf-builder-pro.php');
+}
+
 echo "=== TEST DIRECT CHARGEMENT CLASSES ===\n\n";
 
 // Test 0: Vérifier que le bootstrap minimal existe
