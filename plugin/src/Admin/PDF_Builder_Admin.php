@@ -5154,7 +5154,7 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
 
         // Enqueue PDF Builder React scripts from local build
-        $react_script_url = plugins_url('assets/js/dist/pdf-builder-react.js', dirname(__FILE__, 2));
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
         // Enqueue API Preview scripts for React editor
