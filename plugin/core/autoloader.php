@@ -21,6 +21,7 @@ class PDF_Builder_Autoloader {
      */
     private static $prefixes = [
         'PDF_Builder\\' => 'src/',
+        'WP_PDF_Builder_Pro\\' => '',
     ];
 
     /**
