@@ -77,7 +77,10 @@ function pdf_builder_validator_page() {
         }
         flush();
 
+        // Capturer la sortie du validateur
+        ob_start();
         $validator->run_all_tests();
+        $validation_output = ob_get_clean();
 
         echo '<script>document.getElementById("progress-text").innerHTML = "Tests terminés, génération du rapport...";</script>';
         echo '<script>document.getElementById("progress-fill").style.width = "100%";</script>';
@@ -89,6 +92,65 @@ function pdf_builder_validator_page() {
         // Récupérer les erreurs et warnings pour les console.log
         $errors = $validator->get_errors();
         $warnings = $validator->get_warnings();
+        $results = $validator->get_results();
+
+        // Afficher les résultats de validation dans la page WordPress
+        echo '<div class="validation-results" style="margin-top: 30px; padding: 20px; background: white; border: 1px solid #ddd; border-radius: 5px;">';
+        echo '<h2>📊 Résultats de la Validation</h2>';
+
+        // Résumé
+        $total_tests = count($results['success'] ?? []) + count($errors) + count($warnings);
+        $success_count = count($results['success'] ?? []);
+        $error_count = count($errors);
+        $warning_count = count($warnings);
+        $score = $total_tests > 0 ? round(($success_count / $total_tests) * 100, 1) : 0;
+
+        echo '<div class="validation-summary" style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin: 20px 0;">';
+        echo '<h3>Résumé Exécution</h3>';
+        echo '<p><strong>📊 Score Global:</strong> <span style="font-size: 24px; font-weight: bold; color: ' . ($error_count === 0 ? '#27ae60' : '#e74c3c') . ';">' . $score . '/100</span></p>';
+        echo '<p><strong>✅ Succès:</strong> ' . $success_count . '</p>';
+        echo '<p><strong>❌ Erreurs:</strong> ' . $error_count . '</p>';
+        echo '<p><strong>⚠️ Avertissements:</strong> ' . $warning_count . '</p>';
+        echo '<p><strong>📋 Tests Totaux:</strong> ' . $total_tests . '</p>';
+        echo '</div>';
+
+        // Erreurs
+        if (!empty($errors)) {
+            echo '<div class="validation-errors" style="background: #fee; border: 1px solid #e74c3c; padding: 15px; border-radius: 5px; margin: 20px 0;">';
+            echo '<h3 style="color: #e74c3c;">❌ ERREURS CRITIQUES (' . count($errors) . ')</h3>';
+            echo '<ul>';
+            foreach ($errors as $error) {
+                echo '<li>• ' . htmlspecialchars($error['message']) . ' <small>(' . date('H:i:s', $error['time']) . ')</small></li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+        }
+
+        // Avertissements
+        if (!empty($warnings)) {
+            echo '<div class="validation-warnings" style="background: #fff3cd; border: 1px solid #f39c12; padding: 15px; border-radius: 5px; margin: 20px 0;">';
+            echo '<h3 style="color: #f39c12;">⚠️ AVERTISSEMENTS (' . count($warnings) . ')</h3>';
+            echo '<ul>';
+            foreach ($warnings as $warning) {
+                echo '<li>• ' . htmlspecialchars($warning['message']) . ' <small>(' . date('H:i:s', $warning['time']) . ')</small></li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+        }
+
+        // Succès
+        if (!empty($results['success'])) {
+            echo '<div class="validation-success" style="background: #d4edda; border: 1px solid #27ae60; padding: 15px; border-radius: 5px; margin: 20px 0;">';
+            echo '<h3 style="color: #27ae60;">✅ TESTS RÉUSSIS (' . count($results['success']) . ')</h3>';
+            echo '<ul>';
+            foreach ($results['success'] as $success) {
+                echo '<li>• ' . htmlspecialchars($success['message']) . ' <small>(' . date('H:i:s', $success['time']) . ')</small></li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+        }
+
+        echo '</div>';
 
         // Ajouter les console.log JavaScript pour les erreurs
         if (!empty($errors) || !empty($warnings)) {

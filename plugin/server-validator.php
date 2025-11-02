@@ -593,6 +593,13 @@ class PDF_Builder_Server_Validator {
     }
 
     /**
+     * Récupérer les résultats de validation
+     */
+    public function get_results() {
+        return $this->results;
+    }
+
+    /**
      * Récupérer les erreurs de validation
      */
     public function get_errors() {
