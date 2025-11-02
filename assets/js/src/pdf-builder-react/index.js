@@ -4,6 +4,53 @@ import ReactDOM from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 
+// Composant ErrorBoundary pour capturer les erreurs de rendu
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('❌ React Error Boundary caught an error:', error);
+    console.error('❌ Error Info:', errorInfo);
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return React.createElement('div', {
+        style: {
+          padding: '20px',
+          border: '1px solid #ff6b6b',
+          borderRadius: '5px',
+          backgroundColor: '#ffe6e6',
+          color: '#d63031',
+          fontFamily: 'Arial, sans-serif'
+        }
+      }, 
+        React.createElement('h2', null, 'Erreur dans l\'éditeur PDF'),
+        React.createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'),
+        React.createElement('details', { style: { whiteSpace: 'pre-wrap' } },
+          React.createElement('summary', null, 'Détails de l\'erreur'),
+          this.state.error && this.state.error.toString(),
+          React.createElement('br'),
+          this.state.errorInfo.componentStack
+        )
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // État de l'application
 let currentTemplate = null;
 let isModified = false;
@@ -50,7 +97,9 @@ function initPDFBuilderReact() {
     const root = ReactDOM.createRoot(container);
     console.log('🎨 React root created, rendering component...');
 
-    root.render(React.createElement(PDFBuilder, { width: DEFAULT_CANVAS_WIDTH, height: DEFAULT_CANVAS_HEIGHT })); // A4 portrait dimensions
+    root.render(React.createElement(ErrorBoundary, null, 
+      React.createElement(PDFBuilder, { width: DEFAULT_CANVAS_WIDTH, height: DEFAULT_CANVAS_HEIGHT })
+    ));
     console.log('✅ React component rendered successfully');
 
     return true;
