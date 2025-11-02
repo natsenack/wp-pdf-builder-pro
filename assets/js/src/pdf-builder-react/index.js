@@ -79,21 +79,26 @@ console.log('🌐 Assigning to window...');
 if (typeof window !== 'undefined') {
   console.log('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
 
-  try {
-    // Utiliser Object.defineProperty pour une assignation plus persistante
-    Object.defineProperty(window, 'pdfBuilderReact', {
-      value: exports,
-      writable: false,
-      enumerable: true,
-      configurable: false
-    });
+  // Vérifier si la propriété existe déjà pour éviter les conflits
+  if (typeof window.pdfBuilderReact === 'undefined') {
+    try {
+      // Utiliser Object.defineProperty pour empêcher la suppression mais permettre la modification
+      Object.defineProperty(window, 'pdfBuilderReact', {
+        value: exports,
+        writable: true,  // Permettre les modifications futures
+        enumerable: true,
+        configurable: false  // Empêcher la suppression
+      });
 
-    console.log('✅ window.pdfBuilderReact assigned successfully with Object.defineProperty');
-  } catch (error) {
-    console.error('❌ Failed to assign with Object.defineProperty:', error);
-    // Fallback: assignation directe
-    window.pdfBuilderReact = exports;
-    console.log('🔄 Fallback assignment used');
+      console.log('✅ window.pdfBuilderReact assigned successfully with Object.defineProperty');
+    } catch (error) {
+      console.error('❌ Failed to assign with Object.defineProperty:', error);
+      // Fallback: assignation directe
+      window.pdfBuilderReact = exports;
+      console.log('🔄 Fallback assignment used');
+    }
+  } else {
+    console.log('ℹ️ window.pdfBuilderReact already exists, skipping assignment');
   }
 
   console.log('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
