@@ -1,6 +1,7 @@
 <?php
 /**
  * Diagnostic script for PDF Builder Pro autoloader
+ * Version: 2025-11-02 14:21
  */
 
 // Test direct du fichier DataProviderInterface
