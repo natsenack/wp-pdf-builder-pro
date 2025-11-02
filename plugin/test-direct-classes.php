@@ -157,8 +157,9 @@ try {
 // Test 10: Tester une génération PDF basique
 echo "10. Test génération PDF basique: ";
 try {
-    $generator = new WP_PDF_Builder_Pro\PDFGenerator();
-    $provider = new WP_PDF_Builder_Pro\SampleDataProvider();
+    $template_data = ['test' => 'data'];
+    $data_provider = new WP_PDF_Builder_Pro\Data\SampleDataProvider();
+    $generator = new WP_PDF_Builder_Pro\Generators\PDFGenerator($template_data, $data_provider);
 
     // HTML simple pour test
     $html = '<html><body><h1>Test PDF</h1><p>Ceci est un test.</p></body></html>';
