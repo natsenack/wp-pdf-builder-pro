@@ -48,8 +48,17 @@ class PDF_Builder_Autoloader {
             // Get the relative class name
             $relative_class = substr($class, $len);
 
-            // Replace namespace separators with directory separators
-            $file = self::$base_path . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+            // Special handling for WP_PDF_Builder_Pro namespace
+            if ($prefix === 'WP_PDF_Builder_Pro\\') {
+                // Convert namespace parts to lowercase directories
+                $parts = explode('\\', $relative_class);
+                $relative_class = implode('/', array_map('lcfirst', $parts));
+            } else {
+                // Replace namespace separators with directory separators
+                $relative_class = str_replace('\\', '/', $relative_class);
+            }
+
+            $file = self::$base_path . $base_dir . $relative_class . '.php';
 
             // Debug: uncomment for troubleshooting
             // error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
