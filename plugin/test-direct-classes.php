@@ -65,20 +65,49 @@ try {
 echo "4. Autoloader chargé: ";
 if (class_exists('PDF_Builder_Autoloader')) {
     echo "✅ OK\n";
+
+    // Debug: vérifier que l'autoloader est enregistré
+    echo "4b. Autoloader SPL enregistré: ";
+    $autoloader_functions = spl_autoload_functions();
+    $found = false;
+    foreach ($autoloader_functions as $func) {
+        if (is_array($func) && isset($func[0]) && $func[0] === 'PDF_Builder_Autoloader') {
+            $found = true;
+            break;
+        }
+    }
+    echo $found ? "✅ OK\n" : "❌ NON\n";
+
+    // Debug: tester manuellement l'autoloader
+    echo "4c. Test manuel autoloader pour SampleDataProvider: ";
+    try {
+        $result = PDF_Builder_Autoloader::autoload('WP_PDF_Builder_Pro\\Data\\SampleDataProvider');
+        echo $result ? "✅ OK\n" : "❌ NON\n";
+    } catch (Exception $e) {
+        echo "❌ ERREUR: " . $e->getMessage() . "\n";
+    }
+
 } else {
     echo "❌ NON\n";
 }
 
 // Test 5: Tester le chargement d'une classe WP_PDF_Builder_Pro
 echo "5. Classe WP_PDF_Builder_Pro\\DataProviderInterface: ";
+$class_name = 'WP_PDF_Builder_Pro\\Data\\DataProviderInterface';
+echo "Test de $class_name: ";
 try {
-    if (interface_exists('WP_PDF_Builder_Pro\\DataProviderInterface')) {
-        echo "✅ OK\n";
+    // Debug: vérifier le fichier attendu
+    $expected_file = PDF_BUILDER_PLUGIN_DIR . 'data/DataProviderInterface.php';
+    echo "Fichier attendu: $expected_file - ";
+    echo file_exists($expected_file) ? "EXISTS" : "NOT FOUND";
+
+    if (interface_exists($class_name)) {
+        echo " ✅ OK\n";
     } else {
-        echo "❌ NON\n";
+        echo " ❌ NON\n";
     }
 } catch (Exception $e) {
-    echo "❌ ERREUR: " . $e->getMessage() . "\n";
+    echo " ❌ ERREUR: " . $e->getMessage() . "\n";
 }
 
 // Test 6: Tester le chargement d'une implémentation
