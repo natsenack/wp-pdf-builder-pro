@@ -66,7 +66,7 @@ class PreviewImageAPI {
         // Vérification nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
             $this->log_security_event('invalid_nonce', $_SERVER['REMOTE_ADDR']);
-            wp_die('Security check failed', 403);
+            wp_send_json_error(['message' => 'Security check failed', 'code' => 'INVALID_NONCE'], 403);
         }
 
         // Vérification permissions selon contexte
@@ -75,7 +75,7 @@ class PreviewImageAPI {
 
         if (!current_user_can($required_cap)) {
             $this->log_security_event('insufficient_permissions', $_SERVER['REMOTE_ADDR'], $context);
-            wp_die('Insufficient permissions', 403);
+            wp_send_json_error(['message' => 'Insufficient permissions', 'code' => 'INSUFFICIENT_PERMISSIONS'], 403);
         }
 
         // Validation taille données
@@ -83,7 +83,7 @@ class PreviewImageAPI {
             $data_size = strlen($_POST['template_data']);
             if ($data_size > 1024 * 1024) { // 1MB max
                 $this->log_security_event('data_too_large', $_SERVER['REMOTE_ADDR'], $data_size);
-                wp_die('Data too large', 413);
+                wp_send_json_error(['message' => 'Data too large', 'code' => 'DATA_TOO_LARGE'], 413);
             }
         }
     }
