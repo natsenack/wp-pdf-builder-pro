@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
 
 /**
  * Hook pour gérer la sauvegarde automatique avec retry logic
@@ -77,7 +77,9 @@ export function useSaveState({
       }
 
       try {
-        setState('saving');
+        startTransition(() => {
+          setState('saving');
+        });
         onSaveStart?.();
 
         // Nettoyage des éléments pour JSON - version plus permissive
@@ -142,10 +144,12 @@ export function useSaveState({
 
         // Succès
         const savedAt = data.data?.saved_at || new Date().toISOString();
-        setLastSavedAt(savedAt);
-        setState('saved');
-        setError(null);
-        setRetryCount(0);
+        startTransition(() => {
+          setLastSavedAt(savedAt);
+          setState('saved');
+          setError(null);
+          setRetryCount(0);
+        });
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
 
@@ -154,7 +158,9 @@ export function useSaveState({
 
         // Réinitialiser l'état saved après 2 secondes
         setTimeout(() => {
-          setState(current => current === 'saved' ? 'idle' : current);
+          startTransition(() => {
+            setState(current => current === 'saved' ? 'idle' : current);
+          });
         }, 2000);
 
         return true;
@@ -183,8 +189,10 @@ export function useSaveState({
         }
 
         // Échec définitif après tous les retries
-        setState('error');
-        setError(errorMsg);
+        startTransition(() => {
+          setState('error');
+          setError(errorMsg);
+        });
         onSaveError?.(errorMsg);
         console.error(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
@@ -209,8 +217,10 @@ export function useSaveState({
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
-    setError(null);
-    setState('idle');
+    startTransition(() => {
+      setError(null);
+      setState('idle');
+    });
   }, []);
 
   /**
