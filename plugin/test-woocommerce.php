@@ -1,8 +1,8 @@
 <?php
-/**
- * Test fonctionnel des variables WooCommerce
- * Teste l'injection de vraies données WooCommerce dans les templates PDF
- */
+// Permettre l'exécution en mode test
+if (!defined('PHPUNIT_RUNNING')) {
+    define('PHPUNIT_RUNNING', true);
+}
 
 // Simuler les fonctions WordPress nécessaires pour les tests
 if (!function_exists('wp_create_nonce')) {

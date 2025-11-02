@@ -1,8 +1,8 @@
 <?php
-/**
- * Test de l'API PreviewImageAPI
- * Teste la génération d'aperçus d'images pour les templates PDF
- */
+// Permettre l'exécution en mode test
+if (!defined('PHPUNIT_RUNNING')) {
+    define('PHPUNIT_RUNNING', true);
+}
 
 // Simuler les fonctions WordPress nécessaires pour les tests
 if (!function_exists('add_action')) {
