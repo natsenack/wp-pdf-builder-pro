@@ -5157,6 +5157,9 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
+        // Debug: Log the script URL
+        error_log('[REACT] Script URL: ' . $react_script_url);
+
         // Enqueue API Preview scripts for React editor
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd');
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-api-client.js', ['jquery'], $version_param, true);
