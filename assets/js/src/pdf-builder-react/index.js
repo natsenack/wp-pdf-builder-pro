@@ -79,58 +79,58 @@ console.log('🌐 Assigning to window...');
 if (typeof window !== 'undefined') {
   console.log('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
 
-  // Utiliser une approche plus robuste avec gestion des propriétés existantes
-  let pdfBuilderReactValue = exports;
+  // Approche ultime : assignation forcée avec surveillance agressive
+  let assignmentCount = 0;
+  const maxAssignments = 10;
 
-  try {
-    // Vérifier si la propriété existe déjà et la gérer
-    if (window.hasOwnProperty('pdfBuilderReact')) {
-      console.log('ℹ️ window.pdfBuilderReact already exists, attempting to replace...');
+  function forceAssign() {
+    try {
+      window.pdfBuilderReact = exports;
+      assignmentCount++;
+      console.log(`🔄 Force assignment #${assignmentCount} successful`);
 
-      // Essayer de supprimer la propriété existante si elle est configurable
-      try {
-        delete window.pdfBuilderReact;
-        console.log('✅ Successfully deleted existing pdfBuilderReact property');
-      } catch (deleteError) {
-        console.log('⚠️ Could not delete existing property, attempting direct assignment');
-        // Si on ne peut pas la supprimer, essayer l'assignation directe
-        window.pdfBuilderReact = exports;
-        console.log('🔄 Direct assignment used for existing property');
-      }
+      // Vérifier immédiatement si ça tient
+      setTimeout(() => {
+        if (typeof window.pdfBuilderReact === 'undefined') {
+          console.log('⚠️ Assignment lost immediately, reassigning...');
+          if (assignmentCount < maxAssignments) {
+            forceAssign();
+          }
+        }
+      }, 1);
+
+    } catch (error) {
+      console.error('❌ Force assignment failed:', error);
     }
-
-    // Maintenant définir la propriété avec getter/setter si elle n'existe pas
-    if (!window.hasOwnProperty('pdfBuilderReact')) {
-      Object.defineProperty(window, 'pdfBuilderReact', {
-        get: function() {
-          return pdfBuilderReactValue;
-        },
-        set: function(value) {
-          console.log('⚠️ Attempting to overwrite window.pdfBuilderReact, preserving original value');
-          // Ne pas permettre l'écrasement, garder notre valeur
-          return pdfBuilderReactValue;
-        },
-        enumerable: true,
-        configurable: true  // Permettre la reconfiguration future si nécessaire
-      });
-
-      console.log('✅ window.pdfBuilderReact assigned successfully with getter/setter');
-    }
-
-  } catch (error) {
-    console.error('❌ Failed to assign with getter/setter:', error);
-    // Fallback multiple: assignation directe répétée
-    window.pdfBuilderReact = exports;
-    console.log('🔄 Fallback assignment used');
-
-    // Surveiller et réassigner périodiquement
-    setInterval(function() {
-      if (typeof window.pdfBuilderReact === 'undefined' || window.pdfBuilderReact !== exports) {
-        console.log('🔄 Reassigning window.pdfBuilderReact due to external interference');
-        window.pdfBuilderReact = exports;
-      }
-    }, 50); // Vérifier toutes les 50ms
   }
+
+  // Assignation initiale
+  forceAssign();
+
+  // Surveillance agressive : vérifier toutes les 10ms pendant les 2 premières secondes
+  let surveillanceCount = 0;
+  const surveillanceInterval = setInterval(() => {
+    surveillanceCount++;
+
+    if (typeof window.pdfBuilderReact === 'undefined') {
+      console.log(`🚨 pdfBuilderReact lost at check #${surveillanceCount}, reassigning...`);
+      forceAssign();
+    }
+
+    // Arrêter la surveillance après 2 secondes
+    if (surveillanceCount > 200) { // 200 * 10ms = 2 secondes
+      clearInterval(surveillanceInterval);
+      console.log('✅ Aggressive surveillance ended');
+    }
+  }, 10);
+
+  // Surveillance de maintenance : vérifier toutes les 100ms indéfiniment
+  setInterval(() => {
+    if (typeof window.pdfBuilderReact === 'undefined') {
+      console.log('🔄 Maintenance: pdfBuilderReact lost, reassigning...');
+      window.pdfBuilderReact = exports;
+    }
+  }, 100);
 
   console.log('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
   console.log('🔍 window.pdfBuilderReact object:', window.pdfBuilderReact);
