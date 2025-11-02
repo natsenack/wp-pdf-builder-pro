@@ -89,11 +89,112 @@ function pdf_builder_load_core() {
     $loaded = true;
 }
 
+// Fonction pour charger les nouvelles classes WP_PDF_Builder_Pro
+function pdf_builder_load_new_classes() {
+    static $new_classes_loaded = false;
+    if ($new_classes_loaded) return;
+
+    // Charger les interfaces et classes de données
+    $data_classes = [
+        'data/DataProviderInterface.php',
+        'data/SampleDataProvider.php',
+        'data/WooCommerceDataProvider.php'
+    ];
+
+    foreach ($data_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger les générateurs
+    $generator_classes = [
+        'generators/BaseGenerator.php',
+        'generators/PDFGenerator.php',
+        'generators/GeneratorManager.php'
+    ];
+
+    foreach ($generator_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger les éléments et contrats
+    $element_classes = [
+        'elements/ElementContracts.php'
+    ];
+
+    foreach ($element_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger le core et conventions
+    $core_classes = [
+        'core/Conventions.php'
+    ];
+
+    foreach ($core_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger l'API
+    $api_classes = [
+        'api/PreviewImageAPI.php'
+    ];
+
+    foreach ($api_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger les analytics
+    $analytics_classes = [
+        'analytics/AnalyticsInterface.php'
+    ];
+
+    foreach ($analytics_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    // Charger les états
+    $state_classes = [
+        'states/PreviewStateManager.php'
+    ];
+
+    foreach ($state_classes as $class_file) {
+        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        }
+    }
+
+    $new_classes_loaded = true;
+}
+
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap() {
     // Protection globale contre les chargements multiples
     if (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED) {
         return;
+    }
+
+    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (WP_PDF_Builder_Pro)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
     }
 
     // Charger la configuration si pas déjà faite
@@ -103,6 +204,9 @@ function pdf_builder_load_bootstrap() {
 
     // Charger le core maintenant que l'autoloader est prêt
     pdf_builder_load_core();
+
+    // CHARGER LES NOUVELLES CLASSES WP_PDF_Builder_Pro
+    pdf_builder_load_new_classes();
 
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Core')) {
