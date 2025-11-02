@@ -83,7 +83,9 @@ export function useSaveState({
 
       try {
         // Set saving state
-        setState('saving');
+        startTransition(() => {
+          setState('saving');
+        });
         onSaveStart?.();
 
         // Nettoyage des éléments pour JSON - version plus permissive
@@ -150,10 +152,12 @@ export function useSaveState({
         const savedAt = data.data?.saved_at || new Date().toISOString();
 
         // Update state
-        setLastSavedAt(savedAt);
-        setState('saved');
-        setError(null);
-        setRetryCount(0);
+        startTransition(() => {
+          setLastSavedAt(savedAt);
+          setState('saved');
+          setError(null);
+          setRetryCount(0);
+        });
 
         lastSaveTimeRef.current = Date.now();
         elementsHashRef.current = getElementsHash(elements);
@@ -178,7 +182,9 @@ export function useSaveState({
           const delayMs = Math.min(1000 * Math.pow(2, retryAttempt), 10000); // Backoff exponentiel
           console.log(`[SAVE STATE] Retry dans ${delayMs}ms...`);
 
-          setRetryCount(retryAttempt + 1);
+          startTransition(() => {
+            setRetryCount(retryAttempt + 1);
+          });
 
           // Nettoyer le timeout précédent
           if (retryTimeoutRef.current) {
@@ -194,8 +200,10 @@ export function useSaveState({
         }
 
         // Échec définitif après tous les retries
-        setState('error');
-        setError(errorMsg);
+        startTransition(() => {
+          setState('error');
+          setError(errorMsg);
+        });
         onSaveError?.(errorMsg);
         console.error(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
@@ -224,8 +232,10 @@ export function useSaveState({
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
-    setError(null);
-    setState('idle');
+    startTransition(() => {
+      setError(null);
+      setState('idle');
+    });
   }, []);
 
   /**
