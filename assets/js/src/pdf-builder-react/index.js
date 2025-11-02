@@ -134,7 +134,13 @@ if (typeof window !== 'undefined') {
 
   function forceAssign() {
     try {
-      window.pdfBuilderReact = exports;
+      // Utiliser Object.defineProperty pour une assignation plus robuste
+      Object.defineProperty(window, 'pdfBuilderReact', {
+        value: exports,
+        writable: false, // Empêcher la réécriture
+        configurable: false, // Empêcher la suppression
+        enumerable: true
+      });
       assignmentCount++;
       console.log(`🔄 Force assignment #${assignmentCount} successful`);
 
@@ -163,7 +169,17 @@ if (typeof window !== 'undefined') {
 
     if (typeof window.pdfBuilderReact === 'undefined') {
       console.log(`🚨 pdfBuilderReact lost at check #${surveillanceCount}, reassigning...`);
-      forceAssign();
+      try {
+        Object.defineProperty(window, 'pdfBuilderReact', {
+          value: exports,
+          writable: false,
+          configurable: false,
+          enumerable: true
+        });
+      } catch (error) {
+        // Fallback si Object.defineProperty échoue
+        window.pdfBuilderReact = exports;
+      }
     }
 
     // Arrêter la surveillance après 2 secondes
@@ -177,7 +193,17 @@ if (typeof window !== 'undefined') {
   setInterval(() => {
     if (typeof window.pdfBuilderReact === 'undefined') {
       console.log('🔄 Maintenance: pdfBuilderReact lost, reassigning...');
-      window.pdfBuilderReact = exports;
+      try {
+        Object.defineProperty(window, 'pdfBuilderReact', {
+          value: exports,
+          writable: false,
+          configurable: false,
+          enumerable: true
+        });
+      } catch (error) {
+        // Fallback si Object.defineProperty échoue
+        window.pdfBuilderReact = exports;
+      }
     }
   }, 100);
 
