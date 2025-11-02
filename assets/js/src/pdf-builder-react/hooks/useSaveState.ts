@@ -83,6 +83,16 @@ export function useSaveState({
         return false;
       }
 
+      // Timeout global de 15 secondes pour éviter le blocage
+      const saveTimeout = setTimeout(() => {
+        debugError('[SAVE STATE] Timeout global dépassé, forçage de l\'état error');
+        startTransition(() => {
+          setState('error');
+          setError('Timeout de sauvegarde');
+        });
+        onSaveError?.('Timeout de sauvegarde');
+      }, 15000);
+
       try {
         // Set saving state
         startTransition(() => {
@@ -127,6 +137,11 @@ export function useSaveState({
         debugLog(`[SAVE STATE] Tentative ${retryAttempt + 1}/${maxRetries + 1} - Envoi AJAX...`);
 
         const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+        
+        // Créer un AbortController pour timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 secondes timeout
+        
         const response = await fetch(ajaxUrl, {
           method: 'POST',
           headers: {
@@ -137,8 +152,11 @@ export function useSaveState({
             template_id: templateId.toString(),
             elements: serializedElements,
             nonce: nonce
-          })
+          }),
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId); // Nettoyer le timeout si la requête réussit
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
@@ -183,9 +201,14 @@ export function useSaveState({
           });
         }, 3000);
 
+        clearTimeout(saveTimeout); // Nettoyer le timeout global
         return true;
       } catch (err: any) {
-        const errorMsg = err?.message || 'Erreur inconnue';
+        clearTimeout(saveTimeout); // Nettoyer le timeout global
+        
+        const errorMsg = err?.name === 'AbortError' 
+          ? 'Timeout de la requête (10s)' 
+          : (err?.message || 'Erreur inconnue');
         debugError(`[SAVE STATE] Erreur ${retryAttempt + 1}/${maxRetries + 1}:`, errorMsg);
 
         // Retry logic
