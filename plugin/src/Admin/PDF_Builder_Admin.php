@@ -4877,6 +4877,9 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         wp_add_inline_script('pdf-builder-react', '
             // Wait for the UMD bundle to load and set window.pdfBuilderReact
             function waitForPDFBuilderReact() {
+                console.log("🔍 waitForPDFBuilderReact called");
+                console.log("📦 Current window.pdfBuilderReact:", typeof window.pdfBuilderReact);
+                console.log("📦 window object in waitForPDFBuilderReact:", window);
                 if (typeof window !== "undefined" && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === "function") {
                     console.log("✅ React bundle loaded successfully, pdfBuilderReact.initPDFBuilderReact is available");
                     // Initialize React immediately when available
@@ -4922,6 +4925,12 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Add script error detection and React dependency check
         wp_add_inline_script('pdf-builder-react', '
+            console.log("🔍 Inline script context check:");
+            console.log("📦 window object:", window);
+            console.log("📦 window === globalThis:", window === globalThis);
+            console.log("📦 typeof window:", typeof window);
+            console.log("📦 window.pdfBuilderReact before dependency check:", typeof window.pdfBuilderReact);
+
             // Check React dependencies first
             console.log("🔍 Checking React dependencies...");
             console.log("📦 React available:", typeof window.React);

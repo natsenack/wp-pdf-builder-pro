@@ -77,8 +77,23 @@ console.log('🌐 Assigning to window...');
 
 // Assigner la fonction à window pour l'accès global depuis WordPress
 if (typeof window !== 'undefined') {
+  console.log('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
   window.pdfBuilderReact = exports;
   console.log('✅ window.pdfBuilderReact assigned successfully');
+  console.log('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  console.log('🔍 window.pdfBuilderReact object:', window.pdfBuilderReact);
+  console.log('🔍 window object:', window);
+  console.log('🔍 window === globalThis:', window === globalThis);
+
+  // Vérifier immédiatement si l'assignation persiste
+  setTimeout(function() {
+    console.log('⏰ 100ms after assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  }, 100);
+
+  setTimeout(function() {
+    console.log('⏰ 500ms after assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  }, 500);
+
 } else {
   console.error('❌ window is not available');
 }
