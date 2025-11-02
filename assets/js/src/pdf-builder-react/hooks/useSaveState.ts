@@ -57,6 +57,7 @@ export function useSaveState({
   const pendingSaveRef = useRef<boolean>(false);
   const lastChangeTimeRef = useRef<number>(0);
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveCooldownRef = useRef<number>(0); // Minimum time between saves
 
   /**
    * Calcule un hash simple des éléments pour détecter les changements
@@ -159,12 +160,12 @@ export function useSaveState({
         console.log(`✅ [SAVE STATE] Sauvegarde réussie à ${savedAt}`);
         onSaveSuccess?.(savedAt);
 
-        // Réinitialiser l'état saved après 2 secondes
+        // Réinitialiser l'état saved après 3 secondes (au lieu de 2)
         setTimeout(() => {
           startTransition(() => {
             setState(current => current === 'saved' ? 'idle' : current);
           });
-        }, 2000);
+        }, 3000);
 
         return true;
       } catch (err: any) {
@@ -242,6 +243,12 @@ export function useSaveState({
     lastChangeTimeRef.current = Date.now();
     const currentHash = getElementsHash(elements);
     const hasChanged = currentHash !== elementsHashRef.current;
+    const timeSinceLastCooldown = Date.now() - saveCooldownRef.current;
+
+    // Ne pas programmer de timeout si une sauvegarde est en cours ou récemment faite
+    if (pendingSaveRef.current || timeSinceLastCooldown < 5000) {
+      return;
+    }
 
     if (!hasChanged) {
       return;
@@ -256,25 +263,35 @@ export function useSaveState({
     inactivityTimeoutRef.current = setTimeout(() => {
       const timeSinceLastChange = Date.now() - lastChangeTimeRef.current;
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
+      const timeSinceLastCooldown = Date.now() - saveCooldownRef.current;
 
-      // Sauvegarder seulement si inactif depuis 3 secondes et interval minimum écoulé
-      if (timeSinceLastChange >= 3000 && timeSinceLastSave >= autoSaveInterval && !pendingSaveRef.current) {
+      // Sauvegarder seulement si inactif depuis 3 secondes, interval minimum écoulé,
+      // pas de sauvegarde en cours, et cooldown écoulé (5 secondes minimum entre sauvegardes)
+      if (timeSinceLastChange >= 3000 &&
+          timeSinceLastSave >= autoSaveInterval &&
+          timeSinceLastCooldown >= 5000 &&
+          !pendingSaveRef.current) {
+
         console.log('[SAVE STATE] Inactivité détectée, planification sauvegarde...');
+
+        // Marquer le cooldown
+        saveCooldownRef.current = Date.now();
 
         // Nettoyer le timeout précédent
         if (autoSaveTimeoutRef.current) {
           clearTimeout(autoSaveTimeoutRef.current);
         }
 
-        // Planifier la sauvegarde
+        // Planifier la sauvegarde avec un petit délai pour laisser React finir ses updates
         autoSaveTimeoutRef.current = setTimeout(() => {
           if (!pendingSaveRef.current) {
             pendingSaveRef.current = true;
-            performSave(0).finally(() => {
+            // Ajouter un micro-task pour s'assurer que React a fini ses updates
+            Promise.resolve().then(() => performSave(0)).finally(() => {
               pendingSaveRef.current = false;
             });
           }
-        }, 100); // Petit délai pour éviter les conflits
+        }, 200); // Augmenter le délai à 200ms
       }
     }, 3000); // Attendre 3 secondes d'inactivité
 
