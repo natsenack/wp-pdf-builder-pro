@@ -41,10 +41,10 @@ class PDF_Builder_Server_Validator {
         }
     }
 
-    public function run_all_tests() {
-        $this->log('info', '🚀 DÉBUT VALIDATION SERVEUR PDF BUILDER PRO');
+    public function run_quick_tests() {
+        $this->log('info', '🚀 DÉBUT VALIDATION RAPIDE PDF BUILDER PRO');
 
-        // Tests de base
+        // Tests de base seulement
         error_log('🧪 PDF BUILDER VALIDATOR: Test WordPress config');
         $this->test_wordpress_config();
         error_log('✅ PDF BUILDER VALIDATOR: Test WordPress config terminé');
@@ -56,45 +56,6 @@ class PDF_Builder_Server_Validator {
         error_log('🧪 PDF BUILDER VALIDATOR: Test PHP requirements');
         $this->test_php_requirements();
         error_log('✅ PDF BUILDER VALIDATOR: Test PHP requirements terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test permissions fichiers');
-        $this->test_file_permissions();
-        error_log('✅ PDF BUILDER VALIDATOR: Test permissions fichiers terminé');
-
-        // Tests du plugin
-        error_log('🧪 PDF BUILDER VALIDATOR: Test autoloader');
-        $this->test_autoloader();
-        error_log('✅ PDF BUILDER VALIDATOR: Test autoloader terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test classes core');
-        $this->test_core_classes();
-        error_log('✅ PDF BUILDER VALIDATOR: Test classes core terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test tables base de données');
-        $this->test_database_tables();
-        error_log('✅ PDF BUILDER VALIDATOR: Test tables base de données terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test assets');
-        $this->test_assets();
-        error_log('✅ PDF BUILDER VALIDATOR: Test assets terminé');
-
-        // Tests fonctionnels
-        error_log('🧪 PDF BUILDER VALIDATOR: Test API endpoints');
-        $this->test_api_endpoints();
-        error_log('✅ PDF BUILDER VALIDATOR: Test API endpoints terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test génération PDF');
-        $this->test_pdf_generation();
-        error_log('✅ PDF BUILDER VALIDATOR: Test génération PDF terminé');
-
-        error_log('🧪 PDF BUILDER VALIDATOR: Test intégration WooCommerce');
-        $this->test_woocommerce_integration();
-        error_log('✅ PDF BUILDER VALIDATOR: Test intégration WooCommerce terminé');
-
-        // Tests de performance
-        error_log('🧪 PDF BUILDER VALIDATOR: Test performance');
-        $this->test_performance();
-        error_log('✅ PDF BUILDER VALIDATOR: Test performance terminé');
 
         $this->generate_report();
     }

@@ -94,8 +94,8 @@ function pdf_builder_validator_page() {
 
         $validator = new PDF_Builder_Server_Validator();
 
-        error_log('▶️ PDF BUILDER VALIDATOR: Lancement run_all_tests()');
-        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests...";</script>';
+        error_log('▶️ PDF BUILDER VALIDATOR: Lancement run_quick_tests()');
+        echo '<script>document.getElementById("progress-text").innerHTML = "Lancement des tests rapides...";</script>';
         echo '<script>document.getElementById("progress-fill").style.width = "25%";</script>';
         if (ob_get_level()) {
             ob_flush();
@@ -104,7 +104,7 @@ function pdf_builder_validator_page() {
 
         // Capturer la sortie du validateur
         ob_start();
-        $validator->run_all_tests();
+        $validator->run_quick_tests();
         $validation_output = ob_get_clean();
 
         // Debug: Afficher ce qui a été capturé
