@@ -1094,7 +1094,7 @@ class PDF_Builder_Admin {
 
 
         // Charger les scripts comme dans enqueue_admin_scripts
-        $this->load_admin_scripts('pdf-builder_page_pdf-builder-editor');
+        $this->load_admin_scripts('pdf-builder-pro_page_pdf-builder-editor');
     }
 
     /**
@@ -1108,6 +1108,7 @@ class PDF_Builder_Admin {
             'pdf-builder-pro_page_pdf-builder-templates',
             'pdf-builder-pro_page_pdf-builder-editor',
             'pdf-builder-editor', // Hook direct pour l'éditeur
+            'pdf-builder_page_pdf-builder-editor', // Hook alternatif pour l'éditeur
             'pdf-builder-pro_page_pdf-builder-react-editor', // Éditeur React
             'pdf-builder-pro_page_pdf-builder-settings',
             'pdf-builder-pro_page_pdf-builder-developer',
