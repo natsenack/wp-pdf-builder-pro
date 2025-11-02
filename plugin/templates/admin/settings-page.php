@@ -1923,13 +1923,12 @@ window.addEventListener('load', function() {
                         <p><?php _e('Outils pour les développeurs et le débogage.', 'pdf-builder-pro'); ?></p>
 
                         <div class="debug-controls" style="margin-bottom: 15px;">
-                            <label for="debug-mode-toggle" style="display: inline-block; margin-right: 10px;">
-                                <input type="checkbox" id="debug-mode-toggle" <?php checked(get_option('pdf_builder_debug_mode', false)); ?>>
-                                <?php _e('Activer les logs de debug JavaScript', 'pdf-builder-pro'); ?>
-                            </label>
                             <button type="button" id="toggle-debug-btn" class="button button-secondary">
                                 <?php echo get_option('pdf_builder_debug_mode', false) ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
                             </button>
+                            <span style="margin-left: 10px; font-style: italic; color: #666;">
+                                <?php _e('Activer les logs de debug JavaScript', 'pdf-builder-pro'); ?>
+                            </span>
                         </div>
 
                         <div class="debug-info" style="background: #f9f9f9; padding: 10px; border-left: 4px solid #007cba; margin-bottom: 15px;">
@@ -3113,8 +3112,7 @@ echo '<style>
             e.preventDefault();
 
             var $button = $(this);
-            var $checkbox = $('#debug-mode-toggle');
-            var isCurrentlyEnabled = $checkbox.is(':checked');
+            var isCurrentlyEnabled = $button.text().includes('Désactiver');
             var newState = !isCurrentlyEnabled;
 
             $button.prop('disabled', true);
@@ -3130,7 +3128,6 @@ echo '<style>
                 },
                 success: function(response) {
                     if (response.success) {
-                        $checkbox.prop('checked', newState);
                         $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
 
                         var message = newState ?
