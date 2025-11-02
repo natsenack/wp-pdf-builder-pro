@@ -1923,11 +1923,15 @@ window.addEventListener('load', function() {
                         <p><?php _e('Outils pour les développeurs et le débogage.', 'pdf-builder-pro'); ?></p>
 
                         <div class="debug-controls" style="margin-bottom: 15px;">
+                            <?php 
+                            $debug_mode = get_option('pdf_builder_debug_mode', false);
+                            echo "<script>console.log('PAGE LOAD - Debug mode value:', " . ($debug_mode ? 'true' : 'false') . ");</script>";
+                            ?>
                             <button type="button" id="toggle-debug-btn" class="button button-secondary">
-                                <?php echo get_option('pdf_builder_debug_mode', false) ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
+                                <?php echo $debug_mode ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
                             </button>
                             <span style="margin-left: 10px; font-style: italic; color: #666;">
-                                <?php echo get_option('pdf_builder_debug_mode', false) ? __('Logs de debug JavaScript activés', 'pdf-builder-pro') : __('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>
+                                <?php echo $debug_mode ? __('Logs de debug JavaScript activés', 'pdf-builder-pro') : __('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>
                             </span>
                         </div>
 
@@ -3130,7 +3134,9 @@ echo '<style>
                     nonce: pdfBuilderMaintenanceNonce
                 },
                 success: function(response) {
+                    console.log('AJAX SUCCESS - Response:', response);
                     if (response.success) {
+                        console.log('AJAX SUCCESS - Setting button to:', newState ? 'Désactiver Debug' : 'Activer Debug');
                         $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
                         $button.siblings('span').text(newState ? '<?php _e('Logs de debug JavaScript activés', 'pdf-builder-pro'); ?>' : '<?php _e('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>');
 

@@ -4431,16 +4431,26 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Récupérer l'état souhaité
         $debug_enabled = isset($_POST['debug_enabled']) ? (bool) $_POST['debug_enabled'] : false;
+        
+        error_log('AJAX TOGGLE DEBUG - Requested state: ' . ($debug_enabled ? 'true' : 'false'));
 
         // Sauvegarder dans les options WordPress
         update_option('pdf_builder_debug_mode', $debug_enabled);
+        
+        // Vérifier que c'est bien sauvegardé
+        $saved_value = get_option('pdf_builder_debug_mode', false);
+        error_log('AJAX TOGGLE DEBUG - Saved value: ' . ($saved_value ? 'true' : 'false'));
 
         // Retourner le succès
         wp_send_json_success([
             'message' => $debug_enabled ?
                 __('Mode debug activé', 'pdf-builder-pro') :
                 __('Mode debug désactivé', 'pdf-builder-pro'),
-            'debug_enabled' => $debug_enabled
+            'debug_enabled' => $debug_enabled,
+            'debug_logs' => [
+                'requested' => $debug_enabled,
+                'saved' => $saved_value
+            ]
         ]);
     }
 
