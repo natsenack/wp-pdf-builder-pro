@@ -269,7 +269,7 @@ export function useSaveState({
           });
         }
       }, autoSaveInterval);
-    }, 500); // 500ms debounce
+    }, 2000); // 2000ms debounce to prevent rapid re-renders
 
     // Cleanup
     return () => {

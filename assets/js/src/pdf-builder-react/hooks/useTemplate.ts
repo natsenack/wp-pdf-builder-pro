@@ -1,6 +1,16 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
+
+// Extension de Window pour pdfBuilderData
+declare global {
+  interface Window {
+    pdfBuilderData?: {
+      ajaxUrl: string;
+      nonce: string;
+    };
+  }
+}
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -20,7 +30,7 @@ export function useTemplate() {
     console.log('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
     try {
       // Faire un appel API pour récupérer les données du template
-      const response = await fetch(`${window.pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData.nonce}`);
+      const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}`);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
@@ -102,7 +112,7 @@ export function useTemplate() {
     }
   }, []);
 
-  const saveTemplate = async () => {
+  const saveTemplate = useCallback(async () => {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
@@ -115,10 +125,10 @@ export function useTemplate() {
       formData.append('template_name', state.template.name || 'Template sans nom');
       formData.append('elements', JSON.stringify(state.elements));
       formData.append('canvas', JSON.stringify(state.canvas));
-      formData.append('nonce', window.pdfBuilderData.nonce);
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
       // Faire un appel API pour sauvegarder le template
-      const response = await fetch(window.pdfBuilderData.ajaxUrl, {
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
@@ -145,23 +155,23 @@ export function useTemplate() {
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
-  };
+  }, [state.elements, state.canvas, state.template.name, dispatch]);
 
-  const previewTemplate = () => {
+  const previewTemplate = useCallback(() => {
     dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
-  };
+  }, [dispatch]);
 
-  const newTemplate = () => {
+  const newTemplate = useCallback(() => {
     dispatch({ type: 'NEW_TEMPLATE' });
-  };
+  }, [dispatch]);
 
-  const setTemplateModified = (modified: boolean) => {
+  const setTemplateModified = useCallback((modified: boolean) => {
     dispatch({ type: 'SET_TEMPLATE_MODIFIED', payload: modified });
-  };
+  }, [dispatch]);
 
-  const updateTemplateSettings = (settings: Partial<TemplateState>) => {
+  const updateTemplateSettings = useCallback((settings: Partial<TemplateState>) => {
     dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: settings });
-  };
+  }, [dispatch]);
 
   return {
     templateName: state.template.name,
