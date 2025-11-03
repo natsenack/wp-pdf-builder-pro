@@ -90,13 +90,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           flexDirection: 'column',
           width: '100%',
           height: '100%',
-          gap: '12px',
-          padding: '12px',
+          gap: '0px',
+          padding: '0px',
           backgroundColor: '#ffffff',
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          paddingTop: isHeaderFixed ? '132px' : '12px',
-          paddingLeft: '0px',
+          border: 'none',
+          borderRadius: '0px',
+          paddingTop: isHeaderFixed ? '132px' : '0px',
           transition: 'padding 0.3s ease'
         }}
       >
@@ -122,12 +121,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         />
 
         {/* Toolbar sous le header */}
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, padding: '12px 12px 0 12px' }}>
           <Toolbar />
         </div>
 
         {/* Contenu principal */}
-        <div style={{ display: 'flex', flex: 1, gap: '0' }}>
+        <div style={{ display: 'flex', flex: 1, gap: '0', padding: '12px' }}>
           {/* Sidebar des éléments WooCommerce */}
           <ElementLibrary />
 

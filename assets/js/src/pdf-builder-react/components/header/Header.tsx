@@ -179,13 +179,15 @@ export const Header = memo(function Header({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '16px',
+      padding: isHeaderFixed ? '16px' : '12px',
+      paddingLeft: isHeaderFixed ? '16px' : '12px',
+      paddingRight: isHeaderFixed ? '16px' : '12px',
       backgroundColor: '#ffffff',
       borderBottom: '2px solid #e0e0e0',
-      borderRadius: isHeaderFixed ? '0' : '8px 8px 0 0',
+      borderRadius: isHeaderFixed ? '0' : '0px',
       boxShadow: isHeaderFixed
         ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)'
-        : '0 2px 8px rgba(0, 0, 0, 0.05)',
+        : 'none',
       gap: '16px',
       position: isHeaderFixed ? 'fixed' : 'relative',
       top: isHeaderFixed ? '32px' : 'auto',
