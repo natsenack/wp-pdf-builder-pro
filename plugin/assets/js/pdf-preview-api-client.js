@@ -209,15 +209,37 @@ class PDFPreviewAPI {
         previewModal.classList.add('visible');
         
         // DEBUG: Vérifier les styles appliqués
+        const computedStyle = window.getComputedStyle(previewModal);
         console.log('🔍 Modal styles:', {
-            display: window.getComputedStyle(previewModal).display,
-            position: window.getComputedStyle(previewModal).position,
-            zIndex: window.getComputedStyle(previewModal).zIndex,
-            justifyContent: window.getComputedStyle(previewModal).justifyContent,
-            alignItems: window.getComputedStyle(previewModal).alignItems,
-            width: window.getComputedStyle(previewModal).width,
-            height: window.getComputedStyle(previewModal).height
+            display: computedStyle.display,
+            position: computedStyle.position,
+            zIndex: computedStyle.zIndex,
+            justifyContent: computedStyle.justifyContent,
+            alignItems: computedStyle.alignItems,
+            width: computedStyle.width,
+            height: computedStyle.height,
+            top: computedStyle.top,
+            left: computedStyle.left
         });
+        
+        // Vérifier wrapper aussi
+        const wrapper = previewModal.querySelector('#pdf-preview-modal-wrapper');
+        if (wrapper) {
+            const wrapperStyle = window.getComputedStyle(wrapper);
+            console.log('🔍 Wrapper styles:', {
+                display: wrapperStyle.display,
+                position: wrapperStyle.position,
+                width: wrapperStyle.width,
+                height: wrapperStyle.height,
+                maxWidth: wrapperStyle.maxWidth,
+                backgroundColor: wrapperStyle.backgroundColor
+            });
+        } else {
+            console.warn('⚠️ Wrapper NOT FOUND!');
+        }
+        
+        console.log('📍 Modal dans DOM:', document.getElementById('pdf-preview-modal') !== null);
+        console.log('📍 Modal classes:', previewModal.className);
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
