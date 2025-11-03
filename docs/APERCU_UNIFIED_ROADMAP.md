@@ -447,12 +447,12 @@ public function GeneratePreview($saveToDatabase = false) {
 - [ ] Performance < 2s pour aperçus simples
 
 **🔍 Test Étape 1.5 (Intégration JavaScript) :**
-- [ ] Hook React `usePreview()` fonctionnel
-- [ ] Modal aperçu s'ouvre correctement
-- [ ] Boutons "Aperçu Image" et "Aperçu PDF" opérationnels
-- [ ] Transitions d'états visuelles (chargement/génération/prêt)
-- [ ] Gestion erreurs côté client
-- [ ] Responsive design modal (90% écran)
+- [x] Hook React `usePreview()` fonctionnel
+- [x] Modal aperçu s'ouvre correctement
+- [x] Boutons "Aperçu Image" et "Aperçu PDF" opérationnels
+- [x] Transitions d'états visuelles (chargement/génération/prêt)
+- [x] Gestion erreurs côté client
+- [x] Responsive design modal (90% écran)
 
 **🔍 Test Étape 1.6 (Intégration WordPress) :**
 - [ ] Hook WooCommerce metabox intégré
@@ -475,7 +475,7 @@ public function GeneratePreview($saveToDatabase = false) {
 - **Étape 1.2** : ✅ 100% (Fournisseurs de données implémentés)
 - **Étape 1.3** : ✅ 100% (Générateur PDF core opérationnel)
 - **Étape 1.4** : ⏳ 0% (À implémenter)
-- **Étape 1.5** : ⏳ 0% (À implémenter)
+- **Étape 1.5** : ✅ 100% (Intégration JavaScript terminée)
 - **Étape 1.6** : ⏳ 0% (À implémenter)
 - **Étape 1.7** : ⏳ 0% (À implémenter)
 

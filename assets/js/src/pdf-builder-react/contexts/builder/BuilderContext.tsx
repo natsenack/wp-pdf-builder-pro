@@ -499,6 +499,54 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
 
+  // Chargement automatique du template depuis l'URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template_id');
+
+    if (templateId) {
+      debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
+
+      // Charger le template depuis l'API WordPress
+      const loadTemplate = async () => {
+        try {
+          const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+          const nonce = (window as any).pdfBuilderData?.nonce ||
+                       (window as any).pdfBuilderNonce ||
+                       (window as any).pdfBuilderReactData?.nonce || '';
+
+          const response = await fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              action: 'pdf_builder_load_template',
+              template_id: templateId,
+              nonce: nonce
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success && data.data) {
+            debugLog('✅ [LOAD TEMPLATE] Template chargé avec succès:', data.data);
+            dispatch({
+              type: 'LOAD_TEMPLATE',
+              payload: data.data
+            });
+          } else {
+            debugError('❌ [LOAD TEMPLATE] Erreur lors du chargement:', data.data?.error || 'Erreur inconnue');
+          }
+        } catch (error) {
+          debugError('❌ [LOAD TEMPLATE] Exception lors du chargement:', error);
+        }
+      };
+
+      loadTemplate();
+    }
+  }, []); // Uniquement au montage du composant
+
   // Fonction de sauvegarde automatique
   const autoSaveTemplate = async (): Promise<void> => {
     if (!state.template.id || state.template.isSaving) return;

@@ -21,7 +21,9 @@ Object.defineProperty(window, 'location', {
 global.URLSearchParams = jest.fn().mockImplementation((search) => ({
   get: jest.fn((key) => {
     if (key === 'template_id') {
-      return search.includes('template_id=1') ? '1' : null;
+      // Extraire la valeur de template_id de la chaîne de recherche
+      const match = search.match(/template_id=([^&]*)/);
+      return match ? match[1] : null;
     }
     return null;
   })
@@ -61,6 +63,9 @@ describe('Template Loading and Editing', () => {
 
   test('should load existing template when template_id is present in URL', async () => {
     mockLocation.search = '?template_id=1';
+
+    // Activer le debug pour ce test
+    (window as any).pdfBuilderDebug = true;
 
     // Mock console.log pour vérifier les appels
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation();

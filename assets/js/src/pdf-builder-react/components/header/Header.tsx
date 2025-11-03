@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 'react';
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { usePreview } from '../../hooks/usePreview';
 import { debugLog } from '../../utils/debug';
 
 // Extension de Window pour l'API Preview
@@ -68,11 +69,6 @@ export const Header = memo(function Header({
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewFormat, setPreviewFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
-  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-  const [previewError, setPreviewError] = useState<string | null>(null);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
@@ -83,6 +79,20 @@ export const Header = memo(function Header({
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [newTag, setNewTag] = useState('');
+
+  // Utiliser le hook usePreview pour la gestion de l'aperçu
+  const {
+    isModalOpen: showPreviewModal,
+    openModal: openPreviewModal,
+    closeModal: closePreviewModal,
+    isGenerating: isGeneratingPreview,
+    previewUrl: previewImageUrl,
+    error: previewError,
+    format: previewFormat,
+    setFormat: setPreviewFormat,
+    generatePreview,
+    clearPreview
+  } = usePreview();
 
   // Debug logging
   useEffect(() => {
@@ -170,8 +180,8 @@ export const Header = memo(function Header({
     backgroundColor: '#fff',
     border: '1px solid #ddd',
     color: '#333',
-    boxShadow: hoveredButton === 'preview' || hoveredButton === 'new' ? '0 2px 8px rgba(0, 0, 0, 0.1)' : 'none',
-    transform: hoveredButton === 'preview' || hoveredButton === 'new' ? 'translateY(-1px)' : 'translateY(0)'
+    boxShadow: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? '0 2px 8px rgba(0, 0, 0, 0.1)' : 'none',
+    transform: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? 'translateY(-1px)' : 'translateY(0)'
   };
 
   return (
@@ -290,7 +300,7 @@ export const Header = memo(function Header({
         <button
           onClick={() => {
             debugLog('📸 Aperçu Image button clicked!');
-            setShowPreviewModal(true);
+            openPreviewModal();
           }}
           onMouseEnter={() => setHoveredButton('preview-image')}
           onMouseLeave={() => setHoveredButton(null)}
@@ -303,6 +313,26 @@ export const Header = memo(function Header({
         >
           <span>📸</span>
           <span>Aperçu Image</span>
+        </button>
+
+        <button
+          onClick={() => {
+            debugLog('📄 Aperçu PDF button clicked!');
+            // Pour PDF, définir le format et ouvrir directement
+            setPreviewFormat('pdf');
+            openPreviewModal();
+          }}
+          onMouseEnter={() => setHoveredButton('preview-pdf')}
+          onMouseLeave={() => setHoveredButton(null)}
+          style={{
+            ...secondaryButtonStyles,
+            opacity: isSaving ? 0.6 : 1,
+            pointerEvents: isSaving ? 'none' : 'auto'
+          }}
+          title="Ouvrir le PDF dans un nouvel onglet"
+        >
+          <span>📄</span>
+          <span>Aperçu PDF</span>
         </button>
 
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
@@ -916,9 +946,9 @@ export const Header = memo(function Header({
             backgroundColor: '#ffffff',
             borderRadius: '8px',
             padding: '24px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
+            maxWidth: '90vw',
+            width: '600px',
+            maxHeight: '90vh',
             overflow: 'auto',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
           }}>
@@ -938,9 +968,8 @@ export const Header = memo(function Header({
               </h3>
               <button
                 onClick={() => {
-                  setShowPreviewModal(false);
-                  setPreviewImageUrl(null);
-                  setPreviewError(null);
+                  closePreviewModal();
+                  clearPreview();
                 }}
                 style={{
                   background: 'none',
@@ -1007,49 +1036,13 @@ export const Header = memo(function Header({
             <div style={{ marginBottom: '20px' }}>
               <button
                 onClick={async () => {
-                  setIsGeneratingPreview(true);
-                  setPreviewError(null);
-                  setPreviewImageUrl(null);
-
-                  try {
-                    // Vérifier s'il y a du contenu dans le template
-                    const hasContent = state.elements && state.elements.length > 0;
-
-                    if (!hasContent) {
-                      setPreviewError('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');
-                      setIsGeneratingPreview(false);
-                      return;
-                    }
-
-                    // Utiliser l'API Preview
-                    if (typeof window.pdfPreviewAPI !== 'undefined') {
-                      const result = await window.pdfPreviewAPI.generateEditorPreview({
-                        ...state.template,
-                        elements: state.elements
-                      }, {
-                        format: previewFormat,
-                        quality: 150
-                      });
-
-                      if (result && result.success && result.image_url) {
-                        if (previewFormat === 'pdf') {
-                          // Pour PDF, ouvrir dans un nouvel onglet
-                          window.open(result.image_url, '_blank');
-                        } else {
-                          // Pour PNG/JPG, afficher dans la modale
-                          setPreviewImageUrl(result.image_url);
-                        }
-                      } else {
-                        setPreviewError(result?.error || 'Erreur lors de la génération');
-                      }
-                    } else {
-                      setPreviewError('API Preview non disponible. Vérifiez que les scripts sont chargés.');
-                    }
-                  } catch (error) {
-                    setPreviewError('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
-                  } finally {
-                    setIsGeneratingPreview(false);
-                  }
+                  await generatePreview({
+                    ...state.template,
+                    elements: state.elements
+                  }, {
+                    format: previewFormat,
+                    quality: 150
+                  });
                 }}
                 disabled={isGeneratingPreview}
                 style={{
