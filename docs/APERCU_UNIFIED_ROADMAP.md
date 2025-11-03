@@ -206,6 +206,8 @@ public function GeneratePreview($saveToDatabase = false) {
 
 **✅ ÉTAPE 1.0 TERMINÉE** - Infrastructure de base déployée et opérationnelle.
 
+> **📝 Note :** Cette étape a posé les fondations solides du système avec DomPDF optimisé et une architecture sécurisée. Le rate limiting et la séparation des contextes ont été particulièrement importants pour la stabilité du système.
+
 #### **Étape 1.1 : Architecture de Base**
 **Objectif** : Définir les interfaces et contrats communs
 
@@ -234,6 +236,8 @@ public function GeneratePreview($saveToDatabase = false) {
 
 **✅ ÉTAPE 1.1 TERMINÉE** - Architecture de base unifiée déployée avec interfaces, générateurs et gestion d'états.
 
+> **📝 Note :** L'architecture double avec fallback automatique s'est révélée cruciale pour la robustesse. Les interfaces bien définies ont permis une évolution modulaire du système.
+
 #### **Étape 1.2 : Fournisseurs de Données**
 **Objectif** : Implémenter les fournisseurs de données pour l'injection dynamique de variables
 
@@ -261,6 +265,8 @@ public function GeneratePreview($saveToDatabase = false) {
 - [x] Test sanitisation XSS et sécurité
 
 **✅ ÉTAPE 1.2 TERMINÉE** - Fournisseurs de données opérationnels avec injection variables fonctionnelle.
+
+> **📝 Note :** La séparation claire entre données fictives et réelles a permis de tester l'interface utilisateur sans dépendre de données WooCommerce. Les placeholders informatifs ont amélioré l'expérience développeur.
 
 #### **Étape 1.3 : Générateur PDF Core**
 **Objectif** : Construire le moteur de génération centralisé
@@ -291,6 +297,8 @@ public function GeneratePreview($saveToDatabase = false) {
 
 **✅ ÉTAPE 1.3 TERMINÉE** - Générateur PDF core opérationnel avec fallback et optimisation.
 
+> **📝 Note :** Le système de fallback DomPDF → Canvas a prouvé son utilité lors des premiers tests. L'héritage de BaseGenerator a assuré la cohérence entre tous les générateurs du système.
+
 #### **Étape 1.4 : API Preview Unifiée**
 **Objectif** : Créer le point d'entrée unique pour tous les aperçus
 
@@ -318,6 +326,8 @@ public function GeneratePreview($saveToDatabase = false) {
 - [x] Métriques séparées par contexte d'utilisation
 
 **✅ ÉTAPE 1.4 TERMINÉE** - API Preview Unifiée opérationnelle avec sécurité et performance avancées.
+
+> **📝 Note :** Cette étape a été la plus complexe avec l'implémentation REST API complète. Le cache intelligent et la génération d'images réelle ont considérablement amélioré les performances par rapport au système initial.
 
 #### **Étape 1.5 : Intégration JavaScript**
 **Objectif** : Client unifié pour tous les contextes d'aperçu

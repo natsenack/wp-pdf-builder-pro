@@ -3,7 +3,7 @@ namespace WP_PDF_Builder_Pro\Generators;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use WP_PDF_Builder_Pro\Data\DataProviderInterface;
+use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
 
 /**
  * Classe PDFGenerator
@@ -89,6 +89,12 @@ class PDFGenerator extends BaseGenerator {
         $this->generated_html = $this->generateHTML();
         $this->performance_metrics['html_generation_time'] = microtime(true) - $html_start;
 
+        // Si un fichier de sortie est spécifié, sauvegarder directement
+        $output_file = $this->config['output_file'] ?? null;
+        if ($output_file) {
+            return $this->generateToFile($output_type, $output_file);
+        }
+
         // Tentative génération PDF avec DomPDF
         if ($this->dompdf_available) {
             try {
@@ -104,6 +110,27 @@ class PDFGenerator extends BaseGenerator {
         // Fallback vers Canvas
         $this->logInfo("Using Canvas fallback for PDF generation");
         return $this->generateWithCanvas($output_type);
+    }
+
+    /**
+     * Génère directement vers un fichier
+     */
+    private function generateToFile(string $output_type, string $output_file) {
+        // Tentative génération avec DomPDF
+        if ($this->dompdf_available) {
+            try {
+                $this->generateWithDomPDFToFile($output_type, $output_file);
+                $this->logPerformanceMetrics();
+                return true;
+            } catch (\Exception $e) {
+                $this->logWarning("DomPDF generation to file failed: " . $e->getMessage());
+                $this->performance_metrics['fallback_used'] = true;
+            }
+        }
+
+        // Fallback vers Canvas
+        $this->logInfo("Using Canvas fallback for file generation");
+        return $this->generateWithCanvasToFile($output_type, $output_file);
     }
 
     /**
@@ -164,6 +191,62 @@ class PDFGenerator extends BaseGenerator {
             'config' => $this->config,
             'output_type' => $output_type
         ];
+    }
+
+    /**
+     * Génère avec DomPDF directement vers un fichier
+     */
+    private function generateWithDomPDFToFile(string $output_type, string $output_file) {
+        $pdf_start = microtime(true);
+
+        // Chargement du HTML
+        $this->dompdf->loadHtml($this->generated_html);
+
+        // Rendu du PDF
+        $this->dompdf->render();
+
+        $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
+
+        // Vérification mémoire
+        $current_memory = memory_get_usage(true);
+        $memory_used = $current_memory - $this->performance_metrics['memory_start'];
+
+        if ($memory_used > 100 * 1024 * 1024) { // 100MB
+            $this->logWarning("High memory usage detected: " . round($memory_used / 1024 / 1024, 2) . "MB");
+        }
+
+        // Sauvegarde selon le type demandé
+        switch ($output_type) {
+            case 'pdf':
+                file_put_contents($output_file, $this->dompdf->output());
+                break;
+
+            case 'png':
+            case 'jpg':
+                $image_data = $this->convertPDFToImage($output_type);
+                file_put_contents($output_file, $image_data);
+                break;
+
+            default:
+                throw new \Exception("Unsupported output type: {$output_type}");
+        }
+    }
+
+    /**
+     * Génère avec Canvas directement vers un fichier
+     */
+    private function generateWithCanvasToFile(string $output_type, string $output_file) {
+        $this->logInfo("Generating with Canvas fallback to file");
+
+        // Pour les images, générer un placeholder avec message
+        if (in_array($output_type, ['png', 'jpg'])) {
+            $image_data = $this->generatePlaceholderImage($output_type);
+            file_put_contents($output_file, $image_data);
+            return;
+        }
+
+        // Pour PDF, on ne peut pas faire grand chose en fallback
+        throw new \Exception("Canvas fallback does not support PDF generation to file");
     }
 
     /**

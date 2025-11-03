@@ -1,7 +1,7 @@
 <?php
 namespace WP_PDF_Builder_Pro\Generators;
 
-use WP_PDF_Builder_Pro\Data\DataProviderInterface;
+use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
 
 /**
  * Classe GeneratorManager

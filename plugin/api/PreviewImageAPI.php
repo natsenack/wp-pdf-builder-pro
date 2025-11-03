@@ -1,12 +1,17 @@
 <?php
 namespace WP_PDF_Builder_Pro\Api;
 
+use WP_PDF_Builder_Pro\Generators\GeneratorManager;
+use WP_PDF_Builder_Pro\Data\SampleDataProvider;
+use WP_PDF_Builder_Pro\Data\WooCommerceDataProvider;
+
 class PreviewImageAPI {
     private $cache_dir;
     private $max_cache_age = 3600; // 1 heure
     private $rate_limit_window = 60; // 1 minute
     private $rate_limit_max = 10; // 10 requêtes par minute
     private $request_log = [];
+    private $generator_manager;
 
     public function __construct() {
         error_log('[PDF Preview] PreviewImageAPI constructor called');
@@ -16,6 +21,9 @@ class PreviewImageAPI {
         if (!file_exists($this->cache_dir)) {
             wp_mkdir_p($this->cache_dir);
         }
+
+        // Initialiser le gestionnaire de générateurs
+        $this->generator_manager = new GeneratorManager();
 
         // Enregistrer l'endpoint REST pour l'étape 1.4
         add_action('rest_api_init', array($this, 'register_rest_routes'));
@@ -470,167 +478,53 @@ class PreviewImageAPI {
 
     /**
      * Génération d'une vraie image à partir des données template
+     * VERSION ARCHITECTURALE UNIFIÉE - Utilise GeneratorManager
      */
     private function generate_real_image($params, $cache_file) {
-        // Dimensions A4 en pixels (approximatif pour aperçu)
-        $width = 595;  // A4 width at 72 DPI
-        $height = 842; // A4 height at 72 DPI
+        try {
+            // Créer le fournisseur de données selon le contexte
+            $data_provider = $this->create_data_provider($params);
 
-        // Créer l'image
-        $image = imagecreatetruecolor($width, $height);
-        if (!$image) {
-            throw new Exception('Failed to create image');
-        }
+            // Préparer les données du template
+            $template_data = $params['template_data'];
 
-        // Couleurs
-        $white = imagecolorallocate($image, 255, 255, 255);
-        $black = imagecolorallocate($image, 0, 0, 0);
-        $gray = imagecolorallocate($image, 128, 128, 128);
+            // Utiliser GeneratorManager pour générer l'image
+            $result = $this->generator_manager->generatePreview(
+                $template_data,
+                $data_provider,
+                $params['format'],
+                [
+                    'quality' => $params['quality'],
+                    'output_file' => $cache_file,
+                    'context' => $params['context']
+                ]
+            );
 
-        // Fond blanc
-        imagefill($image, 0, 0, $white);
+            if (!$result) {
+                throw new Exception('Image generation failed: All generators failed');
+            }
 
-        // Rendu des éléments du template
-        $elements = $params['template_data']['template']['elements'] ?? array();
+            return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
 
-        foreach ($elements as $element) {
-            $this->render_element($image, $element, $width, $height);
-        }
-
-        // Ajouter un watermark/titre si pas d'éléments
-        if (empty($elements)) {
-            $this->render_default_preview($image, $width, $height);
-        }
-
-        // Sauvegarder selon le format
-        $success = false;
-        switch ($params['format']) {
-            case 'jpg':
-            case 'jpeg':
-                $success = imagejpeg($image, $cache_file, $params['quality']);
-                break;
-            case 'png':
-            default:
-                // Pour PNG, quality = compression level (0-9)
-                $png_quality = min(9, max(0, (100 - $params['quality']) / 11));
-                $success = imagepng($image, $cache_file, $png_quality);
-                break;
-        }
-
-        // Libérer la mémoire
-        imagedestroy($image);
-
-        if (!$success) {
-            throw new Exception('Failed to save image');
-        }
-
-        return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
-    }
-
-    /**
-     * Rendu d'un élément sur l'image
-     */
-    private function render_element($image, $element, $canvas_width, $canvas_height) {
-        $type = $element['type'] ?? 'text';
-        $x = intval($element['x'] ?? 0);
-        $y = intval($element['y'] ?? 0);
-        $width = intval($element['width'] ?? 100);
-        $height = intval($element['height'] ?? 50);
-
-        // Conversion des coordonnées relatives en pixels
-        $pixel_x = ($x / 100) * $canvas_width;
-        $pixel_y = ($y / 100) * $canvas_height;
-        $pixel_width = ($width / 100) * $canvas_width;
-        $pixel_height = ($height / 100) * $canvas_height;
-
-        switch ($type) {
-            case 'text':
-                $this->render_text_element($image, $element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
-                break;
-            case 'rectangle':
-                $this->render_rectangle_element($image, $element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
-                break;
-            // Autres types d'éléments peuvent être ajoutés ici
+        } catch (Exception $e) {
+            error_log('[PDF Preview] Image generation error: ' . $e->getMessage());
+            throw $e;
         }
     }
 
     /**
-     * Rendu d'un élément texte
+     * Crée le fournisseur de données approprié selon le contexte
      */
-    private function render_text_element($image, $element, $x, $y, $width, $height) {
-        $text = $element['content'] ?? '';
-        $font_size = intval($element['fontSize'] ?? 12);
-        $color = $element['color'] ?? '#000000';
+    private function create_data_provider($params) {
+        $context = $params['context'] ?? 'canvas';
 
-        // Parser la couleur
-        $rgb = $this->hex_to_rgb($color);
-        $text_color = imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']);
-
-        // Police par défaut (GD ne supporte que les polices bitmap intégrées)
-        // Utiliser une taille approximative
-        $font = 5; // Police GD intégrée (5 tailles disponibles: 1-5)
-
-        // Calculer la taille approximative du texte
-        $text_width = strlen($text) * imagefontwidth($font);
-        $text_height = imagefontheight($font);
-
-        // Centrer le texte dans la zone
-        $center_x = $x + ($width - $text_width) / 2;
-        $center_y = $y + ($height + $text_height) / 2;
-
-        // Rendu du texte
-        imagestring($image, $font, $center_x, $center_y - $text_height, $text, $text_color);
-    }
-
-    /**
-     * Rendu d'un élément rectangle
-     */
-    private function render_rectangle_element($image, $element, $x, $y, $width, $height) {
-        $background_color = $element['backgroundColor'] ?? '#ffffff';
-        $border_color = $element['borderColor'] ?? '#000000';
-
-        $bg_rgb = $this->hex_to_rgb($background_color);
-        $border_rgb = $this->hex_to_rgb($border_color);
-
-        $bg_color = imagecolorallocate($image, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
-        $border_color = imagecolorallocate($image, $border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
-
-        // Remplir le rectangle
-        imagefilledrectangle($image, $x, $y, $x + $width, $y + $height, $bg_color);
-
-        // Bordure
-        imagerectangle($image, $x, $y, $x + $width, $y + $height, $border_color);
-    }
-
-    /**
-     * Rendu par défaut quand pas d'éléments
-     */
-    private function render_default_preview($image, $width, $height) {
-        $gray = imagecolorallocate($image, 128, 128, 128);
-        $black = imagecolorallocate($image, 0, 0, 0);
-
-        // Titre
-        $title = 'PDF Builder Pro - Aperçu';
-        imagestring($image, 5, ($width - strlen($title) * imagefontwidth(5)) / 2, $height / 2 - 20, $title, $black);
-
-        // Sous-titre
-        $subtitle = 'Ajoutez des éléments pour voir l\'aperçu';
-        imagestring($image, 4, ($width - strlen($subtitle) * imagefontwidth(4)) / 2, $height / 2 + 10, $subtitle, $gray);
-    }
-
-    /**
-     * Conversion hex vers RGB
-     */
-    private function hex_to_rgb($hex) {
-        $hex = ltrim($hex, '#');
-        if (strlen($hex) == 3) {
-            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        if ($context === 'metabox' && !empty($params['order_id'])) {
+            // Données réelles WooCommerce
+            return new WooCommerceDataProvider($params['order_id'], $context);
+        } else {
+            // Données fictives pour l'éditeur
+            return new SampleDataProvider($context);
         }
-        return array(
-            'r' => hexdec(substr($hex, 0, 2)),
-            'g' => hexdec(substr($hex, 2, 2)),
-            'b' => hexdec(substr($hex, 4, 2))
-        );
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php
 namespace WP_PDF_Builder_Pro\Data;
 
+use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+
 /**
  * Classe SampleDataProvider
  * Fournit des données fictives cohérentes pour l'aperçu en mode éditeur
@@ -332,6 +334,25 @@ class SampleDataProvider implements DataProviderInterface {
             return 'html';
         }
         return 'string';
+    }
+
+    /**
+     * Vérifie si une variable est disponible
+     *
+     * @param string $variable Nom de la variable
+     * @return bool True si la variable existe
+     */
+    public function hasVariable(string $variable): bool {
+        return isset($this->sampleData[$variable]);
+    }
+
+    /**
+     * Retourne la liste de toutes les variables disponibles
+     *
+     * @return array Liste des noms de variables
+     */
+    public function getAllVariables(): array {
+        return array_keys($this->sampleData);
     }
 
     /**
