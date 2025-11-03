@@ -34,33 +34,38 @@ class PreviewImageAPI {
      * Point d'entrée unifié pour tous les aperçus
      */
     public function generate_preview() {
-        error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
-        
-        // Définir header JSON immédiatement pour éviter les réponses HTML en cas d'erreur
+        // ABSOLUMENT AU DÉBUT : Clear any output buffer et set JSON header
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
         header('Content-Type: application/json; charset=UTF-8');
         
-        // Vérifier qu'aucun output n'a été fait avant les headers
-        if (headers_sent($file, $line)) {
-            error_log("Headers already sent in $file:$line - cannot send JSON response");
-            // Essayer de nettoyer et continuer
-            ob_clean();
-        }
-
-        // Debug immédiat au début
-        error_log('[PDF Preview DEBUG] Function called with POST: ' . json_encode($_POST));
-        header('X-PDF-Debug: Function called');
+        error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
         
         $start_time = microtime(true);
 
-        // Debug logging
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Preview] Starting preview generation - POST: ' . json_encode($_POST));
-        }
-
         try {
-            // Validation sécurité multi-couches
-            error_log('[PDF Preview] Starting validation...');
-            $this->validate_request();
+            // VALIDATION ULTRA SIMPLE D'ABORD
+            // Vérification nonce - critiquer
+            if (!isset($_POST['nonce'])) {
+                error_log('[PDF Preview] Missing nonce');
+                wp_send_json_error(['message' => 'Missing nonce'], 403);
+            }
+
+            if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+                error_log('[PDF Preview] Invalid nonce');
+                wp_send_json_error(['message' => 'Invalid nonce'], 403);
+            }
+
+            // Vérification permissions
+            $context = sanitize_text_field($_POST['context'] ?? 'editor');
+            $required_cap = $this->get_required_capability($context);
+
+            if (!current_user_can($required_cap)) {
+                error_log('[PDF Preview] Insufficient permissions for ' . $context);
+                wp_send_json_error(['message' => 'Insufficient permissions'], 403);
+            }
+
             error_log('[PDF Preview] Validation passed');
 
             // Rate limiting
@@ -70,18 +75,12 @@ class PreviewImageAPI {
             // Récupération et validation des paramètres
             error_log('[PDF Preview] Getting validated params...');
             $params = $this->get_validated_params();
-            error_log('[PDF Preview] Params validated: ' . json_encode($params));
-
-            // Log de sécurité
-            // $this->log_request($params);
+            error_log('[PDF Preview] Params validated: context=' . $params['context']);
 
             // Génération avec cache intelligent
             error_log('[PDF Preview] Starting generation with cache...');
             $result = $this->generate_with_cache($params);
             error_log('[PDF Preview] Generation completed');
-
-            // Métriques performance
-            // $this->log_performance($start_time, $params['context']);
 
             // Réponse compressée
             $this->send_compressed_response($result);
@@ -89,32 +88,6 @@ class PreviewImageAPI {
         } catch (\Exception $e) {
             error_log('[PDF Preview] Exception caught: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             $this->handle_error($e, $start_time);
-        }
-    }
-
-    /**
-     * Validation sécurité multi-couches
-     */
-    private function validate_request() {
-        // Vérification nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            $this->send_json_error('Security check failed - invalid nonce', 403);
-        }
-
-        // Vérification permissions selon contexte
-        $context = sanitize_text_field($_POST['context'] ?? 'editor');
-        $required_cap = $this->get_required_capability($context);
-
-        if (!current_user_can($required_cap)) {
-            $this->send_json_error('Insufficient permissions', 403);
-        }
-
-        // Validation taille données
-        if (isset($_POST['template_data'])) {
-            $data_size = strlen($_POST['template_data']);
-            if ($data_size > 1024 * 1024) { // 1MB max
-                $this->send_json_error('Data too large', 413);
-            }
         }
     }
 
