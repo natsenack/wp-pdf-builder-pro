@@ -4949,42 +4949,93 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
-        // Fonctions de debug conditionnel
+        // Fonctions de debug conditionnel - ALWAYS LOG sur localhost
         function isDebugEnabled() {
-            return window.location.hostname === 'localhost' ||
-                   window.location.search.includes('debug=pdf') ||
-                   (window.pdfBuilderDebug === true);
+            return true; // Always log on dev
         }
 
         function debugLog(...args) {
-            if (isDebugEnabled()) {
-                console.log(...args);
-            }
+            console.log('%c[PDF-Builder]', 'color: #00a0d2; font-weight: bold;', ...args);
         }
 
         function debugError(...args) {
-            if (isDebugEnabled()) {
-                console.error(...args);
-            }
+            console.error('%c[PDF-Builder ERROR]', 'color: #dc3545; font-weight: bold;', ...args);
         }
+
+        function debugWarn(...args) {
+            console.warn('%c[PDF-Builder WARN]', 'color: #ff9800; font-weight: bold;', ...args);
+        }
+
+        // Log des scripts enqueued
+        debugLog('=== REACT PDF BUILDER INITIALIZATION START ===');
+        debugLog('Window scripts info:', {
+            'React': typeof window.React,
+            'ReactDOM': typeof window.ReactDOM,
+            'pdfBuilderReact': typeof window.pdfBuilderReact,
+            'document.readyState': document.readyState
+        });
+
+        // Monitor script loading
+        var scriptLoads = {
+            'react': false,
+            'react-dom': false,
+            'pdf-builder-react': false
+        };
+
+        // Intercepter les erreurs de script
+        window.addEventListener('error', function(event) {
+            if (event.filename && event.filename.includes('react')) {
+                debugError('SCRIPT ERROR:', {
+                    message: event.message,
+                    filename: event.filename,
+                    lineno: event.lineno,
+                    colno: event.colno
+                });
+            }
+        });
+
+        // Créer un observer pour les changements dans window
+        var checkInterval = setInterval(function() {
+            if (window.React && !scriptLoads.react) {
+                scriptLoads.react = true;
+                debugLog('✅ React CDN script loaded:', window.React.version || 'version unknown');
+            }
+            if (window.ReactDOM && !scriptLoads['react-dom']) {
+                scriptLoads['react-dom'] = true;
+                debugLog('✅ React-DOM CDN script loaded');
+            }
+            if (window.pdfBuilderReact && !scriptLoads['pdf-builder-react']) {
+                scriptLoads['pdf-builder-react'] = true;
+                debugLog('✅ PDF Builder React bundle script loaded');
+            }
+        }, 50);
 
         // Script d'initialisation React avec vérification périodique
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('🚀 Initializing React PDF Builder...');
-            debugLog('React version loaded:', typeof React);
-            debugLog('React-DOM version loaded:', typeof ReactDOM);
+            debugLog('� DOMContentLoaded fired');
+            debugLog('Current state:', {
+                'React': typeof window.React,
+                'ReactDOM': typeof window.ReactDOM,
+                'pdfBuilderReact': typeof window.pdfBuilderReact,
+                'Scripts loaded': scriptLoads
+            });
 
             function tryInitReact() {
-                debugLog('🔍 Checking for pdfBuilderReact:', typeof window.pdfBuilderReact);
-                if (typeof window.pdfBuilderReact !== 'undefined') {
-                    debugLog('✅ pdfBuilderReact exists:', window.pdfBuilderReact);
-                    debugLog('✅ initPDFBuilderReact exists:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-                }
+                debugLog('🔍 Attempt: Checking for pdfBuilderReact...', {
+                    'Type': typeof window.pdfBuilderReact,
+                    'Has initPDFBuilderReact': window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function'
+                });
+
                 if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                    debugLog('✅ React PDF Builder script loaded, initializing...');
-                    var result = window.pdfBuilderReact.initPDFBuilderReact();
-                    debugLog('✅ initPDFBuilderReact returned:', result);
-                    return result === true;
+                    debugLog('✅ Calling initPDFBuilderReact()...');
+                    try {
+                        var result = window.pdfBuilderReact.initPDFBuilderReact();
+                        debugLog('✅✅ initPDFBuilderReact returned:', result);
+                        return result === true;
+                    } catch(e) {
+                        debugError('❌ Exception in initPDFBuilderReact:', e.message, e.stack);
+                        return false;
+                    }
                 }
                 debugLog('⏳ pdfBuilderReact not ready yet');
                 return false;
@@ -4997,22 +5048,46 @@ class PDF_Builder_Admin {
                 var maxAttempts = 150; // 150 * 200ms = 30 secondes
                 var initInterval = setInterval(function() {
                     attempts++;
-                    if (attempts % 5 === 0) { // Log tous les 5 essais pour ne pas spammer
-                        debugLog('🔄 Attempt', attempts + '/' + maxAttempts, '- Checking for pdfBuilderReact...');
+                    if (attempts % 10 === 1) { // Log tous les 10 essais + attempt 1
+                        debugLog('🔄 Attempt #' + attempts + '/' + maxAttempts + ' - Checking dependencies...');
+                        debugLog('Current state:', {
+                            'React': typeof window.React,
+                            'ReactDOM': typeof window.ReactDOM,
+                            'pdfBuilderReact': typeof window.pdfBuilderReact,
+                            'Scripts ready': scriptLoads
+                        });
                     }
                     if (tryInitReact()) {
                         clearInterval(initInterval);
-                        debugLog('✅✅✅ React bundle loaded after', attempts, 'attempts');
+                        clearInterval(checkInterval);
+                        debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
                     } else if (attempts >= maxAttempts) {
                         clearInterval(initInterval);
-                        debugError('❌ PDF Builder React script not loaded after 30 seconds');
-                        debugError('pdfBuilderReact:', window.pdfBuilderReact);
-                        debugError('React:', typeof React);
-                        debugError('ReactDOM:', typeof ReactDOM);
-                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé après 30 secondes d\'attente. Vérifiez la console pour plus de détails.</p>';
+                        clearInterval(checkInterval);
+                        debugError('=== TIMEOUT AFTER 30 SECONDS ===');
+                        debugError('Final state:', {
+                            'React': typeof window.React,
+                            'ReactDOM': typeof window.ReactDOM,
+                            'pdfBuilderReact': typeof window.pdfBuilderReact,
+                            'React object': window.React,
+                            'ReactDOM object': window.ReactDOM,
+                            'pdfBuilderReact object': window.pdfBuilderReact,
+                            'Scripts status': scriptLoads,
+                            'All window keys with "React"': Object.keys(window).filter(k => k.includes('React') || k.includes('react')),
+                            'All window keys with "pdf"': Object.keys(window).filter(k => k.includes('pdf'))
+                        });
+                        debugError('Check:');
+                        debugError('1. Are scripts actually loading? Check Network tab in DevTools');
+                        debugError('2. Are there CORS errors? Check Console');
+                        debugError('3. Is the React build file (.../pdf-builder-react.js) really being enqueued?');
+                        var loadingDiv = document.getElementById('pdf-builder-react-loading');
+                        if (loadingDiv) {
+                            loadingDiv.innerHTML = '<div style="color: red; padding: 20px;"><strong>Erreur:</strong> Le script React n\'a pas pu être chargé après 30 secondes d\'attente. Vérifiez la console (F12) pour plus de détails. État: React=' + (typeof window.React) + ', ReactDOM=' + (typeof window.ReactDOM) + ', pdfBuilderReact=' + (typeof window.pdfBuilderReact) + '</div>';
+                        }
                     }
                 }, 200);
             } else {
+                clearInterval(checkInterval);
                 debugLog('✅✅✅ React bundle loaded immediately');
             }
         });
