@@ -155,9 +155,6 @@ debugLog('🌐 Assigning to window...');
 
 debugLog('🎉 PDF Builder React bundle execution completed');
 
-// Module export for webpack/commonjs
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-  module.exports = exports;
-}
-
-export default exports;
+// NO MORE EXPORTS - webpack will handle this differently
+// Removed: export default exports;
+// Removed: if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') { module.exports = exports; }
