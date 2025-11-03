@@ -48,7 +48,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     isSaving: isAutoSaving,
     lastSavedAt,
     error: autoSaveError,
-    retryCount,
     saveNow: retryAutoSave,
     clearError: clearAutoSaveError,
     progress
@@ -72,7 +71,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         state={autoSaveState}
         lastSavedAt={lastSavedAt}
         error={autoSaveError}
-        retryCount={retryCount}
         onRetry={retryAutoSave}
         position="top-right"
         progress={progress}

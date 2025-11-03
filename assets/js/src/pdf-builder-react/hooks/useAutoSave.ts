@@ -1,5 +1,5 @@
 import { useBuilder } from '../contexts/builder/BuilderContext';
-import { useSaveState, SaveState } from './useSaveState';
+import { useSaveStateV2, SaveState } from './useSaveStateV2';
 import { debugLog, debugError } from '../utils/debug';
 
 /**
@@ -13,7 +13,6 @@ export interface UseAutoSaveReturn {
   isSaving: boolean;
   lastSavedAt: string | null;
   error: string | null;
-  retryCount: number;
   saveNow: () => Promise<void>;
   clearError: () => void;
   progress: number;
@@ -29,7 +28,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     (window as any).pdfBuilderReactData?.nonce ||
     '';
 
-  // Utiliser useSaveState
+  // Utiliser useSaveStateV2
   const {
     state: saveState,
     isSaving,
@@ -37,14 +36,12 @@ export function useAutoSave(): UseAutoSaveReturn {
     error,
     saveNow,
     clearError,
-    retryCount,
     progress
-  } = useSaveState({
+  } = useSaveStateV2({
     templateId: state.template.id as number | undefined,
     elements: state.elements,
     nonce,
-    autoSaveInterval: 5000, // Increased to 5 seconds to reduce frequency
-    maxRetries: 3,
+    autoSaveInterval: 5000,
     onSaveStart: () => {
       debugLog('[AUTO SAVE] Sauvegarde commencée');
     },
@@ -61,7 +58,6 @@ export function useAutoSave(): UseAutoSaveReturn {
     isSaving,
     lastSavedAt,
     error,
-    retryCount,
     saveNow,
     clearError,
     progress

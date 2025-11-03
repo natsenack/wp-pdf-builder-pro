@@ -16,10 +16,9 @@ export interface SaveIndicatorProps {
   state: 'idle' | 'saving' | 'saved' | 'error';
   lastSavedAt?: string | null;
   error?: string | null;
-  retryCount?: number;
   onRetry?: () => void;
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
-  progress?: number; // 0-100 pour la barre de progression
+  progress?: number;
   showProgressBar?: boolean;
 }
 
@@ -27,7 +26,6 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   state,
   lastSavedAt,
   error,
-  retryCount = 0,
   onRetry,
   position = 'top-right',
   progress = 0,
@@ -156,7 +154,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
         <span className="save-indicator__text">
           {state === 'saving' && 'Sauvegarde...'}
           {state === 'saved' && 'Sauvegardé'}
-          {state === 'error' && `Erreur (${retryCount})`}
+          {state === 'error' && 'Erreur'}
         </span>
 
         {/* Bouton retry pour les erreurs */}
