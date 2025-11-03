@@ -89,14 +89,18 @@ export function useSaveState({
         savedStateTimeoutRef.current = null;
       }
 
-      // Timeout global de 15 secondes pour éviter le blocage
+      // Variables pour les timeouts
       let saveTimeout: NodeJS.Timeout;
       let timeoutTriggered = false;
+      let controller: AbortController | undefined;
+      let timeoutId: NodeJS.Timeout | undefined;
 
+      // Timeout global de 15 secondes pour éviter le blocage
       saveTimeout = setTimeout(() => {
         if (timeoutTriggered) return; // Éviter les doubles déclenchements
         timeoutTriggered = true;
 
+        console.log('[SAVE STATE] Timeout global déclenché - forçage à error');
         debugError('[SAVE STATE] Timeout global dépassé, forçage de l\'état error');
         startTransition(() => {
           setState('error');
@@ -105,8 +109,8 @@ export function useSaveState({
         onSaveError?.('Timeout de sauvegarde (15s)');
 
         // Nettoyer les ressources
-        controller.abort(); // Annuler la requête en cours si elle existe
-        clearTimeout(timeoutId);
+        if (controller) controller.abort(); // Annuler la requête en cours si elle existe
+        if (timeoutId) clearTimeout(timeoutId);
       }, 15000);
 
       try {
@@ -114,7 +118,7 @@ export function useSaveState({
         startTransition(() => {
           setState('saving');
         });
-        console.log('[SAVE STATE] État changé à saving');
+        console.log('[SAVE STATE] État changé à saving - début de sauvegarde');
         
         // Annuler le timer de retour à idle s'il existe (nouvelle sauvegarde commence)
         if (savedStateTimeoutRef.current) {
@@ -238,6 +242,7 @@ export function useSaveState({
         const errorMsg = err?.name === 'AbortError' 
           ? 'Timeout de la requête (8s)' 
           : (err?.message || 'Erreur inconnue');
+        console.log(`[SAVE STATE] Exception capturée: ${errorMsg}`);
         debugError(`[SAVE STATE] Erreur ${retryAttempt + 1}/${maxRetries + 1}:`, errorMsg);
 
         // Retry logic
@@ -409,7 +414,9 @@ export function useSaveState({
    */
   useEffect(() => {
     if (state === 'saving') {
+      console.log('[SAVE STATE] Protection anti-blocage activée - état saving détecté');
       const stuckTimeout = setTimeout(() => {
+        console.log('[SAVE STATE] Protection anti-blocage déclenchée - forçage à error');
         debugError('[SAVE STATE] État "saving" bloqué détecté, forçage à error');
         startTransition(() => {
           setState('error');
@@ -418,7 +425,10 @@ export function useSaveState({
         onSaveError?.('Sauvegarde bloquée - timeout de sécurité');
       }, 30000); // 30 secondes de sécurité
 
-      return () => clearTimeout(stuckTimeout);
+      return () => {
+        console.log('[SAVE STATE] Protection anti-blocage nettoyée');
+        clearTimeout(stuckTimeout);
+      };
     }
   }, [state, onSaveError]);
 
