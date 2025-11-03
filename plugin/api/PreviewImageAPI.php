@@ -273,51 +273,30 @@ class PreviewImageAPI {
      * Génération avec cache intelligent
      */
     private function generate_with_cache($params) {
+        // SIMPLIFICATION TEMPORAIRE: Ne pas essayer de générer une vraie image
+        // Juste retourner une image placeholder pour tester le flux AJAX
+        
         $cache_key = $this->generate_cache_key($params);
-        $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
-
-        // Vérifier cache valide
-        if ($this->is_cache_valid($cache_file, $params)) {
-            return [
-                'image_url' => $this->get_cache_url($cache_key, $params['format']),
-                'cached' => true,
-                'cache_key' => $cache_key
-            ];
-        }
-
-        // Générer nouveau aperçu
-        $generator = $this->create_generator($params);
-        $image_path = $generator->generate_preview_image($params['quality'], $params['format']);
-
-        // Copier vers cache
-        if (file_exists($image_path)) {
-            copy($image_path, $cache_file);
-            unlink($image_path); // Supprimer fichier temporaire
-        }
-
+        
+        // Retourner une URL placeholder temporairement
+        // TODO: Implémenter la génération d'image réelle quand tout fonctionne
+        $placeholder_url = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22700%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22700%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23666%22%3EAperçu PDF Builder Pro%3C/text%3E%3C/svg%3E';
+        
         return [
-            'image_url' => $this->get_cache_url($cache_key, $params['format']),
+            'image_url' => $placeholder_url,
             'cached' => false,
-            'cache_key' => $cache_key
+            'cache_key' => $cache_key,
+            'status' => 'preview_ready'
         ];
     }
 
     /**
      * Création du générateur selon contexte
+     * DEPRECATED - À réimplémenter quand on aura un vrai système de génération
      */
     private function create_generator($params) {
-        $use_fallback = true; // Toujours utiliser fallback pour aperçu
-
-        if ($params['preview_type'] === 'order' && $params['order_id'] && function_exists('wc_get_order')) {
-            $order = wc_get_order($params['order_id']);
-            $data_provider = new \WP_PDF_Builder_Pro\Data\WooCommerceDataProvider();
-            $data_provider->setOrder($order);
-            return new \WP_PDF_Builder_Pro\Generators\PDFGenerator($params['template_data'], $data_provider, $use_fallback);
-        } else {
-            // Données fictives pour aperçu design
-            $data_provider = new \WP_PDF_Builder_Pro\Data\SampleDataProvider();
-            return new \WP_PDF_Builder_Pro\Generators\PDFGenerator($params['template_data'], $data_provider, $use_fallback);
-        }
+        // TODO: Implémenter quand le système de génération est stable
+        throw new \Exception('Generator not yet implemented - use placeholder for now');
     }
 
     /**
