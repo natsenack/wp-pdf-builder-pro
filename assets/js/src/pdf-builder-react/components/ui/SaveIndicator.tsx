@@ -82,11 +82,27 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   };
 
   return (
-    <div
-      className={`save-indicator save-indicator--${state}`}
-      title={getTitle()}
-      aria-label={getTitle()}
-    >
+    <>
+      {/* Debug - À ENLEVER */}
+      <div style={{
+        position: 'fixed',
+        top: '10px',
+        right: '10px',
+        padding: '8px 12px',
+        background: '#ff0000',
+        color: '#fff',
+        fontSize: '11px',
+        zIndex: 99999,
+        borderRadius: '4px'
+      }}>
+        STATE: {state}
+      </div>
+
+      <div
+        className={`save-indicator save-indicator--${state}`}
+        title={getTitle()}
+        aria-label={getTitle()}
+      >
       <div className="save-indicator__content">
         {/* Spinner pour 'saving' */}
         {state === 'saving' && (
@@ -172,7 +188,8 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
       {state === 'error' && error && (
         <div className="save-indicator__error-message">{error}</div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -19,9 +19,11 @@
   align-items: center;
   gap: 8px;
   max-width: 280px;
-  animation: slideInDown 0.3s ease-out;
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  transform: translateY(-10px);
+  transform: none;
 }
 
 .save-indicator--saving,
@@ -29,6 +31,8 @@
 .save-indicator--error {
   opacity: 1;
   pointer-events: auto;
+  transform: translateY(0);
+  animation: slideInDown 0.3s ease-out forwards;
 }
 
 /* States */
