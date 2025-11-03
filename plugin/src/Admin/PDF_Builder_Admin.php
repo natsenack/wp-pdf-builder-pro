@@ -4962,21 +4962,6 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
-        // Localize pdfBuilderAjax for React editor
-        wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'timestamp' => time(),
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-            ]
-        ]);
-
         // Localize script with data
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
