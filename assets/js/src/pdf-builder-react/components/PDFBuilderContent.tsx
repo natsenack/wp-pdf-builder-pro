@@ -174,7 +174,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               style={{
                 position: 'absolute',
                 top: '50%',
-                right: isPropertiesPanelOpen ? '-24px' : '-24px',
+                right: isPropertiesPanelOpen ? '0px' : '-12px',
                 transform: 'translateY(-50%)',
                 zIndex: 20,
                 padding: '8px 6px',
