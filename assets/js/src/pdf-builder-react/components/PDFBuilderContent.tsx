@@ -46,12 +46,10 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   // Hook pour la sauvegarde automatique
   const {
     state: autoSaveState,
-    isSaving: isAutoSaving,
     lastSavedAt,
     error: autoSaveError,
     saveNow: retryAutoSave,
     triggerSave,
-    clearError: clearAutoSaveError,
     progress
   } = useAutoSave();
 

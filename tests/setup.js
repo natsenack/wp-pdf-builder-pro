@@ -1,5 +1,8 @@
 require('@testing-library/jest-dom');
 
+// Polyfill pour fetch API
+require('whatwg-fetch');
+
 // Mock pour le Canvas API
 const createCanvasMock = () => ({
   getContext: jest.fn(() => ({

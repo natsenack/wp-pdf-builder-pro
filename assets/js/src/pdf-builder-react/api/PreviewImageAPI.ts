@@ -8,6 +8,12 @@
  * @since 1.1.0 (Phase 3.0)
  */
 
+declare global {
+  interface Window {
+    ajaxurl?: string;
+  }
+}
+
 import { debugLog, debugError, debugWarn } from '../utils/debug';
 
 export interface PreviewImageOptions {
@@ -97,7 +103,7 @@ export class PreviewImageAPI {
       }
 
       const response = await fetch(
-        (window as any).ajaxurl || '/wp-admin/admin-ajax.php',
+        window.ajaxurl || '/wp-admin/admin-ajax.php',
         {
           method: 'POST',
           body: formData,
@@ -180,7 +186,7 @@ export class PreviewImageAPI {
    */
   clearCacheForOrder(orderId: number): void {
     const keysToDelete: string[] = [];
-    for (const [key, _] of this.cachedImages) {
+    for (const [key] of this.cachedImages) {
       if (key.includes(`_${orderId}_`)) {
         keysToDelete.push(key);
       }
