@@ -125,175 +125,49 @@ const exports = {
 
 debugLog('🌐 Assigning to window...');
 
-// Assigner la fonction à window pour l'accès global depuis WordPress
+// Approche RÉELLE : juste assigner directement et simplement
 if (typeof window !== 'undefined') {
   debugLog('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
 
-  // Approche ultime : assignation forcée avec surveillance agressive
-  let assignmentCount = 0;
-  const maxAssignments = 10;
-
-  function forceAssign() {
+  // Assignation directe et simple
+  try {
+    window.pdfBuilderReact = exports;
+    debugLog('✅ Direct assignment successful');
+  } catch (e) {
+    debugError('❌ Direct assignment failed:', e);
+    // Fallback avec defineProperty
     try {
-      // Vérifier si la propriété existe déjà
-      if (Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact')) {
-        // Si elle existe, essayer de la redéfinir seulement si configurable
-        const descriptor = Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact');
-        if (descriptor.configurable) {
-          Object.defineProperty(window, 'pdfBuilderReact', {
-            value: exports,
-            writable: false,
-            configurable: true, // Permettre la redéfinition
-            enumerable: true
-          });
-        } else {
-          // Si non configurable, ne rien faire
-          debugLog('ℹ️ Property already defined and non-configurable, skipping redefinition');
-          return;
-        }
-      } else {
-        // Première assignation
-        Object.defineProperty(window, 'pdfBuilderReact', {
-          value: exports,
-          writable: false,
-          configurable: true, // Permettre la redéfinition future
-          enumerable: true
-        });
-      }
-      assignmentCount++;
-      debugLog(`🔄 Force assignment #${assignmentCount} successful`);
-
-      // Vérifier immédiatement si ça tient
-      setTimeout(() => {
-        if (typeof window.pdfBuilderReact === 'undefined') {
-          debugLog('⚠️ Assignment lost immediately, reassigning...');
-          if (assignmentCount < maxAssignments) {
-            forceAssign();
-          }
-        }
-      }, 1);
-
-    } catch (error) {
-      debugError('❌ Force assignment failed:', error);
+      Object.defineProperty(window, 'pdfBuilderReact', {
+        value: exports,
+        writable: true,
+        configurable: true,
+        enumerable: true
+      });
+      debugLog('✅ defineProperty assignment successful');
+    } catch (e2) {
+      debugError('❌ defineProperty also failed:', e2);
     }
   }
 
-  // Assignation initiale
-  forceAssign();
-
-  // Surveillance agressive : vérifier toutes les 10ms pendant les 2 premières secondes
-  let surveillanceCount = 0;
-  const surveillanceInterval = setInterval(() => {
-    surveillanceCount++;
-
-    if (typeof window.pdfBuilderReact === 'undefined') {
-      debugLog(`🚨 pdfBuilderReact lost at check #${surveillanceCount}, reassigning...`);
-      try {
-        // Vérifier si la propriété existe déjà
-        if (Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact')) {
-          const descriptor = Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact');
-          if (descriptor.configurable) {
-            Object.defineProperty(window, 'pdfBuilderReact', {
-              value: exports,
-              writable: false,
-              configurable: true,
-              enumerable: true
-            });
-          } else {
-            // Fallback direct seulement si nécessaire
-            try {
-              window.pdfBuilderReact = exports;
-            } catch (error) {
-              debugError('❌ Fallback assignment also failed:', error);
-            }
-          }
-        } else {
-          Object.defineProperty(window, 'pdfBuilderReact', {
-            value: exports,
-            writable: false,
-            configurable: true,
-            enumerable: true
-          });
-        }
-      } catch (error) {
-        debugError('❌ Surveillance reassignment failed:', error);
-        // Fallback direct
-        try {
-          window.pdfBuilderReact = exports;
-        } catch (fallbackError) {
-          debugError('❌ Fallback assignment also failed:', fallbackError);
-        }
-      }
-    }
-
-    // Arrêter la surveillance après 2 secondes
-    if (surveillanceCount > 200) { // 200 * 10ms = 2 secondes
-      clearInterval(surveillanceInterval);
-      debugLog('✅ Aggressive surveillance ended');
-    }
-  }, 10);
-
-  // Surveillance de maintenance : vérifier toutes les 100ms indéfiniment
-  setInterval(() => {
-    if (typeof window.pdfBuilderReact === 'undefined') {
-      debugLog('🔄 Maintenance: pdfBuilderReact lost, reassigning...');
-      try {
-        // Vérifier si la propriété existe déjà
-        if (Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact')) {
-          const descriptor = Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact');
-          if (descriptor.configurable) {
-            Object.defineProperty(window, 'pdfBuilderReact', {
-              value: exports,
-              writable: false,
-              configurable: true,
-              enumerable: true
-            });
-          } else {
-            // Fallback direct seulement si nécessaire
-            try {
-              window.pdfBuilderReact = exports;
-            } catch (error) {
-              debugError('❌ Fallback assignment also failed:', error);
-            }
-          }
-        } else {
-          Object.defineProperty(window, 'pdfBuilderReact', {
-            value: exports,
-            writable: false,
-            configurable: true,
-            enumerable: true
-          });
-        }
-      } catch (error) {
-        debugError('❌ Maintenance reassignment failed:', error);
-        // Fallback direct
-        try {
-          window.pdfBuilderReact = exports;
-        } catch (fallbackError) {
-          debugError('❌ Fallback assignment also failed:', fallbackError);
-        }
-      }
-    }
-  }, 100);
-
+  // Vérification immédiate
   debugLog('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-  debugLog('🔍 window.pdfBuilderReact object:', window.pdfBuilderReact);
-  debugLog('🔍 window object:', window);
-  debugLog('🔍 window === globalThis:', window === globalThis);
+  debugLog('🔍 window.pdfBuilderReact.initPDFBuilderReact:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
 
-  // Vérifier immédiatement si l'assignation persiste
-  setTimeout(function() {
-    debugLog('⏰ 100ms after assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-  }, 100);
-
-  setTimeout(function() {
-    debugLog('⏰ 500ms after assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-  }, 500);
+  // Double-check après 1ms
+  setTimeout(() => {
+    debugLog('⏰ 1ms check - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+    debugLog('⏰ 1ms check - initPDFBuilderReact:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
+  }, 1);
 
 } else {
   debugError('❌ window is not available');
 }
 
 debugLog('🎉 PDF Builder React bundle execution completed');
+
+// Finalized export - ensure it's at the end
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = exports;
+}
 
 export default exports;
