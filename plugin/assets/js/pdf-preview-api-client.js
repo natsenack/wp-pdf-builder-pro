@@ -205,17 +205,8 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal avec les styles forcés
+        // Afficher la modal - juste changer display de none à flex
         previewModal.style.display = 'flex';
-        previewModal.style.position = 'fixed';
-        previewModal.style.top = '0';
-        previewModal.style.left = '0';
-        previewModal.style.width = '100%';
-        previewModal.style.height = '100%';
-        previewModal.style.justifyContent = 'center';
-        previewModal.style.alignItems = 'center';
-        previewModal.style.zIndex = '9999';
-        previewModal.style.backgroundColor = 'rgba(0,0,0,0.8)';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -226,6 +217,9 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
+        // Appliquer les styles flex DÈS LA CRÉATION pour que les enfants soient bien centrés
+        // display: none initialement, sera changé en flex lors de l'affichage
+        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(0,0,0,0.8) !important; display: none; justify-content: center !important; align-items: center !important; z-index: 9999 !important; overflow: auto;';
         
         // Wrapper blanc qui sera centré
         const wrapper = document.createElement('div');
