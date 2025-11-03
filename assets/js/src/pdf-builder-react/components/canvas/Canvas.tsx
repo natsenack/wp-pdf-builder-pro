@@ -238,17 +238,34 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const textColor = String(props.textColor || '#374151');
   const fontSize = Number(props.fontSize || 12);
   const showHeaders = Boolean(props.showHeaders !== false);
+  const showBorders = Boolean(props.showBorders !== false);
+  const backgroundColor = String(props.backgroundColor || 'transparent');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 0);
+
+  // Fond si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Bordure si activée
+  if (showBorders && borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
-  let yPos = 15;
+  let yPos = showBorders ? 15 : 10;
 
   // En-tête si activé
   if (showHeaders) {
     ctx.font = `bold ${fontSize + 2}px Arial`;
-    ctx.fillText('Informations Client', 0, yPos);
+    ctx.fillText('Informations Client', showBorders ? 10 : 0, yPos);
     yPos += 25;
     ctx.font = `${fontSize}px Arial`;
   }
@@ -263,7 +280,7 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   ];
 
   customerData.forEach((item) => {
-    ctx.fillText(`${item.label}: ${item.value}`, 0, yPos);
+    ctx.fillText(`${item.label}: ${item.value}`, showBorders ? 10 : 0, yPos);
     yPos += 18;
   });
 };
@@ -273,17 +290,34 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const textColor = String(props.textColor || '#374151');
   const fontSize = Number(props.fontSize || 12);
   const showHeaders = Boolean(props.showHeaders !== false);
+  const showBorders = Boolean(props.showBorders !== false);
+  const backgroundColor = String(props.backgroundColor || 'transparent');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 0);
+
+  // Fond si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Bordure si activée
+  if (showBorders && borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
-  let yPos = 15;
+  let yPos = showBorders ? 15 : 10;
 
   // En-tête si activé
   if (showHeaders) {
     ctx.font = `bold ${fontSize + 2}px Arial`;
-    ctx.fillText('Informations Société', 0, yPos);
+    ctx.fillText('Informations Société', showBorders ? 10 : 0, yPos);
     yPos += 25;
     ctx.font = `${fontSize}px Arial`;
   }
@@ -300,7 +334,7 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   ];
 
   companyData.forEach((item) => {
-    ctx.fillText(`${item.label}: ${item.value}`, 0, yPos);
+    ctx.fillText(`${item.label}: ${item.value}`, showBorders ? 10 : 0, yPos);
     yPos += 18;
   });
 };
@@ -310,6 +344,22 @@ const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element) => {
   const textColor = String(props.textColor || '#111827');
   const title = String(props.title || 'FACTURE');
   const fontSize = Number(props.fontSize || 18);
+  const backgroundColor = String(props.backgroundColor || 'transparent');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 0);
+
+  // Fond si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Bordure si activée
+  if (borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `bold ${fontSize}px Arial`;
@@ -325,6 +375,22 @@ const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
   const textColor = String(props.textColor || '#6b7280');
   const fontSize = Number(props.fontSize || 10);
+  const backgroundColor = String(props.backgroundColor || 'transparent');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 0);
+
+  // Fond si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Bordure si activée
+  if (borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `${fontSize}px Arial`;
@@ -338,14 +404,16 @@ const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
     'Règlement par virement bancaire'
   ];
 
+  const startY = borderWidth > 0 ? 15 : 10;
   mentions.forEach((mention, index) => {
-    ctx.fillText(mention, 0, 15 + index * 15);
+    ctx.fillText(mention, borderWidth > 0 ? 10 : 0, startY + index * 15);
   });
 };
 
 const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
   const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 1);
   const backgroundColor = String(props.backgroundColor || '#ffffff');
 
   // Fond
@@ -354,7 +422,7 @@ const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   // Bordure
   ctx.strokeStyle = borderColor;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = borderWidth;
   ctx.strokeRect(0, 0, element.width, element.height);
 
   // Placeholder pour le logo
@@ -371,6 +439,22 @@ const drawWooCommerceField = (ctx: CanvasRenderingContext2D, element: Element) =
   const props = element as Record<string, unknown>;
   const textColor = String(props.textColor || '#374151');
   const fontSize = Number(props.fontSize || 12);
+  const backgroundColor = String(props.backgroundColor || 'transparent');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const borderWidth = Number(props.borderWidth || 0);
+
+  // Fond si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Bordure si activée
+  if (borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `${fontSize}px Arial`;
@@ -400,11 +484,11 @@ const drawWooCommerceField = (ctx: CanvasRenderingContext2D, element: Element) =
 
   // Label
   ctx.font = `bold ${fontSize}px Arial`;
-  ctx.fillText(`${label}:`, 0, 15);
+  ctx.fillText(`${label}:`, borderWidth > 0 ? 10 : 0, 15);
 
   // Valeur
   ctx.font = `${fontSize}px Arial`;
-  ctx.fillText(value, 0, 35);
+  ctx.fillText(value, borderWidth > 0 ? 10 : 0, 35);
 };
 
 const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
