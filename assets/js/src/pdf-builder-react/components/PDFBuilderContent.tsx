@@ -170,21 +170,21 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           </div>
 
           {/* Panneau de propriétés à droite */}
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', display: 'flex' }}>
             {/* Bouton toggle pour le panneau de propriétés */}
             <button
               onClick={() => setIsPropertiesPanelOpen(!isPropertiesPanelOpen)}
               style={{
                 position: 'absolute',
                 top: '50%',
-                left: isPropertiesPanelOpen ? '-40px' : '-20px',
+                left: isPropertiesPanelOpen ? '390px' : '0px',
                 transform: 'translateY(-50%)',
                 zIndex: 20,
                 padding: '8px 6px',
                 backgroundColor: '#007acc',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px 0 0 4px',
+                borderRadius: '0 4px 4px 0',
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 'bold',
@@ -195,11 +195,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 width: '24px',
                 height: '60px',
                 writingMode: 'vertical-rl',
-                textOrientation: 'mixed'
+                textOrientation: 'mixed',
+                transition: 'left 0.3s ease'
               }}
               title={isPropertiesPanelOpen ? 'Fermer le panneau de propriétés' : 'Ouvrir le panneau de propriétés'}
             >
-              {isPropertiesPanelOpen ? '◁' : '▷'}
+              {isPropertiesPanelOpen ? '▷' : '◁'}
             </button>
 
             {isPropertiesPanelOpen && (
@@ -210,7 +211,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                   position: 'sticky',
                   top: '110px',
                   height: 'fit-content',
-                  maxHeight: 'calc(100vh - 32px)'
+                  maxHeight: 'calc(100vh - 32px)',
+                  marginLeft: '24px'
                 }}
               >
                 <PropertiesPanel />
