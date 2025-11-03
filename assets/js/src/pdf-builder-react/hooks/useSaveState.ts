@@ -208,15 +208,13 @@ export function useSaveState({
           clearTimeout(savedStateTimeoutRef.current);
         }
 
-        // Réinitialiser l'état saved après 3 secondes
+        // Réinitialiser l'état saved après 2 secondes (synchronisé avec SaveIndicator)
         savedStateTimeoutRef.current = setTimeout(() => {
           console.log('[SAVE STATE] Remise à idle après succès');
           startTransition(() => {
-            // Vérifier que l'état est toujours 'saved' avant de le changer
-            // (évite les conflits si une nouvelle sauvegarde a commencé)
             setState('idle');
           });
-        }, 3000);
+        }, 2000);
 
         clearTimeout(saveTimeout); // Nettoyer le timeout global
         return true;

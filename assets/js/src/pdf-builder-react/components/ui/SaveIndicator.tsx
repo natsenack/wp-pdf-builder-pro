@@ -34,7 +34,14 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
 
   // Gérer la visibilité automatique
   useEffect(() => {
-    if (state !== 'idle') {
+    if (state === 'idle') {
+      // Masquer immédiatement quand on revient à idle
+      setVisible(false);
+      if (autoHideTimer) {
+        clearTimeout(autoHideTimer);
+        setAutoHideTimer(null);
+      }
+    } else {
       setVisible(true);
 
       // Masquer automatiquement après 2 secondes pour 'saved', 3 secondes pour 'error', 10 secondes pour 'saving'
