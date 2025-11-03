@@ -144,23 +144,25 @@ export function useSaveState({
       let controller: AbortController | undefined;
       let timeoutId: NodeJS.Timeout | undefined;
 
-      // Timeout global de 15 secondes pour éviter le blocage
+      // Timeout global de 3 secondes pour éviter le blocage (protection anti-blocage)
       saveTimeout = setTimeout(() => {
         if (timeoutTriggered) return; // Éviter les doubles déclenchements
         timeoutTriggered = true;
 
-        console.log('[SAVE STATE] Timeout global déclenché - forçage à error');
-        debugError('[SAVE STATE] Timeout global dépassé, forçage de l\'état error');
+        console.log('[SAVE STATE] Timeout de 3s - forçage à error');
+        debugError('[SAVE STATE] Sauvegarde non complétée après 3s, forçage de l\'état error');
         startTransition(() => {
           setState('error');
-          setError('Timeout de sauvegarde (15s)');
+          setError('Sauvegarde incomplète (3s)');
+          setProgress(100); // Compléter la barre de progression
         });
-        onSaveError?.('Timeout de sauvegarde (15s)');
+        onSaveError?.('Sauvegarde incomplète (3s)');
+        cleanupProgress(); // Nettoyer l'interval de progression
 
         // Nettoyer les ressources
         if (controller) controller.abort(); // Annuler la requête en cours si elle existe
         if (timeoutId) clearTimeout(timeoutId);
-      }, 15000);
+      }, 3000);
 
       try {
         // Set saving state
@@ -232,6 +234,7 @@ export function useSaveState({
           controller.abort();
         }, 8000); // Réduit à 8 secondes pour laisser du temps au timeout global
         
+        console.log('[SAVE STATE] Envoi de la requête AJAX...');
         const response = await fetch(ajaxUrl, {
           method: 'POST',
           headers: {
@@ -247,12 +250,14 @@ export function useSaveState({
         });
         
         clearTimeout(timeoutId); // Nettoyer le timeout si la requête réussit
+        console.log('[SAVE STATE] Réponse reçue:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
+        console.log('[SAVE STATE] Données JSON reçues:', data);
 
         if (!data.success) {
           throw new Error(data.data?.message || 'Erreur serveur inconnue');
