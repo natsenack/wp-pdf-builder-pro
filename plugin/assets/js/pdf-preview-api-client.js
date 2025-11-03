@@ -205,9 +205,8 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal - juste changer display et visibility
-        previewModal.style.display = 'block !important';
-        previewModal.style.visibility = 'visible !important';
+        // Afficher la modal avec display flex pour centrer
+        previewModal.style.display = 'flex';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -218,12 +217,28 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        // Overlay overlay fullscreen avec fond noir transparent
-        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.8) !important; display: none !important; z-index: 99999 !important; overflow: auto !important; visibility: hidden;';
+        // Overlay fullscreen avec fond noir transparent
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+        modal.style.display = 'none';
+        modal.style.zIndex = '99999';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.flexDirection = 'column';
         
-        // Wrapper blanc qui sera centré avec translate - POSITION RELATIVE, pas fixed!
+        // Wrapper blanc centré - sera enfant direct du modal flex container
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; background: white !important; border-radius: 8px !important; padding: 20px !important; max-width: 90vw !important; max-height: 90vh !important; overflow: auto !important; box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important; z-index: 100000 !important;';
+        wrapper.style.background = 'white';
+        wrapper.style.borderRadius = '8px';
+        wrapper.style.padding = '20px';
+        wrapper.style.maxWidth = '90vw';
+        wrapper.style.maxHeight = '90vh';
+        wrapper.style.overflowY = 'auto';
+        wrapper.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
 
         // Header avec titre et bouton fermer
         const header = document.createElement('div');
