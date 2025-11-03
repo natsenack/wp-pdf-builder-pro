@@ -226,46 +226,65 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: none;
-            justify-content: center;
-            align-items: center;
+        
+        // Wrapper blanc qui sera centré
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = `
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         `;
 
-        modal.innerHTML = `
-            <div style="
-                background: white;
-                border-radius: 8px;
-                padding: 20px;
-                max-width: 90%;
-                max-height: 90%;
-                overflow: auto;
-                position: relative;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 id="pdf-preview-title" style="margin: 0; color: #1d2327;">Aperçu PDF</h3>
-                    <button id="pdf-preview-close" style="
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        color: #666;
-                    ">×</button>
-                </div>
-                <div id="pdf-preview-actions" style="margin-bottom: 15px;"></div>
-                <img id="pdf-preview-image" src="" alt="Aperçu PDF" style="max-width: 100%; height: auto; border: 1px solid #ddd;" />
-            </div>
+        // Header avec titre et bouton fermer
+        const header = document.createElement('div');
+        header.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         `;
+
+        const title = document.createElement('h3');
+        title.id = 'pdf-preview-title';
+        title.textContent = 'Aperçu PDF';
+        title.style.cssText = 'margin: 0; color: #1d2327;';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.id = 'pdf-preview-close';
+        closeBtn.textContent = '×';
+        closeBtn.style.cssText = `
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        `;
+
+        header.appendChild(title);
+        header.appendChild(closeBtn);
+
+        // Actions container
+        const actions = document.createElement('div');
+        actions.id = 'pdf-preview-actions';
+        actions.style.cssText = 'margin-bottom: 15px;';
+
+        // Image container
+        const img = document.createElement('img');
+        img.id = 'pdf-preview-image';
+        img.alt = 'Aperçu PDF';
+        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd;';
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(actions);
+        wrapper.appendChild(img);
+        modal.appendChild(wrapper);
 
         // Gestionnaire de fermeture
-        modal.querySelector('#pdf-preview-close').addEventListener('click', () => {
+        closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
         });
 
