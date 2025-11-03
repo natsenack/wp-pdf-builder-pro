@@ -1,6 +1,7 @@
 /**
  * PDF Builder Pro - Preview API Client
  * Intégration complète de l'API Preview 1.4
+ * Version finale avec modal centrage CSS 2025-11-03 13:17:00
  */
 
 // Fonctions de debug conditionnel
