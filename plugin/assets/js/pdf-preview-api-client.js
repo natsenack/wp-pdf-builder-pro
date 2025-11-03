@@ -205,8 +205,9 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal - juste changer display de none à flex
-        previewModal.style.display = 'flex';
+        // Afficher la modal - juste changer display de none à flex et visibility
+        previewModal.style.display = 'flex !important';
+        previewModal.style.visibility = 'visible';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -219,7 +220,7 @@ class PDFPreviewAPI {
         modal.id = 'pdf-preview-modal';
         // Appliquer les styles flex DÈS LA CRÉATION pour que les enfants soient bien centrés
         // display: none initialement, sera changé en flex lors de l'affichage
-        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(0,0,0,0.8) !important; display: none; justify-content: center !important; align-items: center !important; z-index: 9999 !important; overflow: auto;';
+        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.8) !important; display: none !important; justify-content: center !important; align-items: center !important; z-index: 99999 !important; overflow: auto !important; visibility: hidden;';
         
         // Wrapper blanc qui sera centré
         const wrapper = document.createElement('div');
