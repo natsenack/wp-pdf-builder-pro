@@ -109,6 +109,146 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
   ctx.stroke();
 };
 
+// Fonctions de dessin pour les éléments WooCommerce
+const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const borderColor = String(props.borderColor || '#cccccc');
+  const headerColor = String(props.headerColor || '#f0f0f0');
+
+  // Dessiner le cadre du tableau
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, element.width, element.height);
+
+  // Dessiner l'en-tête
+  ctx.fillStyle = headerColor;
+  ctx.fillRect(0, 0, element.width, 30);
+
+  // Texte d'en-tête
+  ctx.fillStyle = '#333333';
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('Tableau Produits', 10, 20);
+
+  // Lignes de séparation
+  ctx.strokeStyle = borderColor;
+  ctx.beginPath();
+  ctx.moveTo(0, 30);
+  ctx.lineTo(element.width, 30);
+  ctx.stroke();
+
+  // Contenu d'exemple
+  ctx.fillStyle = '#666666';
+  ctx.font = '10px Arial';
+  ctx.fillText('Produit 1 - Qté: 2 - Prix: 25.00€', 10, 50);
+  ctx.fillText('Produit 2 - Qté: 1 - Prix: 15.00€', 10, 70);
+};
+
+const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const textColor = String(props.textColor || '#333333');
+
+  ctx.fillStyle = textColor;
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'left';
+
+  const lines = [
+    'Informations Client',
+    'Nom: {{customer_name}}',
+    'Email: {{customer_email}}',
+    'Téléphone: {{customer_phone}}',
+    'Adresse: {{customer_address}}'
+  ];
+
+  lines.forEach((line, index) => {
+    ctx.fillText(line, 0, 20 + index * 18);
+  });
+};
+
+const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const textColor = String(props.textColor || '#333333');
+
+  ctx.fillStyle = textColor;
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'left';
+
+  const lines = [
+    'Informations Société',
+    'Nom: {{company_name}}',
+    'Adresse: {{company_address}}',
+    'Téléphone: {{company_phone}}',
+    'Email: {{company_email}}'
+  ];
+
+  lines.forEach((line, index) => {
+    ctx.fillText(line, 0, 20 + index * 18);
+  });
+};
+
+const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const textColor = String(props.textColor || '#333333');
+  const title = String(props.title || 'FACTURE');
+
+  ctx.fillStyle = textColor;
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(title, element.width / 2, element.height / 2);
+};
+
+const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const textColor = String(props.textColor || '#666666');
+
+  ctx.fillStyle = textColor;
+  ctx.font = '10px Arial';
+  ctx.textAlign = 'left';
+
+  const mentions = [
+    'Mentions légales',
+    'TVA non applicable, art. 293 B du CGI',
+    'Paiement à 30 jours'
+  ];
+
+  mentions.forEach((mention, index) => {
+    ctx.fillText(mention, 0, 15 + index * 15);
+  });
+};
+
+const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const borderColor = String(props.borderColor || '#cccccc');
+
+  // Dessiner un rectangle pour représenter le logo
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, element.width, element.height);
+
+  // Texte placeholder
+  ctx.fillStyle = '#999999';
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('[LOGO]', element.width / 2, element.height / 2);
+};
+
+const drawWooCommerceField = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as Record<string, unknown>;
+  const textColor = String(props.textColor || '#333333');
+  const label = String(props.label || element.type.replace('_', ' ').toUpperCase());
+
+  ctx.fillStyle = textColor;
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'left';
+
+  // Label
+  ctx.fillText(label + ':', 0, 15);
+
+  // Valeur d'exemple avec variable
+  const value = `{{${element.type}}}`;
+  ctx.fillText(value, 0, 35);
+};
+
 const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
   ctx.save();
 
@@ -127,16 +267,48 @@ const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
       drawCircle(ctx, element);
       break;
     case 'text':
+    case 'text-title':
+    case 'text-subtitle':
+    case 'dynamic-text':
       drawText(ctx, element);
       break;
     case 'line':
       drawLine(ctx, element);
       break;
+    case 'product_table':
+      drawProductTable(ctx, element);
+      break;
+    case 'customer_info':
+      drawCustomerInfo(ctx, element);
+      break;
+    case 'company_info':
+      drawCompanyInfo(ctx, element);
+      break;
+    case 'document_type':
+      drawDocumentType(ctx, element);
+      break;
+    case 'mentions':
+      drawMentions(ctx, element);
+      break;
+    case 'company_logo':
+      drawCompanyLogo(ctx, element);
+      break;
+    case 'order_number':
+    case 'woocommerce-order-date':
+    case 'woocommerce-invoice-number':
+      drawWooCommerceField(ctx, element);
+      break;
     default:
-      // Élément générique - dessiner un rectangle simple
-      ctx.strokeStyle = '#000000';
+      // Élément générique - dessiner un rectangle simple avec le type
+      ctx.strokeStyle = '#666666';
       ctx.lineWidth = 1;
       ctx.strokeRect(0, 0, element.width, element.height);
+
+      // Afficher le type de l'élément
+      ctx.fillStyle = '#666666';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(element.type, element.width / 2, element.height / 2);
   }
 
   ctx.restore();
