@@ -36,6 +36,9 @@ class PreviewImageAPI {
     public function generate_preview() {
         error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
         
+        // Définir header JSON immédiatement pour éviter les réponses HTML en cas d'erreur
+        header('Content-Type: application/json; charset=UTF-8');
+        
         // Vérifier qu'aucun output n'a été fait avant les headers
         if (headers_sent($file, $line)) {
             error_log("Headers already sent in $file:$line - cannot send JSON response");
