@@ -106,6 +106,7 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
+  console.log('Drawing element:', element.type, element.x, element.y, element.width, element.height);
   ctx.save();
 
   // Appliquer transformation de l'élément
@@ -117,18 +118,23 @@ const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
   // Dessiner selon le type d'élément
   switch (element.type) {
     case 'rectangle':
+      console.log('Drawing rectangle');
       drawRectangle(ctx, element);
       break;
     case 'circle':
+      console.log('Drawing circle');
       drawCircle(ctx, element);
       break;
     case 'text':
+      console.log('Drawing text');
       drawText(ctx, element);
       break;
     case 'line':
+      console.log('Drawing line');
       drawLine(ctx, element);
       break;
     default:
+      console.log('Drawing default element');
       // Élément générique - dessiner un rectangle simple
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 1;
@@ -195,12 +201,18 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     // Dessiner les éléments
-    state.elements.forEach((element) => {
-      drawElement(ctx, element);
-    });
+    if (state.elements && state.elements.length > 0) {
+      console.log('Rendering elements:', state.elements.length);
+      state.elements.forEach((element, index) => {
+        console.log(`Element ${index}:`, element);
+        drawElement(ctx, element);
+      });
+    } else {
+      console.log('No elements to render');
+    }
 
     // Dessiner la sélection
-    if (state.selection.selectedElements.length > 0) {
+    if (state.selection && state.selection.selectedElements && state.selection.selectedElements.length > 0 && state.elements) {
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
