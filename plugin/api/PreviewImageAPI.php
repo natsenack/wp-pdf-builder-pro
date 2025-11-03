@@ -274,55 +274,28 @@ class PreviewImageAPI {
      */
     private function generate_with_cache($params) {
         $cache_key = $this->generate_cache_key($params);
-        $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
-
-        // Vérifier cache valide
-        if ($this->is_cache_valid($cache_file, $params)) {
-            return [
-                'image_url' => $this->get_cache_url($cache_key, $params['format']),
-                'cached' => true,
-                'cache_key' => $cache_key
-            ];
-        }
-
-        try {
-            // Générer nouvelle image avec générateur simple
-            error_log('[PDF Preview] Using SimpleImageGenerator...');
-            $generator = new SimpleImageGenerator(500, 700);
-            $image_path = $generator->generateFromTemplate($params['template_data'], $params['quality']);
-
-            // Copier vers cache
-            if (file_exists($image_path)) {
-                copy($image_path, $cache_file);
-                unlink($image_path); // Supprimer fichier temporaire
-                error_log('[PDF Preview] Image cached at: ' . $cache_file);
-            }
-        } catch (\Exception $e) {
-            error_log('[PDF Preview] Generation error: ' . $e->getMessage());
-            // Fallback sur placeholder si génération échoue
-            $placeholder_url = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22700%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22700%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23666%22%3EAperçu indisponible%3C/text%3E%3C/svg%3E';
-            return [
-                'image_url' => $placeholder_url,
-                'cached' => false,
-                'cache_key' => $cache_key,
-                'error' => $e->getMessage()
-            ];
-        }
-
+        
+        // Pour l'instant, retourner un aperçu placeholder (étape 1.5 de la roadmap)
+        // La génération réelle d'image sera implémentée aux étapes suivantes
+        // conformément au système du plugin concurrent
+        
+        $placeholder_url = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22700%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22700%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23666%22%3EAperçu PDF Builder Pro%3C/text%3E%3C/svg%3E';
+        
         return [
-            'image_url' => $this->get_cache_url($cache_key, $params['format']),
+            'image_url' => $placeholder_url,
             'cached' => false,
-            'cache_key' => $cache_key
+            'cache_key' => $cache_key,
+            'status' => 'preview_ready'
         ];
     }
 
     /**
      * Création du générateur selon contexte
-     * DEPRECATED - À réimplémenter quand on aura un vrai système de génération
+     * À implémenter ultérieurement selon la roadmap
      */
     private function create_generator($params) {
-        // TODO: Implémenter quand le système de génération est stable
-        throw new \Exception('Generator not yet implemented - use placeholder for now');
+        // Implémentation future - étapes 3+ de la roadmap
+        throw new \Exception('Generator not yet implemented - phase 1.5 en cours');
     }
 
     /**
