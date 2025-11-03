@@ -257,29 +257,6 @@ export const Header = memo(function Header({
                 Nouveau
               </span>
             )}
-            {isSaving && (
-              <span style={{
-                fontSize: '12px',
-                padding: '4px 10px',
-                backgroundColor: '#e8f4f8',
-                color: '#0056b3',
-                borderRadius: '4px',
-                fontWeight: '500',
-                border: '1px solid #b8daff',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <span style={{
-                  display: 'inline-block',
-                  animation: 'spin 1s linear infinite',
-                  transformOrigin: 'center'
-                }}>
-                  ⟳
-                </span>
-                Enregistrement...
-              </span>
-            )}
           </div>
         </div>
       </div>

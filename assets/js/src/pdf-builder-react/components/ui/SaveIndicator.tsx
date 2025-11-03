@@ -83,21 +83,6 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
 
   return (
     <>
-      {/* Debug - À ENLEVER */}
-      <div style={{
-        position: 'fixed',
-        top: '10px',
-        right: '10px',
-        padding: '8px 12px',
-        background: '#ff0000',
-        color: '#fff',
-        fontSize: '11px',
-        zIndex: 99999,
-        borderRadius: '4px'
-      }}>
-        STATE: {state}
-      </div>
-
       <div
         className={`save-indicator save-indicator--${state}`}
         title={getTitle()}
