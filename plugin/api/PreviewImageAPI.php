@@ -34,27 +34,34 @@ class PreviewImageAPI {
      * Point d'entrée unifié pour tous les aperçus
      */
     public function generate_preview() {
-        // ABSOLUMENT AU DÉBUT : Clear any output buffer et set JSON header
-        while (ob_get_level()) {
+        // === GESTION D'ERREUR EXTRÊMEMENT ROBUSTE ===
+        // Nettoyer tous les output buffers d'abord
+        while (ob_get_level() > 0) {
             ob_end_clean();
         }
+        
+        // Commencer un nouveau buffer
+        ob_start();
+        
+        // Set JSON header IMMÉDIATEMENT
         header('Content-Type: application/json; charset=UTF-8');
+        
+        // Enregistrer un handler d'erreur shutdown pour les erreurs fatales
+        register_shutdown_function(array($this, '_shutdown_handler'));
         
         error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
         
         $start_time = microtime(true);
 
         try {
-            // VALIDATION ULTRA SIMPLE D'ABORD
-            // Vérification nonce - critiquer
+            // VALIDATION TRÈS SIMPLE INLINE
+            // Vérification nonce
             if (!isset($_POST['nonce'])) {
-                error_log('[PDF Preview] Missing nonce');
-                wp_send_json_error(['message' => 'Missing nonce'], 403);
+                throw new \Exception('Missing nonce');
             }
 
             if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-                error_log('[PDF Preview] Invalid nonce');
-                wp_send_json_error(['message' => 'Invalid nonce'], 403);
+                throw new \Exception('Invalid nonce');
             }
 
             // Vérification permissions
@@ -62,8 +69,7 @@ class PreviewImageAPI {
             $required_cap = $this->get_required_capability($context);
 
             if (!current_user_can($required_cap)) {
-                error_log('[PDF Preview] Insufficient permissions for ' . $context);
-                wp_send_json_error(['message' => 'Insufficient permissions'], 403);
+                throw new \Exception('Insufficient permissions');
             }
 
             error_log('[PDF Preview] Validation passed');
@@ -82,12 +88,30 @@ class PreviewImageAPI {
             $result = $this->generate_with_cache($params);
             error_log('[PDF Preview] Generation completed');
 
-            // Réponse compressée
+            // Clean buffer et envoyer réponse
+            ob_clean();
             $this->send_compressed_response($result);
 
         } catch (\Exception $e) {
-            error_log('[PDF Preview] Exception caught: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            $this->handle_error($e, $start_time);
+            error_log('[PDF Preview] Exception caught: ' . $e->getMessage());
+            ob_clean();
+            $this->send_json_error($e->getMessage());
+        }
+    }
+    
+    /**
+     * Handler d'erreur PHP shutdown pour capturer les erreurs fatales
+     */
+    public function _shutdown_handler() {
+        $error = error_get_last();
+        if ($error && ($error['type'] === E_ERROR || $error['type'] === E_PARSE || $error['type'] === E_CORE_ERROR || $error['type'] === E_COMPILE_ERROR)) {
+            error_log('[PDF Preview Shutdown] Fatal error: ' . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']);
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            header('Content-Type: application/json; charset=UTF-8', true);
+            echo json_encode(['success' => false, 'message' => 'Fatal error: ' . substr($error['message'], 0, 100)]);
+            exit;
         }
     }
 
@@ -475,23 +499,23 @@ class PreviewImageAPI {
     }
 
     /**
-     * Envoi d'erreur JSON forcé
+     * Envoi d'erreur JSON - SIMPLE ET ROBUSTE
      */
     private function send_json_error($message, $code = 400) {
+        // Nettoyer les buffers
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
         // Headers
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=UTF-8', true);
         http_response_code($code);
 
-        // Réponse JSON d'erreur
-        $response = json_encode([
+        // Réponse JSON simple - même pattern que l'autre plugin
+        echo json_encode([
             'success' => false,
-            'data' => [
-                'message' => $message,
-                'code' => 'PREVIEW_ERROR'
-            ]
+            'message' => $message
         ]);
-
-        echo $response;
         exit;
     }
 
