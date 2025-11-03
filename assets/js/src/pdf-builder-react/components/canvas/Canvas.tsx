@@ -250,6 +250,16 @@ const drawWooCommerceField = (ctx: CanvasRenderingContext2D, element: Element) =
 };
 
 const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
+  // Vérifier si l'élément est visible
+  if (!element.visible) {
+    return;
+  }
+
+  // Vérifier que l'élément a des dimensions valides
+  if (!element.width || !element.height || element.width <= 0 || element.height <= 0) {
+    return;
+  }
+
   ctx.save();
 
   // Appliquer transformation de l'élément
@@ -372,9 +382,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner les éléments
     if (state.elements && state.elements.length > 0) {
-      state.elements.forEach((element) => {
+      console.log('Rendering', state.elements.length, 'elements:', state.elements);
+      state.elements.forEach((element, index) => {
+        console.log(`Drawing element ${index}:`, element.type, 'at', element.x, element.y, 'size', element.width, 'x', element.height);
         drawElement(ctx, element);
       });
+    } else {
+      console.log('No elements to render');
     }
 
     // Dessiner la sélection
