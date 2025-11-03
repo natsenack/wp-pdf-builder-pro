@@ -4962,10 +4962,10 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
-        // Enqueue API Preview scripts for React editor
+        // Enqueue API Preview scripts for React editor - from assets js folder
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd');
-        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-api-client.js', ['jquery'], $version_param, true);
-        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
+        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
+        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
 
         // Localize pdfBuilderAjax for API Preview scripts
         wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
