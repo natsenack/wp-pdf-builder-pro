@@ -212,7 +212,7 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Crée la modal d'aperçu
+     * Crée la modal d'aperçu - FIXED CENTERING v3.3
      */
     createPreviewModal() {
         // Ajouter une vraie feuille CSS pour le modal si elle n'existe pas
@@ -254,10 +254,11 @@ class PDFPreviewAPI {
                     min-width: 300px !important;
                     position: relative !important;
                     width: 500px !important;
+                    align-self: center !important;
                 }
             `;
             document.head.appendChild(styleSheet);
-            console.log('✅ PDF Preview modal CSS injectée');
+            console.log('✅ PDF Preview modal CSS injectée - Centrage FLEX activé');
         }
         
         const modal = document.createElement('div');
