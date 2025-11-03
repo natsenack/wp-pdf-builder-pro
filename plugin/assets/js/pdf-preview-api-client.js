@@ -205,8 +205,17 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal
-        previewModal.setAttribute('class', 'pdf-preview-modal-visible');
+        // Afficher la modal avec les styles forcés
+        previewModal.style.display = 'flex';
+        previewModal.style.position = 'fixed';
+        previewModal.style.top = '0';
+        previewModal.style.left = '0';
+        previewModal.style.width = '100%';
+        previewModal.style.height = '100%';
+        previewModal.style.justifyContent = 'center';
+        previewModal.style.alignItems = 'center';
+        previewModal.style.zIndex = '9999';
+        previewModal.style.backgroundColor = 'rgba(0,0,0,0.8)';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -217,17 +226,17 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        modal.setAttribute('class', 'pdf-preview-modal-hidden');
         modal.style.cssText = `
             position: fixed;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: rgba(0,0,0,0.8) !important;
-            z-index: 9999 !important;
-            justify-content: center !important;
-            align-items: center !important;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
         `;
 
         modal.innerHTML = `
@@ -257,27 +266,15 @@ class PDFPreviewAPI {
 
         // Gestionnaire de fermeture
         modal.querySelector('#pdf-preview-close').addEventListener('click', () => {
-            modal.setAttribute('class', 'pdf-preview-modal-hidden');
+            modal.style.display = 'none';
         });
 
         // Fermeture en cliquant en dehors
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.setAttribute('class', 'pdf-preview-modal-hidden');
+                modal.style.display = 'none';
             }
         });
-
-        // Ajouter le style pour montrer/cacher
-        const style = document.createElement('style');
-        style.textContent = `
-            .pdf-preview-modal-hidden {
-                display: none !important;
-            }
-            .pdf-preview-modal-visible {
-                display: flex !important;
-            }
-        `;
-        document.head.appendChild(style);
 
         return modal;
     }
