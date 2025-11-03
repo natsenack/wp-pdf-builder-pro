@@ -1,8 +1,45 @@
 /**
  * PDF Builder Pro - Preview API Client
  * Intégration complète de l'API Preview 1.4
- * Version finale avec modal centrage CSS FIXED 2025-11-03 13:50:00
+ * SOLUTION: Centrage modal avec injecteur CSS agressif
  */
+
+// ⚡ FORCE INJECTER LE CSS IMMÉDIATEMENT AU CHARGEMENT
+(function() {
+    if (!document.getElementById('pdf-preview-modal-styles-v2')) {
+        const style = document.createElement('style');
+        style.id = 'pdf-preview-modal-styles-v2';
+        style.textContent = `
+            #pdf-preview-modal {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: rgba(0,0,0,0.8) !important;
+                display: none !important;
+                z-index: 99999 !important;
+            }
+            #pdf-preview-modal.visible {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            #pdf-preview-modal-wrapper {
+                background: white !important;
+                border-radius: 8px !important;
+                padding: 20px !important;
+                max-width: 90vw !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+                width: 500px !important;
+                position: relative !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+})();
 
 // Fonctions de debug conditionnel
 function isDebugEnabled() {
@@ -250,54 +287,9 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Crée la modal d'aperçu
+     * Crée la modal d'aperçu (CSS déjà injecté en haut du fichier)
      */
     createPreviewModal() {
-        // Ajouter une vraie feuille CSS pour le modal si elle n'existe pas
-        if (!document.getElementById('pdf-preview-modal-styles')) {
-            const styleSheet = document.createElement('style');
-            styleSheet.id = 'pdf-preview-modal-styles';
-            styleSheet.textContent = `
-                #pdf-preview-modal {
-                    position: fixed !important;
-                    top: 0 !important;
-                    left: 0 !important;
-                    width: 100% !important;
-                    height: 100% !important;
-                    background-color: rgba(0,0,0,0.8) !important;
-                    display: none !important;
-                    z-index: 99999 !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    flex-direction: column !important;
-                    visibility: visible !important;
-                    gap: 0 !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                }
-                
-                #pdf-preview-modal.visible {
-                    display: flex !important;
-                }
-                
-                #pdf-preview-modal-wrapper {
-                    background: white !important;
-                    border-radius: 8px !important;
-                    padding: 20px !important;
-                    max-width: 90vw !important;
-                    max-height: 90vh !important;
-                    overflow-y: auto !important;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
-                    flex-shrink: 0 !important;
-                    min-width: 300px !important;
-                    position: relative !important;
-                    width: 500px !important;
-                }
-            `;
-            document.head.appendChild(styleSheet);
-            console.log('✅ PDF Preview modal CSS injectée');
-        }
-        
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
         
