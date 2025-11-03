@@ -63,13 +63,51 @@ export function useSaveState({
   const savedStateTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Timer pour revenir à idle
 
   /**
-   * Calcule un hash simple des éléments pour détecter les changements
+   * Calcule un hash robuste des éléments pour détecter les changements réels
    */
   const getElementsHash = useCallback((els: any[]): string => {
     try {
-      return JSON.stringify(els).substring(0, 100);
-    } catch {
-      return 'error';
+      // Fonction récursive pour nettoyer les objets et ignorer les propriétés volatiles
+      const cleanObject = (obj: any): any => {
+        if (obj === null || typeof obj !== 'object') {
+          return obj;
+        }
+
+        if (Array.isArray(obj)) {
+          return obj.map(cleanObject);
+        }
+
+        const cleaned: any = {};
+        for (const key in obj) {
+          // Ignorer les propriétés volatiles qui changent constamment
+          if (
+            key === 'id' || // IDs générés
+            key === 'key' || // React keys
+            key === 'ref' || // React refs
+            key === '_owner' || // React internal
+            key === '_store' || // React internal
+            key.startsWith('__') || // Propriétés privées
+            key === 'canvas' || // Canvas elements
+            key === 'context' || // Canvas context
+            key === 'updatedAt' || // Timestamps
+            key === 'createdAt' || // Timestamps
+            key === 'timestamp' || // Timestamps
+            typeof obj[key] === 'function' // Fonctions
+          ) {
+            continue;
+          }
+
+          cleaned[key] = cleanObject(obj[key]);
+        }
+
+        return cleaned;
+      };
+
+      const cleanedElements = cleanObject(els);
+      return JSON.stringify(cleanedElements);
+    } catch (error) {
+      // En cas d'erreur, retourner un hash simple mais stable
+      return `error-${els.length}`;
     }
   }, []);
 
