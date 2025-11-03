@@ -4966,6 +4966,31 @@ class PDF_Builder_Admin {
             console.warn('%c[PDF-Builder WARN]', 'color: #ff9800; font-weight: bold;', ...args);
         }
 
+        // Watcher: detect if any other script overwrites window.pdfBuilderReact later
+        (function(){
+            try {
+                var existingDesc = Object.getOwnPropertyDescriptor(window, 'pdfBuilderReact');
+                debugLog('🔎 pdfBuilderReact descriptor at watcher install:', existingDesc);
+                var _current = window.pdfBuilderReact;
+                Object.defineProperty(window, 'pdfBuilderReact', {
+                    configurable: true,
+                    enumerable: true,
+                    get: function() { return _current; },
+                    set: function(val) {
+                        debugWarn('⚠️ window.pdfBuilderReact overwritten', {
+                            before: _current,
+                            after: val,
+                            stack: (new Error()).stack
+                        });
+                        _current = val;
+                        return _current;
+                    }
+                });
+            } catch (e) {
+                debugError('Watcher install failed:', e);
+            }
+        })();
+
         // Log des scripts enqueued
         debugLog('=== REACT PDF BUILDER INITIALIZATION START ===');
         debugLog('Window scripts info:', {
