@@ -4954,9 +4954,9 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
     {
         $this->checkAdminPermissions();
 
-        // Enqueue React scripts from local build
-        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
-        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
+        // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
+        wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
+        wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
         // Enqueue PDF Builder React scripts from local build
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
