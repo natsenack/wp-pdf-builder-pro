@@ -90,13 +90,23 @@ export function useSaveState({
       }
 
       // Timeout global de 15 secondes pour éviter le blocage
-      const saveTimeout = setTimeout(() => {
+      let saveTimeout: NodeJS.Timeout;
+      let timeoutTriggered = false;
+
+      saveTimeout = setTimeout(() => {
+        if (timeoutTriggered) return; // Éviter les doubles déclenchements
+        timeoutTriggered = true;
+
         debugError('[SAVE STATE] Timeout global dépassé, forçage de l\'état error');
         startTransition(() => {
           setState('error');
-          setError('Timeout de sauvegarde');
+          setError('Timeout de sauvegarde (15s)');
         });
-        onSaveError?.('Timeout de sauvegarde');
+        onSaveError?.('Timeout de sauvegarde (15s)');
+
+        // Nettoyer les ressources
+        controller.abort(); // Annuler la requête en cours si elle existe
+        clearTimeout(timeoutId);
       }, 15000);
 
       try {
@@ -154,7 +164,9 @@ export function useSaveState({
         
         // Créer un AbortController pour timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 secondes timeout
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 8000); // Réduit à 8 secondes pour laisser du temps au timeout global
         
         const response = await fetch(ajaxUrl, {
           method: 'POST',
@@ -219,10 +231,12 @@ export function useSaveState({
         clearTimeout(saveTimeout); // Nettoyer le timeout global
         return true;
       } catch (err: any) {
+        // Marquer le timeout comme déclenché pour éviter les conflits
+        timeoutTriggered = true;
         clearTimeout(saveTimeout); // Nettoyer le timeout global
         
         const errorMsg = err?.name === 'AbortError' 
-          ? 'Timeout de la requête (10s)' 
+          ? 'Timeout de la requête (8s)' 
           : (err?.message || 'Erreur inconnue');
         debugError(`[SAVE STATE] Erreur ${retryAttempt + 1}/${maxRetries + 1}:`, errorMsg);
 
@@ -389,6 +403,24 @@ export function useSaveState({
       }
     };
   }, [templateId, elements, autoSaveInterval, performSave, getElementsHash]);
+
+  /**
+   * Protection contre les états bloqués - force la transition après 30 secondes
+   */
+  useEffect(() => {
+    if (state === 'saving') {
+      const stuckTimeout = setTimeout(() => {
+        debugError('[SAVE STATE] État "saving" bloqué détecté, forçage à error');
+        startTransition(() => {
+          setState('error');
+          setError('Sauvegarde bloquée - timeout de sécurité');
+        });
+        onSaveError?.('Sauvegarde bloquée - timeout de sécurité');
+      }, 30000); // 30 secondes de sécurité
+
+      return () => clearTimeout(stuckTimeout);
+    }
+  }, [state, onSaveError]);
 
   /**
    * Cleanup des timers à la dé-montage
