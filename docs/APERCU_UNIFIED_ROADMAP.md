@@ -481,7 +481,268 @@ public function GeneratePreview($saveToDatabase = false) {
 
 ---
 
-## 🚀 **Phase 2 : Fonctionnalités Premium Avancées**
+## 🎨 **Phase 1.5 : Audit et Refactorisation CSS**
+
+**📅 Date** : November 3, 2025
+**🎯 Objectif** : Centraliser tous les styles CSS du plugin dans des fichiers dédiés, éliminant les styles inline et les `!important` parasites
+**⏱️ Durée estimée** : 2-3 jours
+**📊 Statut** : ⏳ À implémenter
+**🔑 Priorité** : CRITIQUE - Fondation pour stabilité future
+
+### 🔍 **Étape 1.5.1 : Audit Complet CSS**
+**Objectif** : Identifier et inventorier tous les styles du projet
+
+**📝 Audit Systématique :**
+- [ ] Scan all JavaScript files for `style.cssText` and inline styles
+- [ ] Scan all PHP files for `style="..."` attributes
+- [ ] Scan all HTML templates for inline CSS
+- [ ] Scan all existing CSS files for unused/duplicate rules
+- [ ] Document every style found with:
+  - [ ] Location (file:line)
+  - [ ] Element/Component concerned
+  - [ ] Purpose and context
+  - [ ] Current state (inline/file/conflicting)
+- [ ] Create comprehensive audit spreadsheet with columns:
+  - [ ] File Path | Line | Element ID/Class | CSS Property | Value | Current Location | Target File | Status
+
+**📊 Documentation d'Audit :**
+- [ ] Create `docs/CSS_AUDIT_REPORT.md` with full findings
+- [ ] Group styles by component (Modal, SaveIndicator, Preview, etc.)
+- [ ] Identify CSS conflicts and cascade issues
+- [ ] List all `!important` flags with justification analysis
+- [ ] Document z-index layering strategy
+- [ ] Identify responsive breakpoints needed
+
+**✅ Liverable** : Complete CSS audit spreadsheet + detailed report
+
+### 🗂️ **Étape 1.5.2 : Organisation Architecture CSS**
+**Objectif** : Établir une structure CSS cohérente et maintenable
+
+**🏗️ Structure de Fichiers CSS :**
+```
+plugin/assets/css/
+├── main.css                 # Point d'entrée principal
+├── base/
+│   ├── normalize.css        # Reset/normalize styles
+│   ├── variables.css        # CSS custom properties (colors, spacing, etc.)
+│   └── typography.css       # Font families, sizes, weights
+├── layout/
+│   ├── grid.css             # Grid systems
+│   ├── flexbox-utilities.css # Flex helpers
+│   └── responsive.css       # Media queries and breakpoints
+├── components/
+│   ├── modal.css            # Modal styles (preview, dialogs)
+│   ├── buttons.css          # Button styles
+│   ├── forms.css            # Form elements
+│   ├── notifications.css    # Toast, alerts, save indicator
+│   ├── toolbar.css          # Editor toolbar
+│   ├── editor.css           # Editor canvas area
+│   └── tables.css           # Table styles
+├── features/
+│   ├── preview-api.css      # Preview system specific styles
+│   ├── autosave.css         # Auto-save indicator styles
+│   └── animations.css       # Transitions and animations
+├── utilities/
+│   ├── spacing.css          # Margin, padding utilities
+│   ├── display.css          # Display utilities
+│   ├── sizing.css           # Width, height utilities
+│   └── positioning.css      # Position utilities
+├── vendor/
+│   └── third-party.css      # External library overrides
+└── admin/
+    └── admin-only.css       # WordPress admin specific styles
+```
+
+**🎨 Conventions CSS :**
+- [ ] BEM naming convention: `.block__element--modifier`
+- [ ] No `!important` unless absolutely justified (with comments)
+- [ ] Mobile-first responsive approach
+- [ ] CSS variables for theming (colors, sizes, timing)
+- [ ] Consistent property ordering (position, display, layout, text, etc.)
+- [ ] Meaningful class names reflecting purpose
+- [ ] Group related properties together
+- [ ] Max specificity of 2 selectors (`.parent .child`, not deeper)
+
+**📋 Documentation Standards :**
+- [ ] Each file starts with purpose comment block
+- [ ] Section headers for logical grouping
+- [ ] Inline comments for non-obvious styling
+- [ ] Links to related components/files
+- [ ] Browser compatibility notes if needed
+
+**✅ Liverable** : Complete CSS folder structure + style guide document
+
+### 🔄 **Étape 1.5.3 : Migration CSS depuis Inline**
+**Objectif** : Extraire tous les styles inline vers les fichiers CSS
+
+**� Fichiers à Processus :**
+- [ ] `plugin/assets/js/pdf-preview-api-client.js` - Preview modal styles → `components/modal.css`
+- [ ] `plugin/assets/js/components/*.js` - React component styles → appropriate component CSS files
+- [ ] `plugin/assets/js/editor/*.js` - Editor UI styles → `layout/editor.css` + `components/toolbar.css`
+- [ ] `plugin/assets/js/hooks/*.js` - Hook component styles → `features/*.css`
+- [ ] All PHP templates - inline style attributes → CSS class references
+- [ ] All React components - style prop → className + CSS file
+
+**🔧 Processus Migration par Fichier :**
+1. [ ] Identify all `style.cssText`, `style.something = `, and `style="..."` in file
+2. [ ] Extract each style block with context documentation
+3. [ ] Create corresponding CSS selectors in appropriate CSS file
+4. [ ] Replace inline styles with class names or CSS selectors
+5. [ ] Test visual appearance hasn't changed
+6. [ ] Verify no CSS conflicts introduced
+7. [ ] Update component comments with CSS file references
+8. [ ] Commit with descriptive message mentioning CSS migration
+
+**🧪 Validation Migration :**
+- [ ] Visual regression testing (before/after screenshots)
+- [ ] Browser DevTools inspection (no visual differences)
+- [ ] Console for CSS conflicts/warnings
+- [ ] Performance impact measurement
+- [ ] Responsive design testing at breakpoints
+
+**⚠️ Special Cases :**
+- [ ] Dynamic inline styles → CSS classes with JS toggling + `classList`
+- [ ] Computed styles → CSS variables with JavaScript values
+- [ ] User-customizable styles → CSS variables with admin settings
+- [ ] Temporary/debug styles → Remove or move to debug.css
+
+**✅ Liverable** : All inline styles migrated + clean JavaScript files
+
+### 📝 **Étape 1.5.4 : Intégration CSS dans Templates**
+**Objectif** : Assurer que les fichiers CSS sont correctement chargés aux bons endroits
+
+**🔌 Points de Chargement CSS :**
+- [ ] **Admin Dashboard** : Charger via `wp_enqueue_style()` dans le hook `admin_enqueue_scripts`
+- [ ] **Frontend Editor** : Charger via WordPress `wp_enqueue_style()`
+- [ ] **WooCommerce Metabox** : Charger spécifiquement pour pages produit
+- [ ] **Public Frontend** : Charger si module de preview public activé
+- [ ] **Print Styles** : Media query `@media print` pour export PDF
+
+**📋 Checklist Chargement :**
+- [ ] Create `plugin/assets/css/loader.php` - central CSS loading manager
+- [ ] Define function `enqueue_plugin_styles($context)` with:
+  - [ ] `$context` parameter: 'admin', 'editor', 'frontend', 'metabox'
+  - [ ] Conditional loading based on context
+  - [ ] Proper dependencies handling
+  - [ ] Version control for cache busting
+- [ ] Implement in appropriate WordPress hooks:
+  - [ ] `admin_enqueue_scripts` for admin pages
+  - [ ] `wp_enqueue_scripts` for frontend
+  - [ ] Custom action for metabox context
+- [ ] Document CSS loading strategy in comments
+- [ ] Test that no CSS is loaded unnecessarily
+- [ ] Verify CSS loads in correct order (no override issues)
+
+**🔍 Validation :**
+- [ ] Chrome DevTools Sources tab shows all CSS files loaded
+- [ ] No 404 errors in console for CSS files
+- [ ] Styles apply correctly to components
+- [ ] No missing styles in any context
+- [ ] Performance: CSS load time < 500ms total
+
+**✅ Liverable** : `css-loader.php` + proper `wp_enqueue_style()` calls
+
+### 🧪 **Étape 1.5.5 : Tests et Validation Finale**
+**Objectif** : Valider que la refactorisation CSS n'a cassé rien
+
+**📊 Test Suite :**
+- [ ] Visual Regression Tests:
+  - [ ] Screenshot modal preview before/after
+  - [ ] Screenshot save indicator before/after
+  - [ ] Screenshot editor UI before/after
+  - [ ] Screenshot all pages responsive (mobile/tablet/desktop)
+- [ ] CSS Validation:
+  - [ ] Run CSS through W3C Validator
+  - [ ] Check for unused CSS (can use tools like PurgeCSS)
+  - [ ] Verify no conflicting selectors
+  - [ ] Check specificity is reasonable
+- [ ] Cross-browser Testing:
+  - [ ] Chrome/Edge (latest)
+  - [ ] Firefox (latest)
+  - [ ] Safari (latest)
+  - [ ] Mobile browsers (Chrome mobile, Safari iOS)
+- [ ] Performance Testing:
+  - [ ] Measure CSS file sizes
+  - [ ] Check Lighthouse CSS performance score
+  - [ ] Profile render/reflow performance
+  - [ ] Test on slow 3G network
+- [ ] Accessibility Testing:
+  - [ ] Color contrast ratios sufficient
+  - [ ] Focus states visible
+  - [ ] No keyboard navigation breaks
+- [ ] CSS-in-JS Conflicts:
+  - [ ] Ensure no JavaScript `style` properties override CSS
+  - [ ] Verify `classList` methods work properly
+  - [ ] Test CSS cascade precedence correct
+
+**✅ Criteria for Success :**
+- [ ] All visual aspects identical to before refactoring
+- [ ] No CSS errors in console
+- [ ] Performance metrics same or improved
+- [ ] Code coverage for CSS scenarios 100%
+- [ ] All tests passing
+- [ ] No merge conflicts in deployment
+
+**✅ Liverable** : Test report + before/after screenshots + validation checklist
+
+### 📚 **Étape 1.5.6 : Documentation CSS et Style Guide**
+**Objectif** : Document CSS architecture pour maintenance future
+
+**📖 Documentation à Créer :**
+- [ ] **CSS_ARCHITECTURE.md** - Overview of CSS structure and philosophy
+- [ ] **CSS_CONVENTIONS.md** - Style rules, naming conventions, patterns
+- [ ] **CSS_VARIABLES.md** - Custom properties reference
+- [ ] **RESPONSIVE_BREAKPOINTS.md** - Media query strategy
+- [ ] **Z_INDEX_STRATEGY.md** - Z-index layering and stacking contexts
+- [ ] **COLOR_PALETTE.md** - Color system and usage
+- [ ] **COMPONENT_STYLES.md** - Individual component CSS guide
+- [ ] **TROUBLESHOOTING.md** - Common CSS issues and solutions
+
+**🎓 Style Guide Interactif :**
+- [ ] Create visual style guide document showing:
+  - [ ] Color palette with hex codes
+  - [ ] Typography hierarchy
+  - [ ] Spacing system (margins, paddings)
+  - [ ] Button styles and states
+  - [ ] Form element styles
+  - [ ] Modal and dialog styles
+  - [ ] Notification/toast styles
+  - [ ] Loading states and animations
+  - [ ] Component variations
+- [ ] Document responsive behavior at each breakpoint
+- [ ] Show accessibility features (focus states, contrast, etc.)
+
+**📝 Code Comments :**
+- [ ] Add file headers to each CSS file with purpose
+- [ ] Comment complex selectors or non-obvious rules
+- [ ] Link to related components or documentation
+- [ ] Note browser compatibility issues if any
+- [ ] Mark technical debt or future improvements
+
+**✅ Liverable** : Complete CSS documentation suite + interactive style guide
+
+### 🎯 **Résumé Phase 1.5**
+
+**Impact Attendu :**
+- ✅ **Maintenabilité** : CSS centralisé et organisé, facile à modifier
+- ✅ **Performance** : CSS minifié, pas de styles inline parasites
+- ✅ **Stabilité** : Pas de conflits CSS, hiérarchie claire
+- ✅ **Scalabilité** : Structure pour ajouter nouveaux composants facilement
+- ✅ **Documentation** : Style guide pour cohérence future
+
+**Blockers Résolus:**
+- ✅ Modal toujours en haut-à-gauche → CSS positioning enfin appliqué correctement
+- ✅ `!important` partout → Hiérarchie CSS propre
+- ✅ Styles scattered → Centralisés et organisés
+- ✅ Impossible debugger CSS en JS → Styles dans DevTools facilement
+
+**Prochaine Étape:** Phase 2.1 (Système de Thèmes CSS) utilisant cette fondation CSS solide
+
+---
+
+## �🚀 **Phase 2 : Fonctionnalités Premium Avancées**
+
+
 
 **📅 Date** : Q1 2026
 **🎯 Objectif** : Ajouter les fonctionnalités avancées inspirées du concurrent pour différenciation premium

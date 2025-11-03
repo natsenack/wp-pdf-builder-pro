@@ -221,9 +221,9 @@ class PDFPreviewAPI {
         // Overlay overlay fullscreen avec fond noir transparent
         modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.8) !important; display: none !important; z-index: 99999 !important; overflow: auto !important; visibility: hidden;';
         
-        // Wrapper blanc qui sera centré avec translate
+        // Wrapper blanc qui sera centré avec translate - POSITION RELATIVE, pas fixed!
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; background: white !important; border-radius: 8px !important; padding: 20px !important; max-width: 90vw !important; max-height: 90vh !important; overflow: auto !important; box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important; z-index: 100000 !important;';
+        wrapper.style.cssText = 'position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; background: white !important; border-radius: 8px !important; padding: 20px !important; max-width: 90vw !important; max-height: 90vh !important; overflow: auto !important; box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important; z-index: 100000 !important;';
 
         // Header avec titre et bouton fermer
         const header = document.createElement('div');
