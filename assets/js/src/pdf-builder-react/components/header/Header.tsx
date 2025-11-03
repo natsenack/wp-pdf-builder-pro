@@ -1012,6 +1012,15 @@ export const Header = memo(function Header({
                   setPreviewImageUrl(null);
 
                   try {
+                    // Vérifier s'il y a du contenu dans le template
+                    const hasContent = state.elements && state.elements.length > 0;
+
+                    if (!hasContent) {
+                      setPreviewError('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');
+                      setIsGeneratingPreview(false);
+                      return;
+                    }
+
                     // Utiliser l'API Preview
                     if (typeof window.pdfPreviewAPI !== 'undefined') {
                       const result = await window.pdfPreviewAPI.generateEditorPreview({
