@@ -17,10 +17,9 @@ class PreviewImageAPI {
             wp_mkdir_p($this->cache_dir);
         }
 
-        add_action('wp_ajax_wp_pdf_preview_image', array($this, 'generate_preview'));
-        add_action('wp_ajax_nopriv_wp_pdf_preview_image', array($this, 'generate_preview')); // Pour les vendeurs
-
-        error_log('[PDF Preview] AJAX actions registered: wp_ajax_wp_pdf_preview_image');
+        // NOTE: Les actions AJAX sont enregistrées dans pdf-builder-pro.php, pas ici
+        // pour éviter les conflits de double enregistrement
+        error_log('[PDF Preview] AJAX actions are registered by pdf-builder-pro.php');
 
         // Nettoyage automatique du cache
         add_action('wp_pdf_cleanup_preview_cache', array($this, 'cleanup_cache'));

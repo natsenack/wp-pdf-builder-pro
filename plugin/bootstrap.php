@@ -206,15 +206,8 @@ function pdf_builder_load_bootstrap() {
     // CHARGER LES NOUVELLES CLASSES WP_PDF_Builder_Pro
     pdf_builder_load_new_classes();
 
-    // Initialiser l'API Preview APRÈS le chargement des classes
-    if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
-        error_log('[Bootstrap] Instanciating PreviewImageAPI...');
-        $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
-        error_log('[Bootstrap] PreviewImageAPI instanciated successfully');
-        // L'API s'enregistre automatiquement dans son constructeur
-    } else {
-        error_log('[Bootstrap] PreviewImageAPI class not found!');
-    }
+    // NOTE: PreviewImageAPI est instanciée dans pdf_builder_handle_preview_ajax()
+    // dans pdf-builder-pro.php, pas ici, pour éviter les conflits
 
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Core')) {

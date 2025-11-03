@@ -137,8 +137,8 @@ add_action('init', 'pdf_builder_handle_pdf_downloads');
 
 // Charger le plugin pour les requêtes AJAX
 add_action('admin_init', 'pdf_builder_load_for_ajax');
-add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_load_for_ajax');
-add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_load_for_ajax');
+add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
+add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
 /**
  * Charger le plugin pour les requêtes AJAX
@@ -151,6 +151,32 @@ function pdf_builder_load_for_ajax() {
         if (function_exists('pdf_builder_load_bootstrap')) {
             pdf_builder_load_bootstrap();
         }
+    }
+}
+
+/**
+ * Gestionnaire AJAX pour les aperçus PDF
+ * Cette fonction DOIT être un callback AJAX véritable qui produit une réponse
+ */
+function pdf_builder_handle_preview_ajax() {
+    // Charger le bootstrap
+    pdf_builder_load_for_ajax();
+    
+    // Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
+    // Maintenant, appelons directement la méthode generate_preview si PreviewImageAPI existe
+    if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+        // Créer une nouvelle instance et appeler generate_preview directement
+        $api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+        $api->generate_preview();
+    } else {
+        // Fallback: envoyer une erreur JSON
+        header('Content-Type: application/json; charset=UTF-8', true);
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'PreviewImageAPI not found - plugin not properly initialized'
+        ]);
+        exit;
     }
 }
 
