@@ -1014,12 +1014,6 @@ export const Header = memo(function Header({
                   try {
                     // Vérifier s'il y a du contenu dans le template
                     const hasContent = state.elements && state.elements.length > 0;
-                    console.log('🔍 Debug preview:', {
-                      hasContent,
-                      elementsCount: state.elements?.length || 0,
-                      elements: state.elements,
-                      template: state.template
-                    });
 
                     if (!hasContent) {
                       setPreviewError('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');
