@@ -32,6 +32,9 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   const [visible, setVisible] = useState(false);
   const [autoHideTimer, setAutoHideTimer] = useState<NodeJS.Timeout | null>(null);
 
+  // Debug
+  console.log('[SaveIndicator] state:', state, 'visible:', visible, 'progress:', progress);
+
   // Gérer la visibilité automatique
   useEffect(() => {
     if (state === 'idle') {
@@ -87,6 +90,24 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
         className={`save-indicator save-indicator--${state}`}
         title={getTitle()}
         aria-label={getTitle()}
+        style={{
+          position: 'fixed',
+          top: '50px',
+          right: '20px',
+          padding: '12px 16px',
+          borderRadius: '8px',
+          background: state === 'saving' ? '#f0f6fc' : state === 'saved' ? '#f0fdf4' : state === 'error' ? '#fef2f2' : '#fff',
+          border: state === 'saving' ? '1px solid #0073aa' : state === 'saved' ? '1px solid #46b450' : state === 'error' ? '1px solid #dc2626' : '1px solid #e0e0e0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          fontSize: '13px',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          zIndex: 999999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          maxWidth: '280px',
+          animation: 'slideInDown 0.3s ease-out forwards'
+        }}
       >
       <div className="save-indicator__content">
         {/* Spinner pour 'saving' */}

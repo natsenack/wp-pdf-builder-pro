@@ -279,6 +279,13 @@ export function useSaveStateV2({
   }, [elements, getElementsHash, state, autoSaveInterval, performSave]);
 
   /**
+   * Debug state changes
+   */
+  useEffect(() => {
+    console.log('[useSaveStateV2] state changed to:', state, 'templateId:', templateId);
+  }, [state, templateId]);
+
+  /**
    * Cleanup à la dé-montage
    */
   useEffect(() => {
