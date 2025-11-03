@@ -905,9 +905,9 @@ class PDF_Builder_Admin {
         error_log('[PHP] Script URL: ' . $script_url);
         error_log('[PHP] PDF_BUILDER_PRO_VERSION constant: ' . PDF_BUILDER_PRO_VERSION);
         
-        // Forcer une version unique basée sur le timestamp pour forcer le rechargement du cache browser
-        // Version inclut date + heure + nombre aléatoire pour forcer le cache bust absolu
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . gmdate('Ymd') . '-' . gmdate('His') . '-' . rand(10000, 99999);
+        // Forcer une version unique à CHAQUE rechargement pour forcer le cache bust complet
+        // Inclure le timestamp exact du serveur (actualisé à chaque page)
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
         
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true);
         error_log('[PHP] Script enqueued successfully with version: ' . $version_param);
