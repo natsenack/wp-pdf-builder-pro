@@ -134,8 +134,8 @@ class PDF_Builder_Admin {
         $this->core = $core;
         
         // Initialiser l'intégration WooCommerce si disponible
-        if (class_exists('\PDF_Builder_WooCommerce_Integration')) {
-            $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->core);
+        if (class_exists('PDF_Builder\\Managers\\PDF_Builder_WooCommerce_Integration')) {
+            $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
         }
         
         // NE PAS instancier le manager de templates immédiatement
