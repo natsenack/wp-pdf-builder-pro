@@ -21,6 +21,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   className
 }: PDFBuilderContentProps) {
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
+  const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
 
   const {
     templateName,
@@ -131,7 +132,33 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           <ElementLibrary />
 
           {/* Zone centrale avec le canvas */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+            {/* Bouton toggle pour le panneau de propriétés */}
+            <button
+              onClick={() => setIsPropertiesPanelOpen(!isPropertiesPanelOpen)}
+              style={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                zIndex: 20,
+                padding: '8px 12px',
+                backgroundColor: '#007acc',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title={isPropertiesPanelOpen ? 'Fermer le panneau de propriétés' : 'Ouvrir le panneau de propriétés'}
+            >
+              {isPropertiesPanelOpen ? '◁' : '▷'} Propriétés
+            </button>
+            
             <div
               style={{
                 flex: 1,
@@ -169,18 +196,20 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           </div>
 
           {/* Panneau de propriétés à droite */}
-          <div
-            style={{
-              flexShrink: 0,
-              width: '430px',
-              position: 'sticky',
-              top: '110px',
-              height: 'fit-content',
-              maxHeight: 'calc(100vh - 32px)'
-            }}
-          >
-            <PropertiesPanel />
-          </div>
+          {isPropertiesPanelOpen && (
+            <div
+              style={{
+                flexShrink: 0,
+                width: '430px',
+                position: 'sticky',
+                top: '110px',
+                height: 'fit-content',
+                maxHeight: 'calc(100vh - 32px)'
+              }}
+            >
+              <PropertiesPanel />
+            </div>
+          )}
         </div>
       </div>
     </>
