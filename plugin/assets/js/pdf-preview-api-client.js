@@ -182,9 +182,10 @@ class PDFPreviewAPI {
 
     /**
      * Affiche l'aperçu généré
+     * FIX CENTRAGE MODAL - Version 3.2.1
      */
     displayPreview(imageUrl, context, orderId = null) {
-        console.log('🚨🚨🚨 DISPLAYPREVIEW APPELÉE 🚨🚨🚨', { context, imageUrl });
+        console.log('🎯 PREVIEW SHOW - Centered Modal v3.2.1');
         
         // Créer ou mettre à jour la modal d'aperçu
         let previewModal = document.getElementById('pdf-preview-modal');
@@ -209,7 +210,7 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal en togglant la classe
+        // Afficher la modal en togglant la classe FLEX
         previewModal.classList.add('visible');
         
         // DEBUG: Vérifier les styles appliqués
