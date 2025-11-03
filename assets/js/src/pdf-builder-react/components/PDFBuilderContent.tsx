@@ -4,7 +4,7 @@ import { Toolbar } from './toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
 import { Header } from './header/Header.tsx';
 import { ElementLibrary } from './element-library/ElementLibrary.tsx';
-import { SaveIndicator } from './ui/SaveIndicator.tsx';
+import { SaveTooltip } from './ui/SaveTooltip.tsx';
 import { useTemplate } from '../hooks/useTemplate.ts';
 import { useAutoSave } from '../hooks/useAutoSave.ts';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
@@ -67,14 +67,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   return (
     <>
       {/* SaveIndicator - affiché dans le coin supérieur droit */}
-      <SaveIndicator
+      <SaveTooltip
         state={autoSaveState}
         lastSavedAt={lastSavedAt}
         error={autoSaveError}
-        onRetry={retryAutoSave}
-        position="top-right"
         progress={progress}
-        showProgressBar={autoSaveState === 'saving'}
+        onSaveNow={retryAutoSave}
       />
 
       <div

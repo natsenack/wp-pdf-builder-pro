@@ -1,0 +1,210 @@
+/**
+ * SaveTooltip.css
+ * Styles pour la notification de sauvegarde en survol
+ */
+
+.save-tooltip {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  user-select: none;
+}
+
+/* Indicateur */
+.save-tooltip__indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* États de l'indicateur */
+.save-tooltip--saving .save-tooltip__indicator {
+  border-color: #0073aa;
+  background: #f0f6fc;
+  animation: pulse-save 1s ease-in-out infinite;
+}
+
+.save-tooltip--saved .save-tooltip__indicator {
+  border-color: #00a32a;
+  background: #f0f8f1;
+}
+
+.save-tooltip--error .save-tooltip__indicator {
+  border-color: #d63638;
+  background: #fdf7f7;
+}
+
+@keyframes pulse-save {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(0, 115, 170, 0.3);
+  }
+}
+
+/* Spinner */
+.save-tooltip__spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.save-tooltip__spinner-dot {
+  width: 4px;
+  height: 4px;
+  background: #0073aa;
+  border-radius: 50%;
+  position: absolute;
+  animation: spinner-rotate 1.2s linear infinite;
+}
+
+.save-tooltip__spinner-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.save-tooltip__spinner-dot:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.save-tooltip__spinner-dot:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+@keyframes spinner-rotate {
+  0% {
+    transform: rotate(0deg) translateY(-8px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: rotate(360deg) translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Icônes */
+.save-tooltip__icon {
+  display: block;
+  color: currentColor;
+}
+
+.save-tooltip--saving .save-tooltip__icon {
+  color: #0073aa;
+}
+
+.save-tooltip--saved .save-tooltip__icon {
+  color: #00a32a;
+}
+
+.save-tooltip--error .save-tooltip__icon {
+  color: #d63638;
+}
+
+.save-tooltip--idle .save-tooltip__icon {
+  color: #666;
+}
+
+/* Tooltip popup */
+.save-tooltip__popup {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 250px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.save-tooltip__label {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Barre de progression */
+.save-tooltip__progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.save-tooltip__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Bouton Sauvegarder maintenant */
+.save-tooltip__button {
+  width: 100%;
+  padding: 8px 12px;
+  background: #0073aa;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.save-tooltip__button:hover {
+  background: #005a87;
+}
+
+.save-tooltip__button:active {
+  background: #004466;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .save-tooltip {
+    top: 10px;
+    right: 10px;
+  }
+
+  .save-tooltip__indicator {
+    width: 36px;
+    height: 36px;
+  }
+
+  .save-tooltip__popup {
+    min-width: 200px;
+    top: 45px;
+    right: -20px;
+  }
+}
