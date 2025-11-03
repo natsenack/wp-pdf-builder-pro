@@ -5028,43 +5028,50 @@ wp_add_inline_script('pdf-builder-vanilla-bundle', '
 
         // Script d'initialisation React avec vérification périodique
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('Initializing React PDF Builder...');
+            debugLog('🚀 Initializing React PDF Builder...');
+            debugLog('React version loaded:', typeof React);
+            debugLog('React-DOM version loaded:', typeof ReactDOM);
 
             function tryInitReact() {
-                debugLog('Checking for pdfBuilderReact:', typeof window.pdfBuilderReact);
+                debugLog('🔍 Checking for pdfBuilderReact:', typeof window.pdfBuilderReact);
                 if (typeof window.pdfBuilderReact !== 'undefined') {
-                    debugLog('pdfBuilderReact exists:', window.pdfBuilderReact);
-                    debugLog('initPDFBuilderReact exists:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+                    debugLog('✅ pdfBuilderReact exists:', window.pdfBuilderReact);
+                    debugLog('✅ initPDFBuilderReact exists:', typeof window.pdfBuilderReact.initPDFBuilderReact);
                 }
                 if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                    debugLog('React PDF Builder script loaded, initializing...');
+                    debugLog('✅ React PDF Builder script loaded, initializing...');
                     var result = window.pdfBuilderReact.initPDFBuilderReact();
-                    debugLog('initPDFBuilderReact returned:', result);
-                    return result === true; // Only return true if initialization was successful
+                    debugLog('✅ initPDFBuilderReact returned:', result);
+                    return result === true;
                 }
-                debugLog('pdfBuilderReact not ready');
+                debugLog('⏳ pdfBuilderReact not ready yet');
                 return false;
             }
 
             // Essayer immédiatement
             if (!tryInitReact()) {
-                // Si pas prêt, vérifier toutes les 200ms pendant 10 secondes maximum
+                // Si pas prêt, vérifier toutes les 200ms pendant 30 secondes maximum
                 var attempts = 0;
-                var maxAttempts = 50; // 50 * 200ms = 10 secondes
+                var maxAttempts = 150; // 150 * 200ms = 30 secondes
                 var initInterval = setInterval(function() {
                     attempts++;
-                    debugLog('🔄 Attempt', attempts + 1 + '/' + maxAttempts, '- Checking for pdfBuilderReact...');
+                    if (attempts % 5 === 0) { // Log tous les 5 essais pour ne pas spammer
+                        debugLog('🔄 Attempt', attempts + '/' + maxAttempts, '- Checking for pdfBuilderReact...');
+                    }
                     if (tryInitReact()) {
                         clearInterval(initInterval);
-                        debugLog('✅ React bundle loaded after', attempts + 1, 'attempts');
+                        debugLog('✅✅✅ React bundle loaded after', attempts, 'attempts');
                     } else if (attempts >= maxAttempts) {
                         clearInterval(initInterval);
-                        debugError('PDF Builder React script not loaded after 10 seconds');
-                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé après 10 secondes d\'attente.</p>';
+                        debugError('❌ PDF Builder React script not loaded after 30 seconds');
+                        debugError('pdfBuilderReact:', window.pdfBuilderReact);
+                        debugError('React:', typeof React);
+                        debugError('ReactDOM:', typeof ReactDOM);
+                        document.getElementById('pdf-builder-react-loading').innerHTML = '<p>Erreur: Le script React n\'a pas pu être chargé après 30 secondes d\'attente. Vérifiez la console pour plus de détails.</p>';
                     }
                 }, 200);
             } else {
-                debugLog('✅ React bundle loaded immediately');
+                debugLog('✅✅✅ React bundle loaded immediately');
             }
         });
         </script>
