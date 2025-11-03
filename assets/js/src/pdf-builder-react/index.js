@@ -125,47 +125,37 @@ const exports = {
 
 debugLog('🌐 Assigning to window...');
 
-// Approche RÉELLE : juste assigner directement et simplement
-if (typeof window !== 'undefined') {
-  debugLog('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-
-  // Assignation directe et simple
-  try {
-    window.pdfBuilderReact = exports;
-    debugLog('✅ Direct assignment successful');
-  } catch (e) {
-    debugError('❌ Direct assignment failed:', e);
-    // Fallback avec defineProperty
-    try {
-      Object.defineProperty(window, 'pdfBuilderReact', {
-        value: exports,
-        writable: true,
-        configurable: true,
-        enumerable: true
-      });
-      debugLog('✅ defineProperty assignment successful');
-    } catch (e2) {
-      debugError('❌ defineProperty also failed:', e2);
-    }
+// Wrapper IIFE for immediate execution
+(function() {
+  if (typeof window === 'undefined') {
+    debugError('❌ window is not available');
+    return;
   }
 
-  // Vérification immédiate
+  debugLog('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+
+  // CRITICAL: Assign the exports object directly and immediately
+  window.pdfBuilderReact = exports;
+  debugLog('✅ Direct assignment successful');
+
+  // Verify immediately
   debugLog('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  debugLog('🔍 window.pdfBuilderReact object keys:', Object.keys(window.pdfBuilderReact || {}));
   debugLog('🔍 window.pdfBuilderReact.initPDFBuilderReact:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
 
-  // Double-check après 1ms
-  setTimeout(() => {
-    debugLog('⏰ 1ms check - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-    debugLog('⏰ 1ms check - initPDFBuilderReact:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
-  }, 1);
-
-} else {
-  debugError('❌ window is not available');
-}
+  // Force verify with timing
+  if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+    debugLog('✅✅ SUCCESS: initPDFBuilderReact is callable!');
+  } else {
+    debugError('❌❌ CRITICAL: initPDFBuilderReact is NOT available!');
+    debugError('window.pdfBuilderReact:', window.pdfBuilderReact);
+    debugError('exports object:', exports);
+  }
+}).call(window);
 
 debugLog('🎉 PDF Builder React bundle execution completed');
 
-// Finalized export - ensure it's at the end
+// Module export for webpack/commonjs
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = exports;
 }
