@@ -83,6 +83,12 @@ export function useSaveState({
         return false;
       }
 
+      // Annuler les timers d'état sauvegardé avant de commencer une nouvelle sauvegarde
+      if (savedStateTimeoutRef.current) {
+        clearTimeout(savedStateTimeoutRef.current);
+        savedStateTimeoutRef.current = null;
+      }
+
       // Timeout global de 15 secondes pour éviter le blocage
       const saveTimeout = setTimeout(() => {
         debugError('[SAVE STATE] Timeout global dépassé, forçage de l\'état error');
@@ -99,6 +105,13 @@ export function useSaveState({
           setState('saving');
         });
         console.log('[SAVE STATE] État changé à saving');
+        
+        // Annuler le timer de retour à idle s'il existe (nouvelle sauvegarde commence)
+        if (savedStateTimeoutRef.current) {
+          clearTimeout(savedStateTimeoutRef.current);
+          savedStateTimeoutRef.current = null;
+        }
+        
         onSaveStart?.();
 
         // Nettoyage des éléments pour JSON - version plus permissive
@@ -199,8 +212,11 @@ export function useSaveState({
         savedStateTimeoutRef.current = setTimeout(() => {
           console.log('[SAVE STATE] Remise à idle après succès');
           startTransition(() => {
-            // Forcer le retour à idle même si l'état a changé
-            setState('idle');
+            // Vérifier que l'état est toujours 'saved' avant de le changer
+            // (évite les conflits si une nouvelle sauvegarde a commencé)
+            if (state === 'saved') {
+              setState('idle');
+            }
           });
         }, 3000);
 
@@ -242,6 +258,13 @@ export function useSaveState({
           setError(errorMsg);
         });
         console.log('[SAVE STATE] État changé à error');
+        
+        // Annuler le timer de retour à idle s'il existe
+        if (savedStateTimeoutRef.current) {
+          clearTimeout(savedStateTimeoutRef.current);
+          savedStateTimeoutRef.current = null;
+        }
+        
         onSaveError?.(errorMsg);
         debugError(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
@@ -274,6 +297,17 @@ export function useSaveState({
       setError(null);
       setState('idle');
     });
+    
+    // Nettoyer tous les timers liés aux états
+    if (savedStateTimeoutRef.current) {
+      clearTimeout(savedStateTimeoutRef.current);
+      savedStateTimeoutRef.current = null;
+    }
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+    
     console.log('[SAVE STATE] État changé à idle (clearError)');
   }, []);
 
@@ -353,6 +387,9 @@ export function useSaveState({
       }
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
+      }
+      if (savedStateTimeoutRef.current) {
+        clearTimeout(savedStateTimeoutRef.current);
       }
     };
   }, [templateId, elements, autoSaveInterval, performSave, getElementsHash]);

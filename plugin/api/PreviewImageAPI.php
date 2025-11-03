@@ -70,7 +70,7 @@ class PreviewImageAPI {
             error_log('[PDF Preview] Params validated: ' . json_encode($params));
 
             // Log de sécurité
-            $this->log_request($params);
+            // $this->log_request($params);
 
             // Génération avec cache intelligent
             error_log('[PDF Preview] Starting generation with cache...');
@@ -78,7 +78,7 @@ class PreviewImageAPI {
             error_log('[PDF Preview] Generation completed');
 
             // Métriques performance
-            $this->log_performance($start_time, $params['context']);
+            // $this->log_performance($start_time, $params['context']);
 
             // Réponse compressée
             $this->send_compressed_response($result);
@@ -133,7 +133,7 @@ class PreviewImageAPI {
         });
 
         if (count($requests) >= $this->rate_limit_max) {
-            $this->log_security_event('rate_limit_exceeded', $ip, count($requests));
+            // $this->log_security_event('rate_limit_exceeded', $ip, count($requests));
             $this->send_json_error('Rate limit exceeded', 429);
         }
 
@@ -495,13 +495,24 @@ class PreviewImageAPI {
      * Envoi de succès JSON forcé
      */
     private function send_json_success($data) {
+        wp_send_json_success($data);
+    }
+
+    /**
+     * Envoi d'erreur JSON forcé
+     */
+    private function send_json_error($message, $code = 400) {
         // Headers
         header('Content-Type: application/json');
+        http_response_code($code);
 
-        // Réponse JSON
+        // Réponse JSON d'erreur
         $response = json_encode([
-            'success' => true,
-            'data' => $data
+            'success' => false,
+            'data' => [
+                'message' => $message,
+                'code' => 'PREVIEW_ERROR'
+            ]
         ]);
 
         echo $response;
