@@ -207,6 +207,17 @@ class PDFPreviewAPI {
 
         // Afficher la modal en togglant la classe
         previewModal.classList.add('visible');
+        
+        // DEBUG: Vérifier les styles appliqués
+        console.log('🔍 Modal styles:', {
+            display: window.getComputedStyle(previewModal).display,
+            position: window.getComputedStyle(previewModal).position,
+            zIndex: window.getComputedStyle(previewModal).zIndex,
+            justifyContent: window.getComputedStyle(previewModal).justifyContent,
+            alignItems: window.getComputedStyle(previewModal).alignItems,
+            width: window.getComputedStyle(previewModal).width,
+            height: window.getComputedStyle(previewModal).height
+        });
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -248,9 +259,12 @@ class PDFPreviewAPI {
                     overflow-y: auto !important;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
                     flex-shrink: 0 !important;
+                    min-width: 300px !important;
+                    position: relative !important;
                 }
             `;
             document.head.appendChild(styleSheet);
+            console.log('✅ PDF Preview modal CSS injectée');
         }
         
         const modal = document.createElement('div');
