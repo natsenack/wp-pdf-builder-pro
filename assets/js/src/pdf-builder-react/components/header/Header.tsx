@@ -289,25 +289,6 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-            // Ouvrir la modale JSON et aussi l'aperçu du preview
-            setShowJsonModal(true);
-            onPreview();
-          }}
-          onMouseEnter={() => setHoveredButton('preview')}
-          onMouseLeave={() => setHoveredButton(null)}
-          style={{
-            ...secondaryButtonStyles,
-            opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
-          }}
-          title="Aperçu du template (JSON brut)"
-        >
-          <span>👁️</span>
-          <span>Aperçu</span>
-        </button>
-
-        <button
-          onClick={() => {
             debugLog('📸 Aperçu Image button clicked!');
             setShowPreviewModal(true);
           }}
