@@ -205,8 +205,8 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal avec display flex pour centrer
-        previewModal.style.display = 'flex';
+        // Afficher la modal en togglant la classe
+        previewModal.classList.add('visible');
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -215,30 +215,50 @@ class PDFPreviewAPI {
      * Crée la modal d'aperçu
      */
     createPreviewModal() {
+        // Ajouter une vraie feuille CSS pour le modal si elle n'existe pas
+        if (!document.getElementById('pdf-preview-modal-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'pdf-preview-modal-styles';
+            styleSheet.textContent = `
+                #pdf-preview-modal {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    background-color: rgba(0,0,0,0.8) !important;
+                    display: none !important;
+                    z-index: 99999 !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    flex-direction: column !important;
+                    visibility: visible !important;
+                }
+                
+                #pdf-preview-modal.visible {
+                    display: flex !important;
+                }
+                
+                #pdf-preview-modal-wrapper {
+                    background: white !important;
+                    border-radius: 8px !important;
+                    padding: 20px !important;
+                    max-width: 90vw !important;
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+                    flex-shrink: 0 !important;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+        
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        // Overlay fullscreen avec fond noir transparent
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-        modal.style.display = 'none';
-        modal.style.zIndex = '99999';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.flexDirection = 'column';
         
-        // Wrapper blanc centré - sera enfant direct du modal flex container
+        // Wrapper blanc centré
         const wrapper = document.createElement('div');
-        wrapper.style.background = 'white';
-        wrapper.style.borderRadius = '8px';
-        wrapper.style.padding = '20px';
-        wrapper.style.maxWidth = '90vw';
-        wrapper.style.maxHeight = '90vh';
-        wrapper.style.overflowY = 'auto';
-        wrapper.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
+        wrapper.id = 'pdf-preview-modal-wrapper';
 
         // Header avec titre et bouton fermer
         const header = document.createElement('div');
@@ -286,13 +306,13 @@ class PDFPreviewAPI {
 
         // Gestionnaire de fermeture
         closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
+            modal.classList.remove('visible');
         });
 
         // Fermeture en cliquant en dehors
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.style.display = 'none';
+                modal.classList.remove('visible');
             }
         });
 
