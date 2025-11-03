@@ -31,6 +31,7 @@ export interface UseSaveStateV2Return {
   lastSavedAt: string | null;
   error: string | null;
   saveNow: () => Promise<void>;
+  triggerSave: () => void; // Déclenche une sauvegarde immédiate
   clearError: () => void;
   progress: number;
 }
@@ -220,6 +221,17 @@ export function useSaveStateV2({
   }, [performSave]);
 
   /**
+   * Déclenche une sauvegarde sans délai
+   */
+  const triggerSave = useCallback(() => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+      autoSaveTimeoutRef.current = null;
+    }
+    performSave();
+  }, [performSave]);
+
+  /**
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
@@ -229,14 +241,6 @@ export function useSaveStateV2({
   }, []);
 
   /**
-   * Effect : Initialiser le hash au montage
-   */
-  useEffect(() => {
-    elementsHashRef.current = getElementsHash(elements);
-    console.log('[SAVE V2] Hash initial calculé');
-  }, []); // Juste au montage
-
-  /**
    * Effect : Détecte les changements et déclenche l'auto-save
    */
   useEffect(() => {
@@ -244,15 +248,10 @@ export function useSaveStateV2({
 
     // Si les éléments n'ont pas changé, ne rien faire
     if (currentHash === elementsHashRef.current) {
-      console.log('[SAVE V2] Pas de changements détectés');
       return;
     }
 
-    console.log('[SAVE V2] Changements détectés!');
     debugLog('[SAVE V2] Changements détectés, programmation sauvegarde...');
-
-    // Mettre à jour le hash
-    elementsHashRef.current = currentHash;
 
     // Annuler le timeout précédent
     if (autoSaveTimeoutRef.current) {
@@ -261,16 +260,13 @@ export function useSaveStateV2({
 
     // Ne pas sauvegarder si une sauvegarde est en cours
     if (state === 'saving') {
-      console.log('[SAVE V2] Sauvegarde en cours, ajournement');
       return;
     }
 
     // Attendre 3 secondes d'inactivité avant de sauvegarder
     autoSaveTimeoutRef.current = setTimeout(() => {
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
-      console.log('[SAVE V2] Timeout inactivité - timeSinceLastSave:', timeSinceLastSave, 'autoSaveInterval:', autoSaveInterval);
       if (timeSinceLastSave >= autoSaveInterval) {
-        console.log('[SAVE V2] Déclenchement performSave');
         performSave();
       }
     }, 3000);
@@ -280,7 +276,7 @@ export function useSaveStateV2({
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [elements]);
+  }, [elements, getElementsHash, state, autoSaveInterval, performSave]);
 
   /**
    * Cleanup à la dé-montage
@@ -300,6 +296,7 @@ export function useSaveStateV2({
     lastSavedAt,
     error,
     saveNow,
+    triggerSave,
     clearError,
     progress
   };

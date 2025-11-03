@@ -14,6 +14,7 @@ export interface UseAutoSaveReturn {
   lastSavedAt: string | null;
   error: string | null;
   saveNow: () => Promise<void>;
+  triggerSave: () => void;
   clearError: () => void;
   progress: number;
 }
@@ -35,6 +36,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     lastSavedAt,
     error,
     saveNow,
+    triggerSave,
     clearError,
     progress
   } = useSaveStateV2({
@@ -59,6 +61,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     lastSavedAt,
     error,
     saveNow,
+    triggerSave,
     clearError,
     progress
   };

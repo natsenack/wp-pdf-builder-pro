@@ -1,10 +1,10 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { Canvas } from './canvas/Canvas.tsx';
 import { Toolbar } from './toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
 import { Header } from './header/Header.tsx';
 import { ElementLibrary } from './element-library/ElementLibrary.tsx';
-import { SaveTooltip } from './ui/SaveTooltip.tsx';
+import { SaveIndicator } from './ui/SaveIndicator.tsx';
 import { useTemplate } from '../hooks/useTemplate.ts';
 import { useAutoSave } from '../hooks/useAutoSave.ts';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
@@ -49,6 +49,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     lastSavedAt,
     error: autoSaveError,
     saveNow: retryAutoSave,
+    triggerSave,
     clearError: clearAutoSaveError,
     progress
   } = useAutoSave();
@@ -64,15 +65,22 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Wrapper pour sauvegarder avec auto-save
+  const saveTemplateWithAutoSave = useCallback(async () => {
+    triggerSave(); // Déclenche l'auto-save
+    await saveTemplate(); // Et la sauvegarde manuelle
+  }, [saveTemplate, triggerSave]);
+
   return (
     <>
       {/* SaveIndicator - affiché dans le coin supérieur droit */}
-      <SaveTooltip
+      <SaveIndicator
         state={autoSaveState}
         lastSavedAt={lastSavedAt}
         error={autoSaveError}
+        onRetry={retryAutoSave}
         progress={progress}
-        onSaveNow={retryAutoSave}
+        showProgressBar={autoSaveState === 'saving'}
       />
 
       <div
@@ -107,7 +115,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           isModified={isModified}
           isSaving={isSaving}
           isEditingExistingTemplate={isEditingExistingTemplate}
-          onSave={saveTemplate}
+          onSave={saveTemplateWithAutoSave}
           onPreview={previewTemplate}
           onNewTemplate={newTemplate}
           onUpdateTemplateSettings={updateTemplateSettings}

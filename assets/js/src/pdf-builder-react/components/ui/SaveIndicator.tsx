@@ -17,7 +17,6 @@ export interface SaveIndicatorProps {
   lastSavedAt?: string | null;
   error?: string | null;
   onRetry?: () => void;
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
   progress?: number;
   showProgressBar?: boolean;
 }
@@ -27,7 +26,6 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   lastSavedAt,
   error,
   onRetry,
-  position = 'top-right',
   progress = 0,
   showProgressBar = false
 }) => {
@@ -85,7 +83,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
 
   return (
     <div
-      className={`save-indicator save-indicator--${state} save-indicator--${position}`}
+      className={`save-indicator save-indicator--${state}`}
       title={getTitle()}
       aria-label={getTitle()}
     >
