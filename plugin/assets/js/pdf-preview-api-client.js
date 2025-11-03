@@ -205,9 +205,9 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal - juste changer display de none à flex et visibility
-        previewModal.style.display = 'flex !important';
-        previewModal.style.visibility = 'visible';
+        // Afficher la modal - juste changer display et visibility
+        previewModal.style.display = 'block !important';
+        previewModal.style.visibility = 'visible !important';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -218,21 +218,12 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        // Appliquer les styles flex DÈS LA CRÉATION pour que les enfants soient bien centrés
-        // display: none initialement, sera changé en flex lors de l'affichage
-        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.8) !important; display: none !important; justify-content: center !important; align-items: center !important; z-index: 99999 !important; overflow: auto !important; visibility: hidden;';
+        // Overlay overlay fullscreen avec fond noir transparent
+        modal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.8) !important; display: none !important; z-index: 99999 !important; overflow: auto !important; visibility: hidden;';
         
-        // Wrapper blanc qui sera centré
+        // Wrapper blanc qui sera centré avec translate
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = `
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        `;
+        wrapper.style.cssText = 'position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; background: white !important; border-radius: 8px !important; padding: 20px !important; max-width: 90vw !important; max-height: 90vh !important; overflow: auto !important; box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important; z-index: 100000 !important;';
 
         // Header avec titre et bouton fermer
         const header = document.createElement('div');
