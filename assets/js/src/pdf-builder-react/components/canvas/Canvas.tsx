@@ -31,10 +31,11 @@ const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, size: num
 };
 
 const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const fillColor = (element as any).fillColor || '#ffffff';
-  const strokeColor = (element as any).strokeColor || '#000000';
-  const strokeWidth = (element as any).strokeWidth || 1;
-  const borderRadius = (element as any).borderRadius || 0;
+  const props = element as Record<string, unknown>;
+  const fillColor = String(props.backgroundColor || props.fillColor || '#ffffff');
+  const strokeColor = String(props.borderColor || props.strokeColor || '#000000');
+  const strokeWidth = Number(props.borderWidth || props.strokeWidth || 1);
+  const borderRadius = Number(props.borderRadius || 0);
 
   ctx.fillStyle = fillColor;
   ctx.strokeStyle = strokeColor;
@@ -53,9 +54,10 @@ const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const fillColor = (element as any).fillColor || '#ffffff';
-  const strokeColor = (element as any).strokeColor || '#000000';
-  const strokeWidth = (element as any).strokeWidth || 1;
+  const props = element as Record<string, unknown>;
+  const fillColor = String(props.fillColor || '#ffffff');
+  const strokeColor = String(props.strokeColor || '#000000');
+  const strokeWidth = Number(props.strokeWidth || 1);
 
   const centerX = element.width / 2;
   const centerY = element.height / 2;
@@ -72,11 +74,12 @@ const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const text = (element as any).text || 'Sample Text';
-  const fontSize = (element as any).fontSize || 16;
-  const fontFamily = (element as any).fontFamily || 'Arial';
-  const color = (element as any).color || '#000000';
-  const align = (element as any).align || 'left';
+  const props = element as Record<string, unknown>;
+  const text = String(props.text || 'Sample Text');
+  const fontSize = Number(props.fontSize || 16);
+  const fontFamily = String(props.fontFamily || 'Arial');
+  const color = String(props.textColor || props.color || '#000000');
+  const align = String(props.align || 'left');
 
   ctx.fillStyle = color;
   ctx.font = fontSize + 'px ' + fontFamily;
@@ -93,8 +96,9 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const strokeColor = (element as any).strokeColor || '#000000';
-  const strokeWidth = (element as any).strokeWidth || 1;
+  const props = element as Record<string, unknown>;
+  const strokeColor = String(props.strokeColor || '#000000');
+  const strokeWidth = Number(props.strokeWidth || 1);
 
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = strokeWidth;
@@ -106,7 +110,6 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
-  console.log('Drawing element:', element.type, element.x, element.y, element.width, element.height);
   ctx.save();
 
   // Appliquer transformation de l'élément
@@ -118,23 +121,18 @@ const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
   // Dessiner selon le type d'élément
   switch (element.type) {
     case 'rectangle':
-      console.log('Drawing rectangle');
       drawRectangle(ctx, element);
       break;
     case 'circle':
-      console.log('Drawing circle');
       drawCircle(ctx, element);
       break;
     case 'text':
-      console.log('Drawing text');
       drawText(ctx, element);
       break;
     case 'line':
-      console.log('Drawing line');
       drawLine(ctx, element);
       break;
     default:
-      console.log('Drawing default element');
       // Élément générique - dessiner un rectangle simple
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 1;
@@ -202,13 +200,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner les éléments
     if (state.elements && state.elements.length > 0) {
-      console.log('Rendering elements:', state.elements.length);
-      state.elements.forEach((element, index) => {
-        console.log(`Element ${index}:`, element);
+      state.elements.forEach((element) => {
         drawElement(ctx, element);
       });
-    } else {
-      console.log('No elements to render');
     }
 
     // Dessiner la sélection
