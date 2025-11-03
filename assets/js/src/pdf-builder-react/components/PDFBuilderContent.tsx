@@ -167,24 +167,21 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               </div>
               <Canvas width={width} height={height} />
             </div>
-          </div>
 
-          {/* Panneau de propriétés à droite */}
-          <div style={{ position: 'relative', display: 'flex' }}>
             {/* Bouton toggle pour le panneau de propriétés */}
             <button
               onClick={() => setIsPropertiesPanelOpen(!isPropertiesPanelOpen)}
               style={{
                 position: 'absolute',
                 top: '50%',
-                left: isPropertiesPanelOpen ? '390px' : '0px',
+                right: isPropertiesPanelOpen ? '-24px' : '-24px',
                 transform: 'translateY(-50%)',
                 zIndex: 20,
                 padding: '8px 6px',
                 backgroundColor: '#007acc',
                 color: 'white',
                 border: 'none',
-                borderRadius: '0 4px 4px 0',
+                borderRadius: '4px 0 0 4px',
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 'bold',
@@ -195,29 +192,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 width: '24px',
                 height: '60px',
                 writingMode: 'vertical-rl',
-                textOrientation: 'mixed',
-                transition: 'left 0.3s ease'
+                textOrientation: 'mixed'
               }}
               title={isPropertiesPanelOpen ? 'Fermer le panneau de propriétés' : 'Ouvrir le panneau de propriétés'}
             >
               {isPropertiesPanelOpen ? '▷' : '◁'}
             </button>
-
-            {isPropertiesPanelOpen && (
-              <div
-                style={{
-                  flexShrink: 0,
-                  width: '430px',
-                  position: 'sticky',
-                  top: '110px',
-                  height: 'fit-content',
-                  maxHeight: 'calc(100vh - 32px)',
-                  marginLeft: '24px'
-                }}
-              >
-                <PropertiesPanel />
-              </div>
-            )}
           </div>
         </div>
       </div>
