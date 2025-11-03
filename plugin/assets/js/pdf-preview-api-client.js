@@ -206,7 +206,7 @@ class PDFPreviewAPI {
         this.addPreviewActions(previewModal, imageUrl, context);
 
         // Afficher la modal
-        previewModal.style.display = 'block';
+        previewModal.style.display = 'flex';
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
