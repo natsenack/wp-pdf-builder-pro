@@ -9,6 +9,7 @@ class PreviewImageAPI {
     private $request_log = [];
 
     public function __construct() {
+        error_log('[PDF Preview] PreviewImageAPI constructor called');
         $this->cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir()) . '/cache/wp-pdf-builder-previews/';
 
         // Créer répertoire cache si inexistant
@@ -19,17 +20,29 @@ class PreviewImageAPI {
         add_action('wp_ajax_wp_pdf_preview_image', array($this, 'generate_preview'));
         add_action('wp_ajax_nopriv_wp_pdf_preview_image', array($this, 'generate_preview')); // Pour les vendeurs
 
+        error_log('[PDF Preview] AJAX actions registered: wp_ajax_wp_pdf_preview_image');
+
         // Nettoyage automatique du cache
         add_action('wp_pdf_cleanup_preview_cache', array($this, 'cleanup_cache'));
         if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
         }
+        error_log('[PDF Preview] PreviewImageAPI constructor completed');
     }
 
     /**
      * Point d'entrée unifié pour tous les aperçus
      */
     public function generate_preview() {
+        error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
+        
+        // Vérifier qu'aucun output n'a été fait avant les headers
+        if (headers_sent($file, $line)) {
+            error_log("Headers already sent in $file:$line - cannot send JSON response");
+            // Essayer de nettoyer et continuer
+            ob_clean();
+        }
+
         // Debug immédiat au début
         error_log('[PDF Preview DEBUG] Function called with POST: ' . json_encode($_POST));
         header('X-PDF-Debug: Function called');
@@ -43,19 +56,26 @@ class PreviewImageAPI {
 
         try {
             // Validation sécurité multi-couches
+            error_log('[PDF Preview] Starting validation...');
             $this->validate_request();
+            error_log('[PDF Preview] Validation passed');
 
             // Rate limiting
             $this->check_rate_limit();
+            error_log('[PDF Preview] Rate limit passed');
 
             // Récupération et validation des paramètres
+            error_log('[PDF Preview] Getting validated params...');
             $params = $this->get_validated_params();
+            error_log('[PDF Preview] Params validated: ' . json_encode($params));
 
             // Log de sécurité
             $this->log_request($params);
 
             // Génération avec cache intelligent
+            error_log('[PDF Preview] Starting generation with cache...');
             $result = $this->generate_with_cache($params);
+            error_log('[PDF Preview] Generation completed');
 
             // Métriques performance
             $this->log_performance($start_time, $params['context']);
@@ -64,6 +84,7 @@ class PreviewImageAPI {
             $this->send_compressed_response($result);
 
         } catch (\Exception $e) {
+            error_log('[PDF Preview] Exception caught: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             $this->handle_error($e, $start_time);
         }
     }
@@ -74,8 +95,7 @@ class PreviewImageAPI {
     private function validate_request() {
         // Vérification nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            $this->log_security_event('invalid_nonce', $_SERVER['REMOTE_ADDR']);
-            wp_send_json_error(['message' => 'Security check failed', 'code' => 'INVALID_NONCE'], 403);
+            $this->send_json_error('Security check failed - invalid nonce', 403);
         }
 
         // Vérification permissions selon contexte
@@ -83,16 +103,14 @@ class PreviewImageAPI {
         $required_cap = $this->get_required_capability($context);
 
         if (!current_user_can($required_cap)) {
-            $this->log_security_event('insufficient_permissions', $_SERVER['REMOTE_ADDR'], $context);
-            wp_send_json_error(['message' => 'Insufficient permissions', 'code' => 'INSUFFICIENT_PERMISSIONS'], 403);
+            $this->send_json_error('Insufficient permissions', 403);
         }
 
         // Validation taille données
         if (isset($_POST['template_data'])) {
             $data_size = strlen($_POST['template_data']);
             if ($data_size > 1024 * 1024) { // 1MB max
-                $this->log_security_event('data_too_large', $_SERVER['REMOTE_ADDR'], $data_size);
-                wp_send_json_error(['message' => 'Data too large', 'code' => 'DATA_TOO_LARGE'], 413);
+                $this->send_json_error('Data too large', 413);
             }
         }
     }
@@ -116,7 +134,7 @@ class PreviewImageAPI {
 
         if (count($requests) >= $this->rate_limit_max) {
             $this->log_security_event('rate_limit_exceeded', $ip, count($requests));
-            wp_die('Rate limit exceeded', 429);
+            $this->send_json_error('Rate limit exceeded', 429);
         }
 
         $requests[] = $now;
@@ -156,13 +174,13 @@ class PreviewImageAPI {
                 if ($params['order_id'] && function_exists('wc_get_order')) {
                     $order = wc_get_order($params['order_id']);
                     if (!$order) {
-                        wp_die('Order not found', 404);
+                        $this->send_json_error('Order not found', 404);
                     }
                 }
                 break;
 
             default:
-                wp_die('Invalid context', 400);
+                $this->send_json_error('Invalid context', 400);
         }
 
         // Paramètres optionnels
@@ -189,13 +207,33 @@ class PreviewImageAPI {
 
         $decoded = json_decode(stripslashes($data), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_die('Invalid template data', 400);
+            $this->send_json_error('Invalid template data: ' . json_last_error_msg(), 400);
         }
 
-        // Validation structure de base
-        if (!isset($decoded['template']) || !isset($decoded['template']['elements'])) {
-            wp_die('Invalid template structure', 400);
+        // Validation structure de base - accepter les deux formats
+        // Format 1: {template: {elements: [...]}} 
+        // Format 2: {elements: [...]}
+        if (isset($decoded['template']) && isset($decoded['template']['elements'])) {
+            // Format avec template wrapper
+            $elements = $decoded['template']['elements'];
+        } elseif (isset($decoded['elements'])) {
+            // Format direct
+            $elements = $decoded['elements'];
+        } else {
+            $this->send_json_error('Invalid template structure - missing elements', 400);
         }
+
+        // Vérifier que elements est un array
+        if (!is_array($elements)) {
+            $this->send_json_error('Elements must be an array', 400);
+        }
+
+        // Recréer la structure attendue
+        $decoded = [
+            'template' => [
+                'elements' => $elements
+            ]
+        ];
 
         // Sanitisation des éléments
         $decoded['template']['elements'] = array_map(function($element) {
@@ -450,7 +488,24 @@ class PreviewImageAPI {
             ob_start('ob_gzhandler');
         }
 
-        wp_send_json_success($result);
+        $this->send_json_success($result);
+    }
+
+    /**
+     * Envoi de succès JSON forcé
+     */
+    private function send_json_success($data) {
+        // Headers
+        header('Content-Type: application/json');
+
+        // Réponse JSON
+        $response = json_encode([
+            'success' => true,
+            'data' => $data
+        ]);
+
+        echo $response;
+        exit;
     }
 
     /**

@@ -98,6 +98,7 @@ export function useSaveState({
         startTransition(() => {
           setState('saving');
         });
+        console.log('[SAVE STATE] État changé à saving');
         onSaveStart?.();
 
         // Nettoyage des éléments pour JSON - version plus permissive
@@ -179,6 +180,8 @@ export function useSaveState({
           setRetryCount(0);
         });
 
+        console.log('[SAVE STATE] État changé à saved', { savedAt, state });
+
         debugLog('[SAVE STATE] État changé à saved');
 
         lastSaveTimeRef.current = Date.now();
@@ -194,7 +197,7 @@ export function useSaveState({
 
         // Réinitialiser l'état saved après 3 secondes
         savedStateTimeoutRef.current = setTimeout(() => {
-          debugLog('[SAVE STATE] Remise à idle après succès');
+          console.log('[SAVE STATE] Remise à idle après succès');
           startTransition(() => {
             // Forcer le retour à idle même si l'état a changé
             setState('idle');
@@ -238,6 +241,7 @@ export function useSaveState({
           setState('error');
           setError(errorMsg);
         });
+        console.log('[SAVE STATE] État changé à error');
         onSaveError?.(errorMsg);
         debugError(`❌ [SAVE STATE] Sauvegarde échouée après ${maxRetries + 1} tentatives`);
 
@@ -270,6 +274,7 @@ export function useSaveState({
       setError(null);
       setState('idle');
     });
+    console.log('[SAVE STATE] État changé à idle (clearError)');
   }, []);
 
   /**

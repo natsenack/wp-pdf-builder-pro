@@ -135,6 +135,25 @@ function pdf_builder_add_asset_cache_headers() {
 // Gérer les téléchargements PDF en frontend
 add_action('init', 'pdf_builder_handle_pdf_downloads');
 
+// Charger le plugin pour les requêtes AJAX
+add_action('admin_init', 'pdf_builder_load_for_ajax');
+add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_load_for_ajax');
+add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_load_for_ajax');
+
+/**
+ * Charger le plugin pour les requêtes AJAX
+ */
+function pdf_builder_load_for_ajax() {
+    // Charger le bootstrap pour les requêtes AJAX
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+    if (file_exists($bootstrap_path)) {
+        require_once $bootstrap_path;
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
+        }
+    }
+}
+
 /**
  * Gérer les téléchargements PDF
  */

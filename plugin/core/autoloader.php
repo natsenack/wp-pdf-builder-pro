@@ -72,12 +72,13 @@ class PDF_Builder_Autoloader {
             if (file_exists($file)) {
                 require_once $file;
 
-                // Verify the class was loaded
-                if (class_exists($class, false)) {
+                // Verify the class/interface was loaded
+                if (class_exists($class, false) || interface_exists($class, false) || 
+                    class_exists($class) || interface_exists($class)) {
                     return true;
                 } else {
-                    // Class not found in file - this might indicate a namespace mismatch
-                    error_log("PDF_Builder_Autoloader: Class '$class' not found in expected file '$file'");
+                    // Class/interface not found in file - this might indicate a namespace mismatch
+                    error_log("PDF_Builder_Autoloader: Class/interface '$class' not found in expected file '$file'");
                 }
             } else {
                 // File not found - log for debugging
