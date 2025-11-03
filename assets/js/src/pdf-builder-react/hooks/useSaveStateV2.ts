@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect, startTransition } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { debugLog, debugError } from '../utils/debug';
 
 /**
@@ -110,11 +110,9 @@ export function useSaveStateV2({
 
     try {
       // Démarrer la sauvegarde
-      startTransition(() => {
-        setState('saving');
-        setError(null);
-        setProgress(0);
-      });
+      setState('saving');
+      setError(null);
+      setProgress(0);
       onSaveStart?.();
 
       // Animer la progression
@@ -168,10 +166,8 @@ export function useSaveStateV2({
       }
       setProgress(100);
 
-      startTransition(() => {
-        setState('saved');
-        setLastSavedAt(savedAt);
-      });
+      setState('saved');
+      setLastSavedAt(savedAt);
       elementsHashRef.current = getElementsHash(elements);
       onSaveSuccess?.(savedAt);
 
@@ -182,10 +178,8 @@ export function useSaveStateV2({
         clearTimeout(savedStateTimeoutRef.current);
       }
       savedStateTimeoutRef.current = setTimeout(() => {
-        startTransition(() => {
-          setState('idle');
-          setProgress(0);
-        });
+        setState('idle');
+        setProgress(0);
       }, 2000);
     } catch (err: any) {
       debugError('[SAVE V2] Erreur:', err.message);
@@ -197,10 +191,8 @@ export function useSaveStateV2({
       }
       setProgress(0);
 
-      startTransition(() => {
-        setState('error');
-        setError(err.message || 'Erreur inconnue');
-      });
+      setState('error');
+      setError(err.message || 'Erreur inconnue');
       onSaveError?.(err.message);
 
       // Retourner à idle après 3 secondes
@@ -208,10 +200,8 @@ export function useSaveStateV2({
         clearTimeout(savedStateTimeoutRef.current);
       }
       savedStateTimeoutRef.current = setTimeout(() => {
-        startTransition(() => {
-          setState('idle');
-          setProgress(0);
-        });
+        setState('idle');
+        setProgress(0);
       }, 3000);
     } finally {
       inProgressRef.current = false;
@@ -233,11 +223,9 @@ export function useSaveStateV2({
    * Efface les erreurs
    */
   const clearError = useCallback(() => {
-    startTransition(() => {
-      setError(null);
-      setState('idle');
-      setProgress(0);
-    });
+    setError(null);
+    setState('idle');
+    setProgress(0);
   }, []);
 
   /**
