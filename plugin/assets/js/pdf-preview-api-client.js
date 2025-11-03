@@ -270,6 +270,9 @@ class PDFPreviewAPI {
                     justify-content: center !important;
                     flex-direction: column !important;
                     visibility: visible !important;
+                    gap: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
                 }
                 
                 #pdf-preview-modal.visible {
@@ -287,6 +290,7 @@ class PDFPreviewAPI {
                     flex-shrink: 0 !important;
                     min-width: 300px !important;
                     position: relative !important;
+                    width: 500px !important;
                 }
             `;
             document.head.appendChild(styleSheet);

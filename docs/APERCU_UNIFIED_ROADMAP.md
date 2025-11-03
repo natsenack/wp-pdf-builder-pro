@@ -1,7 +1,8 @@
 # 🚀 Reconstruction Système d'Aperçu PDF
 
 **📅 Date** : 1 novembre 2025
-**🔄 Statut** : Phase 4.1 terminée - Auto-save implémenté, tests Phase 4.2 à venir
+**🔄 Statut** : Phase 1.5 en cours - Audit CSS et Refactorisation (Blocage modal centrage)
+**🎯 Objectif Phase 1.5** : Centraliser tous les styles CSS, résoudre issue de modal, créer structure CSS propre
 
 ---
 
@@ -13,22 +14,23 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - **API Unifiée** : PreviewImageAPI pour générer images PNG côté serveur
 
 ### 📊 État actuel du projet
-**Phase active** : 2/8 (avec Phase 2.5 ajoutée)
-**Progression** : 60% (Phase 1 100% + Phase 2.0-2.1 100% + Phase 2.11 100% complétées)
+**Phase active** : 1.5/8 (Phase 1.5 - Audit CSS)
+**Progression** : 62% (Phase 1 100% + Phase 1.5 5% en cours)
 
 **Statut détaillé** :
 - ✅ Phase 1 (Base unifiée) : 100% TERMINÉE - Architecture serveur éprouvée
-- ⏳ Phase 2 (Fonctionnalités Premium) : 15% - 2.11/11 étapes complétées (stockage avancé)
-- 🆕 Phase 2.5 (Améliorations Concurrentielles) : 0% - Planification (8 gaps à combler)
+- ⏳ Phase 1.5 (Audit CSS) : 5% - Étape 1.5.1 initiée (audit en cours)
+- ⏳ Phase 2 (Fonctionnalités Premium) : 0% - Bloquée sur Phase 1.5
 - ✅ Phase 4.0 (API Preview) : 100% COMPLÉTÉE - PreviewImageAPI + handler AJAX déployés
 - ✅ Phase 4.1 (Auto-save) : 100% COMPLÉTÉE - Hook useSaveState + SaveIndicator déployés
-- ⏳ Phase 4.2-4.6 (Tests) : À faire après validation autosave
+- ⏳ Phase 4.2-4.6 (Tests) : Bloquée sur stabilité modal
 - ⏳ Phase 5-8 : Planification ultérieure
 
 **Prochaine action** :
-1. Implémenter Phase 2.5.1 (Système Double Format) - priorité critique
-2. Tester autosave en production (2.5s interval, retry logic)
-3. Valider cohérence JSON avec aperçu PHP
+1. **IMMÉDIAT**: Phase 1.5.1 - Audit complet CSS du projet (identifier tous les styles inline)
+2. Phase 1.5.2 - Créer structure de fichiers CSS organisée
+3. Phase 1.5.3 - Migrer tous les styles inline vers fichiers CSS
+4. Puis: Déploiement complet et vérification du modal centrage
 
 ---
 

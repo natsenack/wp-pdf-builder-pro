@@ -205,8 +205,8 @@ class PDFPreviewAPI {
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
 
-        // Afficher la modal
-        previewModal.style.display = 'block';
+        // Afficher la modal en togglant la classe
+        previewModal.classList.add('visible');
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -215,55 +215,111 @@ class PDFPreviewAPI {
      * Crée la modal d'aperçu
      */
     createPreviewModal() {
+        // Ajouter une vraie feuille CSS pour le modal si elle n'existe pas
+        if (!document.getElementById('pdf-preview-modal-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'pdf-preview-modal-styles';
+            styleSheet.textContent = `
+                #pdf-preview-modal {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    background-color: rgba(0,0,0,0.8) !important;
+                    display: none !important;
+                    z-index: 99999 !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    flex-direction: column !important;
+                    visibility: visible !important;
+                    gap: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                }
+                
+                #pdf-preview-modal.visible {
+                    display: flex !important;
+                }
+                
+                #pdf-preview-modal-wrapper {
+                    background: white !important;
+                    border-radius: 8px !important;
+                    padding: 20px !important;
+                    max-width: 90vw !important;
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+                    flex-shrink: 0 !important;
+                    min-width: 300px !important;
+                    position: relative !important;
+                    width: 500px !important;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+            console.log('✅ PDF Preview modal CSS injectée');
+        }
+        
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: none;
-            justify-content: center;
+        
+        // Wrapper blanc centré
+        const wrapper = document.createElement('div');
+        wrapper.id = 'pdf-preview-modal-wrapper';
+
+        // Header avec titre et bouton fermer
+        const header = document.createElement('div');
+        header.style.cssText = `
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
         `;
 
-        modal.innerHTML = `
-            <div style="
-                background: white;
-                border-radius: 8px;
-                padding: 20px;
-                max-width: 90%;
-                max-height: 90%;
-                overflow: auto;
-                position: relative;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 id="pdf-preview-title" style="margin: 0; color: #1d2327;">Aperçu PDF</h3>
-                    <button id="pdf-preview-close" style="
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        color: #666;
-                    ">×</button>
-                </div>
-                <div id="pdf-preview-actions" style="margin-bottom: 15px;"></div>
-                <img id="pdf-preview-image" src="" alt="Aperçu PDF" style="max-width: 100%; height: auto; border: 1px solid #ddd;" />
-            </div>
+        const title = document.createElement('h3');
+        title.id = 'pdf-preview-title';
+        title.textContent = 'Aperçu PDF';
+        title.style.cssText = 'margin: 0; color: #1d2327;';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.id = 'pdf-preview-close';
+        closeBtn.textContent = '×';
+        closeBtn.style.cssText = `
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
         `;
+
+        header.appendChild(title);
+        header.appendChild(closeBtn);
+
+        // Actions container
+        const actions = document.createElement('div');
+        actions.id = 'pdf-preview-actions';
+        actions.style.cssText = 'margin-bottom: 15px;';
+
+        // Image container
+        const img = document.createElement('img');
+        img.id = 'pdf-preview-image';
+        img.alt = 'Aperçu PDF';
+        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd;';
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(actions);
+        wrapper.appendChild(img);
+        modal.appendChild(wrapper);
 
         // Gestionnaire de fermeture
-        modal.querySelector('#pdf-preview-close').addEventListener('click', () => {
-            modal.style.display = 'none';
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('visible');
         });
 
         // Fermeture en cliquant en dehors
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.style.display = 'none';
+                modal.classList.remove('visible');
             }
         });
 
