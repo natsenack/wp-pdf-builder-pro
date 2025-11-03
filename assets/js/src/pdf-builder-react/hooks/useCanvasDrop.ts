@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 
 // Import du service de personnalisation pour les calculs de position
@@ -6,7 +6,7 @@ import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 const getCustomizationService = () => {
   // Pour l'instant, on simule le calcul de position dynamique
   return {
-    getDefaultProperties: (type: string, existingElements: any[] = []) => {
+    getDefaultProperties: (type: string, existingElements: unknown[] = []) => {
       // Positions de base stratégiques
       const basePositions: { [key: string]: { x: number, y: number } } = {
         'product_table': { x: 50, y: 50 },
@@ -57,19 +57,25 @@ const getCustomizationService = () => {
       // Trouver l'espace disponible
       const columnElements = existingElements
         .filter(el => {
-          const elX = el.x || 0;
-          const elWidth = el.width || 100;
+          const element = el as { x?: number; y?: number; width?: number; height?: number };
+          const elX = element.x || 0;
+          const elWidth = element.width || 100;
           return elX < columnX + columnWidth && elX + elWidth > columnX;
         })
-        .sort((a, b) => (a.y || 0) - (b.y || 0));
+        .sort((a, b) => {
+          const elemA = a as { y?: number };
+          const elemB = b as { y?: number };
+          return (elemA.y || 0) - (elemB.y || 0);
+        });
 
       let currentY = 10;
       const elementHeight = 50; // Hauteur par défaut
       const spacing = 20;
 
       for (const element of columnElements) {
-        const elementBottom = (element.y || 0) + (element.height || 50) + spacing;
-        if (currentY + elementHeight <= (element.y || 0)) {
+        const elem = element as { y?: number; height?: number };
+        const elementBottom = (elem.y || 0) + (elem.height || 50) + spacing;
+        if (currentY + elementHeight <= (elem.y || 0)) {
           break;
         }
         currentY = Math.max(currentY, elementBottom);
@@ -95,10 +101,10 @@ interface UseCanvasDropProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   canvasWidth: number;
   canvasHeight: number;
-  elements: any[]; // Éléments existants pour calcul dynamique des positions
+  elements: unknown[]; // Éléments existants pour calcul dynamique des positions
 }
 
-export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }: UseCanvasDropProps) => {
+export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeight: _canvasHeight, elements }: UseCanvasDropProps) => {
   const { dispatch } = useBuilder();
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -111,13 +117,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvasWidth / rect.width;
-      const scaleY = canvasHeight / rect.height;
-
-      const x = (e.clientX - rect.left) * scaleX;
-      const y = (e.clientY - rect.top) * scaleY;
-
       // Calculer la position dynamique basée sur les éléments existants
       const customizationService = getCustomizationService();
       const dynamicProps = customizationService.getDefaultProperties(elementData.type, elements);
@@ -126,11 +125,10 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       const newElement = {
         id: `element_${Date.now()}`,
         type: elementData.type,
+        // Commencer par les propriétés calculées dynamiquement (x, y, width, height)
         ...dynamicProps,
-        // Fusionner avec les autres propriétés des defaultProps (sans x, y qui sont déjà calculés)
-        ...Object.fromEntries(
-          Object.entries(elementData.defaultProps).filter(([key]) => !['x', 'y'].includes(key))
-        ),
+        // Puis fusionner avec toutes les propriétés des defaultProps (y compris celles qui pourraient être manquantes)
+        ...elementData.defaultProps,
         // Propriétés requises par BaseElement
         visible: true,
         locked: false,
@@ -141,10 +139,10 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       // Ajouter l'élément au state
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
 
-    } catch (error) {
+    } catch {
       // Erreur silencieuse lors du drop
     }
-  }, [canvasRef, canvasWidth, canvasHeight, elements, dispatch]);
+  }, [canvasRef, elements, dispatch]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

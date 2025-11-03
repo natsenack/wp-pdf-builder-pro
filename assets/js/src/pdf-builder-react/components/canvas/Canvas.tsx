@@ -112,103 +112,230 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
 // Fonctions de dessin pour les éléments WooCommerce
 const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const borderColor = String(props.borderColor || '#cccccc');
-  const headerColor = String(props.headerColor || '#f0f0f0');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const headerBgColor = String(props.headerBackgroundColor || '#f9fafb');
+  const headerTextColor = String(props.headerTextColor || '#111827');
+  const textColor = String(props.textColor || '#374151');
+  const alternateRowColor = String(props.alternateRowColor || '#f9fafb');
+  const showHeaders = Boolean(props.showHeaders !== false);
+  const showBorders = Boolean(props.showBorders !== false);
+  const fontSize = Number(props.fontSize || 11);
 
-  // Dessiner le cadre du tableau
-  ctx.strokeStyle = borderColor;
-  ctx.lineWidth = 1;
-  ctx.strokeRect(0, 0, element.width, element.height);
+  // Dimensions des colonnes
+  const colWidths = [200, 60, 80, 80]; // Produit, Qté, Prix, Total
+  const rowHeight = 25;
+  const headerHeight = 30;
+  const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
 
-  // Dessiner l'en-tête
-  ctx.fillStyle = headerColor;
-  ctx.fillRect(0, 0, element.width, 30);
+  // Ajuster la largeur de l'élément si nécessaire
+  const elementWidth = Math.max(element.width, totalWidth + 20);
 
-  // Texte d'en-tête
-  ctx.fillStyle = '#333333';
-  ctx.font = '12px Arial';
-  ctx.textAlign = 'left';
-  ctx.fillText('Tableau Produits', 10, 20);
+  // Dessiner les bordures si activées
+  if (showBorders) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0, 0, elementWidth, element.height);
+  }
 
-  // Lignes de séparation
+  // Dessiner l'en-tête si activé
+  if (showHeaders) {
+    ctx.fillStyle = headerBgColor;
+    ctx.fillRect(0, 0, elementWidth, headerHeight);
+
+    if (showBorders) {
+      ctx.strokeStyle = borderColor;
+      ctx.strokeRect(0, 0, elementWidth, headerHeight);
+    }
+
+    // Texte de l'en-tête
+    ctx.fillStyle = headerTextColor;
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.textAlign = 'left';
+
+    const headers = ['Produit', 'Qté', 'Prix', 'Total'];
+    let xPos = 5;
+    headers.forEach((header, index) => {
+      ctx.fillText(header, xPos, 20);
+      xPos += colWidths[index];
+    });
+
+    // Ligne de séparation
+    ctx.strokeStyle = borderColor;
+    ctx.beginPath();
+    ctx.moveTo(0, headerHeight);
+    ctx.lineTo(elementWidth, headerHeight);
+    ctx.stroke();
+  }
+
+  // Données d'exemple de produits
+  const products = [
+    { name: 'T-shirt Premium', qty: 2, price: 29.99 },
+    { name: 'Jean Slim Fit', qty: 1, price: 89.99 },
+    { name: 'Chaussures Sport', qty: 1, price: 129.99 }
+  ];
+
+  // Dessiner les lignes de produits
+  ctx.font = `${fontSize}px Arial`;
+  ctx.fillStyle = textColor;
+
+  products.forEach((product, index) => {
+    const yPos = (showHeaders ? headerHeight : 0) + (index * rowHeight) + 20;
+
+    // Couleur alternée des lignes
+    if (index % 2 === 1) {
+      ctx.fillStyle = alternateRowColor;
+      ctx.fillRect(0, yPos - 15, elementWidth, rowHeight);
+      ctx.fillStyle = textColor;
+    }
+
+    // Dessiner les bordures de ligne si activées
+    if (showBorders) {
+      ctx.strokeStyle = borderColor;
+      ctx.strokeRect(0, yPos - 15, elementWidth, rowHeight);
+    }
+
+    let xPos = 5;
+    ctx.textAlign = 'left';
+
+    // Produit
+    ctx.fillText(product.name, xPos, yPos);
+    xPos += colWidths[0];
+
+    // Quantité
+    ctx.textAlign = 'center';
+    ctx.fillText(product.qty.toString(), xPos + colWidths[1] / 2, yPos);
+    xPos += colWidths[1];
+
+    // Prix
+    ctx.fillText(`${product.price.toFixed(2)}€`, xPos + colWidths[2] - 5, yPos);
+    xPos += colWidths[2];
+
+    // Total
+    const total = product.qty * product.price;
+    ctx.fillText(`${total.toFixed(2)}€`, xPos + colWidths[3] - 5, yPos);
+  });
+
+  // Calculer et afficher le total
+  const totalAmount = products.reduce((sum, product) => sum + (product.qty * product.price), 0);
+  const totalY = (showHeaders ? headerHeight : 0) + (products.length * rowHeight) + 25;
+
+  // Ligne de séparation pour le total
   ctx.strokeStyle = borderColor;
   ctx.beginPath();
-  ctx.moveTo(0, 30);
-  ctx.lineTo(element.width, 30);
+  ctx.moveTo(elementWidth - 100, totalY - 10);
+  ctx.lineTo(elementWidth - 5, totalY - 10);
   ctx.stroke();
 
-  // Contenu d'exemple
-  ctx.fillStyle = '#666666';
-  ctx.font = '10px Arial';
-  ctx.fillText('Produit 1 - Qté: 2 - Prix: 25.00€', 10, 50);
-  ctx.fillText('Produit 2 - Qté: 1 - Prix: 15.00€', 10, 70);
+  // Total
+  ctx.fillStyle = headerTextColor;
+  ctx.font = `bold ${fontSize + 1}px Arial`;
+  ctx.textAlign = 'right';
+  ctx.fillText(`Total: ${totalAmount.toFixed(2)}€`, elementWidth - 5, totalY + 5);
 };
 
 const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const textColor = String(props.textColor || '#333333');
+  const textColor = String(props.textColor || '#374151');
+  const fontSize = Number(props.fontSize || 12);
+  const showHeaders = Boolean(props.showHeaders !== false);
 
   ctx.fillStyle = textColor;
-  ctx.font = '12px Arial';
+  ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
-  const lines = [
-    'Informations Client',
-    'Nom: {{customer_name}}',
-    'Email: {{customer_email}}',
-    'Téléphone: {{customer_phone}}',
-    'Adresse: {{customer_address}}'
+  let yPos = 15;
+
+  // En-tête si activé
+  if (showHeaders) {
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.fillText('Informations Client', 0, yPos);
+    yPos += 25;
+    ctx.font = `${fontSize}px Arial`;
+  }
+
+  // Données d'exemple client
+  const customerData = [
+    { label: 'Nom', value: 'Dupont Marie' },
+    { label: 'Email', value: 'marie.dupont@email.com' },
+    { label: 'Téléphone', value: '+33 6 12 34 56 78' },
+    { label: 'Adresse', value: '15 rue de la Paix' },
+    { label: 'Ville', value: '75002 Paris, France' }
   ];
 
-  lines.forEach((line, index) => {
-    ctx.fillText(line, 0, 20 + index * 18);
+  customerData.forEach((item) => {
+    ctx.fillText(`${item.label}: ${item.value}`, 0, yPos);
+    yPos += 18;
   });
 };
 
 const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const textColor = String(props.textColor || '#333333');
+  const textColor = String(props.textColor || '#374151');
+  const fontSize = Number(props.fontSize || 12);
+  const showHeaders = Boolean(props.showHeaders !== false);
 
   ctx.fillStyle = textColor;
-  ctx.font = '12px Arial';
+  ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
-  const lines = [
-    'Informations Société',
-    'Nom: {{company_name}}',
-    'Adresse: {{company_address}}',
-    'Téléphone: {{company_phone}}',
-    'Email: {{company_email}}'
+  let yPos = 15;
+
+  // En-tête si activé
+  if (showHeaders) {
+    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.fillText('Informations Société', 0, yPos);
+    yPos += 25;
+    ctx.font = `${fontSize}px Arial`;
+  }
+
+  // Données d'exemple société
+  const companyData = [
+    { label: 'Société', value: 'Mon Entreprise SARL' },
+    { label: 'SIRET', value: '123 456 789 00012' },
+    { label: 'Adresse', value: '25 avenue des Champs' },
+    { label: 'Ville', value: '75008 Paris, France' },
+    { label: 'Téléphone', value: '+33 1 42 86 75 30' },
+    { label: 'Email', value: 'contact@monentreprise.com' },
+    { label: 'TVA', value: 'FR 12 345 678 901' }
   ];
 
-  lines.forEach((line, index) => {
-    ctx.fillText(line, 0, 20 + index * 18);
+  companyData.forEach((item) => {
+    ctx.fillText(`${item.label}: ${item.value}`, 0, yPos);
+    yPos += 18;
   });
 };
 
 const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const textColor = String(props.textColor || '#333333');
+  const textColor = String(props.textColor || '#111827');
   const title = String(props.title || 'FACTURE');
+  const fontSize = Number(props.fontSize || 18);
 
   ctx.fillStyle = textColor;
-  ctx.font = 'bold 16px Arial';
+  ctx.font = `bold ${fontSize}px Arial`;
   ctx.textAlign = 'center';
   ctx.fillText(title, element.width / 2, element.height / 2);
+
+  // Ajouter un numéro de document d'exemple
+  ctx.font = `${fontSize - 4}px Arial`;
+  ctx.fillText('N° 2025-00123', element.width / 2, element.height / 2 + 25);
 };
 
 const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const textColor = String(props.textColor || '#666666');
+  const textColor = String(props.textColor || '#6b7280');
+  const fontSize = Number(props.fontSize || 10);
 
   ctx.fillStyle = textColor;
-  ctx.font = '10px Arial';
+  ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
   const mentions = [
     'Mentions légales',
     'TVA non applicable, art. 293 B du CGI',
-    'Paiement à 30 jours'
+    'Paiement à 30 jours fin de mois',
+    'Escompte pour paiement anticipé: 2%',
+    'Règlement par virement bancaire'
   ];
 
   mentions.forEach((mention, index) => {
@@ -218,34 +345,65 @@ const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
 
 const drawCompanyLogo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const borderColor = String(props.borderColor || '#cccccc');
+  const borderColor = String(props.borderColor || '#e5e7eb');
+  const backgroundColor = String(props.backgroundColor || '#ffffff');
 
-  // Dessiner un rectangle pour représenter le logo
+  // Fond
+  ctx.fillStyle = backgroundColor;
+  ctx.fillRect(0, 0, element.width, element.height);
+
+  // Bordure
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = 1;
   ctx.strokeRect(0, 0, element.width, element.height);
 
-  // Texte placeholder
-  ctx.fillStyle = '#999999';
-  ctx.font = '12px Arial';
+  // Placeholder pour le logo
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = 'bold 14px Arial';
   ctx.textAlign = 'center';
   ctx.fillText('[LOGO]', element.width / 2, element.height / 2);
+
+  ctx.font = '10px Arial';
+  ctx.fillText('Entreprise', element.width / 2, element.height / 2 + 18);
 };
 
 const drawWooCommerceField = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as Record<string, unknown>;
-  const textColor = String(props.textColor || '#333333');
-  const label = String(props.label || element.type.replace('_', ' ').toUpperCase());
+  const textColor = String(props.textColor || '#374151');
+  const fontSize = Number(props.fontSize || 12);
 
   ctx.fillStyle = textColor;
-  ctx.font = '12px Arial';
+  ctx.font = `${fontSize}px Arial`;
   ctx.textAlign = 'left';
 
-  // Label
-  ctx.fillText(label + ':', 0, 15);
+  // Déterminer le label et la valeur selon le type
+  let label = '';
+  let value = '';
 
-  // Valeur d'exemple avec variable
-  const value = `{{${element.type}}}`;
+  switch (element.type) {
+    case 'order_number':
+      label = 'Commande N°';
+      value = '2025-00123';
+      break;
+    case 'woocommerce-order-date':
+      label = 'Date';
+      value = '15 novembre 2025';
+      break;
+    case 'woocommerce-invoice-number':
+      label = 'Facture N°';
+      value = 'F2025-00123';
+      break;
+    default:
+      label = element.type.replace('_', ' ').toUpperCase();
+      value = '[Valeur]';
+  }
+
+  // Label
+  ctx.font = `bold ${fontSize}px Arial`;
+  ctx.fillText(`${label}:`, 0, 15);
+
+  // Valeur
+  ctx.font = `${fontSize}px Arial`;
   ctx.fillText(value, 0, 35);
 };
 
@@ -382,13 +540,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner les éléments
     if (state.elements && state.elements.length > 0) {
-      console.log('Rendering', state.elements.length, 'elements:', state.elements);
-      state.elements.forEach((element, index) => {
-        console.log(`Drawing element ${index}:`, element.type, 'at', element.x, element.y, 'size', element.width, 'x', element.height);
+      state.elements.forEach((element) => {
         drawElement(ctx, element);
       });
-    } else {
-      console.log('No elements to render');
     }
 
     // Dessiner la sélection
