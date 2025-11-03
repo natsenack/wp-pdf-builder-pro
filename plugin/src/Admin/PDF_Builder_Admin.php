@@ -931,45 +931,7 @@ class PDF_Builder_Admin {
             ]
         ]);
 
-        // Use wp_localize_script for AJAX configuration - safe method
-wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderAjax', [
-    'ajaxurl' => admin_url('admin-ajax.php'),
-    'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-    'version' => PDF_BUILDER_PRO_VERSION,
-    'timestamp' => time(),
-    'strings' => [
-        'loading' => __('Chargement...', 'pdf-builder-pro'),
-        'error' => __('Erreur', 'pdf-builder-pro'),
-        'success' => __('Succès', 'pdf-builder-pro'),
-        'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-        'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-    ]
-]);
-
-// Add safe inline script that references localized variables
-wp_add_inline_script('pdf-builder-vanilla-bundle', '
-    // Safe initialization using localized variables
-    (function() {
-        // Ensure pdfBuilderAjax is available globally
-        window.pdfBuilderAjax = window.pdfBuilderAjax || pdfBuilderAjax;
-
-        // Wait for PDF Builder Pro to be ready
-        function waitForPDFBuilderPro() {
-            if (typeof window.initializePDFBuilderPro === "function") {
-                window.pdfBuilderPro = window.initializePDFBuilderPro();
-                window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || pdfBuilderAjax.nonce;
-                return;
-            }
-
-            // If function doesn\'t exist yet, wait and retry
-            setTimeout(waitForPDFBuilderPro, 50);
-        }
-
-        // Start waiting
-        waitForPDFBuilderPro();
-    })();
-', 'after');
-// Paramètres du canvas pour le JavaScript
+        // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
         $canvas_settings = get_option('pdf_builder_settings', []);
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderCanvasSettings', [
