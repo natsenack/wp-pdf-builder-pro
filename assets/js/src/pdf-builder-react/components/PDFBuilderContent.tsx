@@ -78,6 +78,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         progress={progress}
         showProgressBar={autoSaveState === 'saving'}
       />
+      
+      {/* Debug temporaire */}
+      {console.log('[PDFBuilderContent] SaveIndicator props:', { autoSaveState, progress, showProgressBar: autoSaveState === 'saving' })}
 
       <div
         className={`pdf-builder ${className || ''}`}

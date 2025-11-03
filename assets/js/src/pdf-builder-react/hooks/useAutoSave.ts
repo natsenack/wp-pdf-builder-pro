@@ -66,4 +66,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     clearError,
     progress
   };
+  
+  // Debug temporaire
+  console.log('[useAutoSave] Return:', { saveState, progress });
 }
