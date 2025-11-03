@@ -188,11 +188,13 @@ export const Header = memo(function Header({
         : '0 2px 8px rgba(0, 0, 0, 0.05)',
       gap: '16px',
       position: isHeaderFixed ? 'fixed' : 'relative',
-      top: isHeaderFixed ? '32px' : 'auto', // En dessous de la barre admin WordPress
-      left: isHeaderFixed ? '160px' : 'auto', // Après le menu WordPress replié
-      right: isHeaderFixed ? 0 : 'auto',
+      top: isHeaderFixed ? '32px' : 'auto',
+      left: isHeaderFixed ? '160px' : 'auto',
+      right: isHeaderFixed ? '0' : 'auto',
+      width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
       zIndex: 1000,
-      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease'
+      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease',
+      boxSizing: 'border-box'
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
