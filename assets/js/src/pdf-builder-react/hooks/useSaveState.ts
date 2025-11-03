@@ -479,34 +479,6 @@ export function useSaveState({
   }, [templateId, elements, autoSaveInterval, performSave, getElementsHash]);
 
   /**
-   * Protection contre les états bloqués - force la transition après 30 secondes
-   */
-  useEffect(() => {
-    let stuckTimeout: NodeJS.Timeout | undefined;
-
-    if (state === 'saving') {
-      console.log('[SAVE STATE] Protection anti-blocage activée - état saving détecté');
-      stuckTimeout = setTimeout(() => {
-        console.log('[SAVE STATE] Protection anti-blocage déclenchée - forçage à error');
-        debugError('[SAVE STATE] État "saving" bloqué détecté, forçage à error');
-        startTransition(() => {
-          setState('error');
-          setError('Sauvegarde bloquée - timeout de sécurité');
-        });
-        onSaveError?.('Sauvegarde bloquée - timeout de sécurité');
-      }, 30000); // 30 secondes de sécurité
-    }
-
-    // Cleanup function qui s'exécute à chaque changement d'état
-    return () => {
-      if (stuckTimeout) {
-        console.log('[SAVE STATE] Protection anti-blocage nettoyée');
-        clearTimeout(stuckTimeout);
-      }
-    };
-  }, [state, onSaveError]);
-
-  /**
    * Cleanup des timers à la dé-montage
    */
   useEffect(() => {
