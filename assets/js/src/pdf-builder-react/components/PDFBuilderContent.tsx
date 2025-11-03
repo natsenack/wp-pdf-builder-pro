@@ -199,6 +199,22 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               {isPropertiesPanelOpen ? '▷' : '◁'}
             </button>
           </div>
+
+          {/* Panneau de propriétés à droite */}
+          {isPropertiesPanelOpen && (
+            <div
+              style={{
+                flexShrink: 0,
+                width: '430px',
+                position: 'sticky',
+                top: '110px',
+                height: 'fit-content',
+                maxHeight: 'calc(100vh - 32px)'
+              }}
+            >
+              <PropertiesPanel />
+            </div>
+          )}
         </div>
       </div>
     </>
