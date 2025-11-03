@@ -206,7 +206,7 @@ class PDFPreviewAPI {
         this.addPreviewActions(previewModal, imageUrl, context);
 
         // Afficher la modal
-        previewModal.style.display = 'flex';
+        previewModal.setAttribute('class', 'pdf-preview-modal-visible');
 
         debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
@@ -217,17 +217,17 @@ class PDFPreviewAPI {
     createPreviewModal() {
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
+        modal.setAttribute('class', 'pdf-preview-modal-hidden');
         modal.style.cssText = `
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: none;
-            justify-content: center;
-            align-items: center;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0,0,0,0.8) !important;
+            z-index: 9999 !important;
+            justify-content: center !important;
+            align-items: center !important;
         `;
 
         modal.innerHTML = `
@@ -257,15 +257,27 @@ class PDFPreviewAPI {
 
         // Gestionnaire de fermeture
         modal.querySelector('#pdf-preview-close').addEventListener('click', () => {
-            modal.style.display = 'none';
+            modal.setAttribute('class', 'pdf-preview-modal-hidden');
         });
 
         // Fermeture en cliquant en dehors
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.style.display = 'none';
+                modal.setAttribute('class', 'pdf-preview-modal-hidden');
             }
         });
+
+        // Ajouter le style pour montrer/cacher
+        const style = document.createElement('style');
+        style.textContent = `
+            .pdf-preview-modal-hidden {
+                display: none !important;
+            }
+            .pdf-preview-modal-visible {
+                display: flex !important;
+            }
+        `;
+        document.head.appendChild(style);
 
         return modal;
     }
