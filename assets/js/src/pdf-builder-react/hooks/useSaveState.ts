@@ -214,9 +214,7 @@ export function useSaveState({
           startTransition(() => {
             // Vérifier que l'état est toujours 'saved' avant de le changer
             // (évite les conflits si une nouvelle sauvegarde a commencé)
-            if (state === 'saved') {
-              setState('idle');
-            }
+            setState('idle');
           });
         }, 3000);
 
