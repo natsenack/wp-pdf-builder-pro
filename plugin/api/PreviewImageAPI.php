@@ -17,6 +17,9 @@ class PreviewImageAPI {
             wp_mkdir_p($this->cache_dir);
         }
 
+        // Enregistrer l'endpoint REST pour l'étape 1.4
+        add_action('rest_api_init', array($this, 'register_rest_routes'));
+
         // NOTE: Les actions AJAX sont enregistrées dans pdf-builder-pro.php, pas ici
         // pour éviter les conflits de double enregistrement
         error_log('[PDF Preview] AJAX actions are registered by pdf-builder-pro.php');
@@ -27,6 +30,170 @@ class PreviewImageAPI {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
         }
         error_log('[PDF Preview] PreviewImageAPI constructor completed');
+    }
+
+    /**
+     * Enregistrer les routes REST API pour l'étape 1.4
+     */
+    public function register_rest_routes() {
+        register_rest_route('wp-pdf-builder-pro/v1', '/preview', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'handle_rest_preview'),
+            'permission_callback' => array($this, 'check_rest_permissions'),
+            'args' => array(
+                'templateId' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'description' => 'ID du template à utiliser'
+                ),
+                'orderId' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'description' => 'ID de la commande WooCommerce'
+                ),
+                'context' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'enum' => array('editor', 'metabox'),
+                    'description' => 'Contexte de l\'aperçu'
+                ),
+                'templateData' => array(
+                    'required' => false,
+                    'type' => 'object',
+                    'description' => 'Données du template JSON'
+                ),
+                'quality' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'default' => 150,
+                    'minimum' => 50,
+                    'maximum' => 300,
+                    'description' => 'Qualité de l\'image (50-300)'
+                ),
+                'format' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'enum' => array('png', 'jpg', 'pdf'),
+                    'default' => 'png',
+                    'description' => 'Format de sortie'
+                )
+            )
+        ));
+    }
+
+    /**
+     * Vérification des permissions pour l'API REST
+     */
+    public function check_rest_permissions($request) {
+        $context = $request->get_param('context');
+
+        switch ($context) {
+            case 'editor':
+                return current_user_can('manage_options');
+            case 'metabox':
+                return current_user_can('edit_shop_orders');
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Handler pour l'endpoint REST /preview
+     */
+    public function handle_rest_preview($request) {
+        $start_time = microtime(true);
+
+        try {
+            // Récupération des paramètres
+            $params = array(
+                'template_id' => $request->get_param('templateId'),
+                'order_id' => $request->get_param('orderId'),
+                'context' => $request->get_param('context'),
+                'template_data' => $request->get_param('templateData'),
+                'quality' => $request->get_param('quality') ?: 150,
+                'format' => $request->get_param('format') ?: 'png'
+            );
+
+            // Validation des paramètres
+            $validated_params = $this->validate_rest_params($params);
+
+            // Rate limiting
+            $this->check_rate_limit();
+
+            // Génération avec cache
+            $result = $this->generate_with_cache($validated_params);
+
+            // Log des performances
+            $this->log_performance($start_time, 'rest_' . $validated_params['context']);
+
+            return new WP_REST_Response(array(
+                'success' => true,
+                'data' => $result,
+                'performance' => array(
+                    'duration' => round(microtime(true) - $start_time, 3),
+                    'cached' => $result['cached'] ?? false
+                )
+            ), 200);
+
+        } catch (Exception $e) {
+            $this->log_performance($start_time, 'rest_error');
+
+            return new WP_Error(
+                'preview_generation_failed',
+                $e->getMessage(),
+                array(
+                    'status' => 500,
+                    'performance' => array(
+                        'duration' => round(microtime(true) - $start_time, 3)
+                    )
+                )
+            );
+        }
+    }
+
+    /**
+     * Validation des paramètres REST
+     */
+    private function validate_rest_params($params) {
+        $validated = array(
+            'context' => sanitize_text_field($params['context']),
+            'quality' => max(50, min(300, intval($params['quality']))),
+            'format' => in_array(strtolower($params['format']), array('png', 'jpg', 'pdf')) ?
+                       strtolower($params['format']) : 'png'
+        );
+
+        // Validation selon contexte
+        switch ($validated['context']) {
+            case 'editor':
+                if (empty($params['templateData'])) {
+                    throw new Exception('templateData is required for editor context');
+                }
+                $validated['template_data'] = $this->validate_template_data(json_encode($params['templateData']));
+                $validated['preview_type'] = 'design';
+                break;
+
+            case 'metabox':
+                if (empty($params['templateData'])) {
+                    throw new Exception('templateData is required for metabox context');
+                }
+                $validated['template_data'] = $this->validate_template_data(json_encode($params['templateData']));
+                $validated['order_id'] = !empty($params['orderId']) ? intval($params['orderId']) : null;
+                $validated['preview_type'] = $validated['order_id'] ? 'order' : 'design';
+
+                // Validation commande existe
+                if ($validated['order_id'] && function_exists('wc_get_order')) {
+                    $order = wc_get_order($validated['order_id']);
+                    if (!$order) {
+                        throw new Exception('Order not found', 404);
+                    }
+                }
+                break;
+
+            default:
+                throw new Exception('Invalid context: ' . $validated['context']);
+        }
+
+        return $validated;
     }
 
     /**
@@ -270,23 +437,200 @@ class PreviewImageAPI {
     }
 
     /**
-     * Génération avec cache intelligent
+     * Génération avec cache intelligent - VERSION RÉELLE POUR ÉTAPE 1.4
      */
     private function generate_with_cache($params) {
         $cache_key = $this->generate_cache_key($params);
-        
-        // Pour l'instant, retourner un aperçu placeholder (étape 1.5 de la roadmap)
-        // La génération réelle d'image sera implémentée aux étapes suivantes
-        // conformément au système du plugin concurrent
-        
-        $placeholder_url = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22700%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22500%22 height=%22700%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23666%22%3EAperçu PDF Builder Pro%3C/text%3E%3C/svg%3E';
-        
-        return [
-            'image_url' => $placeholder_url,
+        $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
+
+        // Vérifier si cache valide
+        if ($this->is_cache_valid($cache_file, $params)) {
+            return array(
+                'image_url' => $this->get_cache_url($cache_key, $params['format']),
+                'cached' => true,
+                'cache_key' => $cache_key,
+                'status' => 'preview_ready',
+                'format' => $params['format'],
+                'quality' => $params['quality']
+            );
+        }
+
+        // Générer l'image réelle
+        $image_url = $this->generate_real_image($params, $cache_file);
+
+        return array(
+            'image_url' => $image_url,
             'cached' => false,
             'cache_key' => $cache_key,
-            'status' => 'preview_ready'
-        ];
+            'status' => 'preview_ready',
+            'format' => $params['format'],
+            'quality' => $params['quality']
+        );
+    }
+
+    /**
+     * Génération d'une vraie image à partir des données template
+     */
+    private function generate_real_image($params, $cache_file) {
+        // Dimensions A4 en pixels (approximatif pour aperçu)
+        $width = 595;  // A4 width at 72 DPI
+        $height = 842; // A4 height at 72 DPI
+
+        // Créer l'image
+        $image = imagecreatetruecolor($width, $height);
+        if (!$image) {
+            throw new Exception('Failed to create image');
+        }
+
+        // Couleurs
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $gray = imagecolorallocate($image, 128, 128, 128);
+
+        // Fond blanc
+        imagefill($image, 0, 0, $white);
+
+        // Rendu des éléments du template
+        $elements = $params['template_data']['template']['elements'] ?? array();
+
+        foreach ($elements as $element) {
+            $this->render_element($image, $element, $width, $height);
+        }
+
+        // Ajouter un watermark/titre si pas d'éléments
+        if (empty($elements)) {
+            $this->render_default_preview($image, $width, $height);
+        }
+
+        // Sauvegarder selon le format
+        $success = false;
+        switch ($params['format']) {
+            case 'jpg':
+            case 'jpeg':
+                $success = imagejpeg($image, $cache_file, $params['quality']);
+                break;
+            case 'png':
+            default:
+                // Pour PNG, quality = compression level (0-9)
+                $png_quality = min(9, max(0, (100 - $params['quality']) / 11));
+                $success = imagepng($image, $cache_file, $png_quality);
+                break;
+        }
+
+        // Libérer la mémoire
+        imagedestroy($image);
+
+        if (!$success) {
+            throw new Exception('Failed to save image');
+        }
+
+        return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
+    }
+
+    /**
+     * Rendu d'un élément sur l'image
+     */
+    private function render_element($image, $element, $canvas_width, $canvas_height) {
+        $type = $element['type'] ?? 'text';
+        $x = intval($element['x'] ?? 0);
+        $y = intval($element['y'] ?? 0);
+        $width = intval($element['width'] ?? 100);
+        $height = intval($element['height'] ?? 50);
+
+        // Conversion des coordonnées relatives en pixels
+        $pixel_x = ($x / 100) * $canvas_width;
+        $pixel_y = ($y / 100) * $canvas_height;
+        $pixel_width = ($width / 100) * $canvas_width;
+        $pixel_height = ($height / 100) * $canvas_height;
+
+        switch ($type) {
+            case 'text':
+                $this->render_text_element($image, $element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
+                break;
+            case 'rectangle':
+                $this->render_rectangle_element($image, $element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
+                break;
+            // Autres types d'éléments peuvent être ajoutés ici
+        }
+    }
+
+    /**
+     * Rendu d'un élément texte
+     */
+    private function render_text_element($image, $element, $x, $y, $width, $height) {
+        $text = $element['content'] ?? '';
+        $font_size = intval($element['fontSize'] ?? 12);
+        $color = $element['color'] ?? '#000000';
+
+        // Parser la couleur
+        $rgb = $this->hex_to_rgb($color);
+        $text_color = imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']);
+
+        // Police par défaut (GD ne supporte que les polices bitmap intégrées)
+        // Utiliser une taille approximative
+        $font = 5; // Police GD intégrée (5 tailles disponibles: 1-5)
+
+        // Calculer la taille approximative du texte
+        $text_width = strlen($text) * imagefontwidth($font);
+        $text_height = imagefontheight($font);
+
+        // Centrer le texte dans la zone
+        $center_x = $x + ($width - $text_width) / 2;
+        $center_y = $y + ($height + $text_height) / 2;
+
+        // Rendu du texte
+        imagestring($image, $font, $center_x, $center_y - $text_height, $text, $text_color);
+    }
+
+    /**
+     * Rendu d'un élément rectangle
+     */
+    private function render_rectangle_element($image, $element, $x, $y, $width, $height) {
+        $background_color = $element['backgroundColor'] ?? '#ffffff';
+        $border_color = $element['borderColor'] ?? '#000000';
+
+        $bg_rgb = $this->hex_to_rgb($background_color);
+        $border_rgb = $this->hex_to_rgb($border_color);
+
+        $bg_color = imagecolorallocate($image, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+        $border_color = imagecolorallocate($image, $border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
+
+        // Remplir le rectangle
+        imagefilledrectangle($image, $x, $y, $x + $width, $y + $height, $bg_color);
+
+        // Bordure
+        imagerectangle($image, $x, $y, $x + $width, $y + $height, $border_color);
+    }
+
+    /**
+     * Rendu par défaut quand pas d'éléments
+     */
+    private function render_default_preview($image, $width, $height) {
+        $gray = imagecolorallocate($image, 128, 128, 128);
+        $black = imagecolorallocate($image, 0, 0, 0);
+
+        // Titre
+        $title = 'PDF Builder Pro - Aperçu';
+        imagestring($image, 5, ($width - strlen($title) * imagefontwidth(5)) / 2, $height / 2 - 20, $title, $black);
+
+        // Sous-titre
+        $subtitle = 'Ajoutez des éléments pour voir l\'aperçu';
+        imagestring($image, 4, ($width - strlen($subtitle) * imagefontwidth(4)) / 2, $height / 2 + 10, $subtitle, $gray);
+    }
+
+    /**
+     * Conversion hex vers RGB
+     */
+    private function hex_to_rgb($hex) {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) == 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        return array(
+            'r' => hexdec(substr($hex, 0, 2)),
+            'g' => hexdec(substr($hex, 2, 2)),
+            'b' => hexdec(substr($hex, 4, 2))
+        );
     }
 
     /**
