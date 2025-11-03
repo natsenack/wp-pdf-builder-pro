@@ -32,6 +32,7 @@ export interface UseSaveStateReturn {
   saveNow: () => Promise<void>;
   clearError: () => void;
   retryCount: number;
+  progress: number; // 0-100 pour la barre de progression
 }
 
 export function useSaveState({
@@ -49,6 +50,7 @@ export function useSaveState({
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   // Refs pour le debouncing et la gestion des timers
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -61,6 +63,15 @@ export function useSaveState({
   const saveCooldownRef = useRef<number>(0);
   const saveOperationIdRef = useRef<number>(0);
   const savedStateTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Timer pour revenir à idle
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null); // Interval pour la progression
+
+  // Fonction de nettoyage de la progression
+  const cleanupProgress = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
 
   /**
    * Calcule un hash robuste des éléments pour détecter les changements réels
@@ -155,8 +166,19 @@ export function useSaveState({
         // Set saving state
         startTransition(() => {
           setState('saving');
+          setProgress(0); // Initialiser la progression
         });
         console.log('[SAVE STATE] État changé à saving - début de sauvegarde');
+        
+        // Simulation de progression pendant la sauvegarde
+        progressIntervalRef.current = setInterval(() => {
+          setProgress(prev => {
+            const newProgress = prev + Math.random() * 15; // Avancement aléatoire
+            return Math.min(90, newProgress); // Max 90% jusqu'à la fin
+          });
+        }, 200);
+
+        // Nettoyer l'interval de progression en cas de succès
         
         // Annuler le timer de retour à idle s'il existe (nouvelle sauvegarde commence)
         if (savedStateTimeoutRef.current) {
@@ -245,7 +267,10 @@ export function useSaveState({
           setState('saved');
           setError(null);
           setRetryCount(0);
+          setProgress(100); // Compléter la progression
         });
+
+        cleanupProgress(); // Nettoyer l'interval de progression
 
         console.log('[SAVE STATE] État changé à saved', { savedAt, state });
 
@@ -276,6 +301,7 @@ export function useSaveState({
         // Marquer le timeout comme déclenché pour éviter les conflits
         timeoutTriggered = true;
         clearTimeout(saveTimeout); // Nettoyer le timeout global
+        cleanupProgress(); // Nettoyer l'interval de progression
         
         const errorMsg = err?.name === 'AbortError' 
           ? 'Timeout de la requête (8s)' 
@@ -502,6 +528,7 @@ export function useSaveState({
     error,
     saveNow,
     clearError,
-    retryCount
+    retryCount,
+    progress
   };
 }

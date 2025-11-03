@@ -201,6 +201,24 @@
   }
 }
 
+/* Barre de progression */
+.save-indicator__progress-bar {
+  width: 60px;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+
+.save-indicator__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
 /* Mobile responsive */
 @media (max-width: 640px) {
   .save-indicator {

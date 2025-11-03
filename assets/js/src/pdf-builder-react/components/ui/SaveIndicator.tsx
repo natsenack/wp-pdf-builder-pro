@@ -19,6 +19,8 @@ export interface SaveIndicatorProps {
   retryCount?: number;
   onRetry?: () => void;
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  progress?: number; // 0-100 pour la barre de progression
+  showProgressBar?: boolean;
 }
 
 export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
@@ -27,7 +29,9 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   error,
   retryCount = 0,
   onRetry,
-  position = 'top-right'
+  position = 'top-right',
+  progress = 0,
+  showProgressBar = false
 }) => {
   const [visible, setVisible] = useState(false);
   const [autoHideTimer, setAutoHideTimer] = useState<NodeJS.Timeout | null>(null);
@@ -94,6 +98,16 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
             <div className="save-indicator__spinner-dot save-indicator__spinner-dot--1"></div>
             <div className="save-indicator__spinner-dot save-indicator__spinner-dot--2"></div>
             <div className="save-indicator__spinner-dot save-indicator__spinner-dot--3"></div>
+          </div>
+        )}
+
+        {/* Barre de progression pour 'saving' */}
+        {state === 'saving' && showProgressBar && (
+          <div className="save-indicator__progress-bar">
+            <div
+              className="save-indicator__progress-fill"
+              style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+            />
           </div>
         )}
 

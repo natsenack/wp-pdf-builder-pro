@@ -16,6 +16,7 @@ export interface UseAutoSaveReturn {
   retryCount: number;
   saveNow: () => Promise<void>;
   clearError: () => void;
+  progress: number;
 }
 
 export function useAutoSave(): UseAutoSaveReturn {
@@ -36,7 +37,8 @@ export function useAutoSave(): UseAutoSaveReturn {
     error,
     saveNow,
     clearError,
-    retryCount
+    retryCount,
+    progress
   } = useSaveState({
     templateId: state.template.id as number | undefined,
     elements: state.elements,
@@ -61,6 +63,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     error,
     retryCount,
     saveNow,
-    clearError
+    clearError,
+    progress
   };
 }

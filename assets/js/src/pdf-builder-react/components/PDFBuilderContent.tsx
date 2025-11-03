@@ -50,7 +50,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     error: autoSaveError,
     retryCount,
     saveNow: retryAutoSave,
-    clearError: clearAutoSaveError
+    clearError: clearAutoSaveError,
+    progress
   } = useAutoSave();
 
   // Effet pour gérer le scroll et ajuster le padding
@@ -74,6 +75,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         retryCount={retryCount}
         onRetry={retryAutoSave}
         position="top-right"
+        progress={progress}
+        showProgressBar={autoSaveState === 'saving'}
       />
 
       <div
