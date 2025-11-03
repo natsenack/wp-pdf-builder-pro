@@ -33,6 +33,7 @@ class PDFPreviewAPI {
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
         this.cache = new Map();
+        console.log('🔥🔥🔥 PDF PREVIEW API NOUVELLE VERSION 2025-11-03 13:11:45 🔥🔥🔥');
     }
 
     /**
@@ -182,6 +183,8 @@ class PDFPreviewAPI {
      * Affiche l'aperçu généré
      */
     displayPreview(imageUrl, context, orderId = null) {
+        console.log('🚨🚨🚨 DISPLAYPREVIEW APPELÉE 🚨🚨🚨', { context, imageUrl });
+        
         // Créer ou mettre à jour la modal d'aperçu
         let previewModal = document.getElementById('pdf-preview-modal');
         if (!previewModal) {
