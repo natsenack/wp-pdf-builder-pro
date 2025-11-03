@@ -119,7 +119,14 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
   const alternateRowColor = String(props.alternateRowColor || '#f9fafb');
   const showHeaders = Boolean(props.showHeaders !== false);
   const showBorders = Boolean(props.showBorders !== false);
+  const showAlternatingRows = Boolean(props.showAlternatingRows !== false);
+  const showQuantity = Boolean(props.showQuantity !== false);
   const fontSize = Number(props.fontSize || 11);
+  const fontWeight = String(props.fontWeight || 'normal');
+  const fontStyle = String(props.fontStyle || 'normal');
+  const textDecoration = String(props.textDecoration || 'none');
+  const currency = String(props.currency || '€');
+  const backgroundColor = String(props.backgroundColor || 'transparent');
 
   // Dimensions des colonnes
   const colWidths = [200, 60, 80, 80]; // Produit, Qté, Prix, Total
@@ -129,6 +136,12 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   // Ajuster la largeur de l'élément si nécessaire
   const elementWidth = Math.max(element.width, totalWidth + 20);
+
+  // Dessiner le fond du tableau si nécessaire
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, elementWidth, element.height);
+  }
 
   // Dessiner les bordures si activées
   if (showBorders) {
@@ -149,7 +162,7 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
 
     // Texte de l'en-tête
     ctx.fillStyle = headerTextColor;
-    ctx.font = `bold ${fontSize + 2}px Arial`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize + 2}px Arial`;
     ctx.textAlign = 'left';
 
     const headers = ['Produit', 'Qté', 'Prix', 'Total'];
@@ -175,14 +188,14 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
   ];
 
   // Dessiner les lignes de produits
-  ctx.font = `${fontSize}px Arial`;
+  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px Arial`;
   ctx.fillStyle = textColor;
 
   products.forEach((product, index) => {
     const yPos = (showHeaders ? headerHeight : 0) + (index * rowHeight) + 20;
 
     // Couleur alternée des lignes
-    if (index % 2 === 1) {
+    if (showAlternatingRows && index % 2 === 1) {
       ctx.fillStyle = alternateRowColor;
       ctx.fillRect(0, yPos - 15, elementWidth, rowHeight);
       ctx.fillStyle = textColor;
@@ -207,12 +220,12 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
     xPos += colWidths[1];
 
     // Prix
-    ctx.fillText(`${product.price.toFixed(2)}€`, xPos + colWidths[2] - 5, yPos);
+    ctx.fillText(`${product.price.toFixed(2)}${currency}`, xPos + colWidths[2] - 5, yPos);
     xPos += colWidths[2];
 
     // Total
     const total = product.qty * product.price;
-    ctx.fillText(`${total.toFixed(2)}€`, xPos + colWidths[3] - 5, yPos);
+    ctx.fillText(`${total.toFixed(2)}${currency}`, xPos + colWidths[3] - 5, yPos);
   });
 
   // Calculer et afficher le total
@@ -228,9 +241,9 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   // Total
   ctx.fillStyle = headerTextColor;
-  ctx.font = `bold ${fontSize + 1}px Arial`;
+  ctx.font = `${fontStyle} bold ${fontSize + 1}px Arial`;
   ctx.textAlign = 'right';
-  ctx.fillText(`Total: ${totalAmount.toFixed(2)}€`, elementWidth - 5, totalY + 5);
+  ctx.fillText(`Total: ${totalAmount.toFixed(2)}${currency}`, elementWidth - 5, totalY + 5);
 };
 
 const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
