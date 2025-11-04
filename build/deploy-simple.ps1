@@ -118,22 +118,35 @@ if ($Mode -eq "test") {
         }
     }
     
-    # Creer repertoires sur FTP
+    # Creer repertoires sur FTP de maniere recursive
+    function New-FtpDirectory {
+        param([string]$ftpPath)
+        
+        $parts = $ftpPath -split '/'
+        $currentPath = ""
+        
+        foreach ($part in $parts) {
+            if ($part) {
+                $currentPath += "/$part"
+                try {
+                    $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$currentPath/"
+                    $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                    $ftpRequest.UseBinary = $true
+                    $ftpRequest.UsePassive = $false
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+                } catch {
+                    # Dossier peut deja exister
+                }
+            }
+        }
+    }
+    
     foreach ($dir in $dirs.Keys) {
         $ftpDir = $dir.Replace("\", "/").Replace("plugin/", "")
         $fullPath = "$FtpPath/$ftpDir"
-        
-        try {
-            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$fullPath/"
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-            $ftpRequest.UseBinary = $false
-            $ftpRequest.UsePassive = $false
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-        } catch {
-            # Dossier peut deja exister
-        }
+        New-FtpDirectory $fullPath
     }
     
     # Upload fichiers avec status
