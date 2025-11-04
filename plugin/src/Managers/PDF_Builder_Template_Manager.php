@@ -863,7 +863,9 @@ class PDF_Builder_Template_Manager
             $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
 
             // Dossier des templates prédéfinis
-            $templates_dir = plugin_dir_path(__FILE__) . '../../templates/predefined/';
+            // Depuis src/Managers/, remonter vers la racine du plugin puis aller dans templates/predefined/
+            $plugin_root = dirname(dirname(dirname(__FILE__)));
+            $templates_dir = $plugin_root . '/templates/predefined/';
             $templates = glob($templates_dir . '*.json');
 
             if (empty($templates)) {
