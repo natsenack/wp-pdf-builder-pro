@@ -902,10 +902,34 @@ class PDF_Builder_Template_Manager
                 }
 
                 // Vérifier si c'est un template valide
-                if (!isset($template_data['canvasWidth']) || !isset($template_data['canvasHeight']) || !isset($template_data['elements'])) {
+                // Supporte les deux formats : structure plate ou avec clé 'template'
+                $has_flat_structure = isset($template_data['canvasWidth']) && isset($template_data['canvasHeight']) && isset($template_data['elements']);
+                $has_nested_structure = isset($template_data['template']) && isset($template_data['template']['canvasWidth']) && isset($template_data['template']['canvasHeight']) && isset($template_data['template']['elements']);
+
+                if (!$has_flat_structure && !$has_nested_structure) {
                     error_log('[PDF Builder] Invalid template structure for ' . $filename);
                     $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Template invalide: champs requis manquants'];
                     continue;
+                }
+
+                // Normaliser la structure pour les générateurs (qui attendent une clé 'template')
+                if ($has_flat_structure && !$has_nested_structure) {
+                    $template_data = [
+                        'name' => $template_data['name'] ?? $filename,
+                        'description' => $template_data['description'] ?? '',
+                        'category' => $template_data['category'] ?? 'general',
+                        'tags' => $template_data['tags'] ?? [],
+                        'version' => $template_data['version'] ?? '1.0.0',
+                        'isPremium' => $template_data['isPremium'] ?? false,
+                        'previewImage' => $template_data['previewImage'] ?? '',
+                        'template' => [
+                            'canvasWidth' => $template_data['canvasWidth'],
+                            'canvasHeight' => $template_data['canvasHeight'],
+                            'orientation' => $template_data['orientation'] ?? 'portrait',
+                            'elements' => $template_data['elements'],
+                            'variables' => $template_data['variables'] ?? []
+                        ]
+                    ];
                 }
 
                 try {

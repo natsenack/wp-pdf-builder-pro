@@ -8,13 +8,12 @@
         "épuré"
     ],
     "version": "1.0.0",
+    "canvasWidth": 595,
+    "canvasHeight": 842,
+    "orientation": "portrait",
     "isPremium": false,
     "previewImage": "\/wp-content\/plugins\/wp-pdf-builder-pro\/templates\/predefined\/minimal-preview.png",
-    "template": {
-        "canvasWidth": 595,
-        "canvasHeight": 842,
-        "orientation": "portrait",
-        "elements": [
+    "elements": [
         {
             "id": "company-name-minimal",
             "type": "text",
@@ -319,6 +318,5 @@
             "required": true,
             "label": "Total de la commande"
         }
-    }
     }
 }

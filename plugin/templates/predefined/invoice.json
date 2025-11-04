@@ -8,13 +8,12 @@
         "professionnel"
     ],
     "version": "1.0.0",
+    "canvasWidth": 595,
+    "canvasHeight": 842,
+    "orientation": "portrait",
     "isPremium": false,
     "previewImage": "\/wp-content\/plugins\/wp-pdf-builder-pro\/templates\/predefined\/invoice-preview.png",
-    "template": {
-        "canvasWidth": 595,
-        "canvasHeight": 842,
-        "orientation": "portrait",
-        "elements": [
+    "elements": [
         {
             "id": "header-invoice",
             "type": "rectangle",
@@ -557,6 +556,5 @@
             "required": true,
             "label": "Total TTC"
         }
-    }
     }
 }
