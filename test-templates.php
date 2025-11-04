@@ -21,32 +21,72 @@ require_once 'd:/wp-pdf-builder-pro/plugin/src/Managers/PDF_Builder_Template_Man
 // Créer l'instance
 $manager = new PDF_Builder_Template_Manager(null);
 
-// Tester la méthode
-$templates = $manager->get_builtin_templates();
+// Tester un template spécifique
+$template_file = 'd:/wp-pdf-builder-pro/plugin/templates/builtin/classic.json';
 
-echo "=== TEST DIRECT ===" . PHP_EOL;
-echo "PDF_BUILDER_PLUGIN_DIR: " . PDF_BUILDER_PLUGIN_DIR . PHP_EOL;
-echo "PDF_BUILDER_PLUGIN_URL: " . PDF_BUILDER_PLUGIN_URL . PHP_EOL;
-echo "Templates found: " . count($templates) . PHP_EOL;
-echo PHP_EOL;
+echo "=== TEST TEMPLATE CHARGEMENT ===\n";
+echo "Fichier: $template_file\n";
+echo "Existe: " . (file_exists($template_file) ? 'OUI' : 'NON') . "\n";
 
-if (count($templates) > 0) {
-    echo "Templates:" . PHP_EOL;
-    foreach ($templates as $t) {
-        echo "  - " . $t['name'] . " (id: " . $t['id'] . ")" . PHP_EOL;
-    }
-} else {
-    echo "AUCUN TEMPLATE!" . PHP_EOL;
-    echo "Vérifions le chemin:" . PHP_EOL;
-    $builtin_dir = PDF_BUILDER_PLUGIN_DIR . 'templates/builtin/';
-    echo "  builtin_dir: " . $builtin_dir . PHP_EOL;
-    echo "  exists: " . (is_dir($builtin_dir) ? 'YES' : 'NO') . PHP_EOL;
-    if (is_dir($builtin_dir)) {
-        $files = glob($builtin_dir . '*.json');
-        echo "  files: " . count($files) . PHP_EOL;
-        foreach ($files as $f) {
-            echo "    - " . basename($f) . PHP_EOL;
+if (file_exists($template_file)) {
+    $json_content = file_get_contents($template_file);
+    echo "Contenu lu: " . (strlen($json_content) > 0 ? 'OUI' : 'NON') . " (" . strlen($json_content) . " caractères)\n";
+
+    $template_data = json_decode($json_content, true);
+    echo "JSON décodé: " . (json_last_error() === JSON_ERROR_NONE ? 'OUI' : 'NON - ' . json_last_error_msg()) . "\n";
+
+    if (json_last_error() === JSON_ERROR_NONE) {
+        echo "Structure: " . (is_array($template_data) ? 'ARRAY' : gettype($template_data)) . "\n";
+
+        // Vérifier les clés requises
+        $required_keys = ['elements', 'canvasWidth', 'canvasHeight', 'version'];
+        $missing_keys = [];
+        foreach ($required_keys as $key) {
+            if (!isset($template_data[$key])) {
+                $missing_keys[] = $key;
+            }
+        }
+        echo "Clés manquantes: " . (empty($missing_keys) ? 'AUCUNE' : implode(', ', $missing_keys)) . "\n";
+
+        if (empty($missing_keys)) {
+            echo "Types:\n";
+            echo "  elements: " . gettype($template_data['elements']) . "\n";
+            echo "  canvasWidth: " . gettype($template_data['canvasWidth']) . "\n";
+            echo "  canvasHeight: " . gettype($template_data['canvasHeight']) . "\n";
+            echo "  version: " . gettype($template_data['version']) . "\n";
+
+            // Tester la validation
+            echo "Validation des types:\n";
+            $errors = [];
+
+            if (!is_array($template_data['elements'])) {
+                $errors[] = "'elements' doit être un tableau";
+            }
+
+            if (!is_numeric($template_data['canvasWidth'])) {
+                $errors[] = "'canvasWidth' doit être numérique";
+            }
+
+            if (!is_numeric($template_data['canvasHeight'])) {
+                $errors[] = "'canvasHeight' doit être numérique";
+            }
+
+            if (!is_string($template_data['version'])) {
+                $errors[] = "'version' doit être une chaîne";
+            }
+
+            echo "  Erreurs: " . (empty($errors) ? 'AUCUNE' : implode(', ', $errors)) . "\n";
         }
     }
+}
+
+// Tester la méthode complète
+echo "\n=== TEST MÉTHODE COMPLÈTE ===\n";
+$templates = $manager->get_builtin_templates();
+
+echo "Templates trouvés: " . count($templates) . "\n";
+
+foreach ($templates as $template) {
+    echo "  - " . ($template['name'] ?? 'SANS NOM') . " (id: " . ($template['id'] ?? 'SANS ID') . ")\n";
 }
 ?>

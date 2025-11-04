@@ -59,6 +59,14 @@ function pdf_builder_ajax_get_builtin_templates_handler() {
             error_log('PDF Builder AJAX Handler - Defined PDF_BUILDER_PLUGIN_DIR: ' . PDF_BUILDER_PLUGIN_DIR);
         }
 
+        // Définir PDF_BUILDER_PLUGIN_URL si elle n'existe pas
+        if (!defined('PDF_BUILDER_PLUGIN_URL')) {
+            // Calculer le plugin URL en utilisant le chemin du plugin
+            $plugin_file = $plugin_root . '/pdf-builder-pro.php';
+            define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url($plugin_file));
+            error_log('PDF Builder AJAX Handler - Defined PDF_BUILDER_PLUGIN_URL: ' . PDF_BUILDER_PLUGIN_URL);
+        }
+
         require_once $template_manager_file;
 
         if (!class_exists('PDF_Builder_Template_Manager')) {
