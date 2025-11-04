@@ -73,7 +73,22 @@ if (!defined('ABSPATH')) {
                 response.data.templates.forEach(function(t){
                     var card = document.createElement('div');
                     card.className = 'predef-card';
-                    card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:160px;';
+                    card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:200px;';
+                    
+                    // Image de prévisualisation
+                    if (t.previewImage) {
+                        var imgContainer = document.createElement('div');
+                        imgContainer.style = 'height:120px;background:#f8f9fa;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden;';
+                        var img = document.createElement('img');
+                        img.src = t.previewImage;
+                        img.style = 'max-width:100%;max-height:100%;object-fit:contain;';
+                        img.onerror = function() { 
+                            imgContainer.innerHTML = '<div style="color:#999;font-size:12px;">📄<br>Aperçu</div>';
+                        };
+                        imgContainer.appendChild(img);
+                        card.appendChild(imgContainer);
+                    }
+                    
                     var title = document.createElement('h4'); title.style.margin='0 0 8px 0'; title.textContent = t.name;
                     var desc = document.createElement('div'); desc.style.color='#666'; desc.style.flex='1'; desc.textContent = t.description || '';
                     var footer = document.createElement('div'); footer.style.display='flex'; footer.style.gap='8px'; footer.style.marginTop='10px';
