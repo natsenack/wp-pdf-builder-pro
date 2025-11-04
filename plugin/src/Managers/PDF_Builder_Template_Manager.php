@@ -39,6 +39,9 @@ class PDF_Builder_Template_Manager
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajax_auto_save_template']); // Auto-save handler
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
+        add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
+        add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
+        add_action('wp_ajax_pdf_builder_regenerate_predefined_thumbnails', [$this, 'ajax_regenerate_predefined_thumbnails']);
     }
 
     /**
@@ -740,6 +743,145 @@ class PDF_Builder_Template_Manager
     }
 
     /**
+     * Obtenir tous les templates builtin (statiques)
+     *
+     * @return array Liste des templates builtin avec leurs métadonnées
+     */
+    public function get_builtin_templates()
+    {
+        $templates = [];
+
+        // Chemin vers le dossier des templates builtin
+        $plugin_root = dirname(dirname(dirname(__FILE__)));
+        $builtin_dir = $plugin_root . '/templates/builtin/';
+
+        if (!is_dir($builtin_dir)) {
+            return $templates;
+        }
+
+        // Scanner le dossier pour les fichiers JSON
+        $files = glob($builtin_dir . '*.json');
+
+        foreach ($files as $file) {
+            $template_data = $this->load_builtin_template($file);
+            if ($template_data) {
+                $templates[] = $template_data;
+            }
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Charger un template builtin depuis un fichier JSON
+     *
+     * @param string $file_path Chemin complet vers le fichier JSON
+     * @return array|null Données du template ou null si erreur
+     */
+    private function load_builtin_template($file_path)
+    {
+        if (!file_exists($file_path)) {
+            return null;
+        }
+
+        $json_content = file_get_contents($file_path);
+        if ($json_content === false) {
+            return null;
+        }
+
+        $template_data = json_decode($json_content, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        // Validation de la structure
+        $validation_errors = $this->validate_template_structure($template_data);
+        if (!empty($validation_errors)) {
+            return null;
+        }
+
+        // Ajouter des métadonnées
+        $filename = basename($file_path, '.json');
+        $template_data['_metadata'] = [
+            'filename' => $filename,
+            'file_path' => $file_path,
+            'is_builtin' => true,
+            'loaded_at' => current_time('mysql'),
+            'preview_url' => $this->get_template_preview_url($filename)
+        ];
+
+        return $template_data;
+    }
+
+    /**
+     * Obtenir l'URL de prévisualisation d'un template
+     *
+     * @param string $template_name Nom du template
+     * @return string URL de l'image de prévisualisation
+     */
+    private function get_template_preview_url($template_name)
+    {
+        $plugin_url = plugin_dir_url(dirname(dirname(dirname(__FILE__))));
+        return $plugin_url . 'assets/images/templates/' . $template_name . '-preview.png';
+    }
+
+    /**
+     * Obtenir un template builtin par son nom
+     *
+     * @param string $template_name Nom du template (sans extension .json)
+     * @return array|null Données du template ou null si non trouvé
+     */
+    public function get_builtin_template($template_name)
+    {
+        // Chemin vers le dossier des templates builtin
+        $plugin_root = dirname(dirname(dirname(__FILE__)));
+        $builtin_dir = $plugin_root . '/templates/builtin/';
+        $file_path = $builtin_dir . $template_name . '.json';
+
+        return $this->load_builtin_template($file_path);
+    }
+
+    /**
+     * Installer un template builtin dans la base de données utilisateur
+     *
+     * @param string $template_name Nom du template builtin
+     * @param string $custom_name Nom personnalisé pour le template utilisateur
+     * @return array Résultat de l'opération
+     */
+    public function install_builtin_template($template_name, $custom_name = '')
+    {
+        $template_data = $this->get_builtin_template($template_name);
+        if (!$template_data) {
+            return [
+                'success' => false,
+                'message' => 'Template builtin non trouvé: ' . $template_name
+            ];
+        }
+
+        if (empty($custom_name)) {
+            $custom_name = isset($template_data['metadata']['name'])
+                ? $template_data['metadata']['name']
+                : ucfirst($template_name);
+        }
+
+        // Supprimer les métadonnées avant la sauvegarde
+        unset($template_data['_metadata']);
+
+        // Sauvegarder comme template utilisateur
+        $result = $this->save_template($template_data, $custom_name);
+
+        if ($result['success']) {
+            return [
+                'success' => true,
+                'message' => 'Template "' . $custom_name . '" installé avec succès',
+                'template_id' => $result['template_id']
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
      * Vérifier si un template prédéfini est installé pour l'utilisateur
      *
      * @param string $template_name Nom du template prédéfini
@@ -757,6 +899,286 @@ class PDF_Builder_Template_Manager
 
         return $count > 0;
     }
-        return $count > 0;
-        return $count > 0;    
+
+    /**
+     * AJAX - Obtenir la liste des templates prédéfinis
+     */
+    public function ajax_get_predefined_templates()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupérer les templates prédéfinis
+            $templates = $this->get_predefined_templates();
+
+            // Formater la réponse
+            $formatted_templates = [];
+            foreach ($templates as $template) {
+                $formatted_templates[] = [
+                    'name' => $template['name'],
+                    'description' => $template['description'] ?? '',
+                    'category' => $template['category'] ?? 'general',
+                    'tags' => $template['tags'] ?? [],
+                    'isPremium' => $template['isPremium'] ?? false,
+                    'previewImage' => $template['previewImage'] ?? '',
+                    'elementCount' => count($template['elements'] ?? []),
+                    'filename' => $template['_metadata']['filename'] ?? '',
+                    'isInstalled' => $this->is_predefined_template_installed($template['name'])
+                ];
+            }
+
+            wp_send_json_success([
+                'templates' => $formatted_templates,
+                'total' => count($formatted_templates)
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la récupération des templates: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX - Installer un template prédéfini
+     */
+    public function ajax_install_predefined_template()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupération des paramètres
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $custom_name = isset($_POST['custom_name']) ? sanitize_text_field($_POST['custom_name']) : '';
+
+            if (empty($template_name)) {
+                wp_send_json_error('Nom du template requis');
+            }
+
+            // Installer le template
+            $result = $this->install_predefined_template($template_name, $custom_name);
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => $result['message'],
+                    'template_id' => $result['template_id']
+                ]);
+            } else {
+                wp_send_json_error($result['message']);
+
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de l\'installation: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Régénérer les vignettes de prévisualisation pour tous les templates prédéfinis
+     */
+    public function regenerate_predefined_thumbnails()
+    {
+        try {
+            error_log('[PDF Builder] Starting thumbnail regeneration');
+
+            // Charger PreviewImageAPI pour générer de vraies prévisualisations
+            if (!class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+                error_log('[PDF Builder] PreviewImageAPI class not found');
+                throw new Exception("PreviewImageAPI class not found - plugin not properly initialized");
+            }
+
+            $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+            error_log('[PDF Builder] PreviewImageAPI loaded successfully');
+
+            // Dossier des templates prédéfinis
+            // Depuis src/Managers/, remonter vers la racine du plugin puis aller dans templates/predefined/
+            $plugin_root = dirname(dirname(dirname(__FILE__)));
+            $templates_dir = $plugin_root . '/templates/predefined/';
+            error_log('[PDF Builder] Templates directory: ' . $templates_dir);
+
+            $templates = glob($templates_dir . '*.json');
+            error_log('[PDF Builder] Found ' . count($templates) . ' template files');
+
+            if (empty($templates)) {
+                throw new Exception("Aucun template prédéfini trouvé dans $templates_dir");
+            }
+
+            $results = [];
+            $success_count = 0;
+
+            foreach ($templates as $template_file) {
+                $filename = basename($template_file, '.json');
+                error_log('[PDF Builder] Processing template: ' . $filename);
+
+                // Charger le JSON du template
+                $template_json = file_get_contents($template_file);
+                if (!$template_json) {
+                    error_log('[PDF Builder] Failed to read template file: ' . $template_file);
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de lire le fichier'];
+                    continue;
+                }
+
+                $template_data = json_decode($template_json, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('[PDF Builder] JSON decode error for ' . $filename . ': ' . json_last_error_msg());
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'JSON invalide: ' . json_last_error_msg()];
+                    continue;
+                }
+
+                // Vérifier si c'est un template valide
+                // Supporte les deux formats : structure plate ou avec clé 'template'
+                $has_flat_structure = isset($template_data['canvasWidth']) && isset($template_data['canvasHeight']) && isset($template_data['elements']);
+                $has_nested_structure = isset($template_data['template']) && isset($template_data['template']['canvasWidth']) && isset($template_data['template']['canvasHeight']) && isset($template_data['template']['elements']);
+
+                if (!$has_flat_structure && !$has_nested_structure) {
+                    error_log('[PDF Builder] Invalid template structure for ' . $filename);
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Template invalide: champs requis manquants'];
+                    continue;
+                }
+
+                // Garder une copie de la structure originale pour la sauvegarde
+                $original_template_data = $template_data;
+
+                // Normaliser la structure pour les générateurs (qui attendent une clé 'template')
+                if ($has_flat_structure && !$has_nested_structure) {
+                    $template_data = [
+                        'name' => $template_data['name'] ?? $filename,
+                        'description' => $template_data['description'] ?? '',
+                        'category' => $template_data['category'] ?? 'general',
+                        'tags' => $template_data['tags'] ?? [],
+                        'version' => $template_data['version'] ?? '1.0.0',
+                        'isPremium' => $template_data['isPremium'] ?? false,
+                        'previewImage' => $template_data['previewImage'] ?? '',
+                        'template' => [
+                            'canvasWidth' => $template_data['canvasWidth'],
+                            'canvasHeight' => $template_data['canvasHeight'],
+                            'orientation' => $template_data['orientation'] ?? 'portrait',
+                            'elements' => $template_data['elements'],
+                            'variables' => $template_data['variables'] ?? []
+                        ]
+                    ];
+                }
+
+                try {
+                    error_log('[PDF Builder] Generating preview for ' . $filename);
+
+                    // Générer une vraie prévisualisation avec PreviewImageAPI
+                    $preview_params = [
+                        'context' => 'editor',
+                        'template_data' => $template_data,
+                        'quality' => 75, // Qualité réduite pour vignette
+                        'format' => 'png',
+                        'order_id' => null
+                    ];
+
+                    // Générer la vignette
+                    $result = $preview_api->generate_with_cache($preview_params);
+                    error_log('[PDF Builder] Preview generation result for ' . $filename . ': ' . json_encode($result));
+
+                    if ($result && isset($result['image_url'])) {
+                        // Mettre à jour le champ previewImage dans le JSON original
+                        $original_template_data['previewImage'] = $result['image_url'];
+
+                        error_log('[PDF Builder] About to save template file: ' . $template_file);
+                        error_log('[PDF Builder] New previewImage URL: ' . $result['image_url']);
+
+                        // Sauvegarder le JSON mis à jour
+                        $updated_json = json_encode($original_template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                        if (file_put_contents($template_file, $updated_json)) {
+                            error_log('[PDF Builder] File saved successfully, size: ' . strlen($updated_json) . ' bytes');
+                            $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
+                            $success_count++;
+                            error_log('[PDF Builder] Successfully updated ' . $filename);
+                        } else {
+                            error_log('[PDF Builder] Failed to save updated JSON for ' . $filename . ' - check file permissions');
+                            $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
+                        }
+                    } else {
+                        error_log('[PDF Builder] Preview generation failed for ' . $filename . ' - no image_url in result');
+                        error_log('[PDF Builder] Result details: ' . json_encode($result));
+                        $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Échec de génération de la vignette'];
+                    }
+
+                } catch (Exception $e) {
+                    error_log('[PDF Builder] Exception processing ' . $filename . ': ' . $e->getMessage());
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Exception: ' . $e->getMessage()];
+                }
+            }
+
+            return [
+                'success' => true,
+                'total' => count($templates),
+                'success_count' => $success_count,
+                'results' => $results
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * AJAX - Régénérer les vignettes des templates prédéfinis
+     */
+    public function ajax_regenerate_predefined_thumbnails()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Régénérer les vignettes
+            $result = $this->regenerate_predefined_thumbnails();
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => sprintf('Vignettes régénérées: %d/%d réussies', $result['success_count'], $result['total']),
+                    'results' => $result['results']
+                ]);
+            } else {
+                wp_send_json_error($result['error']);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la régénération: ' . $e->getMessage());
+        }
+    }
 }

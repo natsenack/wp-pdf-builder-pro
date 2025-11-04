@@ -198,6 +198,7 @@ class PDF_Builder_Admin {
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_install_builtin_template', [$this, 'ajax_install_builtin_template']);
         
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
         add_action('wp_ajax_pdf_builder_auto_save_template', function() {
@@ -1185,6 +1186,54 @@ class PDF_Builder_Admin {
         $manager = $this->get_template_manager();
         if ($manager) {
             return $manager->ajax_save_template();
+        }
+    }
+
+    /**
+     * AJAX - Installer un template builtin
+     */
+    public function ajax_install_builtin_template()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupérer les paramètres
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $custom_name = isset($_POST['custom_name']) ? sanitize_text_field($_POST['custom_name']) : '';
+
+            if (empty($template_name)) {
+                wp_send_json_error('Nom du template manquant');
+            }
+
+            // Obtenir le Template Manager
+            $template_manager = $this->get_template_manager();
+            if (!$template_manager) {
+                wp_send_json_error('Erreur interne: Template Manager non disponible');
+            }
+
+            // Installer le template builtin
+            $result = $template_manager->install_builtin_template($template_name, $custom_name);
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => $result['message'],
+                    'template_id' => $result['template_id']
+                ]);
+            } else {
+                wp_send_json_error($result['message']);
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Erreur lors de l\'installation du template builtin: ' . $e->getMessage());
+            wp_send_json_error('Erreur interne du serveur');
         }
     }
 

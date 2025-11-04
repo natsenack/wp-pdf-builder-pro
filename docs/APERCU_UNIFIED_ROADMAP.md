@@ -29,7 +29,10 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 
 **Prochaine action** :
 1. **IMMÉDIAT**: Phase 1.6.1 - Finaliser les hooks WordPress et l'intégration WooCommerce ✅ TERMINÉE
-2. Phase 1.6.2 - Implémenter le système de templates prédéfinis
+2. Phase 1.6.2 - Implémenter les templates statiques + lazy loading (approche concurrent)
+   - Phase 1.6.2A - Infrastructure templates statiques ✅ TERMINÉE
+   - Phase 1.6.2B - Interface lazy loading (EN COURS)
+     - ✅ Correction erreur syntaxe PHP dans Template Manager
 3. Phase 1.6.3 - Déployer analytics et métriques d'utilisation
 4. Phase 1.6.4 - Intégration API REST WordPress
 5. Phase 1.6.5 - Support shortcodes et blocs Gutenberg
@@ -61,28 +64,33 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - [x] Compatibilité extensions WooCommerce
 - [x] Actions WordPress (`init`, `admin_init`, `plugins_loaded`)
 
-### 🎯 **Étape 1.6.2 : Système Templates Prédéfinis**
+### 🎯 **Étape 1.6.2 : Templates Statiques + Lazy Loading**
 **Priorité** : 🔴 **OBLIGATOIRE** - Fonctionnalité core du produit
-**Objectif** : Implémenter une collection de templates professionnels prêts à l'emploi
+**Objectif** : Implémenter des templates professionnels statiques (inspiré du plugin concurrent)
 
-**🏗️ Architecture Templates** :
-- [ ] **Collection de base** : 6 templates professionnels (Classic, Modern, Corporate, Minimal, Invoice, Quote)
-- [ ] **Structure JSON** : Templates stockés en JSON avec métadonnées
-- [ ] **Prévisualisations** : Images miniatures générées automatiquement
-- [ ] **Catégorisation** : Tags et catégories pour organisation
-- [ ] **Personnalisation** : Variables configurables par template
+**🏗️ Architecture Templates Statiques** :
+- [ ] **Templates JSON statiques** : Fichiers `.json` dans `plugin/templates/builtin/`
+- [ ] **Aperçus PNG statiques** : Images miniatures pré-générées dans `plugin/assets/images/templates/`
+- [ ] **Lazy loading** : Templates chargés seulement à la demande
+- [ ] **Pas de génération temps réel** : Évite les erreurs 404 et conversions PDF→image
 
-**🎨 Interface Utilisateur** :
-- [ ] **Modal Template** : Galerie avec prévisualisations
-- [ ] **Filtres recherche** : Par catégorie, style, usage
-- [ ] **Aperçu temps réel** : Changement template sans sauvegarde
+**🎨 Interface Utilisateur Lazy** :
+- [ ] **Modal galerie** : Aperçus statiques (chargement instantané)
+- [ ] **Sélection template** : JSON chargé et converti en template utilisateur
+- [ ] **Personnalisation immédiate** : Édition directe après sélection
 - [ ] **Import/Export** : Partage de templates personnalisés
 
 **🔒 Système Freemium** :
-- [ ] **Templates gratuits** : 2-3 templates de base
-- [ ] **Templates premium** : Accès via licence pro
+- [ ] **Templates gratuits** : 2-3 templates de base (Modern, Classic, Corporate)
+- [ ] **Templates premium** : Accès via licence pro (Invoice, Quote, etc.)
 - [ ] **Limites d'usage** : Watermark sur exports gratuits
 - [ ] **Upgrade prompts** : Call-to-action intégrés
+
+**✅ Avantages vs Ancienne Approche** :
+- [x] **Fiabilité 100%** : Pas de génération = pas d'erreurs 404
+- [x] **Performance optimale** : Images statiques se chargent instantanément
+- [x] **Maintenance simple** : Templates versionnés avec le plugin
+- [x] **Évolutivité** : Ajout nouveaux templates facile
 
 ### 🎯 **Étape 1.6.3 : Analytics & Métriques**
 **Priorité** : 🟡 **RECOMMANDÉ** - Important pour optimisation produit
