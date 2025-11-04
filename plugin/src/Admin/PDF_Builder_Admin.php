@@ -1243,6 +1243,8 @@ class PDF_Builder_Admin {
      */
     public function ajax_get_builtin_templates()
     {
+        error_log("PDF Builder Debug - ajax_get_builtin_templates called");
+
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
@@ -1262,6 +1264,7 @@ class PDF_Builder_Admin {
 
             // Récupérer les templates builtin
             $templates = $template_manager->get_builtin_templates();
+            error_log("PDF Builder Debug - ajax_get_builtin_templates found " . count($templates) . " templates");
 
             wp_send_json_success([
                 'templates' => $templates

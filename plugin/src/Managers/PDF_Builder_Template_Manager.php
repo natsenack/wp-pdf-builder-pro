@@ -832,7 +832,13 @@ class PDF_Builder_Template_Manager
     {
         // URL codée en dur qui fonctionne avec cache-busting
         $cache_bust = time();
-        return "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg?v=" . $cache_bust;
+        $url = "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg?v=" . $cache_bust;
+
+        // Debug logs
+        error_log("PDF Builder Debug - get_template_preview_url called for: $template_name");
+        error_log("PDF Builder Debug - Generated URL: $url");
+
+        return $url;
     }
 
     /**
@@ -915,6 +921,8 @@ class PDF_Builder_Template_Manager
      */
     public function ajax_get_predefined_templates()
     {
+        error_log("PDF Builder Debug - ajax_get_predefined_templates called");
+
         try {
             // Vérification des permissions
             if (!current_user_can('manage_options')) {
@@ -933,6 +941,7 @@ class PDF_Builder_Template_Manager
 
             // Récupérer les templates prédéfinis
             $templates = $this->get_predefined_templates();
+            error_log("PDF Builder Debug - Found " . count($templates) . " templates");
 
             // Formater la réponse
             $formatted_templates = [];
@@ -950,12 +959,18 @@ class PDF_Builder_Template_Manager
                 ];
             }
 
+            error_log("PDF Builder Debug - Sending " . count($formatted_templates) . " formatted templates");
+            foreach ($formatted_templates as $i => $template) {
+                error_log("PDF Builder Debug - Template $i: " . $template['name'] . " - Preview URL will be generated");
+            }
+
             wp_send_json_success([
                 'templates' => $formatted_templates,
                 'total' => count($formatted_templates)
             ]);
 
         } catch (Exception $e) {
+            error_log("PDF Builder Debug - Error in ajax_get_predefined_templates: " . $e->getMessage());
             wp_send_json_error('Erreur lors de la récupération des templates: ' . $e->getMessage());
         }
     }

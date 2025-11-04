@@ -671,6 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load templates via AJAX
     function loadTemplates() {
+        console.log('PDF Builder Debug - loadTemplates called');
         jQuery('.template-gallery-grid').html('<div class="template-gallery-loading">Chargement des modèles...</div>');
 
         jQuery.ajax({
@@ -681,14 +682,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
+                console.log('PDF Builder Debug - AJAX success:', response);
                 if (response.success) {
+                    console.log('PDF Builder Debug - Templates received:', response.data.templates.length);
                     loadedTemplates = response.data.templates;
                     renderTemplates(loadedTemplates);
                 } else {
+                    console.log('PDF Builder Debug - AJAX error in response:', response.data);
                     jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.log('PDF Builder Debug - AJAX error:', status, error, xhr.responseText);
                 jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
             }
         });
@@ -696,9 +701,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Render templates in grid
     function renderTemplates(templates) {
+        console.log('PDF Builder Debug - renderTemplates called with', templates.length, 'templates');
+
         let html = '';
 
         templates.forEach(function(template, index) {
+            console.log('PDF Builder Debug - Processing template:', template.name, 'Preview URL:', template.preview_url);
             const features = template.features || [];
             const featuresHtml = features.map(feature =>
                 `<span class="template-gallery-item-feature">${feature}</span>`
