@@ -852,8 +852,12 @@ class PDF_Builder_Template_Manager
     public function regenerate_predefined_thumbnails()
     {
         try {
-            // Pour l'instant, créons des URLs de placeholder au lieu de générer de vraies images
-            // Cela évite les problèmes de dépendances avec PreviewImageAPI
+            // Charger PreviewImageAPI pour générer de vraies prévisualisations
+            if (!class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+                throw new Exception("PreviewImageAPI class not found - plugin not properly initialized");
+            }
+
+            $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
 
             // Dossier des templates prédéfinis
             $templates_dir = plugin_dir_path(__FILE__) . '../../templates/predefined/';
@@ -888,19 +892,37 @@ class PDF_Builder_Template_Manager
                     continue;
                 }
 
-                // Créer une URL de placeholder pour la vignette
-                $placeholder_url = plugins_url('templates/predefined/' . $filename . '-preview.png', dirname(__FILE__, 2));
+                try {
+                    // Générer une vraie prévisualisation avec PreviewImageAPI
+                    $preview_params = [
+                        'context' => 'editor',
+                        'template_data' => $template_data,
+                        'quality' => 75, // Qualité réduite pour vignette
+                        'format' => 'png',
+                        'order_id' => null
+                    ];
 
-                // Mettre à jour le champ previewImage dans le JSON
-                $template_data['previewImage'] = $placeholder_url;
+                    // Générer la vignette
+                    $result = $preview_api->generate_with_cache($preview_params);
 
-                // Sauvegarder le JSON mis à jour
-                $updated_json = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                if (file_put_contents($template_file, $updated_json)) {
-                    $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $placeholder_url];
-                    $success_count++;
-                } else {
-                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
+                    if ($result && isset($result['image_url'])) {
+                        // Mettre à jour le champ previewImage dans le JSON
+                        $template_data['previewImage'] = $result['image_url'];
+
+                        // Sauvegarder le JSON mis à jour
+                        $updated_json = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                        if (file_put_contents($template_file, $updated_json)) {
+                            $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
+                            $success_count++;
+                        } else {
+                            $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
+                        }
+                    } else {
+                        $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Échec de génération de la vignette'];
+                    }
+
+                } catch (Exception $e) {
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Exception: ' . $e->getMessage()];
                 }
             }
 
