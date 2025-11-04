@@ -832,7 +832,12 @@ class PDF_Builder_Template_Manager
     {
         // Construire l'URL manuellement pour éviter les problèmes avec plugins_url()
         $site_url = get_site_url();
-        return $site_url . '/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/' . $template_name . '-preview.svg';
+        $url = $site_url . '/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/' . $template_name . '-preview.svg';
+
+        // Debug temporaire
+        error_log("PDF Builder Debug - Template: $template_name, Site URL: $site_url, Final URL: $url");
+
+        return $url;
     }
 
     /**
