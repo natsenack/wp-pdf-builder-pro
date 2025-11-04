@@ -627,13 +627,6 @@ function installBuiltinTemplate(templateName, displayName) {
     }
 }
 
-// Fonction pour prévisualiser un template builtin
-function previewBuiltinTemplate(templateName) {
-    // Ouvrir une nouvelle fenêtre/onglet avec l'aperçu
-    const previewUrl = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-preview&template=')); ?>' + encodeURIComponent(templateName) + '&type=builtin';
-    window.open(previewUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-}
-
 // Initialiser le filtrage au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     // Ajouter les event listeners aux boutons de filtrage
@@ -715,7 +708,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="template-gallery-item-features">' + featuresHtml + '</div>' +
                     '<div class="template-gallery-item-actions">' +
                         '<button class="button button-primary install-template" data-template-id="' + template.id + '">Installer</button>' +
-                        '<button class="button button-secondary preview-template" data-template-id="' + template.id + '">Aperçu</button>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -769,16 +761,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotice('Erreur de connexion.', 'error');
             }
         });
-    });
-
-    // Preview template
-    jQuery(document).on('click', '.preview-template', function() {
-        const templateId = jQuery(this).data('template-id');
-        const template = loadedTemplates.find(t => t.id === templateId);
-
-        if (template && template.preview_url) {
-            window.open(template.preview_url, '_blank');
-        }
     });
 
     // Utility function to show notices
