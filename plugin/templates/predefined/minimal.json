@@ -38,7 +38,7 @@
             "content": "FACTURE",
             "fontSize": 16,
             "fontFamily": "Helvetica",
-            "fontWeight": "light",
+            "fontWeight": "300",
             "color": "#666666",
             "textAlign": "right"
         },
