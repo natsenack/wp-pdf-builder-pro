@@ -21,7 +21,6 @@ $WorkingDir = "D:\wp-pdf-builder-pro"
 Write-Host "`nDEPLOIEMENT PLUGIN - Mode: $Mode" -ForegroundColor Cyan
 Write-Host ("=" * 60) -ForegroundColor White
 
-# 1 COMPILATION DES ASSETS
 Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
 
 try {
@@ -65,10 +64,11 @@ try {
     $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
     $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
     
-    # Toujours inclure le dossier vendor (dépendances Composer)
-    $vendorFiles = Get-ChildItem "plugin/vendor/*" -Recurse -File | Select-Object -ExpandProperty FullName
-    $vendorFilesRelative = $vendorFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-    $pluginModified = @($pluginModified) + @($vendorFilesRelative) | Sort-Object -Unique
+    # Toujours inclure le vendor.zip (dépendances Composer compressées)
+    $vendorZip = "plugin/vendor.zip"
+    if (Test-Path (Join-Path $WorkingDir $vendorZip)) {
+        $pluginModified = @($pluginModified) + @($vendorZip) | Sort-Object -Unique
+    }
     
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
@@ -189,6 +189,22 @@ if ($Mode -eq "test") {
     if ($errorCount -gt 0) {
         Write-Host "`nCertains fichiers n'ont pas pu etre uploades!" -ForegroundColor Yellow
         exit 1
+    }
+
+    # Décompresser le vendor.zip sur le serveur si présent
+    if ($pluginModified -contains "plugin/vendor.zip") {
+        Write-Host "`n3.5 Décompression du vendor sur le serveur..." -ForegroundColor Magenta
+        try {
+            $extractCommand = "cd $FtpPath && unzip -q -o vendor.zip && rm vendor.zip"
+            $extractResult = ssh nats@65.108.242.181 $extractCommand 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   Vendor décompressé sur le serveur" -ForegroundColor Green
+            } else {
+                Write-Host "   Erreur décompression: $($extractResult)" -ForegroundColor Red
+            }
+        } catch {
+            Write-Host "   Erreur SSH décompression: $($_.Exception.Message)" -ForegroundColor Red
+        }
     }
 }
 
