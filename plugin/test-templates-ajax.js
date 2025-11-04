@@ -46,19 +46,28 @@ async function testGetBuiltinTemplates() {
 async function testCreateFromBuiltin() {
     console.log('🧪 Test 2: Création d\'un template à partir d\'un builtin');
     try {
-        const response = await testAjax('pdf_builder_install_builtin_template', {
-            template_name: 'classic',
-            custom_name: 'Test Classic Template'
-        });
+        const builtinIds = ['classic', 'corporate', 'minimal', 'modern'];
 
-        if (response.success) {
-            console.log(`📝 Template créé avec succès - ID: ${response.data.template_id}`);
-            return response.data.template_id;
+        for (const builtinId of builtinIds) {
+            console.log(`  Test creation avec ID: ${builtinId}`);
+            const response = await testAjax('pdf_builder_create_from_builtin', {
+                builtin_id: builtinId
+            });
+
+            if (response.success) {
+                console.log(`  ✅ Template créé avec succès - ID: ${response.data.template_id}`);
+                return response.data.template_id;
+            } else {
+                console.log(`  ❌ Échec pour ${builtinId}: ${response.data?.message || 'Erreur inconnue'}`);
+            }
         }
+
+        console.log('  ❌ Aucun template n\'a pu être créé');
+        return null;
     } catch (error) {
-        console.error('Erreur lors de la création du template');
+        console.error('Erreur lors du test de création du template');
+        return null;
     }
-    return null;
 }
 
 // Test 3: Charger un template
