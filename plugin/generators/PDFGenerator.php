@@ -447,8 +447,14 @@ class PDFGenerator extends BaseGenerator {
             return $this->convertWithImagick($format);
         }
 
+        // Essai avec Ghostscript si disponible
+        if ($this->isGhostscriptAvailable()) {
+            $this->logInfo("Using Ghostscript for PDF to image conversion");
+            return $this->convertWithGhostscript($format);
+        }
+
         // Fallback : génération d'une image placeholder avec message
-        $this->logWarning("Imagick not available for PDF to image conversion, using GD placeholder");
+        $this->logWarning("Neither Imagick nor Ghostscript available for PDF to image conversion, using GD placeholder");
         return $this->generatePlaceholderImage($format);
     }
 
@@ -504,6 +510,87 @@ class PDFGenerator extends BaseGenerator {
         } catch (\Exception $e) {
             $this->logError("Imagick conversion failed: " . $e->getMessage());
             $this->logError("Imagick exception trace: " . $e->getTraceAsString());
+            return $this->generatePlaceholderImage($format);
+        }
+    }
+
+    /**
+     * Vérifie si Ghostscript est disponible
+     *
+     * @return bool True si Ghostscript est disponible
+     */
+    private function isGhostscriptAvailable(): bool {
+        $result = false;
+        
+        // Test de disponibilité de Ghostscript
+        if (function_exists('exec')) {
+            $output = [];
+            $returnCode = 0;
+            @exec('which gs 2>/dev/null', $output, $returnCode);
+            $result = ($returnCode === 0 && !empty($output));
+            
+            if (!$result) {
+                // Essai avec 'ghostscript' au lieu de 'gs'
+                $output = [];
+                $returnCode = 0;
+                @exec('which ghostscript 2>/dev/null', $output, $returnCode);
+                $result = ($returnCode === 0 && !empty($output));
+            }
+        }
+        
+        $this->logInfo("Ghostscript available: " . ($result ? 'YES' : 'NO'));
+        return $result;
+    }
+
+    /**
+     * Convertit avec Ghostscript
+     *
+     * @param string $format Format d'image
+     * @return string Données de l'image
+     */
+    private function convertWithGhostscript(string $format): string {
+        $this->logInfo("Starting Ghostscript conversion process");
+
+        try {
+            // Sauvegarde temporaire du PDF
+            $tempPdfPath = tempnam(sys_get_temp_dir(), 'pdf_preview_') . '.pdf';
+            $tempImagePath = tempnam(sys_get_temp_dir(), 'pdf_preview_') . '.' . $format;
+            
+            $this->logInfo("Saving PDF to temporary file: {$tempPdfPath}");
+            file_put_contents($tempPdfPath, $this->dompdf->output());
+            
+            // Commande Ghostscript pour convertir PDF en image
+            $gsCommand = "gs -dNOPAUSE -dBATCH -dSAFER -sDEVICE=png16m -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r150 -dFirstPage=1 -dLastPage=1 -sOutputFile=\"{$tempImagePath}\" \"{$tempPdfPath}\" 2>&1";
+            
+            $this->logInfo("Executing Ghostscript command");
+            $output = [];
+            $returnCode = 0;
+            @exec($gsCommand, $output, $returnCode);
+            
+            if ($returnCode !== 0) {
+                $this->logError("Ghostscript command failed with code {$returnCode}: " . implode("\n", $output));
+                @unlink($tempPdfPath);
+                return $this->generatePlaceholderImage($format);
+            }
+            
+            if (!file_exists($tempImagePath)) {
+                $this->logError("Ghostscript did not create output file: {$tempImagePath}");
+                @unlink($tempPdfPath);
+                return $this->generatePlaceholderImage($format);
+            }
+            
+            $this->logInfo("Reading generated image file");
+            $imageData = file_get_contents($tempImagePath);
+            
+            // Nettoyage
+            @unlink($tempPdfPath);
+            @unlink($tempImagePath);
+            
+            $this->logInfo("Ghostscript conversion completed successfully, result size: " . strlen($imageData) . " bytes");
+            return $imageData;
+            
+        } catch (\Exception $e) {
+            $this->logError("Ghostscript conversion failed: " . $e->getMessage());
             return $this->generatePlaceholderImage($format);
         }
     }
