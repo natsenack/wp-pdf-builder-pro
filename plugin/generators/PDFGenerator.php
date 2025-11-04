@@ -85,20 +85,31 @@ class PDFGenerator extends BaseGenerator {
             if (file_exists($path)) {
                 $this->logInfo("Trying to load library from: $path");
                 try {
+                    $beforeClasses = get_declared_classes();
                     require_once $path;
+                    $afterClasses = get_declared_classes();
+                    $newClasses = array_diff($afterClasses, $beforeClasses);
+
                     // Vérifier si c'est DomPDF
                     if (class_exists('Dompdf\Dompdf')) {
-                        $this->logInfo("DomPDF loaded successfully from: $path");
+                        $this->logInfo("DomPDF loaded successfully from: $path - New classes: " . implode(', ', array_slice($newClasses, -5)));
                         return true;
                     }
                     // Vérifier si c'est HTML2PDF
                     if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
-                        $this->logInfo("HTML2PDF loaded successfully from: $path");
+                        $this->logInfo("HTML2PDF loaded successfully from: $path - New classes: " . implode(', ', array_slice($newClasses, -5)));
                         return true;
                     }
+
+                    $this->logWarning("Library loaded from $path but expected classes not found. Available classes: " . implode(', ', $newClasses));
+
                 } catch (\Exception $e) {
                     $this->logWarning("Failed to load from $path: " . $e->getMessage());
+                } catch (\Throwable $t) {
+                    $this->logWarning("Failed to load from $path (Throwable): " . $t->getMessage());
                 }
+            } else {
+                $this->logInfo("Path does not exist: $path");
             }
         }
 
