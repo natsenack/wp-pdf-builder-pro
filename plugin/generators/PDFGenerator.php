@@ -47,7 +47,63 @@ class PDFGenerator extends BaseGenerator {
      * @return bool True si DomPDF est disponible
      */
     private function checkDomPDFAvailability(): bool {
-        return class_exists('Dompdf\Dompdf');
+        // Essayer plusieurs méthodes pour charger DomPDF
+        if (class_exists('Dompdf\Dompdf')) {
+            $this->logInfo("DomPDF available via class_exists check");
+            return true;
+        }
+
+        // Essayer de charger manuellement depuis vendor
+        $vendorPath = dirname(__DIR__) . '/vendor/autoload.php';
+        if (file_exists($vendorPath)) {
+            $this->logInfo("Trying to load DomPDF via vendor autoload");
+            try {
+                require_once $vendorPath;
+                if (class_exists('Dompdf\Dompdf')) {
+                    $this->logInfo("DomPDF loaded successfully via vendor autoload");
+                    return true;
+                }
+            } catch (\Exception $e) {
+                $this->logWarning("Failed to load vendor autoload: " . $e->getMessage());
+            }
+        }
+
+        // Essayer de charger depuis un autre emplacement possible
+        $altPaths = [
+            dirname(__DIR__, 2) . '/vendor/dompdf/dompdf/src/Dompdf.php',
+            dirname(__DIR__, 3) . '/vendor/dompdf/dompdf/src/Dompdf.php',
+            '/var/www/vendor/dompdf/dompdf/src/Dompdf.php'
+        ];
+
+        foreach ($altPaths as $path) {
+            if (file_exists($path)) {
+                $this->logInfo("Trying to load DomPDF from: $path");
+                try {
+                    require_once $path;
+                    if (class_exists('Dompdf\Dompdf')) {
+                        $this->logInfo("DomPDF loaded successfully from: $path");
+                        return true;
+                    }
+                } catch (\Exception $e) {
+                    $this->logWarning("Failed to load from $path: " . $e->getMessage());
+                }
+            }
+        }
+
+        // Essayer TCPDF comme alternative
+        if (class_exists('TCPDF') || file_exists(ABSPATH . 'wp-includes/tcpdf/tcpdf.php')) {
+            $this->logInfo("TCPDF detected as alternative to DomPDF");
+            return true;
+        }
+
+        // Essayer HTML2PDF (comme dans l'autre plugin)
+        if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
+            $this->logInfo("HTML2PDF detected as alternative to DomPDF");
+            return true;
+        }
+
+        $this->logWarning("DomPDF not available - all loading methods failed");
+        return false;
     }
 
     /**
@@ -95,15 +151,30 @@ class PDFGenerator extends BaseGenerator {
             return $this->generateToFile($output_type, $output_file);
         }
 
-        // Tentative génération PDF avec DomPDF
-        if ($this->dompdf_available) {
-            try {
-                $result = $this->generateWithDomPDF($output_type);
-                $this->logPerformanceMetrics();
-                return $result;
-            } catch (\Exception $e) {
-                $this->logWarning("DomPDF generation failed: " . $e->getMessage());
-                $this->performance_metrics['fallback_used'] = true;
+        // Tentative génération PDF avec alternatives
+        if (!$this->dompdf_available) {
+            // Essayer HTML2PDF d'abord (comme dans l'autre plugin)
+            if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
+                try {
+                    $result = $this->generateWithHTML2PDF($output_type);
+                    $this->logPerformanceMetrics();
+                    return $result;
+                } catch (\Exception $e) {
+                    $this->logWarning("HTML2PDF generation failed: " . $e->getMessage());
+                    $this->performance_metrics['fallback_used'] = true;
+                }
+            }
+
+            // Essayer TCPDF
+            if (class_exists('TCPDF') || file_exists(ABSPATH . 'wp-includes/tcpdf/tcpdf.php')) {
+                try {
+                    $result = $this->generateWithTCPDF($output_type);
+                    $this->logPerformanceMetrics();
+                    return $result;
+                } catch (\Exception $e) {
+                    $this->logWarning("TCPDF generation failed: " . $e->getMessage());
+                    $this->performance_metrics['fallback_used'] = true;
+                }
             }
         }
 
@@ -130,7 +201,37 @@ class PDFGenerator extends BaseGenerator {
                 $this->performance_metrics['fallback_used'] = true;
             }
         } else {
-            $this->logWarning("DomPDF not available, using fallback");
+            $this->logWarning("DomPDF not available, trying alternatives");
+        }
+
+        // Essayer TCPDF comme alternative
+        if (class_exists('TCPDF') || file_exists(ABSPATH . 'wp-includes/tcpdf/tcpdf.php')) {
+            try {
+                $this->logInfo("Attempting TCPDF generation to file: {$output_file}");
+                $result = $this->generateWithTCPDF($output_type);
+                if (is_string($result)) {
+                    file_put_contents($output_file, $result);
+                    $this->logInfo("TCPDF generation to file succeeded");
+                    return true;
+                }
+            } catch (\Exception $e) {
+                $this->logWarning("TCPDF generation to file failed: " . $e->getMessage());
+            }
+        }
+
+        // Essayer HTML2PDF (comme dans l'autre plugin)
+        if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
+            try {
+                $this->logInfo("Attempting HTML2PDF generation to file: {$output_file}");
+                $result = $this->generateWithHTML2PDF($output_type);
+                if (is_string($result)) {
+                    file_put_contents($output_file, $result);
+                    $this->logInfo("HTML2PDF generation to file succeeded");
+                    return true;
+                }
+            } catch (\Exception $e) {
+                $this->logWarning("HTML2PDF generation to file failed: " . $e->getMessage());
+            }
         }
 
         // Fallback vers Canvas
@@ -178,24 +279,46 @@ class PDFGenerator extends BaseGenerator {
     }
 
     /**
-     * Génère avec Canvas (fallback)
+     * Génère avec HTML2PDF (comme dans l'autre plugin)
      *
      * @param string $output_type Type de sortie
      * @return mixed Résultat de la génération
      */
-    private function generateWithCanvas(string $output_type) {
-        $this->logInfo("Generating with Canvas fallback");
+    private function generateWithHTML2PDF(string $output_type) {
+        $this->logInfo("Generating with HTML2PDF (like the other plugin)");
 
-        // Pour le fallback Canvas, nous retournons les données nécessaires
-        // pour que JavaScript puisse générer l'aperçu côté client
-        return [
-            'fallback' => true,
-            'method' => 'canvas',
-            'html' => $this->generated_html,
-            'template_data' => $this->template_data,
-            'config' => $this->config,
-            'output_type' => $output_type
-        ];
+        try {
+            // Créer instance HTML2PDF
+            $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
+
+            // Configuration
+            $html2pdf->setDefaultFont('Arial');
+            $html2pdf->setTestIsImage(false);
+            $html2pdf->setTestTdInOnePage(false);
+
+            // Charger le HTML
+            $html2pdf->writeHTML($this->generated_html);
+
+            // Retour selon le type demandé
+            switch ($output_type) {
+                case 'pdf':
+                    return $html2pdf->output('', 'S'); // Retourner comme string
+
+                case 'png':
+                case 'jpg':
+                    // HTML2PDF vers image - méthode simplifiée
+                    $pdfData = $html2pdf->output('', 'S');
+                    return $this->convertPDFToImageHTML2PDF($pdfData, $output_type);
+
+                default:
+                    throw new \Exception("Unsupported output type: {$output_type}");
+            }
+
+        } catch (\Exception $e) {
+            $this->logError("HTML2PDF generation failed: " . $e->getMessage());
+            // Fallback vers Canvas
+            return $this->generateWithCanvas($output_type);
+        }
     }
 
     /**

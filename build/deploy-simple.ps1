@@ -65,6 +65,11 @@ try {
     $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
     $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
     
+    # Toujours inclure le dossier vendor (dépendances Composer)
+    $vendorFiles = Get-ChildItem "plugin/vendor/*" -Recurse -File | Select-Object -ExpandProperty FullName
+    $vendorFilesRelative = $vendorFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+    $pluginModified = @($pluginModified) + @($vendorFilesRelative) | Sort-Object -Unique
+    
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
         Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
