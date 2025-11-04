@@ -786,6 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
 
         templates.forEach(function(template, index) {
+            console.log('Template:', template.name, 'Preview URL:', template.preview_url);
             const features = template.features || [];
             const featuresHtml = features.map(feature =>
                 `<span class="template-gallery-item-feature">${feature}</span>`
