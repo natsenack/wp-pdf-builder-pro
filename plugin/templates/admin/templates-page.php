@@ -736,8 +736,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentFilter = 'all';
     let loadedTemplates = [];
 
+    // Debug: Check if jQuery is available
+    console.log('Template Gallery: jQuery available?', typeof jQuery);
+    console.log('Template Gallery: Button exists?', jQuery('#open-template-gallery').length);
+
     // Open gallery modal
     jQuery('#open-template-gallery').on('click', function(e) {
+        console.log('Template Gallery: Button clicked');
         e.preventDefault();
         jQuery('.template-gallery-modal').fadeIn(300);
         loadTemplates();
