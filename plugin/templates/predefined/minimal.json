@@ -1,0 +1,318 @@
+{
+  "name": "Minimal",
+  "description": "Template minimaliste avec design épuré et essentiel",
+  "category": "minimal",
+  "tags": ["minimaliste", "simple", "épuré"],
+  "version": "1.0.0",
+  "canvasWidth": 595,
+  "canvasHeight": 842,
+  "orientation": "portrait",
+  "isPremium": false,
+  "previewImage": "minimal-preview.png",
+  "elements": [
+    {
+      "id": "company-name-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 60,
+      "width": 300,
+      "height": 30,
+      "content": "{{company_name}}",
+      "fontSize": 20,
+      "fontFamily": "Helvetica",
+      "fontWeight": "bold",
+      "color": "#000000",
+      "textAlign": "left"
+    },
+    {
+      "id": "invoice-title-minimal",
+      "type": "text",
+      "x": 350,
+      "y": 60,
+      "width": 200,
+      "height": 30,
+      "content": "FACTURE",
+      "fontSize": 16,
+      "fontFamily": "Helvetica",
+      "fontWeight": "light",
+      "color": "#666666",
+      "textAlign": "right"
+    },
+    {
+      "id": "invoice-number-minimal",
+      "type": "text",
+      "x": 350,
+      "y": 85,
+      "width": 200,
+      "height": 20,
+      "content": "#{{order_number}}",
+      "fontSize": 12,
+      "fontFamily": "Helvetica",
+      "color": "#666666",
+      "textAlign": "right"
+    },
+    {
+      "id": "date-minimal",
+      "type": "text",
+      "x": 350,
+      "y": 105,
+      "width": 200,
+      "height": 20,
+      "content": "{{current_date}}",
+      "fontSize": 12,
+      "fontFamily": "Helvetica",
+      "color": "#666666",
+      "textAlign": "right"
+    },
+    {
+      "id": "client-info-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 140,
+      "width": 250,
+      "height": 40,
+      "content": "{{customer_name}}\n{{customer_address}}",
+      "fontSize": 12,
+      "fontFamily": "Helvetica",
+      "color": "#333333",
+      "textAlign": "left",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "divider-1",
+      "type": "rectangle",
+      "x": 40,
+      "y": 200,
+      "width": 515,
+      "height": 1,
+      "fillColor": "#cccccc",
+      "strokeColor": "#cccccc",
+      "strokeWidth": 0
+    },
+    {
+      "id": "product-header-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 220,
+      "width": 515,
+      "height": 25,
+      "content": "ARTICLE\t\t\t\t\t\t\t\tQTÉ\t\tPRIX\t\tTOTAL",
+      "fontSize": 10,
+      "fontFamily": "Helvetica",
+      "fontWeight": "bold",
+      "color": "#666666",
+      "textAlign": "left"
+    },
+    {
+      "id": "divider-2",
+      "type": "rectangle",
+      "x": 40,
+      "y": 245,
+      "width": 515,
+      "height": 1,
+      "fillColor": "#cccccc",
+      "strokeColor": "#cccccc",
+      "strokeWidth": 0
+    },
+    {
+      "id": "product-1-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 260,
+      "width": 515,
+      "height": 25,
+      "content": "{{product_1_name}}\t\t\t\t\t\t\t\t{{product_1_quantity}}\t\t{{product_1_price}}\t\t{{product_1_total}}",
+      "fontSize": 11,
+      "fontFamily": "Helvetica",
+      "color": "#333333",
+      "textAlign": "left"
+    },
+    {
+      "id": "product-2-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 290,
+      "width": 515,
+      "height": 25,
+      "content": "{{product_2_name}}\t\t\t\t\t\t\t\t{{product_2_quantity}}\t\t{{product_2_price}}\t\t{{product_2_total}}",
+      "fontSize": 11,
+      "fontFamily": "Helvetica",
+      "color": "#333333",
+      "textAlign": "left"
+    },
+    {
+      "id": "product-3-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 320,
+      "width": 515,
+      "height": 25,
+      "content": "{{product_3_name}}\t\t\t\t\t\t\t\t{{product_3_quantity}}\t\t{{product_3_price}}\t\t{{product_3_total}}",
+      "fontSize": 11,
+      "fontFamily": "Helvetica",
+      "color": "#333333",
+      "textAlign": "left"
+    },
+    {
+      "id": "divider-3",
+      "type": "rectangle",
+      "x": 40,
+      "y": 360,
+      "width": 515,
+      "height": 1,
+      "fillColor": "#cccccc",
+      "strokeColor": "#cccccc",
+      "strokeWidth": 0
+    },
+    {
+      "id": "total-section-minimal",
+      "type": "text",
+      "x": 350,
+      "y": 380,
+      "width": 200,
+      "height": 40,
+      "content": "TOTAL\n\n{{order_total}}",
+      "fontSize": 14,
+      "fontFamily": "Helvetica",
+      "fontWeight": "bold",
+      "color": "#000000",
+      "textAlign": "right",
+      "lineHeight": 1.5
+    },
+    {
+      "id": "footer-minimal",
+      "type": "text",
+      "x": 40,
+      "y": 780,
+      "width": 515,
+      "height": 30,
+      "content": "{{company_name}} • {{company_email}} • {{company_phone}}",
+      "fontSize": 10,
+      "fontFamily": "Helvetica",
+      "color": "#666666",
+      "textAlign": "center"
+    }
+  ],
+  "variables": {
+    "company_name": {
+      "type": "text",
+      "default": "Votre Société",
+      "required": true,
+      "label": "Nom de l'entreprise"
+    },
+    "company_email": {
+      "type": "email",
+      "default": "contact@votresociete.com",
+      "required": false,
+      "label": "Email de l'entreprise"
+    },
+    "company_phone": {
+      "type": "text",
+      "default": "01 23 45 67 89",
+      "required": false,
+      "label": "Téléphone de l'entreprise"
+    },
+    "customer_name": {
+      "type": "text",
+      "default": "Jean Dupont",
+      "required": true,
+      "label": "Nom du client"
+    },
+    "customer_address": {
+      "type": "textarea",
+      "default": "456 Avenue des Clients\n69000 Lyon\nFrance",
+      "required": true,
+      "label": "Adresse du client"
+    },
+    "order_number": {
+      "type": "text",
+      "default": "2025-001",
+      "required": true,
+      "label": "Numéro de commande"
+    },
+    "current_date": {
+      "type": "date",
+      "default": "04/11/2025",
+      "required": true,
+      "label": "Date"
+    },
+    "product_1_name": {
+      "type": "text",
+      "default": "Service de consultation",
+      "required": false,
+      "label": "Nom du produit 1"
+    },
+    "product_1_quantity": {
+      "type": "number",
+      "default": "1",
+      "required": false,
+      "label": "Quantité produit 1"
+    },
+    "product_1_price": {
+      "type": "text",
+      "default": "500,00 €",
+      "required": false,
+      "label": "Prix produit 1"
+    },
+    "product_1_total": {
+      "type": "text",
+      "default": "500,00 €",
+      "required": false,
+      "label": "Total produit 1"
+    },
+    "product_2_name": {
+      "type": "text",
+      "default": "Produit complémentaire",
+      "required": false,
+      "label": "Nom du produit 2"
+    },
+    "product_2_quantity": {
+      "type": "number",
+      "default": "2",
+      "required": false,
+      "label": "Quantité produit 2"
+    },
+    "product_2_price": {
+      "type": "text",
+      "default": "150,00 €",
+      "required": false,
+      "label": "Prix produit 2"
+    },
+    "product_2_total": {
+      "type": "text",
+      "default": "300,00 €",
+      "required": false,
+      "label": "Total produit 2"
+    },
+    "product_3_name": {
+      "type": "text",
+      "default": "Frais de port",
+      "required": false,
+      "label": "Nom du produit 3"
+    },
+    "product_3_quantity": {
+      "type": "number",
+      "default": "1",
+      "required": false,
+      "label": "Quantité produit 3"
+    },
+    "product_3_price": {
+      "type": "text",
+      "default": "15,00 €",
+      "required": false,
+      "label": "Prix produit 3"
+    },
+    "product_3_total": {
+      "type": "text",
+      "default": "15,00 €",
+      "required": false,
+      "label": "Total produit 3"
+    },
+    "order_total": {
+      "type": "text",
+      "default": "815,00 €",
+      "required": true,
+      "label": "Total de la commande"
+    }
+  }
+}

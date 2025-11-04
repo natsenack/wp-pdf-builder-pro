@@ -291,6 +291,10 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
         
+        // Hooks pour les templates prédéfinis
+        add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
+        add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
+        
         // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);

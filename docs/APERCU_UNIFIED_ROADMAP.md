@@ -28,12 +28,299 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - ⏳ Phase 5-8 : Planification ultérieure
 
 **Prochaine action** :
-1. **IMMÉDIAT**: Phase 1.6.1 - Finaliser les hooks WordPress et l'intégration WooCommerce
+1. **IMMÉDIAT**: Phase 1.6.1 - Finaliser les hooks WordPress et l'intégration WooCommerce ✅ TERMINÉE
 2. Phase 1.6.2 - Implémenter le système de templates prédéfinis
 3. Phase 1.6.3 - Déployer analytics et métriques d'utilisation
-4. Puis: Tests complets et validation finale
+4. Phase 1.6.4 - Intégration API REST WordPress
+5. Phase 1.6.5 - Support shortcodes et blocs Gutenberg
+6. Phase 1.6.6 - Gestion rôles/capabilités étendue
+7. Phase 1.6.7 - Intégration webhooks et automation
+8. Phase 1.6.8 - Support i18n et localisation complète
+9. Phase 1.6.9 - Système sauvegarde et restauration
+10. Phase 1.6.10 - Onboarding et tutoriels intégrés
+11. Phase 1.6.11 - Conformité RGPD complète
+12. Puis: Tests complets et validation finale
 
 ---
+
+## 🚀 **Phase 1.6 : Intégration WordPress Complète**
+
+**📅 Date** : Novembre 2025
+**🎯 Objectif** : Brancher complètement le système dans WordPress avec tous les mécanismes natifs
+**⏱️ Durée estimée** : 2-3 semaines
+**📊 Statut** : ⏳ EN COURS (20% complété)
+**🔑 Priorité** : CRITIQUE - Fondation pour stabilité et extensibilité
+
+### 🎯 **Étape 1.6.1 : Hooks WordPress & WooCommerce** ✅ TERMINÉE
+**Objectif** : Finaliser tous les hooks WordPress et l'intégration WooCommerce
+
+**✅ Points accomplis** :
+- [x] Hooks WooCommerce automatiques (`woocommerce_order_status_changed`, `woocommerce_new_order`, etc.)
+- [x] Cache intelligent avec invalidation automatique
+- [x] Gestion des permissions (`manage_options`, `edit_shop_orders`)
+- [x] Compatibilité extensions WooCommerce
+- [x] Actions WordPress (`init`, `admin_init`, `plugins_loaded`)
+
+### 🎯 **Étape 1.6.2 : Système Templates Prédéfinis**
+**Priorité** : 🔴 **OBLIGATOIRE** - Fonctionnalité core du produit
+**Objectif** : Implémenter une collection de templates professionnels prêts à l'emploi
+
+**🏗️ Architecture Templates** :
+- [ ] **Collection de base** : 6 templates professionnels (Classic, Modern, Corporate, Minimal, Invoice, Quote)
+- [ ] **Structure JSON** : Templates stockés en JSON avec métadonnées
+- [ ] **Prévisualisations** : Images miniatures générées automatiquement
+- [ ] **Catégorisation** : Tags et catégories pour organisation
+- [ ] **Personnalisation** : Variables configurables par template
+
+**🎨 Interface Utilisateur** :
+- [ ] **Modal Template** : Galerie avec prévisualisations
+- [ ] **Filtres recherche** : Par catégorie, style, usage
+- [ ] **Aperçu temps réel** : Changement template sans sauvegarde
+- [ ] **Import/Export** : Partage de templates personnalisés
+
+**🔒 Système Freemium** :
+- [ ] **Templates gratuits** : 2-3 templates de base
+- [ ] **Templates premium** : Accès via licence pro
+- [ ] **Limites d'usage** : Watermark sur exports gratuits
+- [ ] **Upgrade prompts** : Call-to-action intégrés
+
+### 🎯 **Étape 1.6.3 : Analytics & Métriques**
+**Priorité** : 🟡 **RECOMMANDÉ** - Important pour optimisation produit
+**Objectif** : Système de tracking complet pour optimisation produit
+
+**📊 Métriques Utilisation** :
+- [ ] **Templates populaires** : Tracking des templates les plus utilisés
+- [ ] **Performance génération** : Temps de rendu, taux d'erreur
+- [ ] **Usage fonctionnalités** : Éléments utilisés, exports par format
+- [ ] **Données utilisateur** : Fréquence d'usage, préférences
+
+**📈 Dashboard Analytics** :
+- [ ] **Page admin dédiée** : `/wp-admin/admin.php?page=pdf-builder-analytics`
+- [ ] **Graphiques interactifs** : Charts.js pour visualisations
+- [ ] **Filtres temporels** : Aujourd'hui, semaine, mois, année
+- [ ] **Export données** : CSV/PDF pour rapports
+
+**🔍 Insights & Optimisation** :
+- [ ] **Recommandations UX** : Suggestions basées sur usage
+- [ ] **Alertes performance** : Notifications sur métriques critiques
+- [ ] **A/B Testing** : Framework pour tests de fonctionnalités
+- [ ] **Feedback utilisateur** : Intégration système de feedback
+
+### 🎯 **Étape 1.6.4 : API REST WordPress**
+**Priorité** : 🟡 **RECOMMANDÉ** - Utile pour extensibilité future
+**Objectif** : Exposition complète via l'API REST WordPress
+
+**🔌 Endpoints REST** :
+- [ ] **Templates** : `GET/POST/PUT/DELETE /wp-json/wp-pdf-builder-pro/v1/templates`
+- [ ] **Génération** : `POST /wp-json/wp-pdf-builder-pro/v1/generate`
+- [ ] **Prévisualisation** : `POST /wp-json/wp-pdf-builder-pro/v1/preview`
+- [ ] **Analytics** : `GET /wp-json/wp-pdf-builder-pro/v1/analytics`
+
+**🔐 Sécurité & Authentification** :
+- [ ] **OAuth 2.0** : Support authentification externe
+- [ ] **Rate limiting** : Protection contre abus
+- [ ] **CORS** : Configuration pour requêtes cross-origin
+- [ ] **Validation** : Sanitisation et validation des données
+
+**📱 Applications Tierces** :
+- [ ] **Mobile apps** : API pour applications mobiles
+- [ ] **Zapier/IFTTT** : Intégrations automation
+- [ ] **Webhooks** : Notifications temps réel
+- [ ] **SDK** : Bibliothèque pour développeurs
+
+### 🎯 **Étape 1.6.5 : Shortcodes & Blocs Gutenberg**
+**Priorité** : 🟡 **RECOMMANDÉ** - Améliore l'expérience utilisateur
+**Objectif** : Intégration native avec l'éditeur WordPress
+
+**🎯 Shortcodes WordPress** :
+- [ ] **Shortcode principal** : `[pdf_builder template_id="123"]`
+- [ ] **Shortcode avancé** : Paramètres pour personnalisation
+- [ ] **Shortcode liste** : Affichage galerie templates
+- [ ] **Shortcode embed** : Intégration dans articles/pages
+
+**🧱 Blocs Gutenberg** :
+- [ ] **Bloc Template** : Sélecteur visuel de templates
+- [ ] **Bloc Aperçu** : Prévisualisation intégrée
+- [ ] **Bloc Configuration** : Paramètres avancés
+- [ ] **Bloc Analytics** : Métriques intégrées
+
+**🎨 Interface Éditeur** :
+- [ ] **Sidebar WordPress** : Contrôles dans l'éditeur
+- [ ] **Live preview** : Aperçu temps réel dans l'éditeur
+- [ ] **Drag & drop** : Placement intuitif
+- [ ] **Responsive design** : Adaptation mobile/desktop
+
+### 🎯 **Étape 1.6.6 : Rôles & Capabilités Étendus**
+**Priorité** : 🔴 **OBLIGATOIRE** - Sécurité et gestion utilisateurs
+**Objectif** : Système de permissions granulaire et flexible
+
+**👥 Rôles Utilisateur** :
+- [ ] **Super Admin** : Accès complet à tout
+- [ ] **Administrator** : Gestion templates et settings
+- [ ] **Editor** : Édition templates existants
+- [ ] **Shop Manager** : Accès WooCommerce uniquement
+- [ ] **Custom Roles** : Rôles spécifiques métier
+
+**🔑 Capabilités Granulaires** :
+- [ ] **pdf_builder_create** : Créer nouveaux templates
+- [ ] **pdf_builder_edit** : Modifier templates existants
+- [ ] **pdf_builder_delete** : Supprimer templates
+- [ ] **pdf_builder_export** : Exporter PDFs
+- [ ] **pdf_builder_analytics** : Voir métriques
+
+**🏢 Gestion Multi-sites** :
+- [ ] **Réseau WordPress** : Permissions par site
+- [ ] **Templates globaux** : Partagés entre sites
+- [ ] **Analytics centralisés** : Vue réseau complète
+- [ ] **Licences réseau** : Gestion licences multi-sites
+
+### 🎯 **Étape 1.6.7 : Webhooks & Automation**
+**Priorité** : 🟢 **OPTIONNEL** - Fonctionnalité avancée différable
+**Objectif** : Automatisation complète des workflows PDF
+
+**🔗 Webhooks Système** :
+- [ ] **Template créé** : Notification création nouveau template
+- [ ] **PDF généré** : Trigger lors génération PDF
+- [ ] **Erreur système** : Alertes sur problèmes
+- [ ] **Quota dépassé** : Notifications limites usage
+
+**⚙️ Automation Rules** :
+- [ ] **Règles conditionnelles** : "Si commande > 100€ alors PDF premium"
+- [ ] **Actions automatiques** : Envoi email avec PDF attaché
+- [ ] **Intégrations externes** : Slack, Discord, Teams notifications
+- [ ] **Workflows complexes** : Chaînage d'actions
+
+**📧 Email Automation** :
+- [ ] **Templates email** : PDFs intégrés dans emails
+- [ ] **SMTP personnalisé** : Configuration serveur email
+- [ ] **Tracking ouverture** : Métriques email
+- [ ] **Files attachés** : PDFs joints automatiquement
+
+### 🎯 **Étape 1.6.8 : i18n & Localisation**
+**Priorité** : 🔴 **OBLIGATOIRE** - Support multilingue essentiel
+**Objectif** : Support complet multilingue et localisation
+
+**🌐 Traductions Système** :
+- [ ] **Strings traduisibles** : Tous les textes dans fonctions `__()`
+- [ ] **Fichiers .po/.mo** : Support standard WordPress
+- [ ] **Contextes traduction** : Différenciation termes similaires
+- [ ] **Pluralisation** : Support formes plurielles
+
+**💱 Localisation Avancée** :
+- [ ] **Formats dates** : Selon locale WordPress
+- [ ] **Formats nombres** : Séparateurs milliers, décimales
+- [ ] **Devises** : Symboles et positions selon pays
+- [ ] **Adresses** : Formats postaux locaux
+
+**🎯 Interface Localisée** :
+- [ ] **RTL Support** : Langues droite-à-gauche
+- [ ] **Calendriers locaux** : Sélecteurs dates adaptés
+- [ ] **Timezones** : Gestion fuseaux horaires
+- [ ] **Encodage** : Support UTF-8 complet
+
+### 🎯 **Étape 1.6.9 : Sauvegarde & Restauration**
+**Priorité** : 🔴 **OBLIGATOIRE** - Fiabilité et migration
+**Objectif** : Système complet de sauvegarde et restauration des templates
+
+**💾 Mécanisme Sauvegarde** :
+- [ ] **Export templates** : JSON avec métadonnées complètes
+- [ ] **Sauvegarde configuration** : Paramètres et préférences utilisateur
+- [ ] **Versioning automatique** : Historique modifications templates
+- [ ] **Compression intelligente** : Formats optimisés (.zip, .json.gz)
+
+**🔄 Système Restauration** :
+- [ ] **Import templates** : Validation et migration automatique
+- [ ] **Récupération crash** : Point de restauration après erreur
+- [ ] **Migration sites** : Transfert templates entre installations
+- [ ] **Rollback versions** : Retour à version précédente
+
+**🛡️ Sécurité & Intégrité** :
+- [ ] **Validation imports** : Vérification intégrité fichiers
+- [ ] **Sanitisation données** : Nettoyage avant restauration
+- [ ] **Permissions contrôlées** : Droits d'import/export par rôle
+- [ ] **Logs opérations** : Audit trail sauvegardes/restaurations
+
+### 🎯 **Étape 1.6.10 : Onboarding & Tutoriels**
+**Priorité** : 🟡 **RECOMMANDÉ** - Adoption utilisateur
+**Objectif** : Expérience d'accueil et apprentissage intégrée
+
+**🚀 Assistant Première Utilisation** :
+- [ ] **Wizard configuration** : Étapes guidées setup initial
+- [ ] **Détection environnement** : Auto-configuration WooCommerce
+- [ ] **Templates suggérés** : Recommandations selon usage
+- [ ] **Checklist progression** : Suivi complétion onboarding
+
+**📚 Système Tutoriels** :
+- [ ] **Tooltips contextuels** : Aide intégrée interface
+- [ ] **Centre d'aide intégré** : Base connaissances in-app
+- [ ] **Vidéos tutoriels** : Bibliothèque vidéos intégrée
+- [ ] **Recherche intelligente** : Aide contextuelle par fonctionnalité
+
+**🎯 Learning Path** :
+- [ ] **Parcours débutant** : Tutoriels séquencés progressifs
+- [ ] **Templates exemples** : Guides pas-à-pas avec templates
+- [ ] **Success metrics** : Suivi complétion tutoriels
+- [ ] **Feedback intégré** : Notation et commentaires tutoriels
+
+### 🎯 **Étape 1.6.11 : Conformité RGPD**
+**Priorité** : 🔴 **OBLIGATOIRE** - Conformité légale européenne
+**Objectif** : Respect complet RGPD et protection données personnelles
+
+**🔒 Gestion Consentements** :
+- [ ] **Consentement explicite** : Accord utilisateur données personnelles
+- [ ] **Granularité consentements** : Choix par type données (analytics, templates)
+- [ ] **Révocabilité** : Possibilité retrait consentement
+- [ ] **Historique consentements** : Logs modifications consentements
+
+**👤 Droits Utilisateur RGPD** :
+- [ ] **Droit accès** : Export données personnelles utilisateur
+- [ ] **Droit rectification** : Modification données personnelles
+- [ ] **Droit suppression** : "Droit à l'oubli" complet
+- [ ] **Portabilité données** : Export données format standard
+
+**📊 Audit & Traçabilité** :
+- [ ] **Logs traitements** : Audit trail toutes opérations données
+- [ ] **Conservation limitée** : Durées légales par type données
+- [ ] **Anonymisation** : Suppression données personnelles analytics
+- [ ] **Violation reporting** : Alertes brèches sécurité
+
+**🛡️ Sécurité Données** :
+- [ ] **Chiffrement stockage** : Données sensibles chiffrées
+- [ ] **Accès contrôlé** : Permissions granulaire données
+- [ ] **Suppression sécurisée** : Écrasement données supprimées
+- [ ] **Backup sécurisé** : Sauvegardes chiffrées et isolées
+
+### 📊 **Critères de Succès Phase 1.6**
+- [ ] **Intégration native** : Plugin "invisible" dans WordPress
+- [ ] **Performance maintenue** : < 100ms impact sur chargement pages
+- [ ] **Extensibilité** : API complète pour développeurs
+- [ ] **Fiabilité** : 99.9% uptime, gestion erreurs robuste
+- [ ] **UX WordPress** : Respect total conventions WordPress
+
+### 🎯 **Guide des Priorités Phase 1.6**
+
+**🔴 OBLIGATOIRE (7 étapes)** - Doivent être implémentées pour v1.1.0 :
+- **1.6.1** ✅ Hooks WordPress & WooCommerce (TERMINÉ)
+- **1.6.2** 📋 Templates prédéfinis (Core business)
+- **1.6.6** 🔐 Rôles & capacités (Sécurité)
+- **1.6.8** 🌐 i18n & localisation (Multilingue)
+- **1.6.9** 💾 Sauvegarde & restauration (Fiabilité)
+- **1.6.11** � Conformité RGPD (Légalité)
+
+**�🟡 RECOMMANDÉ (4 étapes)** - Améliorent significativement l'expérience :
+- **1.6.3** 📊 Analytics & métriques (Optimisation)
+- **1.6.4** 🔌 API REST (Extensibilité)
+- **1.6.5** 🎯 Shortcodes & Gutenberg (UX)
+- **1.6.10** 🚀 Onboarding & tutoriels (Adoption)
+
+**🟢 OPTIONNEL (1 étape)** - Fonctionnalités avancées différables :
+- **1.6.7** ⚙️ Webhooks & automation (Premium features)
+
+**💡 Stratégie recommandée** : Focus sur les 🔴 OBLIGATOIRES d'abord, puis 🟡 RECOMMANDÉS selon les ressources disponibles.
+
+---
+
+## 📋 Spécifications fonctionnelles
 
 ## 📋 Spécifications fonctionnelles
 

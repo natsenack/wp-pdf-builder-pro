@@ -39,6 +39,8 @@ class PDF_Builder_Template_Manager
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajax_auto_save_template']); // Auto-save handler
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
+        add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
+        add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
     }
 
     /**
@@ -588,5 +590,256 @@ class PDF_Builder_Template_Manager
         }
 
         return $errors;
+    }
+
+    /**
+     * Obtenir tous les templates prédéfinis
+     *
+     * @return array Liste des templates prédéfinis avec leurs métadonnées
+     */
+    public function get_predefined_templates()
+    {
+        $templates = [];
+
+        // Chemin vers le dossier des templates prédéfinis
+        $predefined_dir = plugin_dir_path(dirname(__FILE__)) . '../../templates/predefined/';
+
+        if (!is_dir($predefined_dir)) {
+            return $templates;
+        }
+
+        // Scanner le dossier pour les fichiers JSON
+        $files = glob($predefined_dir . '*.json');
+
+        foreach ($files as $file) {
+            $template_data = $this->load_predefined_template($file);
+            if ($template_data) {
+                $templates[] = $template_data;
+            }
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Charger un template prédéfini depuis un fichier JSON
+     *
+     * @param string $file_path Chemin complet vers le fichier JSON
+     * @return array|null Données du template ou null si erreur
+     */
+    private function load_predefined_template($file_path)
+    {
+        if (!file_exists($file_path)) {
+            return null;
+        }
+
+        $json_content = file_get_contents($file_path);
+        if ($json_content === false) {
+            return null;
+        }
+
+        $template_data = json_decode($json_content, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        // Validation de la structure
+        $validation_errors = $this->validate_template_structure($template_data);
+        if (!empty($validation_errors)) {
+            return null;
+        }
+
+        // Ajouter des métadonnées
+        $filename = basename($file_path, '.json');
+        $template_data['_metadata'] = [
+            'filename' => $filename,
+            'file_path' => $file_path,
+            'is_predefined' => true,
+            'loaded_at' => current_time('mysql')
+        ];
+
+        return $template_data;
+    }
+
+    /**
+     * Obtenir un template prédéfini par son nom
+     *
+     * @param string $template_name Nom du template (sans extension .json)
+     * @return array|null Données du template ou null si non trouvé
+     */
+    public function get_predefined_template($template_name)
+    {
+        $predefined_dir = plugin_dir_path(dirname(__FILE__)) . '../../templates/predefined/';
+        $file_path = $predefined_dir . $template_name . '.json';
+
+        return $this->load_predefined_template($file_path);
+    }
+
+    /**
+     * Installer un template prédéfini dans la base de données utilisateur
+     *
+     * @param string $template_name Nom du template prédéfini
+     * @param string $custom_name Nom personnalisé pour le template utilisateur
+     * @return array Résultat de l'opération
+     */
+    public function install_predefined_template($template_name, $custom_name = '')
+    {
+        $template_data = $this->get_predefined_template($template_name);
+
+        if (!$template_data) {
+            return [
+                'success' => false,
+                'message' => 'Template prédéfini non trouvé: ' . $template_name
+            ];
+        }
+
+        // Utiliser le nom personnalisé ou le nom du template
+        $final_name = !empty($custom_name) ? $custom_name : $template_data['name'];
+
+        // Préparer les données pour la sauvegarde
+        $save_data = [
+            'template_name' => $final_name,
+            'template_data' => wp_json_encode($template_data),
+            'nonce' => wp_create_nonce('pdf_builder_templates')
+        ];
+
+        // Simuler la requête AJAX de sauvegarde
+        $_POST = $save_data;
+
+        // Capturer la réponse
+        ob_start();
+        $this->ajax_save_template();
+        $response = ob_get_clean();
+
+        $decoded_response = json_decode($response, true);
+
+        if ($decoded_response && isset($decoded_response['success']) && $decoded_response['success']) {
+            return [
+                'success' => true,
+                'message' => 'Template installé avec succès',
+                'template_id' => $decoded_response['data']['template_id'] ?? 0
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Erreur lors de l\'installation: ' . ($decoded_response['data'] ?? 'Erreur inconnue')
+        ];
+    }
+
+    /**
+     * Vérifier si un template prédéfini est installé pour l'utilisateur
+     *
+     * @param string $template_name Nom du template prédéfini
+     * @return bool True si installé
+     */
+    public function is_predefined_template_installed($template_name)
+    {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_templates WHERE name LIKE %s",
+            $template_name . '%'
+        ));
+
+        return $count > 0;
+    }
+
+    /**
+     * AJAX - Obtenir la liste des templates prédéfinis
+     */
+    public function ajax_get_predefined_templates()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupérer les templates prédéfinis
+            $templates = $this->get_predefined_templates();
+
+            // Formater la réponse
+            $formatted_templates = [];
+            foreach ($templates as $template) {
+                $formatted_templates[] = [
+                    'name' => $template['name'],
+                    'description' => $template['description'] ?? '',
+                    'category' => $template['category'] ?? 'general',
+                    'tags' => $template['tags'] ?? [],
+                    'isPremium' => $template['isPremium'] ?? false,
+                    'previewImage' => $template['previewImage'] ?? '',
+                    'elementCount' => count($template['elements'] ?? []),
+                    'filename' => $template['_metadata']['filename'] ?? '',
+                    'isInstalled' => $this->is_predefined_template_installed($template['name'])
+                ];
+            }
+
+            wp_send_json_success([
+                'templates' => $formatted_templates,
+                'total' => count($formatted_templates)
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la récupération des templates: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX - Installer un template prédéfini
+     */
+    public function ajax_install_predefined_template()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupération des paramètres
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $custom_name = isset($_POST['custom_name']) ? sanitize_text_field($_POST['custom_name']) : '';
+
+            if (empty($template_name)) {
+                wp_send_json_error('Nom du template requis');
+            }
+
+            // Installer le template
+            $result = $this->install_predefined_template($template_name, $custom_name);
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => $result['message'],
+                    'template_id' => $result['template_id']
+                ]);
+            } else {
+                wp_send_json_error($result['message']);
+
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de l\'installation: ' . $e->getMessage());
+        }
     }
 }

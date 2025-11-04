@@ -40,6 +40,79 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
 
+        <!-- Section: Templates prédéfinis (fourni avec le plugin) -->
+        <div style="margin-top: 10px; margin-bottom: 20px;">
+            <h2><?php _e('Templates Prédéfinis', 'pdf-builder-pro'); ?></h2>
+            <p style="color: #666;"><?php _e('Installez rapidement un template prédéfini fourni par le plugin.', 'pdf-builder-pro'); ?></p>
+            <div id="predefined-templates" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 12px;">
+                <!-- Contenu chargé via AJAX -->
+                <div style="grid-column: 1 / -1; color: #888;">Chargement des templates prédéfinis…</div>
+            </div>
+        </div>
+
+        <script>
+        (function(){
+            // Charger la liste des templates prédéfinis via AJAX
+            jQuery.post(ajaxurl, {
+                action: 'pdf_builder_get_predefined_templates',
+                nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
+            }, function(response){
+                var container = document.getElementById('predefined-templates');
+                container.innerHTML = '';
+                if (!response || !response.success || !response.data || !response.data.templates) {
+                    container.innerHTML = '<div style="grid-column: 1 / -1; color: #c00;">Erreur lors du chargement des templates prédéfinis.</div>';
+                    return;
+                }
+
+                response.data.templates.forEach(function(t){
+                    var card = document.createElement('div');
+                    card.className = 'predef-card';
+                    card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:160px;';
+                    var title = document.createElement('h4'); title.style.margin='0 0 8px 0'; title.textContent = t.name;
+                    var desc = document.createElement('div'); desc.style.color='#666'; desc.style.flex='1'; desc.textContent = t.description || '';
+                    var footer = document.createElement('div'); footer.style.display='flex'; footer.style.gap='8px'; footer.style.marginTop='10px';
+                    var installBtn = document.createElement('button'); installBtn.className='button button-primary'; installBtn.textContent = t.isInstalled ? 'Installé' : 'Installer';
+                    installBtn.disabled = !!t.isInstalled;
+                    installBtn.onclick = function(){
+                        if (t.isPremium) {
+                            alert('Template premium — accès uniquement avec une licence pro.');
+                            return;
+                        }
+                        installPredefinedTemplate(t.filename, installBtn);
+                    };
+                    var info = document.createElement('div'); info.style.fontSize='12px'; info.style.color='#999'; info.textContent = (t.elementCount || 0) + ' éléments • ' + (t.category || 'général');
+                    footer.appendChild(installBtn);
+                    footer.appendChild(info);
+                    card.appendChild(title); card.appendChild(desc); card.appendChild(footer);
+                    container.appendChild(card);
+                });
+            }).fail(function(){
+                var container = document.getElementById('predefined-templates');
+                container.innerHTML = '<div style="grid-column: 1 / -1; color: #c00;">Erreur réseau lors du chargement des templates prédéfinis.</div>';
+            });
+
+            window.installPredefinedTemplate = function(filename, btn) {
+                if (!confirm('Installer ce template prédéfini ?')) return;
+                btn.disabled = true; var original = btn.textContent; btn.textContent = '⏳';
+                jQuery.post(ajaxurl, {
+                    action: 'pdf_builder_install_predefined_template',
+                    nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>',
+                    template_name: filename
+                }, function(resp){
+                    if (resp && resp.success) {
+                        btn.textContent = '✅ Installé';
+                        setTimeout(function(){ location.reload(); }, 800);
+                    } else {
+                        btn.textContent = '❌ Erreur';
+                        btn.disabled = false;
+                        alert('Erreur lors de l\'installation: ' + ((resp && resp.data) || 'Erreur inconnue'));
+                        setTimeout(function(){ btn.textContent = original; }, 2000);
+                    }
+                }).fail(function(){ btn.textContent = '❌ Erreur réseau'; btn.disabled = false; setTimeout(function(){ btn.textContent = original; }, 2000); });
+            };
+        })();
+        </script>
+
         <div id="templates-list" style="margin-top: 20px;">
             <?php
             // Récupérer les templates depuis la base de données
