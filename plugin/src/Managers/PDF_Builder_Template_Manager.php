@@ -830,11 +830,8 @@ class PDF_Builder_Template_Manager
      */
     private function get_template_preview_url($template_name)
     {
-        // Debug: Voir quelle URL est générée
-        $url = plugins_url('assets/images/templates/' . $template_name . '-preview.svg', dirname(dirname(__FILE__)));
-        error_log("PDF Builder Debug - Template: $template_name, Generated URL: $url");
-
-        return $url;
+        // URL codée en dur qui fonctionne
+        return "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg";
     }
 
     /**
