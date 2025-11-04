@@ -855,18 +855,25 @@ class PDF_Builder_Template_Manager
     public function regenerate_predefined_thumbnails()
     {
         try {
+            error_log('[PDF Builder] Starting thumbnail regeneration');
+
             // Charger PreviewImageAPI pour générer de vraies prévisualisations
             if (!class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+                error_log('[PDF Builder] PreviewImageAPI class not found');
                 throw new Exception("PreviewImageAPI class not found - plugin not properly initialized");
             }
 
             $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+            error_log('[PDF Builder] PreviewImageAPI loaded successfully');
 
             // Dossier des templates prédéfinis
             // Depuis src/Managers/, remonter vers la racine du plugin puis aller dans templates/predefined/
             $plugin_root = dirname(dirname(dirname(__FILE__)));
             $templates_dir = $plugin_root . '/templates/predefined/';
+            error_log('[PDF Builder] Templates directory: ' . $templates_dir);
+
             $templates = glob($templates_dir . '*.json');
+            error_log('[PDF Builder] Found ' . count($templates) . ' template files');
 
             if (empty($templates)) {
                 throw new Exception("Aucun template prédéfini trouvé dans $templates_dir");
@@ -877,27 +884,33 @@ class PDF_Builder_Template_Manager
 
             foreach ($templates as $template_file) {
                 $filename = basename($template_file, '.json');
+                error_log('[PDF Builder] Processing template: ' . $filename);
 
                 // Charger le JSON du template
                 $template_json = file_get_contents($template_file);
                 if (!$template_json) {
+                    error_log('[PDF Builder] Failed to read template file: ' . $template_file);
                     $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de lire le fichier'];
                     continue;
                 }
 
                 $template_data = json_decode($template_json, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('[PDF Builder] JSON decode error for ' . $filename . ': ' . json_last_error_msg());
                     $results[] = ['filename' => $filename, 'success' => false, 'error' => 'JSON invalide: ' . json_last_error_msg()];
                     continue;
                 }
 
                 // Vérifier si c'est un template valide
                 if (!isset($template_data['canvasWidth']) || !isset($template_data['canvasHeight']) || !isset($template_data['elements'])) {
+                    error_log('[PDF Builder] Invalid template structure for ' . $filename);
                     $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Template invalide: champs requis manquants'];
                     continue;
                 }
 
                 try {
+                    error_log('[PDF Builder] Generating preview for ' . $filename);
+
                     // Générer une vraie prévisualisation avec PreviewImageAPI
                     $preview_params = [
                         'context' => 'editor',
@@ -909,6 +922,7 @@ class PDF_Builder_Template_Manager
 
                     // Générer la vignette
                     $result = $preview_api->generate_with_cache($preview_params);
+                    error_log('[PDF Builder] Preview generation result for ' . $filename . ': ' . json_encode($result));
 
                     if ($result && isset($result['image_url'])) {
                         // Mettre à jour le champ previewImage dans le JSON
@@ -919,14 +933,18 @@ class PDF_Builder_Template_Manager
                         if (file_put_contents($template_file, $updated_json)) {
                             $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
                             $success_count++;
+                            error_log('[PDF Builder] Successfully updated ' . $filename);
                         } else {
+                            error_log('[PDF Builder] Failed to save updated JSON for ' . $filename);
                             $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
                         }
                     } else {
+                        error_log('[PDF Builder] Preview generation failed for ' . $filename);
                         $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Échec de génération de la vignette'];
                     }
 
                 } catch (Exception $e) {
+                    error_log('[PDF Builder] Exception processing ' . $filename . ': ' . $e->getMessage());
                     $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Exception: ' . $e->getMessage()];
                 }
             }

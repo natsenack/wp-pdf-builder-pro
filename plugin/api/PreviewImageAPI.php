@@ -447,7 +447,7 @@ class PreviewImageAPI {
     /**
      * Génération avec cache intelligent - VERSION RÉELLE POUR ÉTAPE 1.4
      */
-    private function generate_with_cache($params) {
+    public function generate_with_cache($params) {
         $cache_key = $this->generate_cache_key($params);
         $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
 
