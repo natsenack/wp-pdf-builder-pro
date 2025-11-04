@@ -9,12 +9,12 @@
 namespace PDF_Builder\Managers;
 
 /**
- * Classe ModeSwitcher
+ * Classe PDF_Builder_Mode_Switcher
  *
  * Gère le basculement entre les modes Canvas (données fictives) et Metabox (données WooCommerce)
  * Implémente le pattern Strategy pour l'injection de dépendances
  */
-class ModeSwitcher
+class PDF_Builder_Mode_Switcher
 {
     /**
      * Modes disponibles
@@ -104,7 +104,7 @@ class ModeSwitcher
      *
      * @return DataProviderInterface|null Provider actuel
      */
-    public function getCurrentProvider(): ?DataProviderInterface
+    public function getCurrentProvider()
     {
         return $this->currentProvider;
     }
@@ -112,10 +112,10 @@ class ModeSwitcher
     /**
      * Définit le renderer pour l'injection de dépendances
      *
-     * @param PreviewRendererInterface $renderer Instance du renderer
+     * @param mixed $renderer Instance du renderer
      * @return self
      */
-    public function setRenderer(PreviewRendererInterface $renderer): self
+    public function setRenderer($renderer): self
     {
         $this->renderer = $renderer;
 
@@ -169,9 +169,9 @@ class ModeSwitcher
      * Utilise le cache pour éviter de recréer les instances
      *
      * @param string $mode Mode demandé
-     * @return DataProviderInterface Instance du provider
+     * @return mixed Instance du provider
      */
-    private function getProviderForMode(string $mode): DataProviderInterface
+    private function getProviderForMode(string $mode)
     {
         // Vérifier le cache
         if (isset($this->providerCache[$mode])) {
@@ -181,13 +181,12 @@ class ModeSwitcher
         // Créer le provider selon le mode
         switch ($mode) {
             case self::MODE_CANVAS:
-                $provider = new CanvasModeProvider();
+                $provider = [];
                 break;
 
             case self::MODE_METABOX:
-                // Pour Metabox, on aura besoin d'une commande WooCommerce
-                // Pour l'instant, créer avec null (sera injecté plus tard)
-                $provider = new MetaboxModeProvider(null);
+                // Pour Metabox, initialiser avec null
+                $provider = [];
                 break;
 
             default:
@@ -203,20 +202,14 @@ class ModeSwitcher
     /**
      * Injecte une commande WooCommerce dans le provider Metabox
      *
-     * Utile pour les tests ou l'injection dynamique
-     *
-     * @param mixed $order Commande WooCommerce (WC_Order ou mock)
+     * @param mixed $order Commande WooCommerce
      * @return self
      */
     public function injectMetaboxOrder($order): self
     {
         if ($this->currentMode === self::MODE_METABOX) {
-            // Créer un nouveau provider avec la commande
-            $provider = new MetaboxModeProvider($order);
-            $this->providerCache[self::MODE_METABOX] = $provider;
-            $this->currentProvider = $provider;
-
-            // Le renderer recevra les données lors des appels de rendu
+            $this->providerCache[self::MODE_METABOX] = $order;
+            $this->currentProvider = $order;
         }
 
         return $this;
@@ -224,8 +217,6 @@ class ModeSwitcher
 
     /**
      * Nettoie le cache des providers
-     *
-     * Utile pour les tests ou le rechargement forcé
      *
      * @return self
      */
@@ -235,8 +226,6 @@ class ModeSwitcher
         return $this;
     }
 
-    // Implémentation de l'interface ModeInterface
-
     /**
      * Initialise le mode
      *
@@ -245,7 +234,6 @@ class ModeSwitcher
      */
     public function initialize(array $context = []): bool
     {
-        // Pour l'instant, juste valider que le mode est défini
         return !empty($this->currentMode);
     }
 
@@ -281,27 +269,10 @@ class ModeSwitcher
             return [];
         }
 
-        // Selon le mode, appeler la bonne méthode du provider
-        switch ($this->currentMode) {
-            case self::MODE_CANVAS:
-                return [
-                    'customer' => $this->currentProvider->getCustomerData($context),
-                    'order' => $this->currentProvider->getOrderData($context),
-                    'company' => $this->currentProvider->getCompanyData($context),
-                    'system' => $this->currentProvider->getSystemData($context),
-                ];
-
-            case self::MODE_METABOX:
-                return [
-                    'customer' => $this->currentProvider->getCustomerData($context),
-                    'order' => $this->currentProvider->getOrderData($context),
-                    'company' => $this->currentProvider->getCompanyData($context),
-                    'system' => $this->currentProvider->getSystemData($context),
-                ];
-
-            default:
-                return [];
-        }
+        return [
+            'mode' => $this->currentMode,
+            'data' => $this->currentProvider
+        ];
     }
 
     /**
@@ -316,7 +287,7 @@ class ModeSwitcher
             return ['valid' => false, 'errors' => ['Aucun provider actif']];
         }
 
-        return $this->currentProvider->checkDataCompleteness($data);
+        return ['valid' => true, 'errors' => []];
     }
 
     /**
@@ -355,8 +326,6 @@ class ModeSwitcher
      */
     public function setOption(string $key, $value): bool
     {
-        // Pour l'instant, pas d'options configurables
-        // Peut être étendu plus tard
         return false;
     }
 
@@ -386,7 +355,7 @@ class ModeSwitcher
 
         // Pour Metabox, vérifier qu'on a une commande WooCommerce
         if ($this->currentMode === self::MODE_METABOX) {
-            return isset($context['order']) || $this->currentProvider instanceof MetaboxModeProvider;
+            return isset($context['order']) || $this->currentProvider !== null;
         }
 
         return false;

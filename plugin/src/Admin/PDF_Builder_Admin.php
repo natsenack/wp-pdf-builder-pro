@@ -1278,15 +1278,18 @@ class PDF_Builder_Admin {
     public function ajax_get_builtin_templates()
     {
         error_log("PDF Builder Debug - ajax_get_builtin_templates called");
+        error_log("PDF Builder Debug - POST data: " . print_r($_POST, true));
 
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
+                error_log('PDF Builder: ajax_get_builtin_templates - Permissions insuffisantes');
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+                error_log('PDF Builder: ajax_get_builtin_templates - Nonce invalide: ' . ($_POST['nonce'] ?? 'not set'));
                 wp_send_json_error('Sécurité: Nonce invalide');
             }
 
@@ -1294,6 +1297,8 @@ class PDF_Builder_Admin {
 
             // Obtenir le Template Manager
             $template_manager = $this->get_template_manager();
+            error_log('PDF Builder: ajax_get_builtin_templates - Template Manager instance: ' . (is_object($template_manager) ? get_class($template_manager) : 'null'));
+
             if (!$template_manager) {
                 error_log('PDF Builder: ajax_get_builtin_templates - Template Manager null');
                 wp_send_json_error('Erreur interne: Template Manager non disponible');
@@ -1303,12 +1308,17 @@ class PDF_Builder_Admin {
 
             // Récupérer les templates builtin
             $templates = $template_manager->get_builtin_templates();
+            error_log('PDF Builder: ajax_get_builtin_templates - Templates récupérés: ' . (is_array($templates) ? count($templates) : 'not array'));
 
-            error_log('PDF Builder: ajax_get_builtin_templates - Templates récupérés: ' . count($templates));
+            if (!is_array($templates)) {
+                error_log('PDF Builder: ajax_get_builtin_templates - Templates is not an array: ' . print_r($templates, true));
+                wp_send_json_error('Erreur interne: Templates non valides');
+            }
 
             // Ajouter l'URL de prévisualisation à chaque template
             foreach ($templates as &$template) {
                 $template['preview_url'] = $template_manager->get_template_preview_url($template['id']);
+                error_log('PDF Builder: ajax_get_builtin_templates - Template ' . $template['id'] . ' preview URL: ' . $template['preview_url']);
             }
 
             error_log('PDF Builder: ajax_get_builtin_templates - URLs ajoutées, envoi succès');
@@ -2519,7 +2529,7 @@ class PDF_Builder_Admin {
 
             $html_content = $this->generate_unified_html($template_data, $order);
         // Utiliser Dompdf pour générer le PDF
-        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
         if (class_exists('Dompdf\Dompdf')) {
             $dompdf = new Dompdf\Dompdf();
@@ -3350,7 +3360,7 @@ class PDF_Builder_Admin {
         try {
 // S'assurer que la classe Cache Manager est chargée
             if (!class_exists('PDF_Builder_Cache_Manager')) {
-                $cache_manager_path = dirname(__FILE__) . '/managers/PDF_Builder_Cache_Manager.php';
+                $cache_manager_path = dirname(__FILE__) . '/Managers/PDF_Builder_Cache_Manager.php';
                 if (file_exists($cache_manager_path)) {
                     include_once $cache_manager_path;
                 }
@@ -4235,12 +4245,42 @@ class PDF_Builder_Admin {
      */
     public function get_template_manager()
     {
+        error_log('PDF Builder Debug - get_template_manager() called, current template_manager: ' . (is_object($this->template_manager) ? get_class($this->template_manager) : 'null'));
+
         if ($this->template_manager === null) {
+            error_log('PDF Builder Debug - Template manager is null, trying to create it');
+
             // Vérifier si la classe existe dans le namespace global
             if (class_exists('\PDF_Builder_Template_Manager')) {
+                error_log('PDF Builder Debug - PDF_Builder_Template_Manager class exists, creating instance');
                 $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
+                error_log('PDF Builder Debug - Template manager instance created: ' . (is_object($this->template_manager) ? 'success' : 'failed'));
+            } else {
+                error_log('PDF Builder Debug - PDF_Builder_Template_Manager class does not exist, trying manual load');
+
+                // Classe non chargée, essayer de la charger manuellement
+                $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
+                error_log('PDF Builder Debug - Template manager file path: ' . $template_manager_file);
+                error_log('PDF Builder Debug - File exists: ' . (file_exists($template_manager_file) ? 'yes' : 'no'));
+
+                if (file_exists($template_manager_file)) {
+                    error_log('PDF Builder Debug - Loading template manager file');
+                    require_once $template_manager_file;
+
+                    if (class_exists('\PDF_Builder_Template_Manager')) {
+                        error_log('PDF Builder Debug - Class loaded successfully, creating instance');
+                        $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
+                        error_log('PDF Builder Debug - Template manager instance created after manual load: ' . (is_object($this->template_manager) ? 'success' : 'failed'));
+                    } else {
+                        error_log('PDF Builder Debug - Class still does not exist after manual load');
+                    }
+                } else {
+                    error_log('PDF Builder Debug - Template manager file not found');
+                }
             }
         }
+
+        error_log('PDF Builder Debug - get_template_manager() returning: ' . (is_object($this->template_manager) ? get_class($this->template_manager) : 'null'));
         return $this->template_manager;
     }
 

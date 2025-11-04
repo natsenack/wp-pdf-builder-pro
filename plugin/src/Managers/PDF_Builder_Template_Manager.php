@@ -1261,4 +1261,54 @@ class PDF_Builder_Template_Manager
             wp_send_json_error('Erreur lors de la régénération: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Supprimer un template
+     *
+     * @param int $template_id ID du template
+     * @return bool True si suppression réussie
+     */
+    public function delete_template($template_id)
+    {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $result = $wpdb->delete(
+            $table_templates,
+            ['id' => $template_id],
+            ['%d']
+        );
+
+        if ($result) {
+            do_action('pdf_builder_template_deleted', $template_id);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Récupérer les données d'un template
+     *
+     * @param int $template_id ID du template
+     * @return array|null Données du template ou null
+     */
+    public function get_template_data($template_id)
+    {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $result = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table_templates WHERE id = %d",
+            $template_id
+        ), ARRAY_A);
+
+        if ($result && isset($result['data'])) {
+            $result['data'] = json_decode($result['data'], true);
+        }
+
+        return $result;
+    }
 }
+
+

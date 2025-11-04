@@ -69,6 +69,18 @@ class PDF_Builder_Settings_Manager
     }
 
     /**
+     * Récupérer un paramètre
+     *
+     * @param string $option Clé du paramètre
+     * @param mixed $default Valeur par défaut
+     * @return mixed Valeur du paramètre
+     */
+    public function get_setting($option, $default = false)
+    {
+        return get_option($option, $default);
+    }
+
+    /**
      * Sauvegarder les paramètres généraux
      */
     private function save_settings()

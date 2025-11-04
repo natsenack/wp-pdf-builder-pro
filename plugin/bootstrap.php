@@ -84,6 +84,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
+    // Charger le handler AJAX pour les templates builtin
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/get-builtin-templates.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/get-builtin-templates.php';
+    }
+
     $loaded = true;
 }
 
@@ -279,16 +284,35 @@ function pdf_builder_load_core_when_needed() {
         $load_core = true;
     } elseif (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') === 0) {
         $load_core = true;
+    } elseif (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action'])) {
+        // Charger pour les appels AJAX du PDF Builder
+        $pdf_builder_ajax_actions = [
+            'get_builtin_templates',
+            'pdf_builder_save_template',
+            'pdf_builder_load_template',
+            'pdf_builder_auto_save_template',
+            'pdf_builder_get_predefined_templates',
+            'pdf_builder_install_predefined_template',
+            'pdf_builder_regenerate_predefined_thumbnails',
+            'pdf_builder_flush_rest_cache'
+        ];
+        if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
+            $load_core = true;
+        }
     }
 
     if ($load_core) {
+        error_log('PDF Builder - Loading core for action: ' . ($_REQUEST['action'] ?? 'unknown'));
         pdf_builder_load_core();
+        error_log('PDF Builder - Core loaded, class exists: ' . (class_exists('PDF_Builder\Core\PDF_Builder_Core') ? 'yes' : 'no'));
+        
         if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
             try {
                 \PDF_Builder\Core\PDF_Builder_Core::getInstance()->init();
                 $core_loaded = true;
+                error_log('PDF Builder - Core initialized successfully');
             } catch (Exception $e) {
-                // Gestion silencieuse des erreurs pour éviter les logs
+                error_log('PDF Builder - Core initialization failed: ' . $e->getMessage());
                 wp_die('Plugin initialization failed: ' . esc_html($e->getMessage()));
             }
         }
@@ -786,6 +810,8 @@ function pdf_builder_register_fallback_hooks() {
 
 // Enregistrer les hooks seulement si WordPress est disponible
 if (function_exists('add_action')) {
+    // Charger le core au moment de wp_ajax pour les appels AJAX du PDF Builder
+    add_action('wp_ajax_get_builtin_templates', 'pdf_builder_load_core_when_needed', 1);
     pdf_builder_register_fallback_hooks();
 }
 

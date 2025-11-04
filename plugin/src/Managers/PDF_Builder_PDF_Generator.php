@@ -106,7 +106,7 @@ class PDF_Builder_PDF_Generator
         $pdf_path = $pdf_dir . '/' . $filename;
 
         // Générer le PDF avec Dompdf
-        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
         $dompdf = new Dompdf\Dompdf();
         $dompdf->set_option('isRemoteEnabled', true);
@@ -386,6 +386,107 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer un PDF avec Dompdf pour un rendu fidèle
      */
+    public function generate_pdf($html_content, $filename = 'document.pdf')
+    {
+        try {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+
+            $dompdf = new Dompdf\Dompdf();
+            $dompdf->set_option('isRemoteEnabled', true);
+            $dompdf->set_option('isHtml5ParserEnabled', true);
+            $dompdf->set_option('defaultFont', 'Arial');
+
+            $dompdf->loadHtml($html_content);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            return $this->save_pdf($dompdf, $filename);
+        } catch (Exception $e) {
+            error_log('PDF Generator Error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sauvegarder le PDF généré sur le disque
+     *
+     * @param Dompdf\Dompdf $dompdf Instance Dompdf
+     * @param string $filename Nom du fichier
+     * @return string|false Chemin du fichier ou false en cas d'erreur
+     */
+    public function save_pdf($dompdf, $filename = 'document.pdf')
+    {
+        try {
+            $upload_dir = wp_upload_dir();
+            $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
+
+            if (!file_exists($pdf_dir)) {
+                wp_mkdir_p($pdf_dir);
+            }
+
+            $pdf_path = $pdf_dir . '/' . sanitize_file_name($filename);
+            $pdf_content = $dompdf->output();
+
+            if (file_put_contents($pdf_path, $pdf_content) === false) {
+                throw new Exception('Impossible de sauvegarder le fichier PDF');
+            }
+
+            return $pdf_path;
+        } catch (Exception $e) {
+            error_log('PDF Save Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Rendre un élément dans le PDF avec Dompdf
+     */
+    public function render_template($template_data, $context = [])
+    {
+        try {
+            // Générer le HTML depuis les données template
+            $html = $this->generate_html_from_template_data($template_data);
+
+            // Appliquer le contexte s'il existe
+            if (!empty($context)) {
+                $html = $this->apply_context_to_html($html, $context);
+            }
+
+            // Générer le PDF
+            $filename = isset($context['filename']) ? $context['filename'] : 'document.pdf';
+            $pdf_path = $this->generate_pdf($html, $filename);
+
+            return [
+                'success' => $pdf_path !== false,
+                'path' => $pdf_path,
+                'html' => $html
+            ];
+        } catch (Exception $e) {
+            error_log('Template Render Error: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Appliquer le contexte au HTML
+     *
+     * @param string $html HTML à modifier
+     * @param array $context Contexte avec variables
+     * @return string HTML modifié
+     */
+    private function apply_context_to_html($html, $context)
+    {
+        foreach ($context as $key => $value) {
+            if (is_string($value)) {
+                $html = str_replace('{{' . $key . '}}', $value, $html);
+            }
+        }
+
+        return $html;
+    }
 
     /**
      * Rendre un élément dans le PDF avec Dompdf

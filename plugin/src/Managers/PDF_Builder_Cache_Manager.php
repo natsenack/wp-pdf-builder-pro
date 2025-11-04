@@ -101,6 +101,14 @@ class PDF_Builder_Cache_Manager
     }
 
     /**
+     * Alias pour exists() - Vérifier si une clé existe en cache
+     */
+    public function has($key)
+    {
+        return $this->exists($key);
+    }
+
+    /**
      * Supprimer une valeur du cache
      */
     public function delete($key)
