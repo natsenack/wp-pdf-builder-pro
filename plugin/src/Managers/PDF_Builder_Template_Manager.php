@@ -607,20 +607,31 @@ class PDF_Builder_Template_Manager
         $plugin_root = dirname(dirname(dirname(__FILE__)));
         $predefined_dir = $plugin_root . '/templates/predefined/';
 
+        error_log('[PDF Builder] get_predefined_templates - Plugin root: ' . $plugin_root);
+        error_log('[PDF Builder] get_predefined_templates - Predefined dir: ' . $predefined_dir);
+        error_log('[PDF Builder] get_predefined_templates - Directory exists: ' . (is_dir($predefined_dir) ? 'YES' : 'NO'));
+
         if (!is_dir($predefined_dir)) {
+            error_log('[PDF Builder] get_predefined_templates - Directory does not exist: ' . $predefined_dir);
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($predefined_dir . '*.json');
+        error_log('[PDF Builder] get_predefined_templates - Found files: ' . implode(', ', $files));
 
         foreach ($files as $file) {
+            error_log('[PDF Builder] get_predefined_templates - Processing file: ' . $file);
             $template_data = $this->load_predefined_template($file);
             if ($template_data) {
                 $templates[] = $template_data;
+                error_log('[PDF Builder] get_predefined_templates - Successfully loaded template: ' . ($template_data['name'] ?? 'unknown'));
+            } else {
+                error_log('[PDF Builder] get_predefined_templates - Failed to load template from: ' . $file);
             }
         }
 
+        error_log('[PDF Builder] get_predefined_templates - Returning ' . count($templates) . ' templates');
         return $templates;
     }
 
