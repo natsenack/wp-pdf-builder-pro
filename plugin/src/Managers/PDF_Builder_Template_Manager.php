@@ -832,7 +832,12 @@ class PDF_Builder_Template_Manager
     {
         // Utiliser une approche plus fiable pour obtenir l'URL du plugin
         $plugin_dir = basename(dirname(dirname(dirname(__FILE__))));
-        return plugins_url($plugin_dir . '/assets/images/templates/' . $template_name . '-preview.svg');
+        $url = plugins_url($plugin_dir . '/assets/images/templates/' . $template_name . '-preview.svg');
+
+        // Debug: Log the generated URL
+        error_log("PDF Builder Debug - Template: $template_name, Generated URL: $url");
+
+        return $url;
     }
 
     /**
