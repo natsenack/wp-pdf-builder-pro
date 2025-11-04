@@ -290,12 +290,7 @@ class PDF_Builder_Admin {
         
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
-        
-        // Hooks pour les templates prédéfinis
-        add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
-        add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
-        add_action('wp_ajax_pdf_builder_regenerate_predefined_thumbnails', [$this, 'ajax_regenerate_predefined_thumbnails']);
-        
+
         // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
@@ -1304,39 +1299,6 @@ class PDF_Builder_Admin {
         $manager = $this->get_template_manager();
         if ($manager) {
             return $manager->ajax_flush_rest_cache();
-        }
-    }
-
-    /**
-     * AJAX - Obtenir la liste des templates prédéfinis
-     */
-    public function ajax_get_predefined_templates()
-    {
-        $manager = $this->get_template_manager();
-        if ($manager) {
-            return $manager->ajax_get_predefined_templates();
-        }
-    }
-
-    /**
-     * AJAX - Installer un template prédéfini
-     */
-    public function ajax_install_predefined_template()
-    {
-        $manager = $this->get_template_manager();
-        if ($manager) {
-            return $manager->ajax_install_predefined_template();
-        }
-    }
-
-    /**
-     * AJAX - Régénérer les vignettes des templates prédéfinis
-     */
-    public function ajax_regenerate_predefined_thumbnails()
-    {
-        $manager = $this->get_template_manager();
-        if ($manager) {
-            return $manager->ajax_regenerate_predefined_thumbnails();
         }
     }
 
