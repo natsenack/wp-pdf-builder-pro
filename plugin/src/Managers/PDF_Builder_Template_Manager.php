@@ -793,12 +793,24 @@ class PDF_Builder_Template_Manager
     {
         $templates = [];
 
+        // Définir les constantes si elles ne le sont pas
+        if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+            define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__, 3)));
+        }
+        if (!defined('PDF_BUILDER_PLUGIN_URL')) {
+            define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(dirname(__FILE__, 3)));
+        }
+
         // Utiliser la constante définie dans pdf-builder-pro.php
         // PDF_BUILDER_PLUGIN_DIR est défini comme: dirname(__FILE__) . '/'
         // Cela garantit la cohérence entre dev et production
         $builtin_dir = PDF_BUILDER_PLUGIN_DIR . 'templates/builtin/';
 
+        error_log('PDF Builder: get_builtin_templates - PDF_BUILDER_PLUGIN_DIR: ' . PDF_BUILDER_PLUGIN_DIR);
+        error_log('PDF Builder: get_builtin_templates - PDF_BUILDER_PLUGIN_URL: ' . PDF_BUILDER_PLUGIN_URL);
         error_log('PDF Builder: get_builtin_templates - builtin_dir: ' . $builtin_dir);
+        error_log('PDF Builder: get_builtin_templates - is_dir check: ' . (is_dir($builtin_dir) ? 'true' : 'false'));
+        error_log('PDF Builder: get_builtin_templates - file_exists check: ' . (file_exists($builtin_dir) ? 'true' : 'false'));
 
         if (!is_dir($builtin_dir)) {
             error_log('PDF Builder: get_builtin_templates - builtin_dir n\'existe pas');
@@ -807,6 +819,11 @@ class PDF_Builder_Template_Manager
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
+
+        error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
+        foreach ($files as $file) {
+            error_log('PDF Builder: get_builtin_templates - fichier: ' . basename($file));
+        }
 
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
 
