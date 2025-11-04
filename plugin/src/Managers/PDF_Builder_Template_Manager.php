@@ -849,10 +849,9 @@ class PDF_Builder_Template_Manager
      */
     public function get_template_preview_url($template_name)
     {
-        // Utiliser l'URL dynamique du plugin au lieu d'une URL codée en dur
-        $plugin_dir = dirname(dirname(dirname(__FILE__)));
+        // Utiliser la constante définie pour l'URL du plugin
         $cache_bust = time();
-        return plugins_url('assets/images/templates/' . $template_name . '-preview.svg', $plugin_dir) . '?v=' . $cache_bust;
+        return PDF_BUILDER_PLUGIN_URL . 'assets/images/templates/' . $template_name . '-preview.svg?v=' . $cache_bust;
     }
 
     /**
