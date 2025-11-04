@@ -829,13 +829,51 @@ class PDF_Builder_Template_Manager
 
         foreach ($files as $file) {
             error_log('PDF Builder: get_builtin_templates - traitement fichier: ' . basename($file));
-            $template_data = $this->load_builtin_template($file);
-            if ($template_data) {
-                $templates[] = $template_data;
-                error_log('PDF Builder: get_builtin_templates - template ajouté: ' . $template_data['name']);
-            } else {
-                error_log('PDF Builder: get_builtin_templates - template ignoré: ' . basename($file));
+            
+            $content = file_get_contents($file);
+            if ($content === false) {
+                error_log('PDF Builder: get_builtin_templates - impossible de lire le fichier: ' . $file);
+                continue;
             }
+            
+            // Log the first 200 chars and last 200 chars to debug
+            error_log('PDF Builder: get_builtin_templates - début du contenu: ' . substr($content, 0, 200));
+            error_log('PDF Builder: get_builtin_templates - fin du contenu: ' . substr($content, -200));
+            
+            $template_data = json_decode($content, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('PDF Builder: get_builtin_templates - Erreur JSON dans le template builtin ' . basename($file) . ': ' . json_last_error_msg());
+                continue;
+            }
+            
+            // Validation de la structure
+            $validation_errors = $this->validate_template_structure($template_data);
+            if (!empty($validation_errors)) {
+                error_log('PDF Builder: get_builtin_templates - Erreurs de validation dans le template builtin ' . basename($file) . ': ' . implode(', ', $validation_errors));
+                continue;
+            }
+
+            // Ajouter des métadonnées pour la modal
+            $filename = basename($file, '.json');
+            $template_data['id'] = $filename;
+            $template_data['preview_url'] = $this->get_template_preview_url($filename);
+
+            // S'assurer que les champs requis pour la modal sont présents
+            if (!isset($template_data['name'])) {
+                $template_data['name'] = ucfirst($filename);
+            }
+            if (!isset($template_data['description'])) {
+                $template_data['description'] = 'Template ' . ucfirst($filename);
+            }
+            if (!isset($template_data['category'])) {
+                $template_data['category'] = 'general';
+            }
+            if (!isset($template_data['features'])) {
+                $template_data['features'] = ['Standard'];
+            }
+
+            $templates[] = $template_data;
+            error_log('PDF Builder: get_builtin_templates - template ajouté: ' . $template_data['name']);
         }
 
         error_log('PDF Builder: get_builtin_templates - total templates: ' . count($templates));
