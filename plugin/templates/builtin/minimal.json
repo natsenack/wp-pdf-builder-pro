@@ -25,8 +25,7 @@
                 "fontWeight": "light",
                 "color": "#000000",
                 "textAlign": "left"
-            }
-        },
+            },
         {
             "id": "invoice-title",
             "type": "text",
@@ -41,8 +40,7 @@
                 "fontWeight": "normal",
                 "color": "#666666",
                 "textAlign": "left"
-            }
-        },
+            },
         {
             "id": "invoice-number",
             "type": "text",
@@ -57,8 +55,7 @@
                 "fontWeight": "normal",
                 "color": "#000000",
                 "textAlign": "right"
-            }
-        },
+            },
         {
             "id": "invoice-date",
             "type": "text",
@@ -72,8 +69,7 @@
                 "fontFamily": "Helvetica",
                 "color": "#666666",
                 "textAlign": "right"
-            }
-        },
+            },
         {
             "id": "divider-line",
             "type": "line",
@@ -84,8 +80,7 @@
             "properties": {
                 "strokeColor": "#cccccc",
                 "strokeWidth": 1
-            }
-        },
+            },
         {
             "id": "bill-to-label",
             "type": "text",
@@ -100,8 +95,7 @@
                 "fontWeight": "normal",
                 "color": "#666666",
                 "textAlign": "left"
-            }
-        },
+            },
         {
             "id": "billing-address",
             "type": "text",
@@ -115,8 +109,7 @@
                 "fontFamily": "Helvetica",
                 "color": "#000000",
                 "lineHeight": 1.3
-            }
-        },
+            },
         {
             "id": "ship-to-label",
             "type": "text",
@@ -131,8 +124,7 @@
                 "fontWeight": "normal",
                 "color": "#666666",
                 "textAlign": "right"
-            }
-        },
+            },
         {
             "id": "shipping-address",
             "type": "text",
@@ -147,8 +139,7 @@
                 "color": "#000000",
                 "textAlign": "right",
                 "lineHeight": 1.3
-            }
-        },
+            },
         {
             "id": "items-section",
             "type": "product_table",
@@ -164,8 +155,7 @@
                 "borderColor": "#ffffff",
                 "showHeaders": false,
                 "lineHeight": 2
-            }
-        },
+            },
         {
             "id": "totals-section",
             "type": "text",
@@ -180,8 +170,7 @@
                 "color": "#000000",
                 "textAlign": "right",
                 "lineHeight": 1.8
-            }
-        },
+            },
         {
             "id": "footer-divider",
             "type": "line",
@@ -192,8 +181,7 @@
             "properties": {
                 "strokeColor": "#cccccc",
                 "strokeWidth": 1
-            }
-        },
+            },
         {
             "id": "footer-contact",
             "type": "text",
@@ -209,7 +197,6 @@
                 "textAlign": "center",
                 "lineHeight": 1.4
             }
-        }
     ],
     "metadata": {
         "name": "Minimal",
@@ -217,4 +204,5 @@
         "category": "modern",
         "preview": "minimal-preview.png"
     }
-}// modified
+
+
