@@ -607,31 +607,20 @@ class PDF_Builder_Template_Manager
         $plugin_root = dirname(dirname(dirname(__FILE__)));
         $predefined_dir = $plugin_root . '/templates/predefined/';
 
-        error_log('[PDF Builder] get_predefined_templates - Plugin root: ' . $plugin_root);
-        error_log('[PDF Builder] get_predefined_templates - Predefined dir: ' . $predefined_dir);
-        error_log('[PDF Builder] get_predefined_templates - Directory exists: ' . (is_dir($predefined_dir) ? 'YES' : 'NO'));
-
         if (!is_dir($predefined_dir)) {
-            error_log('[PDF Builder] get_predefined_templates - Directory does not exist: ' . $predefined_dir);
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($predefined_dir . '*.json');
-        error_log('[PDF Builder] get_predefined_templates - Found files: ' . implode(', ', $files));
 
         foreach ($files as $file) {
-            error_log('[PDF Builder] get_predefined_templates - Processing file: ' . $file);
             $template_data = $this->load_predefined_template($file);
             if ($template_data) {
                 $templates[] = $template_data;
-                error_log('[PDF Builder] get_predefined_templates - Successfully loaded template: ' . ($template_data['name'] ?? 'unknown'));
-            } else {
-                error_log('[PDF Builder] get_predefined_templates - Failed to load template from: ' . $file);
             }
         }
 
-        error_log('[PDF Builder] get_predefined_templates - Returning ' . count($templates) . ' templates');
         return $templates;
     }
 
@@ -644,46 +633,33 @@ class PDF_Builder_Template_Manager
     private function load_predefined_template($file_path)
     {
         if (!file_exists($file_path)) {
-            error_log('[PDF Builder] load_predefined_template - File does not exist: ' . $file_path);
             return null;
         }
 
-        error_log('[PDF Builder] load_predefined_template - Reading file: ' . $file_path);
         $json_content = file_get_contents($file_path);
         if ($json_content === false) {
-            error_log('[PDF Builder] load_predefined_template - Failed to read file content: ' . $file_path);
             return null;
         }
 
-        error_log('[PDF Builder] load_predefined_template - File content length: ' . strlen($json_content) . ' bytes');
         $template_data = json_decode($json_content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('[PDF Builder] load_predefined_template - JSON decode error: ' . json_last_error_msg() . ' for file: ' . $file_path);
-            error_log('[PDF Builder] load_predefined_template - First 200 chars of content: ' . substr($json_content, 0, 200));
             return null;
         }
-
-        error_log('[PDF Builder] load_predefined_template - JSON decoded successfully, keys: ' . implode(', ', array_keys($template_data)));
 
         // Normaliser la structure : si les propriétés sont dans un sous-objet 'template', les remonter au niveau racine
         if (isset($template_data['template']) && is_array($template_data['template'])) {
-            error_log('[PDF Builder] load_predefined_template - Normalizing template structure from nested format');
             $nested_template = $template_data['template'];
             unset($template_data['template']); // Supprimer l'objet imbriqué
 
             // Fusionner les propriétés du template imbriqué vers le niveau racine
             $template_data = array_merge($nested_template, $template_data);
-            error_log('[PDF Builder] load_predefined_template - After normalization, keys: ' . implode(', ', array_keys($template_data)));
         }
 
-        error_log('[PDF Builder] load_predefined_template - Validation starting...');
+        // Validation de la structure
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
-            error_log('[PDF Builder] load_predefined_template - Validation failed for ' . $file_path . ': ' . implode(', ', $validation_errors));
             return null;
         }
-
-        error_log('[PDF Builder] load_predefined_template - Template loaded successfully: ' . ($template_data['name'] ?? 'unknown'));
 
         // Ajouter des métadonnées
         $filename = basename($file_path, '.json');
@@ -809,12 +785,6 @@ class PDF_Builder_Template_Manager
             // Récupérer les templates prédéfinis
             $templates = $this->get_predefined_templates();
 
-            // DEBUG: Log des données des templates
-            error_log('[PDF Builder] AJAX get_predefined_templates - Found ' . count($templates) . ' templates');
-            foreach ($templates as $i => $template) {
-                error_log('[PDF Builder] Template ' . ($i+1) . ': ' . $template['name'] . ' - previewImage: ' . ($template['previewImage'] ?? 'NOT SET'));
-            }
-
             // Formater la réponse
             $formatted_templates = [];
             foreach ($templates as $template) {
@@ -829,12 +799,6 @@ class PDF_Builder_Template_Manager
                     'filename' => $template['_metadata']['filename'] ?? '',
                     'isInstalled' => $this->is_predefined_template_installed($template['name'])
                 ];
-            }
-
-            // DEBUG: Log des données formatées
-            error_log('[PDF Builder] AJAX response - Returning ' . count($formatted_templates) . ' formatted templates');
-            foreach ($formatted_templates as $i => $template) {
-                error_log('[PDF Builder] Formatted template ' . ($i+1) . ': ' . $template['name'] . ' - previewImage: ' . ($template['previewImage'] ?? 'NOT SET'));
             }
 
             wp_send_json_success([
