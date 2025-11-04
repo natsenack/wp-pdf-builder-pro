@@ -627,6 +627,11 @@ function installBuiltinTemplate(templateName, displayName) {
     }
 }
 
+// Function to close template gallery (for HTML onclick)
+function closeTemplateGallery() {
+    jQuery('.template-gallery-modal').fadeOut(300);
+}
+
 // Initialiser le filtrage au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     // Ajouter les event listeners aux boutons de filtrage
@@ -779,9 +784,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to close template gallery (for HTML onclick)
-    function closeTemplateGallery() {
-        jQuery('.template-gallery-modal').fadeOut(300);
-    }
+    // Moved to global scope above
+    // function closeTemplateGallery() {
+    //     jQuery('.template-gallery-modal').fadeOut(300);
+    // }
 });
 
 // Fermer les modales en cliquant en dehors
