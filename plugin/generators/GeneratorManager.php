@@ -149,18 +149,25 @@ class GeneratorManager {
                 throw new \Exception("Failed to create generator: {$generator_type}");
             }
 
+            $this->logInfo("Generator {$generator_type} created successfully");
+
             // Validation du template
+            $this->logInfo("Validating template for generator: {$generator_type}");
             if (!$generator->validateTemplate()) {
                 throw new \Exception("Template validation failed for generator: {$generator_type}");
             }
+            $this->logInfo("Template validation passed for generator: {$generator_type}");
 
             // Génération avec timeout
+            $this->logInfo("Starting generation with generator: {$generator_type}, format: {$output_format}");
             $result = $this->executeWithTimeout(
                 function() use ($generator, $output_format) {
                     return $generator->generate($output_format);
                 },
                 $config['timeout']
             );
+
+            $this->logInfo("Generation completed for generator: {$generator_type}, result type: " . gettype($result));
 
             // Mise à jour de l'historique
             $this->attempt_history[count($this->attempt_history) - 1]['status'] = 'success';
@@ -191,15 +198,21 @@ class GeneratorManager {
         $config = $this->generators_config[$generator_type];
         $class_name = $config['class'];
 
+        $this->logInfo("Creating generator: {$generator_type}, class: {$class_name}");
+
         if (!class_exists($class_name)) {
             $this->logError("Generator class not found: {$class_name}");
             return null;
         }
 
+        $this->logInfo("Class {$class_name} exists, attempting instantiation");
+
         try {
-            return new $class_name($template_data, $data_provider, true, $options);
+            $generator = new $class_name($template_data, $data_provider, true, $options);
+            $this->logInfo("Generator {$generator_type} instantiated successfully");
+            return $generator;
         } catch (\Throwable $e) {
-            $this->logError("Failed to instantiate generator {$class_name}: " . $e->getMessage());
+            $this->logError("Failed to instantiate generator {$generator_type}: " . $e->getMessage());
             return null;
         }
     }
