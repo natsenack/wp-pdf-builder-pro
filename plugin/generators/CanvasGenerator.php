@@ -35,7 +35,22 @@ class CanvasGenerator extends BaseGenerator {
         $this->performance_metrics['render_time'] = microtime(true);
 
         try {
-            // Générer le HTML Canvas avec JavaScript
+            // Pour les formats image, générer directement avec GD
+            if (in_array($output_type, ['png', 'jpg'])) {
+                $image_data = $this->generateCanvasImage($output_type);
+                $this->performance_metrics['render_time'] = microtime(true) - $this->performance_metrics['render_time'];
+
+                return [
+                    'success' => true,
+                    'format' => $output_type,
+                    'content' => $image_data,
+                    'generator' => 'canvas',
+                    'performance' => $this->performance_metrics,
+                    'is_fallback' => true
+                ];
+            }
+
+            // Pour HTML/PDF, générer le HTML Canvas avec JavaScript
             $this->canvas_html = $this->generateCanvasHTML();
 
             $this->performance_metrics['render_time'] = microtime(true) - $this->performance_metrics['render_time'];
@@ -61,12 +76,147 @@ class CanvasGenerator extends BaseGenerator {
     }
 
     /**
+     * Génère une image directement avec GD (équivalent du canvas côté serveur)
+     *
+     * @param string $format Format de l'image (png ou jpg)
+     * @return string Données binaires de l'image
+     */
+    private function generateCanvasImage(string $format): string {
+        $template_data = $this->template_data;
+        $data_provider = $this->data_provider;
+
+        // Dimensions A4 en pixels (approximatif pour aperçu)
+        $width = 800;
+        $height = 600;
+
+        // Créer l'image GD
+        $image = imagecreatetruecolor($width, $height);
+
+        // Couleurs
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $gray = imagecolorallocate($image, 200, 200, 200);
+
+        // Fond blanc
+        imagefill($image, 0, 0, $white);
+
+        // Bordure
+        imagerectangle($image, 0, 0, $width - 1, $height - 1, $gray);
+
+        // Rendre les éléments du template
+        if (isset($template_data['template']['elements'])) {
+            foreach ($template_data['template']['elements'] as $element) {
+                $this->renderElementToImage($image, $element, $width, $height);
+            }
+        }
+
+        // Message par défaut si pas d'éléments
+        if (empty($template_data['template']['elements'])) {
+            $this->renderDefaultMessageToImage($image, $width, $height);
+        }
+
+        // Générer les données de l'image
+        ob_start();
+        if ($format === 'png') {
+            imagepng($image);
+        } else {
+            imagejpeg($image, null, 90);
+        }
+        $image_data = ob_get_clean();
+        imagedestroy($image);
+
+        return $image_data;
+    }
+
+    /**
+     * Rend un élément sur l'image GD
+     */
+    private function renderElementToImage($image, array $element, int $canvas_width, int $canvas_height): void {
+        $type = $element['type'] ?? 'text';
+
+        // Calculer les positions (simplifié)
+        $x = intval(($element['x'] ?? 50) * $canvas_width / 100);
+        $y = intval(($element['y'] ?? 50) * $canvas_height / 100);
+        $width = intval(($element['width'] ?? 200) * $canvas_width / 100);
+        $height = intval(($element['height'] ?? 50) * $canvas_height / 100);
+
+        switch ($type) {
+            case 'text':
+                $this->renderTextToImage($image, $element, $x, $y, $width, $height);
+                break;
+            case 'rectangle':
+                $this->renderRectangleToImage($image, $element, $x, $y, $width, $height);
+                break;
+        }
+    }
+
+    /**
+     * Rend du texte sur l'image GD
+     */
+    private function renderTextToImage($image, array $element, int $x, int $y, int $width, int $height): void {
+        $text = $element['content'] ?? '';
+        $font_size = intval($element['fontSize'] ?? 12);
+        $color = $element['color'] ?? '#000000';
+
+        // Convertir couleur hex en RGB
+        $rgb = $this->hexToRgb($color);
+        $text_color = imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']);
+
+        // Utiliser une police GD built-in (simplifié)
+        $gd_font = 5; // Police GD 1-5
+        imagestring($image, $gd_font, $x + 10, $y + 10, $text, $text_color);
+    }
+
+    /**
+     * Rend un rectangle sur l'image GD
+     */
+    private function renderRectangleToImage($image, array $element, int $x, int $y, int $width, int $height): void {
+        $bg_color = $element['backgroundColor'] ?? '#ffffff';
+        $border_color = $element['borderColor'] ?? '#000000';
+
+        $bg_rgb = $this->hexToRgb($bg_color);
+        $border_rgb = $this->hexToRgb($border_color);
+
+        $bg_gd_color = imagecolorallocate($image, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+        $border_gd_color = imagecolorallocate($image, $border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
+
+        // Remplir le rectangle
+        imagefilledrectangle($image, $x, $y, $x + $width, $y + $height, $bg_gd_color);
+        // Bordure
+        imagerectangle($image, $x, $y, $x + $width, $y + $height, $border_gd_color);
+    }
+
+    /**
+     * Convertit une couleur hex en RGB
+     */
+    private function hexToRgb(string $hex): array {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        return [
+            'r' => hexdec(substr($hex, 0, 2)),
+            'g' => hexdec(substr($hex, 2, 2)),
+            'b' => hexdec(substr($hex, 4, 2))
+        ];
+    }
+
+    /**
+     * Rend le message par défaut sur l'image
+     */
+    private function renderDefaultMessageToImage($image, int $width, int $height): void {
+        $gray = imagecolorallocate($image, 102, 102, 102);
+
+        imagestring($image, 5, $width / 2 - 100, $height / 2 - 20, 'Apercu PDF Builder Pro', $gray);
+        imagestring($image, 4, $width / 2 - 120, $height / 2 + 10, 'Ajoutez des elements pour voir l\'apercu', $gray);
+    }
+
+    /**
      * Génère le HTML avec Canvas pour l'aperçu
      *
      * @return string HTML du canvas
      */
     private function generateCanvasHTML(): string {
-        $template_data = $this->template_data;
         $data_provider = $this->data_provider;
 
         // Dimensions A4 en pixels (approximatif pour aperçu)
