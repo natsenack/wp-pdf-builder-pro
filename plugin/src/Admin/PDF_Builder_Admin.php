@@ -294,6 +294,7 @@ class PDF_Builder_Admin {
         // Hooks pour les templates prédéfinis
         add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
         add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
+        add_action('wp_ajax_pdf_builder_regenerate_predefined_thumbnails', [$this, 'ajax_regenerate_predefined_thumbnails']);
         
         // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {

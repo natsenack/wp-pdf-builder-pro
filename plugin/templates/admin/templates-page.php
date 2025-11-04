@@ -44,6 +44,12 @@ if (!defined('ABSPATH')) {
         <div style="margin-top: 10px; margin-bottom: 20px;">
             <h2><?php _e('Templates Prédéfinis', 'pdf-builder-pro'); ?></h2>
             <p style="color: #666;"><?php _e('Installez rapidement un template prédéfini fourni par le plugin.', 'pdf-builder-pro'); ?></p>
+            <div style="margin-bottom: 12px;">
+                <button id="regenerate-thumbnails-btn" class="button button-secondary" onclick="regeneratePredefinedThumbnails()">
+                    <?php _e('Régénérer les Vignettes', 'pdf-builder-pro'); ?>
+                </button>
+                <span id="regenerate-status" style="margin-left: 10px; display: none;"></span>
+            </div>
             <div id="predefined-templates" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 12px;">
                 <!-- Contenu chargé via AJAX -->
                 <div style="grid-column: 1 / -1; color: #888;">Chargement des templates prédéfinis…</div>
@@ -109,6 +115,35 @@ if (!defined('ABSPATH')) {
                         setTimeout(function(){ btn.textContent = original; }, 2000);
                     }
                 }).fail(function(){ btn.textContent = '❌ Erreur réseau'; btn.disabled = false; setTimeout(function(){ btn.textContent = original; }, 2000); });
+            };
+
+            window.regeneratePredefinedThumbnails = function() {
+                var btn = document.getElementById('regenerate-thumbnails-btn');
+                var status = document.getElementById('regenerate-status');
+                if (!confirm('Régénérer les vignettes de prévisualisation pour tous les templates prédéfinis ? Cela peut prendre quelques instants.')) return;
+                btn.disabled = true; var original = btn.textContent; btn.textContent = '⏳ Régénération...';
+                status.style.display = 'inline'; status.textContent = 'Traitement en cours...';
+                jQuery.post(ajaxurl, {
+                    action: 'pdf_builder_regenerate_predefined_thumbnails',
+                    nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
+                }, function(resp){
+                    if (resp && resp.success) {
+                        status.textContent = '✅ ' + resp.data.message;
+                        status.style.color = 'green';
+                        // Recharger la liste des templates pour afficher les nouvelles vignettes
+                        setTimeout(function(){ location.reload(); }, 2000);
+                    } else {
+                        status.textContent = '❌ Erreur: ' + ((resp && resp.data) || 'Erreur inconnue');
+                        status.style.color = 'red';
+                        btn.disabled = false;
+                        btn.textContent = original;
+                    }
+                }).fail(function(){
+                    status.textContent = '❌ Erreur réseau';
+                    status.style.color = 'red';
+                    btn.disabled = false;
+                    btn.textContent = original;
+                });
             };
         })();
         </script>

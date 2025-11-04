@@ -41,6 +41,7 @@ class PDF_Builder_Template_Manager
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
         add_action('wp_ajax_pdf_builder_get_predefined_templates', [$this, 'ajax_get_predefined_templates']);
         add_action('wp_ajax_pdf_builder_install_predefined_template', [$this, 'ajax_install_predefined_template']);
+        add_action('wp_ajax_pdf_builder_regenerate_predefined_thumbnails', [$this, 'ajax_regenerate_predefined_thumbnails']);
     }
 
     /**
@@ -840,6 +841,139 @@ class PDF_Builder_Template_Manager
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de l\'installation: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Régénérer les vignettes de prévisualisation pour tous les templates prédéfinis
+     */
+    public function regenerate_predefined_thumbnails()
+    {
+        try {
+            // Charger PreviewImageAPI
+            if (!class_exists('\WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+                throw new Exception('PreviewImageAPI non disponible');
+            }
+
+            $preview_api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+
+            // Dossier des templates prédéfinis
+            $templates_dir = plugin_dir_path(__FILE__) . '../../templates/predefined/';
+            $templates = glob($templates_dir . '*.json');
+
+            if (empty($templates)) {
+                throw new Exception("Aucun template prédéfini trouvé dans $templates_dir");
+            }
+
+            $results = [];
+            $success_count = 0;
+
+            foreach ($templates as $template_file) {
+                $filename = basename($template_file, '.json');
+
+                // Charger le JSON du template
+                $template_json = file_get_contents($template_file);
+                if (!$template_json) {
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de lire le fichier'];
+                    continue;
+                }
+
+                $template_data = json_decode($template_json, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'JSON invalide: ' . json_last_error_msg()];
+                    continue;
+                }
+
+                // Vérifier si c'est un template valide
+                if (!isset($template_data['canvasWidth']) || !isset($template_data['canvasHeight']) || !isset($template_data['elements'])) {
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Template invalide: champs requis manquants'];
+                    continue;
+                }
+
+                // Paramètres pour génération vignette (qualité basse pour rapidité)
+                $params = [
+                    'template_data' => $template_data,
+                    'context' => 'editor',
+                    'quality' => 75, // Qualité réduite pour vignette
+                    'format' => 'png',
+                    'order_id' => null
+                ];
+
+                // Générer la vignette
+                try {
+                    $result = $preview_api->generate_with_cache($params);
+
+                    if ($result && isset($result['image_url'])) {
+                        // Mettre à jour le champ previewImage dans le JSON
+                        $template_data['previewImage'] = $result['image_url'];
+
+                        // Sauvegarder le JSON mis à jour
+                        $updated_json = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                        if (file_put_contents($template_file, $updated_json)) {
+                            $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
+                            $success_count++;
+                        } else {
+                            $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
+                        }
+                    } else {
+                        $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Génération échouée'];
+                    }
+
+                } catch (Exception $e) {
+                    $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Exception: ' . $e->getMessage()];
+                }
+            }
+
+            return [
+                'success' => true,
+                'total' => count($templates),
+                'success_count' => $success_count,
+                'results' => $results
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * AJAX - Régénérer les vignettes des templates prédéfinis
+     */
+    public function ajax_regenerate_predefined_thumbnails()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Régénérer les vignettes
+            $result = $this->regenerate_predefined_thumbnails();
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => sprintf('Vignettes régénérées: %d/%d réussies', $result['success_count'], $result['total']),
+                    'results' => $result['results']
+                ]);
+            } else {
+                wp_send_json_error($result['error']);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la régénération: ' . $e->getMessage());
         }
     }
 }
