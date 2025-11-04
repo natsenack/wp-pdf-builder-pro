@@ -1264,7 +1264,6 @@ class PDF_Builder_Admin {
 
             // Récupérer les templates builtin
             $templates = $template_manager->get_builtin_templates();
-            error_log("PDF Builder Debug - ajax_get_builtin_templates found " . count($templates) . " templates");
 
             // Ajouter l'URL de prévisualisation à chaque template
             foreach ($templates as &$template) {
