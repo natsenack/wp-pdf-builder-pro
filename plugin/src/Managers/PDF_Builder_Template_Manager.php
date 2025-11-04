@@ -189,22 +189,21 @@ class PDF_Builder_Template_Manager
                 \wp_send_json_error('ID template invalide');
             }
 
-            // Récupération depuis la base de données
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            // Récupération depuis wp_posts
+            $post = get_post($template_id);
 
-            $template = $wpdb->get_row(
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
-            );
-
-            if (!$template) {
+            if (!$post || $post->post_type !== 'pdf_template') {
                 \wp_send_json_error('Template non trouvé');
                 return;
             }
 
-            // Décodage du JSON
-            $template_data_raw = $template['template_data'];
+            // Récupération des métadonnées
+            $template_data_raw = get_post_meta($post->ID, '_pdf_template_data', true);
+
+            if (empty($template_data_raw)) {
+                \wp_send_json_error('Données du template manquantes');
+                return;
+            }
 
             $template_data = \json_decode($template_data_raw, true);
             if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
@@ -247,7 +246,7 @@ class PDF_Builder_Template_Manager
         \wp_send_json_success(
             array(
             'template' => $template_data,
-            'name' => $template['name'],
+            'name' => $post->post_title,
             'element_count' => $element_count,
             'element_types' => $element_types
             )

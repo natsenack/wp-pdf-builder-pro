@@ -185,10 +185,41 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Enregistre le custom post type pour les templates PDF
+     */
+    public function register_template_post_type()
+    {
+        register_post_type('pdf_template', [
+            'labels' => [
+                'name' => __('Templates PDF', 'pdf-builder-pro'),
+                'singular_name' => __('Template PDF', 'pdf-builder-pro'),
+                'add_new' => __('Nouveau Template', 'pdf-builder-pro'),
+                'add_new_item' => __('Ajouter un Nouveau Template', 'pdf-builder-pro'),
+                'edit_item' => __('Éditer le Template', 'pdf-builder-pro'),
+                'new_item' => __('Nouveau Template', 'pdf-builder-pro'),
+                'view_item' => __('Voir le Template', 'pdf-builder-pro'),
+                'search_items' => __('Rechercher Templates', 'pdf-builder-pro'),
+                'not_found' => __('Aucun template trouvé', 'pdf-builder-pro'),
+                'not_found_in_trash' => __('Aucun template dans la corbeille', 'pdf-builder-pro'),
+            ],
+            'public' => false,
+            'show_ui' => true,
+            'show_in_menu' => false, // Masqué du menu principal
+            'capability_type' => 'post',
+            'hierarchical' => false,
+            'supports' => ['title'],
+            'has_archive' => false,
+            'rewrite' => false,
+        ]);
+    }
+
+    /**
      * Initialise les hooks WordPress
      */
     private function initHooks()
     {
+        // Enregistrer le custom post type pour les templates
+        add_action('init', [$this, 'register_template_post_type']);
 
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
@@ -5304,7 +5335,6 @@ class PDF_Builder_Admin {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
-
     /**
      * Crée un nouveau template basé sur un template prédéfini
      */
@@ -5342,24 +5372,28 @@ class PDF_Builder_Admin {
                 wp_send_json_error(['message' => 'Données du template invalides']);
             }
 
-            // Créer un nouveau template en base
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-            $data = [
-                'name' => $template_data['name'] . ' (Copie)',
-                'template_data' => $content, // Sauvegarder le JSON brut
-                'created_at' => current_time('mysql'),
-                'updated_at' => current_time('mysql')
+            // Créer un nouveau post de type pdf_template
+            $post_data = [
+                'post_title' => $template_data['name'] . ' (Copie)',
+                'post_type' => 'pdf_template',
+                'post_status' => 'publish',
+                'post_author' => get_current_user_id(),
+                'meta_input' => [
+                    '_pdf_template_data' => $content, // JSON brut du template
+                    '_pdf_template_settings' => [
+                        'canvas_width' => $template_data['canvasWidth'] ?? 595,
+                        'canvas_height' => $template_data['canvasHeight'] ?? 842,
+                        'created_from_builtin' => $builtin_id,
+                        'builtin_version' => $template_data['version'] ?? '1.0'
+                    ]
+                ]
             ];
 
-            $result = $wpdb->insert($table_templates, $data);
+            $new_template_id = wp_insert_post($post_data);
 
-            if ($result === false) {
-                wp_send_json_error(['message' => 'Erreur lors de la création du template']);
+            if (is_wp_error($new_template_id)) {
+                wp_send_json_error(['message' => 'Erreur lors de la création du template: ' . $new_template_id->get_error_message()]);
             }
-
-            $new_template_id = $wpdb->insert_id;
 
             wp_send_json_success([
                 'template_id' => $new_template_id,
