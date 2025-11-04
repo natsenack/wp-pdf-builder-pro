@@ -849,9 +849,10 @@ class PDF_Builder_Template_Manager
      */
     public function get_template_preview_url($template_name)
     {
-        // URL codée en dur qui fonctionne avec cache-busting
+        // Utiliser l'URL dynamique du plugin au lieu d'une URL codée en dur
+        $plugin_dir = dirname(dirname(dirname(__FILE__)));
         $cache_bust = time();
-        return "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg?v=" . $cache_bust;
+        return plugins_url('assets/images/templates/' . $template_name . '-preview.svg', $plugin_dir) . '?v=' . $cache_bust;
     }
 
     /**
