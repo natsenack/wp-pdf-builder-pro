@@ -51,7 +51,7 @@ if (!defined('ABSPATH')) {
 
             <?php
             // Récupérer les templates builtin
-            $template_manager = $this->main->get_template_manager();
+            $template_manager = $this->get_template_manager();
             $builtin_templates = $template_manager->get_builtin_templates();
 
             if (!empty($builtin_templates)) {
