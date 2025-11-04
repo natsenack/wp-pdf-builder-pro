@@ -147,7 +147,7 @@
     },
     {
       "id": "items-section",
-      "type": "table",
+      "type": "product_table",
       "x": 50,
       "y": 360,
       "width": 495,

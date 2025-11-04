@@ -169,7 +169,7 @@
     },
     {
       "id": "items-table",
-      "type": "table",
+      "type": "product_table",
       "x": 40,
       "y": 290,
       "width": 515,

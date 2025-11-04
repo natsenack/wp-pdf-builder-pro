@@ -113,7 +113,7 @@
     },
     {
       "id": "items-table",
-      "type": "table",
+      "type": "product_table",
       "x": 50,
       "y": 285,
       "width": 495,
