@@ -763,6 +763,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load templates via AJAX
     function loadTemplates() {
+        console.log('Template Gallery: Loading templates...');
         jQuery('.template-gallery-grid').html('<div class="template-gallery-loading">Chargement des modèles...</div>');
 
         jQuery.ajax({
@@ -773,14 +774,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
+                console.log('Template Gallery: AJAX success', response);
                 if (response.success) {
+                    console.log('Template Gallery: Templates loaded', response.data.templates);
                     loadedTemplates = response.data.templates;
                     renderTemplates(loadedTemplates);
                 } else {
+                    console.log('Template Gallery: AJAX error in response', response.data);
                     jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.log('Template Gallery: AJAX error', xhr, status, error);
                 jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
             }
         });
@@ -788,9 +793,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Render templates in grid
     function renderTemplates(templates) {
+        console.log('Template Gallery: Rendering templates', templates);
         let html = '';
 
         templates.forEach(function(template, index) {
+            console.log('Template Gallery: Processing template', index, template);
             const features = template.features || [];
             const featuresHtml = features.map(feature =>
                 `<span class="template-gallery-item-feature">${feature}</span>`
@@ -820,6 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
 
+        console.log('Template Gallery: Generated HTML', html);
         jQuery('.template-gallery-grid').html(html);
         filterTemplates();
     }
