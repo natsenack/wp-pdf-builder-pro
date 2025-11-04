@@ -735,37 +735,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Install template
     jQuery(document).on('click', '.install-template', function() {
         const templateId = jQuery(this).data('template-id');
-        const $button = jQuery(this);
-
-        $button.prop('disabled', true).text('Installation...');
-
-        jQuery.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'install_builtin_template',
-                template_id: templateId,
-                nonce: pdfBuilderTemplatesNonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $button.removeClass('button-primary').addClass('button-success').text('Installé ✓');
-                    showNotice('Modèle installé avec succès!', 'success');
-
-                    // Refresh the templates list
-                    if (typeof loadTemplatesList === 'function') {
-                        loadTemplatesList();
-                    }
-                } else {
-                    $button.prop('disabled', false).text('Installer');
-                    showNotice(response.data.message || 'Erreur lors de l\'installation.', 'error');
-                }
-            },
-            error: function() {
-                $button.prop('disabled', false).text('Installer');
-                showNotice('Erreur de connexion.', 'error');
-            }
-        });
+        
+        // Redirect to editor with builtin template
+        window.location.href = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor&builtin_template=')); ?>' + encodeURIComponent(templateId);
     });
 
     // Utility function to show notices
