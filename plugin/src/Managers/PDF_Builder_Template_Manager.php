@@ -830,15 +830,9 @@ class PDF_Builder_Template_Manager
      */
     private function get_template_preview_url($template_name)
     {
-        // TEMPORAIRE: Utiliser une URL d'image de test pour vérifier que le système fonctionne
-        $test_urls = [
-            'modern' => 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Modern+Template',
-            'classic' => 'https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Classic+Template',
-            'corporate' => 'https://via.placeholder.com/300x200/FF9800/FFFFFF?text=Corporate+Template',
-            'minimal' => 'https://via.placeholder.com/300x200/9C27B0/FFFFFF?text=Minimal+Template'
-        ];
-
-        return $test_urls[$template_name] ?? 'https://via.placeholder.com/300x200/607D8B/FFFFFF?text=Template';
+        // Construire l'URL manuellement pour éviter les problèmes avec plugins_url()
+        $site_url = get_site_url();
+        return $site_url . '/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/' . $template_name . '-preview.svg';
     }
 
     /**
