@@ -1,311 +1,315 @@
 {
-  "name": "Modern",
-  "description": "Template moderne et épuré avec design minimaliste",
-  "category": "modern",
-  "tags": ["moderne", "minimaliste", "contemporain"],
-  "version": "1.0.0",
-  "canvasWidth": 595,
-  "canvasHeight": 842,
-  "orientation": "portrait",
-  "isPremium": false,
-  "previewImage": "modern-preview.png",
-  "elements": [
-    {
-      "id": "header-accent",
-      "type": "rectangle",
-      "x": 0,
-      "y": 0,
-      "width": 595,
-      "height": 120,
-      "fillColor": "#007cba",
-      "strokeColor": "#007cba",
-      "strokeWidth": 0
-    },
-    {
-      "id": "company-name-modern",
-      "type": "text",
-      "x": 40,
-      "y": 40,
-      "width": 300,
-      "height": 40,
-      "content": "{{company_name}}",
-      "fontSize": 24,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#ffffff",
-      "textAlign": "left"
-    },
-    {
-      "id": "invoice-title-modern",
-      "type": "text",
-      "x": 350,
-      "y": 50,
-      "width": 200,
-      "height": 30,
-      "content": "FACTURE",
-      "fontSize": 18,
-      "fontFamily": "Helvetica",
-      "fontWeight": "light",
-      "color": "#ffffff",
-      "textAlign": "right"
-    },
-    {
-      "id": "invoice-number-modern",
-      "type": "text",
-      "x": 350,
-      "y": 80,
-      "width": 200,
-      "height": 20,
-      "content": "#{{order_number}}",
-      "fontSize": 14,
-      "fontFamily": "Helvetica",
-      "color": "#ffffff",
-      "textAlign": "right"
-    },
-    {
-      "id": "client-section-modern",
-      "type": "text",
-      "x": 40,
-      "y": 150,
-      "width": 250,
-      "height": 60,
-      "content": "FACTURÉ À\n\n{{customer_name}}\n{{customer_address}}",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left",
-      "lineHeight": 1.4
-    },
-    {
-      "id": "date-section-modern",
-      "type": "text",
-      "x": 350,
-      "y": 150,
-      "width": 200,
-      "height": 40,
-      "content": "DATE\n\n{{current_date}}",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "color": "#666666",
-      "textAlign": "right",
-      "lineHeight": 1.4
-    },
-    {
-      "id": "divider-line",
-      "type": "rectangle",
-      "x": 40,
-      "y": 240,
-      "width": 515,
-      "height": 2,
-      "fillColor": "#007cba",
-      "strokeColor": "#007cba",
-      "strokeWidth": 0
-    },
-    {
-      "id": "table-header-modern",
-      "type": "text",
-      "x": 40,
-      "y": 260,
-      "width": 515,
-      "height": 25,
-      "content": "DESCRIPTION\t\t\t\t\t\tQTÉ\t\tPRIX\t\tTOTAL",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "table-divider",
-      "type": "rectangle",
-      "x": 40,
-      "y": 285,
-      "width": 515,
-      "height": 1,
-      "fillColor": "#cccccc",
-      "strokeColor": "#cccccc",
-      "strokeWidth": 0
-    },
-    {
-      "id": "product-1-modern",
-      "type": "text",
-      "x": 40,
-      "y": 300,
-      "width": 515,
-      "height": 25,
-      "content": "{{product_1_name}}\t\t\t\t\t\t{{product_1_quantity}}\t\t{{product_1_price}}\t\t{{product_1_total}}",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "product-2-modern",
-      "type": "text",
-      "x": 40,
-      "y": 330,
-      "width": 515,
-      "height": 25,
-      "content": "{{product_2_name}}\t\t\t\t\t\t{{product_2_quantity}}\t\t{{product_2_price}}\t\t{{product_2_total}}",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "total-section-modern",
-      "type": "rectangle",
-      "x": 300,
-      "y": 700,
-      "width": 255,
-      "height": 80,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#e9ecef",
-      "strokeWidth": 1,
-      "borderRadius": 8
-    },
-    {
-      "id": "total-label-modern",
-      "type": "text",
-      "x": 320,
-      "y": 720,
-      "width": 100,
-      "height": 20,
-      "content": "TOTAL",
-      "fontSize": 16,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#007cba"
-    },
-    {
-      "id": "total-amount-modern",
-      "type": "text",
-      "x": 450,
-      "y": 720,
-      "width": 85,
-      "height": 20,
-      "content": "{{order_total}}",
-      "fontSize": 16,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#007cba",
-      "textAlign": "right"
-    },
-    {
-      "id": "footer-accent",
-      "type": "rectangle",
-      "x": 0,
-      "y": 810,
-      "width": 595,
-      "height": 32,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#f8f9fa",
-      "strokeWidth": 0
-    },
-    {
-      "id": "footer-text-modern",
-      "type": "text",
-      "x": 40,
-      "y": 815,
-      "width": 515,
-      "height": 20,
-      "content": "Merci pour votre confiance • {{company_name}} • {{company_email}}",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#666666",
-      "textAlign": "center"
+    "name": "Modern",
+    "description": "Template moderne et épuré avec design minimaliste",
+    "category": "modern",
+    "tags": [
+        "moderne",
+        "minimaliste",
+        "contemporain"
+    ],
+    "version": "1.0.0",
+    "canvasWidth": 595,
+    "canvasHeight": 842,
+    "orientation": "portrait",
+    "isPremium": false,
+    "previewImage": "\/wp-content\/plugins\/wp-pdf-builder-pro\/templates\/predefined\/modern-preview.png",
+    "elements": [
+        {
+            "id": "header-accent",
+            "type": "rectangle",
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 120,
+            "fillColor": "#007cba",
+            "strokeColor": "#007cba",
+            "strokeWidth": 0
+        },
+        {
+            "id": "company-name-modern",
+            "type": "text",
+            "x": 40,
+            "y": 40,
+            "width": 300,
+            "height": 40,
+            "content": "{{company_name}}",
+            "fontSize": 24,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "left"
+        },
+        {
+            "id": "invoice-title-modern",
+            "type": "text",
+            "x": 350,
+            "y": 50,
+            "width": 200,
+            "height": 30,
+            "content": "FACTURE",
+            "fontSize": 18,
+            "fontFamily": "Helvetica",
+            "fontWeight": "light",
+            "color": "#ffffff",
+            "textAlign": "right"
+        },
+        {
+            "id": "invoice-number-modern",
+            "type": "text",
+            "x": 350,
+            "y": 80,
+            "width": 200,
+            "height": 20,
+            "content": "#{{order_number}}",
+            "fontSize": 14,
+            "fontFamily": "Helvetica",
+            "color": "#ffffff",
+            "textAlign": "right"
+        },
+        {
+            "id": "client-section-modern",
+            "type": "text",
+            "x": 40,
+            "y": 150,
+            "width": 250,
+            "height": 60,
+            "content": "FACTURÉ À\n\n{{customer_name}}\n{{customer_address}}",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left",
+            "lineHeight": 1.4
+        },
+        {
+            "id": "date-section-modern",
+            "type": "text",
+            "x": 350,
+            "y": 150,
+            "width": 200,
+            "height": 40,
+            "content": "DATE\n\n{{current_date}}",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "color": "#666666",
+            "textAlign": "right",
+            "lineHeight": 1.4
+        },
+        {
+            "id": "divider-line",
+            "type": "rectangle",
+            "x": 40,
+            "y": 240,
+            "width": 515,
+            "height": 2,
+            "fillColor": "#007cba",
+            "strokeColor": "#007cba",
+            "strokeWidth": 0
+        },
+        {
+            "id": "table-header-modern",
+            "type": "text",
+            "x": 40,
+            "y": 260,
+            "width": 515,
+            "height": 25,
+            "content": "DESCRIPTION\t\t\t\t\t\tQTÉ\t\tPRIX\t\tTOTAL",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "table-divider",
+            "type": "rectangle",
+            "x": 40,
+            "y": 285,
+            "width": 515,
+            "height": 1,
+            "fillColor": "#cccccc",
+            "strokeColor": "#cccccc",
+            "strokeWidth": 0
+        },
+        {
+            "id": "product-1-modern",
+            "type": "text",
+            "x": 40,
+            "y": 300,
+            "width": 515,
+            "height": 25,
+            "content": "{{product_1_name}}\t\t\t\t\t\t{{product_1_quantity}}\t\t{{product_1_price}}\t\t{{product_1_total}}",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "product-2-modern",
+            "type": "text",
+            "x": 40,
+            "y": 330,
+            "width": 515,
+            "height": 25,
+            "content": "{{product_2_name}}\t\t\t\t\t\t{{product_2_quantity}}\t\t{{product_2_price}}\t\t{{product_2_total}}",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "total-section-modern",
+            "type": "rectangle",
+            "x": 300,
+            "y": 700,
+            "width": 255,
+            "height": 80,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#e9ecef",
+            "strokeWidth": 1,
+            "borderRadius": 8
+        },
+        {
+            "id": "total-label-modern",
+            "type": "text",
+            "x": 320,
+            "y": 720,
+            "width": 100,
+            "height": 20,
+            "content": "TOTAL",
+            "fontSize": 16,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#007cba"
+        },
+        {
+            "id": "total-amount-modern",
+            "type": "text",
+            "x": 450,
+            "y": 720,
+            "width": 85,
+            "height": 20,
+            "content": "{{order_total}}",
+            "fontSize": 16,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#007cba",
+            "textAlign": "right"
+        },
+        {
+            "id": "footer-accent",
+            "type": "rectangle",
+            "x": 0,
+            "y": 810,
+            "width": 595,
+            "height": 32,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#f8f9fa",
+            "strokeWidth": 0
+        },
+        {
+            "id": "footer-text-modern",
+            "type": "text",
+            "x": 40,
+            "y": 815,
+            "width": 515,
+            "height": 20,
+            "content": "Merci pour votre confiance • {{company_name}} • {{company_email}}",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#666666",
+            "textAlign": "center"
+        }
+    ],
+    "variables": {
+        "company_name": {
+            "type": "text",
+            "default": "Votre Société",
+            "required": true,
+            "label": "Nom de l'entreprise"
+        },
+        "company_email": {
+            "type": "email",
+            "default": "contact@votresociete.com",
+            "required": false,
+            "label": "Email de l'entreprise"
+        },
+        "customer_name": {
+            "type": "text",
+            "default": "Jean Dupont",
+            "required": true,
+            "label": "Nom du client"
+        },
+        "customer_address": {
+            "type": "textarea",
+            "default": "456 Avenue des Clients\n69000 Lyon\nFrance",
+            "required": true,
+            "label": "Adresse du client"
+        },
+        "order_number": {
+            "type": "text",
+            "default": "2025-001",
+            "required": true,
+            "label": "Numéro de commande"
+        },
+        "current_date": {
+            "type": "date",
+            "default": "04\/11\/2025",
+            "required": true,
+            "label": "Date"
+        },
+        "product_1_name": {
+            "type": "text",
+            "default": "Service de consultation",
+            "required": false,
+            "label": "Nom du produit 1"
+        },
+        "product_1_quantity": {
+            "type": "number",
+            "default": "1",
+            "required": false,
+            "label": "Quantité produit 1"
+        },
+        "product_1_price": {
+            "type": "text",
+            "default": "500,00 €",
+            "required": false,
+            "label": "Prix produit 1"
+        },
+        "product_1_total": {
+            "type": "text",
+            "default": "500,00 €",
+            "required": false,
+            "label": "Total produit 1"
+        },
+        "product_2_name": {
+            "type": "text",
+            "default": "Produit complémentaire",
+            "required": false,
+            "label": "Nom du produit 2"
+        },
+        "product_2_quantity": {
+            "type": "number",
+            "default": "2",
+            "required": false,
+            "label": "Quantité produit 2"
+        },
+        "product_2_price": {
+            "type": "text",
+            "default": "150,00 €",
+            "required": false,
+            "label": "Prix produit 2"
+        },
+        "product_2_total": {
+            "type": "text",
+            "default": "300,00 €",
+            "required": false,
+            "label": "Total produit 2"
+        },
+        "order_total": {
+            "type": "text",
+            "default": "800,00 €",
+            "required": true,
+            "label": "Total de la commande"
+        }
     }
-  ],
-  "variables": {
-    "company_name": {
-      "type": "text",
-      "default": "Votre Société",
-      "required": true,
-      "label": "Nom de l'entreprise"
-    },
-    "company_email": {
-      "type": "email",
-      "default": "contact@votresociete.com",
-      "required": false,
-      "label": "Email de l'entreprise"
-    },
-    "customer_name": {
-      "type": "text",
-      "default": "Jean Dupont",
-      "required": true,
-      "label": "Nom du client"
-    },
-    "customer_address": {
-      "type": "textarea",
-      "default": "456 Avenue des Clients\n69000 Lyon\nFrance",
-      "required": true,
-      "label": "Adresse du client"
-    },
-    "order_number": {
-      "type": "text",
-      "default": "2025-001",
-      "required": true,
-      "label": "Numéro de commande"
-    },
-    "current_date": {
-      "type": "date",
-      "default": "04/11/2025",
-      "required": true,
-      "label": "Date"
-    },
-    "product_1_name": {
-      "type": "text",
-      "default": "Service de consultation",
-      "required": false,
-      "label": "Nom du produit 1"
-    },
-    "product_1_quantity": {
-      "type": "number",
-      "default": "1",
-      "required": false,
-      "label": "Quantité produit 1"
-    },
-    "product_1_price": {
-      "type": "text",
-      "default": "500,00 €",
-      "required": false,
-      "label": "Prix produit 1"
-    },
-    "product_1_total": {
-      "type": "text",
-      "default": "500,00 €",
-      "required": false,
-      "label": "Total produit 1"
-    },
-    "product_2_name": {
-      "type": "text",
-      "default": "Produit complémentaire",
-      "required": false,
-      "label": "Nom du produit 2"
-    },
-    "product_2_quantity": {
-      "type": "number",
-      "default": "2",
-      "required": false,
-      "label": "Quantité produit 2"
-    },
-    "product_2_price": {
-      "type": "text",
-      "default": "150,00 €",
-      "required": false,
-      "label": "Prix produit 2"
-    },
-    "product_2_total": {
-      "type": "text",
-      "default": "300,00 €",
-      "required": false,
-      "label": "Total produit 2"
-    },
-    "order_total": {
-      "type": "text",
-      "default": "800,00 €",
-      "required": true,
-      "label": "Total de la commande"
-    }
-  }
 }

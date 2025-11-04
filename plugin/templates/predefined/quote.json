@@ -1,547 +1,551 @@
 {
-  "name": "Quote",
-  "description": "Template spécialisé pour les devis avec mise en page professionnelle",
-  "category": "quote",
-  "tags": ["devis", "commercial", "professionnel"],
-  "version": "1.0.0",
-  "canvasWidth": 595,
-  "canvasHeight": 842,
-  "orientation": "portrait",
-  "isPremium": false,
-  "previewImage": "quote-preview.png",
-  "elements": [
-    {
-      "id": "header-quote",
-      "type": "rectangle",
-      "x": 0,
-      "y": 0,
-      "width": 595,
-      "height": 120,
-      "fillColor": "#27ae60",
-      "strokeColor": "#27ae60",
-      "strokeWidth": 0
-    },
-    {
-      "id": "company-name-quote",
-      "type": "text",
-      "x": 40,
-      "y": 40,
-      "width": 300,
-      "height": 30,
-      "content": "{{company_name}}",
-      "fontSize": 24,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#ffffff",
-      "textAlign": "left"
-    },
-    {
-      "id": "company-tagline",
-      "type": "text",
-      "x": 40,
-      "y": 70,
-      "width": 300,
-      "height": 20,
-      "content": "{{company_tagline}}",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "color": "#ecf0f1",
-      "textAlign": "left"
-    },
-    {
-      "id": "quote-box",
-      "type": "rectangle",
-      "x": 350,
-      "y": 30,
-      "width": 200,
-      "height": 60,
-      "fillColor": "#2ecc71",
-      "strokeColor": "#2ecc71",
-      "strokeWidth": 0,
-      "borderRadius": 8
-    },
-    {
-      "id": "quote-title",
-      "type": "text",
-      "x": 360,
-      "y": 40,
-      "width": 180,
-      "height": 20,
-      "content": "DEVIS",
-      "fontSize": 18,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#ffffff",
-      "textAlign": "center"
-    },
-    {
-      "id": "quote-number",
-      "type": "text",
-      "x": 360,
-      "y": 60,
-      "width": 180,
-      "height": 15,
-      "content": "N° {{quote_number}}",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "color": "#ffffff",
-      "textAlign": "center"
-    },
-    {
-      "id": "quote-date",
-      "type": "text",
-      "x": 360,
-      "y": 75,
-      "width": 180,
-      "height": 15,
-      "content": "Date: {{current_date}}",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#ecf0f1",
-      "textAlign": "center"
-    },
-    {
-      "id": "client-section-quote",
-      "type": "rectangle",
-      "x": 40,
-      "y": 140,
-      "width": 250,
-      "height": 100,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1,
-      "borderRadius": 6
-    },
-    {
-      "id": "client-label-quote",
-      "type": "text",
-      "x": 50,
-      "y": 150,
-      "width": 230,
-      "height": 20,
-      "content": "DESTINATAIRE",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#27ae60"
-    },
-    {
-      "id": "client-info-quote",
-      "type": "text",
-      "x": 50,
-      "y": 170,
-      "width": 230,
-      "height": 60,
-      "content": "{{customer_name}}\n{{customer_address}}\n{{customer_email}}\n{{customer_phone}}",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "color": "#495057",
-      "lineHeight": 1.3
-    },
-    {
-      "id": "validity-section",
-      "type": "rectangle",
-      "x": 305,
-      "y": 140,
-      "width": 250,
-      "height": 100,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1,
-      "borderRadius": 6
-    },
-    {
-      "id": "validity-label",
-      "type": "text",
-      "x": 315,
-      "y": 150,
-      "width": 230,
-      "height": 20,
-      "content": "VALIDITÉ DU DEVIS",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#27ae60"
-    },
-    {
-      "id": "validity-info",
-      "type": "text",
-      "x": 315,
-      "y": 170,
-      "width": 230,
-      "height": 60,
-      "content": "Valable jusqu'au: {{validity_date}}\n\nConditions: {{quote_conditions}}",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "color": "#495057",
-      "lineHeight": 1.3
-    },
-    {
-      "id": "introduction",
-      "type": "text",
-      "x": 40,
-      "y": 260,
-      "width": 515,
-      "height": 40,
-      "content": "Cher {{customer_name}},\n\nSuite à notre échange, nous avons le plaisir de vous soumettre le devis suivant:",
-      "fontSize": 12,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left",
-      "lineHeight": 1.4
-    },
-    {
-      "id": "table-header-bg-quote",
-      "type": "rectangle",
-      "x": 40,
-      "y": 320,
-      "width": 515,
-      "height": 30,
-      "fillColor": "#27ae60",
-      "strokeColor": "#27ae60",
-      "strokeWidth": 0
-    },
-    {
-      "id": "table-header-quote",
-      "type": "text",
-      "x": 40,
-      "y": 325,
-      "width": 515,
-      "height": 25,
-      "content": "DÉSIGNATION\t\t\t\t\t\tQTÉ\t\tPRIX UNIT.\t\tMONTANT",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#ffffff",
-      "textAlign": "left"
-    },
-    {
-      "id": "product-1-bg-quote",
-      "type": "rectangle",
-      "x": 40,
-      "y": 350,
-      "width": 515,
-      "height": 25,
-      "fillColor": "#ffffff",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1
-    },
-    {
-      "id": "product-1-quote",
-      "type": "text",
-      "x": 45,
-      "y": 355,
-      "width": 505,
-      "height": 20,
-      "content": "{{product_1_name}}\t\t\t\t\t\t{{product_1_quantity}}\t\t{{product_1_price}}\t\t{{product_1_total}}",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "product-2-bg-quote",
-      "type": "rectangle",
-      "x": 40,
-      "y": 375,
-      "width": 515,
-      "height": 25,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1
-    },
-    {
-      "id": "product-2-quote",
-      "type": "text",
-      "x": 45,
-      "y": 380,
-      "width": 505,
-      "height": 20,
-      "content": "{{product_2_name}}\t\t\t\t\t\t{{product_2_quantity}}\t\t{{product_2_price}}\t\t{{product_2_total}}",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "product-3-bg-quote",
-      "type": "rectangle",
-      "x": 40,
-      "y": 400,
-      "width": 515,
-      "height": 25,
-      "fillColor": "#ffffff",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1
-    },
-    {
-      "id": "product-3-quote",
-      "type": "text",
-      "x": 45,
-      "y": 405,
-      "width": 505,
-      "height": 20,
-      "content": "{{product_3_name}}\t\t\t\t\t\t{{product_3_quantity}}\t\t{{product_3_price}}\t\t{{product_3_total}}",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#333333",
-      "textAlign": "left"
-    },
-    {
-      "id": "quote-total-box",
-      "type": "rectangle",
-      "x": 300,
-      "y": 650,
-      "width": 255,
-      "height": 100,
-      "fillColor": "#f8f9fa",
-      "strokeColor": "#dee2e6",
-      "strokeWidth": 1,
-      "borderRadius": 6
-    },
-    {
-      "id": "quote-total-label",
-      "type": "text",
-      "x": 320,
-      "y": 670,
-      "width": 100,
-      "height": 20,
-      "content": "MONTANT TOTAL",
-      "fontSize": 14,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#27ae60"
-    },
-    {
-      "id": "quote-total-amount",
-      "type": "text",
-      "x": 450,
-      "y": 670,
-      "width": 85,
-      "height": 20,
-      "content": "{{quote_total}}",
-      "fontSize": 16,
-      "fontFamily": "Helvetica",
-      "fontWeight": "bold",
-      "color": "#27ae60",
-      "textAlign": "right"
-    },
-    {
-      "id": "quote-note",
-      "type": "text",
-      "x": 320,
-      "y": 695,
-      "width": 215,
-      "height": 40,
-      "content": "TVA non applicable\nart. 293 B du CGI",
-      "fontSize": 10,
-      "fontFamily": "Helvetica",
-      "color": "#6c757d",
-      "textAlign": "center",
-      "lineHeight": 1.2
-    },
-    {
-      "id": "conclusion",
-      "type": "text",
-      "x": 40,
-      "y": 580,
-      "width": 515,
-      "height": 60,
-      "content": "Nous restons à votre disposition pour toute question relative à ce devis.\n\nPour accepter ce devis, veuillez nous retourner un exemplaire signé ou nous contacter.",
-      "fontSize": 11,
-      "fontFamily": "Helvetica",
-      "color": "#495057",
-      "textAlign": "left",
-      "lineHeight": 1.4
-    },
-    {
-      "id": "footer-quote",
-      "type": "rectangle",
-      "x": 0,
-      "y": 800,
-      "width": 595,
-      "height": 42,
-      "fillColor": "#27ae60",
-      "strokeColor": "#27ae60",
-      "strokeWidth": 0
-    },
-    {
-      "id": "footer-text-quote",
-      "type": "text",
-      "x": 40,
-      "y": 810,
-      "width": 515,
-      "height": 30,
-      "content": "{{company_name}} • {{company_address}} • {{company_phone}} • {{company_email}} • SIRET: {{company_siret}}",
-      "fontSize": 9,
-      "fontFamily": "Helvetica",
-      "color": "#ffffff",
-      "textAlign": "center",
-      "lineHeight": 1.2
+    "name": "Quote",
+    "description": "Template spécialisé pour les devis avec mise en page professionnelle",
+    "category": "quote",
+    "tags": [
+        "devis",
+        "commercial",
+        "professionnel"
+    ],
+    "version": "1.0.0",
+    "canvasWidth": 595,
+    "canvasHeight": 842,
+    "orientation": "portrait",
+    "isPremium": false,
+    "previewImage": "\/wp-content\/plugins\/wp-pdf-builder-pro\/templates\/predefined\/quote-preview.png",
+    "elements": [
+        {
+            "id": "header-quote",
+            "type": "rectangle",
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 120,
+            "fillColor": "#27ae60",
+            "strokeColor": "#27ae60",
+            "strokeWidth": 0
+        },
+        {
+            "id": "company-name-quote",
+            "type": "text",
+            "x": 40,
+            "y": 40,
+            "width": 300,
+            "height": 30,
+            "content": "{{company_name}}",
+            "fontSize": 24,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "left"
+        },
+        {
+            "id": "company-tagline",
+            "type": "text",
+            "x": 40,
+            "y": 70,
+            "width": 300,
+            "height": 20,
+            "content": "{{company_tagline}}",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "color": "#ecf0f1",
+            "textAlign": "left"
+        },
+        {
+            "id": "quote-box",
+            "type": "rectangle",
+            "x": 350,
+            "y": 30,
+            "width": 200,
+            "height": 60,
+            "fillColor": "#2ecc71",
+            "strokeColor": "#2ecc71",
+            "strokeWidth": 0,
+            "borderRadius": 8
+        },
+        {
+            "id": "quote-title",
+            "type": "text",
+            "x": 360,
+            "y": 40,
+            "width": 180,
+            "height": 20,
+            "content": "DEVIS",
+            "fontSize": 18,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center"
+        },
+        {
+            "id": "quote-number",
+            "type": "text",
+            "x": 360,
+            "y": 60,
+            "width": 180,
+            "height": 15,
+            "content": "N° {{quote_number}}",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "color": "#ffffff",
+            "textAlign": "center"
+        },
+        {
+            "id": "quote-date",
+            "type": "text",
+            "x": 360,
+            "y": 75,
+            "width": 180,
+            "height": 15,
+            "content": "Date: {{current_date}}",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#ecf0f1",
+            "textAlign": "center"
+        },
+        {
+            "id": "client-section-quote",
+            "type": "rectangle",
+            "x": 40,
+            "y": 140,
+            "width": 250,
+            "height": 100,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1,
+            "borderRadius": 6
+        },
+        {
+            "id": "client-label-quote",
+            "type": "text",
+            "x": 50,
+            "y": 150,
+            "width": 230,
+            "height": 20,
+            "content": "DESTINATAIRE",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#27ae60"
+        },
+        {
+            "id": "client-info-quote",
+            "type": "text",
+            "x": 50,
+            "y": 170,
+            "width": 230,
+            "height": 60,
+            "content": "{{customer_name}}\n{{customer_address}}\n{{customer_email}}\n{{customer_phone}}",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "color": "#495057",
+            "lineHeight": 1.3
+        },
+        {
+            "id": "validity-section",
+            "type": "rectangle",
+            "x": 305,
+            "y": 140,
+            "width": 250,
+            "height": 100,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1,
+            "borderRadius": 6
+        },
+        {
+            "id": "validity-label",
+            "type": "text",
+            "x": 315,
+            "y": 150,
+            "width": 230,
+            "height": 20,
+            "content": "VALIDITÉ DU DEVIS",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#27ae60"
+        },
+        {
+            "id": "validity-info",
+            "type": "text",
+            "x": 315,
+            "y": 170,
+            "width": 230,
+            "height": 60,
+            "content": "Valable jusqu'au: {{validity_date}}\n\nConditions: {{quote_conditions}}",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "color": "#495057",
+            "lineHeight": 1.3
+        },
+        {
+            "id": "introduction",
+            "type": "text",
+            "x": 40,
+            "y": 260,
+            "width": 515,
+            "height": 40,
+            "content": "Cher {{customer_name}},\n\nSuite à notre échange, nous avons le plaisir de vous soumettre le devis suivant:",
+            "fontSize": 12,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left",
+            "lineHeight": 1.4
+        },
+        {
+            "id": "table-header-bg-quote",
+            "type": "rectangle",
+            "x": 40,
+            "y": 320,
+            "width": 515,
+            "height": 30,
+            "fillColor": "#27ae60",
+            "strokeColor": "#27ae60",
+            "strokeWidth": 0
+        },
+        {
+            "id": "table-header-quote",
+            "type": "text",
+            "x": 40,
+            "y": 325,
+            "width": 515,
+            "height": 25,
+            "content": "DÉSIGNATION\t\t\t\t\t\tQTÉ\t\tPRIX UNIT.\t\tMONTANT",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "left"
+        },
+        {
+            "id": "product-1-bg-quote",
+            "type": "rectangle",
+            "x": 40,
+            "y": 350,
+            "width": 515,
+            "height": 25,
+            "fillColor": "#ffffff",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1
+        },
+        {
+            "id": "product-1-quote",
+            "type": "text",
+            "x": 45,
+            "y": 355,
+            "width": 505,
+            "height": 20,
+            "content": "{{product_1_name}}\t\t\t\t\t\t{{product_1_quantity}}\t\t{{product_1_price}}\t\t{{product_1_total}}",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "product-2-bg-quote",
+            "type": "rectangle",
+            "x": 40,
+            "y": 375,
+            "width": 515,
+            "height": 25,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1
+        },
+        {
+            "id": "product-2-quote",
+            "type": "text",
+            "x": 45,
+            "y": 380,
+            "width": 505,
+            "height": 20,
+            "content": "{{product_2_name}}\t\t\t\t\t\t{{product_2_quantity}}\t\t{{product_2_price}}\t\t{{product_2_total}}",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "product-3-bg-quote",
+            "type": "rectangle",
+            "x": 40,
+            "y": 400,
+            "width": 515,
+            "height": 25,
+            "fillColor": "#ffffff",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1
+        },
+        {
+            "id": "product-3-quote",
+            "type": "text",
+            "x": 45,
+            "y": 405,
+            "width": 505,
+            "height": 20,
+            "content": "{{product_3_name}}\t\t\t\t\t\t{{product_3_quantity}}\t\t{{product_3_price}}\t\t{{product_3_total}}",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#333333",
+            "textAlign": "left"
+        },
+        {
+            "id": "quote-total-box",
+            "type": "rectangle",
+            "x": 300,
+            "y": 650,
+            "width": 255,
+            "height": 100,
+            "fillColor": "#f8f9fa",
+            "strokeColor": "#dee2e6",
+            "strokeWidth": 1,
+            "borderRadius": 6
+        },
+        {
+            "id": "quote-total-label",
+            "type": "text",
+            "x": 320,
+            "y": 670,
+            "width": 100,
+            "height": 20,
+            "content": "MONTANT TOTAL",
+            "fontSize": 14,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#27ae60"
+        },
+        {
+            "id": "quote-total-amount",
+            "type": "text",
+            "x": 450,
+            "y": 670,
+            "width": 85,
+            "height": 20,
+            "content": "{{quote_total}}",
+            "fontSize": 16,
+            "fontFamily": "Helvetica",
+            "fontWeight": "bold",
+            "color": "#27ae60",
+            "textAlign": "right"
+        },
+        {
+            "id": "quote-note",
+            "type": "text",
+            "x": 320,
+            "y": 695,
+            "width": 215,
+            "height": 40,
+            "content": "TVA non applicable\nart. 293 B du CGI",
+            "fontSize": 10,
+            "fontFamily": "Helvetica",
+            "color": "#6c757d",
+            "textAlign": "center",
+            "lineHeight": 1.2
+        },
+        {
+            "id": "conclusion",
+            "type": "text",
+            "x": 40,
+            "y": 580,
+            "width": 515,
+            "height": 60,
+            "content": "Nous restons à votre disposition pour toute question relative à ce devis.\n\nPour accepter ce devis, veuillez nous retourner un exemplaire signé ou nous contacter.",
+            "fontSize": 11,
+            "fontFamily": "Helvetica",
+            "color": "#495057",
+            "textAlign": "left",
+            "lineHeight": 1.4
+        },
+        {
+            "id": "footer-quote",
+            "type": "rectangle",
+            "x": 0,
+            "y": 800,
+            "width": 595,
+            "height": 42,
+            "fillColor": "#27ae60",
+            "strokeColor": "#27ae60",
+            "strokeWidth": 0
+        },
+        {
+            "id": "footer-text-quote",
+            "type": "text",
+            "x": 40,
+            "y": 810,
+            "width": 515,
+            "height": 30,
+            "content": "{{company_name}} • {{company_address}} • {{company_phone}} • {{company_email}} • SIRET: {{company_siret}}",
+            "fontSize": 9,
+            "fontFamily": "Helvetica",
+            "color": "#ffffff",
+            "textAlign": "center",
+            "lineHeight": 1.2
+        }
+    ],
+    "variables": {
+        "company_name": {
+            "type": "text",
+            "default": "Votre Société",
+            "required": true,
+            "label": "Nom de l'entreprise"
+        },
+        "company_tagline": {
+            "type": "text",
+            "default": "Excellence et qualité à votre service",
+            "required": false,
+            "label": "Slogan de l'entreprise"
+        },
+        "company_address": {
+            "type": "textarea",
+            "default": "123 Rue de l'Entreprise\n75001 Paris\nFrance",
+            "required": true,
+            "label": "Adresse de l'entreprise"
+        },
+        "company_phone": {
+            "type": "text",
+            "default": "01 23 45 67 89",
+            "required": false,
+            "label": "Téléphone de l'entreprise"
+        },
+        "company_email": {
+            "type": "email",
+            "default": "contact@votresociete.com",
+            "required": true,
+            "label": "Email de l'entreprise"
+        },
+        "company_siret": {
+            "type": "text",
+            "default": "123 456 789 00012",
+            "required": false,
+            "label": "Numéro SIRET"
+        },
+        "customer_name": {
+            "type": "text",
+            "default": "Monsieur Dupont",
+            "required": true,
+            "label": "Nom du client"
+        },
+        "customer_address": {
+            "type": "textarea",
+            "default": "456 Avenue des Clients\n69000 Lyon\nFrance",
+            "required": true,
+            "label": "Adresse du client"
+        },
+        "customer_email": {
+            "type": "email",
+            "default": "client@email.com",
+            "required": false,
+            "label": "Email du client"
+        },
+        "customer_phone": {
+            "type": "text",
+            "default": "06 12 34 56 78",
+            "required": false,
+            "label": "Téléphone du client"
+        },
+        "quote_number": {
+            "type": "text",
+            "default": "DEV-2025-001",
+            "required": true,
+            "label": "Numéro du devis"
+        },
+        "current_date": {
+            "type": "date",
+            "default": "04\/11\/2025",
+            "required": true,
+            "label": "Date du devis"
+        },
+        "validity_date": {
+            "type": "date",
+            "default": "04\/12\/2025",
+            "required": false,
+            "label": "Date de validité"
+        },
+        "quote_conditions": {
+            "type": "text",
+            "default": "30 jours",
+            "required": false,
+            "label": "Conditions du devis"
+        },
+        "product_1_name": {
+            "type": "text",
+            "default": "Service de consultation",
+            "required": false,
+            "label": "Nom du produit 1"
+        },
+        "product_1_quantity": {
+            "type": "number",
+            "default": "1",
+            "required": false,
+            "label": "Quantité produit 1"
+        },
+        "product_1_price": {
+            "type": "text",
+            "default": "500,00 €",
+            "required": false,
+            "label": "Prix produit 1"
+        },
+        "product_1_total": {
+            "type": "text",
+            "default": "500,00 €",
+            "required": false,
+            "label": "Total produit 1"
+        },
+        "product_2_name": {
+            "type": "text",
+            "default": "Produit complémentaire",
+            "required": false,
+            "label": "Nom du produit 2"
+        },
+        "product_2_quantity": {
+            "type": "number",
+            "default": "2",
+            "required": false,
+            "label": "Quantité produit 2"
+        },
+        "product_2_price": {
+            "type": "text",
+            "default": "150,00 €",
+            "required": false,
+            "label": "Prix produit 2"
+        },
+        "product_2_total": {
+            "type": "text",
+            "default": "300,00 €",
+            "required": false,
+            "label": "Total produit 2"
+        },
+        "product_3_name": {
+            "type": "text",
+            "default": "Frais de déplacement",
+            "required": false,
+            "label": "Nom du produit 3"
+        },
+        "product_3_quantity": {
+            "type": "number",
+            "default": "1",
+            "required": false,
+            "label": "Quantité produit 3"
+        },
+        "product_3_price": {
+            "type": "text",
+            "default": "75,00 €",
+            "required": false,
+            "label": "Prix produit 3"
+        },
+        "product_3_total": {
+            "type": "text",
+            "default": "75,00 €",
+            "required": false,
+            "label": "Total produit 3"
+        },
+        "quote_total": {
+            "type": "text",
+            "default": "875,00 € HT",
+            "required": true,
+            "label": "Total du devis"
+        }
     }
-  ],
-  "variables": {
-    "company_name": {
-      "type": "text",
-      "default": "Votre Société",
-      "required": true,
-      "label": "Nom de l'entreprise"
-    },
-    "company_tagline": {
-      "type": "text",
-      "default": "Excellence et qualité à votre service",
-      "required": false,
-      "label": "Slogan de l'entreprise"
-    },
-    "company_address": {
-      "type": "textarea",
-      "default": "123 Rue de l'Entreprise\n75001 Paris\nFrance",
-      "required": true,
-      "label": "Adresse de l'entreprise"
-    },
-    "company_phone": {
-      "type": "text",
-      "default": "01 23 45 67 89",
-      "required": false,
-      "label": "Téléphone de l'entreprise"
-    },
-    "company_email": {
-      "type": "email",
-      "default": "contact@votresociete.com",
-      "required": true,
-      "label": "Email de l'entreprise"
-    },
-    "company_siret": {
-      "type": "text",
-      "default": "123 456 789 00012",
-      "required": false,
-      "label": "Numéro SIRET"
-    },
-    "customer_name": {
-      "type": "text",
-      "default": "Monsieur Dupont",
-      "required": true,
-      "label": "Nom du client"
-    },
-    "customer_address": {
-      "type": "textarea",
-      "default": "456 Avenue des Clients\n69000 Lyon\nFrance",
-      "required": true,
-      "label": "Adresse du client"
-    },
-    "customer_email": {
-      "type": "email",
-      "default": "client@email.com",
-      "required": false,
-      "label": "Email du client"
-    },
-    "customer_phone": {
-      "type": "text",
-      "default": "06 12 34 56 78",
-      "required": false,
-      "label": "Téléphone du client"
-    },
-    "quote_number": {
-      "type": "text",
-      "default": "DEV-2025-001",
-      "required": true,
-      "label": "Numéro du devis"
-    },
-    "current_date": {
-      "type": "date",
-      "default": "04/11/2025",
-      "required": true,
-      "label": "Date du devis"
-    },
-    "validity_date": {
-      "type": "date",
-      "default": "04/12/2025",
-      "required": false,
-      "label": "Date de validité"
-    },
-    "quote_conditions": {
-      "type": "text",
-      "default": "30 jours",
-      "required": false,
-      "label": "Conditions du devis"
-    },
-    "product_1_name": {
-      "type": "text",
-      "default": "Service de consultation",
-      "required": false,
-      "label": "Nom du produit 1"
-    },
-    "product_1_quantity": {
-      "type": "number",
-      "default": "1",
-      "required": false,
-      "label": "Quantité produit 1"
-    },
-    "product_1_price": {
-      "type": "text",
-      "default": "500,00 €",
-      "required": false,
-      "label": "Prix produit 1"
-    },
-    "product_1_total": {
-      "type": "text",
-      "default": "500,00 €",
-      "required": false,
-      "label": "Total produit 1"
-    },
-    "product_2_name": {
-      "type": "text",
-      "default": "Produit complémentaire",
-      "required": false,
-      "label": "Nom du produit 2"
-    },
-    "product_2_quantity": {
-      "type": "number",
-      "default": "2",
-      "required": false,
-      "label": "Quantité produit 2"
-    },
-    "product_2_price": {
-      "type": "text",
-      "default": "150,00 €",
-      "required": false,
-      "label": "Prix produit 2"
-    },
-    "product_2_total": {
-      "type": "text",
-      "default": "300,00 €",
-      "required": false,
-      "label": "Total produit 2"
-    },
-    "product_3_name": {
-      "type": "text",
-      "default": "Frais de déplacement",
-      "required": false,
-      "label": "Nom du produit 3"
-    },
-    "product_3_quantity": {
-      "type": "number",
-      "default": "1",
-      "required": false,
-      "label": "Quantité produit 3"
-    },
-    "product_3_price": {
-      "type": "text",
-      "default": "75,00 €",
-      "required": false,
-      "label": "Prix produit 3"
-    },
-    "product_3_total": {
-      "type": "text",
-      "default": "75,00 €",
-      "required": false,
-      "label": "Total produit 3"
-    },
-    "quote_total": {
-      "type": "text",
-      "default": "875,00 € HT",
-      "required": true,
-      "label": "Total du devis"
-    }
-  }
 }
