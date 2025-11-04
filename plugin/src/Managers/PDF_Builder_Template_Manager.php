@@ -603,9 +603,12 @@ class PDF_Builder_Template_Manager
         $templates = [];
 
         // Chemin vers le dossier des templates prédéfinis
-        $predefined_dir = plugin_dir_path(dirname(__FILE__)) . '../../templates/predefined/';
+        // Depuis src/Managers/, remonter vers la racine du plugin puis aller dans templates/predefined/
+        $plugin_root = dirname(dirname(dirname(__FILE__)));
+        $predefined_dir = $plugin_root . '/templates/predefined/';
 
         // Debug: Log the path being used
+        error_log('[PDF Builder] Plugin root: ' . $plugin_root);
         error_log('[PDF Builder] Predefined templates directory: ' . $predefined_dir);
         error_log('[PDF Builder] Directory exists: ' . (is_dir($predefined_dir) ? 'YES' : 'NO'));
 
