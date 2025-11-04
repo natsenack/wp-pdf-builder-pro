@@ -912,6 +912,9 @@ class PDF_Builder_Template_Manager
                     continue;
                 }
 
+                // Garder une copie de la structure originale pour la sauvegarde
+                $original_template_data = $template_data;
+
                 // Normaliser la structure pour les générateurs (qui attendent une clé 'template')
                 if ($has_flat_structure && !$has_nested_structure) {
                     $template_data = [
@@ -949,11 +952,11 @@ class PDF_Builder_Template_Manager
                     error_log('[PDF Builder] Preview generation result for ' . $filename . ': ' . json_encode($result));
 
                     if ($result && isset($result['image_url'])) {
-                        // Mettre à jour le champ previewImage dans le JSON
-                        $template_data['previewImage'] = $result['image_url'];
+                        // Mettre à jour le champ previewImage dans le JSON original
+                        $original_template_data['previewImage'] = $result['image_url'];
 
                         // Sauvegarder le JSON mis à jour
-                        $updated_json = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                        $updated_json = json_encode($original_template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                         if (file_put_contents($template_file, $updated_json)) {
                             $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
                             $success_count++;
