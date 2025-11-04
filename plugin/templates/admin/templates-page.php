@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<p class="template-gallery-item-description">' + template.description + '</p>' +
                     '<div class="template-gallery-item-features">' + featuresHtml + '</div>' +
                     '<div class="template-gallery-item-actions">' +
-                        '<button class="button button-primary install-template" data-template-id="' + template.id + '">Installer</button>' +
+                        '<button class="button button-primary install-template" data-template-id="' + template.id + '">Utiliser ce template</button>' +
                     '</div>' +
                 '</div>' +
             '</div>';
