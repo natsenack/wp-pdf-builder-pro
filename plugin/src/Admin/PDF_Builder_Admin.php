@@ -1308,6 +1308,39 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * AJAX - Obtenir la liste des templates prédéfinis
+     */
+    public function ajax_get_predefined_templates()
+    {
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_get_predefined_templates();
+        }
+    }
+
+    /**
+     * AJAX - Installer un template prédéfini
+     */
+    public function ajax_install_predefined_template()
+    {
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_install_predefined_template();
+        }
+    }
+
+    /**
+     * AJAX - Régénérer les vignettes des templates prédéfinis
+     */
+    public function ajax_regenerate_predefined_thumbnails()
+    {
+        $manager = $this->get_template_manager();
+        if ($manager) {
+            return $manager->ajax_regenerate_predefined_thumbnails();
+        }
+    }
+
+    /**
      * Génère un PDF depuis les données du template
      */
     private function generate_pdf_from_template_data($template, $filename)
