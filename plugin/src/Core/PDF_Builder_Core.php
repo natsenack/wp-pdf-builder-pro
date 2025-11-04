@@ -358,7 +358,18 @@ class PDF_Builder_Core
 
         $charset_collate = $wpdb->get_charset_collate();
 
-        // Table pour les canvas personnalisés par commande (templates utilisent wp_posts)
+        // Table pour les templates
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        $sql_templates = "CREATE TABLE $table_templates (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            template_data longtext NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+
+        // Table pour les canvas personnalisés par commande
         $table_order_canvases = $wpdb->prefix . 'pdf_builder_order_canvases';
         $sql_order_canvases = "CREATE TABLE $table_order_canvases (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -373,6 +384,7 @@ class PDF_Builder_Core
         ) $charset_collate;";
 
         include_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        \dbDelta($sql_templates);
         \dbDelta($sql_order_canvases);
     }
 

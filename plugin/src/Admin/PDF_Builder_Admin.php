@@ -338,6 +338,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
+        add_action('wp_ajax_pdf_builder_migrate_templates_to_posts', [$this, 'ajax_migrate_templates_to_posts']);
 // Hook AJAX pour toggle debug mode
         add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']);
 // Hook AJAX pour toggle debug mode principal
@@ -3850,24 +3851,40 @@ class PDF_Builder_Admin {
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-// Vérifier que le template existe
-        $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
-        if (!$existing) {
+// Vérifier que le template existe (post WordPress)
+        $existing_post = get_post($template_id);
+        if (!$existing_post || $existing_post->post_type !== 'pdf_template') {
             wp_send_json_error(['message' => __('Template introuvable', 'pdf-builder-pro')]);
             return;
         }
 
-        // Préparer les données de mise à jour
-        $update_data = [
-            'name' => $name,
-            'updated_at' => current_time('mysql')
+        // Préparer les données de mise à jour du post
+        $post_data = [
+            'ID' => $template_id,
+            'post_title' => $name,
+            'post_modified' => current_time('mysql')
         ];
-// Pour l'instant, on ne sauvegarde que le nom (les autres champs peuvent être ajoutés plus tard si nécessaire)
-        $result = $wpdb->update($table_templates, $update_data, ['id' => $template_id], ['%s', '%s'], ['%d']);
-        if ($result === false) {
-            wp_send_json_error(['message' => __('Erreur lors de la sauvegarde', 'pdf-builder-pro')]);
+
+        $result = wp_update_post($post_data, true);
+        if (is_wp_error($result)) {
+            wp_send_json_error(['message' => __('Erreur lors de la sauvegarde: ', 'pdf-builder-pro') . $result->get_error_message()]);
             return;
         }
+
+        // Sauvegarder les paramètres supplémentaires dans les métadonnées si nécessaire
+        if (!empty($description)) {
+            update_post_meta($template_id, '_pdf_template_description', $description);
+        }
+        if (!empty($category)) {
+            update_post_meta($template_id, '_pdf_template_category', $category);
+        }
+        if (!empty($paper_size)) {
+            update_post_meta($template_id, '_pdf_template_paper_size', $paper_size);
+        }
+        if (!empty($orientation)) {
+            update_post_meta($template_id, '_pdf_template_orientation', $orientation);
+        }
+        update_post_meta($template_id, '_pdf_template_is_public', $is_public);
 
         wp_send_json_success([
             'message' => __('Paramètres sauvegardés avec succès', 'pdf-builder-pro'),
@@ -4507,6 +4524,100 @@ class PDF_Builder_Admin {
                 'total' => count($templates),
                 'errors' => $errors
                 ]);
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX - Migrer les templates de la table personnalisée vers les posts WordPress
+     */
+    public function ajax_migrate_templates_to_posts()
+    {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_migration')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'pdf_builder_templates';
+
+        try {
+            // Vérifier que la table existe encore
+            $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
+            if (!$table_exists) {
+                wp_send_json_success(['message' => 'Aucune table personnalisée trouvée - migration déjà effectuée', 'migrated' => 0, 'total' => 0]);
+                return;
+            }
+
+            // Récupérer tous les templates de l'ancienne table
+            $templates = $wpdb->get_results("SELECT id, name, template_data, created_at, updated_at FROM $table");
+            if (empty($templates)) {
+                wp_send_json_success(['message' => 'Aucun template à migrer', 'migrated' => 0, 'total' => 0]);
+                return;
+            }
+
+            $migrated_count = 0;
+            $errors = [];
+
+            foreach ($templates as $template) {
+                try {
+                    // Valider les données JSON
+                    $template_data = json_decode($template->template_data, true);
+                    if (json_last_error() !== JSON_ERROR_NONE || !is_array($template_data)) {
+                        $errors[] = "Template ID={$template->id}: données JSON invalides";
+                        continue;
+                    }
+
+                    // Créer le post WordPress
+                    $post_data = [
+                        'post_title' => $template->name,
+                        'post_type' => 'pdf_template',
+                        'post_status' => 'publish',
+                        'post_date' => $template->created_at,
+                        'post_modified' => $template->updated_at,
+                        'post_date_gmt' => get_gmt_from_date($template->created_at),
+                        'post_modified_gmt' => get_gmt_from_date($template->updated_at)
+                    ];
+
+                    $post_id = wp_insert_post($post_data, true);
+                    if (is_wp_error($post_id)) {
+                        $errors[] = "Template ID={$template->id}: erreur création post - " . $post_id->get_error_message();
+                        continue;
+                    }
+
+                    // Sauvegarder les données du template dans les métadonnées
+                    update_post_meta($post_id, '_pdf_template_data', $template->template_data);
+                    update_post_meta($post_id, '_pdf_template_legacy_id', $template->id);
+
+                    // Marquer l'ancien template comme migré (au lieu de le supprimer immédiatement)
+                    $wpdb->update($table, ['name' => '[MIGRÉ] ' . $template->name], ['id' => $template->id]);
+
+                    $migrated_count++;
+
+                } catch (Exception $e) {
+                    $errors[] = "Template ID={$template->id}: " . $e->getMessage();
+                }
+            }
+
+            $message = $migrated_count > 0 ?
+                "Migration terminée: $migrated_count template(s) migré(s) vers les posts WordPress" :
+                "Aucun template migré";
+
+            wp_send_json_success([
+                'message' => $message,
+                'migrated' => $migrated_count,
+                'total' => count($templates),
+                'errors' => $errors
+            ]);
+
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
