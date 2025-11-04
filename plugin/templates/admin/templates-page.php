@@ -24,6 +24,9 @@ if (!defined('ABSPATH')) {
             <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id=0'); ?>" class="button button-primary">
                 ➕ <?php _e('Créer un nouveau template', 'pdf-builder-pro'); ?>
             </a>
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+            </button>
         </div>
 
         <!-- Section de filtrage -->
@@ -138,10 +141,10 @@ if (!defined('ABSPATH')) {
                     </div>
 
                     <div class="template-gallery-filters">
-                        <button class="gallery-filter active" data-category="all">Tous</button>
-                        <button class="gallery-filter" data-category="business">Business</button>
-                        <button class="gallery-filter" data-category="modern">Moderne</button>
-                        <button class="gallery-filter" data-category="creative">Créatif</button>
+                        <button class="gallery-filter active" data-filter="all">Tous</button>
+                        <button class="gallery-filter" data-filter="business">Business</button>
+                        <button class="gallery-filter" data-filter="general">Général</button>
+                        <button class="gallery-filter" data-filter="creative">Créatif</button>
                     </div>
 
                     <div class="template-gallery-grid" id="template-gallery-grid">
@@ -749,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
     jQuery('.gallery-filter').on('click', function() {
         jQuery('.gallery-filter').removeClass('active');
         jQuery(this).addClass('active');
-        currentFilter = jQuery(this).data('filter');
+        currentFilter = jQuery(this).data('category');
         filterTemplates();
     });
 
@@ -885,6 +888,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 jQuery(this).remove();
             });
         }, 5000);
+    }
+
+    // Function to close template gallery (for HTML onclick)
+    function closeTemplateGallery() {
+        jQuery('.template-gallery-modal').fadeOut(300);
     }
 });
 
