@@ -707,7 +707,8 @@ document.addEventListener('DOMContentLoaded', function() {
             html += `
                 <div class="template-gallery-item" data-category="${template.category || 'general'}" style="animation-delay: ${index * 0.1}s">
                     <div class="template-gallery-item-preview">
-                        <img src="${template.preview_url || '<?php echo plugin_dir_url(dirname(__FILE__, 2)); ?>assets/images/templates/placeholder.png'}" alt="${template.name}" loading="lazy">
+                        <img src="${template.preview_url}" alt="${template.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="preview-placeholder" style="display: none;">${template.name.charAt(0).toUpperCase()}</div>
                     </div>
                     <div class="template-gallery-item-info">
                         <h3 class="template-gallery-item-title">${template.name}</h3>
@@ -1052,6 +1053,13 @@ document.addEventListener('keydown', function(e) {
 .template-gallery-item-preview .preview-placeholder {
     font-size: 48px;
     color: #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    border-radius: 8px;
 }
 
 .template-gallery-item-info {
