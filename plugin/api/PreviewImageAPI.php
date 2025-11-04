@@ -500,8 +500,15 @@ class PreviewImageAPI {
                 ]
             );
 
-            if (!$result) {
+            // Vérifier si la génération a réussi
+            if (!$result || (is_array($result) && isset($result['success']) && $result['success'] === false)) {
                 throw new Exception('Image generation failed: All generators failed');
+            }
+
+            // Si le générateur a retourné des données d'image au lieu de créer un fichier,
+            // les sauvegarder dans le cache
+            if (is_array($result) && isset($result['data'])) {
+                file_put_contents($cache_file, $result['data']);
             }
 
             return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);

@@ -18,6 +18,9 @@ class GeneratorManager {
     /** @var string Générateur secondaire (fallback) */
     private $secondary_generator;
 
+    /** @var string Générateur tertiaire (fallback final) */
+    private $tertiary_generator;
+
     /** @var array Historique des tentatives */
     private $attempt_history = [];
 
@@ -28,6 +31,7 @@ class GeneratorManager {
         $this->initializeGeneratorsConfig();
         $this->primary_generator = 'dompdf';
         $this->secondary_generator = 'canvas';
+        $this->tertiary_generator = 'image'; // Nouveau fallback
     }
 
     /**
@@ -52,6 +56,15 @@ class GeneratorManager {
                 'timeout' => 15,
                 'supported_formats' => ['png', 'jpg'],
                 'capabilities' => ['fast', 'client_side', 'fallback']
+            ],
+            'image' => [
+                'class' => 'WP_PDF_Builder_Pro\\Generators\\ImageGenerator',
+                'priority' => 3,
+                'enabled' => true,
+                'max_attempts' => 1,
+                'timeout' => 10,
+                'supported_formats' => ['png', 'jpg'],
+                'capabilities' => ['basic', 'fast', 'always_works']
             ]
         ];
     }
@@ -76,6 +89,12 @@ class GeneratorManager {
         if ($result === false) {
             $this->logInfo("Primary generator failed, trying secondary generator");
             $result = $this->attemptGeneration($this->secondary_generator, $template_data, $data_provider, $output_format, $options);
+        }
+
+        // Si échec, tentative avec le générateur tertiaire (fallback final)
+        if ($result === false) {
+            $this->logInfo("Secondary generator failed, trying tertiary generator");
+            $result = $this->attemptGeneration($this->tertiary_generator, $template_data, $data_provider, $output_format, $options);
         }
 
         // Log du résultat final
