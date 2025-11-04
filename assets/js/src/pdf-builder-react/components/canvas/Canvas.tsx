@@ -33,40 +33,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     canvasRef
   });
 
-  // Fonction de rendu du canvas
-  const renderCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Appliquer transformation (zoom, pan)
-    ctx.save();
-    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
-    ctx.scale(state.canvas.zoom, state.canvas.zoom);
-
-    // Dessiner la grille si activée
-    if (state.canvas.showGrid) {
-      drawGrid(ctx, width, height, state.canvas.gridSize);
-    }
-
-    // Dessiner les éléments
-    state.elements.forEach((element, index) => {
-      drawElement(ctx, element);
-    });
-
-    // Dessiner la sélection
-    if (state.selection.selectedElements.length > 0) {
-      drawSelection(ctx, state.selection.selectedElements, state.elements);
-    }
-
-    ctx.restore();
-  }, [state, width, height]);
-
   // Fonction pour dessiner la grille
   const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, size: number) => {
     ctx.strokeStyle = '#e0e0e0';
@@ -88,7 +54,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   // Fonction pour dessiner un élément
-  const drawElement = (ctx: CanvasRenderingContext2D, element: Element) => {
+  function drawElement(ctx: CanvasRenderingContext2D, element: Element) {
+    // Vérifier si l'élément est visible
+    if (element.visible === false) {
+      return;
+    }
+
     ctx.save();
 
     // Appliquer transformation de l'élément
@@ -145,10 +116,52 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.restore();
   };
 
+  // Fonction de rendu du canvas
+  const renderCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Appliquer transformation (zoom, pan)
+    ctx.save();
+    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
+    ctx.scale(state.canvas.zoom, state.canvas.zoom);
+
+    // Dessiner la grille si activée
+    if (state.canvas.showGrid) {
+      drawGrid(ctx, width, height, state.canvas.gridSize);
+    }
+
+    // Dessiner les éléments
+    state.elements.forEach((element, index) => {
+      drawElement(ctx, element);
+    });
+
+    // Dessiner la sélection
+    if (state.selection.selectedElements.length > 0) {
+      drawSelection(ctx, state.selection.selectedElements, state.elements);
+    }
+
+    ctx.restore();
+  }, [state, width, height]);
+
   // Fonctions de dessin spécifiques
+  // Fonction helper pour normaliser les couleurs
+  const normalizeColor = (color: string): string => {
+    if (!color || color === 'transparent') {
+      return 'rgba(0,0,0,0)'; // Transparent
+    }
+    return color;
+  };
+
   const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
-    const fillColor = (element as any).fillColor || '#ffffff';
-    const strokeColor = (element as any).strokeColor || '#000000';
+    const fillColor = normalizeColor((element as any).fillColor || '#ffffff');
+    const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 1;
     const borderRadius = (element as any).borderRadius || 0;
 
@@ -167,8 +180,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
-    const fillColor = (element as any).fillColor || '#ffffff';
-    const strokeColor = (element as any).strokeColor || '#000000';
+    const fillColor = normalizeColor((element as any).fillColor || '#ffffff');
+    const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 1;
 
     const centerX = element.width / 2;
@@ -188,7 +201,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const text = (element as any).text || 'Text';
     const fontSize = (element as any).fontSize || 16;
-    const color = (element as any).color || '#000000';
+    const color = normalizeColor((element as any).color || '#000000');
     const align = (element as any).align || 'left';
 
     ctx.fillStyle = color;
@@ -200,7 +213,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   };
 
   const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
-    const strokeColor = (element as any).strokeColor || '#000000';
+    const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 2;
 
     ctx.strokeStyle = strokeColor;

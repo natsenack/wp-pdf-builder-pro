@@ -173,50 +173,65 @@ class PDF_Builder_Template_Manager
      */
     public function ajax_load_template()
     {
-        // Vérification des permissions
-        if (!\current_user_can('manage_options')) {
-            \wp_send_json_error('Permissions insuffisantes');
-        }
+        try {
+            // Vérification des permissions
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
+            }
 
-        // Récupération et validation de l'ID
-        $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            // Récupération et validation de l'ID
+            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
 
-        if (!$template_id) {
-            \wp_send_json_error('ID template invalide');
-        }
+            if (!$template_id) {
+                \wp_send_json_error('ID template invalide');
+            }
 
-        // Récupération depuis la base de données
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            // Récupération depuis la base de données
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $template = $wpdb->get_row(
-            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-            ARRAY_A
-        );
+            $template = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
 
-        if (!$template) {
-            \wp_send_json_error('Template non trouvé');
-            return;
-        }
+            if (!$template) {
+                \wp_send_json_error('Template non trouvé');
+                return;
+            }
 
-        // Décodage du JSON
-        $template_data_raw = $template['template_data'];
+            // Décodage du JSON
+            $template_data_raw = $template['template_data'];
 
-        $template_data = \json_decode($template_data_raw, true);
-        if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
-            $json_error = \json_last_error_msg();
-            \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
-            return;
-        }
+            $template_data = \json_decode($template_data_raw, true);
+            if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
+                $json_error = \json_last_error_msg();
+                \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
+                return;
+            }
 
-        // Validation de la structure
-        $validation_errors = $this->validate_template_structure($template_data);
-        if (!empty($validation_errors)) {
-            // On log mais on envoie quand même les données (backward compatibility)
-        }
+            // Validation de la structure
+            $validation_errors = $this->validate_template_structure($template_data);
+            if (!empty($validation_errors)) {
+                // Log les erreurs pour debug
+                error_log('PDF Builder Template Validation Errors for ID ' . $template_id . ': ' . implode(', ', $validation_errors));
+                // Ajouter les propriétés manquantes par défaut pour la compatibilité
+                if (!isset($template_data['version'])) {
+                    $template_data['version'] = '1.0.0';
+                }
+                if (!isset($template_data['canvasWidth'])) {
+                    $template_data['canvasWidth'] = 794; // A4 width
+                }
+                if (!isset($template_data['canvasHeight'])) {
+                    $template_data['canvasHeight'] = 1123; // A4 height
+                }
+                if (!isset($template_data['elements'])) {
+                    $template_data['elements'] = [];
+                }
+            }
 
-        // Analyse du contenu
-        $element_count = isset($template_data['elements']) ? \count($template_data['elements']) : 0;
+            // Analyse du contenu
+            $element_count = isset($template_data['elements']) ? \count($template_data['elements']) : 0;
 
         // Analyser les types d'éléments
         $element_types = [];
@@ -234,6 +249,10 @@ class PDF_Builder_Template_Manager
             'element_types' => $element_types
             )
         );
+        } catch (Exception $e) {
+            error_log('PDF Builder Template Load Error: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+        }
     }
 
     /**

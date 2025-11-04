@@ -533,7 +533,11 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
             debugLog('✅ [LOAD TEMPLATE] Template chargé avec succès:', data.data);
             dispatch({
               type: 'LOAD_TEMPLATE',
-              payload: data.data
+              payload: {
+                ...data.data.template,
+                id: templateId,
+                name: data.data.name
+              }
             });
           } else {
             debugError('❌ [LOAD TEMPLATE] Erreur lors du chargement:', data.data?.error || 'Erreur inconnue');
