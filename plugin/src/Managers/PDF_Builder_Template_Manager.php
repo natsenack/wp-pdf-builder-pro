@@ -847,7 +847,7 @@ class PDF_Builder_Template_Manager
      * @param string $template_name Nom du template
      * @return string URL de l'image de prévisualisation
      */
-    private function get_template_preview_url($template_name)
+    public function get_template_preview_url($template_name)
     {
         // URL codée en dur qui fonctionne avec cache-busting
         $cache_bust = time();
