@@ -504,15 +504,25 @@ class PreviewImageAPI {
             // GeneratorManager peut retourner :
             // - true/false pour les générateurs simples
             // - array avec 'success' => true/false pour les générateurs complexes
+            error_log('[PDF Preview] Raw result from GeneratorManager: ' . json_encode($result));
+            error_log('[PDF Preview] Result type: ' . gettype($result));
+
             $generation_successful = false;
 
             if (is_array($result)) {
                 $generation_successful = isset($result['success']) ? $result['success'] : true;
+                error_log('[PDF Preview] Array result detected, success: ' . ($generation_successful ? 'true' : 'false'));
             } elseif (is_bool($result)) {
                 $generation_successful = $result;
+                error_log('[PDF Preview] Boolean result: ' . ($result ? 'true' : 'false'));
             } elseif ($result) {
                 $generation_successful = true; // Valeur truthy
+                error_log('[PDF Preview] Truthy result detected');
+            } else {
+                error_log('[PDF Preview] Falsy result detected');
             }
+
+            error_log('[PDF Preview] Final generation_successful: ' . ($generation_successful ? 'true' : 'false'));
 
             if (!$generation_successful) {
                 throw new Exception('Image generation failed: All generators failed');
