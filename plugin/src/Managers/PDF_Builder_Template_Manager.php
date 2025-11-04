@@ -830,8 +830,9 @@ class PDF_Builder_Template_Manager
      */
     private function get_template_preview_url($template_name)
     {
-        // URL codée en dur qui fonctionne
-        return "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg";
+        // URL codée en dur qui fonctionne avec cache-busting
+        $cache_bust = time();
+        return "https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/" . $template_name . "-preview.svg?v=" . $cache_bust;
     }
 
     /**
