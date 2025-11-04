@@ -1266,6 +1266,11 @@ class PDF_Builder_Admin {
             $templates = $template_manager->get_builtin_templates();
             error_log("PDF Builder Debug - ajax_get_builtin_templates found " . count($templates) . " templates");
 
+            // Ajouter l'URL de prévisualisation à chaque template
+            foreach ($templates as &$template) {
+                $template['preview_url'] = $template_manager->get_template_preview_url($template['name']);
+            }
+
             wp_send_json_success([
                 'templates' => $templates
             ]);
