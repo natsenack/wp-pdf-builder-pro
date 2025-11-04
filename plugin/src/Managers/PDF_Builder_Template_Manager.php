@@ -830,8 +830,11 @@ class PDF_Builder_Template_Manager
      */
     private function get_template_preview_url($template_name)
     {
-        // Utiliser plugins_url() correctement pour générer l'URL des images SVG
-        return plugins_url('assets/images/templates/' . $template_name . '-preview.svg', dirname(dirname(__FILE__)));
+        // Debug: Voir quelle URL est générée
+        $url = plugins_url('assets/images/templates/' . $template_name . '-preview.svg', dirname(dirname(__FILE__)));
+        error_log("PDF Builder Debug - Template: $template_name, Generated URL: $url");
+
+        return $url;
     }
 
     /**
