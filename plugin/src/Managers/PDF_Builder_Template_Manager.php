@@ -665,7 +665,18 @@ class PDF_Builder_Template_Manager
 
         error_log('[PDF Builder] load_predefined_template - JSON decoded successfully, keys: ' . implode(', ', array_keys($template_data)));
 
-        // Validation de la structure
+        // Normaliser la structure : si les propriétés sont dans un sous-objet 'template', les remonter au niveau racine
+        if (isset($template_data['template']) && is_array($template_data['template'])) {
+            error_log('[PDF Builder] load_predefined_template - Normalizing template structure from nested format');
+            $nested_template = $template_data['template'];
+            unset($template_data['template']); // Supprimer l'objet imbriqué
+
+            // Fusionner les propriétés du template imbriqué vers le niveau racine
+            $template_data = array_merge($nested_template, $template_data);
+            error_log('[PDF Builder] load_predefined_template - After normalization, keys: ' . implode(', ', array_keys($template_data)));
+        }
+
+        error_log('[PDF Builder] load_predefined_template - Validation starting...');
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
             error_log('[PDF Builder] load_predefined_template - Validation failed for ' . $file_path . ': ' . implode(', ', $validation_errors));
