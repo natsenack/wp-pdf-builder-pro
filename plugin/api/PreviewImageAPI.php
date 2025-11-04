@@ -501,7 +501,20 @@ class PreviewImageAPI {
             );
 
             // Vérifier si la génération a réussi
-            if (!$result || (is_array($result) && isset($result['success']) && $result['success'] === false)) {
+            // GeneratorManager peut retourner :
+            // - true/false pour les générateurs simples
+            // - array avec 'success' => true/false pour les générateurs complexes
+            $generation_successful = false;
+
+            if (is_array($result)) {
+                $generation_successful = isset($result['success']) ? $result['success'] : true;
+            } elseif (is_bool($result)) {
+                $generation_successful = $result;
+            } elseif ($result) {
+                $generation_successful = true; // Valeur truthy
+            }
+
+            if (!$generation_successful) {
                 throw new Exception('Image generation failed: All generators failed');
             }
 
@@ -511,6 +524,13 @@ class PreviewImageAPI {
                 file_put_contents($cache_file, $result['data']);
             }
 
+            // Retourner l'URL de l'image
+            // Si le générateur a retourné une URL complète, l'utiliser
+            if (is_array($result) && isset($result['image_url'])) {
+                return $result['image_url'];
+            }
+
+            // Sinon, construire l'URL du fichier cache
             return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
 
         } catch (Exception $e) {
