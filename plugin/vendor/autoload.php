@@ -17,6 +17,17 @@ if (!function_exists('wp_pdf_builder_dompdf_autoload')) {
             }
         }
 
+        // Masterminds\HTML5 classes
+        if (strpos($class, 'Masterminds\\') === 0) {
+            $classPath = str_replace('Masterminds\\', '', $class);
+            $filePath = __DIR__ . '/masterminds/html5/' . str_replace('\\', '/', $classPath) . '.php';
+
+            if (file_exists($filePath)) {
+                require_once $filePath;
+                return true;
+            }
+        }
+
         // Also try Cpdf class specifically
         if ($class === 'Dompdf\Cpdf' || $class === 'Cpdf') {
             $filePath = __DIR__ . '/dompdf/lib/Cpdf.php';
@@ -39,6 +50,7 @@ if (!function_exists('wp_pdf_builder_dompdf_autoload')) {
 
 // Pre-load critical DomPDF classes
 $criticalClasses = [
+    __DIR__ . '/masterminds/html5/HTML5.php',
     __DIR__ . '/dompdf/src/Dompdf.php',
     __DIR__ . '/dompdf/src/Options.php',
     __DIR__ . '/dompdf/lib/Cpdf.php',
