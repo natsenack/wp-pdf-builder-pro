@@ -5048,10 +5048,26 @@ class PDF_Builder_Admin {
             ]
         ]);
 
+        // Check for builtin template parameter
+        $builtin_template_data = null;
+        if (isset($_GET['builtin_template'])) {
+            $template_id = sanitize_text_field($_GET['builtin_template']);
+            $file_path = plugin_dir_path(dirname(__FILE__)) . "templates/builtin/{$template_id}.json";
+            
+            if (file_exists($file_path)) {
+                $content = file_get_contents($file_path);
+                $template_data = json_decode($content, true);
+                if ($template_data) {
+                    $builtin_template_data = $template_data;
+                }
+            }
+        }
+
         // Localize script with data
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
+            'builtinTemplate' => $builtin_template_data,
             'strings' => [
                 'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
                 'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
