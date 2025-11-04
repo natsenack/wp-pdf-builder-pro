@@ -90,22 +90,59 @@ class PDF_Builder_Template_Manager
             $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : '';
             $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
 
+            // Si template_data n'est pas fourni, construire à partir d'elements et canvas séparés
+            if (empty($template_data)) {
+                $elements = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '[]';
+                $canvas = isset($_POST['canvas']) ? \wp_unslash($_POST['canvas']) : '{}';
+
+                // Validation du JSON pour elements
+                $elements_data = \json_decode($elements, true);
+                if (\json_last_error() !== JSON_ERROR_NONE) {
+                    \wp_send_json_error('Données elements JSON invalides: ' . \json_last_error_msg());
+                    return;
+                }
+
+                // Validation du JSON pour canvas
+                $canvas_data = \json_decode($canvas, true);
+                if (\json_last_error() !== JSON_ERROR_NONE) {
+                    \wp_send_json_error('Données canvas JSON invalides: ' . \json_last_error_msg());
+                    return;
+                }
+
+                // Construction de la structure complète du template
+                $template_structure = [
+                    'elements' => $elements_data,
+                    'canvasWidth' => isset($canvas_data['width']) ? $canvas_data['width'] : 794,
+                    'canvasHeight' => isset($canvas_data['height']) ? $canvas_data['height'] : 1123,
+                    'version' => '1.0'
+                ];
+
+                $template_data = \wp_json_encode($template_structure);
+                if ($template_data === false) {
+                    \wp_send_json_error('Erreur lors de l\'encodage des données template');
+                    return;
+                }
+            }
+
             // Validation du JSON
             $decoded_test = \json_decode($template_data, true);
             if (\json_last_error() !== JSON_ERROR_NONE) {
                 $json_error = \json_last_error_msg();
                 \wp_send_json_error('Données JSON invalides: ' . $json_error);
+                return;
             }
 
             // Validation de la structure du template
             $validation_errors = $this->validate_template_structure($decoded_test);
             if (!empty($validation_errors)) {
                 \wp_send_json_error('Structure invalide: ' . \implode(', ', $validation_errors));
+                return;
             }
 
             // Validation des données obligatoires
             if (empty($template_data) || empty($template_name)) {
                 \wp_send_json_error('Données template ou nom manquant');
+                return;
             }
 
             // Sauvegarde en utilisant les posts WordPress
