@@ -75,26 +75,21 @@ if (!defined('ABSPATH')) {
                     card.className = 'predef-card';
                     card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:200px;';
                     
-                    // Image de prévisualisation
+                    // Image de prévisualisation avec data URI SVG
                     var imgContainer = document.createElement('div');
                     imgContainer.style = 'height:120px;background:#f8f9fa;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden;';
                     
-                    if (t.previewImage && t.previewImage !== '') {
-                        var img = document.createElement('img');
-                        img.src = t.previewImage;
-                        img.style = 'max-width:100%;max-height:100%;object-fit:contain;';
-                        img.onload = function() {
-                            // Image chargée avec succès
-                        };
-                        img.onerror = function() { 
-                            // Image non trouvée, afficher placeholder
-                            imgContainer.innerHTML = '<div style="color:#999;font-size:12px;text-align:center;">📄<br>Aperçu<br>non disponible</div>';
-                        };
-                        imgContainer.appendChild(img);
-                    } else {
-                        // Pas d'URL d'aperçu, afficher placeholder
-                        imgContainer.innerHTML = '<div style="color:#999;font-size:12px;text-align:center;">📄<br>Aperçu<br>non disponible</div>';
-                    }
+                    // Créer un SVG data URI simple avec le nom du template
+                    var svgData = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120">' +
+                        '<rect width="200" height="120" fill="#f8f9fa" stroke="#dee2e6"/>' +
+                        '<text x="100" y="50" text-anchor="middle" font-family="Arial" font-size="14" fill="#6c757d">' + (t.name || 'Template') + '</text>' +
+                        '<text x="100" y="70" text-anchor="middle" font-family="Arial" font-size="12" fill="#6c757d">Aperçu</text>' +
+                        '</svg>';
+                    
+                    var img = document.createElement('img');
+                    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+                    img.style = 'max-width:100%;max-height:100%;object-fit:contain;';
+                    imgContainer.appendChild(img);
                     
                     card.appendChild(imgContainer);
                     
