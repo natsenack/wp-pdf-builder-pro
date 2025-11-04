@@ -195,7 +195,7 @@ if ($Mode -eq "test") {
     if ($pluginModified -contains "plugin/vendor.zip") {
         Write-Host "`n3.5 Décompression du vendor sur le serveur..." -ForegroundColor Magenta
         try {
-            $extractCommand = "cd $FtpPath && unzip -q -o vendor.zip && rm vendor.zip"
+            $extractCommand = "cd /var/www/nats/data/www/threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro && unzip -q -o vendor.zip && rm vendor.zip"
             $extractResult = ssh nats@65.108.242.181 $extractCommand 2>&1
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "   Vendor décompressé sur le serveur" -ForegroundColor Green
