@@ -1,4 +1,72 @@
 <svg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'>
-  <rect width='300' height='200' fill='#007cba'/>
-  <text x='150' y='110' font-family='Arial' font-size='24' fill='white' text-anchor='middle'>MODERN</text>
+  <defs>
+    <linearGradient id='modernHeader' x1='0%' y1='0%' x2='0%' y2='100%'>
+      <stop offset='0%' style='stop-color:#007cba;stop-opacity:1' />
+      <stop offset='100%' style='stop-color:#0056b3;stop-opacity:1' />
+    </linearGradient>
+  </defs>
+  
+  <!-- Fond blanc -->
+  <rect width='300' height='200' fill='#ffffff'/>
+  
+  <!-- En-tête entreprise -->
+  <text x='15' y='12' font-family='Arial, sans-serif' font-size='8' font-weight='bold' fill='#212529'>MonEntreprise</text>
+  <text x='15' y='20' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>25 avenue Principale</text>
+  <text x='15' y='25' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>SIRET: 123 456 789</text>
+  
+  <!-- Titre FACTURE -->
+  <text x='270' y='15' font-family='Arial, sans-serif' font-size='14' font-weight='bold' fill='#007cba' text-anchor='end'>FACTURE</text>
+  
+  <!-- Logo placeholder -->
+  <circle cx='270' cy='28' r='8' fill='#007cba' opacity='0.2'/>
+  
+  <!-- Ligne de séparation -->
+  <line x1='15' y1='32' x2='285' y2='32' stroke='#000' stroke-width='1.5'/>
+  
+  <!-- Infos client -->
+  <text x='15' y='42' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#212529'>CLIENT</text>
+  <text x='15' y='48' font-family='Arial, sans-serif' font-size='5' fill='#495057'>Marie Dupont</text>
+  <text x='15' y='53' font-family='Arial, sans-serif' font-size='5' fill='#495057'>15 rue des Liles</text>
+  
+  <!-- Numéro commande -->
+  <text x='220' y='42' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#212529'>N° CMD</text>
+  <text x='220' y='48' font-family='Arial, sans-serif' font-size='5' fill='#495057'>CMD-001</text>
+  <text x='220' y='53' font-family='Arial, sans-serif' font-size='5' fill='#495057'>04/11/2025</text>
+  
+  <!-- Tableau produits - En-tête -->
+  <rect x='15' y='58' width='270' height='10' fill='#007cba'/>
+  <text x='20' y='65' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='white'>Produit</text>
+  <text x='210' y='65' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='white' text-anchor='end'>Qté</text>
+  <text x='245' y='65' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='white' text-anchor='end'>Prix</text>
+  <text x='280' y='65' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='white' text-anchor='end'>Total</text>
+  
+  <!-- Lignes produits -->
+  <line x1='15' y1='68' x2='285' y2='68' stroke='#e0e0e0' stroke-width='0.5'/>
+  <text x='20' y='75' font-family='Arial, sans-serif' font-size='5' fill='#495057'>T-shirt Premium</text>
+  <text x='210' y='75' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>2</text>
+  <text x='245' y='75' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>29.99€</text>
+  <text x='280' y='75' font-family='Arial, sans-serif' font-size='5' fill='#007cba' font-weight='bold' text-anchor='end'>59.98€</text>
+  
+  <line x1='15' y1='78' x2='285' y2='78' stroke='#e0e0e0' stroke-width='0.5'/>
+  <text x='20' y='85' font-family='Arial, sans-serif' font-size='5' fill='#495057'>Jean Slim Fit</text>
+  <text x='210' y='85' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>1</text>
+  <text x='245' y='85' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>89.99€</text>
+  <text x='280' y='85' font-family='Arial, sans-serif' font-size='5' fill='#007cba' font-weight='bold' text-anchor='end'>89.99€</text>
+  
+  <!-- Totaux -->
+  <line x1='15' y1='92' x2='285' y2='92' stroke='#007cba' stroke-width='1'/>
+  <text x='245' y='100' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>Sous-total:</text>
+  <text x='280' y='100' font-family='Arial, sans-serif' font-size='5' fill='#495057' text-anchor='end'>149.97€</text>
+  
+  <text x='245' y='108' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#007cba' text-anchor='end'>TOTAL:</text>
+  <text x='280' y='108' font-family='Arial, sans-serif' font-size='7' fill='#007cba' font-weight='bold' text-anchor='end'>149.97€</text>
+  
+  <!-- Signature zone -->
+  <line x1='15' y1='135' x2='150' y2='135' stroke='#e0e0e0' stroke-width='0.5'/>
+  <text x='15' y='142' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>Signature client</text>
+  
+  <!-- Pied de page -->
+  <line x1='15' y1='157' x2='285' y2='157' stroke='#ccc' stroke-width='0.5'/>
+  <text x='150' y='168' font-family='Arial, sans-serif' font-size='4' fill='#adb5bd' text-anchor='middle'>MonEntreprise • contact@monentreprise.com</text>
+  <text x='150' y='175' font-family='Arial, sans-serif' font-size='4' fill='#adb5bd' text-anchor='middle'>SIRET: 123 456 789 • TVA: FR 12 345 678 901</text>
 </svg>
