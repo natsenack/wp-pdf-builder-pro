@@ -672,7 +672,10 @@ class PDF_Builder_Template_Manager
      */
     public function get_predefined_template($template_name)
     {
-        $predefined_dir = plugin_dir_path(dirname(__FILE__)) . '../../templates/predefined/';
+        // Chemin vers le dossier des templates prédéfinis
+        // Depuis src/Managers/, remonter vers la racine du plugin puis aller dans templates/predefined/
+        $plugin_root = dirname(dirname(dirname(__FILE__)));
+        $predefined_dir = $plugin_root . '/templates/predefined/';
         $file_path = $predefined_dir . $template_name . '.json';
 
         return $this->load_predefined_template($file_path);
