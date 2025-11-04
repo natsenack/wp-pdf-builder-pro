@@ -119,13 +119,18 @@ class PDFGenerator extends BaseGenerator {
         // Tentative génération avec DomPDF
         if ($this->dompdf_available) {
             try {
+                $this->logInfo("Attempting DomPDF generation to file: {$output_file}");
                 $this->generateWithDomPDFToFile($output_type, $output_file);
                 $this->logPerformanceMetrics();
+                $this->logInfo("DomPDF generation succeeded, returning true");
                 return true;
             } catch (\Exception $e) {
                 $this->logWarning("DomPDF generation to file failed: " . $e->getMessage());
+                $this->logWarning("Full exception: " . $e->getTraceAsString());
                 $this->performance_metrics['fallback_used'] = true;
             }
+        } else {
+            $this->logWarning("DomPDF not available, using fallback");
         }
 
         // Fallback vers Canvas
@@ -205,10 +210,12 @@ class PDFGenerator extends BaseGenerator {
             // Chargement du HTML
             $this->logInfo("Loading HTML into DomPDF (" . strlen($this->generated_html) . " chars)");
             $this->dompdf->loadHtml($this->generated_html);
+            $this->logInfo("HTML loaded successfully");
 
             // Rendu du PDF
             $this->logInfo("Rendering PDF with DomPDF");
             $this->dompdf->render();
+            $this->logInfo("PDF rendering completed");
 
             $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
             $this->logInfo("PDF rendering completed in " . round($this->performance_metrics['pdf_generation_time'], 3) . "s");
@@ -232,6 +239,7 @@ class PDFGenerator extends BaseGenerator {
 
                 case 'png':
                 case 'jpg':
+                    $this->logInfo("Converting PDF to image format: {$output_type}");
                     $image_data = $this->convertPDFToImage($output_type);
                     $this->logInfo("Image data size: " . strlen($image_data) . " bytes");
                     file_put_contents($output_file, $image_data);
@@ -244,7 +252,8 @@ class PDFGenerator extends BaseGenerator {
             $this->logInfo("DomPDF generation to file completed successfully: {$output_file}");
 
         } catch (\Exception $e) {
-            $this->logError("DomPDF generation failed: " . $e->getMessage());
+            $this->logError("DomPDF generation failed at step: " . $e->getMessage());
+            $this->logError("Stack trace: " . $e->getTraceAsString());
             throw $e;
         }
     }
@@ -274,13 +283,22 @@ class PDFGenerator extends BaseGenerator {
      * @return string Données de l'image
      */
     private function convertPDFToImage(string $format): string {
+        $this->logInfo("Starting PDF to image conversion, format: {$format}");
+
+        // Vérification des extensions disponibles
+        $imagick_available = extension_loaded('imagick');
+        $gd_available = function_exists('imagecreatetruecolor');
+
+        $this->logInfo("Extensions available - Imagick: " . ($imagick_available ? 'YES' : 'NO') . ", GD: " . ($gd_available ? 'YES' : 'NO'));
+
         // Utilisation de Imagick si disponible pour la conversion
-        if (extension_loaded('imagick')) {
+        if ($imagick_available) {
+            $this->logInfo("Using Imagick for PDF to image conversion");
             return $this->convertWithImagick($format);
         }
 
         // Fallback : génération d'une image placeholder avec message
-        $this->logWarning("Imagick not available for PDF to image conversion");
+        $this->logWarning("Imagick not available for PDF to image conversion, using GD placeholder");
         return $this->generatePlaceholderImage($format);
     }
 
@@ -291,13 +309,25 @@ class PDFGenerator extends BaseGenerator {
      * @return string Données de l'image
      */
     private function convertWithImagick(string $format): string {
+        $this->logInfo("Starting Imagick conversion process");
+
         try {
+            $this->logInfo("Creating Imagick instance");
             $imagick = new \Imagick();
-            $imagick->readImageBlob($this->dompdf->output());
+
+            $this->logInfo("Getting PDF data from DomPDF");
+            $pdf_data = $this->dompdf->output();
+            $this->logInfo("PDF data size: " . strlen($pdf_data) . " bytes");
+
+            $this->logInfo("Reading PDF blob into Imagick");
+            $imagick->readImageBlob($pdf_data);
+
+            $this->logInfo("Setting image format to: {$format}");
             $imagick->setImageFormat($format);
 
             // Configuration qualité
             if ($format === 'jpg') {
+                $this->logInfo("Configuring JPEG compression");
                 $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
                 $imagick->setImageCompressionQuality($this->config['quality'] ?? 90);
             }
@@ -306,14 +336,24 @@ class PDFGenerator extends BaseGenerator {
             $maxWidth = $this->config['max_width'] ?? 1200;
             $maxHeight = $this->config['max_height'] ?? 1600;
 
-            if ($imagick->getImageWidth() > $maxWidth || $imagick->getImageHeight() > $maxHeight) {
+            $currentWidth = $imagick->getImageWidth();
+            $currentHeight = $imagick->getImageHeight();
+            $this->logInfo("Image dimensions: {$currentWidth}x{$currentHeight}, max: {$maxWidth}x{$maxHeight}");
+
+            if ($currentWidth > $maxWidth || $currentHeight > $maxHeight) {
+                $this->logInfo("Resizing image to fit within {$maxWidth}x{$maxHeight}");
                 $imagick->thumbnailImage($maxWidth, $maxHeight, true);
             }
 
-            return $imagick->getImageBlob();
+            $this->logInfo("Getting final image blob");
+            $result = $imagick->getImageBlob();
+            $this->logInfo("Imagick conversion completed successfully, result size: " . strlen($result) . " bytes");
+
+            return $result;
 
         } catch (\Exception $e) {
             $this->logError("Imagick conversion failed: " . $e->getMessage());
+            $this->logError("Imagick exception trace: " . $e->getTraceAsString());
             return $this->generatePlaceholderImage($format);
         }
     }
@@ -325,12 +365,16 @@ class PDFGenerator extends BaseGenerator {
      * @return string Données de l'image placeholder
      */
     private function generatePlaceholderImage(string $format): string {
+        $this->logWarning("Generating placeholder image for format: {$format} - this indicates PDF to image conversion failed");
+
         // Création d'une image simple avec GD si disponible
         if (function_exists('imagecreatetruecolor')) {
+            $this->logInfo("Using GD to generate placeholder image");
             return $this->generatePlaceholderWithGD($format);
         }
 
         // Retour d'une réponse JSON avec les informations d'erreur
+        $this->logError("GD not available, returning JSON error response");
         return json_encode([
             'error' => true,
             'message' => 'Image conversion not available. Please use PDF output.',
@@ -345,6 +389,8 @@ class PDFGenerator extends BaseGenerator {
      * @return string Données de l'image
      */
     private function generatePlaceholderWithGD(string $format): string {
+        $this->logInfo("Generating GD placeholder image - this confirms PDF to image conversion failed and we're using fallback");
+
         $width = 800;
         $height = 600;
 
