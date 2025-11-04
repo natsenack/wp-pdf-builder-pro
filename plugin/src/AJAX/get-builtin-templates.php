@@ -48,6 +48,17 @@ function pdf_builder_ajax_get_builtin_templates_handler() {
             wp_send_json_error('Erreur interne: Fichier Template Manager non trouvé');
         }
 
+        // Définir la constante si elle n'existe pas
+        if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+            // Calculer le plugin dir depuis le chemin actuel
+            // __FILE__ = /path/to/.../plugin/src/AJAX/get-builtin-templates.php
+            // dirname(__FILE__) = /path/to/.../plugin/src/AJAX
+            // dirname(dirname(dirname(__FILE__))) = /path/to/.../plugin
+            $plugin_root = dirname(dirname(dirname($ajax_file)));
+            define('PDF_BUILDER_PLUGIN_DIR', $plugin_root . '/');
+            error_log('PDF Builder AJAX Handler - Defined PDF_BUILDER_PLUGIN_DIR: ' . PDF_BUILDER_PLUGIN_DIR);
+        }
+
         require_once $template_manager_file;
 
         if (!class_exists('PDF_Builder_Template_Manager')) {
