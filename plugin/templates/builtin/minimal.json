@@ -1,216 +1,220 @@
 {
-  "version": "1.0",
-  "name": "Minimal",
-  "description": "Template minimaliste avec un design épuré et des éléments essentiels",
-  "category": "general",
-  "features": ["Minimaliste", "Épuré", "Simple"],
-  "canvasWidth": 595,
-  "canvasHeight": 842,
-  "elements": [
-    {
-      "id": "company-name",
-      "type": "text",
-      "x": 50,
-      "y": 80,
-      "width": 495,
-      "height": 30,
-      "properties": {
-        "text": "[COMPANY_NAME]",
-        "fontSize": 24,
-        "fontFamily": "Helvetica",
-        "fontWeight": "light",
-        "color": "#000000",
-        "textAlign": "left"
-      }
-    },
-    {
-      "id": "invoice-title",
-      "type": "text",
-      "x": 50,
-      "y": 130,
-      "width": 495,
-      "height": 25,
-      "properties": {
-        "text": "Facture",
-        "fontSize": 18,
-        "fontFamily": "Helvetica",
-        "fontWeight": "normal",
-        "color": "#666666",
-        "textAlign": "left"
-      }
-    },
-    {
-      "id": "invoice-number",
-      "type": "text",
-      "x": 450,
-      "y": 130,
-      "width": 95,
-      "height": 25,
-      "properties": {
-        "text": "#[ORDER_NUMBER]",
-        "fontSize": 18,
-        "fontFamily": "Helvetica",
-        "fontWeight": "normal",
-        "color": "#000000",
-        "textAlign": "right"
-      }
-    },
-    {
-      "id": "invoice-date",
-      "type": "text",
-      "x": 450,
-      "y": 155,
-      "width": 95,
-      "height": 20,
-      "properties": {
-        "text": "[ORDER_DATE]",
-        "fontSize": 12,
-        "fontFamily": "Helvetica",
-        "color": "#666666",
-        "textAlign": "right"
-      }
-    },
-    {
-      "id": "divider-line",
-      "type": "line",
-      "x": 50,
-      "y": 200,
-      "width": 495,
-      "height": 1,
-      "properties": {
-        "strokeColor": "#cccccc",
-        "strokeWidth": 1
-      }
-    },
-    {
-      "id": "bill-to-label",
-      "type": "text",
-      "x": 50,
-      "y": 230,
-      "width": 200,
-      "height": 20,
-      "properties": {
-        "text": "Facturé à",
-        "fontSize": 12,
-        "fontFamily": "Helvetica",
-        "fontWeight": "normal",
-        "color": "#666666",
-        "textAlign": "left"
-      }
-    },
-    {
-      "id": "billing-address",
-      "type": "text",
-      "x": 50,
-      "y": 250,
-      "width": 200,
-      "height": 80,
-      "properties": {
-        "text": "[CUSTOMER_NAME]\n[CUSTOMER_BILLING_ADDRESS]",
-        "fontSize": 11,
-        "fontFamily": "Helvetica",
-        "color": "#000000",
-        "lineHeight": 1.3
-      }
-    },
-    {
-      "id": "ship-to-label",
-      "type": "text",
-      "x": 320,
-      "y": 230,
-      "width": 225,
-      "height": 20,
-      "properties": {
-        "text": "Livré à",
-        "fontSize": 12,
-        "fontFamily": "Helvetica",
-        "fontWeight": "normal",
-        "color": "#666666",
-        "textAlign": "right"
-      }
-    },
-    {
-      "id": "shipping-address",
-      "type": "text",
-      "x": 320,
-      "y": 250,
-      "width": 225,
-      "height": 80,
-      "properties": {
-        "text": "[CUSTOMER_NAME]\n[CUSTOMER_SHIPPING_ADDRESS]",
-        "fontSize": 11,
-        "fontFamily": "Helvetica",
-        "color": "#000000",
-        "textAlign": "right",
-        "lineHeight": 1.3
-      }
-    },
-    {
-      "id": "items-section",
-      "type": "product_table",
-      "x": 50,
-      "y": 360,
-      "width": 495,
-      "height": 250,
-      "properties": {
-        "data": "[ORDER_ITEMS]",
-        "fontSize": 11,
-        "fontFamily": "Helvetica",
-        "color": "#000000",
-        "borderColor": "#ffffff",
-        "showHeaders": false,
-        "lineHeight": 2.0
-      }
-    },
-    {
-      "id": "totals-section",
-      "type": "text",
-      "x": 350,
-      "y": 640,
-      "width": 195,
-      "height": 80,
-      "properties": {
-        "text": "Sous-total\t[ORDER_SUBTOTAL]\nTVA\t[ORDER_TAX]\nLivraison\t[ORDER_SHIPPING]\nTotal\t[ORDER_TOTAL]",
-        "fontSize": 11,
-        "fontFamily": "Helvetica",
-        "color": "#000000",
-        "textAlign": "right",
-        "lineHeight": 1.8
-      }
-    },
-    {
-      "id": "footer-divider",
-      "type": "line",
-      "x": 50,
-      "y": 750,
-      "width": 495,
-      "height": 1,
-      "properties": {
-        "strokeColor": "#cccccc",
-        "strokeWidth": 1
-      }
-    },
-    {
-      "id": "footer-contact",
-      "type": "text",
-      "x": 50,
-      "y": 770,
-      "width": 495,
-      "height": 40,
-      "properties": {
-        "text": "[COMPANY_EMAIL] • [COMPANY_PHONE] • [COMPANY_WEBSITE]",
-        "fontSize": 10,
-        "fontFamily": "Helvetica",
-        "color": "#666666",
-        "textAlign": "center",
-        "lineHeight": 1.4
-      }
-    }
-  ],
-  "metadata": {
+    "version": "1.0",
     "name": "Minimal",
-    "description": "Template minimaliste épuré et moderne",
-    "category": "modern",
-    "preview": "minimal-preview.png"
-  }
+    "description": "Template minimaliste avec un design épuré et des éléments essentiels",
+    "category": "general",
+    "features": [
+        "Minimaliste",
+        "Épuré",
+        "Simple"
+    ],
+    "canvasWidth": 794,
+    "canvasHeight": 1123,
+    "elements": [
+        {
+            "id": "company-name",
+            "type": "text",
+            "x": 67,
+            "y": 107,
+            "width": 661,
+            "height": 40,
+            "properties": {
+                "text": "[COMPANY_NAME]",
+                "fontSize": 26,
+                "fontFamily": "Helvetica",
+                "fontWeight": "light",
+                "color": "#000000",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "invoice-title",
+            "type": "text",
+            "x": 67,
+            "y": 173,
+            "width": 661,
+            "height": 33,
+            "properties": {
+                "text": "Facture",
+                "fontSize": 19,
+                "fontFamily": "Helvetica",
+                "fontWeight": "normal",
+                "color": "#666666",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "invoice-number",
+            "type": "text",
+            "x": 601,
+            "y": 173,
+            "width": 127,
+            "height": 33,
+            "properties": {
+                "text": "#[ORDER_NUMBER]",
+                "fontSize": 19,
+                "fontFamily": "Helvetica",
+                "fontWeight": "normal",
+                "color": "#000000",
+                "textAlign": "right"
+            }
+        },
+        {
+            "id": "invoice-date",
+            "type": "text",
+            "x": 601,
+            "y": 207,
+            "width": 127,
+            "height": 27,
+            "properties": {
+                "text": "[ORDER_DATE]",
+                "fontSize": 13,
+                "fontFamily": "Helvetica",
+                "color": "#666666",
+                "textAlign": "right"
+            }
+        },
+        {
+            "id": "divider-line",
+            "type": "line",
+            "x": 67,
+            "y": 267,
+            "width": 661,
+            "height": 1,
+            "properties": {
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "bill-to-label",
+            "type": "text",
+            "x": 67,
+            "y": 307,
+            "width": 267,
+            "height": 27,
+            "properties": {
+                "text": "Facturé à",
+                "fontSize": 13,
+                "fontFamily": "Helvetica",
+                "fontWeight": "normal",
+                "color": "#666666",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "billing-address",
+            "type": "text",
+            "x": 67,
+            "y": 333,
+            "width": 267,
+            "height": 107,
+            "properties": {
+                "text": "[CUSTOMER_NAME]\n[CUSTOMER_BILLING_ADDRESS]",
+                "fontSize": 12,
+                "fontFamily": "Helvetica",
+                "color": "#000000",
+                "lineHeight": 1.3
+            }
+        },
+        {
+            "id": "ship-to-label",
+            "type": "text",
+            "x": 427,
+            "y": 307,
+            "width": 300,
+            "height": 27,
+            "properties": {
+                "text": "Livré à",
+                "fontSize": 13,
+                "fontFamily": "Helvetica",
+                "fontWeight": "normal",
+                "color": "#666666",
+                "textAlign": "right"
+            }
+        },
+        {
+            "id": "shipping-address",
+            "type": "text",
+            "x": 427,
+            "y": 333,
+            "width": 300,
+            "height": 107,
+            "properties": {
+                "text": "[CUSTOMER_NAME]\n[CUSTOMER_SHIPPING_ADDRESS]",
+                "fontSize": 12,
+                "fontFamily": "Helvetica",
+                "color": "#000000",
+                "textAlign": "right",
+                "lineHeight": 1.3
+            }
+        },
+        {
+            "id": "items-section",
+            "type": "product_table",
+            "x": 67,
+            "y": 480,
+            "width": 661,
+            "height": 333,
+            "properties": {
+                "data": "[ORDER_ITEMS]",
+                "fontSize": 12,
+                "fontFamily": "Helvetica",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "showHeaders": false,
+                "lineHeight": 2
+            }
+        },
+        {
+            "id": "totals-section",
+            "type": "text",
+            "x": 467,
+            "y": 854,
+            "width": 260,
+            "height": 107,
+            "properties": {
+                "text": "Sous-total\t[ORDER_SUBTOTAL]\nTVA\t[ORDER_TAX]\nLivraison\t[ORDER_SHIPPING]\nTotal\t[ORDER_TOTAL]",
+                "fontSize": 12,
+                "fontFamily": "Helvetica",
+                "color": "#000000",
+                "textAlign": "right",
+                "lineHeight": 1.8
+            }
+        },
+        {
+            "id": "footer-divider",
+            "type": "line",
+            "x": 67,
+            "y": 1000,
+            "width": 661,
+            "height": 1,
+            "properties": {
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "footer-contact",
+            "type": "text",
+            "x": 67,
+            "y": 1027,
+            "width": 661,
+            "height": 53,
+            "properties": {
+                "text": "[COMPANY_EMAIL] • [COMPANY_PHONE] • [COMPANY_WEBSITE]",
+                "fontSize": 11,
+                "fontFamily": "Helvetica",
+                "color": "#666666",
+                "textAlign": "center",
+                "lineHeight": 1.4
+            }
+        }
+    ],
+    "metadata": {
+        "name": "Minimal",
+        "description": "Template minimaliste épuré et moderne",
+        "category": "modern",
+        "preview": "minimal-preview.png"
+    }
 }
