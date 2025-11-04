@@ -44,93 +44,6 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div id="templates-list" style="margin-top: 20px;">
-            <!-- Section Templates Builtin (Statiques) -->
-            <h3 style="margin: 30px 0 15px 0; color: #23282d; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
-                🎨 Templates Prédéfinis (Statiques)
-            </h3>
-            <p style="color: #666; margin-bottom: 20px;">
-                Choisissez parmi nos templates professionnels statiques. Cliquez sur "Utiliser ce template" pour créer une copie personnalisable.
-            </p>
-
-            <?php
-            // Récupérer les templates builtin
-            $template_manager = $this->get_template_manager();
-            $builtin_templates = $template_manager->get_builtin_templates();
-
-            if (!empty($builtin_templates)) {
-                echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">';
-
-                foreach ($builtin_templates as $template) {
-                    $template_name = isset($template['metadata']['name']) ? $template['metadata']['name'] : basename($template['_metadata']['filename']);
-                    $template_description = isset($template['metadata']['description']) ? $template['metadata']['description'] : 'Template professionnel';
-                    $template_category = isset($template['metadata']['category']) ? $template['metadata']['category'] : 'business';
-                    $preview_url = isset($template['_metadata']['preview_url']) ? $template['_metadata']['preview_url'] : '';
-
-                    // Déterminer l'icône basée sur le nom du template
-                    $icon = '📄'; // Default
-                    if (stripos($template_name, 'Modern') !== false) {
-                        $icon = '🎨';
-                    } elseif (stripos($template_name, 'Classic') !== false) {
-                        $icon = '📜';
-                    } elseif (stripos($template_name, 'Corporate') !== false) {
-                        $icon = '🏢';
-                    } elseif (stripos($template_name, 'Minimal') !== false) {
-                        $icon = '✨';
-                    }
-
-                    // Déterminer la couleur basée sur la catégorie
-                    $category_colors = [
-                        'business' => '#007cba',
-                        'modern' => '#28a745',
-                        'creative' => '#ffc107'
-                    ];
-                    $category_color = isset($category_colors[$template_category]) ? $category_colors[$template_category] : '#6c757d';
-
-                    echo '<div class="template-card builtin-template" style="border: 2px solid ' . $category_color . '; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
-
-                    // Badge "BUILTIN" en haut à droite
-                    echo '<div class="builtin-badge" style="position: absolute; top: 10px; right: 10px; background: ' . $category_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
-                    echo 'Prédéfini';
-                    echo '</div>';
-
-                    // Conteneur pour organiser le contenu de la carte
-                    echo '<div style="display: flex; flex-direction: column; height: 100%;">';
-
-                    echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 20px;">';
-                    if (!empty($preview_url)) {
-                        echo '<div style="width: 100%; height: 120px; background: #f8f9fa; border-radius: 4px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid #dee2e6;">';
-                        echo '<img src="' . esc_url($preview_url) . '" alt="' . esc_attr($template_name) . '" style="max-width: 100%; max-height: 100%; border-radius: 4px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">';
-                        echo '<div style="font-size: 2rem; color: #ccc; display: none;">' . $icon . '</div>';
-                        echo '</div>';
-                    } else {
-                        echo '<div style="font-size: 3rem; margin-bottom: 10px; color: ' . $category_color . ';">' . $icon . '</div>';
-                    }
-                    echo '<h3 style="margin: 0; color: #23282d;">' . esc_html($template_name) . '</h3>';
-                    echo '<p style="color: #666; margin: 5px 0; font-size: 14px;">' . esc_html($template_description) . '</p>';
-                    echo '</div>';
-
-                    echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1;">';
-                    echo '<div>✓ Design professionnel</div>';
-                    echo '<div>✓ Prêt à l\'emploi</div>';
-                    echo '<div>✓ Personnalisable</div>';
-                    echo '<div>✓ Aperçu statique</div>';
-                    echo '</div>';
-
-                    echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 14px;" onclick="installBuiltinTemplate(\'' . $template['_metadata']['filename'] . '\', \'' . addslashes($template_name) . '\')" title="Installer ce template">📥 Utiliser ce template</button>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 14px;" onclick="previewBuiltinTemplate(\'' . $template['_metadata']['filename'] . '\')" title="Aperçu">👁️</button>';
-                    echo '</div>';
-
-                    echo '</div>'; // Fermeture du conteneur flex
-                    echo '</div>';
-                }
-
-                echo '</div>';
-            } else {
-                echo '<p style="color: #666; font-style: italic;">Aucun template prédéfini disponible pour le moment.</p>';
-            }
-            ?>
-
             <!-- Modal Template Gallery -->
             <div id="template-gallery-modal" class="template-gallery-modal" style="display: none;">
                 <div class="template-gallery-overlay" onclick="closeTemplateGallery()"></div>
@@ -786,7 +699,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
 
         templates.forEach(function(template, index) {
-            console.log('Template:', template.name, 'Preview URL:', template.preview_url);
             const features = template.features || [];
             const featuresHtml = features.map(feature =>
                 `<span class="template-gallery-item-feature">${feature}</span>`
