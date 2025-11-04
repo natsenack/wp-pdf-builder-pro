@@ -1256,19 +1256,28 @@ class PDF_Builder_Admin {
                 wp_send_json_error('Sécurité: Nonce invalide');
             }
 
+            error_log('PDF Builder: ajax_get_builtin_templates - Permissions et nonce OK');
+
             // Obtenir le Template Manager
             $template_manager = $this->get_template_manager();
             if (!$template_manager) {
+                error_log('PDF Builder: ajax_get_builtin_templates - Template Manager null');
                 wp_send_json_error('Erreur interne: Template Manager non disponible');
             }
 
+            error_log('PDF Builder: ajax_get_builtin_templates - Template Manager OK, appel get_builtin_templates');
+
             // Récupérer les templates builtin
             $templates = $template_manager->get_builtin_templates();
+
+            error_log('PDF Builder: ajax_get_builtin_templates - Templates récupérés: ' . count($templates));
 
             // Ajouter l'URL de prévisualisation à chaque template
             foreach ($templates as &$template) {
                 $template['preview_url'] = $template_manager->get_template_preview_url($template['name']);
             }
+
+            error_log('PDF Builder: ajax_get_builtin_templates - URLs ajoutées, envoi succès');
 
             wp_send_json_success([
                 'templates' => $templates

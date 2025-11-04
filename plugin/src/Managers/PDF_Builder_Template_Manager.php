@@ -755,19 +755,30 @@ class PDF_Builder_Template_Manager
         $plugin_root = dirname(dirname(dirname(__FILE__)));
         $builtin_dir = $plugin_root . '/templates/builtin/';
 
+        error_log('PDF Builder: get_builtin_templates - builtin_dir: ' . $builtin_dir);
+
         if (!is_dir($builtin_dir)) {
+            error_log('PDF Builder: get_builtin_templates - builtin_dir n\'existe pas');
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
 
+        error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
+
         foreach ($files as $file) {
+            error_log('PDF Builder: get_builtin_templates - traitement fichier: ' . basename($file));
             $template_data = $this->load_builtin_template($file);
             if ($template_data) {
                 $templates[] = $template_data;
+                error_log('PDF Builder: get_builtin_templates - template ajouté: ' . $template_data['name']);
+            } else {
+                error_log('PDF Builder: get_builtin_templates - template ignoré: ' . basename($file));
             }
         }
+
+        error_log('PDF Builder: get_builtin_templates - total templates: ' . count($templates));
 
         return $templates;
     }
