@@ -794,8 +794,14 @@ class PDF_Builder_Template_Manager
         $templates = [];
 
         // Chemin vers le dossier des templates builtin
-        $plugin_root = dirname(dirname(dirname(__FILE__)));
-        $builtin_dir = $plugin_root . '/templates/builtin/';
+        // __FILE__ = /path/to/plugin/src/Managers/PDF_Builder_Template_Manager.php
+        // dirname(__FILE__) = /path/to/plugin/src/Managers/
+        // dirname(dirname(__FILE__)) = /path/to/plugin/src/
+        // dirname(dirname(dirname(__FILE__))) = /path/to/plugin/
+        $manager_dir = dirname(__FILE__);
+        $src_dir = dirname($manager_dir);
+        $plugin_dir = dirname($src_dir);
+        $builtin_dir = $plugin_dir . '/templates/builtin/';
 
         error_log('PDF Builder: get_builtin_templates - builtin_dir: ' . $builtin_dir);
 
