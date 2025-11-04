@@ -78,7 +78,9 @@ class PDFGenerator extends BaseGenerator {
             dirname(__DIR__) . '/../html2pdf/src/Html2Pdf.php',
             // DomPDF installé manuellement
             WP_PLUGIN_DIR . '/dompdf-lib/src/Dompdf.php',
-            dirname(__DIR__) . '/../dompdf-lib/src/Dompdf.php'
+            dirname(__DIR__) . '/../dompdf-lib/src/Dompdf.php',
+            // Vendor déployé
+            dirname(__DIR__) . '/vendor/dompdf/src/Dompdf.php'
         ];
 
         foreach ($altPaths as $path) {
