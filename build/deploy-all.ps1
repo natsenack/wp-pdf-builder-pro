@@ -783,7 +783,6 @@ switch ($Mode) {
     "plugin" {
         # Exclure les gros dossiers inutiles pour le plugin WordPress
         $excludePatterns = @(
-            "vendor",                    # Composer dependencies (énorme!)
             "node_modules",              # NPM dependencies (énorme!)
             ".git",                      # Git files
             ".vscode",                   # VS Code config

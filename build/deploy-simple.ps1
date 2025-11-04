@@ -1,4 +1,4 @@
-# Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
+iZ6vU3zV2y# Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
 # Usage: .\deploy-simple.ps1
 
 param(
@@ -63,12 +63,6 @@ try {
     $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
     $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
     $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
-    
-    # Toujours inclure le vendor.zip (dépendances Composer compressées)
-    $vendorZip = "plugin/vendor.zip"
-    if (Test-Path (Join-Path $WorkingDir $vendorZip)) {
-        $pluginModified = @($pluginModified) + @($vendorZip) | Sort-Object -Unique
-    }
     
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
@@ -191,21 +185,7 @@ if ($Mode -eq "test") {
         exit 1
     }
 
-    # Décompresser le vendor.zip sur le serveur si présent
-    if ($pluginModified -contains "plugin/vendor.zip") {
-        Write-Host "`n3.5 Décompression du vendor sur le serveur..." -ForegroundColor Magenta
-        try {
-            $extractCommand = "cd /var/www/nats/data/www/threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro && unzip -q -o vendor.zip && rm vendor.zip"
-            $extractResult = ssh nats@65.108.242.181 $extractCommand 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "   Vendor décompressé sur le serveur" -ForegroundColor Green
-            } else {
-                Write-Host "   Erreur décompression: $($extractResult)" -ForegroundColor Red
-            }
-        } catch {
-            Write-Host "   Erreur SSH décompression: $($_.Exception.Message)" -ForegroundColor Red
-        }
-    }
+
 }
 
 # 4 GIT COMMIT + PUSH + TAG

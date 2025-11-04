@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-vendor/
 composer.lock
 
 # Build outputs
@@ -8,6 +7,10 @@ assets/js/dist/
 assets/css/dist/
 *.min.js
 *.min.css
+
+# Cache and temporary files
+cache/
+dev/
 
 # Development files
 debug-*.js
@@ -52,6 +55,7 @@ Thumbs.db
 *.log
 logs/
 pdf-builder-logs/
+build/logs/
 
 # Temporary files
 *.tmp
@@ -65,3 +69,6 @@ coverage/
 # Documentation reports (keep main docs)
 /docs/reports/phase*.json
 /docs/reports/phase*.js
+
+# GitHub (local development)
+/.github/
