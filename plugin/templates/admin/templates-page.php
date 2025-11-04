@@ -57,20 +57,56 @@ if (!defined('ABSPATH')) {
         </div>
 
         <script>
+        console.log('[PDF Builder] Templates page JavaScript loaded');
+        
         (function(){
+            console.log('[PDF Builder] IIFE executed, checking jQuery...');
+            
+            // Vérifier que jQuery est disponible
+            if (typeof jQuery === 'undefined') {
+                console.error('[PDF Builder] jQuery not available');
+                return;
+            }
+            
+            console.log('[PDF Builder] jQuery available, checking ajaxurl...');
+            
+            // Définir ajaxurl si pas déjà défini
+            if (typeof ajaxurl === 'undefined') {
+                ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+                console.log('[PDF Builder] ajaxurl set to:', ajaxurl);
+            } else {
+                console.log('[PDF Builder] ajaxurl already defined:', ajaxurl);
+            }
+            
+            console.log('[PDF Builder] Starting AJAX call for predefined templates...');
+            
             // Charger la liste des templates prédéfinis via AJAX
             jQuery.post(ajaxurl, {
                 action: 'pdf_builder_get_predefined_templates',
                 nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
             }, function(response){
+                console.log('[PDF Builder] AJAX success response:', response);
+                
                 var container = document.getElementById('predefined-templates');
+                if (!container) {
+                    console.error('[PDF Builder] Container #predefined-templates not found');
+                    return;
+                }
+                
+                console.log('[PDF Builder] Container found, processing response...');
+                
                 container.innerHTML = '';
                 if (!response || !response.success || !response.data || !response.data.templates) {
+                    console.error('[PDF Builder] Invalid response format:', response);
                     container.innerHTML = '<div style="grid-column: 1 / -1; color: #c00;">Erreur lors du chargement des templates prédéfinis.</div>';
                     return;
                 }
 
-                response.data.templates.forEach(function(t){
+                console.log('[PDF Builder] Processing', response.data.templates.length, 'templates');
+                
+                response.data.templates.forEach(function(t, index){
+                    console.log('[PDF Builder] Creating card for template:', t.name);
+                    
                     var card = document.createElement('div');
                     card.className = 'predef-card';
                     card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:200px;';
@@ -111,12 +147,23 @@ if (!defined('ABSPATH')) {
                     card.appendChild(title); card.appendChild(desc); card.appendChild(footer);
                     container.appendChild(card);
                 });
-            }).fail(function(){
+                
+                console.log('[PDF Builder] All template cards created successfully');
+            }).fail(function(xhr, status, error){
+                console.error('[PDF Builder] AJAX failed:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
+                });
                 var container = document.getElementById('predefined-templates');
-                container.innerHTML = '<div style="grid-column: 1 / -1; color: #c00;">Erreur réseau lors du chargement des templates prédéfinis.</div>';
+                if (container) {
+                    container.innerHTML = '<div style="grid-column: 1 / -1; color: #c00;">Erreur réseau lors du chargement des templates prédéfinis. Status: ' + status + ', Error: ' + error + '</div>';
+                }
             });
 
             window.installPredefinedTemplate = function(filename, btn) {
+                console.log('[PDF Builder] Installing template:', filename);
                 if (!confirm('Installer ce template prédéfini ?')) return;
                 btn.disabled = true; var original = btn.textContent; btn.textContent = '⏳';
                 jQuery.post(ajaxurl, {
@@ -124,6 +171,7 @@ if (!defined('ABSPATH')) {
                     nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>',
                     template_name: filename
                 }, function(resp){
+                    console.log('[PDF Builder] Install response:', resp);
                     if (resp && resp.success) {
                         btn.textContent = '✅ Installé';
                         setTimeout(function(){ location.reload(); }, 800);
@@ -133,10 +181,16 @@ if (!defined('ABSPATH')) {
                         alert('Erreur lors de l\'installation: ' + ((resp && resp.data) || 'Erreur inconnue'));
                         setTimeout(function(){ btn.textContent = original; }, 2000);
                     }
-                }).fail(function(){ btn.textContent = '❌ Erreur réseau'; btn.disabled = false; setTimeout(function(){ btn.textContent = original; }, 2000); });
+                }).fail(function(xhr, status, error){
+                    console.error('[PDF Builder] Install AJAX failed:', status, error);
+                    btn.textContent = '❌ Erreur réseau'; 
+                    btn.disabled = false; 
+                    setTimeout(function(){ btn.textContent = original; }, 2000);
+                });
             };
 
             window.regeneratePredefinedThumbnails = function() {
+                console.log('[PDF Builder] Regenerating thumbnails');
                 var btn = document.getElementById('regenerate-thumbnails-btn');
                 var status = document.getElementById('regenerate-status');
                 if (!confirm('Régénérer les vignettes de prévisualisation pour tous les templates prédéfinis ? Cela peut prendre quelques instants.')) return;
@@ -146,6 +200,7 @@ if (!defined('ABSPATH')) {
                     action: 'pdf_builder_regenerate_predefined_thumbnails',
                     nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
                 }, function(resp){
+                    console.log('[PDF Builder] Regenerate response:', resp);
                     if (resp && resp.success) {
                         status.textContent = '✅ ' + resp.data.message;
                         status.style.color = 'green';
@@ -157,7 +212,8 @@ if (!defined('ABSPATH')) {
                         btn.disabled = false;
                         btn.textContent = original;
                     }
-                }).fail(function(){
+                }).fail(function(xhr, status, error){
+                    console.error('[PDF Builder] Regenerate AJAX failed:', status, error);
                     status.textContent = '❌ Erreur réseau';
                     status.style.color = 'red';
                     btn.disabled = false;
@@ -165,6 +221,8 @@ if (!defined('ABSPATH')) {
                 });
             };
         })();
+        
+        console.log('[PDF Builder] Templates page JavaScript initialization completed');
         </script>
 
         <div id="templates-list" style="margin-top: 20px;">
