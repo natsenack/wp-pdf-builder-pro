@@ -230,6 +230,8 @@ class PDFGenerator extends BaseGenerator {
             default:
                 throw new \Exception("Unsupported output type: {$output_type}");
         }
+
+        $this->logInfo("DomPDF generation to file completed successfully: {$output_file}");
     }
 
     /**
@@ -242,7 +244,8 @@ class PDFGenerator extends BaseGenerator {
         if (in_array($output_type, ['png', 'jpg'])) {
             $image_data = $this->generatePlaceholderImage($output_type);
             file_put_contents($output_file, $image_data);
-            return;
+            $this->logInfo("Canvas fallback generated placeholder image to file: {$output_file}");
+            return true;
         }
 
         // Pour PDF, on ne peut pas faire grand chose en fallback
