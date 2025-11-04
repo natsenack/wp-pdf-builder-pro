@@ -291,6 +291,37 @@ class WooCommerceCache {
     }
 
     /**
+     * Invalide le cache des produits WooCommerce
+     *
+     * @param int $productId ID du produit modifié/supprimé
+     * @return void
+     */
+    public static function invalidateProductCache(int $productId): void {
+        // Invalider le cache spécifique du produit
+        $key = self::generateKey('product', $productId);
+        delete_transient($key);
+
+        // Invalider les caches de commandes qui pourraient contenir ce produit
+        // (on invalide un échantillon représentatif plutôt que tout)
+        if (isset($GLOBALS['wpdb'])) {
+            global $wpdb;
+            $order_transient_keys = $wpdb->get_col(
+                $wpdb->prepare(
+                    "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s LIMIT 50",
+                    '_transient_' . self::CACHE_PREFIX . 'order_%'
+                )
+            );
+
+            foreach ($order_transient_keys as $transient_key) {
+                $key = str_replace('_transient_', '', $transient_key);
+                delete_transient($key);
+            }
+        }
+
+        self::$metrics['invalidations']++;
+    }
+
+    /**
      * Invalide tout le cache WooCommerce
      *
      * @return void
@@ -387,10 +418,15 @@ class WooCommerceCache {
         // Invalidation lors de la modification d'une commande
         add_action('woocommerce_order_status_changed', [self::class, 'invalidateOrderCache'], 10, 1);
         add_action('woocommerce_update_order', [self::class, 'invalidateOrderCache'], 10, 1);
+        add_action('woocommerce_new_order', [self::class, 'invalidateOrderCache'], 10, 1);
 
         // Invalidation lors de la modification d'un client
         add_action('profile_update', [self::class, 'invalidateCustomerCache'], 10, 1);
         add_action('user_register', [self::class, 'invalidateCustomerCache'], 10, 1);
+
+        // Invalidation lors de la modification de produits (affecte les données de commande)
+        add_action('woocommerce_update_product', [self::class, 'invalidateProductCache'], 10, 1);
+        add_action('woocommerce_delete_product', [self::class, 'invalidateProductCache'], 10, 1);
 
         // Invalidation lors des changements de paramètres WooCommerce
         add_action('update_option', function($option_name) {

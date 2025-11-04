@@ -206,6 +206,11 @@ function pdf_builder_load_bootstrap() {
     // CHARGER LES NOUVELLES CLASSES WP_PDF_Builder_Pro
     pdf_builder_load_new_classes();
 
+    // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
+    if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+        \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
+    }
+
     // NOTE: PreviewImageAPI est instanciée dans pdf_builder_handle_preview_ajax()
     // dans pdf-builder-pro.php, pas ici, pour éviter les conflits
 
