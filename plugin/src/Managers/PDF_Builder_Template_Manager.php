@@ -644,24 +644,35 @@ class PDF_Builder_Template_Manager
     private function load_predefined_template($file_path)
     {
         if (!file_exists($file_path)) {
+            error_log('[PDF Builder] load_predefined_template - File does not exist: ' . $file_path);
             return null;
         }
 
+        error_log('[PDF Builder] load_predefined_template - Reading file: ' . $file_path);
         $json_content = file_get_contents($file_path);
         if ($json_content === false) {
+            error_log('[PDF Builder] load_predefined_template - Failed to read file content: ' . $file_path);
             return null;
         }
 
+        error_log('[PDF Builder] load_predefined_template - File content length: ' . strlen($json_content) . ' bytes');
         $template_data = json_decode($json_content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('[PDF Builder] load_predefined_template - JSON decode error: ' . json_last_error_msg() . ' for file: ' . $file_path);
+            error_log('[PDF Builder] load_predefined_template - First 200 chars of content: ' . substr($json_content, 0, 200));
             return null;
         }
+
+        error_log('[PDF Builder] load_predefined_template - JSON decoded successfully, keys: ' . implode(', ', array_keys($template_data)));
 
         // Validation de la structure
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
+            error_log('[PDF Builder] load_predefined_template - Validation failed for ' . $file_path . ': ' . implode(', ', $validation_errors));
             return null;
         }
+
+        error_log('[PDF Builder] load_predefined_template - Template loaded successfully: ' . ($template_data['name'] ?? 'unknown'));
 
         // Ajouter des métadonnées
         $filename = basename($file_path, '.json');
