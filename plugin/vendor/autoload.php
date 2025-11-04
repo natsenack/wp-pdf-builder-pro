@@ -20,6 +20,8 @@ if (!function_exists('wp_pdf_builder_dompdf_autoload')) {
         // Masterminds\HTML5 classes
         if (strpos($class, 'Masterminds\\') === 0) {
             $classPath = str_replace('Masterminds\\', '', $class);
+            // Remove HTML5\ prefix since files are directly in html5/ directory
+            $classPath = str_replace('HTML5\\', '', $classPath);
             $filePath = __DIR__ . '/masterminds/html5/' . str_replace('\\', '/', $classPath) . '.php';
 
             if (file_exists($filePath)) {
