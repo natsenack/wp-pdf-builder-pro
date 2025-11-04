@@ -19,7 +19,7 @@
             "width": 661,
             "height": 53,
             "properties": {
-                "text": "FACTURE",
+                "text": "FACTURE MODERNE",
                 "fontSize": 26,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
@@ -147,7 +147,7 @@
             "width": 661,
             "height": 53,
             "properties": {
-                "text": "Merci pour votre commande ! - Conditions de paiement: [PAYMENT_TERMS]",
+                "text": "Votre commande a été traitée avec succès - Règlement: [PAYMENT_TERMS]",
                 "fontSize": 11,
                 "fontFamily": "Arial",
                 "color": "#666666",

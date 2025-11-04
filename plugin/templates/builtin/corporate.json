@@ -47,7 +47,7 @@
             "width": 274,
             "height": 53,
             "properties": {
-                "text": "FACTURE",
+                "text": "FACTURE PROFESSIONNELLE",
                 "fontSize": 21,
                 "fontFamily": "Helvetica",
                 "fontWeight": "bold",
@@ -269,7 +269,7 @@
             "width": 334,
             "height": 53,
             "properties": {
-                "text": "Merci pour votre confiance\nDocument généré le [CURRENT_DATE]",
+                "text": "Nous vous remercions de votre confiance et restons à votre disposition pour toute information complémentaire.\nDocument établi le [CURRENT_DATE]",
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
                 "color": "#ecf0f1",
