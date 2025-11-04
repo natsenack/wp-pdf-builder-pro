@@ -605,20 +605,29 @@ class PDF_Builder_Template_Manager
         // Chemin vers le dossier des templates prédéfinis
         $predefined_dir = plugin_dir_path(dirname(__FILE__)) . '../../templates/predefined/';
 
+        // Debug: Log the path being used
+        error_log('[PDF Builder] Predefined templates directory: ' . $predefined_dir);
+        error_log('[PDF Builder] Directory exists: ' . (is_dir($predefined_dir) ? 'YES' : 'NO'));
+
         if (!is_dir($predefined_dir)) {
+            error_log('[PDF Builder] Predefined templates directory does not exist');
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($predefined_dir . '*.json');
+        error_log('[PDF Builder] Found ' . count($files) . ' JSON files: ' . implode(', ', $files));
 
         foreach ($files as $file) {
             $template_data = $this->load_predefined_template($file);
             if ($template_data) {
                 $templates[] = $template_data;
+            } else {
+                error_log('[PDF Builder] Failed to load template from: ' . $file);
             }
         }
 
+        error_log('[PDF Builder] Successfully loaded ' . count($templates) . ' templates');
         return $templates;
     }
 
@@ -631,22 +640,26 @@ class PDF_Builder_Template_Manager
     private function load_predefined_template($file_path)
     {
         if (!file_exists($file_path)) {
+            error_log('[PDF Builder] Template file does not exist: ' . $file_path);
             return null;
         }
 
         $json_content = file_get_contents($file_path);
         if ($json_content === false) {
+            error_log('[PDF Builder] Failed to read template file: ' . $file_path);
             return null;
         }
 
         $template_data = json_decode($json_content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('[PDF Builder] JSON decode error for ' . $file_path . ': ' . json_last_error_msg());
             return null;
         }
 
         // Validation de la structure
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
+            error_log('[PDF Builder] Template validation failed for ' . $file_path . ': ' . implode(', ', $validation_errors));
             return null;
         }
 
@@ -659,6 +672,7 @@ class PDF_Builder_Template_Manager
             'loaded_at' => current_time('mysql')
         ];
 
+        error_log('[PDF Builder] Successfully loaded template: ' . $filename);
         return $template_data;
     }
 
