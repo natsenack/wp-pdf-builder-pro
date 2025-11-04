@@ -72,16 +72,28 @@ class PDFGenerator extends BaseGenerator {
         $altPaths = [
             dirname(__DIR__, 2) . '/vendor/dompdf/dompdf/src/Dompdf.php',
             dirname(__DIR__, 3) . '/vendor/dompdf/dompdf/src/Dompdf.php',
-            '/var/www/vendor/dompdf/dompdf/src/Dompdf.php'
+            '/var/www/vendor/dompdf/dompdf/src/Dompdf.php',
+            // HTML2PDF installé manuellement
+            WP_PLUGIN_DIR . '/html2pdf/src/Html2Pdf.php',
+            dirname(__DIR__) . '/../html2pdf/src/Html2Pdf.php',
+            // DomPDF installé manuellement
+            WP_PLUGIN_DIR . '/dompdf-lib/src/Dompdf.php',
+            dirname(__DIR__) . '/../dompdf-lib/src/Dompdf.php'
         ];
 
         foreach ($altPaths as $path) {
             if (file_exists($path)) {
-                $this->logInfo("Trying to load DomPDF from: $path");
+                $this->logInfo("Trying to load library from: $path");
                 try {
                     require_once $path;
+                    // Vérifier si c'est DomPDF
                     if (class_exists('Dompdf\Dompdf')) {
                         $this->logInfo("DomPDF loaded successfully from: $path");
+                        return true;
+                    }
+                    // Vérifier si c'est HTML2PDF
+                    if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
+                        $this->logInfo("HTML2PDF loaded successfully from: $path");
                         return true;
                     }
                 } catch (\Exception $e) {
