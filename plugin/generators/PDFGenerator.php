@@ -623,8 +623,25 @@ class PDFGenerator extends BaseGenerator {
         $image_data = ob_get_clean();
         imagedestroy($image);
 
-        $this->logInfo("PDF preview image generated, size: " . strlen($image_data) . " bytes");
-        return $image_data;
+    }
+
+    /**
+     * Vérifie si Ghostscript est disponible
+     *
+     * @return bool True si Ghostscript est disponible
+     */
+    private function isGhostscriptAvailable(): bool {
+        // Vérifier si la commande gs est disponible
+        $command = 'gs --version 2>&1';
+        $output = [];
+        $returnCode = 0;
+
+        @exec($command, $output, $returnCode);
+
+        $available = ($returnCode === 0);
+        $this->logInfo("Ghostscript available: " . ($available ? 'YES' : 'NO'));
+
+        return $available;
     }
 
     /**
@@ -634,7 +651,6 @@ class PDFGenerator extends BaseGenerator {
      * @return string Données de l'image
      */
     private function convertWithGhostscript(string $format): string {
-        $this->logInfo("Starting Ghostscript conversion process");
 
         try {
             // Sauvegarde temporaire du PDF
