@@ -735,9 +735,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Install template
     jQuery(document).on('click', '.install-template', function() {
         const templateId = jQuery(this).data('template-id');
-        
-        // Redirect to editor with template ID (builtin templates use string IDs)
-        window.location.href = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor&template_id=')); ?>' + encodeURIComponent(templateId);
+        const $button = jQuery(this);
+
+        $button.prop('disabled', true).text('Création du template...');
+
+        // Create a new template based on builtin and redirect to editor
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_create_from_builtin',
+                builtin_id: templateId,
+                nonce: '<?php echo wp_create_nonce('pdf_builder_create_from_builtin'); ?>'
+            },
+            success: function(response) {
+                if (response.success && response.data.template_id) {
+                    // Redirect to editor with the new template ID
+                    window.location.href = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor&template_id=')); ?>' + response.data.template_id;
+                } else {
+                    $button.prop('disabled', false).text('Erreur');
+                    alert('Erreur lors de la création du template: ' + (response.data?.message || 'Erreur inconnue'));
+                }
+            },
+            error: function() {
+                $button.prop('disabled', false).text('Erreur');
+                alert('Erreur de connexion');
+            }
+        });
     });
 
     // Utility function to show notices

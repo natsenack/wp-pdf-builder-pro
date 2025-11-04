@@ -712,22 +712,14 @@ class PDF_Builder_Core
      */
     public function render_react_editor_page()
     {
-        // Charger les données du template si c'est un builtin
-        $template_data = null;
-        if ($template_id && !$is_numeric_id) {
-            // C'est un template builtin
-            $file_path = plugin_dir_path(dirname(__FILE__)) . "../templates/builtin/{$template_id}.json";
-            if (file_exists($file_path)) {
-                $content = file_get_contents($file_path);
-                $template_data = json_decode($content, true);
-            }
-        }
+        // Récupérer le template_id depuis l'URL si présent
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
 
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
             <?php if ($template_id): ?>
-                <p><?php printf(__('Editing template %s', 'pdf-builder-pro'), $is_numeric_id ? '#' . $display_id : '"' . $display_id . '" (builtin)'); ?></p>
+                <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
             <?php else: ?>
                 <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
             <?php endif; ?>
@@ -741,9 +733,8 @@ class PDF_Builder_Core
         <script type="text/javascript">
             // Passer les données à React
             window.pdfBuilderData = {
-                templateId: <?php echo $template_id ? json_encode($template_id) : 'null'; ?>,
+                templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
                 isEditing: <?php echo $template_id ? 'true' : 'false'; ?>,
-                templateData: <?php echo $template_data ? json_encode($template_data) : 'null'; ?>,
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
             };
