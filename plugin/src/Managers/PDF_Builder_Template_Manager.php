@@ -830,12 +830,11 @@ class PDF_Builder_Template_Manager
      */
     private function get_template_preview_url($template_name)
     {
-        // Essayer avec home_url() au lieu de get_site_url()
-        $site_url = home_url();
-        $url = $site_url . '/wp-content/plugins/wp-pdf-builder-pro/assets/images/templates/' . $template_name . '-preview.svg';
+        // Utiliser plugins_url() correctement avec le bon chemin relatif
+        $url = plugins_url('assets/images/templates/' . $template_name . '-preview.svg', dirname(dirname(__FILE__)));
 
         // Debug temporaire
-        error_log("PDF Builder Debug - Template: $template_name, Home URL: $site_url, Final URL: $url");
+        error_log("PDF Builder Debug - Template: $template_name, Plugins URL: $url");
 
         return $url;
     }
