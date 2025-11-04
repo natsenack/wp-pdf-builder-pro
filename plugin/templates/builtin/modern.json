@@ -1,5 +1,9 @@
 {
   "version": "1.0",
+  "name": "Moderne",
+  "description": "Template moderne avec un design épuré et professionnel",
+  "category": "general",
+  "features": ["Design moderne", "Épuré", "Professionnel"],
   "canvasWidth": 595,
   "canvasHeight": 842,
   "elements": [

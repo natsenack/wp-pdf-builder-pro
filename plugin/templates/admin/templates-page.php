@@ -128,6 +128,32 @@ if (!defined('ABSPATH')) {
             }
             ?>
 
+            <!-- Modal Template Gallery -->
+            <div id="template-gallery-modal" class="template-gallery-modal" style="display: none;">
+                <div class="template-gallery-overlay" onclick="closeTemplateGallery()"></div>
+                <div class="template-gallery-content">
+                    <div class="template-gallery-header">
+                        <h2>🎨 Galerie de Templates</h2>
+                        <button class="template-gallery-close" onclick="closeTemplateGallery()">&times;</button>
+                    </div>
+
+                    <div class="template-gallery-filters">
+                        <button class="gallery-filter active" data-category="all">Tous</button>
+                        <button class="gallery-filter" data-category="business">Business</button>
+                        <button class="gallery-filter" data-category="modern">Moderne</button>
+                        <button class="gallery-filter" data-category="creative">Créatif</button>
+                    </div>
+
+                    <div class="template-gallery-grid" id="template-gallery-grid">
+                        <!-- Templates will be loaded here via JavaScript -->
+                    </div>
+
+                    <div class="template-gallery-footer">
+                        <button class="button button-secondary" onclick="closeTemplateGallery()">Annuler</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section Templates Utilisateur -->
             <h3 style="margin: 30px 0 15px 0; color: #23282d; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                 📝 Mes Templates Personnalisés
@@ -702,6 +728,164 @@ document.addEventListener('DOMContentLoaded', function() {
             filterTemplates(filterType);
         });
     });
+
+    // Template Gallery Modal Functionality
+    let currentFilter = 'all';
+    let loadedTemplates = [];
+
+    // Open gallery modal
+    $('#open-template-gallery').on('click', function(e) {
+        e.preventDefault();
+        $('.template-gallery-modal').fadeIn(300);
+        loadTemplates();
+    });
+
+    // Close gallery modal
+    $('.template-gallery-close, .template-gallery-overlay').on('click', function() {
+        $('.template-gallery-modal').fadeOut(300);
+    });
+
+    // Filter templates
+    $('.gallery-filter').on('click', function() {
+        $('.gallery-filter').removeClass('active');
+        $(this).addClass('active');
+        currentFilter = $(this).data('filter');
+        filterTemplates();
+    });
+
+    // Load templates via AJAX
+    function loadTemplates() {
+        $('.template-gallery-grid').html('<div class="template-gallery-loading">Chargement des modèles...</div>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'get_builtin_templates',
+                nonce: pdf_builder_admin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    loadedTemplates = response.data.templates;
+                    renderTemplates(loadedTemplates);
+                } else {
+                    $('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
+                }
+            },
+            error: function() {
+                $('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
+            }
+        });
+    }
+
+    // Render templates in grid
+    function renderTemplates(templates) {
+        let html = '';
+
+        templates.forEach(function(template, index) {
+            const features = template.features || [];
+            const featuresHtml = features.map(feature =>
+                `<span class="template-gallery-item-feature">${feature}</span>`
+            ).join('');
+
+            html += `
+                <div class="template-gallery-item" data-category="${template.category || 'general'}" style="animation-delay: ${index * 0.1}s">
+                    <div class="template-gallery-item-preview">
+                        <img src="${template.preview_url || '<?php echo plugin_dir_url(dirname(__FILE__, 2)); ?>assets/images/templates/placeholder.png'}" alt="${template.name}" loading="lazy">
+                    </div>
+                    <div class="template-gallery-item-info">
+                        <h3 class="template-gallery-item-title">${template.name}</h3>
+                        <p class="template-gallery-item-description">${template.description}</p>
+                        <div class="template-gallery-item-features">
+                            ${featuresHtml}
+                        </div>
+                        <div class="template-gallery-item-actions">
+                            <button class="button button-primary install-template" data-template-id="${template.id}">
+                                Installer
+                            </button>
+                            <button class="button button-secondary preview-template" data-template-id="${template.id}">
+                                Aperçu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        $('.template-gallery-grid').html(html);
+        filterTemplates();
+    }
+
+    // Filter templates based on current filter
+    function filterTemplates() {
+        if (currentFilter === 'all') {
+            $('.template-gallery-item').show();
+        } else {
+            $('.template-gallery-item').hide();
+            $(`.template-gallery-item[data-category="${currentFilter}"]`).show();
+        }
+    }
+
+    // Install template
+    $(document).on('click', '.install-template', function() {
+        const templateId = $(this).data('template-id');
+        const $button = $(this);
+
+        $button.prop('disabled', true).text('Installation...');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'install_builtin_template',
+                template_id: templateId,
+                nonce: pdf_builder_admin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $button.removeClass('button-primary').addClass('button-success').text('Installé ✓');
+                    showNotice('Modèle installé avec succès!', 'success');
+
+                    // Refresh the templates list
+                    if (typeof loadTemplatesList === 'function') {
+                        loadTemplatesList();
+                    }
+                } else {
+                    $button.prop('disabled', false).text('Installer');
+                    showNotice(response.data.message || 'Erreur lors de l\'installation.', 'error');
+                }
+            },
+            error: function() {
+                $button.prop('disabled', false).text('Installer');
+                showNotice('Erreur de connexion.', 'error');
+            }
+        });
+    });
+
+    // Preview template
+    $(document).on('click', '.preview-template', function() {
+        const templateId = $(this).data('template-id');
+        const template = loadedTemplates.find(t => t.id === templateId);
+
+        if (template && template.preview_url) {
+            window.open(template.preview_url, '_blank');
+        }
+    });
+
+    // Utility function to show notices
+    function showNotice(message, type = 'info') {
+        const noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
+        const $notice = $(`<div class="notice ${noticeClass} is-dismissible"><p>${message}</p></div>`);
+
+        $('.wp-header-end').after($notice);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(function() {
+            $notice.fadeOut(function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
 });
 
 // Fermer les modales en cliquant en dehors
@@ -774,6 +958,258 @@ document.addEventListener('keydown', function(e) {
 .button-danger:hover {
     background: #c82333 !important;
     border-color: #bd2130 !important;
+}
+
+/* Template Gallery Modal Styles */
+.template-gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.template-gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+}
+
+.template-gallery-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 1200px;
+    overflow: hidden;
+    animation: gallerySlideIn 0.3s ease-out;
+}
+
+@keyframes gallerySlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.template-gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #e1e5e9;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.template-gallery-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.template-gallery-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.template-gallery-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.template-gallery-filters {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e1e5e9;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.gallery-filter {
+    padding: 8px 16px;
+    border: 2px solid #e1e5e9;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.gallery-filter:hover {
+    border-color: #007cba;
+    color: #007cba;
+}
+
+.gallery-filter.active {
+    background: #007cba;
+    border-color: #007cba;
+    color: white;
+}
+
+.template-gallery-grid {
+    padding: 30px;
+    max-height: 60vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.template-gallery-item {
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: itemFadeIn 0.5s ease-out forwards;
+}
+
+.template-gallery-item:hover {
+    border-color: #007cba;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 123, 186, 0.2);
+}
+
+@keyframes itemFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.template-gallery-item-preview {
+    height: 180px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-gallery-item-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.template-gallery-item:hover .template-gallery-item-preview img {
+    transform: scale(1.05);
+}
+
+.template-gallery-item-preview .preview-placeholder {
+    font-size: 48px;
+    color: #dee2e6;
+}
+
+.template-gallery-item-info {
+    padding: 20px;
+}
+
+.template-gallery-item-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #23282d;
+    margin: 0 0 8px 0;
+}
+
+.template-gallery-item-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+}
+
+.template-gallery-item-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.template-gallery-item-feature {
+    font-size: 12px;
+    color: #28a745;
+    background: #d4edda;
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 1px solid #c3e6cb;
+}
+
+.template-gallery-item-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.template-gallery-item-actions .button {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+}
+
+.template-gallery-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #e1e5e9;
+    display: flex;
+    justify-content: flex-end;
+    background: #f8f9fa;
+}
+
+.template-gallery-loading {
+    text-align: center;
+    padding: 60px;
+    color: #666;
+    font-size: 16px;
+}
+
+.template-gallery-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007cba;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .default-template-icon {

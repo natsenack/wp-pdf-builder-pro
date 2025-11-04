@@ -1,5 +1,9 @@
 {
   "version": "1.0",
+  "name": "Entreprise",
+  "description": "Template professionnel d'entreprise avec en-tête coloré et structure organisée",
+  "category": "business",
+  "features": ["Entreprise", "Professionnel", "Organisé"],
   "canvasWidth": 595,
   "canvasHeight": 842,
   "elements": [

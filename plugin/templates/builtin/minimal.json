@@ -1,5 +1,9 @@
 {
   "version": "1.0",
+  "name": "Minimal",
+  "description": "Template minimaliste avec un design épuré et des éléments essentiels",
+  "category": "general",
+  "features": ["Minimaliste", "Épuré", "Simple"],
   "canvasWidth": 595,
   "canvasHeight": 842,
   "elements": [

@@ -199,6 +199,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_install_builtin_template', [$this, 'ajax_install_builtin_template']);
+        add_action('wp_ajax_get_builtin_templates', [$this, 'ajax_get_builtin_templates']);
         
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
         add_action('wp_ajax_pdf_builder_auto_save_template', function() {
@@ -1233,6 +1234,41 @@ class PDF_Builder_Admin {
 
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur lors de l\'installation du template builtin: ' . $e->getMessage());
+            wp_send_json_error('Erreur interne du serveur');
+        }
+    }
+
+    /**
+     * AJAX - Récupérer la liste des templates builtin
+     */
+    public function ajax_get_builtin_templates()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Obtenir le Template Manager
+            $template_manager = $this->get_template_manager();
+            if (!$template_manager) {
+                wp_send_json_error('Erreur interne: Template Manager non disponible');
+            }
+
+            // Récupérer les templates builtin
+            $templates = $template_manager->get_builtin_templates();
+
+            wp_send_json_success([
+                'templates' => $templates
+            ]);
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Erreur lors de la récupération des templates builtin: ' . $e->getMessage());
             wp_send_json_error('Erreur interne du serveur');
         }
     }

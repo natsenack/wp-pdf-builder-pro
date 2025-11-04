@@ -33,6 +33,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
    - Phase 1.6.2A - Infrastructure templates statiques ✅ TERMINÉE
    - Phase 1.6.2B - Interface lazy loading (EN COURS)
      - ✅ Correction erreur syntaxe PHP dans Template Manager
+     - ✅ Correction erreur propriété $main dans templates-page.php
 3. Phase 1.6.3 - Déployer analytics et métriques d'utilisation
 4. Phase 1.6.4 - Intégration API REST WordPress
 5. Phase 1.6.5 - Support shortcodes et blocs Gutenberg

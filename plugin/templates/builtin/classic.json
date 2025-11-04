@@ -1,5 +1,9 @@
 {
   "version": "1.0",
+  "name": "Classique",
+  "description": "Template classique traditionnel avec bordures et structure formelle",
+  "category": "general",
+  "features": ["Classique", "Traditionnel", "Formel"],
   "canvasWidth": 595,
   "canvasHeight": 842,
   "elements": [

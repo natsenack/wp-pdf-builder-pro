@@ -800,15 +800,24 @@ class PDF_Builder_Template_Manager
             return null;
         }
 
-        // Ajouter des métadonnées
+        // Ajouter des métadonnées pour la modal
         $filename = basename($file_path, '.json');
-        $template_data['_metadata'] = [
-            'filename' => $filename,
-            'file_path' => $file_path,
-            'is_builtin' => true,
-            'loaded_at' => current_time('mysql'),
-            'preview_url' => $this->get_template_preview_url($filename)
-        ];
+        $template_data['id'] = $filename;
+        $template_data['preview_url'] = $this->get_template_preview_url($filename);
+
+        // S'assurer que les champs requis pour la modal sont présents
+        if (!isset($template_data['name'])) {
+            $template_data['name'] = ucfirst($filename);
+        }
+        if (!isset($template_data['description'])) {
+            $template_data['description'] = 'Template ' . ucfirst($filename);
+        }
+        if (!isset($template_data['category'])) {
+            $template_data['category'] = 'general';
+        }
+        if (!isset($template_data['features'])) {
+            $template_data['features'] = ['Standard'];
+        }
 
         return $template_data;
     }
