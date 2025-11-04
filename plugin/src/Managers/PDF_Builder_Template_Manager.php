@@ -755,20 +755,31 @@ class PDF_Builder_Template_Manager
         $plugin_root = dirname(dirname(dirname(__FILE__)));
         $builtin_dir = $plugin_root . '/templates/builtin/';
 
+        error_log('PDF Builder: get_builtin_templates - Plugin root: ' . $plugin_root);
+        error_log('PDF Builder: get_builtin_templates - Builtin dir: ' . $builtin_dir);
+        error_log('PDF Builder: get_builtin_templates - Directory exists: ' . (is_dir($builtin_dir) ? 'YES' : 'NO'));
+
         if (!is_dir($builtin_dir)) {
+            error_log('PDF Builder: get_builtin_templates - Directory does not exist');
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
+        error_log('PDF Builder: get_builtin_templates - Found files: ' . implode(', ', $files));
 
         foreach ($files as $file) {
+            error_log('PDF Builder: get_builtin_templates - Processing file: ' . $file);
             $template_data = $this->load_builtin_template($file);
             if ($template_data) {
                 $templates[] = $template_data;
+                error_log('PDF Builder: get_builtin_templates - Template loaded successfully: ' . ($template_data['name'] ?? 'unnamed'));
+            } else {
+                error_log('PDF Builder: get_builtin_templates - Failed to load template from: ' . $file);
             }
         }
 
+        error_log('PDF Builder: get_builtin_templates - Total templates loaded: ' . count($templates));
         return $templates;
     }
 
@@ -780,25 +791,37 @@ class PDF_Builder_Template_Manager
      */
     private function load_builtin_template($file_path)
     {
+        error_log('PDF Builder: load_builtin_template - Loading file: ' . $file_path);
+
         if (!file_exists($file_path)) {
+            error_log('PDF Builder: load_builtin_template - File does not exist: ' . $file_path);
             return null;
         }
 
         $json_content = file_get_contents($file_path);
         if ($json_content === false) {
+            error_log('PDF Builder: load_builtin_template - Failed to read file: ' . $file_path);
             return null;
         }
 
+        error_log('PDF Builder: load_builtin_template - File content length: ' . strlen($json_content));
+
         $template_data = json_decode($json_content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder: load_builtin_template - JSON decode error: ' . json_last_error_msg());
             return null;
         }
+
+        error_log('PDF Builder: load_builtin_template - JSON decoded successfully');
 
         // Validation de la structure
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
+            error_log('PDF Builder: load_builtin_template - Validation errors: ' . implode(', ', $validation_errors));
             return null;
         }
+
+        error_log('PDF Builder: load_builtin_template - Validation passed');
 
         // Ajouter des métadonnées pour la modal
         $filename = basename($file_path, '.json');
@@ -819,6 +842,7 @@ class PDF_Builder_Template_Manager
             $template_data['features'] = ['Standard'];
         }
 
+        error_log('PDF Builder: load_builtin_template - Template processed successfully: ' . $template_data['name']);
         return $template_data;
     }
 
