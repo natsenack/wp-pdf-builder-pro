@@ -737,6 +737,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
 
+        console.log('PDF Builder Debug - Generated HTML:', html.substring(0, 500) + '...');
         jQuery('.template-gallery-grid').html(html);
         filterTemplates();
     }
