@@ -699,45 +699,26 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
 
         templates.forEach(function(template, index) {
-            const features = template.features || [];
-            const featuresHtml = features.map(feature =>
-                `<span class="template-gallery-item-feature">${feature}</span>`
-            ).join('');
+            var features = template.features || [];
+            var featuresHtml = features.map(function(feature) {
+                return '<span class="template-gallery-item-feature">' + feature + '</span>';
+            }).join('');
 
-            html += `
-                <div class="template-gallery-item" data-category="${template.category || 'general'}" style="animation-delay: ${index * 0.1}s">
-                    <div class="template-gallery-item-preview">
-                        <img src="${template.preview_url}" alt="${template.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="preview-placeholder" style="display: none;">${template.name.charAt(0).toUpperCase()}</div>
-                    </div>
-            const features = template.features || [];
-            const featuresHtml = features.map(feature =>
-                `<span class="template-gallery-item-feature">${feature}</span>`
-            ).join('');
-
-            html += `
-                <div class="template-gallery-item" data-category="${template.category || 'general'}" style="animation-delay: ${index * 0.1}s">
-                    <div class="template-gallery-item-preview">
-                        <img src="${template.preview_url}" alt="${template.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="preview-placeholder" style="display: none;">${template.name.charAt(0).toUpperCase()}</div>
-                    </div>
-                    <div class="template-gallery-item-info">
-                        <h3 class="template-gallery-item-title">${template.name}</h3>
-                        <p class="template-gallery-item-description">${template.description}</p>
-                        <div class="template-gallery-item-features">
-                            ${featuresHtml}
-                        </div>
-                        <div class="template-gallery-item-actions">
-                            <button class="button button-primary install-template" data-template-id="${template.id}">
-                                Installer
-                            </button>
-                            <button class="button button-secondary preview-template" data-template-id="${template.id}">
-                                Aperçu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            html += '<div class="template-gallery-item" data-category="' + (template.category || 'general') + '" style="animation-delay: ' + (index * 0.1) + 's">' +
+                '<div class="template-gallery-item-preview">' +
+                    '<img src="' + template.preview_url + '" alt="' + template.name + '" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">' +
+                    '<div class="preview-placeholder" style="display: none;">' + template.name.charAt(0).toUpperCase() + '</div>' +
+                '</div>' +
+                '<div class="template-gallery-item-info">' +
+                    '<h3 class="template-gallery-item-title">' + template.name + '</h3>' +
+                    '<p class="template-gallery-item-description">' + template.description + '</p>' +
+                    '<div class="template-gallery-item-features">' + featuresHtml + '</div>' +
+                    '<div class="template-gallery-item-actions">' +
+                        '<button class="button button-primary install-template" data-template-id="' + template.id + '">Installer</button>' +
+                        '<button class="button button-secondary preview-template" data-template-id="' + template.id + '">Aperçu</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
         });
 
         jQuery('.template-gallery-grid').html(html);
