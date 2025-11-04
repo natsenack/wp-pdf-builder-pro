@@ -780,25 +780,29 @@ class PDF_Builder_Template_Manager
      */
     private function load_builtin_template($file_path)
     {
-        if (!file_exists($file_path)) {
-            return null;
-        }
+        try {
+            if (!file_exists($file_path)) {
+                return null;
+            }
 
-        $json_content = file_get_contents($file_path);
-        if ($json_content === false) {
-            return null;
-        }
+            $json_content = file_get_contents($file_path);
+            if ($json_content === false) {
+                error_log('PDF Builder: Impossible de lire le fichier template builtin: ' . $file_path);
+                return null;
+            }
 
-        $template_data = json_decode($json_content, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return null;
-        }
+            $template_data = json_decode($json_content, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('PDF Builder: Erreur JSON dans le template builtin ' . basename($file_path) . ': ' . json_last_error_msg());
+                return null;
+            }
 
-        // Validation de la structure
-        $validation_errors = $this->validate_template_structure($template_data);
-        if (!empty($validation_errors)) {
-            return null;
-        }
+            // Validation de la structure
+            $validation_errors = $this->validate_template_structure($template_data);
+            if (!empty($validation_errors)) {
+                error_log('PDF Builder: Erreurs de validation dans le template builtin ' . basename($file_path) . ': ' . implode(', ', $validation_errors));
+                return null;
+            }
 
         // Ajouter des métadonnées pour la modal
         $filename = basename($file_path, '.json');
@@ -820,6 +824,10 @@ class PDF_Builder_Template_Manager
         }
 
         return $template_data;
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception lors du chargement du template builtin ' . basename($file_path) . ': ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**
