@@ -734,46 +734,46 @@ document.addEventListener('DOMContentLoaded', function() {
     let loadedTemplates = [];
 
     // Open gallery modal
-    $('#open-template-gallery').on('click', function(e) {
+    jQuery('#open-template-gallery').on('click', function(e) {
         e.preventDefault();
-        $('.template-gallery-modal').fadeIn(300);
+        jQuery('.template-gallery-modal').fadeIn(300);
         loadTemplates();
     });
 
     // Close gallery modal
-    $('.template-gallery-close, .template-gallery-overlay').on('click', function() {
-        $('.template-gallery-modal').fadeOut(300);
+    jQuery('.template-gallery-close, .template-gallery-overlay').on('click', function() {
+        jQuery('.template-gallery-modal').fadeOut(300);
     });
 
     // Filter templates
-    $('.gallery-filter').on('click', function() {
-        $('.gallery-filter').removeClass('active');
-        $(this).addClass('active');
-        currentFilter = $(this).data('filter');
+    jQuery('.gallery-filter').on('click', function() {
+        jQuery('.gallery-filter').removeClass('active');
+        jQuery(this).addClass('active');
+        currentFilter = jQuery(this).data('filter');
         filterTemplates();
     });
 
     // Load templates via AJAX
     function loadTemplates() {
-        $('.template-gallery-grid').html('<div class="template-gallery-loading">Chargement des modèles...</div>');
+        jQuery('.template-gallery-grid').html('<div class="template-gallery-loading">Chargement des modèles...</div>');
 
-        $.ajax({
+        jQuery.ajax({
             url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'get_builtin_templates',
-                nonce: pdf_builder_admin.nonce
+                nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
                 if (response.success) {
                     loadedTemplates = response.data.templates;
                     renderTemplates(loadedTemplates);
                 } else {
-                    $('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
+                    jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
                 }
             },
             error: function() {
-                $('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
+                jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
             }
         });
     }
@@ -812,34 +812,34 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
 
-        $('.template-gallery-grid').html(html);
+        jQuery('.template-gallery-grid').html(html);
         filterTemplates();
     }
 
     // Filter templates based on current filter
     function filterTemplates() {
         if (currentFilter === 'all') {
-            $('.template-gallery-item').show();
+            jQuery('.template-gallery-item').show();
         } else {
-            $('.template-gallery-item').hide();
-            $(`.template-gallery-item[data-category="${currentFilter}"]`).show();
+            jQuery('.template-gallery-item').hide();
+            jQuery(`.template-gallery-item[data-category="${currentFilter}"]`).show();
         }
     }
 
     // Install template
-    $(document).on('click', '.install-template', function() {
-        const templateId = $(this).data('template-id');
-        const $button = $(this);
+    jQuery(document).on('click', '.install-template', function() {
+        const templateId = jQuery(this).data('template-id');
+        const $button = jQuery(this);
 
         $button.prop('disabled', true).text('Installation...');
 
-        $.ajax({
+        jQuery.ajax({
             url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'install_builtin_template',
                 template_id: templateId,
-                nonce: pdf_builder_admin.nonce
+                nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
                 if (response.success) {
@@ -863,8 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Preview template
-    $(document).on('click', '.preview-template', function() {
-        const templateId = $(this).data('template-id');
+    jQuery(document).on('click', '.preview-template', function() {
+        const templateId = jQuery(this).data('template-id');
         const template = loadedTemplates.find(t => t.id === templateId);
 
         if (template && template.preview_url) {
@@ -875,14 +875,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Utility function to show notices
     function showNotice(message, type = 'info') {
         const noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
-        const $notice = $(`<div class="notice ${noticeClass} is-dismissible"><p>${message}</p></div>`);
+        const $notice = jQuery(`<div class="notice ${noticeClass} is-dismissible"><p>${message}</p></div>`);
 
-        $('.wp-header-end').after($notice);
+        jQuery('.wp-header-end').after($notice);
 
         // Auto-dismiss after 5 seconds
         setTimeout(function() {
             $notice.fadeOut(function() {
-                $(this).remove();
+                jQuery(this).remove();
             });
         }, 5000);
     }
