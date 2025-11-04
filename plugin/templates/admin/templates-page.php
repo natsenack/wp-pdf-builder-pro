@@ -70,7 +70,12 @@ if (!defined('ABSPATH')) {
                     return;
                 }
 
-                response.data.templates.forEach(function(t){
+                // DEBUG: Log des données reçues
+                console.log('[PDF Builder] AJAX response received:', response);
+                console.log('[PDF Builder] Templates data:', response.data.templates);
+
+                response.data.templates.forEach(function(t, index){
+                    console.log('[PDF Builder] Processing template ' + (index+1) + ':', t.name, 'previewImage:', t.previewImage);
                     var card = document.createElement('div');
                     card.className = 'predef-card';
                     card.style = 'background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;display:flex;flex-direction:column;min-height:200px;';
@@ -84,10 +89,12 @@ if (!defined('ABSPATH')) {
                     
                     // Utiliser l'image de prévisualisation réelle si disponible
                     if (t.previewImage) {
+                        console.log('[PDF Builder] Using previewImage for', t.name, ':', t.previewImage);
                         img.src = t.previewImage;
                         img.alt = 'Aperçu ' + (t.name || 'Template');
                         // Fallback vers SVG si l'image ne charge pas
                         img.onerror = function() {
+                            console.error('[PDF Builder] Image failed to load for', t.name, ':', t.previewImage);
                             var svgData = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120">' +
                                 '<rect width="200" height="120" fill="#f8f9fa" stroke="#dee2e6"/>' +
                                 '<text x="100" y="50" text-anchor="middle" font-family="Arial" font-size="14" fill="#6c757d">' + (t.name || 'Template') + '</text>' +
@@ -95,6 +102,9 @@ if (!defined('ABSPATH')) {
                                 '</svg>';
                             this.src = 'data:image/svg+xml;base64,' + btoa(svgData);
                             this.onerror = null; // Éviter les boucles infinies
+                        };
+                        img.onload = function() {
+                            console.log('[PDF Builder] Image loaded successfully for', t.name, ':', t.previewImage);
                         };
                     } else {
                         // Construire l'URL de l'image de prévisualisation si elle n'est pas fournie

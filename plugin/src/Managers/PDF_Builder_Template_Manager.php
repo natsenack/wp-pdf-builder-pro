@@ -776,6 +776,12 @@ class PDF_Builder_Template_Manager
             // Récupérer les templates prédéfinis
             $templates = $this->get_predefined_templates();
 
+            // DEBUG: Log des données des templates
+            error_log('[PDF Builder] AJAX get_predefined_templates - Found ' . count($templates) . ' templates');
+            foreach ($templates as $i => $template) {
+                error_log('[PDF Builder] Template ' . ($i+1) . ': ' . $template['name'] . ' - previewImage: ' . ($template['previewImage'] ?? 'NOT SET'));
+            }
+
             // Formater la réponse
             $formatted_templates = [];
             foreach ($templates as $template) {
@@ -790,6 +796,12 @@ class PDF_Builder_Template_Manager
                     'filename' => $template['_metadata']['filename'] ?? '',
                     'isInstalled' => $this->is_predefined_template_installed($template['name'])
                 ];
+            }
+
+            // DEBUG: Log des données formatées
+            error_log('[PDF Builder] AJAX response - Returning ' . count($formatted_templates) . ' formatted templates');
+            foreach ($formatted_templates as $i => $template) {
+                error_log('[PDF Builder] Formatted template ' . ($i+1) . ': ' . $template['name'] . ' - previewImage: ' . ($template['previewImage'] ?? 'NOT SET'));
             }
 
             wp_send_json_success([
