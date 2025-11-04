@@ -5404,11 +5404,18 @@ class PDF_Builder_Admin {
                 wp_send_json_error(['message' => 'ID du template prédéfini manquant']);
             }
 
+            // Debug: Log du builtin_id et du chemin
+            error_log('PDF Builder Debug - builtin_id: ' . $builtin_id);
+
             // Charger le fichier JSON du builtin
-            $file_path = plugin_dir_path(dirname(__FILE__)) . "templates/builtin/{$builtin_id}.json";
+            $plugin_dir = plugin_dir_path(dirname(__FILE__));
+            $file_path = $plugin_dir . "templates/builtin/{$builtin_id}.json";
+
+            error_log('PDF Builder Debug - file_path: ' . $file_path);
+            error_log('PDF Builder Debug - file_exists: ' . (file_exists($file_path) ? 'true' : 'false'));
 
             if (!file_exists($file_path)) {
-                wp_send_json_error(['message' => 'Template prédéfini non trouvé']);
+                wp_send_json_error(['message' => 'Template prédéfini non trouvé - ID: ' . $builtin_id . ', Chemin: ' . $file_path]);
             }
 
             $content = file_get_contents($file_path);
