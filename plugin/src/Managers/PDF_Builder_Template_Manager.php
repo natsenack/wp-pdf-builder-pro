@@ -955,18 +955,23 @@ class PDF_Builder_Template_Manager
                         // Mettre à jour le champ previewImage dans le JSON original
                         $original_template_data['previewImage'] = $result['image_url'];
 
+                        error_log('[PDF Builder] About to save template file: ' . $template_file);
+                        error_log('[PDF Builder] New previewImage URL: ' . $result['image_url']);
+
                         // Sauvegarder le JSON mis à jour
                         $updated_json = json_encode($original_template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                         if (file_put_contents($template_file, $updated_json)) {
+                            error_log('[PDF Builder] File saved successfully, size: ' . strlen($updated_json) . ' bytes');
                             $results[] = ['filename' => $filename, 'success' => true, 'image_url' => $result['image_url']];
                             $success_count++;
                             error_log('[PDF Builder] Successfully updated ' . $filename);
                         } else {
-                            error_log('[PDF Builder] Failed to save updated JSON for ' . $filename);
+                            error_log('[PDF Builder] Failed to save updated JSON for ' . $filename . ' - check file permissions');
                             $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Impossible de sauvegarder le fichier'];
                         }
                     } else {
-                        error_log('[PDF Builder] Preview generation failed for ' . $filename);
+                        error_log('[PDF Builder] Preview generation failed for ' . $filename . ' - no image_url in result');
+                        error_log('[PDF Builder] Result details: ' . json_encode($result));
                         $results[] = ['filename' => $filename, 'success' => false, 'error' => 'Échec de génération de la vignette'];
                     }
 
