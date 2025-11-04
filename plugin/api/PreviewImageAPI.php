@@ -582,8 +582,9 @@ class PreviewImageAPI {
      * URL du fichier en cache
      */
     private function get_cache_url($cache_key, $format) {
-        $upload_dir = wp_upload_dir();
-        return $upload_dir['baseurl'] . '/cache/wp-pdf-builder-previews/' . $cache_key . '.' . $format;
+        // Utiliser le même chemin que le stockage (WP_CONTENT_DIR)
+        $content_url = content_url();
+        return $content_url . '/cache/wp-pdf-builder-previews/' . $cache_key . '.' . $format;
     }
 
     /**
