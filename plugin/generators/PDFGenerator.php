@@ -197,41 +197,56 @@ class PDFGenerator extends BaseGenerator {
      * Génère avec DomPDF directement vers un fichier
      */
     private function generateWithDomPDFToFile(string $output_type, string $output_file) {
+        $this->logInfo("Starting DomPDF generation to file: {$output_file}, type: {$output_type}");
+
         $pdf_start = microtime(true);
 
-        // Chargement du HTML
-        $this->dompdf->loadHtml($this->generated_html);
+        try {
+            // Chargement du HTML
+            $this->logInfo("Loading HTML into DomPDF (" . strlen($this->generated_html) . " chars)");
+            $this->dompdf->loadHtml($this->generated_html);
 
-        // Rendu du PDF
-        $this->dompdf->render();
+            // Rendu du PDF
+            $this->logInfo("Rendering PDF with DomPDF");
+            $this->dompdf->render();
 
-        $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
+            $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
+            $this->logInfo("PDF rendering completed in " . round($this->performance_metrics['pdf_generation_time'], 3) . "s");
 
-        // Vérification mémoire
-        $current_memory = memory_get_usage(true);
-        $memory_used = $current_memory - $this->performance_metrics['memory_start'];
+            // Vérification mémoire
+            $current_memory = memory_get_usage(true);
+            $memory_used = $current_memory - $this->performance_metrics['memory_start'];
 
-        if ($memory_used > 100 * 1024 * 1024) { // 100MB
-            $this->logWarning("High memory usage detected: " . round($memory_used / 1024 / 1024, 2) . "MB");
+            if ($memory_used > 100 * 1024 * 1024) { // 100MB
+                $this->logWarning("High memory usage detected: " . round($memory_used / 1024 / 1024, 2) . "MB");
+            }
+
+            // Sauvegarde selon le type demandé
+            $this->logInfo("Saving output as {$output_type} to {$output_file}");
+            switch ($output_type) {
+                case 'pdf':
+                    $pdf_data = $this->dompdf->output();
+                    $this->logInfo("PDF data size: " . strlen($pdf_data) . " bytes");
+                    file_put_contents($output_file, $pdf_data);
+                    break;
+
+                case 'png':
+                case 'jpg':
+                    $image_data = $this->convertPDFToImage($output_type);
+                    $this->logInfo("Image data size: " . strlen($image_data) . " bytes");
+                    file_put_contents($output_file, $image_data);
+                    break;
+
+                default:
+                    throw new \Exception("Unsupported output type: {$output_type}");
+            }
+
+            $this->logInfo("DomPDF generation to file completed successfully: {$output_file}");
+
+        } catch (\Exception $e) {
+            $this->logError("DomPDF generation failed: " . $e->getMessage());
+            throw $e;
         }
-
-        // Sauvegarde selon le type demandé
-        switch ($output_type) {
-            case 'pdf':
-                file_put_contents($output_file, $this->dompdf->output());
-                break;
-
-            case 'png':
-            case 'jpg':
-                $image_data = $this->convertPDFToImage($output_type);
-                file_put_contents($output_file, $image_data);
-                break;
-
-            default:
-                throw new \Exception("Unsupported output type: {$output_type}");
-        }
-
-        $this->logInfo("DomPDF generation to file completed successfully: {$output_file}");
     }
 
     /**
