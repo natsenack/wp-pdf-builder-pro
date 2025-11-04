@@ -736,8 +736,8 @@ document.addEventListener('DOMContentLoaded', function() {
     jQuery(document).on('click', '.install-template', function() {
         const templateId = jQuery(this).data('template-id');
         
-        // Redirect to editor with builtin template
-        window.location.href = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor&builtin_template=')); ?>' + encodeURIComponent(templateId);
+        // Redirect to editor with template ID (builtin templates use string IDs)
+        window.location.href = '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor&template_id=')); ?>' + encodeURIComponent(templateId);
     });
 
     // Utility function to show notices
