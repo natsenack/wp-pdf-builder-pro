@@ -1274,7 +1274,7 @@ class PDF_Builder_Admin {
 
             // Ajouter l'URL de prévisualisation à chaque template
             foreach ($templates as &$template) {
-                $template['preview_url'] = $template_manager->get_template_preview_url($template['name']);
+                $template['preview_url'] = $template_manager->get_template_preview_url($template['id']);
             }
 
             error_log('PDF Builder: ajax_get_builtin_templates - URLs ajoutées, envoi succès');
