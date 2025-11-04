@@ -704,12 +704,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 `<span class="template-gallery-item-feature">${feature}</span>`
             ).join('');
 
-            console.log('Template:', template.name, 'Preview URL:', template.preview_url);
-
             html += `
                 <div class="template-gallery-item" data-category="${template.category || 'general'}" style="animation-delay: ${index * 0.1}s">
                     <div class="template-gallery-item-preview">
-                        <img src="${template.preview_url}" alt="${template.name}" loading="lazy" onerror="console.log('Image error for:', template.name, 'URL:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <img src="${template.preview_url}" alt="${template.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                         <div class="preview-placeholder" style="display: none;">${template.name.charAt(0).toUpperCase()}</div>
                     </div>
                     <div class="template-gallery-item-info">
