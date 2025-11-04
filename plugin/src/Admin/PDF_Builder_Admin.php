@@ -1295,6 +1295,18 @@ class PDF_Builder_Admin {
 
             error_log('PDF Builder: ajax_get_builtin_templates - Permissions et nonce OK');
 
+            // S'assurer que les constantes sont définies
+            if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+                $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
+                define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path($plugin_file));
+                error_log('PDF Builder: ajax_get_builtin_templates - Defined PDF_BUILDER_PLUGIN_DIR: ' . PDF_BUILDER_PLUGIN_DIR);
+            }
+            if (!defined('PDF_BUILDER_PLUGIN_URL')) {
+                $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
+                define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url($plugin_file));
+                error_log('PDF Builder: ajax_get_builtin_templates - Defined PDF_BUILDER_PLUGIN_URL: ' . PDF_BUILDER_PLUGIN_URL);
+            }
+
             // Obtenir le Template Manager
             $template_manager = $this->get_template_manager();
             error_log('PDF Builder: ajax_get_builtin_templates - Template Manager instance: ' . (is_object($template_manager) ? get_class($template_manager) : 'null'));
