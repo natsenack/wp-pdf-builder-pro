@@ -83,8 +83,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "textColor": "#2d3748",
-                "lineHeight": 1.4
+                "textColor": "#2d3748"
             }
         },
         {
@@ -101,9 +100,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "textColor": "#2d3748",
-                "textAlign": "right",
-                "lineHeight": 1.4
+                "textColor": "#2d3748"
             }
         },
         {
