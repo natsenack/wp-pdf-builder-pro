@@ -976,7 +976,7 @@ document.addEventListener('keydown', function(e) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
+    padding: 15px 30px;
     border-bottom: 1px solid #e1e5e9;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -1009,7 +1009,7 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-filters {
-    padding: 20px 30px;
+    padding: 12px 30px;
     border-bottom: 1px solid #e1e5e9;
     display: flex;
     gap: 10px;
@@ -1041,7 +1041,7 @@ document.addEventListener('keydown', function(e) {
 
 .template-gallery-grid {
     padding: 30px;
-    max-height: 60vh;
+    max-height: 75vh;
     overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Increased from 280px to accommodate A4 proportions */
@@ -1134,7 +1134,7 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-item-preview {
-    height: 240px;
+    height: 400px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     display: flex;
     align-items: center;
@@ -1284,7 +1284,7 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-footer {
-    padding: 20px 30px;
+    padding: 12px 30px;
     border-top: 1px solid #e1e5e9;
     display: flex;
     justify-content: flex-end;
