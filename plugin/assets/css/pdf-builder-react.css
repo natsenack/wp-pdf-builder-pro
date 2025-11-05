@@ -557,9 +557,11 @@ body.pdf-builder-active #wpadminbar {
   border: 1px solid #f1f3f4;
   position: relative;
   cursor: default;
-  height: auto; /* S'adapte automatiquement au contenu et au conteneur */
-  min-height: 1000px; /* Hauteur minimale pour éviter la compression excessive */
-  width: auto;
+  /* Dimensions standard A4 en pixels (794x1123) */
+  width: 794px;
+  height: 1123px;
+  /* Permet les éléments positionnés en absolu */
+  overflow: visible;
 }
 
 /* Guides du canvas */
