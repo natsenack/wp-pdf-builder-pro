@@ -8,36 +8,48 @@
         "Épuré",
         "Simple"
     ],
-    "canvasWidth": 794,
-    "canvasHeight": 1123,
+    "canvasWidth": 300,
+    "canvasHeight": 200,
     "elements": [
         {
-            "id": "logo",
+            "id": "logo-circle",
+            "type": "circle",
+            "x": 274,
+            "y": 6,
+            "width": 12,
+            "height": 12,
+            "properties": {
+                "fillColor": "#ffc107",
+                "strokeWidth": 0,
+                "opacity": 0.7
+            }
+        },
+        {
+            "id": "logo-text",
             "type": "text",
-            "x": 720,
-            "y": 30,
-            "width": 54,
-            "height": 24,
+            "x": 280,
+            "y": 9,
+            "width": 12,
+            "height": 12,
             "properties": {
                 "text": "L",
-                "fontSize": 18,
+                "fontSize": 7,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#ffffff",
-                "textAlign": "center",
-                "backgroundColor": "#ffc107"
+                "textAlign": "center"
             }
         },
         {
             "id": "document-title",
             "type": "text",
-            "x": 67,
-            "y": 30,
+            "x": 10,
+            "y": 15,
             "width": 200,
-            "height": 30,
+            "height": 10,
             "properties": {
                 "text": "FACTURE",
-                "fontSize": 24,
+                "fontSize": 7,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#212529",
@@ -47,13 +59,13 @@
         {
             "id": "customer-name",
             "type": "text",
-            "x": 67,
-            "y": 70,
-            "width": 300,
-            "height": 20,
+            "x": 10,
+            "y": 28,
+            "width": 200,
+            "height": 5,
             "properties": {
                 "text": "{{customer_name}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
                 "textAlign": "left"
@@ -62,13 +74,13 @@
         {
             "id": "customer-address",
             "type": "text",
-            "x": 67,
-            "y": 90,
-            "width": 300,
-            "height": 20,
+            "x": 10,
+            "y": 33,
+            "width": 200,
+            "height": 5,
             "properties": {
                 "text": "{{customer_address}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
                 "textAlign": "left"
@@ -77,52 +89,52 @@
         {
             "id": "invoice-number",
             "type": "text",
-            "x": 600,
-            "y": 70,
-            "width": 127,
-            "height": 20,
+            "x": 280,
+            "y": 28,
+            "width": 20,
+            "height": 5,
             "properties": {
                 "text": "Fact: {{order_number}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "invoice-date",
             "type": "text",
-            "x": 600,
-            "y": 90,
-            "width": 127,
-            "height": 20,
+            "x": 280,
+            "y": 33,
+            "width": 20,
+            "height": 5,
             "properties": {
                 "text": "{{order_date}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "separator-line",
             "type": "line",
-            "x": 67,
-            "y": 120,
-            "width": 661,
-            "height": 1,
+            "x": 10,
+            "y": 40,
+            "width": 280,
+            "height": 0,
             "properties": {
                 "strokeColor": "#ffc107",
-                "strokeWidth": 3
+                "strokeWidth": 2
             }
         },
         {
             "id": "table-header-bg",
             "type": "rectangle",
-            "x": 67,
-            "y": 140,
-            "width": 661,
-            "height": 30,
+            "x": 10,
+            "y": 45,
+            "width": 280,
+            "height": 8,
             "properties": {
                 "fillColor": "#ffc107",
                 "strokeWidth": 0
@@ -131,13 +143,13 @@
         {
             "id": "table-header",
             "type": "text",
-            "x": 80,
-            "y": 145,
-            "width": 641,
-            "height": 25,
+            "x": 15,
+            "y": 50,
+            "width": 270,
+            "height": 5,
             "properties": {
                 "text": "Produit\t\tQté\tPrix\tTotal",
-                "fontSize": 12,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#212529",
@@ -147,10 +159,10 @@
         {
             "id": "items-table",
             "type": "product_table",
-            "x": 67,
-            "y": 170,
-            "width": 661,
-            "height": 333,
+            "x": 10,
+            "y": 58,
+            "width": 280,
+            "height": 20,
             "properties": {
                 "showHeaders": false,
                 "showBorders": false,
@@ -158,7 +170,7 @@
                 "showSku": false,
                 "showDescription": false,
                 "showQuantity": true,
-                "fontSize": 12,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "textColor": "#212529",
                 "headerBackgroundColor": "#ffc107",
@@ -169,51 +181,93 @@
             }
         },
         {
-            "id": "totals-section",
-            "type": "text",
-            "x": 467,
-            "y": 854,
-            "width": 260,
-            "height": 107,
-            "properties": {
-                "text": "Sous-total\t{{subtotal}}\nTVA\t{{tax}}\nLivraison\t{{shipping_total}}\nTotal\t{{total}}",
-                "fontSize": 11,
-                "fontFamily": "Arial",
-                "color": "#ffc107",
-                "textAlign": "right",
-                "lineHeight": 1.4
-            }
-        },
-        {
-            "id": "footer-divider",
+            "id": "totals-separator",
             "type": "line",
-            "x": 67,
-            "y": 1000,
-            "width": 661,
-            "height": 1,
+            "x": 180,
+            "y": 80,
+            "width": 110,
+            "height": 0,
             "properties": {
-                "strokeColor": "#cccccc",
+                "strokeColor": "#ffc107",
                 "strokeWidth": 1
             }
         },
         {
-            "id": "footer-mentions",
-            "type": "mentions",
-            "x": 67,
-            "y": 1027,
-            "width": 661,
-            "height": 53,
+            "id": "subtotal-label",
+            "type": "text",
+            "x": 200,
+            "y": 90,
+            "width": 60,
+            "height": 5,
             "properties": {
-                "showEmail": true,
-                "showPhone": true,
-                "showSiret": false,
-                "showVat": false,
-                "separator": " • ",
-                "fontSize": 11,
+                "text": "Sous-total:",
+                "fontSize": 5,
                 "fontFamily": "Arial",
-                "textColor": "#adb5bd",
-                "textAlign": "center",
-                "lineHeight": 1.4
+                "color": "#6c757d",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "subtotal-value",
+            "type": "text",
+            "x": 280,
+            "y": 90,
+            "width": 20,
+            "height": 5,
+            "properties": {
+                "text": "{{subtotal}}",
+                "fontSize": 5,
+                "fontFamily": "Arial",
+                "fontWeight": "bold",
+                "color": "#ffc107",
+                "textAlign": "end"
+            }
+        },
+        {
+            "id": "total-label",
+            "type": "text",
+            "x": 200,
+            "y": 98,
+            "width": 60,
+            "height": 5,
+            "properties": {
+                "text": "TOTAL:",
+                "fontSize": 6,
+                "fontFamily": "Arial",
+                "fontWeight": "bold",
+                "color": "#212529",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "total-value",
+            "type": "text",
+            "x": 280,
+            "y": 98,
+            "width": 20,
+            "height": 5,
+            "properties": {
+                "text": "{{total}}",
+                "fontSize": 7,
+                "fontFamily": "Arial",
+                "fontWeight": "bold",
+                "color": "#ffc107",
+                "textAlign": "end"
+            }
+        },
+        {
+            "id": "footer-mentions",
+            "type": "text",
+            "x": 150,
+            "y": 115,
+            "width": 150,
+            "height": 5,
+            "properties": {
+                "text": "contact@minimal.com • www.minimal.com",
+                "fontSize": 4,
+                "fontFamily": "Arial",
+                "color": "#adb5bd",
+                "textAlign": "center"
             }
         }
     ],

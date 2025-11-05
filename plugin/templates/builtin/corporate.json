@@ -8,48 +8,60 @@
         "Corporate",
         "Entreprise"
     ],
-    "canvasWidth": 794,
-    "canvasHeight": 1123,
+    "canvasWidth": 300,
+    "canvasHeight": 200,
     "elements": [
         {
             "id": "header-background",
             "type": "rectangle",
             "x": 0,
             "y": 0,
-            "width": 794,
-            "height": 40,
+            "width": 300,
+            "height": 12,
             "properties": {
                 "fillColor": "#28a745",
                 "strokeWidth": 0
             }
         },
         {
-            "id": "logo",
+            "id": "logo-circle",
+            "type": "circle",
+            "x": 15,
+            "y": 6,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "fillColor": "#ffffff",
+                "strokeWidth": 0,
+                "opacity": 0.8
+            }
+        },
+        {
+            "id": "logo-text",
             "type": "text",
-            "x": 20,
-            "y": 10,
-            "width": 30,
-            "height": 20,
+            "x": 15,
+            "y": 4,
+            "width": 6,
+            "height": 6,
             "properties": {
                 "text": "✓",
-                "fontSize": 16,
+                "fontSize": 6,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
-                "textAlign": "center",
-                "backgroundColor": "#ffffff"
+                "textAlign": "center"
             }
         },
         {
             "id": "company-name",
             "type": "text",
-            "x": 60,
-            "y": 10,
-            "width": 300,
-            "height": 25,
+            "x": 35,
+            "y": 8,
+            "width": 200,
+            "height": 8,
             "properties": {
                 "text": "{{company_name}}",
-                "fontSize": 20,
+                "fontSize": 6,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
@@ -59,13 +71,13 @@
         {
             "id": "company-address",
             "type": "text",
-            "x": 67,
-            "y": 80,
-            "width": 400,
-            "height": 20,
+            "x": 10,
+            "y": 32,
+            "width": 200,
+            "height": 5,
             "properties": {
                 "text": "{{company_address}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
                 "textAlign": "left"
@@ -74,13 +86,13 @@
         {
             "id": "company-details",
             "type": "text",
-            "x": 67,
-            "y": 100,
-            "width": 400,
-            "height": 20,
+            "x": 10,
+            "y": 39,
+            "width": 200,
+            "height": 5,
             "properties": {
                 "text": "SIRET: {{company_siret}} • TVA: {{company_vat}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
                 "textAlign": "left"
@@ -89,13 +101,13 @@
         {
             "id": "client-label",
             "type": "text",
-            "x": 67,
-            "y": 140,
-            "width": 150,
-            "height": 20,
+            "x": 10,
+            "y": 50,
+            "width": 100,
+            "height": 5,
             "properties": {
                 "text": "CLIENT:",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
@@ -105,13 +117,13 @@
         {
             "id": "client-name",
             "type": "text",
-            "x": 67,
-            "y": 160,
-            "width": 200,
-            "height": 20,
+            "x": 10,
+            "y": 56,
+            "width": 100,
+            "height": 5,
             "properties": {
                 "text": "{{customer_name}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
                 "textAlign": "left"
@@ -120,13 +132,13 @@
         {
             "id": "client-address",
             "type": "text",
-            "x": 67,
-            "y": 180,
-            "width": 200,
-            "height": 20,
+            "x": 10,
+            "y": 61,
+            "width": 100,
+            "height": 5,
             "properties": {
                 "text": "{{customer_address}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
                 "textAlign": "left"
@@ -135,56 +147,56 @@
         {
             "id": "order-number",
             "type": "text",
-            "x": 500,
-            "y": 140,
-            "width": 200,
-            "height": 20,
+            "x": 180,
+            "y": 50,
+            "width": 110,
+            "height": 5,
             "properties": {
-                "text": "N° {{order_number}}",
-                "fontSize": 13,
+                "text": "N° CMM-XXXX-XXXX",
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "order-date",
             "type": "text",
-            "x": 500,
-            "y": 160,
-            "width": 200,
-            "height": 20,
+            "x": 180,
+            "y": 56,
+            "width": 110,
+            "height": 5,
             "properties": {
                 "text": "Date: {{order_date}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "client-phone",
             "type": "text",
-            "x": 500,
-            "y": 180,
-            "width": 200,
-            "height": 20,
+            "x": 180,
+            "y": 61,
+            "width": 110,
+            "height": 5,
             "properties": {
                 "text": "{{customer_phone}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#212529",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "table-header-bg",
             "type": "rectangle",
-            "x": 67,
-            "y": 220,
-            "width": 661,
-            "height": 30,
+            "x": 10,
+            "y": 68,
+            "width": 280,
+            "height": 9,
             "properties": {
                 "fillColor": "#28a745",
                 "strokeWidth": 0
@@ -193,13 +205,13 @@
         {
             "id": "table-header",
             "type": "text",
-            "x": 80,
-            "y": 225,
-            "width": 641,
-            "height": 25,
+            "x": 15,
+            "y": 74,
+            "width": 270,
+            "height": 5,
             "properties": {
                 "text": "Produit\tQté\tPrix\tTotal",
-                "fontSize": 12,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#ffffff",
@@ -209,10 +221,10 @@
         {
             "id": "items-table",
             "type": "product_table",
-            "x": 67,
-            "y": 250,
-            "width": 661,
-            "height": 333,
+            "x": 10,
+            "y": 77,
+            "width": 280,
+            "height": 20,
             "properties": {
                 "showHeaders": false,
                 "showBorders": true,
@@ -220,7 +232,7 @@
                 "showSku": false,
                 "showDescription": false,
                 "showQuantity": true,
-                "fontSize": 12,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "textColor": "#212529",
                 "headerBackgroundColor": "#28a745",
@@ -234,100 +246,101 @@
         {
             "id": "totals-separator",
             "type": "line",
-            "x": 400,
-            "y": 600,
-            "width": 328,
-            "height": 1,
+            "x": 160,
+            "y": 100,
+            "width": 130,
+            "height": 0,
             "properties": {
                 "strokeColor": "#e0e0e0",
-                "strokeWidth": 1
+                "strokeWidth": 0.5
             }
         },
         {
             "id": "subtotal-label",
             "type": "text",
-            "x": 500,
-            "y": 620,
-            "width": 150,
-            "height": 20,
+            "x": 200,
+            "y": 110,
+            "width": 60,
+            "height": 5,
             "properties": {
                 "text": "Sous-total:",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
-                "textAlign": "right"
+                "textAlign": "left"
             }
         },
         {
             "id": "subtotal-value",
             "type": "text",
-            "x": 650,
-            "y": 620,
-            "width": 78,
-            "height": 20,
+            "x": 285,
+            "y": 110,
+            "width": 20,
+            "height": 5,
             "properties": {
                 "text": "{{subtotal}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "discount-label",
             "type": "text",
-            "x": 500,
-            "y": 640,
-            "width": 150,
-            "height": 20,
+            "x": 200,
+            "y": 118,
+            "width": 60,
+            "height": 5,
             "properties": {
                 "text": "Coupon:",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "color": "#6c757d",
-                "textAlign": "right"
+                "textAlign": "left"
             }
         },
         {
             "id": "discount-value",
             "type": "text",
-            "x": 650,
-            "y": 640,
-            "width": 78,
-            "height": 20,
+            "x": 285,
+            "y": 118,
+            "width": 20,
+            "height": 5,
             "properties": {
                 "text": "-{{discount}}",
-                "fontSize": 13,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
-                "textAlign": "right"
+                "textAlign": "end"
             }
         },
         {
             "id": "total-background",
             "type": "rectangle",
-            "x": 400,
-            "y": 660,
-            "width": 328,
-            "height": 30,
+            "x": 160,
+            "y": 122,
+            "width": 125,
+            "height": 8,
             "properties": {
                 "fillColor": "#28a745",
                 "strokeWidth": 0,
-                "borderRadius": 4
+                "borderRadius": 4,
+                "opacity": 0.1
             }
         },
         {
             "id": "total-label",
             "type": "text",
-            "x": 500,
-            "y": 665,
-            "width": 150,
-            "height": 25,
+            "x": 160,
+            "y": 129,
+            "width": 50,
+            "height": 5,
             "properties": {
                 "text": "TOTAL:",
-                "fontSize": 16,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
@@ -337,13 +350,13 @@
         {
             "id": "total-value",
             "type": "text",
-            "x": 650,
-            "y": 665,
-            "width": 78,
-            "height": 25,
+            "x": 285,
+            "y": 129,
+            "width": 20,
+            "height": 5,
             "properties": {
                 "text": "{{total}}",
-                "fontSize": 18,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#28a745",
@@ -354,16 +367,16 @@
             "id": "footer-mentions",
             "type": "mentions",
             "x": 67,
-            "y": 1050,
-            "width": 661,
-            "height": 30,
+            "y": 145,
+            "width": 285,
+            "height": 5,
             "properties": {
                 "showEmail": true,
                 "showPhone": false,
                 "showSiret": false,
                 "showVat": false,
                 "separator": " • ",
-                "fontSize": 12,
+                "fontSize": 5,
                 "fontFamily": "Arial",
                 "textColor": "#adb5bd",
                 "textAlign": "center",
