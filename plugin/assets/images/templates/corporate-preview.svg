@@ -20,11 +20,8 @@
     <text x="33.249370277078" y="24.31234256927" font-family="Arial" font-size="7" fill="#ffffff">123 Rue de la Paix</text>
     </g>
     <g id="customer-info">
-    <text x="27.846347607053" y="49.561712846348" font-family="Arial" font-size="8" fill="#28a745" text-anchor="start" font-weight="bold">CLIENT:</text>
-    <text x="27.846347607053" y="57.874055415617" font-family="Arial" font-size="8" fill="#212529" text-anchor="start" font-weight="normal">{{customer_name}}</text>
-    <text x="27.846347607053" y="64.108312342569" font-family="Arial" font-size="8" fill="#212529" text-anchor="start" font-weight="normal">{{customer_address}}</text>
-    <text x="27.846347607053" y="156.62216624685" font-family="Arial" font-size="7" fill="#212529" font-weight="bold">CLIENT:</text>
-    <text x="27.846347607053" y="165.62216624685" font-family="Arial" font-size="7" fill="#212529" font-weight="normal">Sample Text</text>
+    <text x="27.846347607053" y="52.717884130982" font-family="Arial" font-size="7" fill="#212529" font-weight="bold">CLIENT:</text>
+    <text x="27.846347607053" y="61.717884130982" font-family="Arial" font-size="7" fill="#212529" font-weight="normal">Sample Text</text>
     </g>
     <g id="order-info">
     <text x="259.76070528967" y="20.31234256927" font-family="Arial" font-size="12" fill="#000000" text-anchor="end" font-weight="bold">FACTURE</text>
@@ -41,13 +38,13 @@
     <text x="247.62468513854" y="107.1234256927" font-family="Arial" font-size="8" fill="#212529">€50.00</text>
     </g>
     <g id="order-totals">
-    <text x="207.80856423174" y="157.62216624685" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
+    <text x="207.80856423174" y="182.55919395466" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
     <text x="270.15113350126" y="157.62216624685" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">{{subtotal}}</text>
-    <text x="207.80856423174" y="165.93450881612" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
-    <text x="270.15113350126" y="165.93450881612" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-{{discount}}</text>
-    <rect x="207.80856423174" y="166.24685138539" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke="none" stroke-width="0"/>
-    <text x="207.80856423174" y="176.32493702771" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
-    <text x="270.15113350126" y="176.32493702771" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="end" font-weight="bold">{{total}}</text>
+    <text x="207.80856423174" y="190.87153652393" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
+    <text x="270.15113350126" y="190.87153652393" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-{{discount}}</text>
+    <rect x="207.80856423174" y="193.26196473552" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke="none" stroke-width="0"/>
+    <text x="207.80856423174" y="203.34005037783" font-family="Arial" font-size="8" fill="#28a745" text-anchor="start" font-weight="bold">TOTAL:</text>
+    <text x="270.15113350126" y="203.34005037783" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">{{total}}</text>
     </g>
     <g id="footer">
     <text x="27.846347607053" y="209.6523929471" font-family="Arial" font-size="6" fill="#666666">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
