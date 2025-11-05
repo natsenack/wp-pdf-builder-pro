@@ -283,7 +283,7 @@
                 "separator": " | ",
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
-                "color": "#ecf0f1",
+                "textColor": "#ecf0f1",
                 "lineHeight": 1.4
             }
         },
