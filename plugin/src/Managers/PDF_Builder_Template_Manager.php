@@ -825,7 +825,7 @@ class PDF_Builder_Template_Manager
             error_log('PDF Builder: get_builtin_templates - fichier trouvé: ' . basename($file));
         }
 
-        error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
+        error_log('PDF Builder: get_builtin_templates - 🚀 DÉBUT TRAITEMENT BOUCLE - ' . count($files) . ' fichiers à traiter');
 
         foreach ($files as $index => $file) {
             $filename = basename($file, '.json');
@@ -927,6 +927,8 @@ class PDF_Builder_Template_Manager
                 continue;
             }
         }
+
+        error_log('PDF Builder: get_builtin_templates - 🏁 FIN TRAITEMENT BOUCLE - templates dans le tableau: ' . count($templates));
 
         error_log('PDF Builder: get_builtin_templates - ===== RÉSUMÉ FINAL =====');
         error_log('PDF Builder: get_builtin_templates - total templates retournés: ' . count($templates));
