@@ -1,0 +1,224 @@
+{
+  "id": "facture-pilote",
+  "name": "Facture Pilote",
+  "description": "Template de démonstration pour facture simple",
+  "version": "1.0",
+  "canvasWidth": 794,
+  "canvasHeight": 1123,
+  "elements": [
+    {
+      "id": "fond-entete",
+      "type": "rectangle",
+      "x": 0,
+      "y": 0,
+      "width": 794,
+      "height": 120,
+      "properties": {
+        "backgroundColor": "#007cba",
+        "borderWidth": 0
+      }
+    },
+    {
+      "id": "titre-facture",
+      "type": "text",
+      "x": 50,
+      "y": 30,
+      "width": 200,
+      "height": 40,
+      "properties": {
+        "text": "FACTURE",
+        "color": "#ffffff",
+        "fontSize": 28,
+        "fontWeight": "bold",
+        "textAlign": "left"
+      }
+    },
+    {
+      "id": "numero-facture",
+      "type": "dynamic-text",
+      "x": 550,
+      "y": 40,
+      "width": 194,
+      "height": 30,
+      "properties": {
+        "text": "N° [NUMERO]",
+        "color": "#ffffff",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "textAlign": "right"
+      }
+    },
+    {
+      "id": "date-facture",
+      "type": "dynamic-text",
+      "x": 550,
+      "y": 70,
+      "width": 194,
+      "height": 25,
+      "properties": {
+        "text": "Date: [DATE]",
+        "color": "#ffffff",
+        "fontSize": 12,
+        "textAlign": "right"
+      }
+    },
+    {
+      "id": "info-entreprise",
+      "type": "company_info",
+      "x": 50,
+      "y": 140,
+      "width": 300,
+      "height": 80,
+      "properties": {
+        "text": "[NOM_ENTREPRISE]\n[ADRESSE]\n[TEL] • [EMAIL]",
+        "color": "#333333",
+        "fontSize": 12,
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "id": "info-client",
+      "type": "customer_info",
+      "x": 400,
+      "y": 140,
+      "width": 300,
+      "height": 80,
+      "properties": {
+        "text": "FACTURÉ À :\n[NOM_CLIENT]\n[ADRESSE_CLIENT]\n[EMAIL_CLIENT]",
+        "color": "#333333",
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "ligne-separatrice-1",
+      "type": "line",
+      "x": 50,
+      "y": 240,
+      "width": 694,
+      "height": 3,
+      "properties": {
+        "strokeColor": "#007cba",
+        "strokeWidth": 3
+      }
+    },
+    {
+      "id": "titre-produits",
+      "type": "text",
+      "x": 50,
+      "y": 260,
+      "width": 200,
+      "height": 30,
+      "properties": {
+        "text": "DÉTAIL DES PRESTATIONS",
+        "color": "#007cba",
+        "fontSize": 14,
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "id": "tableau-produits",
+      "type": "product_table",
+      "x": 50,
+      "y": 300,
+      "width": 694,
+      "height": 250,
+      "properties": {
+        "backgroundColor": "#f8f9fa",
+        "borderColor": "#dee2e6",
+        "borderWidth": 1,
+        "headerBackgroundColor": "#007cba",
+        "headerColor": "#ffffff",
+        "columns": [
+          {"name": "Description", "width": 45},
+          {"name": "Qté", "width": 15},
+          {"name": "Prix HT", "width": 20},
+          {"name": "Total HT", "width": 20}
+        ]
+      }
+    },
+    {
+      "id": "ligne-separatrice-2",
+      "type": "line",
+      "x": 50,
+      "y": 570,
+      "width": 694,
+      "height": 2,
+      "properties": {
+        "strokeColor": "#cccccc",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "totaux",
+      "type": "dynamic-text",
+      "x": 500,
+      "y": 590,
+      "width": 244,
+      "height": 80,
+      "properties": {
+        "text": "Sous-total HT: [SOUS_TOTAL] €\nTVA (20%): [TVA] €\n\nTOTAL TTC: [MONTANT_TOTAL] €",
+        "color": "#333333",
+        "fontSize": 12,
+        "textAlign": "right",
+        "lineHeight": 1.5
+      }
+    },
+    {
+      "id": "conditions-paiement",
+      "type": "text",
+      "x": 50,
+      "y": 700,
+      "width": 400,
+      "height": 60,
+      "properties": {
+        "text": "CONDITIONS DE PAIEMENT :\n• Paiement à 30 jours\n• Virement bancaire\n• RIB sur demande",
+        "color": "#666666",
+        "fontSize": 10,
+        "lineHeight": 1.4
+      }
+    },
+    {
+      "id": "mentions-legales",
+      "type": "text",
+      "x": 50,
+      "y": 1000,
+      "width": 500,
+      "height": 80,
+      "properties": {
+        "text": "TVA non applicable, art. 293 B du CGI\n• Merci de votre confiance •",
+        "color": "#999999",
+        "fontSize": 9,
+        "textAlign": "center",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "id": "logo-placeholder",
+      "type": "rectangle",
+      "x": 650,
+      "y": 1010,
+      "width": 80,
+      "height": 60,
+      "properties": {
+        "backgroundColor": "#f0f0f0",
+        "borderColor": "#cccccc",
+        "borderWidth": 1
+      }
+    },
+    {
+      "id": "logo-text",
+      "type": "text",
+      "x": 650,
+      "y": 1025,
+      "width": 80,
+      "height": 30,
+      "properties": {
+        "text": "LOGO\nICI",
+        "color": "#999999",
+        "fontSize": 10,
+        "textAlign": "center",
+        "fontWeight": "bold"
+      }
+    }
+  ]
+}
