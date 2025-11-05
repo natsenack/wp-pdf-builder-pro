@@ -5224,6 +5224,9 @@ class PDF_Builder_Admin {
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
 
+        // Charger le script d'injection de styles pour le canvas
+        wp_enqueue_script('pdf-builder-canvas-style-injector', PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-style-injector.js', ['pdf-builder-react'], '1.0.0', true);
+
         // Charger les scripts de l'API Preview pour l'éditeur React
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
