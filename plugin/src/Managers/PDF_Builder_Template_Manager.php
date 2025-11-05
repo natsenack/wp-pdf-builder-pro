@@ -830,6 +830,7 @@ class PDF_Builder_Template_Manager
         foreach ($files as $index => $file) {
             $filename = basename($file, '.json');
             error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE ' . ($index + 1) . '/' . count($files) . ': ' . $filename . ' =====');
+            error_log('PDF Builder: get_builtin_templates - FICHIER À TRAITER: ' . $filename . ' (index ' . $index . ')');
             error_log('PDF Builder: get_builtin_templates - chemin complet: ' . $file);
             error_log('PDF Builder: get_builtin_templates - fichier existe: ' . (file_exists($file) ? 'OUI' : 'NON'));
             error_log('PDF Builder: get_builtin_templates - est lisible: ' . (is_readable($file) ? 'OUI' : 'NON'));
@@ -848,12 +849,14 @@ class PDF_Builder_Template_Manager
             error_log('PDF Builder: get_builtin_templates - fin du contenu: ' . substr($content, -200));
             
             $template_data = json_decode($content, true);
+            error_log('PDF Builder: get_builtin_templates - Tentative de décodage JSON pour ' . $filename);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE JSON pour ' . $filename . ': ' . json_last_error_msg());
                 error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 premiers caractères): ' . substr($content, 0, 200));
                 error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 derniers caractères): ' . substr($content, -200));
                 continue;
             }
+            error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès pour ' . $filename);
             
             error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès');
             error_log('PDF Builder: get_builtin_templates - structure détectée: ' . (isset($template_data['elements']) ? 'nouveau format' : 'ancien format'));
