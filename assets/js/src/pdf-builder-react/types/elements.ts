@@ -41,13 +41,13 @@ export interface BaseElement {
   locked: boolean;
   createdAt: Date;
   updatedAt: Date;
-  [key: string]: any; // Propriétés dynamiques
+  [key: string]: unknown; // Propriétés dynamiques
 }
 
 export type Element = BaseElement;
 
 export interface ElementProperties {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CanvasState {
@@ -179,4 +179,236 @@ export interface LoadTemplatePayload {
   elements?: BaseElement[];
   canvas?: Partial<CanvasState>;
   lastSaved?: Date;
+}
+
+// Propriétés spécifiques pour les éléments
+export interface ShapeElementProperties {
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  borderRadius?: number;
+}
+
+export interface TextElementProperties {
+  text?: string;
+  fontSize?: number;
+  color?: string;
+  align?: 'left' | 'center' | 'right';
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  autoWrap?: boolean;
+  backgroundColor?: string;
+}
+
+export interface LineElementProperties {
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
+export interface ProductTableElementProperties {
+  showHeaders?: boolean;
+  showBorders?: boolean;
+  showAlternatingRows?: boolean;
+  showSku?: boolean;
+  showDescription?: boolean;
+  showQuantity?: boolean;
+  showShipping?: boolean;
+  showTax?: boolean;
+  showGlobalDiscount?: boolean;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  headerBackgroundColor?: string;
+  headerTextColor?: string;
+  bodyBackgroundColor?: string;
+  bodyTextColor?: string;
+  alternateRowColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  padding?: number;
+  theme?: string;
+  textColor?: string;
+  borderRadius?: number;
+  shippingCost?: number;
+  taxRate?: number;
+  globalDiscount?: number;
+  orderFees?: number;
+  backgroundColor?: string;
+}
+
+export interface DocumentTypeElementProperties {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  documentType?: string;
+}
+
+export interface CustomerInfoElementProperties {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  showName?: boolean;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showAddress?: boolean;
+  showCompany?: boolean;
+  labelColor?: string;
+  valueColor?: string;
+  separator?: string;
+  // Propriétés de police pour l'en-tête
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps du texte
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés de mise en page
+  layout?: 'vertical' | 'horizontal';
+  showHeaders?: boolean;
+  showBorders?: boolean;
+  showFullName?: boolean;
+  // Propriétés de style
+  borderColor?: string;
+  headerTextColor?: string;
+}
+
+export interface CompanyInfoElementProperties {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  showName?: boolean;
+  showAddress?: boolean;
+  showPhone?: boolean;
+  showEmail?: boolean;
+  showWebsite?: boolean;
+  showTaxId?: boolean;
+  logoUrl?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  separator?: string;
+  // Propriétés de police pour l'en-tête (nom de l'entreprise)
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps du texte
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés de thème et style
+  theme?: string;
+  showBorders?: boolean;
+  showCompanyName?: boolean;
+  showSiret?: boolean;
+  showVat?: boolean;
+  borderColor?: string;
+  headerTextColor?: string;
+  // Propriétés de données d'entreprise
+  companyName?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companySiret?: string;
+  companyTva?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+}
+
+export interface ImageElementProperties {
+  src?: string;
+  logoUrl?: string;
+  alt?: string;
+  fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  opacity?: number;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  backgroundColor?: string;
+  alignment?: 'left' | 'center' | 'right';
+  maintainAspectRatio?: boolean;
+}
+
+export interface OrderNumberElementProperties {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  prefix?: string;
+  suffix?: string;
+  padding?: number;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  showOrderDate?: boolean;
+  dateFormat?: string;
+  // Propriétés de police pour le label
+  labelFontSize?: number;
+  labelFontFamily?: string;
+  labelFontWeight?: string;
+  labelFontStyle?: string;
+  // Propriétés de police pour le numéro
+  numberFontSize?: number;
+  numberFontFamily?: string;
+  numberFontWeight?: string;
+  numberFontStyle?: string;
+  // Propriétés de police pour la date
+  dateFontSize?: number;
+  dateFontFamily?: string;
+  dateFontWeight?: string;
+  dateFontStyle?: string;
+  // Propriétés d'affichage et de mise en page
+  contentAlign?: 'left' | 'center' | 'right';
+  showLabel?: boolean;
+  showDate?: boolean;
+  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  labelText?: string;
+}
+
+export interface MentionsElementProperties {
+  fontSize?: number | string;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  content?: string;
+  autoWrap?: boolean;
+  lineHeight?: number;
+  margin?: number;
+  padding?: number;
+  text?: string;
+  showSeparator?: boolean;
+  separatorStyle?: string;
+  theme?: string;
 }
