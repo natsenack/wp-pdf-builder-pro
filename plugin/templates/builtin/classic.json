@@ -36,7 +36,7 @@
                 "fontSize": 19,
                 "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
-                "color": "#1a365d",
+                "textColor": "#1a365d",
                 "textAlign": "center"
             }
         },
@@ -50,7 +50,7 @@
             "properties": {
                 "fontSize": 13,
                 "fontFamily": "Times New Roman",
-                "color": "#4a5568",
+                "textColor": "#4a5568",
                 "textAlign": "left"
             }
         },
@@ -64,7 +64,7 @@
             "properties": {
                 "fontSize": 13,
                 "fontFamily": "Times New Roman",
-                "color": "#4a5568",
+                "textColor": "#4a5568",
                 "textAlign": "left"
             }
         },
@@ -83,7 +83,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "color": "#2d3748",
+                "textColor": "#2d3748",
                 "lineHeight": 1.4
             }
         },
@@ -101,7 +101,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "color": "#2d3748",
+                "textColor": "#2d3748",
                 "textAlign": "right",
                 "lineHeight": 1.4
             }
