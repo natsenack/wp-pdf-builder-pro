@@ -812,14 +812,17 @@ class PDF_Builder_Template_Manager
 
         foreach ($files as $index => $file) {
             $filename = basename($file, '.json');
+            error_log("PDF Builder - Processing template file: $filename");
             try {
                 $content = file_get_contents($file);
                 if ($content === false) {
+                    error_log("PDF Builder - Failed to read file: $filename");
                     continue;
                 }
                 
                 $template_data = json_decode($content, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log("PDF Builder - JSON decode error for $filename: " . json_last_error_msg());
                     continue;
                 }
                 
@@ -827,8 +830,11 @@ class PDF_Builder_Template_Manager
                 $validation_errors = $this->validate_template_structure($template_data);
                 
                 if (!empty($validation_errors)) {
+                    error_log("PDF Builder - Validation errors for $filename: " . implode(', ', $validation_errors));
                     continue;
                 }
+
+                error_log("PDF Builder - Template $filename passed validation, adding to list");
 
                 // Ajouter des métadonnées pour la modal
                 $template_data['id'] = $filename;
