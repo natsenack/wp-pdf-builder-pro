@@ -719,7 +719,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const showPhone = props.showPhone !== false; // Par défaut true
     const showEmail = props.showEmail !== false; // Par défaut true
     const showSiret = props.showSiret !== false; // Par défaut true
-    const showTva = props.showTva !== false; // Par défaut true
+    const showVat = props.showVat !== false; // Par défaut true
 
     // Définition des thèmes
     const themes = {
@@ -819,7 +819,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     // Afficher la TVA si demandée
-    if (showTva) {
+    if (showVat) {
       ctx.fillText(companyData.tva, x, y);
       y += Math.round(fontSize * 1.2);
     }
