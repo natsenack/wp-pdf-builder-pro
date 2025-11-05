@@ -509,11 +509,7 @@ class PDF_Builder_Template_Manager
 
         // ===== Vérification 6 : Validation de chaque élément =====
         foreach ($template_data['elements'] as $index => $element) {
-            error_log("PDF Builder - Validating element $index: " . ($element['id'] ?? 'unknown') . " (type: " . ($element['type'] ?? 'unknown') . ")");
             $element_errors = $this->validate_template_element($element, $index);
-            if (!empty($element_errors)) {
-                error_log("PDF Builder - Element $index validation errors: " . implode('; ', $element_errors));
-            }
             $errors = array_merge($errors, $element_errors);
 
             // Limiter à 10 erreurs pour éviter un flood de messages
@@ -813,36 +809,26 @@ class PDF_Builder_Template_Manager
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
-        error_log("PDF Builder - Found " . count($files) . " JSON files in $builtin_dir");
 
         foreach ($files as $index => $file) {
             $filename = basename($file, '.json');
-            error_log("PDF Builder - Processing template file: $filename (file: $file)");
-
             try {
                 $content = file_get_contents($file);
                 if ($content === false) {
-                    error_log("PDF Builder - Failed to read file: $filename");
                     continue;
                 }
 
                 $template_data = json_decode($content, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log("PDF Builder - JSON decode error for $filename: " . json_last_error_msg());
                     continue;
                 }
-
-                error_log("PDF Builder - Template $filename loaded, has " . count($template_data['elements'] ?? []) . " elements");
 
                 // Validation de la structure
                 $validation_errors = $this->validate_template_structure($template_data);
 
                 if (!empty($validation_errors)) {
-                    error_log("PDF Builder - Template $filename validation failed: " . implode('; ', $validation_errors));
                     continue;
-                }
-
-                error_log("PDF Builder - Template $filename passed validation, adding to list");error_log("PDF Builder - Template $filename added successfully");
+                }error_log("PDF Builder - Template $filename added successfully");
 
                 // Ajouter des métadonnées pour la modal
                 $template_data['id'] = $filename;
@@ -873,7 +859,6 @@ class PDF_Builder_Template_Manager
             }
         }
 
-        error_log("PDF Builder - Returning " . count($templates) . " templates");
         return $templates;
     }
 
