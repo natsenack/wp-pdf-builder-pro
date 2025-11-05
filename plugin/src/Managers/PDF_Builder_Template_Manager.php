@@ -828,7 +828,10 @@ class PDF_Builder_Template_Manager
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
 
         foreach ($files as $index => $file) {
+            $filename = basename($file, '.json');
+            error_log('PDF Builder: get_builtin_templates - 🔄 DÉBUT BOUCLE: template ' . ($index + 1) . '/' . count($files) . ' - fichier: ' . $filename);
             try {
+                error_log('PDF Builder: get_builtin_templates - ✅ TRY BLOCK ENTERED pour ' . $filename);
                 $filename = basename($file, '.json');
                 error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE ' . ($index + 1) . '/' . count($files) . ': ' . $filename . ' =====');
                 error_log('PDF Builder: get_builtin_templates - FICHIER À TRAITER: ' . $filename . ' (index ' . $index . ')');
