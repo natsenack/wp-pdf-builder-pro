@@ -1,16 +1,18 @@
 <?php
 /**
- * Générateur automatique d'aperçus SVG depuis les templates JSON
- * Usage: php generate-svg-preview.php <template-name>
- * Exemple: php generate-svg-preview.php corporate
+ * Générateur d'aperçus SVG HONNÊTES
+ * Affiche exactement ce qui sera généré en PDF, sans mensonges
+ * 
+ * Usage: php generate-svg-preview-honest.php <template-name>
+ * Exemple: php generate-svg-preview-honest.php corporate
  */
 
-class SVGPreviewGenerator
+class SVGPreviewGeneratorHonest
 {
     private $templateData;
     private $scaleFactor;
-    private $previewWidth = 350;  // Canvas proportions: 794x1123 ratio
-    private $previewHeight = 494; // 350 * (1123/794) ≈ 494
+    private $previewWidth = 350;
+    private $previewHeight = 494;
     private $pagePadding = 10;
 
     public function __construct($jsonPath)
@@ -24,15 +26,11 @@ class SVGPreviewGenerator
             throw new Exception("Invalid JSON file: $jsonPath");
         }
 
-        // Calculate scale factor to fit canvas into preview dimensions
-        // Use fixed ratio to match A4 proportions
         $canvasWidth = $this->templateData['canvasWidth'] ?? 794;
         $canvasHeight = $this->templateData['canvasHeight'] ?? 1123;
 
-        // Scale to fit within preview while maintaining A4 aspect ratio
-        // 794x1123 should scale to fit in 350x494
         $this->scaleFactor = min(
-            ($this->previewWidth - 20) / $canvasWidth,    // Leave margins
+            ($this->previewWidth - 20) / $canvasWidth,
             ($this->previewHeight - 20) / $canvasHeight
         );
     }
@@ -42,57 +40,54 @@ class SVGPreviewGenerator
         $svg = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $svg .= '<svg width="' . $this->previewWidth . '" height="' . $this->previewHeight . '" viewBox="0 0 ' . $this->previewWidth . ' ' . $this->previewHeight . '" xmlns="http://www.w3.org/2000/svg">' . "\n";
 
-        // Add white A4 page background
-        $pageMargin = $this->pagePadding; 
+        $pageMargin = $this->pagePadding;
         $pageWidth = $this->previewWidth - ($pageMargin * 2);
-        $pageHeight = $pageWidth * 1.414; // A4 ratio (√2)
-
-        // Center the page vertically
+        $pageHeight = $pageWidth * 1.414;
         $pageY = ($this->previewHeight - $pageHeight) / 2;
 
-        // White page background with subtle shadow
-        $svg .= '  <!-- A4 Page Background -->' . "\n";
+        // Page background
         $svg .= '  <rect x="' . ($pageMargin + 2) . '" y="' . ($pageY + 2) . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#f0f0f0" rx="4"/>' . "\n";
         $svg .= '  <rect x="' . $pageMargin . '" y="' . $pageY . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>' . "\n";
 
-        // Define clip path for page content
         $svg .= '  <defs>' . "\n";
         $svg .= '    <clipPath id="pageClip">' . "\n";
         $svg .= '      <rect x="' . $pageMargin . '" y="' . $pageY . '" width="' . $pageWidth . '" height="' . $pageHeight . '"/>' . "\n";
         $svg .= '    </clipPath>' . "\n";
         $svg .= '  </defs>' . "\n";
 
-        // Add semantic groups inside the page with clip-path
         $svg .= '  <g id="page-content" transform="translate(' . $pageMargin . ',' . $pageY . ')" clip-path="url(#pageClip)">' . "\n";
 
-        $svg .= '    <g id="header">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="company-info">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="customer-info">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="order-info">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="products-table">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="order-totals">' . "\n";
-        $svg .= '    </g>' . "\n";
-
-        $svg .= '    <g id="footer">' . "\n";
-        $svg .= '    </g>' . "\n";
+        // Semantic groups
+        $groups = ['header', 'company-info', 'customer-info', 'order-info', 'products-table', 'order-totals', 'footer'];
+        foreach ($groups as $group) {
+            $svg .= '    <g id="' . $group . '">' . "\n";
+            $svg .= '    </g>' . "\n";
+        }
 
         $svg .= '  </g>' . "\n";
 
-        // Generate elements - pass pageWidth and pageHeight for bounds checking
+        // Generate elements - ONLY what's REALLY supported
         $elementsByGroup = [];
         if (isset($this->templateData['elements'])) {
             foreach ($this->templateData['elements'] as $element) {
-                $svgElement = $this->generateElement($element, 0, 0, $pageWidth, $pageHeight);
+                $type = $element['type'] ?? '';
+                
+                // ONLY render elements that have real renderers
+                $supportedTypes = [
+                    'rectangle', 'circle', 'line', 'arrow',        // Shapes
+                    'text', 'dynamic-text', 'order_number',        // Text
+                    'product_table',                               // Tables
+                    'company_logo',                                // Images
+                    'customer_info', 'company_info', 'mentions',   // Info
+                    'document_type'                                // Document
+                ];
+
+                if (!in_array($type, $supportedTypes)) {
+                    // Skip unsupported elements
+                    continue;
+                }
+
+                $svgElement = $this->generateElement($element, $pageWidth, $pageHeight);
                 if ($svgElement) {
                     $groupId = $this->getElementGroup($element);
                     if (!isset($elementsByGroup[$groupId])) {
@@ -103,50 +98,55 @@ class SVGPreviewGenerator
             }
         }
 
-        // Insert elements into their respective groups
+        // Insert elements into their groups
         foreach ($elementsByGroup as $groupId => $elements) {
             $svg = str_replace('    <g id="' . $groupId . '">' . "\n" . '    </g>', '    <g id="' . $groupId . '">' . "\n" . $elements . '    </g>', $svg);
         }
 
         $svg .= '</svg>';
-
         return $svg;
     }
 
-    private function generateElement($element, $offsetX = 0, $offsetY = 0, $pageWidth = 330, $pageHeight = 466)
+    private function getElementGroup($element)
+    {
+        $id = $element['id'] ?? '';
+        $type = $element['type'] ?? '';
+
+        // Group elements by semantic meaning
+        if (strpos($id, 'header') !== false || strpos($id, 'logo') !== false) {
+            return 'header';
+        } elseif (strpos($id, 'company') !== false) {
+            return 'company-info';
+        } elseif (strpos($id, 'customer') !== false || strpos($id, 'client') !== false) {
+            return 'customer-info';
+        } elseif (strpos($id, 'order') !== false || strpos($id, 'date') !== false) {
+            return 'order-info';
+        } elseif ($type === 'product_table' || strpos($id, 'table') !== false || strpos($id, 'items') !== false) {
+            return 'products-table';
+        } elseif (strpos($id, 'total') !== false || strpos($id, 'subtotal') !== false || strpos($id, 'discount') !== false) {
+            return 'order-totals';
+        } elseif (strpos($id, 'footer') !== false || strpos($id, 'mentions') !== false) {
+            return 'footer';
+        }
+
+        return 'order-info'; // Default
+    }
+
+    private function generateElement($element, $pageWidth = 330, $pageHeight = 466)
     {
         $type = $element['type'] ?? '';
-        
-        // Scale element coordinates from canvas (794x1123) to preview
         $x = ($element['x'] ?? 0) * $this->scaleFactor;
         $y = ($element['y'] ?? 0) * $this->scaleFactor;
         $width = ($element['width'] ?? 0) * $this->scaleFactor;
         $height = ($element['height'] ?? 0) * $this->scaleFactor;
+        $properties = $element['properties'] ?? [];
 
-        // Special compression for preview: compress vertical space after table
-        // If element is after y=200 (table), compress the spacing
-        if ($element['y'] > 200) {
-            // Elements after table should be pulled up to use less vertical space
-            $verticalCompressionFactor = 0.6; // Compress to 60% of original spacing
-            $compressedY = $element['y'] - 200; // Distance from table end
-            $y = (200 * $this->scaleFactor) + ($compressedY * $this->scaleFactor * $verticalCompressionFactor);
-        }
-        
-        // Special compression for product table in preview
-        // Reduce table height from 200px to 50px for better preview visibility
-        if ($type === 'product_table') {
-            $height = 50 * $this->scaleFactor; // Compressed table height
-        }
-
-        // Check if element is completely outside page bounds - don't render
+        // Bounds checking
         if ($y + $height < 0 || $y > $pageHeight || $x + $width < 0 || $x > $pageWidth) {
-            return ''; // Element is outside visible area
+            return '';
         }
 
-        // Clip element to stay within page bounds
-        $originalY = $y;
-        $originalHeight = $height;
-        
+        // Clip to bounds
         if ($y < 0) {
             $height -= (0 - $y);
             $y = 0;
@@ -154,7 +154,6 @@ class SVGPreviewGenerator
         if ($y + $height > $pageHeight) {
             $height = $pageHeight - $y;
         }
-        
         if ($x < 0) {
             $width -= (0 - $x);
             $x = 0;
@@ -163,18 +162,16 @@ class SVGPreviewGenerator
             $width = $pageWidth - $x;
         }
 
-        // Skip if element has no visible dimensions
         if ($width <= 0 || $height <= 0) {
             return '';
         }
-
-        $properties = $element['properties'] ?? [];
 
         switch ($type) {
             case 'rectangle':
                 $fillColor = $properties['fillColor'] ?? '#000000';
                 $strokeWidth = ($properties['strokeWidth'] ?? 0) * $this->scaleFactor;
-                return '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . $height . '" fill="' . $fillColor . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+                $strokeColor = $properties['strokeColor'] ?? 'none';
+                return '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . $height . '" fill="' . $fillColor . '" stroke="' . $strokeColor . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
 
             case 'circle':
                 $cx = $x + ($width / 2);
@@ -185,241 +182,241 @@ class SVGPreviewGenerator
                 $opacity = $properties['opacity'] ?? 1;
                 return '    <circle cx="' . $cx . '" cy="' . $cy . '" r="' . $r . '" fill="' . $fillColor . '" stroke-width="' . $strokeWidth . '" opacity="' . $opacity . '"/>' . "\n";
 
+            case 'line':
+                $strokeColor = $properties['strokeColor'] ?? '#000000';
+                $strokeWidth = max(($properties['strokeWidth'] ?? 1) * $this->scaleFactor, 1);
+                return '    <line x1="' . $x . '" y1="' . $y . '" x2="' . ($x + $width) . '" y2="' . ($y + $height) . '" stroke="' . $strokeColor . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+
+            case 'arrow':
+                $strokeColor = $properties['strokeColor'] ?? '#000000';
+                $strokeWidth = max(($properties['strokeWidth'] ?? 1) * $this->scaleFactor, 1);
+                $direction = $properties['direction'] ?? 'right';
+                return $this->renderArrow($x, $y, $width, $height, $strokeColor, $strokeWidth, $direction);
+
             case 'text':
-                $text = $properties['text'] ?? '';
-                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.9, 8); // Better size
+                $text = htmlspecialchars($properties['text'] ?? '', ENT_QUOTES);
+                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.9, 8);
                 $color = $properties['color'] ?? '#000000';
-                $textAlign = $properties['textAlign'] ?? 'left';
                 $fontWeight = $properties['fontWeight'] ?? 'normal';
-
-                // Skip dynamic content for preview - replace with sample data
-                if (strpos($text, '{{') !== false) {
-                    $elementId = $element['id'] ?? '';
-                    
-                    if (strpos($elementId, 'subtotal-label') !== false) {
-                        $text = 'Sous-total:';
-                    } elseif (strpos($elementId, 'subtotal-value') !== false) {
-                        $text = '€2500.00';
-                    } elseif (strpos($elementId, 'discount-label') !== false) {
-                        $text = 'Coupon:';
-                    } elseif (strpos($elementId, 'discount-value') !== false) {
-                        $text = '-€250.00';
-                    } elseif (strpos($elementId, 'total-label') !== false) {
-                        $text = 'TOTAL:';
-                    } elseif (strpos($elementId, 'total-value') !== false) {
-                        $text = '€2250.00';
-                    } elseif (strpos($elementId, 'customer') !== false || strpos($elementId, 'client') !== false) {
-                        $text = 'Sample Text';
-                    } elseif (strpos($elementId, 'address') !== false) {
-                        $text = 'Sample Address';
-                    } else {
-                        $text = 'Sample Text';
-                    }
-                }
-
-                $textAnchor = 'start';
-                $textX = $x;
-                if ($textAlign === 'center') {
-                    $textAnchor = 'middle';
-                    $textX = $x + ($width / 2);
-                } elseif ($textAlign === 'right') {
-                    $textAnchor = 'end';
-                    $textX = $x + $width;
-                }
-
-                // Constrain to visible page area
-                $textX = max(2, min($textX, $pageWidth - 2));
-                $textY = max($y + $fontSize, min($y + $fontSize, $pageHeight - 2));
-
-                return '    <text x="' . $textX . '" y="' . $textY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars(substr($text, 0, 60)) . '</text>' . "\n";
-
-            case 'company_info':
-                // Generate sample company info for preview
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.85, 8);
-                $color = $properties['textColor'] ?? '#ffffff';
-                $sampleText = "Entreprise XYZ\n123 Rue de la Paix\n75001 Paris";
-
-                $lines = explode("\n", $sampleText);
-                $svg = '';
-                foreach ($lines as $i => $line) {
-                    $lineY = $y + ($i + 1) * ($fontSize * 1.4);
-                    // Constrain to page bounds
-                    if ($lineY > $pageHeight - 2) break; // Stop if we're outside the page
-                    if ($lineY < 0) continue;
-                    
-                    $svg .= '    <text x="' . max(2, $x) . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
-                }
-                return $svg;
-
-            case 'customer_info':
-                // Generate sample customer info for preview
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.85, 8);
-                $color = $properties['textColor'] ?? '#000000';
-                $sampleText = "Client ABC\n456 Avenue des Champs\n92000 Nanterre";
-
-                $lines = explode("\n", $sampleText);
-                $svg = '';
-                foreach ($lines as $i => $line) {
-                    $lineY = $y + ($i + 1) * ($fontSize * 1.4);
-                    // Constrain to page bounds
-                    if ($lineY > $pageHeight - 2) break;
-                    if ($lineY < 0) continue;
-                    
-                    $svg .= '    <text x="' . $x . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
-                }
-                return $svg;
-
-            case 'order_number':
-                // Generate sample order number for preview
-                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor, 10);
-                $color = $properties['textColor'] ?? '#000000';
-                $sampleText = "Commande #12345";
-                return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($sampleText) . '</text>' . "\n";
-
-            case 'document_type':
-                // Generate sample document type for preview
-                $fontSize = max(($properties['fontSize'] ?? 24) * $this->scaleFactor * 0.8, 16);
-                $color = $properties['textColor'] ?? '#000000';
-                $fontFamily = $properties['fontFamily'] ?? 'Georgia';
-                $fontWeight = $properties['fontWeight'] ?? 'bold';
-                $textDecoration = $properties['textDecoration'] ?? 'underline';
-                $sampleText = $properties['title'] ?? 'FACTURE';
-
-                $textAnchor = 'middle';
-                $textX = $x + ($width / 2);
-                $textY = $y + $fontSize;
-
-                $svg = '    <text x="' . $textX . '" y="' . $textY . '" font-family="' . $fontFamily . '" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '"';
-                if ($textDecoration === 'underline') {
-                    $svg .= ' text-decoration="underline"';
-                }
-                $svg .= '>' . htmlspecialchars($sampleText) . '</text>' . "\n";
-                return $svg;
+                $textAnchor = $this->getTextAnchor($properties['textAlign'] ?? 'left');
+                return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . $text . '</text>' . "\n";
 
             case 'dynamic-text':
-                // Generate sample dynamic text for preview based on element ID
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
-                $color = $properties['textColor'] ?? '#000000';
-                $elementId = $element['id'] ?? '';
+                return $this->renderDynamicText($x, $y, $width, $height, $properties);
 
-                // Provide appropriate sample content based on element ID
-                $sampleText = 'Sample Text';
-                if (strpos($elementId, 'due') !== false) {
-                    $sampleText = 'Date d\'échéance: 15/11/2025';
-                } elseif (strpos($elementId, 'payment') !== false) {
-                    $sampleText = 'Conditions de règlement: Virement bancaire';
-                } elseif (strpos($elementId, 'footer') !== false) {
-                    $sampleText = 'Merci de votre confiance - Document généré automatiquement le 05/11/2025';
-                } elseif (strpos($elementId, 'date') !== false) {
-                    $sampleText = 'Date: 05/11/2025';
-                } elseif (isset($properties['content'])) {
-                    $content = $properties['content'];
-                    // Replace variables with sample data
-                    $content = str_replace('{{order_date}}', '05/11/2025', $content);
-                    $content = str_replace('{{date}}', '05/11/2025', $content);
-                    $content = str_replace('{{payment_method}}', 'Virement bancaire', $content);
-                    $content = str_replace('{{due_date}}', '15/11/2025', $content);
-                    $sampleText = $content;
-                }
-
-                return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($sampleText) . '</text>' . "\n";
+            case 'order_number':
+                return $this->renderOrderNumber($x, $y, $width, $height, $properties);
 
             case 'product_table':
-                // Generate sample product table for preview
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
-                $headerColor = $properties['headerTextColor'] ?? '#ffffff';
-                $headerBgColor = $properties['headerBgColor'] ?? '#28a745';
+                return $this->renderProductTable($x, $y, $width, $height, $properties);
 
-                $svg = '';
-                // Table header background
-                $svg .= '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . ($fontSize * 2) . '" fill="' . $headerBgColor . '"/>' . "\n";
-                // Table headers
-                $svg .= '    <text x="' . ($x + 5) . '" y="' . ($y + $fontSize * 1.5) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Produit</text>' . "\n";
-                $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($y + $fontSize * 1.5) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Qté</text>' . "\n";
-                $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($y + $fontSize * 1.5) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Prix</text>' . "\n";
+            case 'company_info':
+                return $this->renderCompanyInfo($x, $y, $width, $height, $properties);
 
-                // Sample product row
-                $rowY = $y + $fontSize * 2.5;
-                $svg .= '    <text x="' . ($x + 5) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="#000000">Produit Sample</text>' . "\n";
-                $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="#000000">2</text>' . "\n";
-                $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="#000000">€50.00</text>' . "\n";
-
-                return $svg;
+            case 'customer_info':
+                return $this->renderCustomerInfo($x, $y, $width, $height, $properties);
 
             case 'mentions':
-                // Generate sample footer mentions for preview
-                $fontSize = max(($properties['fontSize'] ?? 8) * $this->scaleFactor, 6);
-                $color = $properties['textColor'] ?? '#666666';
-                $sampleText = "Conditions générales de vente - TVA non applicable art. 293B du CGI";
-                return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($sampleText) . '</text>' . "\n";
+                return $this->renderMentions($x, $y, $width, $height, $properties);
 
-            case 'line':
-                $strokeWidth = ($properties['strokeWidth'] ?? 1) * $this->scaleFactor;
-                $strokeColor = $properties['strokeColor'] ?? '#000000';
-                $x2 = $x + $width;
-                $y2 = $y + $height;
-                return '    <line x1="' . $x . '" y1="' . $y . '" x2="' . $x2 . '" y2="' . $y2 . '" stroke="' . $strokeColor . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+            case 'document_type':
+                return $this->renderDocumentType($x, $y, $width, $height, $properties);
+
+            case 'company_logo':
+                // Placeholder - logo can't be rendered in SVG preview easily
+                return $this->renderLogoPlaceholder($x, $y, $width, $height);
 
             default:
-                // Skip unknown element types for preview
                 return '';
         }
     }
 
-    private function getElementGroup($element)
+    private function renderDynamicText($x, $y, $width, $height, $properties)
     {
-        $id = $element['id'] ?? '';
-        $type = $element['type'] ?? '';
+        $content = $properties['content'] ?? '';
+        $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.9, 8);
+        $color = $properties['textColor'] ?? '#000000';
+        $textAnchor = $this->getTextAnchor($properties['textAlign'] ?? 'left');
 
-        // Map elements to semantic groups
-        if (strpos($id, 'header') !== false || strpos($id, 'logo') !== false || $type === 'document_type') {
-            return 'header';
-        }
-        if ($type === 'company_info' || strpos($id, 'company') !== false) {
-            return 'company-info';
-        }
-        if (strpos($id, 'client') !== false || $type === 'customer_info') {
-            return 'customer-info';
-        }
-        if (strpos($id, 'order') !== false || $type === 'order_number' || $type === 'dynamic-text') {
-            return 'order-info';
-        }
-        if ($type === 'product_table' || strpos($id, 'table') !== false || strpos($id, 'product') !== false || strpos($id, 'items') !== false) {
-            return 'products-table';
-        }
-        if (strpos($id, 'total') !== false || strpos($id, 'subtotal') !== false || strpos($id, 'discount') !== false || strpos($id, 'tax') !== false) {
-            return 'order-totals';
-        }
-        if ($type === 'mentions' || strpos($id, 'footer') !== false) {
-            return 'footer';
+        // Replace variables with real sample data
+        $sampleData = [
+            '{{order_date}}' => '05/11/2025',
+            '{{current_date}}' => '05/11/2025',
+            '{{current_time}}' => '20:30',
+            '{{page_number}}' => '1',
+            '{{total_pages}}' => '1',
+            '{{customer_name}}' => 'Sample Text',
+            '{{customer_address}}' => 'Sample Text',
+            '{{payment_method}}' => 'Virement bancaire',
+            '{{due_date}}' => '05/12/2025',
+            '{{date}}' => '05/11/2025',
+        ];
+
+        foreach ($sampleData as $var => $value) {
+            $content = str_replace($var, $value, $content);
         }
 
-        // Default to header for unclassified elements
-        return 'header';
+        $displayText = htmlspecialchars($content, ENT_QUOTES);
+        return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '">' . $displayText . '</text>' . "\n";
+    }
+
+    private function renderOrderNumber($x, $y, $width, $height, $properties)
+    {
+        $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.9, 8);
+        $color = $properties['textColor'] ?? '#000000';
+        $textAnchor = $this->getTextAnchor($properties['textAlign'] ?? 'left');
+        $text = htmlspecialchars('Commande #12345', ENT_QUOTES);
+        return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '">' . $text . '</text>' . "\n";
+    }
+
+    private function renderProductTable($x, $y, $width, $height, $properties)
+    {
+        // Compress table height for preview
+        $displayHeight = 50 * $this->scaleFactor;
+        $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
+        $headerBgColor = $properties['headerBackgroundColor'] ?? '#28a745';
+        $headerColor = $properties['headerTextColor'] ?? '#ffffff';
+        $textColor = $properties['textColor'] ?? '#000000';
+
+        $svg = '';
+        
+        // Table header
+        $svg .= '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . ($fontSize * 1.8) . '" fill="' . $headerBgColor . '"/>' . "\n";
+        $svg .= '    <text x="' . ($x + 5) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Produit</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Qté</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Prix</text>' . "\n";
+
+        // Sample row
+        $rowY = $y + $fontSize * 2;
+        $svg .= '    <text x="' . ($x + 5) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">Produit Sample</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">2</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">€50.00</text>' . "\n";
+
+        return $svg;
+    }
+
+    private function renderCompanyInfo($x, $y, $width, $height, $properties)
+    {
+        $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.9, 7);
+        $color = $properties['textColor'] ?? '#000000';
+
+        $lines = [
+            'Entreprise XYZ',
+            '123 Rue de la Paix',
+            '75001 Paris',
+            'SIRET: 12345678900123',
+            'TVA: FR12345678901'
+        ];
+
+        $svg = '';
+        $lineY = $y + $fontSize;
+        foreach ($lines as $line) {
+            if ($lineY - $y > $height) break;
+            $svg .= '    <text x="' . $x . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line, ENT_QUOTES) . '</text>' . "\n";
+            $lineY += $fontSize + 2;
+        }
+
+        return $svg;
+    }
+
+    private function renderCustomerInfo($x, $y, $width, $height, $properties)
+    {
+        $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.9, 7);
+        $color = $properties['textColor'] ?? '#000000';
+
+        $lines = [
+            'CLIENT:',
+            'Sample Text',
+            'Sample Text',
+            'sample@example.com'
+        ];
+
+        $svg = '';
+        $lineY = $y + $fontSize;
+        foreach ($lines as $line) {
+            if ($lineY - $y > $height) break;
+            $weight = strpos($line, ':') !== false ? 'bold' : 'normal';
+            $svg .= '    <text x="' . $x . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" font-weight="' . $weight . '">' . htmlspecialchars($line, ENT_QUOTES) . '</text>' . "\n";
+            $lineY += $fontSize + 2;
+        }
+
+        return $svg;
+    }
+
+    private function renderMentions($x, $y, $width, $height, $properties)
+    {
+        $fontSize = max(($properties['fontSize'] ?? 8) * $this->scaleFactor * 0.9, 6);
+        $color = $properties['textColor'] ?? '#666666';
+        $text = htmlspecialchars('Conditions générales de vente - TVA non applicable art. 293B du CGI', ENT_QUOTES);
+        return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . $text . '</text>' . "\n";
+    }
+
+    private function renderDocumentType($x, $y, $width, $height, $properties)
+    {
+        $fontSize = max(($properties['fontSize'] ?? 26) * $this->scaleFactor * 0.9, 12);
+        $color = $properties['textColor'] ?? '#000000';
+        $text = htmlspecialchars($properties['title'] ?? 'FACTURE', ENT_QUOTES);
+        $textAnchor = $this->getTextAnchor($properties['textAlign'] ?? 'center');
+        return '    <text x="' . ($x + $width / 2) . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="bold">' . $text . '</text>' . "\n";
+    }
+
+    private function renderLogoPlaceholder($x, $y, $width, $height)
+    {
+        // Simple rectangle placeholder for logo
+        return '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . $height . '" fill="#f0f0f0" stroke="#cccccc" stroke-width="1" stroke-dasharray="5,5"/>' . "\n";
+    }
+
+    private function renderArrow($x, $y, $width, $height, $color, $strokeWidth, $direction)
+    {
+        // Simplified arrow implementation
+        $arrowSize = 5;
+        switch ($direction) {
+            case 'right':
+                return '    <line x1="' . $x . '" y1="' . ($y + $height / 2) . '" x2="' . ($x + $width - $arrowSize) . '" y2="' . ($y + $height / 2) . '" stroke="' . $color . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+            case 'left':
+                return '    <line x1="' . ($x + $width) . '" y1="' . ($y + $height / 2) . '" x2="' . ($x + $arrowSize) . '" y2="' . ($y + $height / 2) . '" stroke="' . $color . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+            case 'up':
+                return '    <line x1="' . ($x + $width / 2) . '" y1="' . ($y + $height) . '" x2="' . ($x + $width / 2) . '" y2="' . ($y + $arrowSize) . '" stroke="' . $color . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+            case 'down':
+                return '    <line x1="' . ($x + $width / 2) . '" y1="' . $y . '" x2="' . ($x + $width / 2) . '" y2="' . ($y + $height - $arrowSize) . '" stroke="' . $color . '" stroke-width="' . $strokeWidth . '"/>' . "\n";
+        }
+        return '';
+    }
+
+    private function getTextAnchor($align)
+    {
+        switch ($align) {
+            case 'center':
+                return 'middle';
+            case 'right':
+                return 'end';
+            default:
+                return 'start';
+        }
+    }
+
+    public function save($outputPath)
+    {
+        $svg = $this->generateSVG();
+        file_put_contents($outputPath, $svg);
+        echo "✅ Aperçu SVG généré: " . basename($outputPath) . "\n";
+        echo "📁 Chemin: " . realpath($outputPath) . "\n";
     }
 }
 
-// Main execution
-if ($argc < 2) {
-    echo "Usage: php generate-svg-preview.php <template-name>\n";
-    echo "Example: php generate-svg-preview.php corporate\n";
-    exit(1);
-}
+// Main script
+if (php_sapi_name() === 'cli') {
+    $templateName = $argv[1] ?? 'corporate';
+    $basePath = __DIR__ . '/templates/builtin/';
+    $jsonPath = $basePath . $templateName . '.json';
+    $outputPath = __DIR__ . '/assets/images/templates/' . $templateName . '-preview.svg';
 
-$templateName = $argv[1];
-$jsonPath = __DIR__ . "/templates/builtin/{$templateName}.json";
-$svgPath = __DIR__ . "/assets/images/templates/{$templateName}-preview.svg";
-
-try {
-    $generator = new SVGPreviewGenerator($jsonPath);
-    $svgContent = $generator->generateSVG();
-
-    file_put_contents($svgPath, $svgContent);
-    echo "✅ Aperçu SVG généré: {$templateName}-preview.svg\n";
-    echo "📁 Chemin: {$svgPath}\n";
-
-} catch (Exception $e) {
-    echo "❌ Erreur: " . $e->getMessage() . "\n";
-    exit(1);
+    try {
+        $generator = new SVGPreviewGeneratorHonest($jsonPath);
+        $generator->save($outputPath);
+    } catch (Exception $e) {
+        echo "❌ Erreur: " . $e->getMessage() . "\n";
+        exit(1);
+    }
 }
 ?>
