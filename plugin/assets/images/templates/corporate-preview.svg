@@ -40,13 +40,13 @@
     <text x="247.62468513854" y="111.1234256927" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
     </g>
     <g id="order-totals">
-    <text x="207.80856423174" y="182.55919395466" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
-    <text x="303.40050377834" y="182.55919395466" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">€2500.00</text>
-    <text x="207.80856423174" y="190.87153652393" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
-    <text x="303.40050377834" y="190.87153652393" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-€250.00</text>
-    <rect x="207.80856423174" y="191.1838790932" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke-width="0"/>
-    <text x="207.80856423174" y="201.26196473552" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
-    <text x="303.40050377834" y="201.26196473552" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="end" font-weight="bold">€2250.00</text>
+    <text x="207.80856423174" y="145.98488664987" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
+    <text x="303.40050377834" y="145.98488664987" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">€2500.00</text>
+    <text x="207.80856423174" y="150.97229219144" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
+    <text x="303.40050377834" y="150.97229219144" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-€250.00</text>
+    <rect x="207.80856423174" y="147.959697733" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke-width="0"/>
+    <text x="207.80856423174" y="157.20654911839" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
+    <text x="303.40050377834" y="157.20654911839" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="end" font-weight="bold">€2250.00</text>
     </g>
     <g id="footer">
     </g>

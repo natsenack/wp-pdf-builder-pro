@@ -37,15 +37,15 @@
     <text x="247.62468513854" y="98.654911838791" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
     </g>
     <g id="order-totals">
-    <line x1="166.24685138539" y1="249.37027707809" x2="302.56926952141" y2="249.78589420655" stroke="#ffc107" stroke-width="0.41561712846348"/>
-    <text x="270.15113350126" y="265.68261964736" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="normal">Sous-total:</text>
-    <text x="302.56926952141" y="265.68261964736" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">€2500.00</text>
-    <text x="270.15113350126" y="273.99496221662" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">TOTAL:</text>
-    <text x="302.56926952141" y="273.99496221662" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">€2250.00</text>
+    <line x1="166.24685138539" y1="182.87153652393" x2="302.56926952141" y2="183.28715365239" stroke="#ffc107" stroke-width="0.41561712846348"/>
+    <text x="270.15113350126" y="195.85894206549" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="normal">Sous-total:</text>
+    <text x="302.56926952141" y="195.85894206549" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">€2500.00</text>
+    <text x="270.15113350126" y="200.84634760705" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">TOTAL:</text>
+    <text x="302.56926952141" y="200.84634760705" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">€2250.00</text>
     </g>
     <g id="footer">
-    <line x1="27.846347607053" y1="415.61712846348" x2="302.56926952141" y2="416.03274559194" stroke="#cccccc" stroke-width="0.41561712846348"/>
-    <text x="27.846347607053" y="432.83879093199" font-family="Arial" font-size="6" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
+    <line x1="27.846347607053" y1="282.61964735516" x2="302.56926952141" y2="283.03526448363" stroke="#cccccc" stroke-width="0.41561712846348"/>
+    <text x="27.846347607053" y="295.35264483627" font-family="Arial" font-size="6" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
     </g>
   </g>
 </svg>

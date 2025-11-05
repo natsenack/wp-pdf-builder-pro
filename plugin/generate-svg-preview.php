@@ -123,6 +123,15 @@ class SVGPreviewGenerator
         $width = ($element['width'] ?? 0) * $this->scaleFactor;
         $height = ($element['height'] ?? 0) * $this->scaleFactor;
 
+        // Special compression for preview: compress vertical space after table
+        // If element is after y=200 (table), compress the spacing
+        if ($element['y'] > 200) {
+            // Elements after table should be pulled up to use less vertical space
+            $verticalCompressionFactor = 0.6; // Compress to 60% of original spacing
+            $compressedY = $element['y'] - 200; // Distance from table end
+            $y = (200 * $this->scaleFactor) + ($compressedY * $this->scaleFactor * $verticalCompressionFactor);
+        }
+
         // Check if element is completely outside page bounds - don't render
         if ($y + $height < 0 || $y > $pageHeight || $x + $width < 0 || $x > $pageWidth) {
             return ''; // Element is outside visible area

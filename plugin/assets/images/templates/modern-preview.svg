@@ -30,21 +30,21 @@
     <text x="83.123425692695" y="21.637279596977" font-family="Arial" font-size="10" fill="#4a5568">Commande #12345</text>
     <text x="83.123425692695" y="25.871536523929" font-family="Arial" font-size="8" fill="#4a5568">Date: 05/11/2025</text>
     <text x="83.123425692695" y="32.105793450882" font-family="Arial" font-size="8" fill="#4a5568">{{customer_name}}</text>
-    <rect x="27.846347607053" y="87.27959697733" width="274.72292191436" height="16" fill="#28a745"/>
-    <text x="32.846347607053" y="99.27959697733" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Produit</text>
-    <text x="192.68010075567" y="99.27959697733" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Qté</text>
-    <text x="247.62468513854" y="99.27959697733" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Prix</text>
-    <text x="32.846347607053" y="115.27959697733" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
-    <text x="192.68010075567" y="115.27959697733" font-family="Arial" font-size="8" fill="#000000">2</text>
-    <text x="247.62468513854" y="115.27959697733" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
-    <text x="302.15365239295" y="257.37027707809" font-family="Arial" font-size="8" fill="#007cba" text-anchor="end" font-weight="bold">Sample Text</text>
+    <rect x="27.846347607053" y="85.617128463476" width="274.72292191436" height="16" fill="#28a745"/>
+    <text x="32.846347607053" y="97.617128463476" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Produit</text>
+    <text x="192.68010075567" y="97.617128463476" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Qté</text>
+    <text x="247.62468513854" y="97.617128463476" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Prix</text>
+    <text x="32.846347607053" y="113.61712846348" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
+    <text x="192.68010075567" y="113.61712846348" font-family="Arial" font-size="8" fill="#000000">2</text>
+    <text x="247.62468513854" y="113.61712846348" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
+    <text x="302.15365239295" y="190.87153652393" font-family="Arial" font-size="8" fill="#007cba" text-anchor="end" font-weight="bold">Sample Text</text>
     </g>
     <g id="products-table">
     </g>
     <g id="order-totals">
     </g>
     <g id="footer">
-    <text x="165.20780856423" y="423.61712846348" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="middle" font-weight="normal">Paiement en ligne disponible • Merci pour votre commande</text>
+    <text x="165.20780856423" y="290.61964735516" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="middle" font-weight="normal">Paiement en ligne disponible • Merci pour votre commande</text>
     </g>
   </g>
 </svg>
