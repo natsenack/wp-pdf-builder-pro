@@ -104,6 +104,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/canvas-style-injector-inline.php';
     }
 
+    // Charger le handler AJAX pour rendre le template en HTML
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/render-template-html.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/render-template-html.php';
+    }
+
     $loaded = true;
 }
 

@@ -17,170 +17,87 @@ add_action('wp_footer', function() {
     
     ?>
     <script type="text/javascript">
-    /* PDF Builder Pro - Canvas Element Style Injector */
+    /* PDF Builder Pro - Canvas SVG Template Injector */
     (function() {
         'use strict';
 
-        // Function to apply element styles
-        function applyElementStyles(element, elementData) {
-            if (!elementData || !elementData.properties) {
-                return;
-            }
-
-            const props = elementData.properties;
-            const elementId = elementData.id;
-            const type = elementData.type;
-            const styles = [];
-
-            // Apply styles based on element type
-            if (type === 'rectangle' || type === 'shape') {
-                if (props.fillColor) {
-                    styles.push('background-color', props.fillColor);
-                }
-                if (props.strokeColor && props.strokeWidth) {
-                    styles.push('border', props.strokeWidth + 'px solid ' + props.strokeColor);
-                }
-            }
-
-            if (type === 'circle') {
-                if (props.fillColor) {
-                    styles.push('background-color', props.fillColor);
-                }
-                if (props.strokeColor && props.strokeWidth) {
-                    styles.push('border', props.strokeWidth + 'px solid ' + props.strokeColor);
-                }
-                styles.push('border-radius', '50%');
-            }
-
-            if (type === 'line') {
-                if (props.strokeColor) {
-                    const strokeWidth = props.strokeWidth || 1;
-                    styles.push('border-top', strokeWidth + 'px solid ' + props.strokeColor);
-                    styles.push('height', '0px');
-                }
-            }
-
-            if (['text', 'document_type', 'order_number', 'dynamic-text', 'company_info', 'customer_info'].includes(type)) {
-                if (props.color || props.textColor) {
-                    const color = props.color || props.textColor;
-                    styles.push('color', color);
-                }
-                if (props.fontSize) {
-                    styles.push('font-size', props.fontSize + 'px');
-                }
-                if (props.fontFamily) {
-                    styles.push('font-family', props.fontFamily + ', sans-serif');
-                }
-                if (props.fontWeight) {
-                    styles.push('font-weight', props.fontWeight);
-                }
-                if (props.textAlign) {
-                    styles.push('text-align', props.textAlign);
-                }
-                if (props.backgroundColor) {
-                    styles.push('background-color', props.backgroundColor);
-                }
-            }
-
-            if (['product_table', 'items_table'].includes(type)) {
-                if (props.backgroundColor) {
-                    styles.push('background-color', props.backgroundColor);
-                }
-                if (props.borderColor && props.borderWidth) {
-                    styles.push('border', props.borderWidth + 'px solid ' + props.borderColor);
-                }
-            }
-
-            // Apply styles to element
-            for (let i = 0; i < styles.length; i += 2) {
-                if (element && element.style) {
-                    const prop = styles[i];
-                    const value = styles[i + 1];
-                    element.style[prop.replace(/-([a-z])/g, function(g) { return g[1].toUpperCase(); })] = value;
-                }
-            }
-        }
-
-        // Monitor DOM for new canvas elements and apply styles
-        function monitorCanvas() {
-            const styleSheet = document.createElement('style');
-            styleSheet.id = 'pdf-builder-element-styles-applied';
-            styleSheet.textContent = '';
-            document.head.appendChild(styleSheet);
-
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.nodeType === 1) {
-                            // Check if this is a canvas element
-                            if (node.classList && node.classList.contains('canvas-element')) {
-                                const elementId = node.getAttribute('data-element-id') || node.id;
-                                if (elementId && window.pdfBuilderCanvasElements) {
-                                    // Try to find element data
-                                    const element = window.pdfBuilderCanvasElements.find(function(e) {
-                                        return e.id === elementId;
-                                    });
-                                    if (element) {
-                                        applyElementStyles(node, element);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                });
-            });
-
-            const canvas = document.querySelector('.canvas, [class*="canvas"]');
-            if (canvas) {
-                observer.observe(canvas, {
-                    childList: true,
-                    subtree: true
-                });
-            }
-        }
-
-        // Wait for document to load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(monitorCanvas, 500);
-            });
-        } else {
-            setTimeout(monitorCanvas, 500);
-        }
-
-        // Expose global object for storing element data from Redux/store
-        window.pdfBuilderCanvasElements = [];
-
-        // Listen for AJAX calls that load templates
+        // Intercepter le chargement du template et charger le SVG
         const originalFetch = window.fetch;
         window.fetch = function() {
-            const result = originalFetch.apply(this, arguments);
-            return result.then(function(response) {
-                if (response.ok && (arguments[0].includes('load_builtin_template') || arguments[0].includes('load_template'))) {
-                    response.clone().json().then(function(data) {
-                        if (data.success && data.data && data.data.template && data.data.template.elements) {
-                            window.pdfBuilderCanvasElements = data.data.template.elements;
-                            // Trigger re-application of styles after a short delay
-                            setTimeout(function() {
-                                const elements = document.querySelectorAll('.canvas-element');
-                                elements.forEach(function(el) {
-                                    const elementId = el.getAttribute('data-element-id') || el.id;
-                                    if (elementId) {
-                                        const element = window.pdfBuilderCanvasElements.find(function(e) {
-                                            return e.id === elementId;
-                                        });
-                                        if (element) {
-                                            applyElementStyles(el, element);
-                                        }
-                                    }
-                                });
-                            }, 100);
+            const args = Array.from(arguments);
+            const url = args[0];
+            const result = originalFetch.apply(this, args);
+
+            // Si c'est un appel de chargement de template builtin
+            if (url && (url.includes('load_builtin_template') || url.includes('load_template'))) {
+                return result.then(function(response) {
+                    return response.clone().json().then(function(data) {
+                        if (data.success && data.data && data.data.template) {
+                            const templateId = data.data.id;
+                            if (templateId) {
+                                // Charger et afficher le SVG du template
+                                loadTemplateFromSVG(templateId);
+                            }
                         }
-                    }).catch(function() {});
-                }
-                return response;
-            });
+                        return response;
+                    }).catch(function() {
+                        return response;
+                    });
+                });
+            }
+
+            return result;
         };
+
+        // Fonction pour charger et afficher le SVG du template
+        function loadTemplateFromSVG(templateId) {
+            // Construire les données pour l'AJAX
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_render_template_html');
+            formData.append('template_id', templateId);
+            formData.append('nonce', (window.pdfBuilderData && window.pdfBuilderData.nonce) || (typeof ajaxnonce !== 'undefined' ? ajaxnonce : ''));
+
+            // Faire l'appel AJAX
+            const ajaxUrl = (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php';
+            
+            fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success && data.data.html) {
+                    // Trouver le canvas et injecter le SVG
+                    setTimeout(function() {
+                        const canvas = document.querySelector('.canvas, [class*="canvas"]');
+                        if (canvas) {
+                            // Créer un wrapper pour le SVG
+                            const svgContainer = document.createElement('div');
+                            svgContainer.id = 'svg-template-container';
+                            svgContainer.style.cssText = 'position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;';
+                            svgContainer.innerHTML = data.data.html;
+                            
+                            // Vider le canvas et ajouter le SVG
+                            canvas.innerHTML = '';
+                            canvas.appendChild(svgContainer);
+                            
+                            // Adapter le SVG aux dimensions du canvas
+                            const svg = svgContainer.querySelector('svg');
+                            if (svg) {
+                                svg.style.maxWidth = '100%';
+                                svg.style.maxHeight = '100%';
+                                svg.style.width = 'auto';
+                                svg.style.height = 'auto';
+                            }
+                        }
+                    }, 200);
+                }
+            })
+            .catch(function(err) { 
+                console.error('Erreur chargement SVG:', err); 
+            });
+        }
+
     })();
     </script>
     <?php
