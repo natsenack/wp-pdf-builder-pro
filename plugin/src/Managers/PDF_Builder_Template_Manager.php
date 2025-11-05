@@ -826,13 +826,11 @@ class PDF_Builder_Template_Manager
 
                 // Validation de la structure
                 $validation_errors = $this->validate_template_structure($template_data);
-
+                
                 if (!empty($validation_errors)) {
-                    error_log("PDF Builder - Template $filename validation failed: " . implode(', ', $validation_errors));
+                    error_log("PDF Builder - Template $filename validation failed: " . implode('; ', $validation_errors));
                     continue;
-                }
-
-                error_log("PDF Builder - Template $filename added successfully");
+                }                error_log("PDF Builder - Template $filename added successfully");
 
                 // Ajouter des métadonnées pour la modal
                 $template_data['id'] = $filename;
