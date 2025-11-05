@@ -3,6 +3,8 @@
  * Injecte les styles des éléments depuis les propriétés du template JSON
  */
 
+/* global document, window, setTimeout, MutationObserver, console */
+
 (function() {
     'use strict';
 
@@ -156,8 +158,8 @@
                                             applyElementStyles(node, element);
                                         }
                                     }
-                                } catch (e) {
-                                    // Silent fail
+                                } catch (err) {
+                                    // Silent fail - element data not in Redux store
                                 }
                             }
                         }

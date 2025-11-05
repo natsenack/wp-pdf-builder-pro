@@ -99,6 +99,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php';
     }
 
+    // Charger l'injecteur de styles pour le canvas (inline)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/canvas-style-injector-inline.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/canvas-style-injector-inline.php';
+    }
+
     $loaded = true;
 }
 
