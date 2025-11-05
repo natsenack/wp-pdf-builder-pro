@@ -1044,7 +1044,7 @@ document.addEventListener('keydown', function(e) {
     max-height: 60vh;
     overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Increased from 280px to accommodate A4 proportions */
     gap: 20px;
 }
 
@@ -1074,19 +1074,20 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-item-preview {
-    height: 180px;
+    height: 240px; /* A4 portrait ratio: ~350px width / 1.414 ≈ 240px height */
     background: #f8f9fa;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    border-bottom: 1px solid #e1e5e9;
 }
 
 .template-gallery-item-preview img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Preserve A4 proportions instead of cropping */
     transition: transform 0.3s ease;
 }
 

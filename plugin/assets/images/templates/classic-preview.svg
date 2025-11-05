@@ -1,72 +1,33 @@
-<svg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'>
-  <!-- Fond blanc -->
-  <rect width='300' height='200' fill='#ffffff'/>
-
-  <!-- Bordure formelle -->
-  <rect x='8' y='8' width='284' height='184' fill='none' stroke='#333' stroke-width='1.5'/>
-
-  <!-- En-tête centré formel -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="494" viewBox="0 0 350 494" xmlns="http://www.w3.org/2000/svg">
   <g id="header">
-    <text x='150' y='20' font-family='Georgia, serif' font-size='9' font-weight='bold' fill='#333' text-anchor='middle'>FACTURE</text>
-    <line x1='40' y1='24' x2='260' y2='24' stroke='#333' stroke-width='1'/>
+    <rect x="39.590382902939" y="39.590382902939" width="310.40961709706" height="63.344612644702" fill="#ffffff" stroke-width="1.5836153161175"/>
   </g>
-
-  <!-- Infos entreprise et commande -->
   <g id="company-info">
-    <text x='15' y='35' font-family='Arial, sans-serif' font-size='5' fill='#555'>MonEntreprise • SIRET: 123456789</text>
+    <text x="53.051113089938" y="167.96153161175" font-family="Arial" font-size="8" fill="#333333">Entreprise XYZ</text>
+    <text x="53.051113089938" y="177.56153161175" font-family="Arial" font-size="8" fill="#333333">123 Rue de la Paix</text>
+    <text x="53.051113089938" y="187.16153161175" font-family="Arial" font-size="8" fill="#333333">75001 Paris</text>
   </g>
-
-  <g id="order-info">
-    <text x='200' y='35' font-family='Arial, sans-serif' font-size='5' fill='#555' text-anchor='end'>Facture N° 001 • 04/11/2025</text>
-  </g>
-
-  <!-- Client -->
   <g id="customer-info">
-    <text x='15' y='46' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#333'>CLIENT:</text>
-    <text x='15' y='52' font-family='Arial, sans-serif' font-size='5' fill='#555'>Marie Dupont, 15 rue des Liles</text>
+    <text x="338.1018699911" y="168.81339269813" font-family="Arial" font-size="8.7098842386465" fill="#333333">Client ABC</text>
+    <text x="338.1018699911" y="179.26525378451" font-family="Arial" font-size="8.7098842386465" fill="#333333">456 Avenue des Champs</text>
+    <text x="338.1018699911" y="189.71711487088" font-family="Arial" font-size="8.7098842386465" fill="#333333">92000 Nanterre</text>
   </g>
-  
-  <!-- Tableau -->
+  <g id="order-info">
+    <text x="53.051113089938" y="120.85307212823" font-family="Arial" font-size="10" fill="#333333">Commande #12345</text>
+  </g>
   <g id="products-table">
-    <!-- En-tête simple gris -->
-    <rect x='15' y='58' width='270' height='8' fill='#e0e0e0'/>
-    <text x='20' y='63' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#333'>Désignation</text>
-    <text x='210' y='63' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#333'>Qté</text>
-    <text x='245' y='63' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#333'>P.U.</text>
-    <text x='280' y='63' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#333' text-anchor='end'>Total</text>
-
-    <!-- Lignes -->
-    <line x1='15' y1='66' x2='285' y2='66' stroke='#ccc' stroke-width='0.5'/>
-    <text x='20' y='73' font-family='Arial, sans-serif' font-size='5' fill='#555'>T-shirt Premium</text>
-    <text x='210' y='73' font-family='Arial, sans-serif' font-size='5' fill='#555'>2</text>
-    <text x='245' y='73' font-family='Arial, sans-serif' font-size='5' fill='#555'>29.99€</text>
-    <text x='280' y='73' font-family='Arial, sans-serif' font-size='5' fill='#333' text-anchor='end'>59.98€</text>
-
-    <line x1='15' y1='76' x2='285' y2='76' stroke='#ccc' stroke-width='0.5'/>
-    <text x='20' y='83' font-family='Arial, sans-serif' font-size='5' fill='#555'>Jean Slim Fit</text>
-    <text x='210' y='83' font-family='Arial, sans-serif' font-size='5' fill='#555'>1</text>
-    <text x='245' y='83' font-family='Arial, sans-serif' font-size='5' fill='#555'>89.99€</text>
-    <text x='280' y='83' font-family='Arial, sans-serif' font-size='5' fill='#333' text-anchor='end'>89.99€</text>
+    <rect x="53.051113089938" y="277.13268032057" width="296.94888691006" height="17.419768477293" fill="#28a745"/>
+    <text x="58.051113089938" y="290.19750667854" font-family="Arial" font-size="8.7098842386465" fill="#000000" font-weight="bold">Produit</text>
+    <text x="231.22044523598" y="290.19750667854" font-family="Arial" font-size="8.7098842386465" fill="#000000" font-weight="bold">Qté</text>
+    <text x="290.61022261799" y="290.19750667854" font-family="Arial" font-size="8.7098842386465" fill="#000000" font-weight="bold">Prix</text>
+    <text x="58.051113089938" y="307.61727515583" font-family="Arial" font-size="8.7098842386465" fill="#000000">Produit Sample</text>
+    <text x="231.22044523598" y="307.61727515583" font-family="Arial" font-size="8.7098842386465" fill="#000000">2</text>
+    <text x="290.61022261799" y="307.61727515583" font-family="Arial" font-size="8.7098842386465" fill="#000000">€50.00</text>
   </g>
-  
-  <!-- Totaux -->
   <g id="order-totals">
-    <line x1='15' y1='90' x2='285' y2='90' stroke='#333' stroke-width='1'/>
-    <text x='245' y='98' font-family='Arial, sans-serif' font-size='5' fill='#555'>Total HT:</text>
-    <text x='280' y='98' font-family='Arial, sans-serif' font-size='5' fill='#333' text-anchor='end'>149.97€</text>
-    <text x='245' y='106' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#333'>TOTAL TTC:</text>
-    <text x='280' y='106' font-family='Arial, sans-serif' font-size='7' fill='#333' font-weight='bold' text-anchor='end'>149.97€</text>
+    <rect x="126.6892252894" y="103.7268032057" width="89.474265360641" height="22.962422083704" fill="#f8f8f8" stroke-width="0.79180765805877"/>
   </g>
-
-  <!-- Signature -->
-  <g id="signature">
-    <line x1='15' y1='132' x2='100' y2='132' stroke='#ccc' stroke-width='0.5'/>
-    <text x='15' y='140' font-family='Arial, sans-serif' font-size='5' fill='#999'>Signature du client</text>
-  </g>
-
-  <!-- Pied -->
   <g id="footer">
-    <line x1='15' y1='155' x2='285' y2='155' stroke='#ccc' stroke-width='0.5'/>
-    <text x='150' y='170' font-family='Arial, sans-serif' font-size='4' fill='#999' text-anchor='middle'>Conditions générales de vente • TVA intra-communautaire</text>
   </g>
 </svg>

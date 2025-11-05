@@ -1,78 +1,32 @@
-<svg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'>
-  <!-- Fond blanc -->
-  <rect width='300' height='200' fill='#ffffff'/>
-
-  <!-- En-tête couleur verte professionnel -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="494" viewBox="0 0 350 494" xmlns="http://www.w3.org/2000/svg">
   <g id="header">
-    <rect width='300' height='12' fill='#28a745'/>
+    <rect x="0" y="0" width="350" height="63.344612644702" fill="#28a745" stroke-width="0"/>
   </g>
-
-  <!-- Logo et informations entreprise -->
   <g id="company-info">
-    <circle cx='15' cy='15' r='6' fill='#ffffff' opacity='0.8'/>
-    <text x='15' y='17' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#28a745' text-anchor='middle'>✓</text>
-    <text x='35' y='20' font-family='Arial, sans-serif' font-size='8' font-weight='bold' fill='#28a745'>Mon Boutique Entreprise</text>
-    <text x='10' y='32' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>25 Avenue des Commerçants, 69000 Lyon</text>
-    <text x='10' y='39' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>SIRET: 123 456 789 • TVA: FR 12 345 678 901</text>
+    <text x="63.344612644702" y="25.436153161175" font-family="Arial" font-size="8" fill="#ffffff">Entreprise XYZ</text>
+    <text x="63.344612644702" y="35.036153161175" font-family="Arial" font-size="8" fill="#ffffff">123 Rue de la Paix</text>
+    <text x="63.344612644702" y="44.636153161175" font-family="Arial" font-size="8" fill="#ffffff">75001 Paris</text>
   </g>
-
-  <!-- Section client et commande côte à côte -->
   <g id="customer-info">
-    <text x='10' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#28a745'>CLIENT:</text>
-    <text x='10' y='56' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Marie Dupont</text>
-    <text x='10' y='61' font-family='Arial, sans-serif' font-size='5' fill='#212529'>15 rue des Lilas</text>
+    <text x="53.051113089938" y="89.180765805877" font-family="Arial" font-size="10" fill="#28a745" text-anchor="start" font-weight="bold">CLIENT:</text>
   </g>
-
   <g id="order-info">
-    <text x='180' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#28a745' text-anchor='end'>N° CMM-XXXX-XXXX</text>
-    <text x='180' y='56' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>Date: 04/11/2025</text>
-    <text x='180' y='61' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>+33 6 12 34 56 78</text>
+    <text x="395.90382902939" y="89.180765805877" font-family="Arial" font-size="10" fill="#28a745">Commande #12345</text>
   </g>
-  
-  <!-- Tableau avec en-tête vert -->
   <g id="products-table">
-    <rect x='10' y='68' width='280' height='9' fill='#28a745'/>
-    <text x='15' y='74' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='white'>Produit</text>
-    <text x='200' y='74' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='white'>Qté</text>
-    <text x='240' y='74' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='white'>Prix</text>
-    <text x='285' y='74' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='white' text-anchor='end'>Total</text>
-
-    <!-- Ligne 1 -->
-    <rect x='10' y='77' width='280' height='7' fill='#f8f9fa'/>
-    <text x='15' y='81' font-family='Arial, sans-serif' font-size='5' fill='#212529'>T-shirt Premium Bio</text>
-    <text x='200' y='81' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>2</text>
-    <text x='240' y='81' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>29.99€</text>
-    <text x='285' y='81' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>59.99€</text>
-
-    <!-- Ligne 2 -->
-    <rect x='10' y='84' width='280' height='7' fill='#ffffff'/>
-    <text x='15' y='88' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Jean Slim Fit</text>
-    <text x='200' y='88' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>1</text>
-    <text x='240' y='88' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>89.99€</text>
-    <text x='285' y='88' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>89.99€</text>
-
-    <!-- Ligne 3 -->
-    <rect x='10' y='91' width='280' height='7' fill='#f8f9fa'/>
-    <text x='15' y='95' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Chaussures Running</text>
-    <text x='200' y='95' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>1</text>
-    <text x='240' y='95' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>129.99€</text>
-    <text x='285' y='95' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>129.99€</text>
+    <rect x="53.051113089938" y="158.36153161175" width="296.94888691006" height="16" fill="#28a745"/>
+    <text x="58.051113089938" y="170.36153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
+    <text x="231.22044523598" y="170.36153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
+    <text x="290.61022261799" y="170.36153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
+    <text x="58.051113089938" y="186.36153161175" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
+    <text x="231.22044523598" y="186.36153161175" font-family="Arial" font-size="8" fill="#000000">2</text>
+    <text x="290.61022261799" y="186.36153161175" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
   </g>
-  
-  <!-- Totaux à droite -->
   <g id="order-totals">
-    <line x1='160' y1='100' x2='290' y2='100' stroke='#e0e0e0' stroke-width='0.5'/>
-    <text x='200' y='110' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>Sous-total:</text>
-    <text x='285' y='110' font-family='Arial, sans-serif' font-size='5' fill='#28a745' font-weight='bold' text-anchor='end'>279.97€</text>
-    <text x='200' y='118' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>Coupon:</text>
-    <text x='285' y='118' font-family='Arial, sans-serif' font-size='5' fill='#28a745' font-weight='bold' text-anchor='end'>-30.87€</text>
-    <rect x='160' y='122' width='130' height='10' fill='#28a745' opacity='0.1' rx='2'/>
-    <text x='200' y='129' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#28a745'>TOTAL:</text>
-    <text x='285' y='129' font-family='Arial, sans-serif' font-size='7' font-weight='bold' fill='#28a745' text-anchor='end'>249.10€</text>
+    <line x1="126.6892252894" y1="79.180765805877" x2="229.62422083704" y2="79.180765805877" stroke="#e0e0e0" stroke-width="0.39590382902939"/>
   </g>
-
-  <!-- Pied -->
   <g id="footer">
-    <text x='150' y='145' font-family='Arial, sans-serif' font-size='4' fill='#adb5bd' text-anchor='middle'>contact@maboutique.com • www.maboutique.com</text>
+    <text x="53.051113089938" y="419.65805877115" font-family="Arial" font-size="7.9180765805877" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
   </g>
 </svg>
