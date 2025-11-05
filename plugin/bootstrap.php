@@ -730,59 +730,41 @@ function pdf_builder_ajax_get_template() {
  * AJAX handler pour récupérer les templates builtin
  */
 function pdf_builder_ajax_get_builtin_templates() {
-    error_log('PDF Builder AJAX - get_builtin_templates called');
-    
     // Vérifier le nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-        error_log('PDF Builder AJAX - Nonce verification failed');
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
 
-    error_log('PDF Builder AJAX - Nonce OK, checking permissions');
-
     // Vérifier les permissions
     if (!current_user_can('edit_posts')) {
-        error_log('PDF Builder AJAX - Permission denied');
         wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
         return;
     }
 
-    error_log('PDF Builder AJAX - Permissions OK, checking Template Manager class');
-
     // Charger le Template Manager
     if (!class_exists('PDF_Builder_Template_Manager')) {
-        error_log('PDF Builder AJAX - Template Manager class not found');
         wp_send_json_error(__('Template Manager non disponible.', 'pdf-builder-pro'));
         return;
     }
 
-    error_log('PDF Builder AJAX - Template Manager class found, trying to instantiate');
-
     try {
         // Essayer avec l'instance du core si disponible
         if (class_exists('\\PDF_Builder\\Core\\PDF_Builder_Core')) {
-            error_log('PDF Builder AJAX - PDF_Builder_Core class exists, getting instance');
             $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
             $template_manager = new PDF_Builder_Template_Manager($core);
         } else {
-            error_log('PDF Builder AJAX - PDF_Builder_Core class not found, using null');
             // Fallback sans instance du core
             $template_manager = new PDF_Builder_Template_Manager(null);
         }
 
-        error_log('PDF Builder AJAX - Template Manager instantiated, calling get_builtin_templates');
-
         $templates = $template_manager->get_builtin_templates();
-
-        error_log('PDF Builder AJAX - get_builtin_templates returned ' . count($templates) . ' templates');
 
         wp_send_json_success(array(
             'templates' => $templates,
             'count' => count($templates)
         ));
     } catch (Exception $e) {
-        error_log('PDF Builder AJAX - Exception: ' . $e->getMessage());
         wp_send_json_error(__('Erreur lors du chargement des templates: ', 'pdf-builder-pro') . $e->getMessage());
     }
 }
