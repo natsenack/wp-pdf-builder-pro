@@ -828,87 +828,98 @@ class PDF_Builder_Template_Manager
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
 
         foreach ($files as $index => $file) {
-            $filename = basename($file, '.json');
-            error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE ' . ($index + 1) . '/' . count($files) . ': ' . $filename . ' =====');
-            error_log('PDF Builder: get_builtin_templates - FICHIER À TRAITER: ' . $filename . ' (index ' . $index . ')');
-            error_log('PDF Builder: get_builtin_templates - chemin complet: ' . $file);
-            error_log('PDF Builder: get_builtin_templates - fichier existe: ' . (file_exists($file) ? 'OUI' : 'NON'));
-            error_log('PDF Builder: get_builtin_templates - est lisible: ' . (is_readable($file) ? 'OUI' : 'NON'));
-            
-            $content = file_get_contents($file);
-            if ($content === false) {
-                error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE: impossible de lire le fichier: ' . $file);
-                error_log('PDF Builder: get_builtin_templates - Détails fichier: existe=' . (file_exists($file) ? 'oui' : 'non') . ', lisible=' . (is_readable($file) ? 'oui' : 'non') . ', taille=' . filesize($file));
-                continue;
-            }
-            
-            error_log('PDF Builder: get_builtin_templates - ✅ fichier lu, taille: ' . strlen($content) . ' caractères');
-            
-            // Log the first 200 chars and last 200 chars to debug
-            error_log('PDF Builder: get_builtin_templates - début du contenu: ' . substr($content, 0, 200));
-            error_log('PDF Builder: get_builtin_templates - fin du contenu: ' . substr($content, -200));
-            
-            $template_data = json_decode($content, true);
-            error_log('PDF Builder: get_builtin_templates - Tentative de décodage JSON pour ' . $filename);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE JSON pour ' . $filename . ': ' . json_last_error_msg());
-                error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 premiers caractères): ' . substr($content, 0, 200));
-                error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 derniers caractères): ' . substr($content, -200));
-                continue;
-            }
-            error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès pour ' . $filename);
-            
-            error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès');
-            error_log('PDF Builder: get_builtin_templates - structure détectée: ' . (isset($template_data['elements']) ? 'nouveau format' : 'ancien format'));
-            error_log('PDF Builder: get_builtin_templates - nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
-            
-            // Validation de la structure
-            $validation_errors = $this->validate_template_structure($template_data);
-            if (!empty($validation_errors)) {
-                error_log('PDF Builder: get_builtin_templates - ❌ ÉCHEC VALIDATION pour ' . $filename . ': ' . implode(', ', $validation_errors));
-                error_log('PDF Builder: get_builtin_templates - Détails éléments: ' . count($template_data['elements']) . ' éléments trouvés');
-                foreach ($validation_errors as $error) {
-                    error_log('PDF Builder: get_builtin_templates - Erreur validation: ' . $error);
+            try {
+                $filename = basename($file, '.json');
+                error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE ' . ($index + 1) . '/' . count($files) . ': ' . $filename . ' =====');
+                error_log('PDF Builder: get_builtin_templates - FICHIER À TRAITER: ' . $filename . ' (index ' . $index . ')');
+                error_log('PDF Builder: get_builtin_templates - chemin complet: ' . $file);
+                error_log('PDF Builder: get_builtin_templates - fichier existe: ' . (file_exists($file) ? 'OUI' : 'NON'));
+                error_log('PDF Builder: get_builtin_templates - est lisible: ' . (is_readable($file) ? 'OUI' : 'NON'));
+                
+                $content = file_get_contents($file);
+                if ($content === false) {
+                    error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE: impossible de lire le fichier: ' . $file);
+                    error_log('PDF Builder: get_builtin_templates - Détails fichier: existe=' . (file_exists($file) ? 'oui' : 'non') . ', lisible=' . (is_readable($file) ? 'oui' : 'non') . ', taille=' . filesize($file));
+                    continue;
                 }
+                
+                error_log('PDF Builder: get_builtin_templates - ✅ fichier lu, taille: ' . strlen($content) . ' caractères');
+                
+                // Log the first 200 chars and last 200 chars to debug
+                error_log('PDF Builder: get_builtin_templates - début du contenu: ' . substr($content, 0, 200));
+                error_log('PDF Builder: get_builtin_templates - fin du contenu: ' . substr($content, -200));
+                
+                $template_data = json_decode($content, true);
+                error_log('PDF Builder: get_builtin_templates - Tentative de décodage JSON pour ' . $filename);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE JSON pour ' . $filename . ': ' . json_last_error_msg());
+                    error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 premiers caractères): ' . substr($content, 0, 200));
+                    error_log('PDF Builder: get_builtin_templates - Contenu problématique (200 derniers caractères): ' . substr($content, -200));
+                    continue;
+                }
+                error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès pour ' . $filename);
+                
+                error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès');
+                error_log('PDF Builder: get_builtin_templates - structure détectée: ' . (isset($template_data['elements']) ? 'nouveau format' : 'ancien format'));
+                error_log('PDF Builder: get_builtin_templates - nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
+                
+                // Validation de la structure
+                $validation_errors = $this->validate_template_structure($template_data);
+                if (!empty($validation_errors)) {
+                    error_log('PDF Builder: get_builtin_templates - ❌ ÉCHEC VALIDATION pour ' . $filename . ': ' . implode(', ', $validation_errors));
+                    error_log('PDF Builder: get_builtin_templates - Détails éléments: ' . count($template_data['elements']) . ' éléments trouvés');
+                    foreach ($validation_errors as $error) {
+                        error_log('PDF Builder: get_builtin_templates - Erreur validation: ' . $error);
+                    }
+                    continue;
+                }
+                
+                error_log('PDF Builder: get_builtin_templates - ✅ VALIDATION RÉUSSIE pour ' . $filename);
+
+                // Ajouter des métadonnées pour la modal
+                $template_data['id'] = $filename;
+                $template_data['preview_url'] = $this->get_template_preview_url($filename);
+                
+                error_log('PDF Builder: get_builtin_templates - preview_url générée: ' . $template_data['preview_url']);
+
+                // S'assurer que les champs requis pour la modal sont présents
+                if (!isset($template_data['name'])) {
+                    $template_data['name'] = ucfirst($filename);
+                    error_log('PDF Builder: get_builtin_templates - nom généré: ' . $template_data['name']);
+                } else {
+                    error_log('PDF Builder: get_builtin_templates - nom existant: ' . $template_data['name']);
+                }
+                
+                if (!isset($template_data['description'])) {
+                    $template_data['description'] = 'Template ' . ucfirst($filename);
+                    error_log('PDF Builder: get_builtin_templates - description générée: ' . $template_data['description']);
+                } else {
+                    error_log('PDF Builder: get_builtin_templates - description existante: ' . $template_data['description']);
+                }
+                
+                if (!isset($template_data['category'])) {
+                    $template_data['category'] = 'general';
+                    error_log('PDF Builder: get_builtin_templates - catégorie générée: ' . $template_data['category']);
+                } else {
+                    error_log('PDF Builder: get_builtin_templates - catégorie existante: ' . $template_data['category']);
+                }
+                if (!isset($template_data['features'])) {
+                    $template_data['features'] = ['Standard'];
+                }
+
+                $templates[] = $template_data;
+                error_log('PDF Builder: get_builtin_templates - ✅ template ajouté: ' . $template_data['name']);
+                error_log('PDF Builder: get_builtin_templates - ===== FIN TRAITEMENT TEMPLATE: ' . $filename . ' =====');
+                
+            } catch (Exception $e) {
+                error_log('PDF Builder: get_builtin_templates - ❌ ERREUR FATALE (Exception) dans le template ' . basename($file) . ': ' . $e->getMessage());
+                error_log('PDF Builder: get_builtin_templates - Trace: ' . $e->getTraceAsString());
+                continue;
+            } catch (Throwable $t) {
+                error_log('PDF Builder: get_builtin_templates - ❌ ERREUR CRITIQUE (Throwable) dans le template ' . basename($file) . ': ' . $t->getMessage());
+                error_log('PDF Builder: get_builtin_templates - Trace: ' . $t->getTraceAsString());
                 continue;
             }
-            
-            error_log('PDF Builder: get_builtin_templates - ✅ VALIDATION RÉUSSIE pour ' . $filename);
-
-            // Ajouter des métadonnées pour la modal
-            $template_data['id'] = $filename;
-            $template_data['preview_url'] = $this->get_template_preview_url($filename);
-            
-            error_log('PDF Builder: get_builtin_templates - preview_url générée: ' . $template_data['preview_url']);
-
-            // S'assurer que les champs requis pour la modal sont présents
-            if (!isset($template_data['name'])) {
-                $template_data['name'] = ucfirst($filename);
-                error_log('PDF Builder: get_builtin_templates - nom généré: ' . $template_data['name']);
-            } else {
-                error_log('PDF Builder: get_builtin_templates - nom existant: ' . $template_data['name']);
-            }
-            
-            if (!isset($template_data['description'])) {
-                $template_data['description'] = 'Template ' . ucfirst($filename);
-                error_log('PDF Builder: get_builtin_templates - description générée: ' . $template_data['description']);
-            } else {
-                error_log('PDF Builder: get_builtin_templates - description existante: ' . $template_data['description']);
-            }
-            
-            if (!isset($template_data['category'])) {
-                $template_data['category'] = 'general';
-                error_log('PDF Builder: get_builtin_templates - catégorie générée: ' . $template_data['category']);
-            } else {
-                error_log('PDF Builder: get_builtin_templates - catégorie existante: ' . $template_data['category']);
-            }
-            if (!isset($template_data['features'])) {
-                $template_data['features'] = ['Standard'];
-            }
-
-            $templates[] = $template_data;
-            error_log('PDF Builder: get_builtin_templates - ✅ template ajouté: ' . $template_data['name']);
-            error_log('PDF Builder: get_builtin_templates - ===== FIN TRAITEMENT TEMPLATE: ' . $filename . ' =====');
         }
 
         error_log('PDF Builder: get_builtin_templates - ===== RÉSUMÉ FINAL =====');
