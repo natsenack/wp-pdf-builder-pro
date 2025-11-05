@@ -956,7 +956,7 @@ document.addEventListener('keydown', function(e) {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     max-width: 90vw;
     max-height: 90vh;
-    width: 1200px;
+    width: 1400px;
     overflow: hidden;
     animation: gallerySlideIn 0.3s ease-out;
 }
@@ -1044,7 +1044,7 @@ document.addEventListener('keydown', function(e) {
     max-height: 75vh;
     overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Increased from 280px to accommodate A4 proportions */
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes pour afficher tous les templates */
     gap: 20px;
 }
 
