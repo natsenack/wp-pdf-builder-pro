@@ -820,6 +820,11 @@ class PDF_Builder_Template_Manager
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
 
+        error_log('PDF Builder: get_builtin_templates - 📂 FICHIERS TROUVÉS PAR GLOB: ' . count($files));
+        for ($i = 0; $i < count($files); $i++) {
+            error_log('PDF Builder: get_builtin_templates - 📄 [' . ($i + 1) . '] ' . basename($files[$i]));
+        }
+
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
         foreach ($files as $file) {
             error_log('PDF Builder: get_builtin_templates - fichier trouvé: ' . basename($file));
