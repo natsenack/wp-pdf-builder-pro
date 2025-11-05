@@ -136,7 +136,7 @@
                 "fontSize": 11,
                 "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
-                "textColor": "#000000",
+                "color": "#000000",
                 "backgroundColor": "#e8e8e8",
                 "padding": "3px"
             }
@@ -191,7 +191,7 @@
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
-                "textColor": "#1a365d",
+                "color": "#1a365d",
                 "textAlign": "right",
                 "lineHeight": 1.6
             }
@@ -207,7 +207,7 @@
                 "text": "Conditions de règlement: {{payment_method}}\nDate d'échéance: {{due_date}}\nMode de paiement: {{payment_method}}",
                 "fontSize": 11,
                 "fontFamily": "Times New Roman",
-                "textColor": "#4a5568",
+                "color": "#4a5568",
                 "lineHeight": 1.4
             }
         },
@@ -234,7 +234,7 @@
                 "text": "Merci de votre confiance - Document généré automatiquement le {{date}}",
                 "fontSize": 10,
                 "fontFamily": "Times New Roman",
-                "textColor": "#718096",
+                "color": "#718096",
                 "textAlign": "center"
             }
         }

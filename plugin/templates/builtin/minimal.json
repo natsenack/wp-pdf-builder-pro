@@ -30,7 +30,7 @@
                 "fontSize": 26,
                 "fontFamily": "Helvetica",
                 "fontWeight": "light",
-                "textColor": "#2b6cb0"
+                "textColor": "#ffc107"
             }
         },
         {
@@ -45,7 +45,7 @@
                 "fontSize": 19,
                 "fontFamily": "Helvetica",
                 "fontWeight": "normal",
-                "textColor": "#666666",
+                "textColor": "#212529",
                 "textAlign": "left"
             }
         },
@@ -103,7 +103,7 @@
                 "fontSize": 13,
                 "fontFamily": "Helvetica",
                 "fontWeight": "normal",
-                "color": "#666666",
+                "color": "#212529",
                 "textAlign": "left"
             }
         },
@@ -126,7 +126,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
-                "textColor": "#2d3748"
+                "textColor": "#212529"
             }
         },
         {
@@ -141,7 +141,7 @@
                 "fontSize": 13,
                 "fontFamily": "Helvetica",
                 "fontWeight": "normal",
-                "color": "#666666",
+                "color": "#212529",
                 "textAlign": "right"
             }
         },
@@ -164,7 +164,7 @@
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
-                "textColor": "#2d3748"
+                "textColor": "#212529"
             }
         },
         {
@@ -201,7 +201,7 @@
                 "text": "Sous-total\t{{subtotal}}\nTVA\t{{tax}}\nLivraison\t{{shipping_total}}\nTotal\t{{total}}",
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
-                "color": "#1a365d",
+                "color": "#ffc107",
                 "textAlign": "right",
                 "lineHeight": 1.4
             }

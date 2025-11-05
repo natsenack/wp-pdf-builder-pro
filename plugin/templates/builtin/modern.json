@@ -23,7 +23,7 @@
                 "fontSize": 26,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#333333",
+                "textColor": "#333333",
                 "textAlign": "center"
             }
         },
