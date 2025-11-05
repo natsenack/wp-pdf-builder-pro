@@ -757,7 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             html += '<div class="template-gallery-item" data-category="' + (template.category || 'general') + '" style="animation-delay: ' + (index * 0.1) + 's">' +
                 '<div class="template-gallery-item-preview">' +
-                    '<img src="' + template.preview_url + '" alt="' + template.name + '" width="300" height="200" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">' +
+                    '<img src="' + template.preview_url + '" alt="' + template.name + '" loading="lazy" onerror="console.error(\'Failed to load preview:\', this.src); this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="console.log(\'Preview loaded:\', this.src);">' +
                     '<div class="preview-placeholder" style="display: none;">' + template.name.charAt(0).toUpperCase() + '</div>' +
                 '</div>' +
                 '<div class="template-gallery-item-info">' +
