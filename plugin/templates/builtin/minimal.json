@@ -66,12 +66,13 @@
         },
         {
             "id": "order-date",
-            "type": "woocommerce-order-date",
+            "type": "dynamic-text",
             "x": 601,
             "y": 207,
             "width": 127,
             "height": 27,
             "properties": {
+                "content": "{{order_date}}",
                 "fontSize": 13,
                 "fontFamily": "Helvetica",
                 "textColor": "#718096",

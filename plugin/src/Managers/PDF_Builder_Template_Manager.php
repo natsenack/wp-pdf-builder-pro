@@ -827,10 +827,12 @@ class PDF_Builder_Template_Manager
 
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
 
-        foreach ($files as $file) {
+        foreach ($files as $index => $file) {
             $filename = basename($file, '.json');
-            error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE: ' . $filename . ' =====');
-            error_log('PDF Builder: get_builtin_templates - traitement fichier: ' . basename($file));
+            error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE ' . ($index + 1) . '/' . count($files) . ': ' . $filename . ' =====');
+            error_log('PDF Builder: get_builtin_templates - chemin complet: ' . $file);
+            error_log('PDF Builder: get_builtin_templates - fichier existe: ' . (file_exists($file) ? 'OUI' : 'NON'));
+            error_log('PDF Builder: get_builtin_templates - est lisible: ' . (is_readable($file) ? 'OUI' : 'NON'));
             
             $content = file_get_contents($file);
             if ($content === false) {
