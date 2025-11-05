@@ -25,63 +25,83 @@
             }
         },
         {
-            "id": "header-title",
-            "type": "text",
+            "id": "document-title",
+            "type": "document_type",
             "x": 67,
             "y": 67,
             "width": 661,
             "height": 40,
             "properties": {
-                "text": "FACTURE COMMERCIALE TRADITIONNELLE",
+                "title": "FACTURE COMMERCIALE TRADITIONNELLE",
                 "fontSize": 19,
                 "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
-                "color": "#000000",
+                "color": "#1a365d",
                 "textAlign": "center"
             }
         },
         {
-            "id": "header-subtitle",
-            "type": "text",
+            "id": "order-number",
+            "type": "order_number",
             "x": 67,
             "y": 107,
-            "width": 661,
+            "width": 200,
             "height": 27,
             "properties": {
-                "text": "N° [ORDER_NUMBER] - Date: [ORDER_DATE]",
                 "fontSize": 13,
                 "fontFamily": "Times New Roman",
-                "color": "#333333",
-                "textAlign": "center"
+                "color": "#4a5568",
+                "textAlign": "left"
             }
         },
         {
-            "id": "company-section",
-            "type": "text",
+            "id": "order-date",
+            "type": "woocommerce-order-date",
+            "x": 300,
+            "y": 107,
+            "width": 200,
+            "height": 27,
+            "properties": {
+                "fontSize": 13,
+                "fontFamily": "Times New Roman",
+                "color": "#4a5568",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "company-info",
+            "type": "company_info",
             "x": 67,
             "y": 187,
             "width": 320,
             "height": 107,
             "properties": {
-                "text": "[COMPANY_NAME]\n[COMPANY_ADDRESS]\nTéléphone: [COMPANY_PHONE]\nEmail: [COMPANY_EMAIL]",
+                "showFullName": true,
+                "showAddress": true,
+                "showEmail": true,
+                "showPhone": true,
+                "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "color": "#000000",
+                "color": "#2d3748",
                 "lineHeight": 1.4
             }
         },
         {
-            "id": "client-section",
-            "type": "text",
+            "id": "customer-info",
+            "type": "customer_info",
             "x": 427,
             "y": 187,
             "width": 300,
             "height": 107,
             "properties": {
-                "text": "FACTURER À:\n[CUSTOMER_NAME]\n[CUSTOMER_BILLING_ADDRESS]",
+                "showHeaders": true,
+                "showFullName": true,
+                "showAddress": true,
+                "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
-                "color": "#000000",
+                "color": "#2d3748",
                 "textAlign": "right",
                 "lineHeight": 1.4
             }
@@ -123,12 +143,21 @@
             "width": 661,
             "height": 333,
             "properties": {
-                "data": "[ORDER_ITEMS]",
+                "showHeaders": true,
+                "showBorders": true,
+                "showAlternatingRows": true,
+                "showSku": false,
+                "showDescription": false,
+                "showQuantity": true,
                 "fontSize": 11,
                 "fontFamily": "Times New Roman",
-                "color": "#000000",
+                "textColor": "#000000",
+                "headerBackgroundColor": "#f9fafb",
+                "headerTextColor": "#111827",
+                "alternateRowColor": "#f9f9f9",
                 "borderColor": "#cccccc",
-                "alternateRowColor": "#f9f9f9"
+                "borderWidth": 1,
+                "textAlign": "left"
             }
         },
         {
@@ -152,11 +181,11 @@
             "width": 274,
             "height": 133,
             "properties": {
-                "text": "Sous-total HT: [ORDER_SUBTOTAL]\nTVA ([TAX_RATE]%): [ORDER_TAX]\nFrais de port: [ORDER_SHIPPING]\n\nTOTAL TTC: [ORDER_TOTAL]",
+                "text": "Sous-total HT: {{subtotal}}\nTVA: {{tax}}\nFrais de port: {{shipping_total}}\n\nTOTAL TTC: {{total}}",
                 "fontSize": 12,
                 "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
-                "color": "#000000",
+                "color": "#1a365d",
                 "textAlign": "right",
                 "lineHeight": 1.6
             }
@@ -169,10 +198,10 @@
             "width": 661,
             "height": 80,
             "properties": {
-                "text": "Conditions de règlement: [PAYMENT_TERMS]\nDate d'échéance: [DUE_DATE]\nMode de paiement: [PAYMENT_METHOD]",
+                "text": "Conditions de règlement: {{payment_method}}\nDate d'échéance: {{due_date}}\nMode de paiement: {{payment_method}}",
                 "fontSize": 11,
                 "fontFamily": "Times New Roman",
-                "color": "#333333",
+                "color": "#4a5568",
                 "lineHeight": 1.4
             }
         },
@@ -196,10 +225,10 @@
             "width": 661,
             "height": 27,
             "properties": {
-                "text": "Merci de votre confiance - Document généré automatiquement le [CURRENT_DATE]",
+                "text": "Merci de votre confiance - Document généré automatiquement le {{date}}",
                 "fontSize": 10,
                 "fontFamily": "Times New Roman",
-                "color": "#666666",
+                "color": "#718096",
                 "textAlign": "center"
             }
         }

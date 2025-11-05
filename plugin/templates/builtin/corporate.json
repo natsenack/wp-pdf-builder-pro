@@ -24,30 +24,31 @@
             }
         },
         {
-            "id": "company-logo-area",
-            "type": "text",
+            "id": "company-info",
+            "type": "company_info",
             "x": 53,
             "y": 40,
             "width": 267,
             "height": 80,
             "properties": {
-                "text": "[COMPANY_NAME]",
-                "fontSize": 30,
-                "fontFamily": "Helvetica",
+                "showFullName": true,
+                "layout": "vertical",
+                "fontSize": 20,
+                "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#ffffff",
                 "textAlign": "left"
             }
         },
         {
-            "id": "header-invoice-title",
-            "type": "text",
+            "id": "document-title",
+            "type": "document_type",
             "x": 467,
             "y": 53,
             "width": 274,
             "height": 53,
             "properties": {
-                "text": "FACTURE PROFESSIONNELLE",
+                "title": "FACTURE PROFESSIONNELLE",
                 "fontSize": 21,
                 "fontFamily": "Helvetica",
                 "fontWeight": "bold",
@@ -63,7 +64,7 @@
             "width": 274,
             "height": 27,
             "properties": {
-                "text": "N° [ORDER_NUMBER]",
+                "text": "N° {{order_number}}",
                 "fontSize": 13,
                 "fontFamily": "Helvetica",
                 "color": "#ecf0f1",
@@ -100,18 +101,21 @@
             }
         },
         {
-            "id": "billing-address",
-            "type": "text",
+            "id": "customer-info",
+            "type": "customer_info",
             "x": 67,
             "y": 220,
             "width": 307,
             "height": 93,
             "properties": {
-                "text": "[CUSTOMER_NAME]\n[CUSTOMER_BILLING_ADDRESS]",
+                "showHeaders": false,
+                "showFullName": true,
+                "showAddress": true,
+                "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
-                "color": "#34495e",
-                "lineHeight": 1.3
+                "color": "#2c3e50",
+                "lineHeight": 1.4
             }
         },
         {
@@ -135,7 +139,7 @@
             "width": 307,
             "height": 113,
             "properties": {
-                "text": "Date de facture: [ORDER_DATE]\nDate d'échéance: [DUE_DATE]\n\nConditions de paiement:\n[PAYMENT_TERMS]",
+                "text": "Date de facture: {{order_date}}\nDate d'échéance: {{due_date}}\n\nConditions de paiement:\n{{payment_method}}",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
                 "color": "#34495e",
@@ -179,13 +183,21 @@
             "width": 687,
             "height": 333,
             "properties": {
-                "data": "[ORDER_ITEMS]",
+                "showHeaders": true,
+                "showBorders": true,
+                "showAlternatingRows": true,
+                "showSku": false,
+                "showDescription": false,
+                "showQuantity": true,
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
-                "color": "#2c3e50",
+                "textColor": "#2c3e50",
+                "headerBackgroundColor": "#f8f9fa",
+                "headerTextColor": "#2c3e50",
+                "alternateRowColor": "#f8f9fa",
                 "borderColor": "#ecf0f1",
-                "headerBackground": "#f8f9fa",
-                "alternateRowColor": "#f8f9fa"
+                "borderWidth": 1,
+                "textAlign": "left"
             }
         },
         {
@@ -225,13 +237,13 @@
             "width": 307,
             "height": 113,
             "properties": {
-                "text": "Sous-total HT:\t[ORDER_SUBTOTAL]\nTVA ([TAX_RATE]%):\t[ORDER_TAX]\nFrais de livraison:\t[ORDER_SHIPPING]\n\nTOTAL TTC:\t[ORDER_TOTAL]",
+                "text": "Sous-total HT:\t{{subtotal}}\nTVA:\t{{tax}}\nFrais de livraison:\t{{shipping_total}}\n\nTOTAL TTC:\t{{total}}",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
                 "fontWeight": "bold",
                 "color": "#2c3e50",
                 "textAlign": "right",
-                "lineHeight": 1.5
+                "lineHeight": 1.6
             }
         },
         {
@@ -247,14 +259,18 @@
             }
         },
         {
-            "id": "company-contact",
-            "type": "text",
+            "id": "company-mentions",
+            "type": "mentions",
             "x": 53,
             "y": 980,
             "width": 334,
             "height": 80,
             "properties": {
-                "text": "[COMPANY_NAME]\n[COMPANY_ADDRESS]\n[COMPANY_PHONE] | [COMPANY_EMAIL]",
+                "showEmail": true,
+                "showPhone": true,
+                "showSiret": true,
+                "showVat": true,
+                "separator": " | ",
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
                 "color": "#ecf0f1",
@@ -269,7 +285,7 @@
             "width": 334,
             "height": 53,
             "properties": {
-                "text": "Nous vous remercions de votre confiance et restons à votre disposition pour toute information complémentaire.\nDocument établi le [CURRENT_DATE]",
+                "text": "Nous vous remercions de votre confiance et restons à votre disposition pour toute information complémentaire.\nDocument établi le {{date}}",
                 "fontSize": 11,
                 "fontFamily": "Helvetica",
                 "color": "#ecf0f1",

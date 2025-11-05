@@ -12,14 +12,14 @@
     "canvasHeight": 1123,
     "elements": [
         {
-            "id": "header-title",
-            "type": "text",
+            "id": "document-title",
+            "type": "document_type",
             "x": 67,
             "y": 67,
             "width": 661,
             "height": 53,
             "properties": {
-                "text": "FACTURE MODERNE",
+                "title": "FACTURE MODERNE",
                 "fontSize": 26,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
@@ -29,16 +29,20 @@
         },
         {
             "id": "company-info",
-            "type": "text",
+            "type": "company_info",
             "x": 67,
             "y": 160,
             "width": 320,
             "height": 107,
             "properties": {
-                "text": "[COMPANY_NAME]\n[COMPANY_ADDRESS]\n[COMPANY_PHONE]\n[COMPANY_EMAIL]",
-                "fontSize": 13,
+                "showFullName": true,
+                "showAddress": true,
+                "showEmail": true,
+                "showPhone": true,
+                "layout": "vertical",
+                "fontSize": 14,
                 "fontFamily": "Arial",
-                "color": "#666666",
+                "color": "#2b6cb0",
                 "lineHeight": 1.4
             }
         },
@@ -50,41 +54,47 @@
             "width": 300,
             "height": 107,
             "properties": {
-                "text": "Facture N°: [ORDER_NUMBER]\nDate: [ORDER_DATE]\nClient: [CUSTOMER_NAME]",
+                "text": "Facture N°: {{order_number}}\nDate: {{order_date}}\nClient: {{customer_name}}",
                 "fontSize": 13,
                 "fontFamily": "Arial",
-                "color": "#333333",
+                "color": "#4a5568",
                 "textAlign": "right",
                 "lineHeight": 1.4
             }
         },
         {
             "id": "billing-address",
-            "type": "text",
+            "type": "customer_info",
             "x": 67,
             "y": 293,
             "width": 320,
             "height": 133,
             "properties": {
-                "text": "Adresse de facturation:\n[CUSTOMER_BILLING_ADDRESS]",
-                "fontSize": 12,
+                "showHeaders": true,
+                "showFullName": false,
+                "showAddress": true,
+                "layout": "vertical",
+                "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#333333",
+                "color": "#2d3748",
                 "lineHeight": 1.3
             }
         },
         {
             "id": "shipping-address",
-            "type": "text",
+            "type": "customer_info",
             "x": 427,
             "y": 293,
             "width": 300,
             "height": 133,
             "properties": {
-                "text": "Adresse de livraison:\n[CUSTOMER_SHIPPING_ADDRESS]",
+                "showHeaders": true,
+                "showFullName": false,
+                "showAddress": true,
+                "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "color": "#333333",
+                "color": "#2d3748",
                 "textAlign": "right",
                 "lineHeight": 1.3
             }
@@ -114,12 +124,20 @@
             "width": 661,
             "height": 267,
             "properties": {
-                "data": "[ORDER_ITEMS]",
+                "showHeaders": true,
+                "showBorders": true,
+                "showAlternatingRows": false,
+                "showSku": false,
+                "showDescription": false,
+                "showQuantity": true,
                 "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#333333",
+                "textColor": "#333333",
+                "headerBackgroundColor": "#f9f9f9",
+                "headerTextColor": "#333333",
                 "borderColor": "#dddddd",
-                "headerBackground": "#f9f9f9"
+                "borderWidth": 1,
+                "textAlign": "left"
             }
         },
         {
@@ -130,11 +148,11 @@
             "width": 300,
             "height": 133,
             "properties": {
-                "text": "Sous-total: [ORDER_SUBTOTAL]\nTVA: [ORDER_TAX]\nLivraison: [ORDER_SHIPPING]\nTOTAL: [ORDER_TOTAL]",
-                "fontSize": 13,
+                "text": "Sous-total: {{subtotal}}\nTVA: {{tax}}\nLivraison: {{shipping_total}}\nTOTAL: {{total}}",
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#333333",
+                "color": "#2b6cb0",
                 "textAlign": "right",
                 "lineHeight": 1.5
             }
