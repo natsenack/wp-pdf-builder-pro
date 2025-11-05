@@ -509,7 +509,11 @@ class PDF_Builder_Template_Manager
 
         // ===== Vérification 6 : Validation de chaque élément =====
         foreach ($template_data['elements'] as $index => $element) {
+            error_log("PDF Builder - Validating element $index: " . ($element['id'] ?? 'unknown') . " (type: " . ($element['type'] ?? 'unknown') . ")");
             $element_errors = $this->validate_template_element($element, $index);
+            if (!empty($element_errors)) {
+                error_log("PDF Builder - Element $index validation errors: " . implode('; ', $element_errors));
+            }
             $errors = array_merge($errors, $element_errors);
 
             // Limiter à 10 erreurs pour éviter un flood de messages

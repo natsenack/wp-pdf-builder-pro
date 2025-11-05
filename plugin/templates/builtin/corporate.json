@@ -202,18 +202,6 @@
             }
         },
         {
-            "id": "totals-separator",
-            "type": "line",
-            "x": 160,
-            "y": 100,
-            "width": 130,
-            "height": 0,
-            "properties": {
-                "strokeColor": "#e0e0e0",
-                "strokeWidth": 0.5
-            }
-        },
-        {
             "id": "subtotal-label",
             "type": "text",
             "x": 500,
@@ -319,26 +307,6 @@
                 "fontWeight": "bold",
                 "color": "#ffffff",
                 "textAlign": "right"
-            }
-        },
-        {
-            "id": "footer-mentions",
-            "type": "mentions",
-            "x": 67,
-            "y": 520,
-            "width": 661,
-            "height": 20,
-            "properties": {
-                "showEmail": true,
-                "showPhone": false,
-                "showSiret": false,
-                "showVat": false,
-                "separator": " • ",
-                "fontSize": 10,
-                "fontFamily": "Arial",
-                "textColor": "#adb5bd",
-                "textAlign": "center",
-                "lineHeight": 1.4
             }
         }
     ],

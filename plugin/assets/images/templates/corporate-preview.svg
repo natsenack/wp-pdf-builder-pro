@@ -28,10 +28,9 @@
     <text x="284.61022261799" y="200.05153161175" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
     </g>
     <g id="order-totals">
-    <line x1="136.6892252894" y1="92.870765805877" x2="239.62422083704" y2="92.870765805877" stroke="#e0e0e0" stroke-width="0.39590382902939"/>
+    <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
     </g>
     <g id="footer">
-    <text x="63.051113089938" y="433.34805877115" font-family="Arial" font-size="7.9180765805877" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
     </g>
   </g>
 </svg>
