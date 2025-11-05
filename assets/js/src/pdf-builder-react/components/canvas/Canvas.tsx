@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
-import { Point, Element } from '../../types/elements';
+import { Element } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 
 interface CanvasProps {
@@ -13,7 +13,7 @@ interface CanvasProps {
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state, dispatch } = useBuilder();
+  const { state } = useBuilder();
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -53,103 +53,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
   };
 
-  // Fonction pour dessiner un élément
-  function drawElement(ctx: CanvasRenderingContext2D, element: Element) {
-    // Vérifier si l'élément est visible
-    if (element.visible === false) {
-      return;
-    }
-
-    ctx.save();
-
-    // Appliquer transformation de l'élément
-    ctx.translate(element.x, element.y);
-    if (element.rotation) {
-      ctx.rotate((element.rotation * Math.PI) / 180);
-    }
-
-    // Dessiner selon le type d'élément
-    switch (element.type) {
-      case 'rectangle':
-        drawRectangle(ctx, element);
-        break;
-      case 'circle':
-        drawCircle(ctx, element);
-        break;
-      case 'text':
-        drawText(ctx, element);
-        break;
-      case 'line':
-        drawLine(ctx, element);
-        break;
-      case 'product_table':
-        drawProductTable(ctx, element);
-        break;
-      case 'customer_info':
-        drawCustomerInfo(ctx, element);
-        break;
-      case 'company_info':
-        drawCompanyInfo(ctx, element);
-        break;
-      case 'company_logo':
-        drawCompanyLogo(ctx, element);
-        break;
-      case 'order_number':
-        drawOrderNumber(ctx, element);
-        break;
-      case 'document_type':
-        drawDocumentType(ctx, element);
-        break;
-      case 'dynamic-text':
-        drawDynamicText(ctx, element);
-        break;
-      case 'mentions':
-        drawMentions(ctx, element);
-        break;
-      default:
-        // Élément générique - dessiner un rectangle simple
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(0, 0, element.width, element.height);
-    }
-
-    ctx.restore();
-  };
-
-  // Fonction de rendu du canvas
-  const renderCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Appliquer transformation (zoom, pan)
-    ctx.save();
-    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
-    ctx.scale(state.canvas.zoom, state.canvas.zoom);
-
-    // Dessiner la grille si activée
-    if (state.canvas.showGrid) {
-      drawGrid(ctx, width, height, state.canvas.gridSize);
-    }
-
-    // Dessiner les éléments
-    state.elements.forEach((element, index) => {
-      drawElement(ctx, element);
-    });
-
-    // Dessiner la sélection
-    if (state.selection.selectedElements.length > 0) {
-      drawSelection(ctx, state.selection.selectedElements, state.elements);
-    }
-
-    ctx.restore();
-  }, [state, width, height]);
-
   // Fonctions de dessin spécifiques
   // Fonction helper pour normaliser les couleurs
   const normalizeColor = (color: string): string => {
@@ -159,7 +62,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     return color;
   };
 
-  const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
+  // Fonctions de dessin pour les éléments
+  function drawRectangle(ctx: CanvasRenderingContext2D, element: Element) {
     const fillColor = normalizeColor((element as any).fillColor || '#ffffff');
     const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 1;
@@ -177,9 +81,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.fillRect(0, 0, element.width, element.height);
       ctx.strokeRect(0, 0, element.width, element.height);
     }
-  };
+  }
 
-  const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
+  function drawCircle(ctx: CanvasRenderingContext2D, element: Element) {
     const fillColor = normalizeColor((element as any).fillColor || '#ffffff');
     const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 1;
@@ -196,9 +100,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
-  };
+  }
 
-  const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
+  function drawText(ctx: CanvasRenderingContext2D, element: Element) {
     const text = (element as any).text || 'Text';
     const fontSize = (element as any).fontSize || 16;
     const color = normalizeColor((element as any).color || '#000000');
@@ -210,9 +114,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     const x = align === 'center' ? element.width / 2 : align === 'right' ? element.width : 0;
     ctx.fillText(text, x, fontSize);
-  };
+  }
 
-  const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
+  function drawLine(ctx: CanvasRenderingContext2D, element: Element) {
     const strokeColor = normalizeColor((element as any).strokeColor || '#000000');
     const strokeWidth = (element as any).strokeWidth || 2;
 
@@ -223,7 +127,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.moveTo(0, element.height / 2); // Centre verticalement
     ctx.lineTo(element.width, element.height / 2); // Ligne horizontale droite
     ctx.stroke();
-  };
+  }
 
   // Fonction utilitaire pour rectangle arrondi
   const roundedRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
@@ -852,7 +756,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
       if (!img) {
         // Créer une nouvelle image et la mettre en cache
-        img = new Image();
+        img = new (window as any).Image() as HTMLImageElement;
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
         imageCache.current.set(logoUrl, img);
@@ -1403,8 +1307,71 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.fillText(documentType, x, y);
   };
 
+  // Fonction pour dessiner un élément
+  const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
+    // Vérifier si l'élément est visible
+    if (element.visible === false) {
+      return;
+    }
+
+    ctx.save();
+
+    // Appliquer transformation de l'élément
+    ctx.translate(element.x, element.y);
+    if (element.rotation) {
+      ctx.rotate((element.rotation * Math.PI) / 180);
+    }
+
+    // Dessiner selon le type d'élément
+    switch (element.type) {
+      case 'rectangle':
+        drawRectangle(ctx, element);
+        break;
+      case 'circle':
+        drawCircle(ctx, element);
+        break;
+      case 'text':
+        drawText(ctx, element);
+        break;
+      case 'line':
+        drawLine(ctx, element);
+        break;
+      case 'product_table':
+        drawProductTable(ctx, element);
+        break;
+      case 'customer_info':
+        drawCustomerInfo(ctx, element);
+        break;
+      case 'company_info':
+        drawCompanyInfo(ctx, element);
+        break;
+      case 'company_logo':
+        drawCompanyLogo(ctx, element);
+        break;
+      case 'order_number':
+        drawOrderNumber(ctx, element);
+        break;
+      case 'document_type':
+        drawDocumentType(ctx, element);
+        break;
+      case 'dynamic-text':
+        drawDynamicText(ctx, element);
+        break;
+      case 'mentions':
+        drawMentions(ctx, element);
+        break;
+      default:
+        // Élément générique - dessiner un rectangle simple
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, element.width, element.height);
+    }
+
+    ctx.restore();
+  }, [drawRectangle, drawCircle, drawText, drawLine, drawProductTable, drawCustomerInfo, drawCompanyLogo, drawOrderNumber, drawDynamicText, drawMentions]);
+
   // Fonction pour dessiner la sélection
-  const drawSelection = (ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) => {
+  function drawSelection(ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) {
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
     if (selectedElements.length === 0) return;
 
@@ -1418,14 +1385,32 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       maxY = Math.max(maxY, el.y + el.height);
     });
 
-    // Dessiner le rectangle de sélection
+    // Rectangle de sélection
     ctx.strokeStyle = '#007acc';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.setLineDash([5, 5]);
-    ctx.strokeRect(minX - 5, minY - 5, (maxX - minX) + 10, (maxY - minY) + 10);
+    ctx.strokeRect(minX - 2, minY - 2, maxX - minX + 4, maxY - minY + 4);
+
+    // Poignées de redimensionnement
+    const handleSize = 6;
+    ctx.fillStyle = '#007acc';
     ctx.setLineDash([]);
 
-    // Ajouter les indicateurs de dimensions pour chaque élément sélectionné
+    // Coins
+    ctx.fillRect(minX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(maxX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(minX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(maxX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+
+    // Centres des côtés
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    ctx.fillRect(midX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(midX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(minX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
+    ctx.fillRect(maxX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
+
+    // Afficher les dimensions pour chaque élément sélectionné
     selectedElements.forEach(el => {
       if (selectedIds.includes(el.id)) {
         // Coordonnées
@@ -1455,6 +1440,40 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       }
     });
   };
+
+  // Fonction de rendu du canvas
+  const renderCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Appliquer transformation (zoom, pan)
+    ctx.save();
+    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
+    ctx.scale(state.canvas.zoom, state.canvas.zoom);
+
+    // Dessiner la grille si activée
+    if (state.canvas.showGrid) {
+      drawGrid(ctx, width, height, state.canvas.gridSize);
+    }
+
+    // Dessiner les éléments
+    state.elements.forEach((element) => {
+      drawElement(ctx, element);
+    });
+
+    // Dessiner la sélection
+    if (state.selection.selectedElements.length > 0) {
+      drawSelection(ctx, state.selection.selectedElements, state.elements);
+    }
+
+    ctx.restore();
+  }, [state, width, height, drawElement]);
 
   // Redessiner quand l'état change
   useEffect(() => {
