@@ -29,15 +29,15 @@
     <text x="207.80856423174" y="57.874055415617" font-family="Arial" font-size="8" fill="#212529" text-anchor="end">05/11/2025</text>
     </g>
     <g id="products-table">
-    <rect x="27.846347607053" y="83.123425692695" width="274.72292191436" height="12" fill="#28a745" stroke="#ecf0f1" stroke-width="0.5"/>
+    <rect x="27.846347607053" y="83.123425692695" width="274.72292191436" height="12" fill="#28a745" stroke="#cccccc" stroke-width="0.5"/>
     <text x="30.846347607053" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
     <text x="178.94395465995" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
     <text x="233.88853904282" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
-    <rect x="27.846347607053" y="95.123425692695" width="274.72292191436" height="12" fill="#f8f9fa" stroke="#ecf0f1" stroke-width="0.5"/>
+    <rect x="27.846347607053" y="95.123425692695" width="274.72292191436" height="12" fill="#f8f9fa" stroke="#cccccc" stroke-width="0.5"/>
     <text x="30.846347607053" y="101.5234256927" font-family="Arial" font-size="8" fill="#212529">Produit Sample 1</text>
     <text x="178.94395465995" y="101.5234256927" font-family="Arial" font-size="8" fill="#212529">2</text>
     <text x="233.88853904282" y="101.5234256927" font-family="Arial" font-size="8" fill="#212529">€50.00</text>
-    <rect x="27.846347607053" y="107.1234256927" width="274.72292191436" height="12" fill="#ffffff" stroke="#ecf0f1" stroke-width="0.5"/>
+    <rect x="27.846347607053" y="107.1234256927" width="274.72292191436" height="12" fill="#ffffff" stroke="#cccccc" stroke-width="0.5"/>
     <text x="30.846347607053" y="113.5234256927" font-family="Arial" font-size="8" fill="#212529">Produit Sample 2</text>
     <text x="178.94395465995" y="113.5234256927" font-family="Arial" font-size="8" fill="#212529">1</text>
     <text x="233.88853904282" y="113.5234256927" font-family="Arial" font-size="8" fill="#212529">€75.50</text>
@@ -52,6 +52,7 @@
     <text x="270.15113350126" y="203.34005037783" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">{{total}}</text>
     </g>
     <g id="footer">
+    <line x1="27.846347607053" y1="199.49622166247" x2="302.56926952141" y2="199.91183879093" stroke="#cccccc" stroke-width="1"/>
     <text x="27.846347607053" y="209.6523929471" font-family="Arial" font-size="6" fill="#666666">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
     </g>
   </g>

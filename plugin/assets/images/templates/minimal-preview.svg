@@ -30,9 +30,9 @@
     </g>
     <g id="products-table">
     <rect x="27.846347607053" y="83.123425692695" width="274.72292191436" height="12" fill="#ffc107" stroke="#ffffff" stroke-width="0.5"/>
-    <text x="30.846347607053" y="89.523425692695" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Produit</text>
-    <text x="178.94395465995" y="89.523425692695" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Qté</text>
-    <text x="233.88853904282" y="89.523425692695" font-family="Arial" font-size="8" fill="#212529" font-weight="bold">Prix</text>
+    <text x="30.846347607053" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
+    <text x="178.94395465995" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
+    <text x="233.88853904282" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
     <rect x="27.846347607053" y="95.123425692695" width="274.72292191436" height="12" fill="#f9f9f9" stroke="#ffffff" stroke-width="0.5"/>
     <text x="30.846347607053" y="101.5234256927" font-family="Arial" font-size="8" fill="#212529">Produit Sample 1</text>
     <text x="178.94395465995" y="101.5234256927" font-family="Arial" font-size="8" fill="#212529">2</text>

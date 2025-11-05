@@ -165,10 +165,9 @@
                 "fontFamily": "Arial",
                 "textColor": "#212529",
                 "headerBackgroundColor": "#28a745",
-                "headerTextColor": "#ffffff",
                 "alternateRowColor": "#f8f9fa",
-                "borderColor": "#ecf0f1",
-                "borderWidth": 1,
+                "borderColor": "#cccccc",
+                "borderWidth": 0.5,
                 "textAlign": "left"
             }
         },
@@ -301,11 +300,11 @@
             "type": "line",
             "x": 67,
             "y": 480,
-            "x2": 728,
-            "y2": 480,
+            "width": 661,
+            "height": 1,
             "properties": {
-                "color": "#ecf0f1",
-                "width": 1
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
             }
         },
         {
