@@ -198,18 +198,33 @@
             }
         },
         {
-            "id": "payment-info",
-            "type": "text",
+            "id": "payment-method",
+            "type": "dynamic-text",
             "x": 67,
             "y": 700,
             "width": 661,
-            "height": 50,
+            "height": 20,
             "properties": {
-                "text": "Conditions de règlement: {{payment_method}}\nDate d'échéance: {{due_date}}\nMode de paiement: {{payment_method}}",
+                "content": "Conditions de règlement: {{payment_method}}",
                 "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#666666",
-                "lineHeight": 1.4
+                "textColor": "#666666",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "due-date",
+            "type": "dynamic-text",
+            "x": 67,
+            "y": 720,
+            "width": 661,
+            "height": 20,
+            "properties": {
+                "content": "Date d'échéance: {{due_date}}",
+                "fontSize": 11,
+                "fontFamily": "Arial",
+                "textColor": "#666666",
+                "textAlign": "left"
             }
         },
         {
@@ -226,16 +241,16 @@
         },
         {
             "id": "footer-text",
-            "type": "text",
+            "type": "dynamic-text",
             "x": 67,
             "y": 800,
             "width": 661,
             "height": 30,
             "properties": {
-                "text": "Merci de votre confiance - Document généré automatiquement le {{date}}",
+                "content": "Merci de votre confiance - Document généré automatiquement le {{date}}",
                 "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#666666",
+                "textColor": "#666666",
                 "textAlign": "center"
             }
         }

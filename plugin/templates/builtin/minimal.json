@@ -23,7 +23,7 @@
                 "fontSize": 18,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#ffffff",
+                "textColor": "#ffffff",
                 "textAlign": "center",
                 "backgroundColor": "#ffc107"
             }
@@ -40,67 +40,58 @@
                 "fontSize": 24,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#212529",
+                "textColor": "#212529",
                 "textAlign": "left"
             }
         },
         {
-            "id": "customer-name",
-            "type": "text",
+            "id": "customer-info",
+            "type": "customer_info",
             "x": 67,
             "y": 70,
             "width": 300,
-            "height": 20,
+            "height": 40,
             "properties": {
-                "text": "{{customer_name}}",
+                "showHeaders": false,
+                "showFullName": true,
+                "showAddress": true,
+                "showEmail": false,
+                "showPhone": false,
+                "showCompanyName": false,
+                "showVatNumber": false,
+                "showCompanyAddress": false,
+                "layout": "vertical",
                 "fontSize": 13,
                 "fontFamily": "Arial",
-                "color": "#212529",
-                "textAlign": "left"
+                "textColor": "#212529"
             }
         },
         {
-            "id": "customer-address",
-            "type": "text",
-            "x": 67,
-            "y": 90,
-            "width": 300,
-            "height": 20,
-            "properties": {
-                "text": "{{customer_address}}",
-                "fontSize": 13,
-                "fontFamily": "Arial",
-                "color": "#6c757d",
-                "textAlign": "left"
-            }
-        },
-        {
-            "id": "invoice-number",
-            "type": "text",
+            "id": "order-number",
+            "type": "order_number",
             "x": 600,
             "y": 70,
             "width": 127,
             "height": 20,
             "properties": {
-                "text": "Fact: {{order_number}}",
                 "fontSize": 13,
                 "fontFamily": "Arial",
-                "color": "#212529",
+                "textColor": "#212529",
                 "textAlign": "right"
             }
         },
         {
-            "id": "invoice-date",
-            "type": "text",
+            "id": "order-date",
+            "type": "dynamic-text",
             "x": 600,
             "y": 90,
             "width": 127,
             "height": 20,
             "properties": {
-                "text": "{{order_date}}",
+                "content": "{{order_date}}",
                 "fontSize": 13,
                 "fontFamily": "Arial",
-                "color": "#6c757d",
+                "textColor": "#6c757d",
                 "textAlign": "right"
             }
         },
@@ -129,19 +120,6 @@
             }
         },
         {
-            "id": "table-header-bg",
-            "type": "rectangle",
-            "x": 80,
-            "y": 145,
-            "width": 641,
-            "height": 25,
-            "properties": {
-                "fillColor": "#ffc107",
-                "strokeColor": "#ffc107",
-                "strokeWidth": 0
-            }
-        },
-        {
             "id": "table-header",
             "type": "text",
             "x": 80,
@@ -153,7 +131,7 @@
                 "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#212529",
+                "textColor": "#212529",
                 "textAlign": "left"
             }
         },
@@ -173,7 +151,7 @@
                 "showQuantity": true,
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "color": "#212529",
+                "textColor": "#212529",
                 "headerBackgroundColor": "#ffc107",
                 "headerTextColor": "#212529",
                 "borderColor": "#ffffff",
@@ -204,7 +182,7 @@
                 "text": "Sous-total:",
                 "fontSize": 13,
                 "fontFamily": "Arial",
-                "color": "#6c757d",
+                "textColor": "#6c757d",
                 "textAlign": "right"
             }
         },
@@ -220,7 +198,7 @@
                 "fontSize": 13,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#ffc107",
+                "textColor": "#ffc107",
                 "textAlign": "right"
             }
         },
@@ -236,7 +214,7 @@
                 "fontSize": 16,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#212529",
+                "textColor": "#212529",
                 "textAlign": "right"
             }
         },
@@ -252,7 +230,7 @@
                 "fontSize": 18,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#ffc107",
+                "textColor": "#ffc107",
                 "textAlign": "right"
             }
         },
@@ -283,7 +261,7 @@
                 "separator": " • ",
                 "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#adb5bd",
+                "textColor": "#adb5bd",
                 "textAlign": "center",
                 "lineHeight": 1.4
             }
@@ -296,4 +274,3 @@
         "preview": "minimal-preview.png"
     }
 }
-
