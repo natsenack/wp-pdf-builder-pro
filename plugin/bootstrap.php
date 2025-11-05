@@ -728,6 +728,12 @@ function pdf_builder_ajax_get_template() {
  * AJAX handler pour récupérer les templates builtin
  */
 function pdf_builder_ajax_get_builtin_templates() {
+    // Vérifier le nonce
+    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_templates')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
     // Vérifier les permissions
     if (!current_user_can('edit_posts')) {
         wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
