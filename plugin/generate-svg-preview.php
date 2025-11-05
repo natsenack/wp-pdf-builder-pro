@@ -55,8 +55,15 @@ class SVGPreviewGenerator
         $svg .= '  <rect x="' . ($pageMargin + 2) . '" y="' . ($pageY + 2) . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#f0f0f0" rx="4"/>' . "\n";
         $svg .= '  <rect x="' . $pageMargin . '" y="' . $pageY . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>' . "\n";
 
-        // Add semantic groups inside the page
-        $svg .= '  <g id="page-content" transform="translate(' . $pageMargin . ',' . $pageY . ')">' . "\n";
+        // Define clip path for page content
+        $svg .= '  <defs>' . "\n";
+        $svg .= '    <clipPath id="pageClip">' . "\n";
+        $svg .= '      <rect x="' . $pageMargin . '" y="' . $pageY . '" width="' . $pageWidth . '" height="' . $pageHeight . '"/>' . "\n";
+        $svg .= '    </clipPath>' . "\n";
+        $svg .= '  </defs>' . "\n";
+
+        // Add semantic groups inside the page with clip-path
+        $svg .= '  <g id="page-content" transform="translate(' . $pageMargin . ',' . $pageY . ')" clip-path="url(#pageClip)">' . "\n";
 
         $svg .= '    <g id="header">' . "\n";
         $svg .= '    </g>' . "\n";
@@ -81,11 +88,11 @@ class SVGPreviewGenerator
 
         $svg .= '  </g>' . "\n";
 
-        // Generate elements
+        // Generate elements - pass pageWidth and pageHeight for bounds checking
         $elementsByGroup = [];
         if (isset($this->templateData['elements'])) {
             foreach ($this->templateData['elements'] as $element) {
-                $svgElement = $this->generateElement($element, $pageMargin, $pageY);
+                $svgElement = $this->generateElement($element, 0, 0, $pageWidth, $pageHeight);
                 if ($svgElement) {
                     $groupId = $this->getElementGroup($element);
                     if (!isset($elementsByGroup[$groupId])) {
@@ -106,40 +113,39 @@ class SVGPreviewGenerator
         return $svg;
     }
 
-    private function generateElement($element, $pageMargin = 0, $pageY = 0)
+    private function generateElement($element, $offsetX = 0, $offsetY = 0, $pageWidth = 330, $pageHeight = 466)
     {
         $type = $element['type'] ?? '';
-        $x = ($element['x'] ?? 0) * $this->scaleFactor + $pageMargin;
-        $y = ($element['y'] ?? 0) * $this->scaleFactor + $pageY;
+        
+        // Scale element coordinates from canvas (794x1123) to preview
+        $x = ($element['x'] ?? 0) * $this->scaleFactor;
+        $y = ($element['y'] ?? 0) * $this->scaleFactor;
         $width = ($element['width'] ?? 0) * $this->scaleFactor;
         $height = ($element['height'] ?? 0) * $this->scaleFactor;
 
-        // Calculate page bounds
-        $pageWidth = $this->previewWidth - ($pageMargin * 2);
-        $pageHeight = $pageWidth * 1.414; // A4 ratio
-
-        // Clip elements to stay within page bounds
-        // Don't render if element is completely outside bounds
-        if ($y + $height < $pageY || $y > $pageY + $pageHeight) {
+        // Check if element is completely outside page bounds - don't render
+        if ($y + $height < 0 || $y > $pageHeight || $x + $width < 0 || $x > $pageWidth) {
             return ''; // Element is outside visible area
         }
 
-        // Clip width
-        if ($x + $width > $this->previewWidth - $pageMargin) {
-            $width = $this->previewWidth - $pageMargin - $x;
+        // Clip element to stay within page bounds
+        $originalY = $y;
+        $originalHeight = $height;
+        
+        if ($y < 0) {
+            $height -= (0 - $y);
+            $y = 0;
         }
-        if ($x < $pageMargin) {
-            $width -= $pageMargin - $x;
-            $x = $pageMargin;
+        if ($y + $height > $pageHeight) {
+            $height = $pageHeight - $y;
         }
-
-        // Clip height
-        if ($y + $height > $pageY + $pageHeight) {
-            $height = $pageY + $pageHeight - $y;
+        
+        if ($x < 0) {
+            $width -= (0 - $x);
+            $x = 0;
         }
-        if ($y < $pageY) {
-            $height -= $pageY - $y;
-            $y = $pageY;
+        if ($x + $width > $pageWidth) {
+            $width = $pageWidth - $x;
         }
 
         // Skip if element has no visible dimensions
@@ -206,9 +212,9 @@ class SVGPreviewGenerator
                     $textX = $x + $width;
                 }
 
-                // Constrain to visible area
-                $textX = max($this->pagePadding + 2, min($textX, $this->previewWidth - $this->pagePadding - 2));
-                $textY = max($y + $fontSize, min($y + $fontSize, $this->previewHeight - 2));
+                // Constrain to visible page area
+                $textX = max(2, min($textX, $pageWidth - 2));
+                $textY = max($y + $fontSize, min($y + $fontSize, $pageHeight - 2));
 
                 return '    <text x="' . $textX . '" y="' . $textY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars(substr($text, 0, 60)) . '</text>' . "\n";
 
@@ -221,10 +227,12 @@ class SVGPreviewGenerator
                 $lines = explode("\n", $sampleText);
                 $svg = '';
                 foreach ($lines as $i => $line) {
-                    $lineY = $y + ($i + 1) * ($fontSize * 1.4); // More spacing between lines
-                    // Ensure text stays within bounds
-                    $lineY = max($fontSize, min($lineY, $this->previewHeight - 10));
-                    $svg .= '    <text x="' . max($this->pagePadding + 2, $x) . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
+                    $lineY = $y + ($i + 1) * ($fontSize * 1.4);
+                    // Constrain to page bounds
+                    if ($lineY > $pageHeight - 2) break; // Stop if we're outside the page
+                    if ($lineY < 0) continue;
+                    
+                    $svg .= '    <text x="' . max(2, $x) . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
                 }
                 return $svg;
 
@@ -238,6 +246,10 @@ class SVGPreviewGenerator
                 $svg = '';
                 foreach ($lines as $i => $line) {
                     $lineY = $y + ($i + 1) * ($fontSize * 1.4);
+                    // Constrain to page bounds
+                    if ($lineY > $pageHeight - 2) break;
+                    if ($lineY < 0) continue;
+                    
                     $svg .= '    <text x="' . $x . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
                 }
                 return $svg;
