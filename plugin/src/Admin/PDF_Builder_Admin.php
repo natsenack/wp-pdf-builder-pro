@@ -345,6 +345,12 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
 // Hook AJAX pour créer un template depuis un builtin
         add_action('wp_ajax_pdf_builder_create_from_builtin', [$this, 'ajax_create_from_builtin']);
+// Hooks AJAX pour l'éditeur de templates builtin
+        add_action('wp_ajax_pdf_builder_load_builtin_templates', 'pdf_builder_ajax_load_builtin_templates');
+        add_action('wp_ajax_pdf_builder_load_builtin_template', 'pdf_builder_ajax_load_builtin_template');
+        add_action('wp_ajax_pdf_builder_save_builtin_template', 'pdf_builder_ajax_save_builtin_template');
+        add_action('wp_ajax_pdf_builder_create_builtin_template', 'pdf_builder_ajax_create_builtin_template');
+        add_action('wp_ajax_pdf_builder_delete_builtin_template', 'pdf_builder_ajax_delete_builtin_template');
     }
 
     /**
@@ -367,6 +373,8 @@ class PDF_Builder_Admin {
         add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
 // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
+// Éditeur de templates prédéfinis
+        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Builtin - PDF Builder Pro', 'pdf-builder-pro'), __('🔧 Éditeur Builtin', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-builtin-editor', 'pdf_builder_builtin_editor_page');
 // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
     }
