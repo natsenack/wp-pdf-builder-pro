@@ -32,11 +32,17 @@
             "height": 80,
             "properties": {
                 "showFullName": true,
+                "showAddress": true,
+                "showEmail": true,
+                "showPhone": true,
+                "showSiret": true,
+                "showVat": true,
+                "showCompanyName": true,
                 "layout": "vertical",
                 "fontSize": 20,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#ffffff",
+                "textColor": "#ffffff",
                 "textAlign": "left"
             }
         },
@@ -111,11 +117,15 @@
                 "showHeaders": false,
                 "showFullName": true,
                 "showAddress": true,
+                "showEmail": true,
+                "showPhone": true,
+                "showCompanyName": false,
+                "showVatNumber": false,
+                "showCompanyAddress": false,
                 "layout": "vertical",
                 "fontSize": 12,
                 "fontFamily": "Helvetica",
-                "color": "#2c3e50",
-                "lineHeight": 1.4
+                "textColor": "#2c3e50"
             }
         },
         {
