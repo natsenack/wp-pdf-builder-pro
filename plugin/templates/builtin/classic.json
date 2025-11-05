@@ -1,8 +1,8 @@
 {
     "version": "1.0",
     "name": "Classique",
-    "description": "Template classique traditionnel avec en-tête formel et structure standard",
-    "category": "classic",
+    "description": "Template classique traditionnel avec bordures et structure formelle",
+    "category": "general",
     "features": [
         "Classique",
         "Traditionnel",
@@ -12,26 +12,202 @@
     "canvasHeight": 1123,
     "elements": [
         {
-            "id": "company-header",
+            "id": "header-border",
+            "type": "rectangle",
+            "x": 53,
+            "y": 53,
+            "width": 687,
+            "height": 107,
+            "properties": {
+                "fillColor": "#f8f8f8",
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "header-title",
+            "type": "text",
+            "x": 67,
+            "y": 67,
+            "width": 661,
+            "height": 40,
+            "properties": {
+                "text": "FACTURE COMMERCIALE TRADITIONNELLE",
+                "fontSize": 19,
+                "fontFamily": "Times New Roman",
+                "fontWeight": "bold",
+                "color": "#000000",
+                "textAlign": "center"
+            }
+        },
+        {
+            "id": "header-subtitle",
             "type": "text",
             "x": 67,
             "y": 107,
             "width": 661,
-            "height": 40,
+            "height": 27,
             "properties": {
-                "text": "[COMPANY_NAME]",
-                "fontSize": 24,
-                "fontFamily": "Times",
+                "text": "N° [ORDER_NUMBER] - Date: [ORDER_DATE]",
+                "fontSize": 13,
+                "fontFamily": "Times New Roman",
+                "color": "#333333",
+                "textAlign": "center"
+            }
+        },
+        {
+            "id": "company-section",
+            "type": "text",
+            "x": 67,
+            "y": 187,
+            "width": 320,
+            "height": 107,
+            "properties": {
+                "text": "[COMPANY_NAME]\n[COMPANY_ADDRESS]\nTéléphone: [COMPANY_PHONE]\nEmail: [COMPANY_EMAIL]",
+                "fontSize": 12,
+                "fontFamily": "Times New Roman",
+                "color": "#000000",
+                "lineHeight": 1.4
+            }
+        },
+        {
+            "id": "client-section",
+            "type": "text",
+            "x": 427,
+            "y": 187,
+            "width": 300,
+            "height": 107,
+            "properties": {
+                "text": "FACTURER À:\n[CUSTOMER_NAME]\n[CUSTOMER_BILLING_ADDRESS]",
+                "fontSize": 12,
+                "fontFamily": "Times New Roman",
+                "color": "#000000",
+                "textAlign": "right",
+                "lineHeight": 1.4
+            }
+        },
+        {
+            "id": "separator-line",
+            "type": "line",
+            "x": 67,
+            "y": 320,
+            "width": 661,
+            "height": 1,
+            "properties": {
+                "strokeColor": "#000000",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "items-header",
+            "type": "text",
+            "x": 67,
+            "y": 347,
+            "width": 661,
+            "height": 33,
+            "properties": {
+                "text": "DESCRIPTION DES ARTICLES\tQUANTITÉ\tPRIX UNITAIRE\tMONTANT",
+                "fontSize": 11,
+                "fontFamily": "Times New Roman",
                 "fontWeight": "bold",
                 "color": "#000000",
+                "backgroundColor": "#e8e8e8",
+                "padding": "3px"
+            }
+        },
+        {
+            "id": "items-table",
+            "type": "product_table",
+            "x": 67,
+            "y": 380,
+            "width": 661,
+            "height": 333,
+            "properties": {
+                "data": "[ORDER_ITEMS]",
+                "fontSize": 11,
+                "fontFamily": "Times New Roman",
+                "color": "#000000",
+                "borderColor": "#cccccc",
+                "alternateRowColor": "#f9f9f9"
+            }
+        },
+        {
+            "id": "totals-box",
+            "type": "rectangle",
+            "x": 427,
+            "y": 734,
+            "width": 300,
+            "height": 160,
+            "properties": {
+                "fillColor": "#f8f8f8",
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "order-totals",
+            "type": "text",
+            "x": 440,
+            "y": 747,
+            "width": 274,
+            "height": 133,
+            "properties": {
+                "text": "Sous-total HT: [ORDER_SUBTOTAL]\nTVA ([TAX_RATE]%): [ORDER_TAX]\nFrais de port: [ORDER_SHIPPING]\n\nTOTAL TTC: [ORDER_TOTAL]",
+                "fontSize": 12,
+                "fontFamily": "Times New Roman",
+                "fontWeight": "bold",
+                "color": "#000000",
+                "textAlign": "right",
+                "lineHeight": 1.6
+            }
+        },
+        {
+            "id": "payment-info",
+            "type": "text",
+            "x": 67,
+            "y": 920,
+            "width": 661,
+            "height": 80,
+            "properties": {
+                "text": "Conditions de règlement: [PAYMENT_TERMS]\nDate d'échéance: [DUE_DATE]\nMode de paiement: [PAYMENT_METHOD]",
+                "fontSize": 11,
+                "fontFamily": "Times New Roman",
+                "color": "#333333",
+                "lineHeight": 1.4
+            }
+        },
+        {
+            "id": "footer-border",
+            "type": "line",
+            "x": 67,
+            "y": 1040,
+            "width": 661,
+            "height": 1,
+            "properties": {
+                "strokeColor": "#cccccc",
+                "strokeWidth": 1
+            }
+        },
+        {
+            "id": "footer-text",
+            "type": "text",
+            "x": 67,
+            "y": 1054,
+            "width": 661,
+            "height": 27,
+            "properties": {
+                "text": "Merci de votre confiance - Document généré automatiquement le [CURRENT_DATE]",
+                "fontSize": 10,
+                "fontFamily": "Times New Roman",
+                "color": "#666666",
                 "textAlign": "center"
             }
         }
     ],
     "metadata": {
-        "name": "Classique",
-        "description": "Template classique traditionnel",
-        "category": "classic",
+        "name": "Classic",
+        "description": "Template classique traditionnel avec bordures",
+        "category": "business",
         "preview": "classic-preview.png"
     }
 }
