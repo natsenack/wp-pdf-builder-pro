@@ -79,14 +79,23 @@ class SVGPreviewGenerator
         $svg .= '  </g>' . "\n";
 
         // Generate elements
+        $elementsByGroup = [];
         if (isset($this->templateData['elements'])) {
             foreach ($this->templateData['elements'] as $element) {
                 $svgElement = $this->generateElement($element, $pageMargin, $pageY);
                 if ($svgElement) {
                     $groupId = $this->getElementGroup($element);
-                    $svg = str_replace('    <g id="' . $groupId . '">' . "\n" . '    </g>', '    <g id="' . $groupId . '">' . "\n" . $svgElement . '    </g>', $svg);
+                    if (!isset($elementsByGroup[$groupId])) {
+                        $elementsByGroup[$groupId] = '';
+                    }
+                    $elementsByGroup[$groupId] .= $svgElement;
                 }
             }
+        }
+
+        // Insert elements into their respective groups
+        foreach ($elementsByGroup as $groupId => $elements) {
+            $svg = str_replace('    <g id="' . $groupId . '">' . "\n" . '    </g>', '    <g id="' . $groupId . '">' . "\n" . $elements . '    </g>', $svg);
         }
 
         $svg .= '</svg>';
@@ -194,11 +203,52 @@ class SVGPreviewGenerator
                 $sampleText = "Commande #12345";
                 return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($sampleText) . '</text>' . "\n";
 
+            case 'document_type':
+                // Generate sample document type for preview
+                $fontSize = max(($properties['fontSize'] ?? 24) * $this->scaleFactor * 0.8, 16);
+                $color = $properties['textColor'] ?? '#000000';
+                $fontFamily = $properties['fontFamily'] ?? 'Georgia';
+                $fontWeight = $properties['fontWeight'] ?? 'bold';
+                $textDecoration = $properties['textDecoration'] ?? 'underline';
+                $sampleText = $properties['title'] ?? 'FACTURE';
+
+                $textAnchor = 'middle';
+                $textX = $x + ($width / 2);
+                $textY = $y + $fontSize;
+
+                $svg = '    <text x="' . $textX . '" y="' . $textY . '" font-family="' . $fontFamily . '" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '"';
+                if ($textDecoration === 'underline') {
+                    $svg .= ' text-decoration="underline"';
+                }
+                $svg .= '>' . htmlspecialchars($sampleText) . '</text>' . "\n";
+                return $svg;
+
             case 'dynamic-text':
-                // Generate sample dynamic text for preview
+                // Generate sample dynamic text for preview based on element ID
                 $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
                 $color = $properties['textColor'] ?? '#000000';
-                $sampleText = "Date: 05/11/2025";
+                $elementId = $element['id'] ?? '';
+
+                // Provide appropriate sample content based on element ID
+                $sampleText = 'Sample Text';
+                if (strpos($elementId, 'due') !== false) {
+                    $sampleText = 'Date d\'échéance: 15/11/2025';
+                } elseif (strpos($elementId, 'payment') !== false) {
+                    $sampleText = 'Conditions de règlement: Virement bancaire';
+                } elseif (strpos($elementId, 'footer') !== false) {
+                    $sampleText = 'Merci de votre confiance - Document généré automatiquement le 05/11/2025';
+                } elseif (strpos($elementId, 'date') !== false) {
+                    $sampleText = 'Date: 05/11/2025';
+                } elseif (isset($properties['content'])) {
+                    $content = $properties['content'];
+                    // Replace variables with sample data
+                    $content = str_replace('{{order_date}}', '05/11/2025', $content);
+                    $content = str_replace('{{date}}', '05/11/2025', $content);
+                    $content = str_replace('{{payment_method}}', 'Virement bancaire', $content);
+                    $content = str_replace('{{due_date}}', '15/11/2025', $content);
+                    $sampleText = $content;
+                }
+
                 return '    <text x="' . $x . '" y="' . ($y + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($sampleText) . '</text>' . "\n";
 
             case 'product_table':

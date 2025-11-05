@@ -6,6 +6,9 @@
   <g id="page-content" transform="translate(10,13.69)">
     <g id="header">
     <rect x="49.590382902939" y="53.280382902939" width="290.40961709706" height="63.344612644702" fill="#ffffff" stroke-width="1.5836153161175"/>
+    <text x="201.52555654497" y="83.21071237756" font-family="Georgia" font-size="16.469599287622" fill="#000000" text-anchor="middle" font-weight="bold" text-decoration="underline">FACTURE</text>
+    <line x1="63.051113089938" y1="251.23229741763" x2="340" y2="252.81591273375" stroke="#000000" stroke-width="1.5836153161175"/>
+    <text x="63.051113089938" y="277.06845057881" font-family="Arial" font-size="10" fill="#000000" text-anchor="start" font-weight="bold">DESCRIPTION DES ARTICLES	QUANTITÉ	PRIX UNITAIRE	MONTANT</text>
     </g>
     <g id="company-info">
     <text x="63.051113089938" y="181.65153161175" font-family="Arial" font-size="8" fill="#333333">Entreprise XYZ</text>
@@ -19,6 +22,12 @@
     </g>
     <g id="order-info">
     <text x="63.051113089938" y="134.54307212823" font-family="Arial" font-size="10" fill="#333333">Commande #12345</text>
+    <text x="63.051113089938" y="149.88091718611" font-family="Arial" font-size="9.5016918967053" fill="#333333">Date: 05/11/2025</text>
+    <text x="300" y="482.93844167409" font-family="Arial" font-size="10" fill="#000000" text-anchor="end" font-weight="bold">Sample Text</text>
+    <text x="63.051113089938" y="576.66524487979" font-family="Arial" font-size="8.7098842386465" fill="#666666">Conditions de règlement: Virement bancaire</text>
+    <text x="63.051113089938" y="592.50139804096" font-family="Arial" font-size="8.7098842386465" fill="#666666">Date d&#039;échéance: 15/11/2025</text>
+    <line x1="63.051113089938" y1="631.29997328584" x2="340" y2="480.31" stroke="#000000" stroke-width="1.5836153161175"/>
+    <text x="63.051113089938" y="655.84601068566" font-family="Arial" font-size="8.7098842386465" fill="#666666">Merci de votre confiance - Document généré automatiquement le 05/11/2025</text>
     </g>
     <g id="products-table">
     <rect x="63.051113089938" y="290.82268032057" width="276.94888691006" height="17.419768477293" fill="#28a745"/>
