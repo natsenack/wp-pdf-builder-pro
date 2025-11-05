@@ -1,55 +1,60 @@
 <svg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'>
   <!-- Fond blanc -->
   <rect width='300' height='200' fill='#ffffff'/>
-  
-  <!-- Logo minimaliste en haut à droite -->
-  <circle cx='280' cy='12' r='6' fill='#ffc107' opacity='0.7'/>
-  <text x='280' y='15' font-family='Arial, sans-serif' font-size='7' font-weight='bold' fill='white' text-anchor='middle'>L</text>
-  
-  <!-- Titre simple -->
-  <text x='10' y='15' font-family='Arial, sans-serif' font-size='9' font-weight='bold' fill='#212529'>FACTURE</text>
-  
-  <!-- Espace blanc intentionnel -->
-  
-  <!-- Infos client ultra simples -->
-  <text x='10' y='28' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Marie Dupont</text>
-  <text x='10' y='33' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>15 rue des Lilas</text>
-  
-  <!-- N° facture -->
-  <text x='280' y='28' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>Fact: 2025-001</text>
-  <text x='280' y='33' font-family='Arial, sans-serif' font-size='5' fill='#6c757d' text-anchor='end'>04/11/2025</text>
-  
+
+  <!-- En-tête avec logo et titre -->
+  <g id="header">
+    <circle cx='280' cy='12' r='6' fill='#ffc107' opacity='0.7'/>
+    <text x='280' y='15' font-family='Arial, sans-serif' font-size='7' font-weight='bold' fill='white' text-anchor='middle'>L</text>
+    <text x='10' y='15' font-family='Arial, sans-serif' font-size='9' font-weight='bold' fill='#212529'>FACTURE</text>
+  </g>
+
+  <!-- Infos client et commande -->
+  <g id="customer-info">
+    <text x='10' y='28' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Marie Dupont</text>
+    <text x='10' y='33' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>15 rue des Lilas</text>
+  </g>
+
+  <g id="order-info">
+    <text x='280' y='28' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>Fact: 2025-001</text>
+    <text x='280' y='33' font-family='Arial, sans-serif' font-size='5' fill='#6c757d' text-anchor='end'>04/11/2025</text>
+  </g>
+
   <!-- Ligne de séparation minimaliste -->
   <line x1='10' y1='40' x2='290' y2='40' stroke='#ffc107' stroke-width='2'/>
   
   <!-- Tableau avec en-tête jaune -->
-  <rect x='10' y='45' width='280' height='8' fill='#ffc107'/>
-  <text x='15' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Produit</text>
-  <text x='200' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Qté</text>
-  <text x='240' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Prix</text>
-  <text x='280' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529' text-anchor='end'>Total</text>
-  
-  <!-- Ligne 1 -->
-  <text x='15' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529'>T-shirt Premium</text>
-  <text x='200' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>2</text>
-  <text x='240' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>29.99€</text>
-  <text x='280' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>59.99€</text>
-  
-  <!-- Ligne 2 -->
-  <text x='15' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Jean Slim Fit</text>
-  <text x='200' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>1</text>
-  <text x='240' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>89.99€</text>
-  <text x='280' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>89.99€</text>
+  <g id="products-table">
+    <rect x='10' y='45' width='280' height='8' fill='#ffc107'/>
+    <text x='15' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Produit</text>
+    <text x='200' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Qté</text>
+    <text x='240' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529'>Prix</text>
+    <text x='280' y='50' font-family='Arial, sans-serif' font-size='5' font-weight='bold' fill='#212529' text-anchor='end'>Total</text>
+
+    <!-- Ligne 1 -->
+    <text x='15' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529'>T-shirt Premium</text>
+    <text x='200' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>2</text>
+    <text x='240' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>29.99€</text>
+    <text x='280' y='62' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>59.99€</text>
+
+    <!-- Ligne 2 -->
+    <text x='15' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529'>Jean Slim Fit</text>
+    <text x='200' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>1</text>
+    <text x='240' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='middle'>89.99€</text>
+    <text x='280' y='72' font-family='Arial, sans-serif' font-size='5' fill='#212529' text-anchor='end'>89.99€</text>
+  </g>
   
   <!-- Totaux minimalistes -->
-  <line x1='180' y1='80' x2='290' y2='80' stroke='#ffc107' stroke-width='1'/>
-  
-  <text x='200' y='90' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>Sous-total:</text>
-  <text x='280' y='90' font-family='Arial, sans-serif' font-size='5' fill='#ffc107' font-weight='bold' text-anchor='end'>149.98€</text>
-  
-  <text x='200' y='98' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#212529'>TOTAL:</text>
-  <text x='280' y='98' font-family='Arial, sans-serif' font-size='7' font-weight='bold' fill='#ffc107' text-anchor='end'>149.98€</text>
-  
+  <g id="order-totals">
+    <line x1='180' y1='80' x2='290' y2='80' stroke='#ffc107' stroke-width='1'/>
+    <text x='200' y='90' font-family='Arial, sans-serif' font-size='5' fill='#6c757d'>Sous-total:</text>
+    <text x='280' y='90' font-family='Arial, sans-serif' font-size='5' fill='#ffc107' font-weight='bold' text-anchor='end'>149.98€</text>
+    <text x='200' y='98' font-family='Arial, sans-serif' font-size='6' font-weight='bold' fill='#212529'>TOTAL:</text>
+    <text x='280' y='98' font-family='Arial, sans-serif' font-size='7' font-weight='bold' fill='#ffc107' text-anchor='end'>149.98€</text>
+  </g>
+
   <!-- Pied minimaliste -->
-  <text x='150' y='115' font-family='Arial, sans-serif' font-size='4' fill='#adb5bd' text-anchor='middle'>contact@minimal.com • www.minimal.com</text>
+  <g id="footer">
+    <text x='150' y='115' font-family='Arial, sans-serif' font-size='4' fill='#adb5bd' text-anchor='middle'>contact@minimal.com • www.minimal.com</text>
+  </g>
 </svg>
