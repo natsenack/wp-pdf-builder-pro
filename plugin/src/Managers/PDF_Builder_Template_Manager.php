@@ -19,7 +19,7 @@ class PDF_Builder_Template_Manager
     /**
      * Constructeur
      */
-    public function __construct($main_instance)
+    public function __construct($main_instance = null)
     {
         $this->main = $main_instance;
         // Les hooks AJAX sont enregistrés par PDF_Builder_Admin, pas ici

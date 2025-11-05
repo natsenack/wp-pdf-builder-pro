@@ -740,14 +740,25 @@ function pdf_builder_ajax_get_builtin_templates() {
         return;
     }
 
-    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
-    $template_manager = new PDF_Builder_Template_Manager($core);
-    $templates = $template_manager->get_builtin_templates();
+    try {
+        // Essayer avec l'instance du core si disponible
+        if (class_exists('\\PDF_Builder\\Core\\PDF_Builder_Core')) {
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            $template_manager = new PDF_Builder_Template_Manager($core);
+        } else {
+            // Fallback sans instance du core
+            $template_manager = new PDF_Builder_Template_Manager(null);
+        }
 
-    wp_send_json_success(array(
-        'templates' => $templates,
-        'count' => count($templates)
-    ));
+        $templates = $template_manager->get_builtin_templates();
+
+        wp_send_json_success(array(
+            'templates' => $templates,
+            'count' => count($templates)
+        ));
+    } catch (Exception $e) {
+        wp_send_json_error(__('Erreur lors du chargement des templates: ', 'pdf-builder-pro') . $e->getMessage());
+    }
 }
 
 /**
