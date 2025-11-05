@@ -51,7 +51,7 @@ TOTAL TTC: {{total}}</text>
     <text x="233.88853904282" y="167.55365239295" font-family="Arial" font-size="8" fill="#000000">€75.50</text>
     </g>
     <g id="order-totals">
-    <rect x="66.498740554156" y="54.445843828715" width="46.964735516373" height="12.052896725441" fill="#007cba" stroke="#007cba" stroke-width="0.41561712846348"/>
+    <rect x="166.24685138539" y="203.6523929471" width="135.90680100756" height="20.780856423174" fill="#007cba" stroke="#007cba" stroke-width="0.41561712846348"/>
     </g>
     <g id="footer">
     <text x="27.846347607053" y="298.93198992443" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">Merci de votre confiance - Document généré automatiquement le 05/11/2025</text>

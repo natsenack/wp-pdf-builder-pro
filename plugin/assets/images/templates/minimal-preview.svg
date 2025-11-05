@@ -50,8 +50,8 @@
     <text x="270.15113350126" y="228.27707808564" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">{{total}}</text>
     </g>
     <g id="footer">
-    <line x1="27.846347607053" y1="415.61712846348" x2="302.56926952141" y2="416.03274559194" stroke="#cccccc" stroke-width="1"/>
-    <text x="27.846347607053" y="432.83879093199" font-family="Arial" font-size="6" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
+    <line x1="27.846347607053" y1="232.74559193955" x2="302.56926952141" y2="233.16120906801" stroke="#cccccc" stroke-width="1"/>
+    <text x="27.846347607053" y="247.05793450882" font-family="Arial" font-size="6" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
     </g>
   </g>
 </svg>

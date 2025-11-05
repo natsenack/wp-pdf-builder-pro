@@ -170,10 +170,10 @@
         {
             "id": "totals-box",
             "type": "rectangle",
-            "x": 160,
-            "y": 131,
-            "width": 113,
-            "height": 29,
+            "x": 400,
+            "y": 490,
+            "width": 327,
+            "height": 50,
             "properties": {
                 "fillColor": "#007cba",
                 "strokeColor": "#007cba",

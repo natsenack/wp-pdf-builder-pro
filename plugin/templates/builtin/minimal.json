@@ -289,7 +289,7 @@
             "id": "footer-divider",
             "type": "line",
             "x": 67,
-            "y": 1000,
+            "y": 560,
             "width": 661,
             "height": 1,
             "properties": {
@@ -301,7 +301,7 @@
             "id": "footer-mentions",
             "type": "mentions",
             "x": 67,
-            "y": 1027,
+            "y": 580,
             "width": 661,
             "height": 53,
             "properties": {

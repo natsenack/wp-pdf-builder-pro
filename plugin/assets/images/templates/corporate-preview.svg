@@ -44,7 +44,7 @@
     </g>
     <g id="order-totals">
     <text x="207.80856423174" y="182.55919395466" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
-    <text x="270.15113350126" y="157.62216624685" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">{{subtotal}}</text>
+    <text x="270.15113350126" y="182.55919395466" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">{{subtotal}}</text>
     <text x="207.80856423174" y="190.87153652393" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
     <text x="270.15113350126" y="190.87153652393" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-{{discount}}</text>
     <rect x="207.80856423174" y="193.26196473552" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke="none" stroke-width="0"/>
