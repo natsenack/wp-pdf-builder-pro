@@ -8,74 +8,75 @@
         "Traditionnel",
         "Formel"
     ],
-    "canvasWidth": 300,
-    "canvasHeight": 200,
+    "canvasWidth": 794,
+    "canvasHeight": 1123,
     "elements": [
         {
             "id": "header-border",
             "type": "rectangle",
-            "x": 20,
-            "y": 9,
-            "width": 259,
-            "height": 19,
+            "x": 50,
+            "y": 50,
+            "width": 694,
+            "height": 80,
             "properties": {
-                "fillColor": "#f8f8f8",
-                "strokeColor": "#cccccc",
-                "strokeWidth": 1
+                "fillColor": "#ffffff",
+                "strokeColor": "#000000",
+                "strokeWidth": 2
             }
         },
         {
             "id": "document-title",
             "type": "document_type",
-            "x": 25,
-            "y": 12,
-            "width": 249,
-            "height": 7,
+            "x": 67,
+            "y": 67,
+            "width": 661,
+            "height": 53,
             "properties": {
-                "title": "FACTURE COMMERCIALE TRADITIONNELLE",
-                "fontSize": 5,
-                "fontFamily": "Times New Roman",
+                "title": "FACTURE",
+                "fontSize": 26,
+                "fontFamily": "Georgia",
                 "fontWeight": "bold",
-                "textColor": "#1a365d",
-                "textAlign": "center"
+                "textColor": "#000000",
+                "textAlign": "center",
+                "textDecoration": "underline"
             }
         },
         {
             "id": "order-number",
             "type": "order_number",
-            "x": 25,
-            "y": 19,
-            "width": 75,
-            "height": 5,
+            "x": 67,
+            "y": 140,
+            "width": 200,
+            "height": 20,
             "properties": {
-                "fontSize": 5,
-                "fontFamily": "Times New Roman",
-                "textColor": "#4a5568",
+                "fontSize": 12,
+                "fontFamily": "Arial",
+                "textColor": "#333333",
                 "textAlign": "left"
             }
         },
         {
             "id": "order-date",
             "type": "dynamic-text",
-            "x": 113,
-            "y": 19,
-            "width": 75,
-            "height": 5,
+            "x": 67,
+            "y": 160,
+            "width": 200,
+            "height": 20,
             "properties": {
                 "content": "{{order_date}}",
-                "fontSize": 5,
-                "fontFamily": "Times New Roman",
-                "textColor": "#4a5568",
+                "fontSize": 12,
+                "fontFamily": "Arial",
+                "textColor": "#333333",
                 "textAlign": "left"
             }
         },
         {
             "id": "company-info",
             "type": "company_info",
-            "x": 25,
-            "y": 33,
-            "width": 120,
-            "height": 19,
+            "x": 67,
+            "y": 200,
+            "width": 320,
+            "height": 80,
             "properties": {
                 "showFullName": true,
                 "showAddress": true,
@@ -85,18 +86,18 @@
                 "showVat": true,
                 "showCompanyName": true,
                 "layout": "vertical",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
-                "textColor": "#2d3748"
+                "fontSize": 11,
+                "fontFamily": "Arial",
+                "textColor": "#333333"
             }
         },
         {
             "id": "customer-info",
             "type": "customer_info",
-            "x": 160,
-            "y": 33,
-            "width": 113,
-            "height": 19,
+            "x": 427,
+            "y": 200,
+            "width": 300,
+            "height": 80,
             "properties": {
                 "showHeaders": true,
                 "showFullName": true,
@@ -107,61 +108,61 @@
                 "showVatNumber": false,
                 "showCompanyAddress": false,
                 "layout": "vertical",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
-                "textColor": "#2d3748"
+                "fontSize": 11,
+                "fontFamily": "Arial",
+                "textColor": "#333333"
             }
         },
         {
             "id": "separator-line",
             "type": "line",
-            "x": 25,
-            "y": 57,
-            "width": 249,
-            "height": 1,
+            "x": 67,
+            "y": 300,
+            "width": 661,
+            "height": 2,
             "properties": {
                 "strokeColor": "#000000",
-                "strokeWidth": 1
+                "strokeWidth": 2
             }
         },
         {
             "id": "items-header",
             "type": "text",
-            "x": 25,
-            "y": 62,
-            "width": 249,
-            "height": 6,
+            "x": 67,
+            "y": 320,
+            "width": 661,
+            "height": 25,
             "properties": {
                 "text": "DESCRIPTION DES ARTICLES\tQUANTITÉ\tPRIX UNITAIRE\tMONTANT",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
+                "fontSize": 12,
+                "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#000000",
-                "backgroundColor": "#e8e8e8",
-                "padding": "3px"
+                "backgroundColor": "#cccccc",
+                "textAlign": "left",
+                "padding": "5px"
             }
         },
         {
             "id": "items-table",
             "type": "product_table",
-            "x": 25,
-            "y": 68,
-            "width": 249,
-            "height": 59,
+            "x": 67,
+            "y": 350,
+            "width": 661,
+            "height": 200,
             "properties": {
-                "showHeaders": true,
+                "showHeaders": false,
                 "showBorders": true,
-                "showAlternatingRows": true,
+                "showAlternatingRows": false,
                 "showSku": false,
                 "showDescription": false,
                 "showQuantity": true,
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
+                "fontSize": 11,
+                "fontFamily": "Arial",
                 "textColor": "#000000",
-                "headerBackgroundColor": "#f9fafb",
-                "headerTextColor": "#111827",
-                "alternateRowColor": "#f9f9f9",
-                "borderColor": "#cccccc",
+                "headerBackgroundColor": "#ffffff",
+                "headerTextColor": "#000000",
+                "borderColor": "#000000",
                 "borderWidth": 1,
                 "textAlign": "left"
             }
@@ -182,16 +183,16 @@
         {
             "id": "order-totals",
             "type": "text",
-            "x": 165,
-            "y": 133,
-            "width": 103,
-            "height": 24,
+            "x": 427,
+            "y": 580,
+            "width": 300,
+            "height": 80,
             "properties": {
                 "text": "Sous-total HT: {{subtotal}}\nTVA: {{tax}}\nFrais de port: {{shipping_total}}\n\nTOTAL TTC: {{total}}",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
+                "fontSize": 12,
+                "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#1a365d",
+                "color": "#000000",
                 "textAlign": "right",
                 "lineHeight": 1.6
             }
@@ -199,42 +200,42 @@
         {
             "id": "payment-info",
             "type": "text",
-            "x": 25,
-            "y": 164,
-            "width": 249,
-            "height": 14,
+            "x": 67,
+            "y": 700,
+            "width": 661,
+            "height": 50,
             "properties": {
                 "text": "Conditions de règlement: {{payment_method}}\nDate d'échéance: {{due_date}}\nMode de paiement: {{payment_method}}",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
-                "color": "#4a5568",
+                "fontSize": 11,
+                "fontFamily": "Arial",
+                "color": "#666666",
                 "lineHeight": 1.4
             }
         },
         {
             "id": "footer-border",
             "type": "line",
-            "x": 25,
-            "y": 185,
-            "width": 249,
-            "height": 1,
+            "x": 67,
+            "y": 780,
+            "width": 661,
+            "height": 2,
             "properties": {
-                "strokeColor": "#cccccc",
-                "strokeWidth": 1
+                "strokeColor": "#000000",
+                "strokeWidth": 2
             }
         },
         {
             "id": "footer-text",
             "type": "text",
-            "x": 25,
-            "y": 188,
-            "width": 249,
-            "height": 5,
+            "x": 67,
+            "y": 800,
+            "width": 661,
+            "height": 30,
             "properties": {
                 "text": "Merci de votre confiance - Document généré automatiquement le {{date}}",
-                "fontSize": 4,
-                "fontFamily": "Times New Roman",
-                "color": "#718096",
+                "fontSize": 11,
+                "fontFamily": "Arial",
+                "color": "#666666",
                 "textAlign": "center"
             }
         }

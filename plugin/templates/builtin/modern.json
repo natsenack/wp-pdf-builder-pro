@@ -8,44 +8,44 @@
         "Épuré",
         "Professionnel"
     ],
-    "canvasWidth": 300,
-    "canvasHeight": 200,
+    "canvasWidth": 794,
+    "canvasHeight": 1123,
     "elements": [
         {
             "id": "document-title",
             "type": "document_type",
-            "x": 25,
-            "y": 12,
-            "width": 249,
-            "height": 9,
+            "x": 67,
+            "y": 30,
+            "width": 661,
+            "height": 30,
             "properties": {
-                "title": "FACTURE MODERNE",
-                "fontSize": 7,
+                "title": "FACTURE",
+                "fontSize": 28,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "textColor": "#333333",
-                "textAlign": "center"
+                "textColor": "#007cba",
+                "textAlign": "right"
             }
         },
         {
             "id": "company-info",
             "type": "company_info",
-            "x": 25,
-            "y": 28,
-            "width": 120,
-            "height": 19,
+            "x": 67,
+            "y": 30,
+            "width": 300,
+            "height": 50,
             "properties": {
                 "showFullName": true,
                 "showAddress": true,
-                "showEmail": true,
-                "showPhone": true,
+                "showEmail": false,
+                "showPhone": false,
                 "showSiret": true,
-                "showVat": true,
+                "showVat": false,
                 "showCompanyName": true,
                 "layout": "vertical",
-                "fontSize": 4,
+                "fontSize": 10,
                 "fontFamily": "Arial",
-                "textColor": "#2b6cb0"
+                "textColor": "#6c757d"
             }
         },
         {
@@ -65,104 +65,124 @@
             }
         },
         {
-            "id": "billing-address",
-            "type": "customer_info",
-            "x": 25,
-            "y": 52,
-            "width": 120,
-            "height": 24,
+            "id": "logo",
+            "type": "text",
+            "x": 720,
+            "y": 50,
+            "width": 30,
+            "height": 30,
             "properties": {
-                "showHeaders": true,
-                "showFullName": false,
-                "showAddress": true,
-                "showEmail": true,
-                "showPhone": true,
-                "showCompanyName": false,
-                "showVatNumber": false,
-                "showCompanyAddress": false,
-                "layout": "vertical",
-                "fontSize": 4,
+                "text": "●",
+                "fontSize": 16,
                 "fontFamily": "Arial",
-                "textColor": "#2d3748"
+                "color": "#007cba",
+                "textAlign": "center",
+                "opacity": 0.2
             }
         },
         {
-            "id": "shipping-address",
-            "type": "customer_info",
-            "x": 160,
-            "y": 52,
-            "width": 113,
-            "height": 24,
+            "id": "separator-line",
+            "type": "line",
+            "x": 67,
+            "y": 90,
+            "width": 661,
+            "height": 1,
             "properties": {
-                "showHeaders": true,
-                "showFullName": false,
+                "strokeColor": "#000000",
+                "strokeWidth": 1.5
+            }
+        },
+        {
+            "id": "client-label",
+            "type": "text",
+            "x": 67,
+            "y": 110,
+            "width": 100,
+            "height": 20,
+            "properties": {
+                "text": "CLIENT",
+                "fontSize": 12,
+                "fontFamily": "Arial",
+                "fontWeight": "bold",
+                "color": "#212529",
+                "textAlign": "left"
+            }
+        },
+        {
+            "id": "billing-address",
+            "type": "customer_info",
+            "x": 67,
+            "y": 130,
+            "width": 300,
+            "height": 40,
+            "properties": {
+                "showHeaders": false,
+                "showFullName": true,
                 "showAddress": true,
-                "showEmail": true,
-                "showPhone": true,
+                "showEmail": false,
+                "showPhone": false,
                 "showCompanyName": false,
                 "showVatNumber": false,
                 "showCompanyAddress": false,
                 "layout": "vertical",
-                "fontSize": 4,
+                "fontSize": 10,
                 "fontFamily": "Arial",
-                "textColor": "#2d3748",
-                "textAlign": "right"
+                "textColor": "#495057"
             }
         },
         {
             "id": "order-items-header",
             "type": "text",
-            "x": 25,
-            "y": 83,
-            "width": 249,
-            "height": 6,
+            "x": 67,
+            "y": 180,
+            "width": 661,
+            "height": 25,
             "properties": {
                 "text": "DÉSIGNATION\tQTÉ\tPRIX UNIT.\tTOTAL",
-                "fontSize": 4,
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#333333",
-                "backgroundColor": "#f5f5f5",
-                "padding": "5px"
+                "color": "#212529",
+                "textAlign": "left"
             }
         },
         {
             "id": "order-items",
             "type": "product_table",
-            "x": 25,
-            "y": 89,
-            "width": 249,
-            "height": 47,
+            "x": 67,
+            "y": 210,
+            "width": 661,
+            "height": 333,
             "properties": {
-                "showHeaders": true,
-                "showBorders": true,
+                "showHeaders": false,
+                "showBorders": false,
                 "showAlternatingRows": false,
                 "showSku": false,
                 "showDescription": false,
                 "showQuantity": true,
-                "fontSize": 4,
+                "fontSize": 11,
                 "fontFamily": "Arial",
-                "textColor": "#333333",
-                "headerBackgroundColor": "#f9f9f9",
-                "headerTextColor": "#333333",
-                "borderColor": "#dddddd",
-                "borderWidth": 1,
+                "textColor": "#212529",
+                "headerBackgroundColor": "#ffffff",
+                "headerTextColor": "#212529",
+                "borderColor": "#ffffff",
+                "borderWidth": 0,
                 "textAlign": "left"
             }
         },
         {
             "id": "order-totals",
             "type": "text",
-            "x": 160,
-            "y": 142,
-            "width": 113,
-            "height": 24,
+            "x": 427,
+            "y": 600,
+            "width": 300,
+            "height": 80,
             "properties": {
                 "text": "Sous-total: {{subtotal}}\nTVA: {{tax}}\nLivraison: {{shipping_total}}\nTOTAL: {{total}}",
-                "fontSize": 4,
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#2b6cb0",
+                "color": "#007cba",
                 "textAlign": "right",
                 "lineHeight": 1.5
             }
@@ -170,15 +190,15 @@
         {
             "id": "footer",
             "type": "text",
-            "x": 25,
-            "y": 178,
-            "width": 249,
-            "height": 9,
+            "x": 67,
+            "y": 1000,
+            "width": 661,
+            "height": 30,
             "properties": {
-                "text": "Votre commande a été traitée avec succès - Règlement: [PAYMENT_TERMS]",
-                "fontSize": 4,
+                "text": "Paiement en ligne disponible • Merci pour votre commande",
+                "fontSize": 11,
                 "fontFamily": "Arial",
-                "color": "#666666",
+                "color": "#6c757d",
                 "textAlign": "center"
             }
         }

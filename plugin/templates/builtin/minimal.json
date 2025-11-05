@@ -129,6 +129,19 @@
             }
         },
         {
+            "id": "table-header-bg",
+            "type": "rectangle",
+            "x": 80,
+            "y": 145,
+            "width": 641,
+            "height": 25,
+            "properties": {
+                "fillColor": "#ffc107",
+                "strokeColor": "#ffc107",
+                "strokeWidth": 0
+            }
+        },
+        {
             "id": "table-header",
             "type": "text",
             "x": 80,
@@ -160,7 +173,7 @@
                 "showQuantity": true,
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "textColor": "#212529",
+                "color": "#212529",
                 "headerBackgroundColor": "#ffc107",
                 "headerTextColor": "#212529",
                 "borderColor": "#ffffff",
@@ -270,7 +283,7 @@
                 "separator": " • ",
                 "fontSize": 11,
                 "fontFamily": "Arial",
-                "textColor": "#adb5bd",
+                "color": "#adb5bd",
                 "textAlign": "center",
                 "lineHeight": 1.4
             }
@@ -283,3 +296,4 @@
         "preview": "minimal-preview.png"
     }
 }
+
