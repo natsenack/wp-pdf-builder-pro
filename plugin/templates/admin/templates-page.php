@@ -669,6 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load templates via AJAX
     function loadTemplates() {
+        console.log('[PDF Builder Debug] ===== LOAD TEMPLATES START =====');
         console.log('[PDF Builder Debug] loadTemplates() called');
         console.log('[PDF Builder Debug] ajaxurl:', ajaxurl);
         console.log('[PDF Builder Debug] pdfBuilderTemplatesNonce:', pdfBuilderTemplatesNonce);
@@ -683,26 +684,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
-                console.log('[PDF Builder Debug] AJAX success response:', response);
+                console.log('[PDF Builder Debug] ===== AJAX SUCCESS =====');
+                console.log('[PDF Builder Debug] Full response:', response);
                 console.log('[PDF Builder Debug] response.success:', response.success);
                 console.log('[PDF Builder Debug] response.data:', response.data);
 
                 if (response.success) {
-                    console.log('[PDF Builder Debug] Templates loaded successfully:', response.data.templates);
+                    console.log('[PDF Builder Debug] Templates loaded successfully');
+                    console.log('[PDF Builder Debug] Number of templates:', response.data.templates ? response.data.templates.length : 'undefined');
                     loadedTemplates = response.data.templates;
+
+                    // Log détaillé de chaque template
+                    if (loadedTemplates && loadedTemplates.length > 0) {
+                        console.log('[PDF Builder Debug] ===== TEMPLATE DETAILS =====');
+                        loadedTemplates.forEach(function(template, index) {
+                            console.log('[PDF Builder Debug] Template ' + index + ':', {
+                                id: template.id,
+                                name: template.name,
+                                category: template.category,
+                                hasPreview: template.preview_url ? 'YES' : 'NO',
+                                previewUrl: template.preview_url,
+                                elementCount: template.elements ? template.elements.length : 'undefined',
+                                features: template.features
+                            });
+                        });
+                    } else {
+                        console.warn('[PDF Builder Debug] No templates loaded or empty array');
+                    }
+
                     renderTemplates(loadedTemplates);
                 } else {
+                    console.error('[PDF Builder Debug] ===== SERVER ERROR =====');
                     console.error('[PDF Builder Debug] Server returned error:', response.data);
                     jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur lors du chargement des modèles.</p></div>');
                 }
             },
             error: function(xhr, status, error) {
-                console.error('[PDF Builder Debug] AJAX error:', {
+                console.error('[PDF Builder Debug] ===== AJAX ERROR =====');
+                console.error('[PDF Builder Debug] AJAX error details:', {
                     xhr: xhr,
                     status: status,
                     error: error,
                     responseText: xhr.responseText,
-                    statusCode: xhr.status
+                    statusCode: xhr.status,
+                    readyState: xhr.readyState
                 });
                 jQuery('.template-gallery-grid').html('<div class="notice notice-error"><p>Erreur de connexion.</p></div>');
             }
@@ -711,9 +736,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Render templates in grid
     function renderTemplates(templates) {
+        console.log('[PDF Builder Debug] ===== RENDER TEMPLATES START =====');
+        console.log('[PDF Builder Debug] renderTemplates called with', templates ? templates.length : 'null/undefined', 'templates');
+
         let html = '';
 
+        if (!templates || templates.length === 0) {
+            console.warn('[PDF Builder Debug] No templates to render');
+            jQuery('.template-gallery-grid').html('<div class="notice notice-warning"><p>Aucun modèle trouvé.</p></div>');
+            return;
+        }
+
         templates.forEach(function(template, index) {
+            console.log('[PDF Builder Debug] Rendering template ' + index + ':', template.name);
+
             var features = template.features || [];
             var featuresHtml = features.map(function(feature) {
                 return '<span class="template-gallery-item-feature">' + feature + '</span>';
@@ -735,18 +771,33 @@ document.addEventListener('DOMContentLoaded', function() {
             '</div>';
         });
 
+        console.log('[PDF Builder Debug] ===== RENDER TEMPLATES END =====');
+        console.log('[PDF Builder Debug] Generated HTML length:', html.length);
+        console.log('[PDF Builder Debug] Setting HTML to .template-gallery-grid');
+
         jQuery('.template-gallery-grid').html(html);
+
+        console.log('[PDF Builder Debug] HTML set, calling filterTemplates()');
         filterTemplates();
+
+        console.log('[PDF Builder Debug] ===== RENDER COMPLETE =====');
+        console.log('[PDF Builder Debug] Final template count in DOM:', jQuery('.template-gallery-item').length);
     }
 
     // Filter templates based on current filter
     function filterTemplates() {
+        console.log('[PDF Builder Debug] ===== FILTER TEMPLATES =====');
+        console.log('[PDF Builder Debug] currentFilter:', currentFilter);
+        console.log('[PDF Builder Debug] Templates before filter:', jQuery('.template-gallery-item').length);
+
         if (currentFilter === 'all') {
             jQuery('.template-gallery-item').show();
         } else {
             jQuery('.template-gallery-item').hide();
             jQuery(`.template-gallery-item[data-category="${currentFilter}"]`).show();
         }
+
+        console.log('[PDF Builder Debug] Templates after filter:', jQuery('.template-gallery-item:visible').length);
     }
 
     // Install template

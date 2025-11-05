@@ -828,13 +828,17 @@ class PDF_Builder_Template_Manager
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
 
         foreach ($files as $file) {
+            $filename = basename($file, '.json');
+            error_log('PDF Builder: get_builtin_templates - ===== TRAITEMENT TEMPLATE: ' . $filename . ' =====');
             error_log('PDF Builder: get_builtin_templates - traitement fichier: ' . basename($file));
             
             $content = file_get_contents($file);
             if ($content === false) {
-                error_log('PDF Builder: get_builtin_templates - impossible de lire le fichier: ' . $file);
+                error_log('PDF Builder: get_builtin_templates - ❌ impossible de lire le fichier: ' . $file);
                 continue;
             }
+            
+            error_log('PDF Builder: get_builtin_templates - ✅ fichier lu, taille: ' . strlen($content) . ' caractères');
             
             // Log the first 200 chars and last 200 chars to debug
             error_log('PDF Builder: get_builtin_templates - début du contenu: ' . substr($content, 0, 200));
@@ -842,41 +846,70 @@ class PDF_Builder_Template_Manager
             
             $template_data = json_decode($content, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder: get_builtin_templates - Erreur JSON dans le template builtin ' . basename($file) . ': ' . json_last_error_msg());
+                error_log('PDF Builder: get_builtin_templates - ❌ Erreur JSON dans le template builtin ' . basename($file) . ': ' . json_last_error_msg());
                 continue;
             }
+            
+            error_log('PDF Builder: get_builtin_templates - ✅ JSON décodé avec succès');
+            error_log('PDF Builder: get_builtin_templates - structure détectée: ' . (isset($template_data['elements']) ? 'nouveau format' : 'ancien format'));
+            error_log('PDF Builder: get_builtin_templates - nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             
             // Validation de la structure
             $validation_errors = $this->validate_template_structure($template_data);
             if (!empty($validation_errors)) {
-                error_log('PDF Builder: get_builtin_templates - Erreurs de validation dans le template builtin ' . basename($file) . ': ' . implode(', ', $validation_errors));
+                error_log('PDF Builder: get_builtin_templates - ❌ Erreurs de validation dans le template builtin ' . basename($file) . ': ' . implode(', ', $validation_errors));
                 continue;
             }
+            
+            error_log('PDF Builder: get_builtin_templates - ✅ validation passée');
 
             // Ajouter des métadonnées pour la modal
-            $filename = basename($file, '.json');
             $template_data['id'] = $filename;
             $template_data['preview_url'] = $this->get_template_preview_url($filename);
+            
+            error_log('PDF Builder: get_builtin_templates - preview_url générée: ' . $template_data['preview_url']);
 
             // S'assurer que les champs requis pour la modal sont présents
             if (!isset($template_data['name'])) {
                 $template_data['name'] = ucfirst($filename);
+                error_log('PDF Builder: get_builtin_templates - nom généré: ' . $template_data['name']);
+            } else {
+                error_log('PDF Builder: get_builtin_templates - nom existant: ' . $template_data['name']);
             }
+            
             if (!isset($template_data['description'])) {
                 $template_data['description'] = 'Template ' . ucfirst($filename);
+                error_log('PDF Builder: get_builtin_templates - description générée: ' . $template_data['description']);
+            } else {
+                error_log('PDF Builder: get_builtin_templates - description existante: ' . $template_data['description']);
             }
+            
             if (!isset($template_data['category'])) {
                 $template_data['category'] = 'general';
+                error_log('PDF Builder: get_builtin_templates - catégorie générée: ' . $template_data['category']);
+            } else {
+                error_log('PDF Builder: get_builtin_templates - catégorie existante: ' . $template_data['category']);
             }
             if (!isset($template_data['features'])) {
                 $template_data['features'] = ['Standard'];
             }
 
             $templates[] = $template_data;
-            error_log('PDF Builder: get_builtin_templates - template ajouté: ' . $template_data['name']);
+            error_log('PDF Builder: get_builtin_templates - ✅ template ajouté: ' . $template_data['name']);
+            error_log('PDF Builder: get_builtin_templates - ===== FIN TRAITEMENT TEMPLATE: ' . $filename . ' =====');
         }
 
-        error_log('PDF Builder: get_builtin_templates - total templates: ' . count($templates));
+        error_log('PDF Builder: get_builtin_templates - ===== RÉSUMÉ FINAL =====');
+        error_log('PDF Builder: get_builtin_templates - total templates retournés: ' . count($templates));
+        
+        if (count($templates) > 0) {
+            error_log('PDF Builder: get_builtin_templates - liste des templates:');
+            foreach ($templates as $index => $template) {
+                error_log('PDF Builder: get_builtin_templates - ' . ($index + 1) . '. ' . $template['name'] . ' (id: ' . $template['id'] . ', category: ' . $template['category'] . ')');
+            }
+        } else {
+            error_log('PDF Builder: get_builtin_templates - ❌ AUCUN TEMPLATE RETOURNÉ');
+        }
 
         return $templates;
     }
