@@ -825,6 +825,13 @@ class PDF_Builder_Template_Manager
             error_log('PDF Builder: get_builtin_templates - 📄 [' . ($i + 1) . '] ' . basename($files[$i]));
         }
 
+        // Vérifier spécifiquement classic.json
+        $classic_path = $builtin_dir . 'classic.json';
+        error_log('PDF Builder: get_builtin_templates - 🔍 VÉRIFICATION CLASSIC.JSON:');
+        error_log('PDF Builder: get_builtin_templates - chemin attendu: ' . $classic_path);
+        error_log('PDF Builder: get_builtin_templates - fichier existe: ' . (file_exists($classic_path) ? 'OUI' : 'NON'));
+        error_log('PDF Builder: get_builtin_templates - est dans glob results: ' . (in_array($classic_path, $files) ? 'OUI' : 'NON'));
+
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
         foreach ($files as $file) {
             error_log('PDF Builder: get_builtin_templates - fichier trouvé: ' . basename($file));
