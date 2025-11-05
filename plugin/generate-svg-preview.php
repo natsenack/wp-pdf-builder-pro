@@ -271,26 +271,36 @@ class SVGPreviewGeneratorHonest
 
     private function renderProductTable($x, $y, $width, $height, $properties)
     {
-        // Compress table height for preview
-        $displayHeight = 50 * $this->scaleFactor;
+        // Compress table height for preview but keep structure visible
         $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
         $headerBgColor = $properties['headerBackgroundColor'] ?? '#28a745';
         $headerColor = $properties['headerTextColor'] ?? '#ffffff';
         $textColor = $properties['textColor'] ?? '#000000';
-
-        $svg = '';
+        $borderColor = $properties['borderColor'] ?? '#e0e0e0';
+        $alternateRowColor = $properties['alternateRowColor'] ?? '#f9f9f9';
         
-        // Table header
-        $svg .= '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . ($fontSize * 1.8) . '" fill="' . $headerBgColor . '"/>' . "\n";
-        $svg .= '    <text x="' . ($x + 5) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Produit</text>' . "\n";
-        $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Qté</text>' . "\n";
-        $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($y + $fontSize * 1.3) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Prix</text>' . "\n";
+        $svg = '';
+        $lineHeight = $fontSize * 1.5;
+        
+        // Table header background
+        $svg .= '    <rect x="' . $x . '" y="' . $y . '" width="' . $width . '" height="' . $lineHeight . '" fill="' . $headerBgColor . '" stroke="' . $borderColor . '" stroke-width="0.5"/>' . "\n";
+        $svg .= '    <text x="' . ($x + 3) . '" y="' . ($y + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Produit</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.55) . '" y="' . ($y + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Qté</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.75) . '" y="' . ($y + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $headerColor . '" font-weight="bold">Prix</text>' . "\n";
 
-        // Sample row
-        $rowY = $y + $fontSize * 2;
-        $svg .= '    <text x="' . ($x + 5) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">Produit Sample</text>' . "\n";
-        $svg .= '    <text x="' . ($x + $width * 0.6) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">2</text>' . "\n";
-        $svg .= '    <text x="' . ($x + $width * 0.8) . '" y="' . ($rowY + $fontSize) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">€50.00</text>' . "\n";
+        // Row 1 - alternating row color
+        $rowY = $y + $lineHeight;
+        $svg .= '    <rect x="' . $x . '" y="' . $rowY . '" width="' . $width . '" height="' . $lineHeight . '" fill="' . $alternateRowColor . '" stroke="' . $borderColor . '" stroke-width="0.5"/>' . "\n";
+        $svg .= '    <text x="' . ($x + 3) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">Produit Sample 1</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.55) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">2</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.75) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">€50.00</text>' . "\n";
+        
+        // Row 2 - white row
+        $rowY += $lineHeight;
+        $svg .= '    <rect x="' . $x . '" y="' . $rowY . '" width="' . $width . '" height="' . $lineHeight . '" fill="#ffffff" stroke="' . $borderColor . '" stroke-width="0.5"/>' . "\n";
+        $svg .= '    <text x="' . ($x + 3) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">Produit Sample 2</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.55) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">1</text>' . "\n";
+        $svg .= '    <text x="' . ($x + $width * 0.75) . '" y="' . ($rowY + $fontSize * 0.8) . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $textColor . '">€75.50</text>' . "\n";
 
         return $svg;
     }

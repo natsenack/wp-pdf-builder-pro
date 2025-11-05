@@ -27,13 +27,18 @@
     <line x1="27.846347607053" y1="41.561712846348" x2="302.56926952141" y2="41.977329974811" stroke="#007cba" stroke-width="1"/>
     <text x="27.846347607053" y="67.264483627204" font-family="Arial" font-size="7" fill="#495057" font-weight="bold">CLIENT:</text>
     <text x="27.846347607053" y="76.264483627204" font-family="Arial" font-size="7" fill="#495057" font-weight="normal">Sample Text</text>
-    <rect x="27.846347607053" y="93.513853904282" width="274.72292191436" height="14.4" fill="#007cba"/>
-    <text x="32.846347607053" y="103.91385390428" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
-    <text x="192.68010075567" y="103.91385390428" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
-    <text x="247.62468513854" y="103.91385390428" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
-    <text x="32.846347607053" y="117.51385390428" font-family="Arial" font-size="8" fill="#212529">Produit Sample</text>
-    <text x="192.68010075567" y="117.51385390428" font-family="Arial" font-size="8" fill="#212529">2</text>
-    <text x="247.62468513854" y="117.51385390428" font-family="Arial" font-size="8" fill="#212529">€50.00</text>
+    <rect x="27.846347607053" y="93.513853904282" width="274.72292191436" height="12" fill="#007cba" stroke="#ffffff" stroke-width="0.5"/>
+    <text x="30.846347607053" y="99.913853904282" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
+    <text x="178.94395465995" y="99.913853904282" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
+    <text x="233.88853904282" y="99.913853904282" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
+    <rect x="27.846347607053" y="105.51385390428" width="274.72292191436" height="12" fill="#f9f9f9" stroke="#ffffff" stroke-width="0.5"/>
+    <text x="30.846347607053" y="111.91385390428" font-family="Arial" font-size="8" fill="#212529">Produit Sample 1</text>
+    <text x="178.94395465995" y="111.91385390428" font-family="Arial" font-size="8" fill="#212529">2</text>
+    <text x="233.88853904282" y="111.91385390428" font-family="Arial" font-size="8" fill="#212529">€50.00</text>
+    <rect x="27.846347607053" y="117.51385390428" width="274.72292191436" height="12" fill="#ffffff" stroke="#ffffff" stroke-width="0.5"/>
+    <text x="30.846347607053" y="123.91385390428" font-family="Arial" font-size="8" fill="#212529">Produit Sample 2</text>
+    <text x="178.94395465995" y="123.91385390428" font-family="Arial" font-size="8" fill="#212529">1</text>
+    <text x="233.88853904282" y="123.91385390428" font-family="Arial" font-size="8" fill="#212529">€75.50</text>
     <text x="177.4685138539" y="211.6523929471" font-family="Arial" font-size="8" fill="#007cba" text-anchor="end" font-weight="bold">Sous-total: {{subtotal}}
 TVA: {{tax}}
 Livraison: {{shipping_total}}
