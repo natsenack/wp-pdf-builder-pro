@@ -11,6 +11,7 @@ class SVGPreviewGenerator
     private $scaleFactor;
     private $previewWidth = 350;  // Canvas proportions: 794x1123 ratio
     private $previewHeight = 494; // 350 * (1123/794) ≈ 494
+    private $pagePadding = 10;
 
     public function __construct($jsonPath)
     {
@@ -42,7 +43,7 @@ class SVGPreviewGenerator
         $svg .= '<svg width="' . $this->previewWidth . '" height="' . $this->previewHeight . '" viewBox="0 0 ' . $this->previewWidth . ' ' . $this->previewHeight . '" xmlns="http://www.w3.org/2000/svg">' . "\n";
 
         // Add white A4 page background
-        $pageMargin = 10; // Margin around the page
+        $pageMargin = $this->pagePadding; 
         $pageWidth = $this->previewWidth - ($pageMargin * 2);
         $pageHeight = $pageWidth * 1.414; // A4 ratio (√2)
 
@@ -165,7 +166,7 @@ class SVGPreviewGenerator
 
             case 'text':
                 $text = $properties['text'] ?? '';
-                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.8, 8); // Minimum readable font size
+                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.9, 8); // Better size
                 $color = $properties['color'] ?? '#000000';
                 $textAlign = $properties['textAlign'] ?? 'left';
                 $fontWeight = $properties['fontWeight'] ?? 'normal';
@@ -174,11 +175,17 @@ class SVGPreviewGenerator
                 if (strpos($text, '{{') !== false) {
                     $elementId = $element['id'] ?? '';
                     
-                    if (strpos($elementId, 'subtotal') !== false) {
+                    if (strpos($elementId, 'subtotal-label') !== false) {
+                        $text = 'Sous-total:';
+                    } elseif (strpos($elementId, 'subtotal-value') !== false) {
                         $text = '€2500.00';
-                    } elseif (strpos($elementId, 'discount') !== false) {
+                    } elseif (strpos($elementId, 'discount-label') !== false) {
+                        $text = 'Coupon:';
+                    } elseif (strpos($elementId, 'discount-value') !== false) {
                         $text = '-€250.00';
-                    } elseif (strpos($elementId, 'total') !== false) {
+                    } elseif (strpos($elementId, 'total-label') !== false) {
+                        $text = 'TOTAL:';
+                    } elseif (strpos($elementId, 'total-value') !== false) {
                         $text = '€2250.00';
                     } elseif (strpos($elementId, 'customer') !== false || strpos($elementId, 'client') !== false) {
                         $text = 'Sample Text';
@@ -200,37 +207,37 @@ class SVGPreviewGenerator
                 }
 
                 // Constrain to visible area
-                $textX = max($pageMargin + 2, min($textX, $this->previewWidth - $pageMargin - 2));
-                $textY = max($pageY + $fontSize + 2, min($y + $fontSize, $pageY + ($this->previewWidth - $pageMargin * 2) * 1.414 - 2));
+                $textX = max($this->pagePadding + 2, min($textX, $this->previewWidth - $this->pagePadding - 2));
+                $textY = max($y + $fontSize, min($y + $fontSize, $this->previewHeight - 2));
 
-                return '    <text x="' . $textX . '" y="' . $textY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars(substr($text, 0, 50)) . '</text>' . "\n";
+                return '    <text x="' . $textX . '" y="' . $textY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars(substr($text, 0, 60)) . '</text>' . "\n";
 
             case 'company_info':
                 // Generate sample company info for preview
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.6, 8); // Smaller but readable
-                $color = $properties['textColor'] ?? '#000000';
+                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.85, 8);
+                $color = $properties['textColor'] ?? '#ffffff';
                 $sampleText = "Entreprise XYZ\n123 Rue de la Paix\n75001 Paris";
 
                 $lines = explode("\n", $sampleText);
                 $svg = '';
                 foreach ($lines as $i => $line) {
-                    $lineY = $y + ($i + 1) * ($fontSize * 1.2);
+                    $lineY = $y + ($i + 1) * ($fontSize * 1.4); // More spacing between lines
                     // Ensure text stays within bounds
                     $lineY = max($fontSize, min($lineY, $this->previewHeight - 10));
-                    $svg .= '    <text x="' . max(5, $x) . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
+                    $svg .= '    <text x="' . max($this->pagePadding + 2, $x) . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
                 }
                 return $svg;
 
             case 'customer_info':
                 // Generate sample customer info for preview
-                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor, 8);
+                $fontSize = max(($properties['fontSize'] ?? 10) * $this->scaleFactor * 0.85, 8);
                 $color = $properties['textColor'] ?? '#000000';
                 $sampleText = "Client ABC\n456 Avenue des Champs\n92000 Nanterre";
 
                 $lines = explode("\n", $sampleText);
                 $svg = '';
                 foreach ($lines as $i => $line) {
-                    $lineY = $y + ($i + 1) * ($fontSize * 1.2);
+                    $lineY = $y + ($i + 1) * ($fontSize * 1.4);
                     $svg .= '    <text x="' . $x . '" y="' . $lineY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '">' . htmlspecialchars($line) . '</text>' . "\n";
                 }
                 return $svg;

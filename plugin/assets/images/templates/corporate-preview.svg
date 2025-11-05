@@ -12,9 +12,9 @@
     <text x="37.846347607053" y="94.422997481108" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">Produit	Quantité	Prix	Total</text>
     </g>
     <g id="company-info">
-    <text x="43.249370277078" y="31.60234256927" font-family="Arial" font-size="8" fill="#ffffff">Entreprise XYZ</text>
-    <text x="43.249370277078" y="41.20234256927" font-family="Arial" font-size="8" fill="#ffffff">123 Rue de la Paix</text>
-    <text x="43.249370277078" y="50.80234256927" font-family="Arial" font-size="8" fill="#ffffff">75001 Paris</text>
+    <text x="43.249370277078" y="33.20234256927" font-family="Arial" font-size="8" fill="#ffffff">Entreprise XYZ</text>
+    <text x="43.249370277078" y="44.40234256927" font-family="Arial" font-size="8" fill="#ffffff">123 Rue de la Paix</text>
+    <text x="43.249370277078" y="55.60234256927" font-family="Arial" font-size="8" fill="#ffffff">75001 Paris</text>
     </g>
     <g id="customer-info">
     <text x="37.846347607053" y="63.251712846348" font-family="Arial" font-size="8" fill="#28a745" text-anchor="start" font-weight="bold">CLIENT:</text>
