@@ -131,6 +131,12 @@ class SVGPreviewGenerator
             $compressedY = $element['y'] - 200; // Distance from table end
             $y = (200 * $this->scaleFactor) + ($compressedY * $this->scaleFactor * $verticalCompressionFactor);
         }
+        
+        // Special compression for product table in preview
+        // Reduce table height from 200px to 50px for better preview visibility
+        if ($type === 'product_table') {
+            $height = 50 * $this->scaleFactor; // Compressed table height
+        }
 
         // Check if element is completely outside page bounds - don't render
         if ($y + $height < 0 || $y > $pageHeight || $x + $width < 0 || $x > $pageWidth) {
