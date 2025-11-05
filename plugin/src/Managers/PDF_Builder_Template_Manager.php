@@ -645,28 +645,37 @@ class PDF_Builder_Template_Manager
         // Utiliser la constante définie dans pdf-builder-pro.php
         $builtin_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/';
 
+        error_log('PDF Builder Template Manager - Scanning builtin dir: ' . $builtin_dir);
+        error_log('PDF Builder Template Manager - Dir exists: ' . (is_dir($builtin_dir) ? 'yes' : 'no'));
+
         if (!is_dir($builtin_dir)) {
+            error_log('PDF Builder Template Manager - Builtin dir not found');
             return $templates;
         }
 
         // Scanner le dossier pour les fichiers JSON
         $files = glob($builtin_dir . '*.json');
+        error_log('PDF Builder Template Manager - Found files: ' . implode(', ', $files));
 
         foreach ($files as $file) {
             $filename = basename($file, '.json');
+            error_log('PDF Builder Template Manager - Processing file: ' . $filename);
             $content = file_get_contents($file);
 
             if ($content === false) {
+                error_log('PDF Builder Template Manager - Failed to read file: ' . $file);
                 continue;
             }
 
             $template_data = json_decode($content, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('PDF Builder Template Manager - JSON decode error for ' . $filename . ': ' . json_last_error_msg());
                 continue;
             }
 
             // Validation basique
             if (!isset($template_data['elements'])) {
+                error_log('PDF Builder Template Manager - Template ' . $filename . ' missing elements array');
                 continue;
             }
 
@@ -687,9 +696,11 @@ class PDF_Builder_Template_Manager
                 $template_data['category'] = 'general';
             }
 
+            error_log('PDF Builder Template Manager - Added template: ' . $template_data['name']);
             $templates[] = $template_data;
         }
 
+        error_log('PDF Builder Template Manager - Total templates found: ' . count($templates));
         return $templates;
     }
 }
