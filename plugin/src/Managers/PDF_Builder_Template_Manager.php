@@ -632,4 +632,64 @@ class PDF_Builder_Template_Manager
 
         return $errors;
     }
+
+    /**
+     * Obtenir tous les templates builtin (statiques)
+     *
+     * @return array Liste des templates builtin avec leurs métadonnées
+     */
+    public function get_builtin_templates()
+    {
+        $templates = [];
+
+        // Utiliser la constante définie dans pdf-builder-pro.php
+        $builtin_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/';
+
+        if (!is_dir($builtin_dir)) {
+            return $templates;
+        }
+
+        // Scanner le dossier pour les fichiers JSON
+        $files = glob($builtin_dir . '*.json');
+
+        foreach ($files as $file) {
+            $filename = basename($file, '.json');
+            $content = file_get_contents($file);
+
+            if ($content === false) {
+                continue;
+            }
+
+            $template_data = json_decode($content, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                continue;
+            }
+
+            // Validation basique
+            if (!isset($template_data['elements'])) {
+                continue;
+            }
+
+            // Ajouter des métadonnées pour la modale
+            $template_data['id'] = $filename;
+            $template_data['preview_url'] = ''; // Pas de preview pour le moment
+
+            // Champs requis pour la modale
+            if (!isset($template_data['name'])) {
+                $template_data['name'] = ucfirst(str_replace('-', ' ', $filename));
+            }
+
+            if (!isset($template_data['description'])) {
+                $template_data['description'] = 'Template ' . ucfirst(str_replace('-', ' ', $filename));
+            }
+
+            if (!isset($template_data['category'])) {
+                $template_data['category'] = 'general';
+            }
+
+            $templates[] = $template_data;
+        }
+
+        return $templates;
+    }
 }
