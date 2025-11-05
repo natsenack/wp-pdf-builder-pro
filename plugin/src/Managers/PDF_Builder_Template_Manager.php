@@ -863,8 +863,11 @@ class PDF_Builder_Template_Manager
                 error_log('PDF Builder: get_builtin_templates - structure détectée: ' . (isset($template_data['elements']) ? 'nouveau format' : 'ancien format'));
                 error_log('PDF Builder: get_builtin_templates - nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
                 
+                error_log('PDF Builder: get_builtin_templates - 🔍 APPEL validate_template_structure pour ' . $filename);
                 // Validation de la structure
                 $validation_errors = $this->validate_template_structure($template_data);
+                error_log('PDF Builder: get_builtin_templates - 🔍 RETOUR validate_template_structure pour ' . $filename . ' - erreurs: ' . count($validation_errors));
+                
                 if (!empty($validation_errors)) {
                     error_log('PDF Builder: get_builtin_templates - ❌ ÉCHEC VALIDATION pour ' . $filename . ': ' . implode(', ', $validation_errors));
                     error_log('PDF Builder: get_builtin_templates - Détails éléments: ' . count($template_data['elements']) . ' éléments trouvés');
