@@ -39,35 +39,52 @@ class SVGPreviewGenerator
         $svg = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $svg .= '<svg width="' . $this->previewWidth . '" height="' . $this->previewHeight . '" viewBox="0 0 ' . $this->previewWidth . ' ' . $this->previewHeight . '" xmlns="http://www.w3.org/2000/svg">' . "\n";
 
-        // Add semantic groups
-        $svg .= '  <g id="header">' . "\n";
-        $svg .= '  </g>' . "\n";
+        // Add white A4 page background
+        $pageMargin = 10; // Margin around the page
+        $pageWidth = $this->previewWidth - ($pageMargin * 2);
+        $pageHeight = $pageWidth * 1.414; // A4 ratio (√2)
 
-        $svg .= '  <g id="company-info">' . "\n";
-        $svg .= '  </g>' . "\n";
+        // Center the page vertically
+        $pageY = ($this->previewHeight - $pageHeight) / 2;
 
-        $svg .= '  <g id="customer-info">' . "\n";
-        $svg .= '  </g>' . "\n";
+        // White page background with subtle shadow
+        $svg .= '  <!-- A4 Page Background -->' . "\n";
+        $svg .= '  <rect x="' . ($pageMargin + 2) . '" y="' . ($pageY + 2) . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#f0f0f0" rx="4"/>' . "\n";
+        $svg .= '  <rect x="' . $pageMargin . '" y="' . $pageY . '" width="' . $pageWidth . '" height="' . $pageHeight . '" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>' . "\n";
 
-        $svg .= '  <g id="order-info">' . "\n";
-        $svg .= '  </g>' . "\n";
+        // Add semantic groups inside the page
+        $svg .= '  <g id="page-content" transform="translate(' . $pageMargin . ',' . $pageY . ')">' . "\n";
 
-        $svg .= '  <g id="products-table">' . "\n";
-        $svg .= '  </g>' . "\n";
+        $svg .= '    <g id="header">' . "\n";
+        $svg .= '    </g>' . "\n";
 
-        $svg .= '  <g id="order-totals">' . "\n";
-        $svg .= '  </g>' . "\n";
+        $svg .= '    <g id="company-info">' . "\n";
+        $svg .= '    </g>' . "\n";
 
-        $svg .= '  <g id="footer">' . "\n";
+        $svg .= '    <g id="customer-info">' . "\n";
+        $svg .= '    </g>' . "\n";
+
+        $svg .= '    <g id="order-info">' . "\n";
+        $svg .= '    </g>' . "\n";
+
+        $svg .= '    <g id="products-table">' . "\n";
+        $svg .= '    </g>' . "\n";
+
+        $svg .= '    <g id="order-totals">' . "\n";
+        $svg .= '    </g>' . "\n";
+
+        $svg .= '    <g id="footer">' . "\n";
+        $svg .= '    </g>' . "\n";
+
         $svg .= '  </g>' . "\n";
 
         // Generate elements
         if (isset($this->templateData['elements'])) {
             foreach ($this->templateData['elements'] as $element) {
-                $svgElement = $this->generateElement($element);
+                $svgElement = $this->generateElement($element, $pageMargin, $pageY);
                 if ($svgElement) {
                     $groupId = $this->getElementGroup($element);
-                    $svg = str_replace('  <g id="' . $groupId . '">' . "\n" . '  </g>', '  <g id="' . $groupId . '">' . "\n" . $svgElement . '  </g>', $svg);
+                    $svg = str_replace('    <g id="' . $groupId . '">' . "\n" . '    </g>', '    <g id="' . $groupId . '">' . "\n" . $svgElement . '    </g>', $svg);
                 }
             }
         }
@@ -77,20 +94,23 @@ class SVGPreviewGenerator
         return $svg;
     }
 
-    private function generateElement($element)
+    private function generateElement($element, $pageMargin = 0, $pageY = 0)
     {
         $type = $element['type'] ?? '';
-        $x = max(0, ($element['x'] ?? 0) * $this->scaleFactor); // Ensure x >= 0
-        $y = max(0, ($element['y'] ?? 0) * $this->scaleFactor); // Ensure y >= 0
+        $x = max(0, ($element['x'] ?? 0) * $this->scaleFactor) + $pageMargin; // Add page margin
+        $y = max(0, ($element['y'] ?? 0) * $this->scaleFactor) + $pageY; // Add page Y offset
         $width = ($element['width'] ?? 0) * $this->scaleFactor;
         $height = ($element['height'] ?? 0) * $this->scaleFactor;
 
-        // Ensure elements don't exceed viewBox bounds
-        if ($x + $width > $this->previewWidth) {
-            $width = $this->previewWidth - $x;
+        // Ensure elements don't exceed page bounds
+        $pageWidth = $this->previewWidth - ($pageMargin * 2);
+        $pageHeight = $pageWidth * 1.414;
+
+        if ($x + $width > $this->previewWidth - $pageMargin) {
+            $width = $this->previewWidth - $pageMargin - $x;
         }
-        if ($y + $height > $this->previewHeight) {
-            $height = $this->previewHeight - $y;
+        if ($y + $height > $pageY + $pageHeight) {
+            $height = $pageY + $pageHeight - $y;
         }
 
         $properties = $element['properties'] ?? [];

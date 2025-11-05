@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="350" height="494" viewBox="0 0 350 494" xmlns="http://www.w3.org/2000/svg">
-  <g id="header">
-    <text x="300" y="49.725520926091" font-family="Arial" font-size="10.135138023152" fill="#007cba" text-anchor="middle" font-weight="normal">●</text>
-  </g>
-  <g id="company-info">
-    <text x="53.051113089938" y="33.354229741763" font-family="Arial" font-size="8" fill="#6c757d">Entreprise XYZ</text>
-    <text x="53.051113089938" y="42.954229741763" font-family="Arial" font-size="8" fill="#6c757d">123 Rue de la Paix</text>
-    <text x="53.051113089938" y="52.554229741763" font-family="Arial" font-size="8" fill="#6c757d">75001 Paris</text>
-  </g>
-  <g id="customer-info">
-    <text x="53.051113089938" y="97.098842386465" font-family="Arial" font-size="10" fill="#212529" text-anchor="start" font-weight="bold">CLIENT</text>
-  </g>
-  <g id="order-info">
-    <text x="158.36153161175" y="32.170614425646" font-family="Arial" font-size="10" fill="#4a5568">Commande #12345</text>
-  </g>
-  <g id="products-table">
-  </g>
-  <g id="order-totals">
-  </g>
-  <g id="footer">
+  <!-- A4 Page Background -->
+  <rect x="12" y="15.69" width="330" height="466.62" fill="#f0f0f0" rx="4"/>
+  <rect x="10" y="13.69" width="330" height="466.62" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>
+  <g id="page-content" transform="translate(10,13.69)">
+    <g id="header">
+    <text x="300" y="63.415520926091" font-family="Arial" font-size="10.135138023152" fill="#007cba" text-anchor="middle" font-weight="normal">●</text>
+    </g>
+    <g id="company-info">
+    <text x="63.051113089938" y="47.044229741763" font-family="Arial" font-size="8" fill="#6c757d">Entreprise XYZ</text>
+    <text x="63.051113089938" y="56.644229741763" font-family="Arial" font-size="8" fill="#6c757d">123 Rue de la Paix</text>
+    <text x="63.051113089938" y="66.244229741763" font-family="Arial" font-size="8" fill="#6c757d">75001 Paris</text>
+    </g>
+    <g id="customer-info">
+    <text x="63.051113089938" y="110.78884238646" font-family="Arial" font-size="10" fill="#212529" text-anchor="start" font-weight="bold">CLIENT</text>
+    </g>
+    <g id="order-info">
+    <text x="168.36153161175" y="45.860614425646" font-family="Arial" font-size="10" fill="#4a5568">Commande #12345</text>
+    </g>
+    <g id="products-table">
+    </g>
+    <g id="order-totals">
+    </g>
+    <g id="footer">
     <text x="201.52555654497" y="489" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="middle" font-weight="normal">Paiement en ligne disponible • Merci pour votre commande</text>
+    </g>
   </g>
 </svg>
