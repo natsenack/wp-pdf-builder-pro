@@ -311,9 +311,6 @@ function pdf_builder_load_core_when_needed() {
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
-            'pdf_builder_get_predefined_templates',
-            'pdf_builder_install_predefined_template',
-            'pdf_builder_regenerate_predefined_thumbnails',
             'pdf_builder_flush_rest_cache'
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {

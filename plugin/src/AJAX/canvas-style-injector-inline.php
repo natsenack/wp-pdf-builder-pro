@@ -28,29 +28,7 @@ add_action('wp_footer', function() {
             const url = args[0];
             const result = originalFetch.apply(this, args);
 
-            // Si c'est un appel de chargement de template builtin
-            if (url && url.includes('load_builtin_template')) {
-                return result.then(function(response) {
-                    return response.clone().json().then(function(data) {
-                        if (data.success && data.data && data.data.template) {
-                            // Stocker les données du template pour que React puisse les utiliser
-                            window.currentTemplateData = data.data.template;
-                            
-                            // Dispatcher un événement personnalisé pour informer React
-                            setTimeout(function() {
-                                const event = new CustomEvent('templateLoaded', { 
-                                    detail: { template: data.data.template } 
-                                });
-                                document.dispatchEvent(event);
-                            }, 100);
-                        }
-                        return response;
-                    }).catch(function() {
-                        return response;
-                    });
-                });
-            }
-
+            // Pas de traitement spécial pour les templates builtin
             return result;
         };
 
