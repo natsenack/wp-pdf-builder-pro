@@ -308,7 +308,6 @@ function pdf_builder_load_core_when_needed() {
         // Charger pour les appels AJAX du PDF Builder
         $pdf_builder_ajax_actions = [
             'get_builtin_templates',
-            'pdf_builder_get_builtin_templates',
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
@@ -730,7 +729,7 @@ function pdf_builder_ajax_get_template() {
  */
 function pdf_builder_ajax_get_builtin_templates() {
     // Vérifier le nonce
-    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_templates')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
@@ -892,9 +891,9 @@ function pdf_builder_register_fallback_hooks() {
 // Enregistrer les hooks seulement si WordPress est disponible
 if (function_exists('add_action')) {
     // Charger le core au moment de wp_ajax pour les appels AJAX du PDF Builder
-    add_action('wp_ajax_pdf_builder_get_builtin_templates', 'pdf_builder_load_core_when_needed', 1);
-    add_action('wp_ajax_pdf_builder_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
-    add_action('wp_ajax_nopriv_pdf_builder_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
+    add_action('wp_ajax_get_builtin_templates', 'pdf_builder_load_core_when_needed', 1);
+    add_action('wp_ajax_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
+    add_action('wp_ajax_nopriv_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
     pdf_builder_register_fallback_hooks();
 }
 

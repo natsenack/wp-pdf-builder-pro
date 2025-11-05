@@ -108,4 +108,5 @@ function pdf_builder_ajax_get_builtin_templates_handler() {
 }
 
 // Enregistrer le hook AJAX directement
-add_action('wp_ajax_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates_handler');
+// Désactivé car conflit avec la fonction dans bootstrap.php
+// add_action('wp_ajax_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates_handler');
