@@ -24,13 +24,15 @@ class SVGPreviewGenerator
         }
 
         // Calculate scale factor to fit canvas into preview dimensions
-        // More conservative scaling to keep elements visible and proportional
+        // Use fixed ratio to match A4 proportions
         $canvasWidth = $this->templateData['canvasWidth'] ?? 794;
         $canvasHeight = $this->templateData['canvasHeight'] ?? 1123;
 
+        // Scale to fit within preview while maintaining A4 aspect ratio
+        // 794x1123 should scale to fit in 350x494
         $this->scaleFactor = min(
-            $this->previewWidth / $canvasWidth * 1.8,  // More conservative scaling
-            $this->previewHeight / $canvasHeight * 1.8
+            ($this->previewWidth - 20) / $canvasWidth,    // Leave margins
+            ($this->previewHeight - 20) / $canvasHeight
         );
     }
 
@@ -106,20 +108,42 @@ class SVGPreviewGenerator
     private function generateElement($element, $pageMargin = 0, $pageY = 0)
     {
         $type = $element['type'] ?? '';
-        $x = max(0, ($element['x'] ?? 0) * $this->scaleFactor) + $pageMargin; // Add page margin
-        $y = max(0, ($element['y'] ?? 0) * $this->scaleFactor) + $pageY; // Add page Y offset
+        $x = ($element['x'] ?? 0) * $this->scaleFactor + $pageMargin;
+        $y = ($element['y'] ?? 0) * $this->scaleFactor + $pageY;
         $width = ($element['width'] ?? 0) * $this->scaleFactor;
         $height = ($element['height'] ?? 0) * $this->scaleFactor;
 
-        // Ensure elements don't exceed page bounds
+        // Calculate page bounds
         $pageWidth = $this->previewWidth - ($pageMargin * 2);
-        $pageHeight = $pageWidth * 1.414;
+        $pageHeight = $pageWidth * 1.414; // A4 ratio
 
+        // Clip elements to stay within page bounds
+        // Don't render if element is completely outside bounds
+        if ($y + $height < $pageY || $y > $pageY + $pageHeight) {
+            return ''; // Element is outside visible area
+        }
+
+        // Clip width
         if ($x + $width > $this->previewWidth - $pageMargin) {
             $width = $this->previewWidth - $pageMargin - $x;
         }
+        if ($x < $pageMargin) {
+            $width -= $pageMargin - $x;
+            $x = $pageMargin;
+        }
+
+        // Clip height
         if ($y + $height > $pageY + $pageHeight) {
             $height = $pageY + $pageHeight - $y;
+        }
+        if ($y < $pageY) {
+            $height -= $pageY - $y;
+            $y = $pageY;
+        }
+
+        // Skip if element has no visible dimensions
+        if ($width <= 0 || $height <= 0) {
+            return '';
         }
 
         $properties = $element['properties'] ?? [];
@@ -141,7 +165,7 @@ class SVGPreviewGenerator
 
             case 'text':
                 $text = $properties['text'] ?? '';
-                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.8, 10); // Minimum readable font size
+                $fontSize = max(($properties['fontSize'] ?? 12) * $this->scaleFactor * 0.8, 8); // Minimum readable font size
                 $color = $properties['color'] ?? '#000000';
                 $textAlign = $properties['textAlign'] ?? 'left';
                 $fontWeight = $properties['fontWeight'] ?? 'normal';
@@ -166,19 +190,20 @@ class SVGPreviewGenerator
                 }
 
                 $textAnchor = 'start';
+                $textX = $x;
                 if ($textAlign === 'center') {
                     $textAnchor = 'middle';
-                    $x += $width / 2;
+                    $textX = $x + ($width / 2);
                 } elseif ($textAlign === 'right') {
                     $textAnchor = 'end';
-                    $x += $width;
+                    $textX = $x + $width;
                 }
 
-                // Ensure text stays within bounds
-                $x = max(5, min($x, $this->previewWidth - 50));
-                $y = max($fontSize, min($y + $fontSize, $this->previewHeight - 5));
+                // Constrain to visible area
+                $textX = max($pageMargin + 2, min($textX, $this->previewWidth - $pageMargin - 2));
+                $textY = max($pageY + $fontSize + 2, min($y + $fontSize, $pageY + ($this->previewWidth - $pageMargin * 2) * 1.414 - 2));
 
-                return '    <text x="' . $x . '" y="' . $y . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars($text) . '</text>' . "\n";
+                return '    <text x="' . $textX . '" y="' . $textY . '" font-family="Arial" font-size="' . $fontSize . '" fill="' . $color . '" text-anchor="' . $textAnchor . '" font-weight="' . $fontWeight . '">' . htmlspecialchars(substr($text, 0, 50)) . '</text>' . "\n";
 
             case 'company_info':
                 // Generate sample company info for preview

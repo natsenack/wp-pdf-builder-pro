@@ -5,43 +5,43 @@
   <rect x="10" y="13.69" width="330" height="466.62" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>
   <g id="page-content" transform="translate(10,13.69)">
     <g id="header">
-    <rect x="10" y="13.69" width="330" height="63.344612644702" fill="#28a745" stroke-width="0"/>
-    <rect x="33.754229741763" y="33.485191451469" width="23.754229741763" height="23.754229741763" fill="#ffffff" stroke-width="0"/>
-    <text x="45.631344612645" y="44.887221727516" font-family="Arial" font-size="11.402030276046" fill="#28a745" text-anchor="middle" font-weight="bold">✓</text>
-    <rect x="63.051113089938" y="148.29730186999" width="276.94888691006" height="23.754229741763" fill="#28a745" stroke-width="0"/>
-    <text x="63.051113089938" y="162.25634016028" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="start" font-weight="bold">Produit	Quantité	Prix	Total</text>
+    <rect x="10" y="13.69" width="330" height="33.249370277078" fill="#28a745" stroke-width="0"/>
+    <rect x="22.468513853904" y="24.080428211587" width="12.468513853904" height="12.468513853904" fill="#ffffff" stroke-width="0"/>
+    <text x="28.702770780856" y="32.080428211587" font-family="Arial" font-size="8" fill="#28a745" text-anchor="middle" font-weight="bold">✓</text>
+    <rect x="37.846347607053" y="84.344911838791" width="274.72292191436" height="12.468513853904" fill="#28a745" stroke-width="0"/>
+    <text x="37.846347607053" y="94.422997481108" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">Produit	Quantité	Prix	Total</text>
     </g>
     <g id="company-info">
-    <text x="73.344612644702" y="39.126153161175" font-family="Arial" font-size="8" fill="#ffffff">Entreprise XYZ</text>
-    <text x="73.344612644702" y="48.726153161175" font-family="Arial" font-size="8" fill="#ffffff">123 Rue de la Paix</text>
-    <text x="73.344612644702" y="58.326153161175" font-family="Arial" font-size="8" fill="#ffffff">75001 Paris</text>
+    <text x="43.249370277078" y="31.60234256927" font-family="Arial" font-size="8" fill="#ffffff">Entreprise XYZ</text>
+    <text x="43.249370277078" y="41.20234256927" font-family="Arial" font-size="8" fill="#ffffff">123 Rue de la Paix</text>
+    <text x="43.249370277078" y="50.80234256927" font-family="Arial" font-size="8" fill="#ffffff">75001 Paris</text>
     </g>
     <g id="customer-info">
-    <text x="63.051113089938" y="102.87076580588" font-family="Arial" font-size="10" fill="#28a745" text-anchor="start" font-weight="bold">CLIENT:</text>
-    <text x="63.051113089938" y="118.70691896705" font-family="Arial" font-size="10" fill="#212529" text-anchor="start" font-weight="normal">Sample Text</text>
-    <text x="63.051113089938" y="130.58403383793" font-family="Arial" font-size="10" fill="#212529" text-anchor="start" font-weight="normal">Sample Text</text>
+    <text x="37.846347607053" y="63.251712846348" font-family="Arial" font-size="8" fill="#28a745" text-anchor="start" font-weight="bold">CLIENT:</text>
+    <text x="37.846347607053" y="71.564055415617" font-family="Arial" font-size="8" fill="#212529" text-anchor="start" font-weight="normal">Sample Text</text>
+    <text x="37.846347607053" y="77.798312342569" font-family="Arial" font-size="8" fill="#212529" text-anchor="start" font-weight="normal">Sample Text</text>
     </g>
     <g id="order-info">
-    <text x="405.90382902939" y="102.87076580588" font-family="Arial" font-size="10" fill="#28a745">Commande #12345</text>
-    <text x="405.90382902939" y="116.70691896705" font-family="Arial" font-size="8" fill="#212529">Date: 05/11/2025</text>
+    <text x="217.80856423174" y="65.251712846348" font-family="Arial" font-size="10" fill="#28a745">Commande #12345</text>
+    <text x="217.80856423174" y="71.564055415617" font-family="Arial" font-size="8" fill="#212529">Date: 05/11/2025</text>
     </g>
     <g id="products-table">
-    <rect x="63.051113089938" y="172.05153161175" width="276.94888691006" height="16" fill="#28a745"/>
-    <text x="68.051113089938" y="184.05153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
-    <text x="229.22044523598" y="184.05153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
-    <text x="284.61022261799" y="184.05153161175" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
-    <text x="68.051113089938" y="200.05153161175" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
-    <text x="229.22044523598" y="200.05153161175" font-family="Arial" font-size="8" fill="#000000">2</text>
-    <text x="284.61022261799" y="200.05153161175" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
+    <rect x="37.846347607053" y="96.813425692695" width="274.72292191436" height="16" fill="#28a745"/>
+    <text x="42.846347607053" y="108.8134256927" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
+    <text x="202.68010075567" y="108.8134256927" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
+    <text x="257.62468513854" y="108.8134256927" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
+    <text x="42.846347607053" y="124.8134256927" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
+    <text x="202.68010075567" y="124.8134256927" font-family="Arial" font-size="8" fill="#000000">2</text>
+    <text x="257.62468513854" y="124.8134256927" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
     </g>
     <g id="order-totals">
-    <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
-    <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">€2500.00</text>
-    <text x="300" y="372.08536954586" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
-    <text x="300" y="372.08536954586" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">-€250.00</text>
-    <rect x="405.90382902939" y="377.92152270703" width="-65.903829029386" height="23.754229741763" fill="#28a745" stroke-width="0"/>
-    <text x="300" y="391.88056099733" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
-    <text x="300" y="391.88056099733" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="end" font-weight="bold">€2250.00</text>
+    <text x="217.80856423174" y="196.24919395466" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
+    <text x="313.40050377834" y="196.24919395466" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">€2500.00</text>
+    <text x="217.80856423174" y="204.56153652393" font-family="Arial" font-size="8" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
+    <text x="313.40050377834" y="204.56153652393" font-family="Arial" font-size="8" fill="#28a745" text-anchor="end" font-weight="bold">-€250.00</text>
+    <rect x="217.80856423174" y="204.8738790932" width="95.5919395466" height="12.468513853904" fill="#28a745" stroke-width="0"/>
+    <text x="217.80856423174" y="214.95196473552" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
+    <text x="313.40050377834" y="214.95196473552" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="end" font-weight="bold">€2250.00</text>
     </g>
     <g id="footer">
     </g>
