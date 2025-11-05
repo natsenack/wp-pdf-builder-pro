@@ -8,19 +8,19 @@
         "Épuré",
         "Professionnel"
     ],
-    "canvasWidth": 300,
-    "canvasHeight": 200,
+    "canvasWidth": 794,
+    "canvasHeight": 1123,
     "elements": [
         {
             "id": "document-title",
             "type": "document_type",
-            "x": 25,
-            "y": 12,
-            "width": 249,
-            "height": 9,
+            "x": 67,
+            "y": 67,
+            "width": 661,
+            "height": 53,
             "properties": {
                 "title": "FACTURE MODERNE",
-                "fontSize": 7,
+                "fontSize": 26,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "textColor": "#333333",
@@ -30,10 +30,10 @@
         {
             "id": "company-info",
             "type": "company_info",
-            "x": 25,
-            "y": 28,
-            "width": 120,
-            "height": 19,
+            "x": 67,
+            "y": 160,
+            "width": 320,
+            "height": 107,
             "properties": {
                 "showFullName": true,
                 "showAddress": true,
@@ -43,7 +43,7 @@
                 "showVat": true,
                 "showCompanyName": true,
                 "layout": "vertical",
-                "fontSize": 4,
+                "fontSize": 14,
                 "fontFamily": "Arial",
                 "textColor": "#2b6cb0"
             }
@@ -51,13 +51,13 @@
         {
             "id": "invoice-details",
             "type": "text",
-            "x": 160,
-            "y": 28,
-            "width": 113,
-            "height": 19,
+            "x": 427,
+            "y": 160,
+            "width": 300,
+            "height": 107,
             "properties": {
                 "text": "Facture N°: {{order_number}}\nDate: {{order_date}}\nClient: {{customer_name}}",
-                "fontSize": 4,
+                "fontSize": 13,
                 "fontFamily": "Arial",
                 "color": "#4a5568",
                 "textAlign": "right",
@@ -67,10 +67,10 @@
         {
             "id": "billing-address",
             "type": "customer_info",
-            "x": 25,
-            "y": 52,
-            "width": 120,
-            "height": 24,
+            "x": 67,
+            "y": 293,
+            "width": 320,
+            "height": 133,
             "properties": {
                 "showHeaders": true,
                 "showFullName": false,
@@ -81,7 +81,7 @@
                 "showVatNumber": false,
                 "showCompanyAddress": false,
                 "layout": "vertical",
-                "fontSize": 4,
+                "fontSize": 11,
                 "fontFamily": "Arial",
                 "textColor": "#2d3748"
             }
@@ -89,10 +89,10 @@
         {
             "id": "shipping-address",
             "type": "customer_info",
-            "x": 160,
-            "y": 52,
-            "width": 113,
-            "height": 24,
+            "x": 427,
+            "y": 293,
+            "width": 300,
+            "height": 133,
             "properties": {
                 "showHeaders": true,
                 "showFullName": false,
@@ -103,7 +103,7 @@
                 "showVatNumber": false,
                 "showCompanyAddress": false,
                 "layout": "vertical",
-                "fontSize": 4,
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "textColor": "#2d3748",
                 "textAlign": "right"
@@ -112,13 +112,13 @@
         {
             "id": "order-items-header",
             "type": "text",
-            "x": 25,
-            "y": 83,
-            "width": 249,
-            "height": 6,
+            "x": 67,
+            "y": 467,
+            "width": 661,
+            "height": 33,
             "properties": {
                 "text": "DÉSIGNATION\tQTÉ\tPRIX UNIT.\tTOTAL",
-                "fontSize": 4,
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#333333",
@@ -129,10 +129,10 @@
         {
             "id": "order-items",
             "type": "product_table",
-            "x": 25,
-            "y": 89,
-            "width": 249,
-            "height": 47,
+            "x": 67,
+            "y": 500,
+            "width": 661,
+            "height": 267,
             "properties": {
                 "showHeaders": true,
                 "showBorders": true,
@@ -140,7 +140,7 @@
                 "showSku": false,
                 "showDescription": false,
                 "showQuantity": true,
-                "fontSize": 4,
+                "fontSize": 11,
                 "fontFamily": "Arial",
                 "textColor": "#333333",
                 "headerBackgroundColor": "#f9f9f9",
@@ -153,13 +153,13 @@
         {
             "id": "order-totals",
             "type": "text",
-            "x": 160,
-            "y": 142,
-            "width": 113,
-            "height": 24,
+            "x": 427,
+            "y": 800,
+            "width": 300,
+            "height": 133,
             "properties": {
                 "text": "Sous-total: {{subtotal}}\nTVA: {{tax}}\nLivraison: {{shipping_total}}\nTOTAL: {{total}}",
-                "fontSize": 4,
+                "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
                 "color": "#2b6cb0",
@@ -170,13 +170,13 @@
         {
             "id": "footer",
             "type": "text",
-            "x": 25,
-            "y": 178,
-            "width": 249,
-            "height": 9,
+            "x": 67,
+            "y": 1000,
+            "width": 661,
+            "height": 53,
             "properties": {
                 "text": "Votre commande a été traitée avec succès - Règlement: [PAYMENT_TERMS]",
-                "fontSize": 4,
+                "fontSize": 11,
                 "fontFamily": "Arial",
                 "color": "#666666",
                 "textAlign": "center"
