@@ -1049,33 +1049,93 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-item {
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border: 2px solid #e1e5e9;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     opacity: 0;
-    transform: translateY(20px);
-    animation: itemFadeIn 0.5s ease-out forwards;
+    transform: translateY(30px) scale(0.95);
+    animation: itemFadeIn 0.6s ease-out forwards;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.template-gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007cba, #28a745, #ffc107, #dc3545);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .template-gallery-item:hover {
     border-color: #007cba;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 123, 186, 0.2);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 123, 186, 0.15);
+}
+
+.template-gallery-item:hover::before {
+    opacity: 1;
 }
 
 @keyframes itemFadeIn {
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+    }
+}
+
+.template-gallery-item-category {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, rgba(0, 123, 186, 0.9) 0%, rgba(0, 86, 135, 0.9) 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.template-gallery-item-popular {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
     }
 }
 
 .template-gallery-item-preview {
-    height: 240px; /* A4 portrait ratio: ~350px width / 1.414 ≈ 240px height */
-    background: #f8f9fa;
+    height: 240px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1087,8 +1147,14 @@ document.addEventListener('keydown', function(e) {
 .template-gallery-item-preview img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain; /* Preserve A4 proportions instead of cropping */
-    transition: transform 0.3s ease;
+    object-fit: contain;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.template-gallery-item:hover .template-gallery-item-preview img {
+    transform: scale(1.08) rotate(1deg);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
 }
 
 .template-gallery-item:hover .template-gallery-item-preview img {
@@ -1108,49 +1174,113 @@ document.addEventListener('keydown', function(e) {
 }
 
 .template-gallery-item-info {
-    padding: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    position: relative;
 }
 
 .template-gallery-item-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #23282d;
-    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.025em;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.template-gallery-item-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, #007cba, transparent);
+    border-radius: 1px;
 }
 
 .template-gallery-item-description {
     font-size: 14px;
-    color: #666;
-    margin: 0 0 15px 0;
-    line-height: 1.4;
+    color: #4a5568;
+    margin: 0 0 18px 0;
+    line-height: 1.5;
+    font-weight: 400;
 }
 
 .template-gallery-item-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 24px;
 }
 
 .template-gallery-item-feature {
-    font-size: 12px;
-    color: #28a745;
-    background: #d4edda;
-    padding: 4px 8px;
-    border-radius: 12px;
-    border: 1px solid #c3e6cb;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2d3748;
+    background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #81e6d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-gallery-item-feature::before {
+    content: '✓';
+    margin-right: 6px;
+    color: #38b2ac;
+    font-weight: bold;
+}
+
+.template-gallery-item-feature:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .template-gallery-item-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .template-gallery-item-actions .button {
     flex: 1;
     text-align: center;
     font-size: 14px;
-    padding: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-gallery-item-actions .button-primary {
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
+}
+
+.template-gallery-item-actions .button-primary:hover {
+    background: linear-gradient(135deg, #005a87 0%, #004466 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 186, 0.4);
+}
+
+.template-gallery-item-actions .button-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.template-gallery-item-actions .button-secondary:hover {
+    background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
 }
 
 .template-gallery-footer {
