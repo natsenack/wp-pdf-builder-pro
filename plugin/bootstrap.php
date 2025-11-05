@@ -573,20 +573,40 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
-    // Charger le core si nécessaire
-    if (!class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
-        pdf_builder_load_core_when_needed();
-    }
-
-    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
-
-    // Récupérer le template
+    // Récupérer le template depuis la table personnalisée
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
     $template = $wpdb->get_row(
         $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
         ARRAY_A
     );
+
+    // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
+    if (!$template) {
+        error_log('PDF Builder: Template ' . $template_id . ' not found in custom table, checking wp_posts');
+        $post = get_post($template_id);
+        
+        if ($post && $post->post_type === 'pdf_template') {
+            // Récupérer les métadonnées du template
+            $template_data_raw = get_post_meta($post->ID, '_pdf_template_data', true);
+            
+            if (!empty($template_data_raw)) {
+                // Créer un objet template compatible avec le format attendu
+                $template = array(
+                    'id' => $post->ID,
+                    'name' => $post->post_title,
+                    'template_data' => $template_data_raw,
+                    'created_at' => $post->post_date,
+                    'updated_at' => $post->post_modified
+                );
+                error_log('PDF Builder: Template found in wp_posts: ' . $post->ID);
+            } else {
+                error_log('PDF Builder: Template found in wp_posts but no _pdf_template_data meta');
+            }
+        } else {
+            error_log('PDF Builder: Template not found in wp_posts either');
+        }
+    }
 
     if (!$template) {
         wp_send_json_error(__('Template non trouvé.', 'pdf-builder-pro'));
