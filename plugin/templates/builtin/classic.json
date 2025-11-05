@@ -20,7 +20,7 @@
             "height": 80,
             "properties": {
                 "fillColor": "#ffffff",
-                "strokeColor": "#000000",
+                "strokeColor": "#007cba",
                 "strokeWidth": 2
             }
         },
@@ -33,10 +33,10 @@
             "height": 53,
             "properties": {
                 "title": "FACTURE",
-                "fontSize": 26,
+                "fontSize": 28,
                 "fontFamily": "Georgia",
                 "fontWeight": "bold",
-                "textColor": "#000000",
+                "textColor": "#007cba",
                 "textAlign": "center",
                 "textDecoration": "underline"
             }
@@ -117,11 +117,11 @@
             "id": "separator-line",
             "type": "line",
             "x": 67,
-            "y": 300,
+            "y": 280,
             "width": 661,
-            "height": 2,
+            "height": 1,
             "properties": {
-                "strokeColor": "#000000",
+                "strokeColor": "#007cba",
                 "strokeWidth": 2
             }
         },
@@ -129,7 +129,7 @@
             "id": "items-header",
             "type": "text",
             "x": 67,
-            "y": 320,
+            "y": 300,
             "width": 661,
             "height": 25,
             "properties": {
@@ -137,8 +137,8 @@
                 "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#000000",
-                "backgroundColor": "#cccccc",
+                "color": "#ffffff",
+                "backgroundColor": "#007cba",
                 "textAlign": "left",
                 "padding": "5px"
             }
@@ -147,9 +147,9 @@
             "id": "items-table",
             "type": "product_table",
             "x": 67,
-            "y": 350,
+            "y": 330,
             "width": 661,
-            "height": 200,
+            "height": 150,
             "properties": {
                 "showHeaders": false,
                 "showBorders": true,
@@ -175,16 +175,17 @@
             "width": 113,
             "height": 29,
             "properties": {
-                "fillColor": "#f8f8f8",
-                "strokeColor": "#cccccc",
-                "strokeWidth": 1
+                "fillColor": "#007cba",
+                "strokeColor": "#007cba",
+                "strokeWidth": 1,
+                "opacity": 0.1
             }
         },
         {
             "id": "order-totals",
             "type": "text",
             "x": 427,
-            "y": 580,
+            "y": 500,
             "width": 300,
             "height": 80,
             "properties": {
@@ -192,7 +193,7 @@
                 "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#000000",
+                "color": "#007cba",
                 "textAlign": "right",
                 "lineHeight": 1.6
             }
@@ -201,7 +202,7 @@
             "id": "payment-method",
             "type": "dynamic-text",
             "x": 67,
-            "y": 700,
+            "y": 600,
             "width": 661,
             "height": 20,
             "properties": {
@@ -216,7 +217,7 @@
             "id": "due-date",
             "type": "dynamic-text",
             "x": 67,
-            "y": 720,
+            "y": 620,
             "width": 661,
             "height": 20,
             "properties": {
@@ -231,11 +232,11 @@
             "id": "footer-border",
             "type": "line",
             "x": 67,
-            "y": 780,
+            "y": 680,
             "width": 661,
-            "height": 2,
+            "height": 1,
             "properties": {
-                "strokeColor": "#000000",
+                "strokeColor": "#007cba",
                 "strokeWidth": 2
             }
         },
@@ -243,7 +244,7 @@
             "id": "footer-text",
             "type": "dynamic-text",
             "x": 67,
-            "y": 800,
+            "y": 700,
             "width": 661,
             "height": 30,
             "properties": {

@@ -52,13 +52,13 @@
             "id": "order-number",
             "type": "order_number",
             "x": 200,
-            "y": 28,
+            "y": 30,
             "width": 150,
             "height": 15,
             "properties": {
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "textColor": "#4a5568",
+                "textColor": "#6c757d",
                 "textAlign": "right"
             }
         },
@@ -66,14 +66,14 @@
             "id": "order-date",
             "type": "dynamic-text",
             "x": 200,
-            "y": 43,
+            "y": 50,
             "width": 150,
             "height": 15,
             "properties": {
                 "content": "{{order_date}}",
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "textColor": "#4a5568",
+                "textColor": "#6c757d",
                 "textAlign": "right"
             }
         },
@@ -81,14 +81,14 @@
             "id": "customer-name",
             "type": "dynamic-text",
             "x": 200,
-            "y": 58,
+            "y": 70,
             "width": 150,
             "height": 15,
             "properties": {
                 "content": "{{customer_name}}",
                 "fontSize": 12,
                 "fontFamily": "Arial",
-                "textColor": "#4a5568",
+                "textColor": "#6c757d",
                 "textAlign": "right"
             }
         },
@@ -112,19 +112,19 @@
             "id": "separator-line",
             "type": "line",
             "x": 67,
-            "y": 90,
+            "y": 100,
             "width": 661,
             "height": 1,
             "properties": {
-                "strokeColor": "#000000",
-                "strokeWidth": 1.5
+                "strokeColor": "#007cba",
+                "strokeWidth": 2
             }
         },
         {
             "id": "client-label",
             "type": "text",
             "x": 67,
-            "y": 110,
+            "y": 120,
             "width": 100,
             "height": 20,
             "properties": {
@@ -140,7 +140,7 @@
             "id": "billing-address",
             "type": "customer_info",
             "x": 67,
-            "y": 130,
+            "y": 145,
             "width": 300,
             "height": 40,
             "properties": {
@@ -162,7 +162,7 @@
             "id": "order-items-header",
             "type": "text",
             "x": 67,
-            "y": 180,
+            "y": 195,
             "width": 661,
             "height": 25,
             "properties": {
@@ -170,7 +170,8 @@
                 "fontSize": 12,
                 "fontFamily": "Arial",
                 "fontWeight": "bold",
-                "color": "#212529",
+                "color": "#ffffff",
+                "backgroundColor": "#007cba",
                 "textAlign": "left"
             }
         },
@@ -178,9 +179,9 @@
             "id": "order-items",
             "type": "product_table",
             "x": 67,
-            "y": 210,
+            "y": 225,
             "width": 661,
-            "height": 333,
+            "height": 250,
             "properties": {
                 "showHeaders": false,
                 "showBorders": false,
@@ -191,8 +192,8 @@
                 "fontSize": 11,
                 "fontFamily": "Arial",
                 "textColor": "#212529",
-                "headerBackgroundColor": "#ffffff",
-                "headerTextColor": "#212529",
+                "headerBackgroundColor": "#007cba",
+                "headerTextColor": "#ffffff",
                 "borderColor": "#ffffff",
                 "borderWidth": 0,
                 "textAlign": "left"
@@ -202,7 +203,7 @@
             "id": "order-totals",
             "type": "text",
             "x": 427,
-            "y": 600,
+            "y": 490,
             "width": 300,
             "height": 80,
             "properties": {

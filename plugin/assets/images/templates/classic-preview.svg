@@ -9,8 +9,8 @@
   </defs>
   <g id="page-content" transform="translate(10,13.69)" clip-path="url(#pageClip)">
     <g id="header">
-    <rect x="20.780856423174" y="20.780856423174" width="288.43828715365" height="33.249370277078" fill="#ffffff" stroke="#000000" stroke-width="0.83123425692695"/>
-    <text x="27.846347607053" y="140.99748110831" font-family="Arial" font-size="8" fill="#000000" text-anchor="start" font-weight="bold">DESCRIPTION DES ARTICLES	QUANTITÉ	PRIX UNITAIRE	MONTANT</text>
+    <rect x="20.780856423174" y="20.780856423174" width="288.43828715365" height="33.249370277078" fill="#ffffff" stroke="#007cba" stroke-width="0.83123425692695"/>
+    <text x="27.846347607053" y="132.68513853904" font-family="Arial" font-size="8" fill="#ffffff" text-anchor="start" font-weight="bold">DESCRIPTION DES ARTICLES	QUANTITÉ	PRIX UNITAIRE	MONTANT</text>
     </g>
     <g id="company-info">
     <text x="27.846347607053" y="90.123425692695" font-family="Arial" font-size="7" fill="#333333">Entreprise XYZ</text>
@@ -23,33 +23,33 @@
     <text x="177.4685138539" y="108.1234256927" font-family="Arial" font-size="7" fill="#333333" font-weight="normal">Sample Text</text>
     </g>
     <g id="order-info">
-    <text x="165.20780856423" y="39.846347607053" font-family="Arial" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold">FACTURE</text>
+    <text x="165.20780856423" y="39.846347607053" font-family="Arial" font-size="12" fill="#007cba" text-anchor="middle" font-weight="bold">FACTURE</text>
     <text x="27.846347607053" y="66.186397984887" font-family="Arial" font-size="8" fill="#333333" text-anchor="start">Commande #12345</text>
     <text x="27.846347607053" y="74.498740554156" font-family="Arial" font-size="8" fill="#333333" text-anchor="start">05/11/2025</text>
-    <line x1="27.846347607053" y1="124.68513853904" x2="302.56926952141" y2="125.51637279597" stroke="#000000" stroke-width="1"/>
-    <text x="177.4685138539" y="249.05793450882" font-family="Arial" font-size="8" fill="#000000" text-anchor="end" font-weight="bold">Sous-total HT: {{subtotal}}
+    <line x1="27.846347607053" y1="116.37279596977" x2="302.56926952141" y2="116.78841309824" stroke="#007cba" stroke-width="1"/>
+    <text x="177.4685138539" y="215.80856423174" font-family="Arial" font-size="8" fill="#007cba" text-anchor="end" font-weight="bold">Sous-total HT: {{subtotal}}
 TVA: {{tax}}
 Frais de port: {{shipping_total}}
 
 TOTAL TTC: {{total}}</text>
-    <text x="27.846347607053" y="298.93198992443" font-family="Arial" font-size="8" fill="#666666" text-anchor="start">Conditions de règlement: Virement bancaire</text>
-    <text x="27.846347607053" y="307.2443324937" font-family="Arial" font-size="8" fill="#666666" text-anchor="start">Date d&#039;échéance: 05/12/2025</text>
-    <line x1="27.846347607053" y1="324.18136020151" x2="302.56926952141" y2="325.01259445844" stroke="#000000" stroke-width="1"/>
+    <text x="27.846347607053" y="257.37027707809" font-family="Arial" font-size="8" fill="#666666" text-anchor="start">Conditions de règlement: Virement bancaire</text>
+    <text x="27.846347607053" y="265.68261964736" font-family="Arial" font-size="8" fill="#666666" text-anchor="start">Date d&#039;échéance: 05/12/2025</text>
+    <line x1="27.846347607053" y1="282.61964735516" x2="302.56926952141" y2="283.03526448363" stroke="#007cba" stroke-width="1"/>
     </g>
     <g id="products-table">
-    <rect x="27.846347607053" y="145.46599496222" width="274.72292191436" height="14.4" fill="#ffffff"/>
-    <text x="32.846347607053" y="155.86599496222" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Produit</text>
-    <text x="192.68010075567" y="155.86599496222" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Qté</text>
-    <text x="247.62468513854" y="155.86599496222" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Prix</text>
-    <text x="32.846347607053" y="169.46599496222" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
-    <text x="192.68010075567" y="169.46599496222" font-family="Arial" font-size="8" fill="#000000">2</text>
-    <text x="247.62468513854" y="169.46599496222" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
+    <rect x="27.846347607053" y="137.15365239295" width="274.72292191436" height="14.4" fill="#ffffff"/>
+    <text x="32.846347607053" y="147.55365239295" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Produit</text>
+    <text x="192.68010075567" y="147.55365239295" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Qté</text>
+    <text x="247.62468513854" y="147.55365239295" font-family="Arial" font-size="8" fill="#000000" font-weight="bold">Prix</text>
+    <text x="32.846347607053" y="161.15365239295" font-family="Arial" font-size="8" fill="#000000">Produit Sample</text>
+    <text x="192.68010075567" y="161.15365239295" font-family="Arial" font-size="8" fill="#000000">2</text>
+    <text x="247.62468513854" y="161.15365239295" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
     </g>
     <g id="order-totals">
-    <rect x="66.498740554156" y="54.445843828715" width="46.964735516373" height="12.052896725441" fill="#f8f8f8" stroke="#cccccc" stroke-width="0.41561712846348"/>
+    <rect x="66.498740554156" y="54.445843828715" width="46.964735516373" height="12.052896725441" fill="#007cba" stroke="#007cba" stroke-width="0.41561712846348"/>
     </g>
     <g id="footer">
-    <text x="27.846347607053" y="340.49370277078" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">Merci de votre confiance - Document généré automatiquement le 05/11/2025</text>
+    <text x="27.846347607053" y="298.93198992443" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">Merci de votre confiance - Document généré automatiquement le 05/11/2025</text>
     </g>
   </g>
 </svg>
