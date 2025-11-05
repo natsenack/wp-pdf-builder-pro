@@ -822,7 +822,7 @@ class PDF_Builder_Template_Manager
 
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
         foreach ($files as $file) {
-            error_log('PDF Builder: get_builtin_templates - fichier: ' . basename($file));
+            error_log('PDF Builder: get_builtin_templates - fichier trouvé: ' . basename($file));
         }
 
         error_log('PDF Builder: get_builtin_templates - fichiers trouvés: ' . count($files));
