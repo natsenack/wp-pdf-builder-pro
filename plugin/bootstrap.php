@@ -89,6 +89,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/get-builtin-templates.php';
     }
 
+    // Charger le handler AJAX pour charger un template builtin spécifique
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/load-builtin-template.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/load-builtin-template.php';
+    }
+
     $loaded = true;
 }
 

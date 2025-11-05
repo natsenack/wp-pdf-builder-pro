@@ -225,15 +225,24 @@ class PDF_Builder_Template_Manager
                 \wp_send_json_error('Permissions insuffisantes');
             }
 
-            // Récupération et validation de l'ID
-            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            // Récupération de l'ID (peut être numérique ou texte)
+            $template_id = isset($_POST['template_id']) ? \sanitize_text_field($_POST['template_id']) : '';
 
-            if (!$template_id) {
+            if (empty($template_id)) {
                 \wp_send_json_error('ID template invalide');
             }
 
+            // Vérifier d'abord si c'est un template builtin (texte avec traits d'union)
+            if (!is_numeric($template_id) && preg_match('/^[a-z0-9-]+$/i', $template_id)) {
+                // C'est un template builtin - charger depuis le fichier JSON
+                return $this->load_builtin_template_ajax($template_id);
+            }
+
+            // Sinon, c'est un template personnalisé - charger depuis wp_posts
+            $template_id_numeric = \intval($template_id);
+            
             // Récupération depuis wp_posts
-            $post = get_post($template_id);
+            $post = get_post($template_id_numeric);
 
             if (!$post || $post->post_type !== 'pdf_template') {
                 \wp_send_json_error('Template non trouvé');
@@ -387,6 +396,86 @@ class PDF_Builder_Template_Manager
             ));
         } catch (\Exception $e) {
             \wp_send_json_error('Erreur lors de l\'auto-save: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Charge un template builtin depuis AJAX
+     * @param string $template_id ID du template builtin (ex: "classic", "corporate")
+     */
+    private function load_builtin_template_ajax($template_id)
+    {
+        try {
+            if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+                define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__, 3)));
+            }
+
+            // Construire le chemin du fichier
+            $template_file = PDF_BUILDER_PLUGIN_DIR . 'templates/builtin/' . $template_id . '.json';
+
+            // Sécurité: vérifier que le fichier n'échappe pas du répertoire
+            $real_path = realpath($template_file);
+            $allowed_dir = realpath(PDF_BUILDER_PLUGIN_DIR . 'templates/builtin');
+            
+            if (!$real_path || strpos($real_path, $allowed_dir) !== 0) {
+                \wp_send_json_error('Accès au fichier refusé');
+                return;
+            }
+
+            // Charger le fichier JSON
+            if (!file_exists($template_file)) {
+                \wp_send_json_error('Template builtin non trouvé: ' . $template_id);
+                return;
+            }
+
+            $template_content = file_get_contents($template_file);
+            if ($template_content === false) {
+                \wp_send_json_error('Erreur lors de la lecture du fichier template');
+                return;
+            }
+
+            $template_data = \json_decode($template_content, true);
+            if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
+                \wp_send_json_error('JSON invalide: ' . \json_last_error_msg());
+                return;
+            }
+
+            // Valider la structure
+            $validation_errors = $this->validate_template_structure($template_data);
+            if (!empty($validation_errors)) {
+                // Ajouter les propriétés par défaut
+                if (!isset($template_data['canvasWidth'])) {
+                    $template_data['canvasWidth'] = 794;
+                }
+                if (!isset($template_data['canvasHeight'])) {
+                    $template_data['canvasHeight'] = 1123;
+                }
+                if (!isset($template_data['elements'])) {
+                    $template_data['elements'] = [];
+                }
+            }
+
+            // Compter les éléments
+            $element_count = isset($template_data['elements']) ? \count($template_data['elements']) : 0;
+            $element_types = [];
+            
+            foreach ($template_data['elements'] as $element) {
+                $type = $element['type'] ?? 'unknown';
+                $element_types[$type] = ($element_types[$type] ?? 0) + 1;
+            }
+
+            // Retourner le template
+            \wp_send_json_success([
+                'template' => $template_data,
+                'name' => $template_data['name'] ?? ucfirst($template_id),
+                'id' => $template_id,
+                'is_builtin' => true,
+                'element_count' => $element_count,
+                'element_types' => $element_types
+            ]);
+
+        } catch (Exception $e) {
+            \wp_send_json_error('Erreur lors du chargement du template builtin: ' . $e->getMessage());
         }
     }
 
