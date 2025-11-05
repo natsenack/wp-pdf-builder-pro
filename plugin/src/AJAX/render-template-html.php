@@ -1,7 +1,8 @@
 <?php
 /**
  * PDF Builder Pro - AJAX Handler for render_template_html
- * Retourne le HTML du canvas avec le template rendu via SVG
+ * Retourne le SVG rendu du template pour affichage dans le canvas React
+ * Utilise le même générateur SVG que la prévisualisation
  */
 
 if (!defined('ABSPATH')) {
@@ -9,8 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Gestionnaire AJAX pour rendre un template en HTML pour le canvas
- * Au lieu de laisser React rendre, on retourne le SVG/HTML déjà généré
+ * Gestionnaire AJAX pour rendre un template en SVG pour le canvas
  */
 function pdf_builder_ajax_render_template_html_handler() {
     try {
@@ -24,50 +24,53 @@ function pdf_builder_ajax_render_template_html_handler() {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        // Récupération du template_id ou template_data
-        $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
-        
-        if (empty($template_id)) {
-            wp_send_json_error('ID template manquant');
+        // Récupération des données du template
+        $template_data_json = isset($_POST['template_data']) ? wp_unslash($_POST['template_data']) : '';
+        if (empty($template_data_json)) {
+            wp_send_json_error('Données du template manquantes');
         }
 
-        // Valider l'ID du template (builtin ou custom)
-        if (!preg_match('/^[a-z0-9_-]+$/i', $template_id)) {
-            wp_send_json_error('ID template invalide');
+        $template_data = json_decode($template_data_json, true);
+        if ($template_data === null) {
+            wp_send_json_error('JSON invalide');
         }
 
-        // Chercher le fichier SVG preview builtin
+        // Charger le générateur SVG
         if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
             define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__, 3)));
         }
 
-        $svg_file = PDF_BUILDER_PLUGIN_DIR . 'assets/images/templates/' . $template_id . '-preview.svg';
-
-        // Vérifier que le fichier SVG existe et est valide
-        if (!file_exists($svg_file)) {
-            wp_send_json_error('Fichier SVG non trouvé pour le template: ' . $template_id);
+        $svg_generator_file = PDF_BUILDER_PLUGIN_DIR . 'generate-svg-preview.php';
+        if (!file_exists($svg_generator_file)) {
+            wp_send_json_error('Générateur SVG non trouvé');
         }
 
-        // Vérifier que le chemin ne s'échappe pas
-        $real_path = realpath($svg_file);
-        $allowed_dir = realpath(PDF_BUILDER_PLUGIN_DIR . 'assets/images/templates');
-        if (!$real_path || strpos($real_path, $allowed_dir) !== 0) {
-            wp_send_json_error('Accès au fichier refusé');
-        }
+        // Charger la classe
+        require_once $svg_generator_file;
 
-        // Lire le contenu du SVG
-        $svg_content = file_get_contents($svg_file);
-        if ($svg_content === false) {
-            wp_send_json_error('Erreur lors de la lecture du fichier SVG');
-        }
+        try {
+            // Créer une instance avec les données du template
+            // La classe s'attend à un fichier JSON, donc on crée un wrapper
+            $temp_file = sys_get_temp_dir() . '/template_' . uniqid() . '.json';
+            file_put_contents($temp_file, json_encode($template_data));
 
-        // Retourner le SVG comme HTML pour le canvas
-        wp_send_json_success([
-            'html' => $svg_content,
-            'format' => 'svg',
-            'template_id' => $template_id,
-            'success' => true
-        ]);
+            // Générer le SVG
+            $generator = new SVGPreviewGeneratorHonest($temp_file);
+            $svg_content = $generator->generateSVG();
+
+            // Nettoyer
+            unlink($temp_file);
+
+            // Retourner le SVG
+            wp_send_json_success([
+                'html' => $svg_content,
+                'format' => 'svg',
+                'success' => true
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur génération SVG: ' . $e->getMessage());
+        }
 
     } catch (Exception $e) {
         wp_send_json_error('Erreur: ' . $e->getMessage());

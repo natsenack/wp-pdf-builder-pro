@@ -22,6 +22,18 @@
         styleSheet.textContent = '';
         document.head.appendChild(styleSheet);
 
+        // Fonction pour appliquer les styles à tous les éléments d'un template
+        function applyTemplateStyles(templateData) {
+            if (!templateData || !templateData.elements) {
+                return;
+            }
+
+            console.log('Applying styles to', templateData.elements.length, 'elements');
+            templateData.elements.forEach(element => {
+                applyElementStyles(null, element);
+            });
+        }
+
         // Fonction pour appliquer les styles à un élément
         function applyElementStyles(element, elementData) {
             if (!elementData || !elementData.properties) {
@@ -96,6 +108,7 @@
 
             // Appliquer les styles
             if (styles.length > 0) {
+                console.log('Applying styles for element', elementId, ':', styles);
                 // Ajouter au CSS global avec un sélecteur spécifique
                 const cssRule = `[data-element-id="${elementId}"] { ${styles.join('; ')}; }`;
                 try {
@@ -107,12 +120,15 @@
                 // Appliquer aussi directement si l'élément est un DIV
                 const domElement = document.querySelector(`[data-element-id="${elementId}"]`);
                 if (domElement) {
+                    console.log('Found DOM element for', elementId, 'applying inline styles');
                     styles.forEach(style => {
                         const [prop, value] = style.split(':').map(s => s.trim());
                         if (prop && value) {
                             domElement.style[prop.replace(/-([a-z])/g, g => g[1].toUpperCase())] = value;
                         }
                     });
+                } else {
+                    console.log('DOM element not found for', elementId);
                 }
             }
         }
@@ -125,12 +141,12 @@
                 if (args[0] && (args[0].includes('load_builtin_template') || args[0].includes('load_template'))) {
                     return response.clone().json().then(data => {
                         if (data.success && data.data && data.data.template && data.data.template.elements) {
+                            console.log('Template loaded:', data.data.template);
                             // Appliquer les styles après un délai pour laisser React rendre
                             setTimeout(() => {
-                                data.data.template.elements.forEach(element => {
-                                    applyElementStyles(null, element);
-                                });
-                            }, 100);
+                                console.log('Applying styles to template elements...');
+                                applyTemplateStyles(data.data.template);
+                            }, 500);
                         }
                         return response;
                     }).catch(() => response);
@@ -147,19 +163,11 @@
                         // C'est un élément du canvas - essayer de récupérer ses données
                         const elementId = node.getAttribute('data-element-id') || node.id;
                         if (elementId) {
-                            // Essayer de trouver les données de cet élément dans le store Redux
-                            if (window.__REDUX_DEVTOOLS_EXTENSION__) {
-                                // Redux est disponible
-                                try {
-                                    const state = window.store?.getState?.();
-                                    if (state && state.elements && Array.isArray(state.elements)) {
-                                        const element = state.elements.find(e => e.id === elementId);
-                                        if (element) {
-                                            applyElementStyles(node, element);
-                                        }
-                                    }
-                                } catch (err) {
-                                    // Silent fail - element data not in Redux store
+                            // Essayer de trouver les données de cet élément dans les données du template
+                            if (window.currentTemplateData && window.currentTemplateData.elements) {
+                                const element = window.currentTemplateData.elements.find(e => e.id === elementId);
+                                if (element) {
+                                    applyElementStyles(node, element);
                                 }
                             }
                         }

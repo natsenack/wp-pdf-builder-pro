@@ -17,11 +17,11 @@ add_action('wp_footer', function() {
     
     ?>
     <script type="text/javascript">
-    /* PDF Builder Pro - Canvas SVG Template Injector */
+    /* PDF Builder Pro - Canvas Template Style Helper */
     (function() {
         'use strict';
 
-        // Intercepter le chargement du template et charger le SVG
+        // Intercepter le chargement du template pour aider l'application React
         const originalFetch = window.fetch;
         window.fetch = function() {
             const args = Array.from(arguments);
@@ -29,15 +29,20 @@ add_action('wp_footer', function() {
             const result = originalFetch.apply(this, args);
 
             // Si c'est un appel de chargement de template builtin
-            if (url && (url.includes('load_builtin_template') || url.includes('load_template'))) {
+            if (url && url.includes('load_builtin_template')) {
                 return result.then(function(response) {
                     return response.clone().json().then(function(data) {
                         if (data.success && data.data && data.data.template) {
-                            const templateId = data.data.id;
-                            if (templateId) {
-                                // Charger et afficher le SVG du template
-                                loadTemplateFromSVG(templateId);
-                            }
+                            // Stocker les données du template pour que React puisse les utiliser
+                            window.currentTemplateData = data.data.template;
+                            
+                            // Dispatcher un événement personnalisé pour informer React
+                            setTimeout(function() {
+                                const event = new CustomEvent('templateLoaded', { 
+                                    detail: { template: data.data.template } 
+                                });
+                                document.dispatchEvent(event);
+                            }, 100);
                         }
                         return response;
                     }).catch(function() {
@@ -48,55 +53,6 @@ add_action('wp_footer', function() {
 
             return result;
         };
-
-        // Fonction pour charger et afficher le SVG du template
-        function loadTemplateFromSVG(templateId) {
-            // Construire les données pour l'AJAX
-            const formData = new FormData();
-            formData.append('action', 'pdf_builder_render_template_html');
-            formData.append('template_id', templateId);
-            formData.append('nonce', (window.pdfBuilderData && window.pdfBuilderData.nonce) || (typeof ajaxnonce !== 'undefined' ? ajaxnonce : ''));
-
-            // Faire l'appel AJAX
-            const ajaxUrl = (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php';
-            
-            fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success && data.data.html) {
-                    // Trouver le canvas et injecter le SVG
-                    setTimeout(function() {
-                        const canvas = document.querySelector('.canvas, [class*="canvas"]');
-                        if (canvas) {
-                            // Créer un wrapper pour le SVG
-                            const svgContainer = document.createElement('div');
-                            svgContainer.id = 'svg-template-container';
-                            svgContainer.style.cssText = 'position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;';
-                            svgContainer.innerHTML = data.data.html;
-                            
-                            // Vider le canvas et ajouter le SVG
-                            canvas.innerHTML = '';
-                            canvas.appendChild(svgContainer);
-                            
-                            // Adapter le SVG aux dimensions du canvas
-                            const svg = svgContainer.querySelector('svg');
-                            if (svg) {
-                                svg.style.maxWidth = '100%';
-                                svg.style.maxHeight = '100%';
-                                svg.style.width = 'auto';
-                                svg.style.height = 'auto';
-                            }
-                        }
-                    }, 200);
-                }
-            })
-            .catch(function(err) { 
-                console.error('Erreur chargement SVG:', err); 
-            });
-        }
 
     })();
     </script>
