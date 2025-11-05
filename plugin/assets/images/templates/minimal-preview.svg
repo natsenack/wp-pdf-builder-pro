@@ -6,6 +6,10 @@
   <g id="page-content" transform="translate(10,13.69)">
     <g id="header">
     <text x="300" y="48.846260017809" font-family="Arial" font-size="11.402030276046" fill="#000000" text-anchor="middle" font-weight="bold">L</text>
+    <text x="63.051113089938" y="52.646936776492" font-family="Arial" font-size="15.202707034728" fill="#000000" text-anchor="start" font-weight="bold">FACTURE</text>
+    <line x1="63.051113089938" y1="108.70691896705" x2="340" y2="109.49872662511" stroke="#ffc107" stroke-width="2.3754229741763"/>
+    <rect x="63.051113089938" y="124.54307212823" width="276.94888691006" height="23.754229741763" fill="#ffc107" stroke-width="0"/>
+    <text x="73.344612644702" y="138.50211041852" font-family="Arial" font-size="10" fill="#000000" text-anchor="start" font-weight="bold">Produit		Qté	Prix	Total</text>
     </g>
     <g id="company-info">
     </g>
@@ -16,6 +20,7 @@
     </g>
     <g id="order-info">
     <text x="485.08459483526" y="79.410035618878" font-family="Arial" font-size="10.293499554764" fill="#212529">Commande #12345</text>
+    <text x="485.08459483526" y="95.246188780053" font-family="Arial" font-size="10.293499554764" fill="#6c757d">Date: 05/11/2025</text>
     </g>
     <g id="products-table">
     <rect x="63.051113089938" y="148.29730186999" width="276.94888691006" height="19.003383793411" fill="#28a745"/>
@@ -28,9 +33,14 @@
     </g>
     <g id="order-totals">
     <line x1="326.72306322351" y1="488.77459483526" x2="340" y2="480.31" stroke="#ffc107" stroke-width="0.79180765805877"/>
+    <text x="300" y="489" font-family="Arial" font-size="10" fill="#000000" text-anchor="end" font-weight="normal">Sous-total:</text>
+    <text x="300" y="489" font-family="Arial" font-size="10" fill="#000000" text-anchor="end" font-weight="bold">€2500.00</text>
+    <text x="300" y="489" font-family="Arial" font-size="10.135138023152" fill="#000000" text-anchor="end" font-weight="bold">TOTAL:</text>
+    <text x="300" y="489" font-family="Arial" font-size="11.402030276046" fill="#000000" text-anchor="end" font-weight="bold">€2250.00</text>
     </g>
     <g id="footer">
     <line x1="63.051113089938" y1="805.49765805877" x2="340" y2="480.31" stroke="#cccccc" stroke-width="0.79180765805877"/>
+    <text x="63.051113089938" y="835.586349065" font-family="Arial" font-size="8.7098842386465" fill="#adb5bd">Conditions générales de vente - TVA non applicable art. 293B du CGI</text>
     </g>
   </g>
 </svg>

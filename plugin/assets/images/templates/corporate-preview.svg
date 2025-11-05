@@ -36,12 +36,12 @@
     </g>
     <g id="order-totals">
     <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="start" font-weight="normal">Sous-total:</text>
-    <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">Sample Text</text>
+    <text x="300" y="356.24921638468" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">€2500.00</text>
     <text x="300" y="372.08536954586" font-family="Arial" font-size="10" fill="#6c757d" text-anchor="start" font-weight="normal">Coupon:</text>
-    <text x="300" y="372.08536954586" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">Sample Text</text>
+    <text x="300" y="372.08536954586" font-family="Arial" font-size="10" fill="#28a745" text-anchor="end" font-weight="bold">-€250.00</text>
     <rect x="405.90382902939" y="377.92152270703" width="-65.903829029386" height="23.754229741763" fill="#28a745" stroke-width="0"/>
     <text x="300" y="391.88056099733" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="start" font-weight="bold">TOTAL:</text>
-    <text x="300" y="391.88056099733" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="end" font-weight="bold">Sample Text</text>
+    <text x="300" y="391.88056099733" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="end" font-weight="bold">€2250.00</text>
     </g>
     <g id="footer">
     </g>

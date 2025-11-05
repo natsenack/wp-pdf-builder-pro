@@ -146,9 +146,23 @@ class SVGPreviewGenerator
                 $textAlign = $properties['textAlign'] ?? 'left';
                 $fontWeight = $properties['fontWeight'] ?? 'normal';
 
-                // Skip dynamic content for preview
+                // Skip dynamic content for preview - replace with sample data
                 if (strpos($text, '{{') !== false) {
-                    $text = 'Sample Text';
+                    $elementId = $element['id'] ?? '';
+                    
+                    if (strpos($elementId, 'subtotal') !== false) {
+                        $text = '€2500.00';
+                    } elseif (strpos($elementId, 'discount') !== false) {
+                        $text = '-€250.00';
+                    } elseif (strpos($elementId, 'total') !== false) {
+                        $text = '€2250.00';
+                    } elseif (strpos($elementId, 'customer') !== false || strpos($elementId, 'client') !== false) {
+                        $text = 'Sample Text';
+                    } elseif (strpos($elementId, 'address') !== false) {
+                        $text = 'Sample Address';
+                    } else {
+                        $text = 'Sample Text';
+                    }
                 }
 
                 $textAnchor = 'start';

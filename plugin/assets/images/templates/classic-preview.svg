@@ -23,7 +23,7 @@
     <g id="order-info">
     <text x="63.051113089938" y="134.54307212823" font-family="Arial" font-size="10" fill="#333333">Commande #12345</text>
     <text x="63.051113089938" y="149.88091718611" font-family="Arial" font-size="9.5016918967053" fill="#333333">Date: 05/11/2025</text>
-    <text x="300" y="482.93844167409" font-family="Arial" font-size="10" fill="#000000" text-anchor="end" font-weight="bold">Sample Text</text>
+    <text x="300" y="482.93844167409" font-family="Arial" font-size="10" fill="#000000" text-anchor="end" font-weight="bold">€2250.00</text>
     <text x="63.051113089938" y="576.66524487979" font-family="Arial" font-size="8.7098842386465" fill="#666666">Conditions de règlement: Virement bancaire</text>
     <text x="63.051113089938" y="592.50139804096" font-family="Arial" font-size="8.7098842386465" fill="#666666">Date d&#039;échéance: 15/11/2025</text>
     <line x1="63.051113089938" y1="631.29997328584" x2="340" y2="480.31" stroke="#000000" stroke-width="1.5836153161175"/>
