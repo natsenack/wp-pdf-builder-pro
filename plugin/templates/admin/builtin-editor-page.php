@@ -107,6 +107,9 @@ function pdf_builder_builtin_templates_list_page() {
                     <button class="template-edit-btn" data-template-id="<%= id %>" title="<?php _e('Modifier les paramètres', 'pdf-builder-pro'); ?>">
                         <span class="dashicons dashicons-admin-generic"></span>
                     </button>
+                    <button class="template-delete-btn" data-template-id="<%= id %>" title="<?php _e('Supprimer le template', 'pdf-builder-pro'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
                     <a href="<?php echo admin_url('admin.php?page=pdf-builder-builtin-editor&template='); ?><%= id %>" class="button button-primary button-small">
                         <span class="dashicons dashicons-edit"></span>
                         <?php _e('Éditer', 'pdf-builder-pro'); ?>

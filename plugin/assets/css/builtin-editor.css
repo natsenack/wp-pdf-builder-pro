@@ -183,6 +183,29 @@
     background: #d1d5db;
 }
 
+/* Boutons de suppression */
+.template-delete-btn {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.template-delete-btn:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fca5a5;
+}
+
+.template-delete-btn:active {
+    background: #fecaca;
+}
+
 #json-editor-container {
     height: 500px;
     border: 1px solid #ccd0d4;

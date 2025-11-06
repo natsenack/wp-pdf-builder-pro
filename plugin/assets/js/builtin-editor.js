@@ -125,6 +125,14 @@
             showEditTemplateModal(templateId);
         });
 
+        // Delete template buttons
+        $(document).on('click', '.template-delete-btn', function() {
+            const templateId = $(this).data('template-id');
+            if (confirm(pdfBuilderBuiltinEditor.strings.confirm_delete)) {
+                deleteTemplate(templateId);
+            }
+        });
+
         // Update template confirm button
         $('#update-template-confirm').on('click', function() {
             updateTemplateParameters();
@@ -265,6 +273,33 @@
     function hideEditTemplateModal() {
         $('#edit-template-modal').hide();
         $('#edit-template-form')[0].reset();
+    }
+
+    /**
+     * Delete the current template
+     */
+    function deleteTemplate(templateId) {
+        $.ajax({
+            url: pdfBuilderBuiltinEditor.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_delete_builtin_template',
+                template_id: templateId,
+                nonce: pdfBuilderBuiltinEditor.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    showSuccess(pdfBuilderBuiltinEditor.strings.template_deleted);
+                    // Reload the templates list
+                    loadTemplatesList();
+                } else {
+                    showError('Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue'));
+                }
+            },
+            error: function() {
+                showError('Erreur de connexion lors de la suppression');
+            }
+        });
     }
 
     /**
