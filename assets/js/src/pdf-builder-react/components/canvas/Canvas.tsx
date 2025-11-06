@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useCallback, memo } from 'react';
-import ReactDOM from 'react-dom';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
@@ -1707,14 +1706,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
           backgroundColor: '#ffffff'
         }}
       />
-      {typeof document !== 'undefined' && ReactDOM.createPortal(
+      {contextMenu.isVisible && (
         <ContextMenu
           items={getContextMenuItems(contextMenu.elementId)}
           position={contextMenu.position}
           onClose={hideContextMenu}
           isVisible={contextMenu.isVisible}
-        />,
-        document.body
+        />
       )}
     </>
   );
