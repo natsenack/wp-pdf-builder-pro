@@ -105,20 +105,12 @@ if (!defined('ABSPATH')) {
                     echo '<span style="background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à l\'emploi</span>';
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px;">';
-                    echo '<button class="button button-primary" style="flex: 1;" onclick="createFromPredefined(\'' . esc_attr($template['slug']) . '\')">🚀 Utiliser ce modèle</button>';
-                    echo '<button class="button button-secondary" style="flex: 1;" onclick="previewPredefinedTemplate(\'' . esc_attr($template['slug']) . '\')">👁️ Aperçu</button>';
+                    echo '<button class="button button-primary" style="width: 100%;" onclick="createFromPredefined(\'' . esc_attr($template['slug']) . '\')">🚀 Utiliser ce modèle</button>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
                 }
 
-                echo '</div>';
-            } else {
-                echo '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6;">';
-                echo '<div style="font-size: 3rem; margin-bottom: 20px;">🎨</div>';
-                echo '<h3 style="color: #666; margin-bottom: 10px;">Aucun modèle prédéfini disponible</h3>';
-                echo '<p style="color: #999;">Les modèles prédéfinis apparaîtront ici une fois créés.</p>';
-                echo '<button class="button button-primary" onclick="openPredefinedManager()">Créer un modèle prédéfini</button>';
                 echo '</div>';
             }
             ?>
@@ -908,30 +900,6 @@ function createFromPredefined(slug) {
             button.disabled = false;
         });
     }
-}
-
-function previewPredefinedTemplate(slug) {
-    // Ouvrir la galerie et filtrer sur ce template
-    openTemplateGallery();
-    setTimeout(() => {
-        const filterButtons = document.querySelectorAll('.gallery-filter-btn');
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        // Trouver le bouton de filtrage correspondant à ce template
-        const templateCard = document.querySelector(`.predefined-template-card[data-slug="${slug}"]`);
-        if (templateCard) {
-            const category = templateCard.getAttribute('data-category');
-            const filterBtn = document.querySelector(`.gallery-filter-btn[data-filter="${category}"]`);
-            if (filterBtn) {
-                filterBtn.classList.add('active');
-                filterGalleryTemplates(category);
-            }
-        }
-    }, 100);
-}
-
-function openPredefinedManager() {
-    // Rediriger vers la page de gestion des modèles prédéfinis
-    window.location.href = '<?php echo admin_url("admin.php?page=pdf-builder-predefined-templates"); ?>';
 }
 </script>
 

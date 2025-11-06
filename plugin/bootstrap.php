@@ -74,6 +74,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
+    // Charger le gestionnaire de modèles prédéfinis
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php';
+    }
+
     // Charger le contrôleur PDF
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
@@ -403,6 +408,22 @@ function pdf_builder_ensure_admin_menu() {
             $core->render_settings_page();
         }
 
+        // Fonction callback pour la page modèles prédéfinis
+        function pdf_builder_predefined_templates_page_callback() {
+            if (!is_user_logged_in()) {
+                wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
+            }
+
+            pdf_builder_load_core_when_needed();
+            // Le gestionnaire est auto-instancié, on appelle juste sa méthode de rendu
+            if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
+                $manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
+                $manager->render_admin_page();
+            } else {
+                echo '<div class="wrap"><h1>Erreur</h1><p>Le gestionnaire de modèles prédéfinis n\'est pas disponible.</p></div>';
+            }
+        }
+
         // Fonction callback pour la page React Editor
         function pdf_builder_react_editor_page_callback() {
             if (!is_user_logged_in()) {
@@ -468,6 +489,15 @@ function pdf_builder_ensure_admin_menu() {
             'read',  // Changé pour permettre à tous les utilisateurs connectés
             'pdf-builder-settings',
             'pdf_builder_settings_page_callback'
+        );
+
+        add_submenu_page(
+            'pdf-builder-main',
+            '📝 Modèles Prédéfinis',
+            '📝 Modèles Prédéfinis',
+            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'pdf-builder-predefined-templates',
+            'pdf_builder_predefined_templates_page_callback'
         );
 
         add_submenu_page(

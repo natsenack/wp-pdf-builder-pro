@@ -460,16 +460,17 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Configuration JSON invalide: ' . json_last_error_msg());
             }
 
-            // Structure du modèle
-            $template_data = [
-                'name' => $name,
-                'category' => $category,
-                'description' => $description,
-                'icon' => $icon,
-                'created_at' => current_time('mysql'),
-                'updated_at' => current_time('mysql'),
-                'config' => $json_data
-            ];
+            // Le JSON envoyé depuis l'éditeur contient déjà la structure complète (template + elements)
+            // On l'utilise directement comme contenu du fichier
+            $template_data = $json_data;
+
+            // Ajouter les métadonnées du modèle prédéfini
+            $template_data['name'] = $name;
+            $template_data['category'] = $category;
+            $template_data['description'] = $description;
+            $template_data['icon'] = $icon;
+            $template_data['created_at'] = current_time('mysql');
+            $template_data['updated_at'] = current_time('mysql');
 
             // Sauvegarde dans le fichier
             $file_path = $this->templates_dir . $slug . '.json';
