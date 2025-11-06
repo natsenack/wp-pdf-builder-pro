@@ -5334,9 +5334,6 @@ class PDF_Builder_Admin {
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
-        <script>
-            console.log('[PHP OUTPUT] wp_localize_script executed with pdfBuilderData:', typeof window.pdfBuilderData, 'builtinTemplate:', typeof window.pdfBuilderData?.builtinTemplate);
-        </script>
         <div class="wrap">
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
@@ -5578,7 +5575,7 @@ class PDF_Builder_Admin {
         
         function callInitIfNeeded() {
             if (!initCalled) {
-                debugLog('🟢 Calling initReactAndTemplate from timeout fallback');
+                debugLog('🟢 Calling initReactAndTemplate from fallback');
                 initCalled = true;
                 initReactAndTemplate();
             }
@@ -5599,9 +5596,21 @@ class PDF_Builder_Admin {
             initReactAndTemplate();
         }
 
-        // Fallback: If not called after 2 seconds, call it anyway
-        setTimeout(callInitIfNeeded, 2000);
-        debugLog('⏱️ [ADMIN] Fallback timeout set for 2 seconds');
+        // Fallback: Wait for pdfBuilderData to be available, then init
+        debugLog('⏱️ [ADMIN] Waiting for pdfBuilderData to become available...');
+        var pdfDataCheckCount = 0;
+        var pdfDataWaiter = setInterval(function() {
+            pdfDataCheckCount++;
+            if (window.pdfBuilderData) {
+                clearInterval(pdfDataWaiter);
+                debugLog('✅ [ADMIN] pdfBuilderData became available at check #' + pdfDataCheckCount);
+                callInitIfNeeded();
+            } else if (pdfDataCheckCount > 200) { // 200 * 50ms = 10 seconds
+                clearInterval(pdfDataWaiter);
+                debugLog('⚠️ [ADMIN] pdfBuilderData not available after 10 seconds, initializing anyway');
+                callInitIfNeeded();
+            }
+        }, 50);
 
         // ============================================================================
         // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
