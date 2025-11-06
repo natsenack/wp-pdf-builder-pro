@@ -81,8 +81,26 @@
                         <p>${template.description}</p>
                         <small>${template.elements.length} éléments</small>
                     </div>
+                    <div class="template-actions">
+                        <button class="template-edit-btn" data-template-id="${template.id}" title="Modifier les paramètres">
+                            <span class="dashicons dashicons-admin-generic"></span>
+                        </button>
+                        <button class="template-delete-btn" data-template-id="${template.id}" title="Supprimer le template">
+                            <span class="dashicons dashicons-trash"></span>
+                        </button>
+                        <a href="admin.php?page=pdf-builder-builtin-editor&template=${template.id}" class="button button-primary button-small">
+                            <span class="dashicons dashicons-edit"></span>
+                            Éditer
+                        </a>
+                    </div>
                 </div>
             `);
+            
+            // Log the HTML generated
+            console.log('📝 [BUILTIN EDITOR] Generated HTML:', item.html());
+            console.log('🔍 [BUILTIN EDITOR] .template-actions found in item:', item.find('.template-actions').length, 'elements');
+            console.log('🔍 [BUILTIN EDITOR] .template-edit-btn found in item:', item.find('.template-edit-btn').length, 'elements');
+            console.log('🔍 [BUILTIN EDITOR] .template-delete-btn found in item:', item.find('.template-delete-btn').length, 'elements');
 
             item.on('click', function() {
                 loadTemplate(template.id);
@@ -90,9 +108,30 @@
 
             container.append(item);
             console.log('✅ [BUILTIN EDITOR] Template added to container:', template.id);
+            console.log('✅ [BUILTIN EDITOR] Template item HTML after append:', item.html());
+            console.log('🔍 [BUILTIN EDITOR] .template-actions in DOM:', container.find('.template-actions').length, 'elements');
+            console.log('🔍 [BUILTIN EDITOR] .template-edit-btn in DOM:', container.find('.template-edit-btn').length, 'elements');
+            console.log('🔍 [BUILTIN EDITOR] .template-delete-btn in DOM:', container.find('.template-delete-btn').length, 'elements');
         });
 
         console.log('🎉 [BUILTIN EDITOR] All templates rendered, container has', container.children().length, 'children');
+        console.log('📊 [BUILTIN EDITOR] Final DOM check:');
+        console.log('   - .template-actions:', $('.template-actions').length);
+        console.log('   - .template-edit-btn:', $('.template-edit-btn').length);
+        console.log('   - .template-delete-btn:', $('.template-delete-btn').length);
+        console.log('   - All .template-list-item:', $('.template-list-item').length);
+        
+        // Log CSS computed styles for debugging
+        const firstEditBtn = $('.template-edit-btn').first();
+        if (firstEditBtn.length) {
+            const computed = window.getComputedStyle(firstEditBtn[0]);
+            console.log('🎨 [BUILTIN EDITOR] First .template-edit-btn computed styles:');
+            console.log('   - display:', computed.display);
+            console.log('   - visibility:', computed.visibility);
+            console.log('   - opacity:', computed.opacity);
+            console.log('   - width:', computed.width);
+            console.log('   - height:', computed.height);
+        }
     }
 
     /**
@@ -137,20 +176,29 @@
      * Setup event handlers
      */
     function setupEventHandlers() {
+        console.log('🎯 [BUILTIN EDITOR] Setting up event handlers...');
+        
         // New template button
         $('#new-template-btn').on('click', function() {
+            console.log('👆 [BUILTIN EDITOR] New template button clicked');
             showNewTemplateModal();
         });
 
         // Edit template parameters buttons
-        $(document).on('click', '.template-edit-btn', function() {
+        $(document).on('click', '.template-edit-btn', function(e) {
+            e.stopPropagation();
             const templateId = $(this).data('template-id');
+            console.log('✏️ [BUILTIN EDITOR] Edit button clicked for template:', templateId);
+            console.log('🔍 [BUILTIN EDITOR] Button element:', this);
             showEditTemplateModal(templateId);
         });
 
         // Delete template buttons
-        $(document).on('click', '.template-delete-btn', function() {
+        $(document).on('click', '.template-delete-btn', function(e) {
+            e.stopPropagation();
             const templateId = $(this).data('template-id');
+            console.log('🗑️ [BUILTIN EDITOR] Delete button clicked for template:', templateId);
+            console.log('🔍 [BUILTIN EDITOR] Button element:', this);
             if (confirm(pdfBuilderBuiltinEditor.strings.confirm_delete)) {
                 deleteTemplate(templateId);
             }
@@ -158,13 +206,17 @@
 
         // Update template confirm button
         $('#update-template-confirm').on('click', function() {
+            console.log('💾 [BUILTIN EDITOR] Update template confirm clicked');
             updateTemplateParameters();
         });
 
         // Close edit modal events
         $('#edit-template-modal .pdf-modal-close, #edit-template-modal .pdf-modal-backdrop').on('click', function() {
+            console.log('❌ [BUILTIN EDITOR] Edit modal close clicked');
             hideEditTemplateModal();
         });
+        
+        console.log('✅ [BUILTIN EDITOR] Event handlers setup completed');
     }
 
     /**
