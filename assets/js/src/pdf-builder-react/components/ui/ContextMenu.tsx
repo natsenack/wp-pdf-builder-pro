@@ -23,6 +23,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
+  console.log('🎛️ ContextMenu render - isVisible:', isVisible, 'position:', position, 'items:', items);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,10 +52,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isVisible, onClose]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    console.log('🎛️ ContextMenu - not visible, returning null');
+    return null;
+  }
+
+  console.log('🎛️ ContextMenu - rendering menu');
 
   const handleItemClick = (item: ContextMenuItem) => {
     if (!item.disabled && !item.separator && item.action) {
+      console.log('🎛️ ContextMenu - item clicked:', item.label);
       item.action();
       onClose();
     }
