@@ -766,6 +766,7 @@ class PDF_Builder_Core
 
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
             <?php if ($template_data && $builtin_template): ?>
+            console.log('🏗️ [PDF BUILDER] Préparation injection builtin - Template:', <?php echo json_encode($builtin_template); ?>, 'Data:', <?php echo json_encode(count($template_data['elements'] ?? [])); ?>);
             window.pdfBuilderData.builtinData = <?php echo json_encode($template_data); ?>;
             console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderData.builtinData);
 
@@ -775,7 +776,12 @@ class PDF_Builder_Core
 
             function tryInjectBuiltinData() {
                 injectionAttempts++;
-                console.log(`� [PDF BUILDER] Tentative d'injection ${injectionAttempts}/${maxAttempts}`);
+                console.log(`🔄 [PDF BUILDER] Tentative d'injection ${injectionAttempts}/${maxAttempts} - Template:`, window.pdfBuilderData.builtinTemplate);
+                console.log(`🔍 [PDF BUILDER] Données disponibles:`, {
+                    builtinTemplate: window.pdfBuilderData.builtinTemplate,
+                    builtinData: !!window.pdfBuilderData.builtinData,
+                    elementsCount: window.pdfBuilderData.builtinData?.elements?.length || 0
+                });
 
                 // Essayer différentes méthodes d'accès à l'éditeur
                 const possibleEditors = [
@@ -786,11 +792,18 @@ class PDF_Builder_Core
                     document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
                 ];
 
+                console.log('🔍 [PDF BUILDER] Éditeurs disponibles:', possibleEditors.map((e, i) => ({
+                    index: i,
+                    exists: !!e,
+                    hasDispatch: !!(e && typeof e.dispatch === 'function'),
+                    type: e?.constructor?.name || 'unknown'
+                })));
+
                 for (const editor of possibleEditors) {
                     if (editor && typeof editor.dispatch === 'function') {
-                        console.log('🚀 [PDF BUILDER] Éditeur trouvé, injection des données builtin...');
+                        console.log('🚀 [PDF BUILDER] Éditeur trouvé avec dispatch, préparation injection...');
                         try {
-                            editor.dispatch({
+                            const payload = {
                                 type: 'LOAD_TEMPLATE',
                                 payload: {
                                     id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
@@ -801,12 +814,16 @@ class PDF_Builder_Core
                                         height: window.pdfBuilderData.builtinData.canvasHeight || 1123
                                     }
                                 }
-                            });
-                            console.log('✅ [PDF BUILDER] Données builtin injectées avec succès');
+                            };
+                            console.log('📤 [PDF BUILDER] Payload à envoyer:', JSON.stringify(payload, null, 2));
+                            const result = editor.dispatch(payload);
+                            console.log('✅ [PDF BUILDER] Dispatch réussi, résultat:', result);
                             return true;
                         } catch (error) {
-                            console.error('❌ [PDF BUILDER] Erreur lors du dispatch:', error);
+                            console.error('❌ [PDF BUILDER] Erreur lors du dispatch:', error.message, error.stack);
                         }
+                    } else if (editor) {
+                        console.log('⚠️ [PDF BUILDER] Éditeur trouvé mais pas de dispatch:', typeof editor.dispatch);
                     }
                 }
 
@@ -824,8 +841,9 @@ class PDF_Builder_Core
                                 }
                             }
                         });
+                        console.log('📡 [PDF BUILDER] Envoi événement personnalisé avec détail:', event.detail);
                         window.dispatchEvent(event);
-                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé avec données complètes');
+                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé avec succès');
                         return true;
                     } catch (e) {
                         console.error('❌ [PDF BUILDER] Erreur envoi événement:', e);
@@ -843,7 +861,12 @@ class PDF_Builder_Core
                             height: window.pdfBuilderData.builtinData.canvasHeight || 1123
                         }
                     };
-                    console.log('💾 [PDF BUILDER] Données stockées dans variable globale');
+                    console.log('💾 [PDF BUILDER] Données stockées dans variable globale:', {
+                        id: window.pdfBuilderBuiltinTemplateData.id,
+                        name: window.pdfBuilderBuiltinTemplateData.name,
+                        elementsCount: window.pdfBuilderBuiltinTemplateData.elements.length,
+                        canvas: window.pdfBuilderBuiltinTemplateData.canvas
+                    });
                 }
 
                 // Réessayer si on n'a pas dépassé le nombre max de tentatives

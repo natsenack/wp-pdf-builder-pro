@@ -8,6 +8,14 @@
     // No longer need editor-related variables since editing is done in React
 
     $(document).ready(function() {
+        console.log('🔍 [BUILTIN EDITOR] Page loaded, initializing...');
+        console.log('🔍 [BUILTIN EDITOR] pdfBuilderBuiltinEditor:', typeof pdfBuilderBuiltinEditor, pdfBuilderBuiltinEditor);
+
+        if (typeof pdfBuilderBuiltinEditor === 'undefined') {
+            console.error('❌ [BUILTIN EDITOR] pdfBuilderBuiltinEditor is not defined!');
+            return;
+        }
+
         loadTemplatesList();
         setupEventHandlers();
     });
@@ -16,6 +24,8 @@
      * Load the list of builtin templates
      */
     function loadTemplatesList() {
+        console.log('🔍 [BUILTIN EDITOR] Loading templates list...');
+
         $.ajax({
             url: pdfBuilderBuiltinEditor.ajaxurl,
             type: 'POST',
@@ -24,13 +34,17 @@
                 nonce: pdfBuilderBuiltinEditor.nonce
             },
             success: function(response) {
+                console.log('✅ [BUILTIN EDITOR] AJAX success:', response);
                 if (response.success) {
+                    console.log('📋 [BUILTIN EDITOR] Rendering', response.data.templates.length, 'templates');
                     renderTemplatesList(response.data.templates);
                 } else {
+                    console.error('❌ [BUILTIN EDITOR] AJAX error:', response.data);
                     showError('Erreur lors du chargement des templates: ' + (response.data || 'Erreur inconnue'));
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('❌ [BUILTIN EDITOR] AJAX failed:', status, error);
                 showError('Erreur de connexion lors du chargement des templates');
             }
         });
@@ -40,7 +54,11 @@
      * Render the templates list
      */
     function renderTemplatesList(templates) {
+        console.log('🎨 [BUILTIN EDITOR] Rendering templates:', templates);
+
         const container = $('#templates-list');
+        console.log('📦 [BUILTIN EDITOR] Container found:', container.length, 'elements');
+
         container.empty();
 
         if (templates.length === 0) {
@@ -49,6 +67,8 @@
         }
 
         templates.forEach(function(template) {
+            console.log('🔧 [BUILTIN EDITOR] Processing template:', template.id, template.name);
+
             const item = $(`
                 <div class="template-list-item" data-template-id="${template.id}">
                     <div class="template-thumbnail">
@@ -69,7 +89,10 @@
             });
 
             container.append(item);
+            console.log('✅ [BUILTIN EDITOR] Template added to container:', template.id);
         });
+
+        console.log('🎉 [BUILTIN EDITOR] All templates rendered, container has', container.children().length, 'children');
     }
 
     /**

@@ -5278,29 +5278,41 @@ class PDF_Builder_Admin {
         <script>
         // Écouter les événements de chargement de templates builtin
         window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
-            debugLog('📡 Received builtin template load event:', event.detail);
+            debugLog('📡 [ADMIN] Received builtin template load event:', event.detail);
+            debugLog('📊 [ADMIN] Event detail structure:', {
+                hasId: !!event.detail?.id,
+                hasName: !!event.detail?.name,
+                elementsCount: event.detail?.elements?.length || 0,
+                hasCanvas: !!event.detail?.canvas
+            });
 
             // Attendre que l'éditeur soit prêt, puis charger le template
             function loadBuiltinTemplateWhenReady() {
+                debugLog('🔍 [ADMIN] Checking if editor is ready for builtin template...');
+                debugLog('🔍 [ADMIN] Window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+                debugLog('🔍 [ADMIN] Has loadTemplate:', !!(window.pdfBuilderReact && window.pdfBuilderReact.loadTemplate));
+                debugLog('🔍 [ADMIN] Has getEditorState:', !!(window.pdfBuilderReact && window.pdfBuilderReact.getEditorState));
+
                 if (typeof window.pdfBuilderReact !== 'undefined' &&
                     window.pdfBuilderReact.loadTemplate &&
                     window.pdfBuilderReact.getEditorState) {
 
                     try {
                         var editorState = window.pdfBuilderReact.getEditorState();
-                        debugLog('📊 Current editor state:', editorState);
+                        debugLog('📊 [ADMIN] Current editor state:', editorState);
 
                         // Charger le template builtin
+                        debugLog('🚀 [ADMIN] Calling loadTemplate with:', event.detail);
                         var result = window.pdfBuilderReact.loadTemplate(event.detail);
-                        debugLog('✅ Builtin template loaded:', result);
+                        debugLog('✅ [ADMIN] Builtin template loaded, result:', result);
                         return true;
                     } catch(e) {
-                        debugError('❌ Error loading builtin template:', e.message);
+                        debugError('❌ [ADMIN] Error loading builtin template:', e.message, e.stack);
                         return false;
                     }
                 }
 
-                debugLog('⏳ Editor not ready for builtin template, retrying...');
+                debugLog('⏳ [ADMIN] Editor not ready for builtin template, retrying...');
                 return false;
             }
 
@@ -5323,11 +5335,16 @@ class PDF_Builder_Admin {
 
         // Vérifier aussi les données globales au cas où l'événement n'aurait pas été envoyé
         setTimeout(function() {
+            debugLog('🔍 [ADMIN] Checking for global builtin template data...');
             if (window.pdfBuilderBuiltinTemplateData) {
-                debugLog('💾 Found global builtin template data, loading...');
+                debugLog('💾 [ADMIN] Found global builtin template data, loading...');
+                debugLog('📊 [ADMIN] Global data:', window.pdfBuilderBuiltinTemplateData);
                 window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                     detail: window.pdfBuilderBuiltinTemplateData
                 }));
+                debugLog('📡 [ADMIN] Dispatched event from global data');
+            } else {
+                debugLog('❌ [ADMIN] No global builtin template data found');
             }
         }, 1000);
 
