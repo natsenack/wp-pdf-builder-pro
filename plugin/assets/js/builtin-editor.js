@@ -118,6 +118,22 @@
         $('#new-template-btn').on('click', function() {
             showNewTemplateModal();
         });
+
+        // Edit template parameters buttons
+        $(document).on('click', '.template-edit-btn', function() {
+            const templateId = $(this).data('template-id');
+            showEditTemplateModal(templateId);
+        });
+
+        // Update template confirm button
+        $('#update-template-confirm').on('click', function() {
+            updateTemplateParameters();
+        });
+
+        // Close edit modal events
+        $('#edit-template-modal .pdf-modal-close, #edit-template-modal .pdf-modal-backdrop').on('click', function() {
+            hideEditTemplateModal();
+        });
     }
 
     /**
@@ -161,6 +177,94 @@
     function hideNewTemplateModal() {
         $('#new-template-modal').hide();
         $('#new-template-form')[0].reset();
+    }
+
+    /**
+     * Show edit template modal
+     */
+    function showEditTemplateModal(templateId) {
+        // Load template data
+        $.ajax({
+            url: pdfBuilderBuiltinEditor.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_load_builtin_template',
+                template_id: templateId,
+                nonce: pdfBuilderBuiltinEditor.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    const template = response.data.template;
+
+                    // Fill form
+                    $('#edit-template-id').val(templateId);
+                    $('#edit-template-name').val(template.name || '');
+                    $('#edit-template-description').val(template.description || '');
+                    $('#edit-template-category').val(template.category || 'general');
+
+                    // Show modal
+                    $('#edit-template-modal').show();
+                } else {
+                    showError('Erreur lors du chargement du template: ' + (response.data || 'Erreur inconnue'));
+                }
+            },
+            error: function() {
+                showError('Erreur de connexion lors du chargement du template');
+            }
+        });
+    }
+
+    /**
+     * Update template parameters
+     */
+    function updateTemplateParameters() {
+        const templateId = $('#edit-template-id').val();
+        const name = $('#edit-template-name').val().trim();
+        const description = $('#edit-template-description').val().trim();
+        const category = $('#edit-template-category').val();
+
+        if (!name) {
+            alert('Le nom du template est requis');
+            return;
+        }
+
+        $('#update-template-confirm').prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> ' + 'Mise à jour...');
+
+        $.ajax({
+            url: pdfBuilderBuiltinEditor.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_update_builtin_template_params',
+                template_id: templateId,
+                name: name,
+                description: description,
+                category: category,
+                nonce: pdfBuilderBuiltinEditor.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    showSuccess('Paramètres mis à jour avec succès');
+                    loadTemplatesList();
+                    hideEditTemplateModal();
+                } else {
+                    showError('Erreur lors de la mise à jour: ' + (response.data || 'Erreur inconnue'));
+                }
+            },
+            error: function() {
+                showError('Erreur de connexion lors de la mise à jour');
+            },
+            complete: function() {
+                $('#update-template-confirm').prop('disabled', false).html('Mettre à jour');
+            }
+        });
+    }
+
+    /**
+     * Hide edit template modal
+     */
+    function hideEditTemplateModal() {
+        $('#edit-template-modal').hide();
+        $('#edit-template-form')[0].reset();
     }
 
     /**

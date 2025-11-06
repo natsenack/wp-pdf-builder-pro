@@ -104,9 +104,12 @@ function pdf_builder_builtin_templates_list_page() {
                     <small><%= category || 'general' %> | v<%= version || '1.0' %></small>
                 </div>
                 <div class="template-actions">
+                    <button class="template-edit-btn" data-template-id="<%= id %>" title="<?php _e('Modifier les paramètres', 'pdf-builder-pro'); ?>">
+                        <span class="dashicons dashicons-admin-generic"></span>
+                    </button>
                     <a href="<?php echo admin_url('admin.php?page=pdf-builder-builtin-editor&template='); ?><%= id %>" class="button button-primary button-small">
                         <span class="dashicons dashicons-edit"></span>
-                        <?php _e('Éditer Visuellement', 'pdf-builder-pro'); ?>
+                        <?php _e('Éditer', 'pdf-builder-pro'); ?>
                     </a>
                 </div>
             </div>
@@ -144,6 +147,43 @@ function pdf_builder_builtin_templates_list_page() {
                 <div class="pdf-modal-footer">
                     <button class="button button-secondary pdf-modal-close"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
                     <button class="button button-primary" id="create-template-confirm"><?php _e('Créer', 'pdf-builder-pro'); ?></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal d'édition des paramètres -->
+        <div id="edit-template-modal" class="pdf-modal" style="display: none;">
+            <div class="pdf-modal-backdrop"></div>
+            <div class="pdf-modal-content">
+                <div class="pdf-modal-header">
+                    <h2><?php _e('Modifier les Paramètres', 'pdf-builder-pro'); ?></h2>
+                    <button class="pdf-modal-close">&times;</button>
+                </div>
+                <div class="pdf-modal-body">
+                    <form id="edit-template-form">
+                        <input type="hidden" id="edit-template-id" name="template_id">
+                        <div class="form-group">
+                            <label for="edit-template-name"><?php _e('Nom du template', 'pdf-builder-pro'); ?></label>
+                            <input type="text" id="edit-template-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-template-description"><?php _e('Description', 'pdf-builder-pro'); ?></label>
+                            <textarea id="edit-template-description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-template-category"><?php _e('Catégorie', 'pdf-builder-pro'); ?></label>
+                            <select id="edit-template-category" name="category">
+                                <option value="general"><?php _e('Général', 'pdf-builder-pro'); ?></option>
+                                <option value="invoice"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
+                                <option value="quote"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
+                                <option value="business"><?php _e('Entreprise', 'pdf-builder-pro'); ?></option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="pdf-modal-footer">
+                    <button class="button button-secondary pdf-modal-close"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
+                    <button class="button button-primary" id="update-template-confirm"><?php _e('Mettre à jour', 'pdf-builder-pro'); ?></button>
                 </div>
             </div>
         </div>
@@ -426,6 +466,64 @@ function pdf_builder_ajax_delete_builtin_template() {
 
     wp_send_json_success(array(
         'message' => 'Template supprimé avec succès',
+        'template_id' => $template_id
+    ));
+}
+
+/**
+ * AJAX - Mettre à jour les paramètres d'un template builtin
+ */
+function pdf_builder_ajax_update_builtin_template_params() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_builtin_editor')) {
+        wp_send_json_error('Sécurité: Nonce invalide');
+    }
+
+    $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
+    $name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
+    $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : 'general';
+
+    if (empty($template_id) || empty($name)) {
+        wp_send_json_error('Données manquantes');
+    }
+
+    // Chemin vers le fichier
+    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
+
+    if (!file_exists($file_path)) {
+        wp_send_json_error('Template non trouvé');
+    }
+
+    // Lire le contenu actuel
+    $content = file_get_contents($file_path);
+    if ($content === false) {
+        wp_send_json_error('Erreur de lecture du fichier');
+    }
+
+    $template_data = json_decode($content, true);
+    if ($template_data === null) {
+        wp_send_json_error('JSON invalide dans le fichier');
+    }
+
+    // Mettre à jour les paramètres
+    $template_data['name'] = $name;
+    $template_data['description'] = $description;
+    $template_data['category'] = $category;
+
+    // Sauvegarder le fichier
+    $new_content = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if (file_put_contents($file_path, $new_content) === false) {
+        wp_send_json_error('Erreur lors de la sauvegarde');
+    }
+
+    wp_send_json_success(array(
+        'message' => 'Paramètres mis à jour avec succès',
         'template_id' => $template_id
     ));
 }
