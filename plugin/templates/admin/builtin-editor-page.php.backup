@@ -149,6 +149,176 @@ function pdf_builder_builtin_templates_list_page() {
 /**
  * AJAX - Charger la liste des templates builtin
  */
+        }
+
+        .template-info small {
+            font-size: 11px;
+            color: #888;
+        }
+
+        #json-editor-container {
+            height: 500px;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            margin: 15px;
+            margin-top: 0;
+        }
+
+        #json-editor {
+            width: 100%;
+            height: 100%;
+        }
+
+        .json-validation {
+            padding: 0 15px 15px 15px;
+        }
+
+        .json-status-valid {
+            color: #46b450;
+            font-size: 12px;
+        }
+
+        .json-status-invalid {
+            color: #dc3232;
+            font-size: 12px;
+        }
+
+        .preview-container {
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .template-preview {
+            width: 794px;
+            height: 1123px;
+            background: white;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transform: scale(0.3);
+            transform-origin: top left;
+            position: relative;
+        }
+
+        .preview-info {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-top: 1px solid #ccd0d4;
+        }
+
+        /* Modal styles */
+        .pdf-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100000;
+        }
+
+        .pdf-modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .pdf-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .pdf-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e1e1e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .pdf-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .pdf-modal-body {
+            padding: 20px;
+        }
+
+        .pdf-modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e1e1e1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        @media (max-width: 1200px) {
+            .editor-layout {
+                grid-template-columns: 250px 1fr 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .templates-list-panel,
+            .json-editor-panel,
+            .preview-panel {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+    <?php
+}
+
+/**
+ * AJAX - Charger la liste des templates builtin
+ */
 function pdf_builder_ajax_load_builtin_templates() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
@@ -222,16 +392,15 @@ function pdf_builder_ajax_load_builtin_template() {
     }
 
     $content = file_get_contents($file_path);
+
     if ($content === false) {
         wp_send_json_error('Erreur de lecture du fichier');
     }
 
-    $template_data = json_decode($content, true);
-    if ($template_data === null) {
-        wp_send_json_error('JSON invalide dans le fichier');
-    }
-
-    wp_send_json_success(array('template' => $template_data));
+    wp_send_json_success(array(
+        'template_id' => $template_id,
+        'content' => $content
+    ));
 }
 
 /**
@@ -328,35 +497,46 @@ function pdf_builder_ajax_create_builtin_template() {
     }
 
     $name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
-    $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+    $description = isset($_POST['description']) ? sanitize_text_field($_POST['description']) : '';
     $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : 'general';
 
     if (empty($name)) {
-        wp_send_json_error('Le nom du template est requis');
+        wp_send_json_error('Nom du template requis');
     }
 
     // Générer un ID unique
-    $template_id = sanitize_title($name) . '-' . time();
+    $template_id = sanitize_title($name);
 
-    // Créer la structure du template
+    // Vérifier que l'ID n'existe pas déjà
+    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
+    if (file_exists($file_path)) {
+        // Ajouter un suffixe numérique si nécessaire
+        $counter = 1;
+        while (file_exists(plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '-' . $counter . '.json')) {
+            $counter++;
+        }
+        $template_id = $template_id . '-' . $counter;
+    }
+
+    // Template de base
     $template_data = array(
         'id' => $template_id,
         'name' => $name,
         'description' => $description,
-        'category' => $category,
         'version' => '1.0',
+        'category' => $category,
         'canvasWidth' => 794,
         'canvasHeight' => 1123,
         'elements' => array(
             array(
-                'id' => 'titre',
+                'id' => 'sample-text',
                 'type' => 'text',
                 'x' => 50,
                 'y' => 50,
                 'width' => 200,
                 'height' => 40,
                 'properties' => array(
-                    'text' => $name,
+                    'text' => 'Nouveau Template',
                     'color' => '#007cba',
                     'fontSize' => 24,
                     'fontWeight' => 'bold'
@@ -365,18 +545,10 @@ function pdf_builder_ajax_create_builtin_template() {
         )
     );
 
-    // Chemin vers le fichier
-    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
-
-    // Créer le dossier s'il n'existe pas
-    $dir = dirname($file_path);
-    if (!is_dir($dir)) {
-        wp_mkdir_p($dir);
-    }
+    $content = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
     // Sauvegarder le fichier
-    $json_content = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    if (file_put_contents($file_path, $json_content) === false) {
+    if (file_put_contents($file_path, $content) === false) {
         wp_send_json_error('Erreur lors de la création du template');
     }
 
@@ -422,103 +594,5 @@ function pdf_builder_ajax_delete_builtin_template() {
     wp_send_json_success(array(
         'message' => 'Template supprimé avec succès',
         'template_id' => $template_id
-    ));
-}
-
-/**
- * AJAX - Sauvegarder un template builtin depuis l'éditeur React
- */
-function pdf_builder_ajax_save_builtin_from_react() {
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-    }
-
-    // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-        wp_send_json_error('Sécurité: Nonce invalide');
-    }
-
-    $builtin_id = isset($_POST['builtin_id']) ? sanitize_text_field($_POST['builtin_id']) : '';
-    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-
-    if (empty($builtin_id) || empty($template_data)) {
-        wp_send_json_error('Données manquantes');
-    }
-
-    // Valider que template_data est un tableau
-    if (!is_array($template_data)) {
-        wp_send_json_error('Format de données invalide');
-    }
-
-    // Nettoyer les données du template
-    $clean_template = array(
-        'id' => $builtin_id,
-        'name' => sanitize_text_field($template_data['name'] ?? 'Template sans nom'),
-        'description' => sanitize_textarea_field($template_data['description'] ?? ''),
-        'category' => sanitize_text_field($template_data['category'] ?? 'general'),
-        'version' => sanitize_text_field($template_data['version'] ?? '1.0'),
-        'canvasWidth' => intval($template_data['canvasWidth'] ?? 794),
-        'canvasHeight' => intval($template_data['canvasHeight'] ?? 1123),
-        'elements' => array()
-    );
-
-    // Nettoyer les éléments
-    if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-        foreach ($template_data['elements'] as $element) {
-            if (is_array($element)) {
-                $clean_element = array(
-                    'id' => sanitize_text_field($element['id'] ?? ''),
-                    'type' => sanitize_text_field($element['type'] ?? 'text'),
-                    'x' => intval($element['x'] ?? 0),
-                    'y' => intval($element['y'] ?? 0),
-                    'width' => intval($element['width'] ?? 100),
-                    'height' => intval($element['height'] ?? 50),
-                    'properties' => array()
-                );
-
-                // Nettoyer les propriétés
-                if (isset($element['properties']) && is_array($element['properties'])) {
-                    foreach ($element['properties'] as $key => $value) {
-                        $clean_key = sanitize_text_field($key);
-                        if (is_string($value)) {
-                            $clean_element['properties'][$clean_key] = sanitize_text_field($value);
-                        } elseif (is_numeric($value)) {
-                            $clean_element['properties'][$clean_key] = $value;
-                        } elseif (is_bool($value)) {
-                            $clean_element['properties'][$clean_key] = $value;
-                        }
-                        // Ignorer les autres types
-                    }
-                }
-
-                $clean_template['elements'][] = $clean_element;
-            }
-        }
-    }
-
-    // Chemin vers le fichier
-    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_id . '.json';
-
-    // Créer le dossier s'il n'existe pas
-    $dir = dirname($file_path);
-    if (!is_dir($dir)) {
-        wp_mkdir_p($dir);
-    }
-
-    // Encoder en JSON et sauvegarder
-    $json_content = json_encode($clean_template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    if ($json_content === false) {
-        wp_send_json_error('Erreur lors de l\'encodage JSON');
-    }
-
-    if (file_put_contents($file_path, $json_content) === false) {
-        wp_send_json_error('Erreur lors de la sauvegarde du fichier');
-    }
-
-    wp_send_json_success(array(
-        'message' => 'Template builtin sauvegardé avec succès',
-        'template_id' => $builtin_id,
-        'template' => $clean_template
     ));
 }

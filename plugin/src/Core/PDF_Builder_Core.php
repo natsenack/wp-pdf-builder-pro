@@ -715,10 +715,26 @@ class PDF_Builder_Core
         // Récupérer le template_id depuis l'URL si présent
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
 
+        // Vérifier si c'est un template builtin
+        $builtin_template = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
+        $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
+
+        $template_data = null;
+        if ($builtin_template && $transient_key) {
+            $template_data = get_transient($transient_key);
+            if ($template_data) {
+                // Marquer comme template builtin pour l'interface
+                $template_data['is_builtin'] = true;
+                $template_data['builtin_id'] = $builtin_template;
+            }
+        }
+
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
-            <?php if ($template_id): ?>
+            <?php if ($builtin_template): ?>
+                <p><?php printf(__('Editing builtin template: %s', 'pdf-builder-pro'), $builtin_template); ?></p>
+            <?php elseif ($template_id): ?>
                 <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
             <?php else: ?>
                 <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
@@ -734,7 +750,10 @@ class PDF_Builder_Core
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                isEditing: <?php echo $template_id ? 'true' : 'false'; ?>,
+                builtinTemplate: <?php echo $builtin_template ? json_encode($builtin_template) : 'null'; ?>,
+                templateData: <?php echo $template_data ? json_encode($template_data) : 'null'; ?>,
+                isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
+                isBuiltin: <?php echo $builtin_template ? 'true' : 'false'; ?>,
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
             };

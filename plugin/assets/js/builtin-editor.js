@@ -157,6 +157,12 @@
 
         const content = jsonEditor.value;
 
+        // Valider le JSON avant la sauvegarde
+        if (!validateJSON()) {
+            showError(pdfBuilderBuiltinEditor.strings.invalid_json + ' - Veuillez corriger le JSON avant de sauvegarder.');
+            return;
+        }
+
         $('#save-template-btn').prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> ' + pdfBuilderBuiltinEditor.strings.saving);
 
         $.ajax({
