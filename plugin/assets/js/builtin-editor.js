@@ -209,6 +209,32 @@
             }
         });
 
+        // New template modal - close buttons
+        $('#new-template-modal .pdf-modal-close, #new-template-modal .pdf-modal-backdrop').on('click', function() {
+            console.log('❌ [BUILTIN EDITOR] New template modal close clicked');
+            hideNewTemplateModal();
+        });
+
+        // New template create button
+        $('#create-template-confirm').on('click', function() {
+            console.log('➕ [BUILTIN EDITOR] Create template button clicked');
+            const name = $('#template-name').val().trim();
+            const description = $('#template-description').val().trim();
+            const category = $('#template-category').val();
+
+            console.log('   - Name:', name);
+            console.log('   - Description:', description);
+            console.log('   - Category:', category);
+
+            if (!name) {
+                console.warn('⚠️ [BUILTIN EDITOR] Template name is required');
+                alert('Le nom du template est requis');
+                return;
+            }
+
+            createNewTemplate(name, description, category);
+        });
+
         // Update template confirm button
         $('#update-template-confirm').on('click', function() {
             console.log('💾 [BUILTIN EDITOR] Update template confirm clicked');
@@ -228,35 +254,15 @@
      * Show new template modal
      */
     function showNewTemplateModal() {
-        // Add modal to page if not exists
-        if (!$('#new-template-modal').length) {
-            $('body').append($('#new-template-modal-template').html());
-        }
-
+        console.log('➕ [BUILTIN EDITOR] Opening new template modal');
+        
+        // Show the modal
         $('#new-template-modal').show();
-
-        // Setup modal events
-        $('#cancel-new-template, .pdf-modal-close').on('click', function() {
-            hideNewTemplateModal();
-        });
-
-        $('#create-new-template').on('click', function() {
-            const name = $('#template-name').val().trim();
-            const description = $('#template-description').val().trim();
-            const category = $('#template-category').val();
-
-            if (!name) {
-                alert('Le nom du template est requis');
-                return;
-            }
-
-            createNewTemplate(name, description, category);
-        });
-
-        // Close on backdrop click
-        $('.pdf-modal-backdrop').on('click', function() {
-            hideNewTemplateModal();
-        });
+        
+        // Reset form
+        $('#new-template-form')[0].reset();
+        
+        console.log('👁️ [BUILTIN EDITOR] New template modal shown');
     }
 
     /**
