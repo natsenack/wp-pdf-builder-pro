@@ -1689,36 +1689,43 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         section: 'CALQUES'
       },
       {
-        id: 'bring-to-front',
-        label: 'Premier plan',
-        icon: '⬆️',
-        shortcut: 'Ctrl+↑',
-        action: () => handleContextMenuAction('bring-to-front', elementId),
-        disabled: isLocked
-      },
-      {
-        id: 'send-to-back',
-        label: 'Arrière plan',
-        icon: '⬇️',
-        shortcut: 'Ctrl+↓',
-        action: () => handleContextMenuAction('send-to-back', elementId),
-        disabled: isLocked
-      },
-      {
-        id: 'bring-forward',
-        label: 'Avancer d\'un plan',
-        icon: '↗️',
-        shortcut: 'Ctrl+Shift+↑',
-        action: () => handleContextMenuAction('bring-forward', elementId),
-        disabled: isLocked
-      },
-      {
-        id: 'send-backward',
-        label: 'Reculer d\'un plan',
-        icon: '↙️',
-        shortcut: 'Ctrl+Shift+↓',
-        action: () => handleContextMenuAction('send-backward', elementId),
-        disabled: isLocked
+        id: 'layer-order',
+        label: 'Ordre des calques',
+        icon: '📚',
+        children: [
+          {
+            id: 'bring-to-front',
+            label: 'Premier plan',
+            icon: '⬆️',
+            shortcut: 'Ctrl+↑',
+            action: () => handleContextMenuAction('bring-to-front', elementId),
+            disabled: isLocked
+          },
+          {
+            id: 'send-to-back',
+            label: 'Arrière plan',
+            icon: '⬇️',
+            shortcut: 'Ctrl+↓',
+            action: () => handleContextMenuAction('send-to-back', elementId),
+            disabled: isLocked
+          },
+          {
+            id: 'bring-forward',
+            label: 'Avancer d\'un plan',
+            icon: '↗️',
+            shortcut: 'Ctrl+Shift+↑',
+            action: () => handleContextMenuAction('bring-forward', elementId),
+            disabled: isLocked
+          },
+          {
+            id: 'send-backward',
+            label: 'Reculer d\'un plan',
+            icon: '↙️',
+            shortcut: 'Ctrl+Shift+↓',
+            action: () => handleContextMenuAction('send-backward', elementId),
+            disabled: isLocked
+          }
+        ]
       },
       { id: 'separator1', separator: true },
 
@@ -1752,20 +1759,27 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ]
       },
       {
-        id: 'copy',
-        label: 'Copier',
+        id: 'clipboard',
+        label: 'Presse-papiers',
         icon: '📄',
-        shortcut: 'Ctrl+C',
-        action: () => handleContextMenuAction('copy', elementId),
-        disabled: false
-      },
-      {
-        id: 'cut',
-        label: 'Couper',
-        icon: '✂️',
-        shortcut: 'Ctrl+X',
-        action: () => handleContextMenuAction('cut', elementId),
-        disabled: isLocked
+        children: [
+          {
+            id: 'copy',
+            label: 'Copier',
+            icon: '📄',
+            shortcut: 'Ctrl+C',
+            action: () => handleContextMenuAction('copy', elementId),
+            disabled: false
+          },
+          {
+            id: 'cut',
+            label: 'Couper',
+            icon: '✂️',
+            shortcut: 'Ctrl+X',
+            action: () => handleContextMenuAction('cut', elementId),
+            disabled: isLocked
+          }
+        ]
       },
       { id: 'separator2', separator: true },
 
