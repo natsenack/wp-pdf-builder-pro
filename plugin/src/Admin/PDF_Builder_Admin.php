@@ -5328,6 +5328,54 @@ class PDF_Builder_Admin {
             }
         }
 
+        // Transform builtin template data to match React format
+        if ($builtin_template_data && isset($builtin_template_data['elements']) && is_array($builtin_template_data['elements'])) {
+            $transformed_elements = array();
+            foreach ($builtin_template_data['elements'] as $element) {
+                $transformed_element = array(
+                    'id' => uniqid('element_', true),
+                    'type' => $element['type'],
+                    'visible' => true,
+                    'locked' => false,
+                    'createdAt' => date('c'),
+                    'updatedAt' => date('c')
+                );
+
+                // Flatten position
+                if (isset($element['position'])) {
+                    $transformed_element['x'] = $element['position']['x'];
+                    $transformed_element['y'] = $element['position']['y'];
+                }
+
+                // Flatten size
+                if (isset($element['size'])) {
+                    $transformed_element['width'] = $element['size']['width'];
+                    $transformed_element['height'] = $element['size']['height'];
+                }
+
+                // Map content to text
+                if (isset($element['content'])) {
+                    $transformed_element['text'] = $element['content'];
+                }
+
+                // Flatten style
+                if (isset($element['style']) && is_array($element['style'])) {
+                    foreach ($element['style'] as $key => $value) {
+                        $transformed_element[$key] = $value;
+                    }
+                }
+
+                // Default values based on type
+                if ($element['type'] === 'text') {
+                    $transformed_element['align'] = 'left';
+                    $transformed_element['rotation'] = 0;
+                }
+
+                $transformed_elements[] = $transformed_element;
+            }
+            $builtin_template_data['elements'] = $transformed_elements;
+        }
+
         // Localize script with data
         $localize_data = [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
