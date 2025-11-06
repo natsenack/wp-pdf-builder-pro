@@ -159,7 +159,7 @@ class PDF_Builder_Frontend_I18n {
      * Localiser les scripts frontend
      */
     public function localize_scripts() {
-        if (wp_script_is('pdf-builder-frontend', 'enqueued')) {
+        if (did_action('wp_enqueue_scripts')) {
             wp_localize_script('pdf-builder-frontend', 'pdfBuilderI18n', $this->strings);
         }
     }
@@ -168,7 +168,7 @@ class PDF_Builder_Frontend_I18n {
      * Localiser les scripts d'administration
      */
     public function localize_admin_scripts() {
-        if (wp_script_is('pdf-builder-admin', 'enqueued')) {
+        if (did_action('admin_enqueue_scripts')) {
             wp_localize_script('pdf-builder-admin', 'pdfBuilderI18n', $this->strings);
         }
     }
