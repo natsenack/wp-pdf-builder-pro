@@ -5658,6 +5658,15 @@ class PDF_Builder_Admin {
 
         function loadExistingTemplateData() {
             console.log('Attempting to load existing template data...');
+            console.log('pdfBuilderData exists:', typeof window.pdfBuilderData !== 'undefined');
+            if (typeof window.pdfBuilderData !== 'undefined') {
+                console.log('hasExistingData:', window.pdfBuilderData.hasExistingData);
+                console.log('existingTemplate exists:', !!window.pdfBuilderData.existingTemplate);
+                console.log('pdfBuilderReact exists:', typeof window.pdfBuilderReact !== 'undefined');
+                if (typeof window.pdfBuilderReact !== 'undefined') {
+                    console.log('loadTemplate exists:', !!window.pdfBuilderReact.loadTemplate);
+                }
+            }
             if (typeof window.pdfBuilderData !== 'undefined' &&
                 window.pdfBuilderData.hasExistingData &&
                 window.pdfBuilderData.existingTemplate &&
