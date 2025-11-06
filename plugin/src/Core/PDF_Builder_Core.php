@@ -769,41 +769,46 @@ class PDF_Builder_Core
                 console.log('📊 [PDF BUILDER] Template data elements:', window.pdfBuilderData.templateData.elements);
             }
 
-            // INTERCEPTEUR BUILTIN - Version EARLY avec logs 
-            // 2025-11-06-04-30-00
-            console.log('🎬 [BUILTIN EARLY] Script lancé AVANT tout');
-            console.log('📊 [BUILTIN EARLY] isBuiltin =', window.pdfBuilderData?.isBuiltin);
-            
-            if (window.pdfBuilderData?.isBuiltin) {
-                console.log('✅ [BUILTIN EARLY] C\'est un builtin, installation intercepteurs');
+            // ============================================
+            // INTERCEPTEUR BUILTIN - Force reload 2025-11-06 02:45:00
+            // ============================================
+            (function interceptBuiltinAutoSave() {
+                console.log('🎬 [BUILTIN INTERCEPTOR] FUNCTION EXECUTED');
+                console.log('📊 [BUILTIN] isBuiltin:', window.pdfBuilderData?.isBuiltin);
+                console.log('📊 [BUILTIN] builtinTemplate:', window.pdfBuilderData?.builtinTemplate);
                 
-                // Intercepter fetch IMMÉDIATEMENT
+                if (!window.pdfBuilderData?.isBuiltin) {
+                    console.log('ℹ️ [BUILTIN] Not a builtin, skipping');
+                    return;
+                }
+
+                const builtinId = window.pdfBuilderData.builtinTemplate;
+                console.log('✅ [BUILTIN] Installing interceptor for:', builtinId);
+
+                // Hook fetch
                 const originalFetch = window.fetch;
                 window.fetch = function(...args) {
-                    let url = args[0];
-                    let options = args[1] || {};
-
-                    if (typeof url === 'string' && (url.includes('admin-ajax.php') || url.includes('/wp-admin/admin-ajax.php'))) {
-                        const body = options.body;
-                        if (typeof body === 'string' && body.includes('action=pdf_builder_auto_save_template')) {
-                            console.log('🎯 [BUILTIN FETCH] Auto-save auto-detected, intercept!');
-                            
-                            const params = new URLSearchParams(body);
+                    const url = args[0];
+                    const options = args[1] || {};
+                    
+                    if (typeof url === 'string' && url.includes('admin-ajax.php')) {
+                        if (options.body && typeof options.body === 'string' && options.body.includes('pdf_builder_auto_save_template')) {
+                            console.log('🎯 [BUILTIN] Auto-save intercepted!');
+                            const params = new URLSearchParams(options.body);
                             const oldId = params.get('template_id');
-                            params.set('template_id', window.pdfBuilderData.builtinTemplate);
-                            
-                            console.log('🔄 [BUILTIN FETCH] Changed template_id:', oldId, '=>', window.pdfBuilderData.builtinTemplate);
+                            params.set('template_id', builtinId);
+                            console.log('🔄 [BUILTIN] Changed template_id:', oldId, '=>', builtinId);
                             options.body = params.toString();
                             args[1] = options;
                         }
                     }
-
+                    
                     return originalFetch.apply(this, args);
                 };
-                console.log('✅ [BUILTIN EARLY] Fetch interceptor installed');
-            } else {
-                console.log('ℹ️ [BUILTIN EARLY] Pas un builtin, intercepteur skip');
-            }
+                
+                console.log('✅ [BUILTIN] Interceptor installed successfully');
+            })();
+            // ============================================
 
 
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
