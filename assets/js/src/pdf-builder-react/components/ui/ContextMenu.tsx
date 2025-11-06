@@ -31,6 +31,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [submenuPosition, setSubmenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
   const adjustedPosition = useMemo(() => {
@@ -75,6 +76,15 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     return { x: adjustedX, y: adjustedY };
   }, [position, items]);
+
+  // Nettoyer les timeouts quand le composant se démonte
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Calculer la position du sous-menu quand il s'ouvre
   useEffect(() => {
@@ -176,6 +186,23 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     <div
       ref={menuRef}
       className="context-menu"
+      onMouseLeave={() => {
+        // Délai plus long pour permettre la navigation vers les sous-menus
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+        }
+        closeTimeoutRef.current = window.setTimeout(() => {
+          setOpenSubmenu(null);
+          setHoveredItem(null);
+        }, 300);
+      }}
+      onMouseEnter={() => {
+        // Annuler la fermeture si on revient dans le menu
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
+        }
+      }}
       style={{
         position: 'fixed',
         left: `${adjustedPosition.x}px`,
@@ -216,15 +243,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                   setOpenSubmenu(null);
                 }
               }}
-              onMouseLeave={() => {
-                setHoveredItem(null);
-                // Délai pour permettre au sous-menu d'être survolé
-                setTimeout(() => {
-                  if (openSubmenu === item.id) {
-                    setOpenSubmenu(null);
-                  }
-                }, 100);
-              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -262,12 +280,32 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     if (!parentItem || !parentItem.children) return null;
 
     return (
-      <ContextMenu
-        items={parentItem.children}
-        position={submenuPosition}
-        onClose={() => setOpenSubmenu(null)}
-        isVisible={true}
-      />
+      <div
+        onMouseEnter={() => {
+          // Annuler la fermeture si on entre dans le sous-menu
+          if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+          }
+        }}
+        onMouseLeave={() => {
+          // Délai pour permettre le retour au menu principal
+          if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+          }
+          closeTimeoutRef.current = window.setTimeout(() => {
+            setOpenSubmenu(null);
+            setHoveredItem(null);
+          }, 300);
+        }}
+      >
+        <ContextMenu
+          items={parentItem.children}
+          position={submenuPosition}
+          onClose={() => setOpenSubmenu(null)}
+          isVisible={true}
+        />
+      </div>
     );
   };
 
