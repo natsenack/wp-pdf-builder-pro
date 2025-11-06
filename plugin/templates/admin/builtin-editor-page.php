@@ -76,6 +76,11 @@ function pdf_builder_builtin_templates_list_page() {
         <p><?php _e('Sélectionnez un template pour l\'éditer visuellement avec l\'éditeur React.', 'pdf-builder-pro'); ?></p>
 
         <div class="pdf-builder-builtin-editor">
+            <!-- Boutons d'action -->
+            <div style="margin-bottom: 20px;">
+                <button id="new-template-btn" class="button button-primary"><?php _e('Créer un Nouveau Template', 'pdf-builder-pro'); ?></button>
+            </div>
+
             <!-- Liste des templates -->
             <div class="templates-list-panel" style="width: 100%; max-width: none;">
                 <h3><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h3>
