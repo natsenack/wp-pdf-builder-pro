@@ -52,10 +52,11 @@ class PDF_Builder_Predefined_Templates_Manager {
         // Debug: log the hook
         error_log('PDF Builder Templates - Hook received: ' . $hook);
 
-        // TEMP: Load on all admin pages for debugging
-        // if ($hook !== 'pdf-builder-pro_page_pdf-builder-predefined-templates') {
-        //     return;
-        // }
+        // Load only on predefined templates page
+        if ($hook !== 'pdf-builder_page_pdf-builder-predefined-templates') {
+            error_log('PDF Builder Templates - Hook mismatch, not loading scripts for: ' . $hook);
+            return;
+        }
 
         error_log('PDF Builder Templates - Loading scripts for hook: ' . $hook);
         wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);
