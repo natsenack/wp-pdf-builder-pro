@@ -770,13 +770,27 @@ class PDF_Builder_Core
             console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderBuiltinData);
 
             // Injecter les données dans l'éditeur React après son chargement
-            setTimeout(function() {
-                if (window.pdfBuilderEditor && window.pdfBuilderBuiltinData) {
-                    console.log('🚀 [PDF BUILDER] Injection des données builtin dans l\'éditeur...');
-                    try {
-                        // Simuler le dispatch LOAD_TEMPLATE avec les données builtin
-                        if (window.pdfBuilderEditor.dispatch) {
-                            window.pdfBuilderEditor.dispatch({
+            let injectionAttempts = 0;
+            const maxAttempts = 50; // 5 secondes max
+
+            function tryInjectBuiltinData() {
+                injectionAttempts++;
+                console.log(`� [PDF BUILDER] Tentative d'injection ${injectionAttempts}/${maxAttempts}`);
+
+                // Essayer différentes méthodes d'accès à l'éditeur
+                const possibleEditors = [
+                    window.pdfBuilderEditor,
+                    window.pdfCanvasEditor,
+                    window.pdfEditorPreview?.canvasEditor,
+                    // Chercher dans le DOM
+                    document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
+                ];
+
+                for (const editor of possibleEditors) {
+                    if (editor && typeof editor.dispatch === 'function') {
+                        console.log('🚀 [PDF BUILDER] Éditeur trouvé, injection des données builtin...');
+                        try {
+                            editor.dispatch({
                                 type: 'LOAD_TEMPLATE',
                                 payload: {
                                     id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
@@ -789,15 +803,36 @@ class PDF_Builder_Core
                                 }
                             });
                             console.log('✅ [PDF BUILDER] Données builtin injectées avec succès');
+                            return true;
+                        } catch (error) {
+                            console.error('❌ [PDF BUILDER] Erreur lors du dispatch:', error);
                         }
-                    } catch (error) {
-                        console.error('❌ [PDF BUILDER] Erreur lors de l\'injection des données builtin:', error);
                     }
-                } else {
-                    console.log('⏳ [PDF BUILDER] Éditeur React pas encore prêt, retry dans 1s...');
-                    setTimeout(arguments.callee, 1000);
                 }
-            }, 1000);
+
+                // Si on n'a pas trouvé d'éditeur, essayer de déclencher un événement personnalisé
+                if (window.dispatchEvent) {
+                    try {
+                        const event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                            detail: window.pdfBuilderBuiltinData
+                        });
+                        window.dispatchEvent(event);
+                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé');
+                    } catch (e) {
+                        console.error('❌ [PDF BUILDER] Erreur envoi événement:', e);
+                    }
+                }
+
+                // Réessayer si on n'a pas dépassé le nombre max de tentatives
+                if (injectionAttempts < maxAttempts) {
+                    setTimeout(tryInjectBuiltinData, 100);
+                } else {
+                    console.error('❌ [PDF BUILDER] Échec de l\'injection après', maxAttempts, 'tentatives');
+                }
+            }
+
+            // Démarrer l'injection après un court délai
+            setTimeout(tryInjectBuiltinData, 500);
             <?php endif; ?>
         </script>
         <?php
