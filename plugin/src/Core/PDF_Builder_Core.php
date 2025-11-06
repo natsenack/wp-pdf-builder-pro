@@ -714,30 +714,14 @@ class PDF_Builder_Core
     {
         // Récupérer le template_id depuis l'URL si présent
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
-
-        // Vérifier si c'est un template builtin
-        $builtin_template = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
         $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
 
         $template_data = null;
-        $builtin_template_data = null;
-        if ($builtin_template) {
-            // Charger et transformer le template builtin
-            $template_data = $this->load_builtin_template($builtin_template);
-            $builtin_template_data = $builtin_template;
-            if ($template_data) {
-                // Marquer comme template builtin pour l'interface
-                $template_data['is_builtin'] = true;
-                $template_data['builtin_id'] = $builtin_template;
-            }
-        }
 
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
-            <?php if ($builtin_template): ?>
-                <p><?php printf(__('Editing builtin template: %s', 'pdf-builder-pro'), $builtin_template); ?></p>
-            <?php elseif ($template_id): ?>
+            <?php if ($template_id): ?>
                 <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
             <?php else: ?>
                 <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
@@ -749,17 +733,12 @@ class PDF_Builder_Core
             </div>
         </div>
 
-        <!-- DEBUG: Builtin Template = <?php echo $builtin_template ? htmlspecialchars($builtin_template) : 'NULL'; ?> -->
-        <!-- DEBUG: Is Builtin = <?php echo $builtin_template ? 'YES' : 'NO'; ?> -->
-
         <script type="text/javascript">
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                builtinTemplate: <?php echo $builtin_template_data ? json_encode($builtin_template_data) : 'null'; ?>,
                 templateData: <?php echo $template_data ? json_encode($template_data) : 'null'; ?>,
                 isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
-                isBuiltin: <?php echo $builtin_template ? 'true' : 'false'; ?>,
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
             };
@@ -769,231 +748,11 @@ class PDF_Builder_Core
             if (window.pdfBuilderData.templateData) {
 
             }
-
-            // Pour les templates builtin, définir hasExistingData pour que le chargement automatique fonctionne
-            if (window.pdfBuilderData.isBuiltin && window.pdfBuilderData.templateData) {
-                window.pdfBuilderData.hasExistingData = true;
-                window.pdfBuilderData.existingTemplate = window.pdfBuilderData.templateData;
-            }
-
-            // ============================================
-            // INTERCEPTEUR BUILTIN - Force reload 2025-11-06 02:45:00
-            // ============================================
-            (function interceptBuiltinAutoSave() {
-
-
-
-                
-                if (!window.pdfBuilderData?.isBuiltin) {
-
-                    return;
-                }
-
-                const builtinId = window.pdfBuilderData.builtinTemplate;
-
-
-                // Hook fetch
-                const originalFetch = window.fetch;
-                window.fetch = function(...args) {
-                    const url = args[0];
-                    const options = args[1] || {};
-                    
-                    if (typeof url === 'string' && url.includes('admin-ajax.php')) {
-                        if (options.body && typeof options.body === 'string' && options.body.includes('pdf_builder_auto_save_template')) {
-
-                            const params = new URLSearchParams(options.body);
-                            const oldId = params.get('template_id');
-                            params.set('template_id', builtinId);
-
-                            options.body = params.toString();
-                            args[1] = options;
-                        }
-                    }
-                    
-                    return originalFetch.apply(this, args);
-                };
-                
-
-            })();
-            // ============================================
-
-
-            // Pour les templates builtin, injecter les données directement dans l'éditeur React
-            window.pdfBuilderData.builtinData = <?php echo json_encode($template_data); ?>;
-
-
-            // Injecter les données dans l'éditeur React après son chargement
-            let injectionAttempts = 0;
-            const maxAttempts = 50; // 5 secondes max
-
-            function tryInjectBuiltinData() {
-                if (!window.pdfBuilderData.builtinData) {
-                    return;
-                }
-                injectionAttempts++;
-
-                // Essayer différentes méthodes d'accès à l'éditeur
-                const possibleEditors = [
-                    window.pdfBuilderEditor,
-                    window.pdfCanvasEditor,
-                    window.pdfEditorPreview?.canvasEditor,
-                    // Chercher dans le DOM
-                    document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
-                ];
-
-                for (const editor of possibleEditors) {
-                    if (editor && typeof editor.dispatch === 'function') {
-
-                        try {
-                            const payload = {
-                                type: 'LOAD_TEMPLATE',
-                                payload: {
-                                    id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
-                                    name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
-                                    elements: window.pdfBuilderData.builtinData.elements || [],
-                                    canvas: {
-                                        width: window.pdfBuilderData.builtinData.canvasWidth || 794,
-                                        height: window.pdfBuilderData.builtinData.canvasHeight || 1123
-                                    }
-                                }
-                            };
-
-                            const result = editor.dispatch(payload);
-
-                            return true;
-                        } catch (error) {
-
-                        }
-                    } else if (editor) {
-
-                    }
-                }
-
-                // Si on n'a pas trouvé d'éditeur, essayer de déclencher un événement personnalisé
-                if (window.dispatchEvent) {
-                    try {
-                        const event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                            detail: {
-                                id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
-                                name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
-                                elements: window.pdfBuilderData.builtinData.elements || [],
-                                canvas: {
-                                    width: window.pdfBuilderData.builtinData.canvasWidth || 794,
-                                    height: window.pdfBuilderData.builtinData.canvasHeight || 1123
-                                }
-                            }
-                        });
-
-                        window.dispatchEvent(event);
-
-                        return true;
-                    } catch (e) {
-
-                    }
-                }
-
-                // Si rien ne marche, essayer de définir une variable globale que l'éditeur peut vérifier
-                if (!window.pdfBuilderBuiltinTemplateData) {
-                    window.pdfBuilderBuiltinTemplateData = {
-                        id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
-                        name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
-                        elements: window.pdfBuilderData.builtinData.elements || [],
-                        canvas: {
-                            width: window.pdfBuilderData.builtinData.canvasWidth || 794,
-                            height: window.pdfBuilderData.builtinData.canvasHeight || 1123
-                        }
-                    };
-                }
-
-                // Réessayer si on n'a pas dépassé le nombre max de tentatives
-                if (injectionAttempts < maxAttempts) {
-                    setTimeout(tryInjectBuiltinData, 100);
-                } else {
-
-                }
-            }
-
-            // Démarrer l'injection après un court délai
-            setTimeout(tryInjectBuiltinData, 500);
         </script>
         <?php
     }
 
-    /**
-     * Charger un template builtin depuis le fichier JSON
-     */
-    private function load_builtin_template($template_id) {
-        if (empty($template_id)) {
-            return null;
-        }
 
-        // Chemin vers le fichier
-        $file_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'templates/builtin/' . $template_id . '.json';
-
-        if (!file_exists($file_path)) {
-            return null;
-        }
-
-        $content = file_get_contents($file_path);
-        if ($content === false) {
-            return null;
-        }
-
-        $template_data = json_decode($content, true);
-        if ($template_data === null) {
-            return null;
-        }
-
-        // Transformer les éléments pour correspondre au format React
-        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-            $transformed_elements = array();
-            foreach ($template_data['elements'] as $element) {
-                $transformed_element = array(
-                    'id' => uniqid('element_', true),
-                    'type' => $element['type'],
-                    'visible' => true,
-                    'locked' => false,
-                    'createdAt' => date('c'),
-                    'updatedAt' => date('c')
-                );
-
-                // Aplatir position
-                if (isset($element['position'])) {
-                    $transformed_element['x'] = $element['position']['x'];
-                    $transformed_element['y'] = $element['position']['y'];
-                }
-
-                // Aplatir size
-                if (isset($element['size'])) {
-                    $transformed_element['width'] = $element['size']['width'];
-                    $transformed_element['height'] = $element['size']['height'];
-                }
-
-                // Mapper content à text
-                if (isset($element['content'])) {
-                    $transformed_element['text'] = $element['content'];
-                }
-
-                // Aplatir style
-                if (isset($element['style']) && is_array($element['style'])) {
-                    foreach ($element['style'] as $key => $value) {
-                        $transformed_element[$key] = $value;
-                    }
-                }
-
-                // Valeurs par défaut selon le type
-                if ($element['type'] === 'text') {
-                    $transformed_element['align'] = 'left';
-                    $transformed_element['rotation'] = 0;
-                }
-
-                $transformed_elements[] = $transformed_element;
-            }
-            $template_data['elements'] = $transformed_elements;
-        }
-
-        return $template_data;
-    }
 }
 
 // Empêcher l'accès direct

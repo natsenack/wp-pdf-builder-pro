@@ -218,9 +218,6 @@ class PDF_Builder_Admin {
      */
     private function initHooks()
     {
-        // Inclure les fichiers de pages admin nécessaires pour les actions AJAX
-        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/builtin-editor-page.php';
-
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
 
@@ -232,11 +229,8 @@ class PDF_Builder_Admin {
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
-        add_action('wp_ajax_pdf_builder_install_builtin_template', [$this, 'ajax_install_builtin_template']);
-        add_action('wp_ajax_get_builtin_templates', [$this, 'ajax_get_builtin_templates']);
         
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
-        // MODIFIÉ pour supporter les templates builtin - 2025-11-06-03-30-00
         add_action('wp_ajax_pdf_builder_auto_save_template', function() {
             try {
                 // Vérifier les permissions
@@ -272,48 +266,7 @@ class PDF_Builder_Admin {
                     return;
                 }
 
-                // Vérifier si c'est un template builtin (chaîne de caractères)
-                if (is_string($template_id_raw) && !is_numeric($template_id_raw)) {
-                    // C'est un template builtin
-                    $builtin_id = \sanitize_text_field($template_id_raw);
-                    $builtin_file = \plugin_dir_path(\dirname(\dirname(__FILE__))) . 'templates/builtin/' . $builtin_id . '.json';
-
-                    if (!\file_exists($builtin_file)) {
-                        \wp_send_json_error('Template builtin non trouvé');
-                        return;
-                    }
-
-                    // Charger le template existant
-                    $existing_content = \file_get_contents($builtin_file);
-                    $existing_data = \json_decode($existing_content, true);
-
-                    if ($existing_data === null) {
-                        \wp_send_json_error('Impossible de charger le template existant');
-                        return;
-                    }
-
-                    // Mettre à jour seulement les éléments
-                    $existing_data['elements'] = $elements_decoded;
-
-                    // Sauvegarder le fichier JSON
-                    $json_content = \json_encode($existing_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                    if (\file_put_contents($builtin_file, $json_content) === false) {
-                        \wp_send_json_error('Erreur lors de la sauvegarde du fichier builtin');
-                        return;
-                    }
-
-                    // Réponse de succès pour builtin
-                    \wp_send_json_success(array(
-                        'message' => 'Template builtin auto-sauvegardé',
-                        'template_id' => $builtin_id,
-                        'saved_at' => \current_time('mysql'),
-                        'element_count' => \count($elements_decoded),
-                        'is_builtin' => true
-                    ));
-                    return;
-                }
-
-                // Sinon traiter comme template utilisateur en base de données
+                // Traiter comme template utilisateur en base de données
                 $template_id = \intval($template_id_raw);
                 if (!$template_id) {
                     \wp_send_json_error('ID template invalide');
@@ -395,17 +348,6 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']);
 // Hook AJAX pour toggle debug mode principal
         add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
-// Hook AJAX pour créer un template depuis un builtin
-        add_action('wp_ajax_pdf_builder_create_from_builtin', [$this, 'ajax_create_from_builtin']);
-// Hooks AJAX pour l'éditeur de templates builtin
-        add_action('wp_ajax_pdf_builder_load_builtin_templates', 'pdf_builder_ajax_load_builtin_templates');
-        add_action('wp_ajax_pdf_builder_load_builtin_template', 'pdf_builder_ajax_load_builtin_template');
-        add_action('wp_ajax_pdf_builder_load_template_for_modal', 'pdf_builder_ajax_load_template_for_modal');
-        add_action('wp_ajax_pdf_builder_save_builtin_template', 'pdf_builder_ajax_save_builtin_template');
-        add_action('wp_ajax_pdf_builder_create_builtin_template', 'pdf_builder_ajax_create_builtin_template');
-        add_action('wp_ajax_pdf_builder_delete_builtin_template', 'pdf_builder_ajax_delete_builtin_template');
-        add_action('wp_ajax_pdf_builder_update_builtin_template_params', 'pdf_builder_ajax_update_builtin_template_params');
-        add_action('wp_ajax_pdf_builder_save_builtin_from_react', 'pdf_builder_ajax_save_builtin_from_react');
     }
 
     /**
@@ -428,8 +370,6 @@ class PDF_Builder_Admin {
         add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
 // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
-// Éditeur de templates prédéfinis
-        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Builtin - PDF Builder Pro', 'pdf-builder-pro'), __('🔧 Éditeur Builtin', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-builtin-editor', 'pdf_builder_builtin_editor_page');
 // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
     }
@@ -1287,120 +1227,9 @@ class PDF_Builder_Admin {
         }
     }
 
-    /**
-     * AJAX - Installer un template builtin
-     */
-    public function ajax_install_builtin_template()
-    {
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
-            }
-
-            // Récupérer les paramètres
-            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
-            $custom_name = isset($_POST['custom_name']) ? sanitize_text_field($_POST['custom_name']) : '';
-
-            if (empty($template_name)) {
-                wp_send_json_error('Nom du template manquant');
-            }
-
-            // Obtenir le Template Manager
-            $template_manager = $this->get_template_manager();
-            if (!$template_manager) {
-                wp_send_json_error('Erreur interne: Template Manager non disponible');
-            }
-
-            // Installer le template builtin
-            $result = $template_manager->install_builtin_template($template_name, $custom_name);
-
-            if ($result['success']) {
-                wp_send_json_success([
-                    'message' => $result['message'],
-                    'template_id' => $result['template_id']
-                ]);
-            } else {
-                wp_send_json_error($result['message']);
-            }
-
-        } catch (Exception $e) {
-
-            wp_send_json_error('Erreur interne du serveur');
-        }
-    }
-
-    /**
-     * AJAX - Récupérer la liste des templates builtin
-     */
-    public function ajax_get_builtin_templates()
-    {
 
 
 
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-
-                wp_send_json_error('Permissions insuffisantes');
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-
-                wp_send_json_error('Sécurité: Nonce invalide');
-            }
-
-
-
-            // S'assurer que les constantes sont définies
-            if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
-                $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
-                define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path($plugin_file));
-
-            }
-            if (!defined('PDF_BUILDER_PLUGIN_URL')) {
-                $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
-                define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url($plugin_file));
-
-            }
-
-            // Obtenir le Template Manager
-            $template_manager = $this->get_template_manager();
-
-
-            if (!$template_manager) {
-
-                wp_send_json_error('Erreur interne: Template Manager non disponible');
-            }
-
-
-
-            // Récupérer les templates builtin
-            $templates = $template_manager->get_builtin_templates();
-
-
-            if (!is_array($templates)) {
-
-                wp_send_json_error('Erreur interne: Templates non valides');
-            }
-
-
-
-            wp_send_json_success([
-                'templates' => $templates
-            ]);
-
-        } catch (Exception $e) {
-
-            wp_send_json_error('Erreur interne du serveur');
-        }
-    }
 
     /**
      * AJAX - Auto-sauvegarder le template (wrapper)
@@ -5273,6 +5102,9 @@ class PDF_Builder_Admin {
     {
         $this->checkAdminPermissions();
 
+        // Get template ID from URL parameter
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+
         // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
         wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
         wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
@@ -5305,84 +5137,6 @@ class PDF_Builder_Admin {
             ]
         ]);
 
-        // Check if loading a builtin template
-        $builtin_template_id = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
-        $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        $builtin_template_data = null;
-
-        if ($builtin_template_id && $transient_key) {
-            // Load builtin template from transient (set by builtin-editor-page.php)
-            $transient_data = get_transient($transient_key);
-            if ($transient_data) {
-                $builtin_template_data = $transient_data;
-                // Clean up the transient after use
-                delete_transient($transient_key);
-            } else {
-                // Fallback: Load builtin template directly from file
-                $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
-                if (file_exists($builtin_file)) {
-                    $json_content = file_get_contents($builtin_file);
-                    $builtin_template_data = json_decode($json_content, true);
-                }
-            }
-        } elseif ($builtin_template_id) {
-            // Fallback: Load builtin template directly from file
-            $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
-            if (file_exists($builtin_file)) {
-                $json_content = file_get_contents($builtin_file);
-                $builtin_template_data = json_decode($json_content, true);
-            }
-        }
-
-        // Transform builtin template data to match React format
-        if ($builtin_template_data && isset($builtin_template_data['elements']) && is_array($builtin_template_data['elements'])) {
-            $transformed_elements = array();
-            foreach ($builtin_template_data['elements'] as $element) {
-                $transformed_element = array(
-                    'id' => uniqid('element_', true),
-                    'type' => $element['type'],
-                    'visible' => true,
-                    'locked' => false,
-                    'createdAt' => date('c'),
-                    'updatedAt' => date('c')
-                );
-
-                // Flatten position
-                if (isset($element['position'])) {
-                    $transformed_element['x'] = $element['position']['x'];
-                    $transformed_element['y'] = $element['position']['y'];
-                }
-
-                // Flatten size
-                if (isset($element['size'])) {
-                    $transformed_element['width'] = $element['size']['width'];
-                    $transformed_element['height'] = $element['size']['height'];
-                }
-
-                // Map content to text
-                if (isset($element['content'])) {
-                    $transformed_element['text'] = $element['content'];
-                }
-
-                // Flatten style
-                if (isset($element['style']) && is_array($element['style'])) {
-                    foreach ($element['style'] as $key => $value) {
-                        $transformed_element[$key] = $value;
-                    }
-                }
-
-                // Default values based on type
-                if ($element['type'] === 'text') {
-                    $transformed_element['align'] = 'left';
-                    $transformed_element['rotation'] = 0;
-                }
-
-                $transformed_elements[] = $transformed_element;
-            }
-            $builtin_template_data['elements'] = $transformed_elements;
-        }
-
         // Localize script with data
         $localize_data = [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
@@ -5403,16 +5157,6 @@ class PDF_Builder_Admin {
             }
         }
         
-        // Add builtin template data if available
-        if ($builtin_template_data) {
-            $localize_data['builtinTemplate'] = $builtin_template_data;
-            $localize_data['isBuiltin'] = true;
-            $localize_data['templateId'] = $builtin_template_id;
-            // Also set as existing template data so the automatic loading works
-            $localize_data['existingTemplate'] = $builtin_template_data;
-            $localize_data['hasExistingData'] = true;
-        }
-        
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
@@ -5430,236 +5174,6 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
-            // Écouter les événements de chargement de templates builtin
-            window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
-
-            // Attendre que l'éditeur soit prêt, puis charger le template
-            function loadBuiltinTemplateWhenReady() {
-
-
-
-
-
-                if (typeof window.pdfBuilderReact !== 'undefined' &&
-                    window.pdfBuilderReact.loadTemplate &&
-                    window.pdfBuilderReact.getEditorState) {
-
-                    try {
-                        var editorState = window.pdfBuilderReact.getEditorState();
-
-
-                        // Charger le template builtin
-
-                        var result = window.pdfBuilderReact.loadTemplate(event.detail);
-
-                        return true;
-                    } catch(e) {
-
-                        return false;
-                    }
-                }
-
-
-                return false;
-            }
-
-            // Essayer immédiatement
-            if (!loadBuiltinTemplateWhenReady()) {
-                // Réessayer toutes les 500ms pendant 10 secondes
-                var loadAttempts = 0;
-                var maxLoadAttempts = 20;
-                var loadInterval = setInterval(function() {
-                    loadAttempts++;
-                    if (loadBuiltinTemplateWhenReady()) {
-                        clearInterval(loadInterval);
-                    } else if (loadAttempts >= maxLoadAttempts) {
-
-                        clearInterval(loadInterval);
-                    }
-                }, 500);
-            }
-        });
-
-        // ============================================================================
-        // IMMEDIATE BUILTIN TEMPLATE LOADING - dispatch event right away
-
-        // Log des scripts enqueued
-
-        // Monitor script loading
-        var scriptLoads = {
-            'react': false,
-            'react-dom': false,
-            'pdf-builder-react': false
-        };
-
-        // Intercepter les erreurs de script
-        window.addEventListener('error', function(event) {
-            if (event.filename && event.filename.includes('react')) {
-                // Script error handling (logging removed)
-            }
-        });
-
-        // Créer un observer pour les changements dans window
-        var checkInterval = setInterval(function() {
-            if (window.React && !scriptLoads.react) {
-                scriptLoads.react = true;
-
-            }
-            if (window.ReactDOM && !scriptLoads['react-dom']) {
-                scriptLoads['react-dom'] = true;
-
-            }
-            if (window.pdfBuilderReact && !scriptLoads['pdf-builder-react']) {
-                scriptLoads['pdf-builder-react'] = true;
-
-            }
-        }, 50);
-
-        // Script d'initialisation React avec vérification périodique
-        function initReactAndTemplate() {
-
-            
-            var scriptLoads = {
-                'react': !!window.React,
-                'react-dom': !!window.ReactDOM,
-                'pdf-builder-react': !!window.pdfBuilderReact
-            };
-
-            function tryInitReact() {
-
-                if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-
-                    try {
-                        var result = window.pdfBuilderReact.initPDFBuilderReact();
-
-                        return result === true;
-                    } catch(e) {
-
-                        return false;
-                    }
-                }
-
-                return false;
-            }
-
-            // Try immediately
-            if (tryInitReact()) {
-                // React loaded immediately
-
-                
-                setTimeout(function() {
-                    if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-
-
-                        window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                            detail: window.pdfBuilderData.builtinTemplate
-                        }));
-
-                    }
-                }, 50);
-            } else {
-                // React not ready yet, poll for it
-                var attempts = 0;
-                var maxAttempts = 150;
-                var initInterval = setInterval(function() {
-                    attempts++;
-                    if (attempts % 10 === 1) {
-
-                    }
-                    if (tryInitReact()) {
-                        clearInterval(initInterval);
-
-                        
-                        setTimeout(function() {
-                            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-
-
-                                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                                    detail: window.pdfBuilderData.builtinTemplate
-                                }));
-
-                            }
-                        }, 50);
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(initInterval);
-
-                    }
-                }, 200);
-            }
-
-            // Global fallback: Monitor for pdfBuilderData availability (runs regardless of React init)
-            var builtin_check_count = 0;
-            var builtin_data_ready = setInterval(function() {
-                builtin_check_count++;
-                if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                    clearInterval(builtin_data_ready);
-
-
-                    window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                        detail: window.pdfBuilderData.builtinTemplate
-                    }));
-
-                } else if (builtin_check_count >= 100) {
-                    clearInterval(builtin_data_ready);
-
-                }
-            }, 50);
-        }
-
-        // Call initialization immediately if DOM is ready, otherwise wait for DOMContentLoaded
-        var initCalled = false;
-        
-        function callInitIfNeeded() {
-            if (!initCalled) {
-
-                initCalled = true;
-                initReactAndTemplate();
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-
-            document.addEventListener('DOMContentLoaded', function() {
-
-                if (!initCalled) {
-                    initCalled = true;
-                    initReactAndTemplate();
-                }
-            });
-        } else {
-
-            initCalled = true;
-            initReactAndTemplate();
-        }
-
-        // Fallback: Wait for pdfBuilderData to be available, then init
-
-        
-        var pdfDataCheckCount = 0;
-        var pdfDataWaiter = setInterval(function() {
-            pdfDataCheckCount++;
-            if (window.pdfBuilderData) {
-                clearInterval(pdfDataWaiter);
-
-                
-                // Dispatch builtin template event if it exists
-                if (window.pdfBuilderData.builtinTemplate) {
-
-                    var event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                        detail: window.pdfBuilderData.builtinTemplate
-                    });
-                    window.dispatchEvent(event);
-
-                }
-                
-                callInitIfNeeded();
-            } else if (pdfDataCheckCount > 200) {
-                clearInterval(pdfDataWaiter);
-
-                callInitIfNeeded();
-            }
-        }, 50);
-
         // ============================================================================
         // EXISTING TEMPLATE DATA LOADING - FIX FOR ELEMENTS DISAPPEARING ON REFRESH
         // ============================================================================
@@ -5685,7 +5199,7 @@ class PDF_Builder_Admin {
         }
 
         // Try to load existing data immediately, then retry periodically
-        // Load for both regular templates with existing data AND builtin templates
+        // Load existing template data when editor is ready
         if (!loadExistingTemplateData()) {
             var loadDataAttempts = 0;
             var maxLoadDataAttempts = 30; // 15 seconds max
@@ -5699,63 +5213,6 @@ class PDF_Builder_Admin {
             }, 500);
         }
 
-        // ============================================================================
-        // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
-        // ============================================================================
-        // Intercept fetch requests to force builtin template_id in auto-save calls
-
-        
-        (function setupBuiltinAutoSaveInterceptor() {
-            // Get builtin template ID from URL or global variable
-            const urlParams = new URLSearchParams(window.location.search);
-            const builtinTemplateId = urlParams.get('builtin_template');
-            
-            if (!builtinTemplateId) {
-
-                return;
-            }
-            
-
-            
-            // Store original fetch
-            const originalFetch = window.fetch;
-            
-            // Replace fetch with wrapper
-            window.fetch = function(...args) {
-                const [resource, config] = args;
-                const resourceStr = typeof resource === 'string' ? resource : resource.url || '';
-                
-                // Check if this is an auto-save request
-                if (resourceStr.includes('admin-ajax.php') && config && config.body) {
-                    try {
-                        const body = new URLSearchParams(config.body);
-                        const action = body.get('action');
-                        
-                        if (action === 'pdf_builder_auto_save_template') {
-
-
-                            
-                            // Force template_id to builtin ID
-                            body.set('template_id', builtinTemplateId);
-                            
-
-
-                            
-                            // Update config with new body
-                            config.body = body.toString();
-                        }
-                    } catch (e) {
-
-                    }
-                }
-                
-                // Call original fetch
-                return originalFetch.apply(this, args);
-            };
-            
-
-        })();
-        
         </script>
 
         <style>
@@ -5778,105 +5235,8 @@ class PDF_Builder_Admin {
         </style>
         <?php
     }
-    /**
-     * Crée un nouveau template basé sur un template prédéfini
-     */
-    public function ajax_create_from_builtin()
-    {
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            }
 
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_create_from_builtin')) {
-                wp_send_json_error(['message' => 'Sécurité: Nonce invalide']);
-            }
 
-            // Récupérer l'ID du builtin
-            $builtin_id = isset($_POST['builtin_id']) ? sanitize_text_field($_POST['builtin_id']) : '';
-
-            if (empty($builtin_id)) {
-                wp_send_json_error(['message' => 'ID du template prédéfini manquant']);
-            }
-
-            // Charger le fichier JSON du builtin
-            // Utiliser une approche plus robuste pour le chemin
-            $plugin_root = dirname(dirname(dirname(__FILE__)));
-            $file_path = $plugin_root . '/templates/builtin/' . $builtin_id . '.json';
-
-            if (!file_exists($file_path)) {
-                wp_send_json_error(['message' => 'Template prédéfini non trouvé: ' . $builtin_id]);
-            }
-
-            $content = file_get_contents($file_path);
-            $template_data = json_decode($content, true);
-
-            if (!$template_data) {
-                wp_send_json_error(['message' => 'Données du template invalides']);
-            }
-
-            // Créer un nouveau post de type pdf_template
-            $post_data = [
-                'post_title' => $template_data['name'] . ' (Copie)',
-                'post_type' => 'pdf_template',
-                'post_status' => 'publish',
-                'post_author' => get_current_user_id(),
-                'meta_input' => [
-                    '_pdf_template_data' => $content, // JSON brut du template
-                    '_pdf_template_settings' => [
-                        'canvas_width' => $template_data['canvasWidth'] ?? 595,
-                        'canvas_height' => $template_data['canvasHeight'] ?? 842,
-                        'created_from_builtin' => $builtin_id,
-                        'builtin_version' => $template_data['version'] ?? '1.0'
-                    ]
-                ]
-            ];
-
-            $new_template_id = wp_insert_post($post_data);
-
-            if (is_wp_error($new_template_id)) {
-                wp_send_json_error(['message' => 'Erreur lors de la création du template: ' . $new_template_id->get_error_message()]);
-            }
-
-            wp_send_json_success([
-                'template_id' => $new_template_id,
-                'message' => 'Template créé avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Charger un template builtin depuis le fichier JSON
-     */
-    private function load_builtin_template($template_id) {
-        if (empty($template_id)) {
-            return null;
-        }
-
-        // Chemin vers le fichier
-        $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
-
-        if (!file_exists($file_path)) {
-            return null;
-        }
-
-        $content = file_get_contents($file_path);
-        if ($content === false) {
-            return null;
-        }
-
-        $template_data = json_decode($content, true);
-        if ($template_data === null) {
-            return null;
-        }
-
-        return $template_data;
-    }
 }
 
 // Empêcher l'accès direct

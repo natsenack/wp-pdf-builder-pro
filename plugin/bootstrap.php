@@ -84,15 +84,7 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
-    // Charger le handler AJAX pour les templates builtin
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/get-builtin-templates.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/get-builtin-templates.php';
-    }
 
-    // Charger le handler AJAX pour charger un template builtin spécifique
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/load-builtin-template.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/load-builtin-template.php';
-    }
 
     // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
@@ -307,7 +299,6 @@ function pdf_builder_load_core_when_needed() {
     } elseif (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action'])) {
         // Charger pour les appels AJAX du PDF Builder
         $pdf_builder_ajax_actions = [
-            'get_builtin_templates',
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
@@ -726,48 +717,7 @@ function pdf_builder_ajax_get_template() {
     ));
 }
 
-/**
- * AJAX handler pour récupérer les templates builtin
- */
-function pdf_builder_ajax_get_builtin_templates() {
-    // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
-        return;
-    }
 
-    // Vérifier les permissions
-    if (!current_user_can('edit_posts')) {
-        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
-        return;
-    }
-
-    // Charger le Template Manager
-    if (!class_exists('PDF_Builder_Template_Manager')) {
-        wp_send_json_error(__('Template Manager non disponible.', 'pdf-builder-pro'));
-        return;
-    }
-
-    try {
-        // Essayer avec l'instance du core si disponible
-        if (class_exists('\\PDF_Builder\\Core\\PDF_Builder_Core')) {
-            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
-            $template_manager = new PDF_Builder_Template_Manager($core);
-        } else {
-            // Fallback sans instance du core
-            $template_manager = new PDF_Builder_Template_Manager(null);
-        }
-
-        $templates = $template_manager->get_builtin_templates();
-
-        wp_send_json_success(array(
-            'templates' => $templates,
-            'count' => count($templates)
-        ));
-    } catch (Exception $e) {
-        wp_send_json_error(__('Erreur lors du chargement des templates: ', 'pdf-builder-pro') . $e->getMessage());
-    }
-}
 
 /**
  * AJAX handler pour sauvegarder un template
@@ -892,11 +842,6 @@ function pdf_builder_register_fallback_hooks() {
 
 // Enregistrer les hooks seulement si WordPress est disponible
 if (function_exists('add_action')) {
-    // Charger le core au moment de wp_ajax pour les appels AJAX du PDF Builder
-    add_action('wp_ajax_get_builtin_templates', 'pdf_builder_load_core_when_needed', 1);
-    add_action('wp_ajax_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
-    add_action('wp_ajax_nopriv_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
-
     // Action cron pour la génération de previews de templates
     add_action('pdf_builder_generate_template_preview', 'pdf_builder_generate_template_preview_cron');
 

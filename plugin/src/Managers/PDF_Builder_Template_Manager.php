@@ -388,10 +388,6 @@ class PDF_Builder_Template_Manager
     }
 
     /**
-     * Charge un template builtin depuis AJAX
-     * @param string $template_id ID du template builtin (ex: "classic", "corporate")
-     */
-    /**
      * AJAX - Vider le cache REST
      */
     public function ajax_flush_rest_cache()
@@ -633,142 +629,9 @@ class PDF_Builder_Template_Manager
         return $errors;
     }
 
-    /**
-     * Obtenir tous les templates builtin (statiques)
-     *
-     * @return array Liste des templates builtin avec leurs métadonnées
-     */
-    public function get_builtin_templates()
-    {
-        $templates = [];
-
-        // Utiliser la constante définie dans pdf-builder-pro.php
-        $builtin_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/';
-
-        if (!is_dir($builtin_dir)) {
-            return $templates;
-        }
-
-        // Scanner le dossier pour les fichiers JSON
-        $files = glob($builtin_dir . '*.json');
-
-        foreach ($files as $file) {
-            $filename = basename($file, '.json');
-            $content = file_get_contents($file);
-
-            if ($content === false) {
-                continue;
-            }
-
-            $template_data = json_decode($content, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                continue;
-            }
-
-            // Validation basique
-            if (!isset($template_data['elements'])) {
-                continue;
-            }
-
-            // Ajouter des métadonnées pour la modale
-            $template_data['id'] = $filename;
-            $template_data['preview_url'] = $this->get_template_preview_url($filename);
-
-            // Champs requis pour la modale
-            if (!isset($template_data['name'])) {
-                $template_data['name'] = ucfirst(str_replace('-', ' ', $filename));
-            }
-
-            if (!isset($template_data['description'])) {
-                $template_data['description'] = 'Template ' . ucfirst(str_replace('-', ' ', $filename));
-            }
-
-            if (!isset($template_data['category'])) {
-                $template_data['category'] = 'general';
-            }
-
-            $templates[] = $template_data;
-        }
-
-        return $templates;
-    }
-
-    /**
-     * Génère ou retourne l'URL de prévisualisation d'un template
-     */
-    public function get_template_preview_url($template_id)
-    {
-        // Chemin vers le fichier de cache des previews
-        $cache_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'cache/';
-        $preview_file = $cache_dir . $template_id . '.png';
-
-        // Vérifier si la preview existe déjà
-        if (file_exists($preview_file) && filemtime($preview_file) > time() - 3600) { // Cache de 1 heure
-            return plugin_dir_url(dirname(dirname(__FILE__))) . 'cache/' . $template_id . '.png';
-        }
-
-        // Générer la preview de manière asynchrone
-        $template_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
-
-        if (file_exists($template_file)) {
-            // Lancer la génération en arrière-plan
-            $this->generate_template_preview_async($template_id, $template_file);
-        }
-
-        // Retourner une URL temporaire ou vide pendant la génération
-        return '';
-    }
-
-    /**
-     * Génère une preview de template de manière asynchrone
-     */
-    private function generate_template_preview_async($template_id, $template_file)
-    {
-        // Utiliser wp_schedule_single_event pour générer la preview en arrière-plan
-        if (!wp_next_scheduled('pdf_builder_generate_template_preview', array($template_id, $template_file))) {
-            wp_schedule_single_event(time() + 5, 'pdf_builder_generate_template_preview', array($template_id, $template_file));
-        }
-    }
-
-    /**
-     * Génère effectivement la preview du template
-     */
-    public function generate_template_preview($template_id, $template_file)
-    {
-        try {
-            $cache_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'cache/';
-
-            // Créer le dossier cache s'il n'existe pas
-            if (!is_dir($cache_dir)) {
-                wp_mkdir_p($cache_dir);
-            }
-
-            // Utiliser le script generate-svg-preview.php existant
-            $script_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'generate-svg-preview.php';
-            $command = "php \"$script_path\" \"$template_id\" 2>&1";
-
-            // Exécuter le script
-            $output = shell_exec($command);
-
-            if ($output && strpos($output, '✅ Aperçu SVG généré') !== false) {
-                // Le script a réussi, chercher le fichier SVG généré
-                $svg_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/images/templates/' . $template_id . '-preview.svg';
-
-                if (file_exists($svg_file)) {
-                    // Copier vers le cache avec le nom PNG attendu
-                    $png_file = $cache_dir . $template_id . '.png';
-                    copy($svg_file, $png_file);
-
-                    return plugin_dir_url(dirname(dirname(__FILE__))) . 'cache/' . $template_id . '.png';
-                }
-            }
 
 
 
-        } catch (Exception $e) {
 
-        }
 
-        return false;
-    }
 }

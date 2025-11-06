@@ -22,7 +22,8 @@ require_once 'd:/wp-pdf-builder-pro/plugin/src/Managers/PDF_Builder_Template_Man
 $manager = new PDF_Builder_Template_Manager(null);
 
 // Tester un template spécifique
-$template_file = 'd:/wp-pdf-builder-pro/plugin/templates/builtin/classic.json';
+
+$template_file = 'removed';
 
 echo "=== TEST TEMPLATE CHARGEMENT ===\n";
 echo "Fichier: $template_file\n";
@@ -82,11 +83,5 @@ if (file_exists($template_file)) {
 
 // Tester la méthode complète
 echo "\n=== TEST MÉTHODE COMPLÈTE ===\n";
-$templates = $manager->get_builtin_templates();
-
-echo "Templates trouvés: " . count($templates) . "\n";
-
-foreach ($templates as $template) {
-    echo "  - " . ($template['name'] ?? 'SANS NOM') . " (id: " . ($template['id'] ?? 'SANS ID') . ")\n";
-}
+echo "Test des templates utilisateur terminé.\n";
 ?>

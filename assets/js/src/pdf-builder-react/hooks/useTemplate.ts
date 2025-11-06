@@ -129,58 +129,6 @@ export function useTemplate() {
         return;
       }
 
-      // Pour les templates builtin, charger directement les données depuis l'événement
-      // Un template builtin a soit des elements, soit un canvas défini (même null)
-      if (templateData.elements !== undefined || templateData.canvas !== undefined) {
-        debugLog('🎯 [useTemplate] Template builtin détecté, chargement direct');
-
-        // Parse les données si nécessaire
-        let elements = [];
-        let canvas = null;
-
-        try {
-          if (typeof templateData.elements === 'string') {
-            elements = JSON.parse(templateData.elements);
-          } else if (Array.isArray(templateData.elements)) {
-            elements = templateData.elements;
-          } else if (templateData.elements) {
-            // Si c'est un objet mais pas un array, essayer de le convertir
-            elements = [templateData.elements];
-          }
-
-          if (typeof templateData.canvas === 'string') {
-            canvas = JSON.parse(templateData.canvas);
-          } else if (templateData.canvas && typeof templateData.canvas === 'object') {
-            canvas = templateData.canvas;
-          }
-        } catch (parseError) {
-          debugError('❌ [useTemplate] Erreur de parsing des données builtin:', parseError);
-          elements = [];
-          canvas = null;
-        }
-
-        debugLog('🚀 [useTemplate] Dispatch LOAD_TEMPLATE pour builtin:', {
-          id: templateData.id,
-          name: templateData.name,
-          elementsCount: elements.length,
-          canvas: canvas,
-          rawElements: templateData.elements
-        });
-
-        dispatch({
-          type: 'LOAD_TEMPLATE',
-          payload: {
-            id: templateData.id,
-            name: templateData.name || 'Template sans nom',
-            elements: elements,
-            canvas: canvas,
-            lastSaved: new Date()
-          } as LoadTemplatePayload
-        });
-
-        return;
-      }
-
       // Pour les templates sauvegardés, utiliser l'API
       loadExistingTemplate(templateData.id).catch((error: unknown) => {
         debugError('❌ [useTemplate] Erreur lors du chargement du template:', error);
@@ -188,10 +136,8 @@ export function useTemplate() {
     };
 
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
-    document.addEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadTemplate);
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
-      document.removeEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadTemplate);
     };
   }, [loadExistingTemplate]);
 

@@ -138,7 +138,7 @@
         window.fetch = function(...args) {
             return originalFetch.apply(this, args).then(response => {
                 // Vérifier si c'est un appel AJAX pour charger un template
-                if (args[0] && (args[0].includes('load_builtin_template') || args[0].includes('load_template'))) {
+                if (args[0] && args[0].includes('load_template')) {
                     return response.clone().json().then(data => {
                         if (data.success && data.data && data.data.template && data.data.template.elements) {
 

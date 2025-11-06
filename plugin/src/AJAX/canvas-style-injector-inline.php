@@ -28,7 +28,7 @@ add_action('wp_footer', function() {
             const url = args[0];
             const result = originalFetch.apply(this, args);
 
-            // Pas de traitement spécial pour les templates builtin
+            // Templates système nettoyé
             return result;
         };
 

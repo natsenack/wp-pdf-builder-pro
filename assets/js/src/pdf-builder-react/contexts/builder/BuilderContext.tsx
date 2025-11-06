@@ -7,11 +7,30 @@ import {
   DragState,
   Element,
   BuilderMode,
-  HistoryState,
-  LoadTemplatePayload
+  HistoryState
 } from '../../types/elements';
-import { useSaveState } from '../../hooks/useSaveState';
 import { debugLog, debugError, debugWarn } from '../../utils/debug';
+
+// Type pour les propriétés des éléments product_table
+interface ProductTableProperties {
+  showHeaders: boolean;
+  showBorders: boolean;
+  showAlternatingRows: boolean;
+  showSku: boolean;
+  showDescription: boolean;
+  showQuantity: boolean;
+  fontSize: number;
+  currency: string;
+  tableStyle: string;
+  textAlign: string;
+  verticalAlign: string;
+  backgroundColor: string;
+  headerBackgroundColor: string;
+  headerTextColor: string;
+  alternateRowColor: string;
+  borderColor: string;
+  textColor: string;
+}
 
 // Fonction helper pour corriger les positions des éléments hors limites
 const clampElementPositions = (elements: Element[]): Element[] => {
@@ -42,7 +61,7 @@ const clampElementPositions = (elements: Element[]): Element[] => {
 
 // Fonction helper pour réparer les propriétés des éléments product_table
 const repairProductTableProperties = (elements: Element[]): Element[] => {
-  const defaultProperties = {
+  const defaultProperties: ProductTableProperties = {
     // Fonctionnalités de base
     showHeaders: true,
     showBorders: true,
@@ -72,47 +91,47 @@ const repairProductTableProperties = (elements: Element[]): Element[] => {
   return elements.map(element => {
     if (element.type !== 'product_table') return element;
 
-    const repairedElement: any = { ...element };
+    const repairedElement = { ...element } as Element & ProductTableProperties;
 
     // Ajouter les propriétés manquantes
     Object.keys(defaultProperties).forEach(prop => {
       if (!(prop in repairedElement)) {
-        repairedElement[prop] = (defaultProperties as any)[prop];
+        (repairedElement as Record<string, unknown>)[prop] = defaultProperties[prop as keyof ProductTableProperties];
       }
     });
 
     // Validation des booléens
-    const booleanProps = ['showHeaders', 'showBorders', 'showAlternatingRows', 'showSku', 'showDescription', 'showQuantity'];
+    const booleanProps: (keyof ProductTableProperties)[] = ['showHeaders', 'showBorders', 'showAlternatingRows', 'showSku', 'showDescription', 'showQuantity'];
     booleanProps.forEach(prop => {
       if (typeof repairedElement[prop] !== 'boolean') {
-        repairedElement[prop] = (defaultProperties as any)[prop];
+        (repairedElement as Record<string, unknown>)[prop] = defaultProperties[prop];
       }
     });
 
     // Validation des nombres
-    const numberProps = ['fontSize'];
+    const numberProps: (keyof ProductTableProperties)[] = ['fontSize'];
     numberProps.forEach(prop => {
       if (typeof repairedElement[prop] !== 'number') {
-        repairedElement[prop] = (defaultProperties as any)[prop];
+        (repairedElement as Record<string, unknown>)[prop] = defaultProperties[prop];
       }
     });
 
     // Validation des alignements
     const validHorizontalAligns = ['left', 'center', 'right'];
-    if (!validHorizontalAligns.includes(repairedElement.textAlign)) {
+    if (!validHorizontalAligns.includes(repairedElement.textAlign as string)) {
       repairedElement.textAlign = defaultProperties.textAlign;
     }
 
     const validVerticalAligns = ['top', 'middle', 'bottom'];
-    if (!validVerticalAligns.includes(repairedElement.verticalAlign)) {
+    if (!validVerticalAligns.includes(repairedElement.verticalAlign as string)) {
       repairedElement.verticalAlign = defaultProperties.verticalAlign;
     }
 
     // Validation des couleurs (format hexadécimal)
-    const colorProperties = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor', 'headerTextColor', 'textColor'];
+    const colorProperties: (keyof ProductTableProperties)[] = ['backgroundColor', 'headerBackgroundColor', 'alternateRowColor', 'borderColor', 'headerTextColor', 'textColor'];
     colorProperties.forEach(prop => {
-      if (repairedElement[prop] && !/^#[0-9A-Fa-f]{6}$/.test(repairedElement[prop])) {
-        repairedElement[prop] = (defaultProperties as any)[prop];
+      if (repairedElement[prop] && !/^#[0-9A-Fa-f]{6}$/.test(repairedElement[prop] as string)) {
+        (repairedElement as Record<string, unknown>)[prop] = defaultProperties[prop];
       }
     });
 
@@ -195,7 +214,7 @@ const initialState: BuilderState = {
 // Reducer
 function builderReducer(state: BuilderState, action: BuilderAction): BuilderState {
   switch (action.type) {
-    case 'ADD_ELEMENT':
+    case 'ADD_ELEMENT': {
       return {
         ...state,
         elements: [...state.elements, action.payload],
@@ -208,8 +227,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           elements: [...state.elements, action.payload]
         })
       };
+    }
 
-    case 'UPDATE_ELEMENT':
+    case 'UPDATE_ELEMENT': {
       return {
         ...state,
         elements: state.elements.map(el =>
@@ -230,8 +250,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           )
         })
       };
+    }
 
-    case 'REMOVE_ELEMENT':
+    case 'REMOVE_ELEMENT': {
       return {
         ...state,
         elements: state.elements.filter(el => el.id !== action.payload),
@@ -252,15 +273,17 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           }
         })
       };
+    }
 
-    case 'SET_ELEMENTS':
+    case 'SET_ELEMENTS': {
       return {
         ...state,
         elements: action.payload,
         history: updateHistory(state, { ...state, elements: action.payload })
       };
+    }
 
-    case 'SET_SELECTION':
+    case 'SET_SELECTION': {
       return {
         ...state,
         selection: {
@@ -269,8 +292,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           selectionBounds: calculateSelectionBounds(action.payload, state.elements)
         }
       };
+    }
 
-    case 'CLEAR_SELECTION':
+    case 'CLEAR_SELECTION': {
       return {
         ...state,
         selection: {
@@ -279,38 +303,44 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           selectionBounds: undefined
         }
       };
+    }
 
-    case 'SET_CANVAS':
+    case 'SET_CANVAS': {
       return {
         ...state,
         canvas: { ...state.canvas, ...action.payload }
       };
+    }
 
-    case 'SET_MODE':
+    case 'SET_MODE': {
       return {
         ...state,
         mode: action.payload
       };
+    }
 
-    case 'SET_DRAG_STATE':
+    case 'SET_DRAG_STATE': {
       return {
         ...state,
         drag: { ...state.drag, ...action.payload }
       };
+    }
 
-    case 'SET_PREVIEW_MODE':
+    case 'SET_PREVIEW_MODE': {
       return {
         ...state,
         previewMode: action.payload
       };
+    }
 
-    case 'SET_ORDER_ID':
+    case 'SET_ORDER_ID': {
       return {
         ...state,
         orderId: action.payload
       };
+    }
 
-    case 'UNDO':
+    case 'UNDO': {
       if (!state.history.canUndo) return state;
       const previousState = state.history.past[state.history.past.length - 1];
       return {
@@ -323,8 +353,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           canRedo: true
         }
       };
+    }
 
-    case 'REDO':
+    case 'REDO': {
       if (!state.history.canRedo) return state;
       const nextState = state.history.future[0];
       return {
@@ -337,11 +368,13 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           canRedo: state.history.future.length > 1
         }
       };
+    }
 
-    case 'RESET':
+    case 'RESET': {
       return initialState;
+    }
 
-    case 'SAVE_TEMPLATE':
+    case 'SAVE_TEMPLATE': {
       return {
         ...state,
         template: {
@@ -354,8 +387,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           name: action.payload?.name || state.template.name
         }
       };
+    }
 
-    case 'SET_TEMPLATE_MODIFIED':
+    case 'SET_TEMPLATE_MODIFIED': {
       return {
         ...state,
         template: {
@@ -363,6 +397,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           isModified: action.payload
         }
       };
+    }
 
     case 'SET_TEMPLATE_SAVING':
       return {
@@ -383,17 +418,17 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         }
       };
 
-    case 'LOAD_TEMPLATE':
-      const rawElements = (action.payload as any).elements || [];
+    case 'LOAD_TEMPLATE': {
+      const rawElements = (action.payload as Record<string, unknown>).elements as Element[] || [];
       const repairedElements = repairProductTableProperties(rawElements);
       
       // Ne pas convertir, garder les PX directement
       const clampedElements = clampElementPositions(repairedElements);
       
       // Garder les dimensions du canvas si présentes
-      const canvasData = (action.payload as any).canvas ? { 
+      const canvasData = (action.payload as Record<string, unknown>).canvas ? { 
         ...state.canvas, 
-        ...(action.payload as any).canvas 
+        ...(action.payload as Record<string, unknown>).canvas as Partial<CanvasState>
       } : state.canvas;
       
       return {
@@ -401,12 +436,12 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         elements: clampedElements,
         canvas: canvasData,
         template: {
-          id: (action.payload as any).id,
-          name: (action.payload as any).name,
+          id: (action.payload as Record<string, unknown>).id as string,
+          name: (action.payload as Record<string, unknown>).name as string,
           isNew: false,
           isModified: true, // Template chargé est considéré comme modifiable
           isSaving: false,
-          lastSaved: (action.payload as any).lastSaved
+          lastSaved: (action.payload as Record<string, unknown>).lastSaved as Date
         },
         history: updateHistory(state, {
           ...state,
@@ -414,8 +449,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           canvas: canvasData
         })
       };
+    }
 
-    case 'NEW_TEMPLATE':
+    case 'NEW_TEMPLATE': {
       return {
         ...initialState,
         template: {
@@ -424,9 +460,11 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           isSaving: false
         }
       };
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 }
 
@@ -501,6 +539,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
   // Chargement automatique du template depuis l'URL
   useEffect(() => {
+    if (typeof URLSearchParams === 'undefined') return;
+    
     const urlParams = new URLSearchParams(window.location.search);
     const templateId = urlParams.get('template_id');
 
@@ -510,10 +550,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       // Charger le template depuis l'API WordPress
       const loadTemplate = async () => {
         try {
-          const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
-          const nonce = (window as any).pdfBuilderData?.nonce ||
-                       (window as any).pdfBuilderNonce ||
-                       (window as any).pdfBuilderReactData?.nonce || '';
+          const ajaxUrl = (window as unknown as Record<string, unknown>).ajaxurl as string || '/wp-admin/admin-ajax.php';
+          const nonce = ((window as unknown as Record<string, unknown>).pdfBuilderData as Record<string, unknown>)?.nonce as string ||
+                       ((window as unknown as Record<string, unknown>).pdfBuilderNonce as string) ||
+                       ((window as unknown as Record<string, unknown>).pdfBuilderReactData as Record<string, unknown>)?.nonce as string || '';
 
           const response = await fetch(ajaxUrl, {
             method: 'POST',
@@ -564,22 +604,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       }
     };
 
-    const handleLoadBuiltinTemplate = (event: CustomEvent) => {
-      debugLog('🔄 [LOAD BUILTIN TEMPLATE] Custom event received', event.detail);
-      const templateData = event.detail;
-      if (templateData) {
-        dispatch({
-          type: 'LOAD_TEMPLATE',
-          payload: templateData
-        });
-      }
-    };
-
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
-    document.addEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadBuiltinTemplate as EventListener);
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
-      document.removeEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadBuiltinTemplate as EventListener);
     };
   }, []);
 

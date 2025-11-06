@@ -70,14 +70,14 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 **Objectif** : Implémenter des templates professionnels statiques (inspiré du plugin concurrent)
 
 **🏗️ Architecture Templates Statiques** :
-- [ ] **Templates JSON statiques** : Fichiers `.json` dans `plugin/templates/builtin/`
-- [ ] **Aperçus PNG statiques** : Images miniatures pré-générées dans `plugin/assets/images/templates/`
-- [ ] **Lazy loading** : Templates chargés seulement à la demande
-- [ ] **Pas de génération temps réel** : Évite les erreurs 404 et conversions PDF→image
+- [x] **Templates JSON statiques** : SUPPRIMÉ - Le système builtin a été complètement retiré
+- [x] **Aperçus PNG statiques** : SUPPRIMÉ - Plus de templates prédéfinis
+- [x] **Lazy loading** : SUPPRIMÉ - Fonctionnalité non applicable
+- [x] **Pas de génération temps réel** : SUPPRIMÉ - Fonctionnalité non applicable
 
 **🎨 Interface Utilisateur Lazy** :
-- [ ] **Modal galerie** : Aperçus statiques (chargement instantané)
-- [ ] **Sélection template** : JSON chargé et converti en template utilisateur
+- [x] **Modal galerie** : SUPPRIMÉ - Plus de templates prédéfinis
+- [x] **Sélection template** : SUPPRIMÉ - Seuls les templates utilisateur sont supportés
 - [ ] **Personnalisation immédiate** : Édition directe après sélection
 - [ ] **Import/Export** : Partage de templates personnalisés
 
