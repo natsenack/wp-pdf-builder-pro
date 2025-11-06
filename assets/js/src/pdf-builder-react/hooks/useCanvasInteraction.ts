@@ -386,9 +386,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     // Pour le menu contextuel, nous utilisons les coordonnées absolues de la souris
     // (pas les coordonnées transformées du canvas)
-    const bodyRect = document.body.getBoundingClientRect();
-    const menuX = event.pageX - bodyRect.left;
-    const menuY = event.pageY - bodyRect.top;
+    const menuX = event.clientX;
+    const menuY = event.clientY;
 
     // Pour la détection d'élément, nous utilisons les coordonnées du canvas
     const rect = canvas.getBoundingClientRect();
