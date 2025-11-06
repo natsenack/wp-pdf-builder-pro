@@ -128,7 +128,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         background: 'red',
         border: '5px solid blue',
         zIndex: 99999,
-        position: 'fixed',
+        position: 'absolute',
         minWidth: '250px',
         padding: '15px',
         boxShadow: '0 0 20px rgba(0,0,0,0.8)',
