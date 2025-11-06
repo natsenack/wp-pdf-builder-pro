@@ -5407,14 +5407,18 @@ class PDF_Builder_Admin {
         
         // Add builtin template data if available
         if ($builtin_template_data) {
+            error_log('DEBUG: Adding builtin template to localize_data');
             $localize_data['builtinTemplate'] = $builtin_template_data;
             $localize_data['isBuiltin'] = true;
             $localize_data['templateId'] = $builtin_template_id;
             // Also set as existing template data so the automatic loading works
             $localize_data['existingTemplate'] = $builtin_template_data;
             $localize_data['hasExistingData'] = true;
+            error_log('DEBUG: hasExistingData set to true');
+            error_log('DEBUG: localize_data keys: ' . implode(', ', array_keys($localize_data)));
         }
         
+        error_log('DEBUG: Before wp_localize_script, hasExistingData in data: ' . (isset($localize_data['hasExistingData']) ? 'YES' : 'NO'));
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
