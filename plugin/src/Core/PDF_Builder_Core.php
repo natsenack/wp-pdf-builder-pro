@@ -933,6 +933,34 @@ class PDF_Builder_Core
         </script>
         <?php
     }
+
+    /**
+     * Charger un template builtin depuis le fichier JSON
+     */
+    private function load_builtin_template($template_id) {
+        if (empty($template_id)) {
+            return null;
+        }
+
+        // Chemin vers le fichier
+        $file_path = plugin_dir_path(__FILE__) . '../../templates/builtin/' . $template_id . '.json';
+
+        if (!file_exists($file_path)) {
+            return null;
+        }
+
+        $content = file_get_contents($file_path);
+        if ($content === false) {
+            return null;
+        }
+
+        $template_data = json_decode($content, true);
+        if ($template_data === null) {
+            return null;
+        }
+
+        return $template_data;
+    }
 }
 
 // Empêcher l'accès direct
