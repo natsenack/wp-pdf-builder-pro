@@ -579,7 +579,71 @@ function pdf_builder_ajax_update_builtin_template_params() {
 }
 
 /**
- * AJAX - Sauvegarder un template builtin depuis l'éditeur React
+ * AJAX - Hook wrapper pour auto-save qui détecte les templates builtin
+ * Intercepts pdf_builder_auto_save_template to handle builtin templates
+ * CACHE BUST: 2025-11-06-03-15-00
+ */
+function pdf_builder_ajax_auto_save_builtin_wrapper() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+    }
+
+    // Récupérer les POST data
+    $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
+    $elements = isset($_POST['elements']) ? $_POST['elements'] : '';
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+        wp_send_json_error('Sécurité: Nonce invalide');
+    }
+
+    // Vérifier si c'est un template builtin (cherche dans le dossier builtin)
+    $builtin_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/';
+    $builtin_file = $builtin_dir . $template_id . '.json';
+
+    if (file_exists($builtin_file)) {
+        // C'est un template builtin, sauvegarder dans le fichier JSON
+        error_log('[PDF BUILDER] Auto-save détecte un template BUILTIN: ' . $template_id);
+        
+        // Décoder les éléments
+        $elements_data = json_decode(stripslashes($elements), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Erreur JSON dans les éléments: ' . json_last_error_msg());
+        }
+
+        // Charger le template existant pour conserver les métadonnées
+        $existing_content = file_get_contents($builtin_file);
+        $existing_data = json_decode($existing_content, true);
+
+        if ($existing_data === null) {
+            wp_send_json_error('Impossible de charger le template existant');
+        }
+
+        // Mettre à jour seulement les éléments
+        $existing_data['elements'] = $elements_data;
+
+        // Sauvegarder le fichier
+        $json_content = json_encode($existing_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        if (file_put_contents($builtin_file, $json_content) === false) {
+            wp_send_json_error('Erreur lors de la sauvegarde du fichier builtin');
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Template builtin sauvegardé avec succès',
+            'template_id' => $template_id,
+            'saved_at' => gmdate('Y-m-d H:i:s'),
+            'is_builtin' => true
+        ));
+    }
+
+    // Sinon, laisser le reste du système gérer (templates utilisateur)
+    // Cette fonction wrapper n'est appelée que pour intercepter les builtin
+    wp_send_json_error('Impossible de déterminer le type de template');
+}
+
+/**
+ * AJAX - Sauvegarder un template builtin depuis l'éditeur React (OLD - to be removed)
  */
 function pdf_builder_ajax_save_builtin_from_react() {
     // Vérifier les permissions

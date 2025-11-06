@@ -236,6 +236,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_get_builtin_templates', [$this, 'ajax_get_builtin_templates']);
         
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
+        // MODIFIÉ pour supporter les templates builtin - 2025-11-06-03-30-00
         add_action('wp_ajax_pdf_builder_auto_save_template', function() {
             try {
                 // Vérifier les permissions
@@ -255,11 +256,11 @@ class PDF_Builder_Admin {
                     \wp_send_json_error('Sécurité: Nonce invalide');
                 }
 
-                // Récupération des données
-                $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+                // Récupération des données - Accepter les deux entiers et chaînes
+                $template_id_raw = isset($_POST['template_id']) ? $_POST['template_id'] : '';
                 $elements = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '[]';
 
-                if (!$template_id) {
+                if (empty($template_id_raw)) {
                     \wp_send_json_error('ID template manquant');
                     return;
                 }
@@ -268,6 +269,54 @@ class PDF_Builder_Admin {
                 $elements_decoded = \json_decode($elements, true);
                 if (\json_last_error() !== JSON_ERROR_NONE) {
                     \wp_send_json_error('JSON invalide: ' . \json_last_error_msg());
+                    return;
+                }
+
+                // Vérifier si c'est un template builtin (chaîne de caractères)
+                if (is_string($template_id_raw) && !is_numeric($template_id_raw)) {
+                    // C'est un template builtin
+                    $builtin_id = \sanitize_text_field($template_id_raw);
+                    $builtin_file = \plugin_dir_path(\dirname(\dirname(__FILE__))) . 'templates/builtin/' . $builtin_id . '.json';
+
+                    if (!\file_exists($builtin_file)) {
+                        \wp_send_json_error('Template builtin non trouvé');
+                        return;
+                    }
+
+                    // Charger le template existant
+                    $existing_content = \file_get_contents($builtin_file);
+                    $existing_data = \json_decode($existing_content, true);
+
+                    if ($existing_data === null) {
+                        \wp_send_json_error('Impossible de charger le template existant');
+                        return;
+                    }
+
+                    // Mettre à jour seulement les éléments
+                    $existing_data['elements'] = $elements_decoded;
+
+                    // Sauvegarder le fichier JSON
+                    $json_content = \json_encode($existing_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    if (\file_put_contents($builtin_file, $json_content) === false) {
+                        \wp_send_json_error('Erreur lors de la sauvegarde du fichier builtin');
+                        return;
+                    }
+
+                    // Réponse de succès pour builtin
+                    \wp_send_json_success(array(
+                        'message' => 'Template builtin auto-sauvegardé',
+                        'template_id' => $builtin_id,
+                        'saved_at' => \current_time('mysql'),
+                        'element_count' => \count($elements_decoded),
+                        'is_builtin' => true
+                    ));
+                    return;
+                }
+
+                // Sinon traiter comme template utilisateur en base de données
+                $template_id = \intval($template_id_raw);
+                if (!$template_id) {
+                    \wp_send_json_error('ID template invalide');
                     return;
                 }
 
