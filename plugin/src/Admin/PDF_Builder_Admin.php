@@ -5316,9 +5316,6 @@ class PDF_Builder_Admin {
                 $builtin_template_data = $transient_data;
                 // Clean up the transient after use
                 delete_transient($transient_key);
-                error_log('DEBUG: Loaded from transient');
-            } else {
-                error_log('DEBUG: Transient not found or empty');
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
