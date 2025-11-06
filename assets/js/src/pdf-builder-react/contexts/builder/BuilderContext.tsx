@@ -551,6 +551,23 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
   }, []); // Uniquement au montage du composant
 
+  // Écouteur pour le chargement de template via API globale
+  useEffect(() => {
+    const handleLoadTemplate = (event: CustomEvent) => {
+      debugLog('🔄 [LOAD TEMPLATE] Custom event received', event.detail);
+      const templateData = event.detail;
+      if (templateData) {
+        dispatch({
+          type: 'LOAD_TEMPLATE',
+          payload: templateData
+        });
+      }
+    };
+
+    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
+    return () => document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
+  }, []);
+
   // Fonction de sauvegarde automatique
   const autoSaveTemplate = async (): Promise<void> => {
     if (!state.template.id || state.template.isSaving) return;
