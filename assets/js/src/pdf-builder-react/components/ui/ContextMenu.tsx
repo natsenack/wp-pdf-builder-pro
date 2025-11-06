@@ -134,15 +134,19 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ref={menuRef}
       className="context-menu"
       style={{
-        position: 'absolute', // DEBUG: Try absolute instead of fixed
-        left: `${adjustedPosition.x}px`,
-        top: `${adjustedPosition.y}px`,
+        position: 'fixed',
+        left: `100px`, // DEBUG: Fixed position to test visibility
+        top: `100px`,  // DEBUG: Fixed position to test visibility
         opacity: 1,
         visibility: 'visible',
         pointerEvents: 'auto',
         zIndex: 999999,
+        transform: 'translate(0, 0)', // DEBUG: Force no transform
       }}
     >
+      <div style={{padding: '10px', background: '#ff0000', color: '#ffffff', fontSize: '16px', fontWeight: 'bold'}}>
+        🚨 DEBUG: Menu is rendering! 🚨
+      </div>
       {items.map((item) => (
         <div key={item.id}>
           {item.section && (

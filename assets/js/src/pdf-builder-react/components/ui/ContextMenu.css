@@ -1,5 +1,5 @@
 .context-menu {
-  position: absolute !important; /* DEBUG: Changed from fixed to absolute */
+  position: fixed !important; /* BACK TO FIXED positioning */
   background: #ff0000 !important; /* DEBUG: Bright red background */
   border: 3px solid #000000 !important; /* DEBUG: Black border */
   border-radius: 12px !important;
