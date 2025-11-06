@@ -23,7 +23,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
   const adjustedPosition = useMemo(() => {
@@ -57,8 +57,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     if (!isVisible) return;
 
     const handleClickOutside = (event: Event) => {
-      // @ts-expect-error DOM event target type checking
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (menuRef.current && !(menuRef.current as any).contains(event.target)) {
         onClose();
       }
     };
@@ -93,8 +92,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     return null;
   }
 
-  console.log('🎛️ ContextMenu - rendering menu at:', adjustedPosition);
-
   const handleItemClick = (item: ContextMenuItem) => {
     if (!item.disabled && !item.separator && item.action) {
       item.action();
@@ -108,47 +105,17 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       className="context-menu"
       style={{
         left: `${adjustedPosition.x}px`,
-        top: `${adjustedPosition.y}px`,
-        position: 'fixed',
-        backgroundColor: '#ffffff',
-        border: '1px solid #cccccc',
-        borderRadius: '4px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 9999,
-        minWidth: '200px',
-        maxWidth: '300px',
-        fontSize: '14px',
-        fontFamily: 'system-ui, -apple-system, sans-serif'
+        top: `${adjustedPosition.y}px`
       }}
     >
       {items.map((item) => (
-        <div 
-          key={item.id} 
+        <div
+          key={item.id}
+          className={`context-menu-item ${item.disabled ? 'disabled' : ''} ${item.separator ? 'context-menu-separator' : ''}`}
           onClick={() => handleItemClick(item)}
-          style={{
-            padding: '8px 12px',
-            cursor: item.separator ? 'default' : 'pointer',
-            backgroundColor: item.disabled ? '#f5f5f5' : 'transparent',
-            color: item.disabled ? '#999999' : '#333333',
-            borderBottom: item.separator ? '1px solid #e0e0e0' : 'none',
-            display: item.separator ? 'none' : 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            userSelect: 'none'
-          }}
-          onMouseEnter={(e) => {
-            if (!item.disabled && !item.separator) {
-              e.currentTarget.style.backgroundColor = '#f0f0f0';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!item.disabled && !item.separator) {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }
-          }}
         >
-          {item.icon && <span style={{ fontSize: '16px' }}>{item.icon}</span>}
-          {item.label && <span>{item.label}</span>}
+          {item.icon && <span className="context-menu-icon">{item.icon}</span>}
+          {item.label && <span className="context-menu-label">{item.label}</span>}
         </div>
       ))}
     </div>

@@ -394,10 +394,39 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const canvasX = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
     const canvasY = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
 
-    // Trouver l'élément cliqué
+    // Trouver l'élément cliqué (en tenant compte de la rotation)
     const clickedElement = state.elements.find(el => {
-      const isInside = canvasX >= el.x && canvasX <= el.x + el.width &&
-                      canvasY >= el.y && canvasY <= el.y + el.height;
+      // Si pas de rotation, utiliser la vérification simple
+      if (!el.rotation || el.rotation === 0) {
+        const isInside = canvasX >= el.x && canvasX <= el.x + el.width &&
+                        canvasY >= el.y && canvasY <= el.y + el.height;
+        return isInside;
+      }
+
+      // Pour les éléments tournés, utiliser une vérification plus précise
+      // Calculer le centre de l'élément
+      const centerX = el.x + el.width / 2;
+      const centerY = el.y + el.height / 2;
+
+      // Calculer l'angle en radians
+      const angle = (el.rotation * Math.PI) / 180;
+
+      // Translater le point vers l'origine centrée sur l'élément
+      const translatedX = canvasX - centerX;
+      const translatedY = canvasY - centerY;
+
+      // Appliquer la rotation inverse
+      const cos = Math.cos(-angle);
+      const sin = Math.sin(-angle);
+      const rotatedX = translatedX * cos - translatedY * sin;
+      const rotatedY = translatedX * sin + translatedY * cos;
+
+      // Vérifier si le point est dans le rectangle non tourné
+      const halfWidth = el.width / 2;
+      const halfHeight = el.height / 2;
+      const isInside = rotatedX >= -halfWidth && rotatedX <= halfWidth &&
+                      rotatedY >= -halfHeight && rotatedY <= halfHeight;
+
       return isInside;
     });
 

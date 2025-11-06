@@ -1573,8 +1573,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
           label: 'Coller',
           icon: '📋',
           action: () => {
-            // TODO: Implémenter le collage
-          }
+            // TODO: Implémenter le collage depuis le presse-papiers
+            console.log('Paste functionality not yet implemented');
+          },
+          disabled: true // Désactiver jusqu'à implémentation
         }
       ];
     }
