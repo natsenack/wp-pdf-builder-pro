@@ -11,6 +11,7 @@ export interface ContextMenuItem {
   disabled?: boolean;
   separator?: boolean;
   section?: string;
+  children?: ContextMenuItem[];
 }
 
 interface ContextMenuProps {
@@ -28,6 +29,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 }) => {
   const menuRef = useRef(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [submenuPosition, setSubmenuPosition] = useState<{ x: number; y: number } | null>(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
   const adjustedPosition = useMemo(() => {
@@ -72,6 +75,43 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     return { x: adjustedX, y: adjustedY };
   }, [position, items]);
+
+  // Calculer la position du sous-menu quand il s'ouvre
+  useEffect(() => {
+    if (openSubmenu && menuRef.current) {
+      const menuElement = menuRef.current as HTMLElement;
+      const parentItem = menuElement.querySelector(`[data-item-id="${openSubmenu}"]`) as HTMLElement;
+
+      if (parentItem) {
+        const menuRect = menuElement.getBoundingClientRect();
+        const parentRect = parentItem.getBoundingClientRect();
+
+        let submenuX = menuRect.right - 2; // Positionner à droite du menu parent
+        let submenuY = parentRect.top; // Aligner avec l'élément parent
+
+        // Vérifier si le sous-menu sort à droite de l'écran
+        const submenuWidth = 160;
+        if (submenuX + submenuWidth > window.innerWidth) {
+          submenuX = menuRect.left - submenuWidth + 2; // Positionner à gauche
+        }
+
+        // Vérifier si le sous-menu sort en bas de l'écran
+        const submenuHeight = 200; // Estimation
+        if (submenuY + submenuHeight > window.innerHeight) {
+          submenuY = window.innerHeight - submenuHeight - 10;
+        }
+
+        // Vérifier si le sous-menu sort en haut
+        if (submenuY < 0) {
+          submenuY = 10;
+        }
+
+        setSubmenuPosition({ x: submenuX, y: submenuY });
+      }
+    } else {
+      setSubmenuPosition(null);
+    }
+  }, [openSubmenu]);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -166,9 +206,25 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           ) : (
             <div
               className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
+              data-item-id={item.id}
               onClick={() => handleItemClick(item)}
-              onMouseEnter={() => setHoveredItem(item.id)}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={() => {
+                setHoveredItem(item.id);
+                if (item.children && item.children.length > 0) {
+                  setOpenSubmenu(item.id);
+                } else {
+                  setOpenSubmenu(null);
+                }
+              }}
+              onMouseLeave={() => {
+                setHoveredItem(null);
+                // Délai pour permettre au sous-menu d'être survolé
+                setTimeout(() => {
+                  if (openSubmenu === item.id) {
+                    setOpenSubmenu(null);
+                  }
+                }, 100);
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -188,6 +244,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               {item.icon && <span className="context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.disabled ? '#94a3b8' : '#64748b', fontSize: '9px'}}>{item.icon}</span>}
               {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#334155'}}>{item.label}</span>}
               {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
+              {item.children && item.children.length > 0 && (
+                <span className="context-menu-submenu-arrow" style={{marginLeft: '4px', color: '#64748b', fontSize: '8px'}}>▶</span>
+              )}
             </div>
           )}
         </div>
@@ -195,6 +254,29 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     </div>
   );
 
+  // Rendre les sous-menus ouverts
+  const renderSubmenus = () => {
+    if (!openSubmenu || !submenuPosition) return null;
+
+    const parentItem = items.find(item => item.id === openSubmenu);
+    if (!parentItem || !parentItem.children) return null;
+
+    return (
+      <ContextMenu
+        items={parentItem.children}
+        position={submenuPosition}
+        onClose={() => setOpenSubmenu(null)}
+        isVisible={true}
+      />
+    );
+  };
+
   // Utiliser un Portal pour rendre le menu au niveau du document body
-  return createPortal(menuElement, document.body);
+  return createPortal(
+    <>
+      {menuElement}
+      {renderSubmenus()}
+    </>,
+    document.body
+  );
 };

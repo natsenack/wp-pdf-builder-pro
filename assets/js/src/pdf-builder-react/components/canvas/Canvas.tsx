@@ -1733,7 +1733,23 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         icon: '📋',
         shortcut: 'Ctrl+D',
         action: () => handleContextMenuAction('duplicate', elementId),
-        disabled: isLocked
+        disabled: isLocked,
+        children: [
+          {
+            id: 'duplicate-here',
+            label: 'Dupliquer ici',
+            icon: '📋',
+            action: () => handleContextMenuAction('duplicate', elementId),
+            disabled: isLocked
+          },
+          {
+            id: 'duplicate-multiple',
+            label: 'Dupliquer plusieurs...',
+            icon: '📋📋',
+            action: () => handleContextMenuAction('duplicate-multiple', elementId),
+            disabled: isLocked
+          }
+        ]
       },
       {
         id: 'copy',
