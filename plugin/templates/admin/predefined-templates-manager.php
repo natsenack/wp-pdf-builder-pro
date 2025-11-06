@@ -554,10 +554,10 @@ class PDF_Builder_Predefined_Templates_Manager {
             error_log('PDF Builder: Nonce verification result: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
 
             // Temporairement désactiver la vérification nonce pour debug
-            // if (!$nonce_valid) {
-            //     error_log('PDF Builder: Nonce verification failed - possible expiration or mismatch');
-            //     wp_send_json_error('Nonce invalide - vérifiez que la page n\'est pas expirée');
-            // }
+            if (!$nonce_valid) {
+                error_log('PDF Builder: Nonce verification failed - possible expiration or mismatch');
+                wp_send_json_error('Nonce invalide - vérifiez que la page n\'est pas expirée');
+            }
 
             // check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
 

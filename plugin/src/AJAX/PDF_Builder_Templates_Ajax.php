@@ -11,8 +11,8 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Templates_Ajax {
 
     public function __construct() {
-        // Actions pour les templates prédéfinis
-        add_action('wp_ajax_pdf_builder_load_predefined_template', array($this, 'load_predefined_template'));
+        // Actions pour les templates prédéfinis - géré dans predefined-templates-manager.php
+        // add_action('wp_ajax_pdf_builder_load_predefined_template', array($this, 'load_predefined_template'));
         add_action('wp_ajax_pdf_builder_create_from_predefined', array($this, 'create_from_predefined'));
 
         // Actions pour les templates personnalisés
@@ -32,7 +32,7 @@ class PDF_Builder_Templates_Ajax {
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_predefined_templates')) {
                 wp_send_json_error('Nonce invalide');
             }
 
