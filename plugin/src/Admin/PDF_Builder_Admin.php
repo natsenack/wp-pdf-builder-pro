@@ -5326,12 +5326,13 @@ class PDF_Builder_Admin {
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
-            $builtin_file = plugin_dir_path(__FILE__) . '../../templates/builtin/' . $builtin_template_id . '.json';
-            error_log('DEBUG: Loading from file: ' . $builtin_file);
+            $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
+            error_log('DEBUG: Loading from file: ' . $builtin_file . ', exists: ' . (file_exists($builtin_file) ? 'yes' : 'no'));
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
+                error_log('DEBUG: File content length: ' . strlen($json_content));
                 $builtin_template_data = json_decode($json_content, true);
-                error_log('DEBUG: File loaded, JSON decoded: ' . ($builtin_template_data ? 'success' : 'failed'));
+                error_log('DEBUG: JSON decode result: ' . ($builtin_template_data ? 'success' : 'failed - ' . json_last_error_msg()));
             } else {
                 error_log('DEBUG: File does not exist: ' . $builtin_file);
             }
