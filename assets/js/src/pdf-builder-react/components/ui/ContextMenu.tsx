@@ -104,14 +104,17 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ref={menuRef}
       className="context-menu"
       style={{
+        position: 'fixed',
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
         width: '200px',
         height: 'auto',
         backgroundColor: 'white',
-        border: '2px solid red',
-        padding: '10px',
-        zIndex: 999999
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        padding: '4px 0',
+        zIndex: 99999
       }}
     >
       {items.map((item) => (
