@@ -4,6 +4,16 @@ import ReactDOM from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 import { debugLog, debugError } from './utils/debug';
+import { 
+  registerEditorInstance,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  resetAPI
+} from './api/global-api';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
@@ -120,7 +130,15 @@ debugLog('📦 Creating exports object...');
 
 // Export default pour webpack
 const exports = {
-  initPDFBuilderReact
+  initPDFBuilderReact,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  registerEditorInstance,
+  resetAPI
 };
 
 debugLog('🌐 Assigning to window...');
