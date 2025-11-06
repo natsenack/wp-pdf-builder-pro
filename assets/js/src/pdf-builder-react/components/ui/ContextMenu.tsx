@@ -23,6 +23,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
+  console.log('🎨 ContextMenu rendu avec:', { items, position, isVisible });
+
   const menuRef = useRef(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
