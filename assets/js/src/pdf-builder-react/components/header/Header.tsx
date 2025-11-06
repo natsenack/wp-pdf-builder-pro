@@ -338,6 +338,21 @@ export const Header = memo(function Header({
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
 
         <button
+          onClick={() => setShowJsonModal(true)}
+          onMouseEnter={() => setHoveredButton('json')}
+          onMouseLeave={() => setHoveredButton(null)}
+          style={{
+            ...secondaryButtonStyles,
+            opacity: isSaving ? 0.6 : 1,
+            pointerEvents: isSaving ? 'none' : 'auto'
+          }}
+          title="Voir et copier le JSON du canvas"
+        >
+          <span>📄</span>
+          <span>JSON</span>
+        </button>
+
+        <button
           onClick={() => setShowSettingsModal(true)}
           onMouseEnter={() => setHoveredButton('settings')}
           onMouseLeave={() => setHoveredButton(null)}
