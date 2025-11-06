@@ -60,15 +60,20 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     if (!isVisible) return;
 
     const handleClickOutside = (event: React.MouseEvent | Event) => {
+      console.log('ContextMenu: Click outside detected, closing menu');
       // Vérifier que l'événement n'est pas un clic droit (contextmenu)
       if ('button' in event && event.button === 2) return;
 
       if (menuRef.current && !(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
+        console.log('ContextMenu: Click was outside menu, calling onClose');
         onClose();
+      } else {
+        console.log('ContextMenu: Click was inside menu, keeping open');
       }
     };
 
     const handleEscape = (event: Event) => {
+      console.log('ContextMenu: Escape key pressed, closing menu');
       // @ts-expect-error Keyboard event key property
       if (event.key === 'Escape') {
         onClose();
@@ -113,9 +118,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   console.log('ContextMenu rendering at position:', adjustedPosition);
 
   const handleItemClick = (item: ContextMenuItem) => {
+    console.log('ContextMenu: Item clicked:', item.id, item.label);
     if (!item.disabled && !item.separator && item.action) {
+      console.log('ContextMenu: Executing action for:', item.id);
       item.action();
       onClose();
+    } else {
+      console.log('ContextMenu: Item disabled or no action:', item.disabled, !!item.action);
     }
   };
 
@@ -131,25 +140,58 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         visibility: 'visible',
         pointerEvents: 'auto',
         zIndex: 999999,
+        background: '#ff0000', // DEBUG: Bright red background
+        border: '3px solid #000',
+        borderRadius: '8px',
+        padding: '10px',
+        minWidth: '200px',
+        color: '#fff',
+        fontSize: '14px',
+        fontWeight: 'bold',
       }}
     >
+      <div style={{marginBottom: '10px', fontSize: '16px'}}>🚨 MENU DEBUG 🚨</div>
       {items.map((item) => (
         <div key={item.id}>
           {item.section && (
-            <div className="context-menu-section">
-              <div className="context-menu-section-title">{item.section}</div>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#ffff00',
+              marginTop: '8px',
+              marginBottom: '4px',
+              textTransform: 'uppercase'
+            }}>
+              {item.section}
             </div>
           )}
           {item.separator ? (
-            <div className="context-menu-separator"></div>
+            <div style={{
+              height: '2px',
+              background: '#fff',
+              margin: '4px 0'
+            }}></div>
           ) : (
             <div
               className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
               onClick={() => handleItemClick(item)}
+              style={{
+                padding: '8px 12px',
+                margin: '2px 0',
+                background: item.disabled ? '#666' : '#cc0000',
+                borderRadius: '4px',
+                cursor: item.disabled ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '1px solid #fff'
+              }}
             >
-              {item.icon && <span className="context-menu-item-icon">{item.icon}</span>}
-              {item.label && <span className="context-menu-item-text">{item.label}</span>}
-              {item.shortcut && <span className="context-menu-item-shortcut">{item.shortcut}</span>}
+              <span>
+                {item.icon && <span style={{marginRight: '8px'}}>{item.icon}</span>}
+                {item.label && <span>{item.label}</span>}
+              </span>
+              {item.shortcut && <span style={{fontSize: '11px', opacity: 0.8}}>{item.shortcut}</span>}
             </div>
           )}
         </div>
