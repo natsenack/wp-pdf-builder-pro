@@ -757,6 +757,12 @@ class PDF_Builder_Core
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
             };
+
+            // Debug: Afficher les données passées à React
+            console.log('🔍 [PDF BUILDER] Données passées à React:', window.pdfBuilderData);
+            if (window.pdfBuilderData.templateData) {
+                console.log('📊 [PDF BUILDER] Template data elements:', window.pdfBuilderData.templateData.elements);
+            }
         </script>
         <?php
     }
