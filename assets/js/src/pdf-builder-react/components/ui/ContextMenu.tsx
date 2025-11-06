@@ -112,13 +112,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  if (!isVisible) {
-    console.log('ContextMenu not rendering - isVisible is false');
-    return null;
-  }
-
-  console.log('ContextMenu rendering at position:', adjustedPosition);
-
   const menuElement = (
     <div
       ref={menuRef}
@@ -126,6 +119,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       style={{
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
+        opacity: 1,
+        visibility: 'visible',
+        pointerEvents: 'auto',
       }}
     >
       {items.map((item) => (
