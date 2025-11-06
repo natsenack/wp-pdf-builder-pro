@@ -5521,14 +5521,18 @@ class PDF_Builder_Admin {
                         debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
                         
                         // Load builtin template after React is ready
-                        if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                            debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (DOMContentLoaded)');
-                            debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
-                            window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                                detail: window.pdfBuilderData.builtinTemplate
-                            }));
-                            debugLog('📡 [ADMIN] Dispatched event from DOMContentLoaded');
-                        }
+                        setTimeout(function() {
+                            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                                debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (DOMContentLoaded delay)');
+                                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                                    detail: window.pdfBuilderData.builtinTemplate
+                                }));
+                                debugLog('📡 [ADMIN] Dispatched event from DOMContentLoaded');
+                            } else {
+                                debugLog('🔍 [ADMIN] pdfBuilderData not yet available after React init');
+                            }
+                        }, 50);
                     } else if (attempts >= maxAttempts) {
                         clearInterval(initInterval);
                         clearInterval(checkInterval);
@@ -5559,15 +5563,37 @@ class PDF_Builder_Admin {
                 debugLog('✅✅✅ React bundle loaded immediately');
                 
                 // Load builtin template after React is ready (immediate case)
+                setTimeout(function() {
+                    if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                        debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (immediate)');
+                        debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                        window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                            detail: window.pdfBuilderData.builtinTemplate
+                        }));
+                        debugLog('📡 [ADMIN] Dispatched event from immediate load');
+                    } else {
+                        debugLog('🔍 [ADMIN] pdfBuilderData not yet available, will try again...');
+                    }
+                }, 50);
+            }
+
+            // Global fallback: Monitor for pdfBuilderData availability
+            var builtin_check_count = 0;
+            var builtin_data_ready = setInterval(function() {
+                builtin_check_count++;
                 if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                    debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (immediate)');
+                    clearInterval(builtin_data_ready);
+                    debugLog('✅ [ADMIN] pdfBuilderData NOW AVAILABLE (check #' + builtin_check_count + ')');
                     debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
                     window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                         detail: window.pdfBuilderData.builtinTemplate
                     }));
-                    debugLog('📡 [ADMIN] Dispatched event from immediate load');
+                    debugLog('📡 [ADMIN] Dispatched event from global monitor');
+                } else if (builtin_check_count >= 100) {
+                    clearInterval(builtin_data_ready);
+                    debugLog('❌ [ADMIN] pdfBuilderData not available after 5 seconds');
                 }
-            }
+            }, 50);
         });
 
         // ============================================================================
