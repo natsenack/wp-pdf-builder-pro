@@ -102,15 +102,13 @@
             console.log('🔍 [BUILTIN EDITOR] .template-edit-btn found in item:', item.find('.template-edit-btn').length, 'elements');
             console.log('🔍 [BUILTIN EDITOR] .template-delete-btn found in item:', item.find('.template-delete-btn').length, 'elements');
 
-            // Click handler for the template item - but NOT on action buttons
+            // Click handler for non-button clicks (info area only)
             item.on('click', function(e) {
-                // Don't navigate if clicking on buttons
-                if ($(e.target).closest('.template-actions').length) {
-                    console.log('🚫 [BUILTIN EDITOR] Click was on action buttons, ignoring');
-                    return false;
+                // Only trigger if clicking directly on template-info or template-thumbnail
+                if ($(e.target).closest('.template-info, .template-thumbnail').length && !$(e.target).closest('button, a').length) {
+                    console.log('📂 [BUILTIN EDITOR] Template item clicked, loading template');
+                    loadTemplate(template.id);
                 }
-                console.log('📂 [BUILTIN EDITOR] Template item clicked, loading template');
-                loadTemplate(template.id);
             });
 
             container.append(item);
