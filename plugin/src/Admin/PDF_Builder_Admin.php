@@ -5339,6 +5339,15 @@ class PDF_Builder_Admin {
             ]
         ];
         
+        // Load existing template data if template_id is provided
+        if ($template_id > 0) {
+            $existing_template_data = $this->load_template_robust($template_id);
+            if ($existing_template_data && isset($existing_template_data['elements'])) {
+                $localize_data['existingTemplate'] = $existing_template_data;
+                $localize_data['hasExistingData'] = true;
+            }
+        }
+        
         // Add builtin template data if available
         if ($builtin_template_data) {
             $localize_data['builtinTemplate'] = $builtin_template_data;
@@ -5592,6 +5601,44 @@ class PDF_Builder_Admin {
                 callInitIfNeeded();
             }
         }, 50);
+
+        // ============================================================================
+        // EXISTING TEMPLATE DATA LOADING
+        // ============================================================================
+        // Automatically load existing template data when editor is ready
+
+        function loadExistingTemplateData() {
+            if (typeof window.pdfBuilderData !== 'undefined' &&
+                window.pdfBuilderData.hasExistingData &&
+                window.pdfBuilderData.existingTemplate &&
+                typeof window.pdfBuilderReact !== 'undefined' &&
+                window.pdfBuilderReact.loadTemplate) {
+
+                try {
+                    // Load the existing template data into the editor
+                    var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
+                    return result === true;
+                } catch (e) {
+                    // Silently fail if loading existing data fails
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Try to load existing data immediately, then retry periodically
+        if (!loadExistingTemplateData()) {
+            var loadDataAttempts = 0;
+            var maxLoadDataAttempts = 30; // 15 seconds max
+            var loadDataInterval = setInterval(function() {
+                loadDataAttempts++;
+                if (loadExistingTemplateData()) {
+                    clearInterval(loadDataInterval);
+                } else if (loadDataAttempts >= maxLoadDataAttempts) {
+                    clearInterval(loadDataInterval);
+                }
+            }, 500);
+        }
 
         // ============================================================================
         // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
