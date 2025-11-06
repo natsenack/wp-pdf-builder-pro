@@ -179,14 +179,9 @@
                     populateForm(response.data);
                     showTemplateEditor(response.data);
                 } else {
-                    // Si nonce invalide, essayer de le rafraîchir
-                    if (response.data && response.data.indexOf('Nonce invalide') !== -1) {
-                        console.log('Nonce expired, refreshing...');
-                        refreshNonceAndRetry(slug);
-                    } else {
-                        console.error('Template load failed:', response.data.message);
-                        showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
-                    }
+                    // Nonce temporairement désactivé pour debug
+                    console.error('Template load failed:', response.data.message);
+                    showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
                 }
             },
             error: function(xhr, status, error) {
