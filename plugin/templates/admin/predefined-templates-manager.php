@@ -1,4 +1,6 @@
 <?php
+namespace PDF_Builder\Admin;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -34,9 +36,9 @@ class PDF_Builder_Predefined_Templates_Manager {
      */
     public function add_admin_menu() {
         add_submenu_page(
-            'pdf-builder-templates',
+            'pdf-builder-pro',
             __('Modèles Prédéfinis', 'pdf-builder-pro'),
-            __('Modèles Prédéfinis', 'pdf-builder-pro'),
+            __('📝 Modèles Prédéfinis', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-predefined-templates',
             [$this, 'render_admin_page']

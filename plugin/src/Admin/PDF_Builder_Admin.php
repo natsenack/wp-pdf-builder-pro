@@ -228,6 +228,9 @@ class PDF_Builder_Admin {
         // Inclure le gestionnaire de modèles prédéfinis
         include_once plugin_dir_path(dirname(__FILE__)) . '../templates/admin/predefined-templates-manager.php';
         
+        // Instancier le gestionnaire de modèles prédéfinis
+        new PDF_Builder_Predefined_Templates_Manager();
+        
         // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
