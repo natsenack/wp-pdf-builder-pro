@@ -188,8 +188,10 @@ export function useTemplate() {
     };
 
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+    document.addEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadTemplate);
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+      document.removeEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadTemplate);
     };
   }, [loadExistingTemplate]);
 
