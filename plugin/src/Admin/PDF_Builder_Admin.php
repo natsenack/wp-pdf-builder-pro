@@ -5277,6 +5277,10 @@ class PDF_Builder_Admin {
         wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
         wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
+        // Declare global variable BEFORE loading bundle
+        $inline_script = "window.pdfBuilderReact = {}; console.log('[PDF-Builder] Global variable pre-declared');";
+        wp_add_inline_script('react-dom', $inline_script);
+
         // Enqueue PDF Builder React scripts from local build
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
