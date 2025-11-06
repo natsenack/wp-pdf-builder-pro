@@ -266,6 +266,8 @@
      * Show edit template modal
      */
     function showEditTemplateModal(templateId) {
+        console.log('🔄 [BUILTIN EDITOR] Loading template modal for:', templateId);
+        
         // Load template data
         $.ajax({
             url: pdfBuilderBuiltinEditor.ajaxurl,
@@ -276,6 +278,7 @@
                 nonce: pdfBuilderBuiltinEditor.nonce
             },
             success: function(response) {
+                console.log('✅ [BUILTIN EDITOR] Template loaded:', response);
                 if (response.success) {
                     const template = response.data.template;
 
@@ -285,13 +288,18 @@
                     $('#edit-template-description').val(template.description || '');
                     $('#edit-template-category').val(template.category || 'general');
 
+                    console.log('📝 [BUILTIN EDITOR] Form filled with template data');
+                    
                     // Show modal
                     $('#edit-template-modal').show();
+                    console.log('👁️ [BUILTIN EDITOR] Modal shown');
                 } else {
+                    console.error('❌ [BUILTIN EDITOR] AJAX error:', response.data);
                     showError('Erreur lors du chargement du template: ' + (response.data || 'Erreur inconnue'));
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('❌ [BUILTIN EDITOR] AJAX request failed:', status, error, xhr.responseText);
                 showError('Erreur de connexion lors du chargement du template');
             }
         });
@@ -306,7 +314,13 @@
         const description = $('#edit-template-description').val().trim();
         const category = $('#edit-template-category').val();
 
+        console.log('💾 [BUILTIN EDITOR] Updating template:', templateId);
+        console.log('   - Name:', name);
+        console.log('   - Description:', description);
+        console.log('   - Category:', category);
+
         if (!name) {
+            console.warn('⚠️ [BUILTIN EDITOR] Template name is required');
             alert('Le nom du template est requis');
             return;
         }
@@ -325,15 +339,19 @@
                 nonce: pdfBuilderBuiltinEditor.nonce
             },
             success: function(response) {
+                console.log('✅ [BUILTIN EDITOR] Update response:', response);
                 if (response.success) {
+                    console.log('🎉 [BUILTIN EDITOR] Template updated successfully');
                     showSuccess('Paramètres mis à jour avec succès');
                     loadTemplatesList();
                     hideEditTemplateModal();
                 } else {
+                    console.error('❌ [BUILTIN EDITOR] Update error:', response.data);
                     showError('Erreur lors de la mise à jour: ' + (response.data || 'Erreur inconnue'));
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('❌ [BUILTIN EDITOR] Update AJAX failed:', status, error, xhr.responseText);
                 showError('Erreur de connexion lors de la mise à jour');
             },
             complete: function() {
@@ -354,6 +372,8 @@
      * Delete the current template
      */
     function deleteTemplate(templateId) {
+        console.log('🗑️ [BUILTIN EDITOR] Deleting template:', templateId);
+        
         $.ajax({
             url: pdfBuilderBuiltinEditor.ajaxurl,
             type: 'POST',
@@ -363,15 +383,19 @@
                 nonce: pdfBuilderBuiltinEditor.nonce
             },
             success: function(response) {
+                console.log('✅ [BUILTIN EDITOR] Delete response:', response);
                 if (response.success) {
+                    console.log('🎉 [BUILTIN EDITOR] Template deleted successfully');
                     showSuccess(pdfBuilderBuiltinEditor.strings.template_deleted);
                     // Reload the templates list
                     loadTemplatesList();
                 } else {
+                    console.error('❌ [BUILTIN EDITOR] Delete error:', response.data);
                     showError('Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue'));
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('❌ [BUILTIN EDITOR] Delete AJAX failed:', status, error, xhr.responseText);
                 showError('Erreur de connexion lors de la suppression');
             }
         });
