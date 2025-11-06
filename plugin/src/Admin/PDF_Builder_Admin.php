@@ -5603,7 +5603,7 @@ class PDF_Builder_Admin {
         }, 50);
 
         // ============================================================================
-        // EXISTING TEMPLATE DATA LOADING
+        // EXISTING TEMPLATE DATA LOADING - FIX FOR ELEMENTS DISAPPEARING ON REFRESH
         // ============================================================================
         // Automatically load existing template data when editor is ready
 
