@@ -229,7 +229,6 @@ class PDF_Builder_Admin {
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
-        add_action('wp_ajax_pdf_builder_create_template_from_gallery', [$this->template_manager, 'ajax_create_template_from_gallery']);
         
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
         add_action('wp_ajax_pdf_builder_auto_save_template', function() {
