@@ -954,6 +954,7 @@ interface CanvasProps {
 }
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
+  console.log('🎨 Canvas component mounted/updated');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
 
@@ -1584,9 +1585,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
-    console.log('Context menu triggered', event);
+    console.log('🎯 Context menu triggered on canvas', event);
+    console.log('Event target:', event.target);
+    console.log('Event type:', event.type);
     handleContextMenu(event, (x, y, elementId) => {
-      console.log('Showing context menu at', x, y, 'for element', elementId);
+      console.log('🎯 Showing context menu at', x, y, 'for element', elementId);
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);
