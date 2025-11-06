@@ -5681,9 +5681,8 @@ class PDF_Builder_Admin {
         }
 
         // Try to load existing data immediately, then retry periodically
-        // Skip for builtin templates as they load via existing template logic now
-        var isBuiltin = window.pdfBuilderData && window.pdfBuilderData.isBuiltin;
-        if (!isBuiltin && !loadExistingTemplateData()) {
+        // Load for both regular templates with existing data AND builtin templates
+        if (!loadExistingTemplateData()) {
             var loadDataAttempts = 0;
             var maxLoadDataAttempts = 30; // 15 seconds max
             var loadDataInterval = setInterval(function() {
