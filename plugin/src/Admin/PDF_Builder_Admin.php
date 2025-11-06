@@ -116,6 +116,11 @@ class PDF_Builder_Admin {
     private $template_manager = null;
 
     /**
+     * Manager de templates prédéfinis
+     */
+    private $predefined_templates_manager = null;
+
+    /**
      * Obtenir l'instance unique de la classe (Singleton)
      */
     public static function getInstance($core = null)
@@ -137,9 +142,11 @@ class PDF_Builder_Admin {
         if (class_exists('PDF_Builder\\Managers\\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
         }
-        
-        // NE PAS instancier le manager de templates immédiatement
-        // Il sera créé lazily à la demande via get_template_manager()
+
+        // Initialiser le manager de templates prédéfinis
+        if (class_exists('PDF_Builder\\Admin\\PDF_Builder_Predefined_Templates_Manager')) {
+            $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
+        }
         
         $this->initHooks();
     }
