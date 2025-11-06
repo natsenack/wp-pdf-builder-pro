@@ -6,9 +6,11 @@ export interface ContextMenuItem {
   id: string;
   label?: string;
   icon?: string;
+  shortcut?: string;
   action?: () => void;
   disabled?: boolean;
   separator?: boolean;
+  section?: string;
 }
 
 interface ContextMenuProps {
@@ -57,11 +59,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   useEffect(() => {
     if (!isVisible) return;
 
-    const handleClickOutside = (event: any) => {
+    const handleClickOutside = (event: React.MouseEvent | Event) => {
       // Vérifier que l'événement n'est pas un clic droit (contextmenu)
-      if (event.button === 2) return;
+      if ('button' in event && event.button === 2) return;
 
-      if (menuRef.current && !(menuRef.current as any).contains(event.target)) {
+      if (menuRef.current && !(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
         onClose();
       }
     };
@@ -122,27 +124,29 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ref={menuRef}
       className="context-menu"
       style={{
-        position: 'fixed',
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
-        width: '200px',
-        height: 'auto',
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        padding: '4px 0',
-        zIndex: 99999
       }}
     >
       {items.map((item) => (
-        <div
-          key={item.id}
-          className={`context-menu-item ${item.disabled ? 'disabled' : ''} ${item.separator ? 'context-menu-separator' : ''}`}
-          onClick={() => handleItemClick(item)}
-        >
-          {item.icon && <span className="context-menu-icon">{item.icon}</span>}
-          {item.label && <span className="context-menu-label">{item.label}</span>}
+        <div key={item.id}>
+          {item.section && (
+            <div className="context-menu-section">
+              <div className="context-menu-section-title">{item.section}</div>
+            </div>
+          )}
+          {item.separator ? (
+            <div className="context-menu-separator"></div>
+          ) : (
+            <div
+              className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
+              onClick={() => handleItemClick(item)}
+            >
+              {item.icon && <span className="context-menu-item-icon">{item.icon}</span>}
+              {item.label && <span className="context-menu-item-text">{item.label}</span>}
+              {item.shortcut && <span className="context-menu-item-shortcut">{item.shortcut}</span>}
+            </div>
+          )}
         </div>
       ))}
     </div>

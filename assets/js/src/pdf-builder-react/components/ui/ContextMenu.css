@@ -1,37 +1,57 @@
 .context-menu {
   position: fixed !important;
-  background: #ffffff !important;
-  border: 1px solid #e1e5e9 !important;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
   z-index: 99999 !important;
-  min-width: 220px;
-  max-width: 320px;
-  padding: 8px 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 14px;
-  overflow: hidden;
-  backdrop-filter: blur(8px);
+  min-width: 240px !important;
+  max-width: 320px !important;
+  padding: 8px 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 13px !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(20px) !important;
+  animation: context-menu-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes context-menu-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .context-menu-item {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 8px 16px;
   cursor: pointer;
   user-select: none;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  min-height: 36px;
+  border: none;
+  background: transparent;
 }
 
 .context-menu-item:hover:not(.disabled) {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .context-menu-item:active:not(.disabled) {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
   transform: translateX(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .context-menu-item.disabled {
@@ -43,6 +63,7 @@
 .context-menu-item.disabled:hover {
   background-color: transparent;
   transform: none;
+  box-shadow: none;
 }
 
 .context-menu-icon {

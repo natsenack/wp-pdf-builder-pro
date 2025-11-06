@@ -1544,6 +1544,87 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         }
         break;
       }
+      case 'copy': {
+        // Copier l'élément dans le presse-papiers interne
+        const element = state.elements.find(el => el.id === elementId);
+        if (element) {
+          // TODO: Implémenter le presse-papiers interne
+          console.log('Copy functionality not yet implemented');
+        }
+        break;
+      }
+      case 'cut': {
+        // Couper l'élément (copier puis supprimer)
+        const element = state.elements.find(el => el.id === elementId);
+        if (element) {
+          // TODO: Implémenter le presse-papiers interne
+          console.log('Cut functionality not yet implemented');
+          // dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
+        }
+        break;
+      }
+      case 'reset-size': {
+        // Réinitialiser la taille de l'élément à ses dimensions par défaut
+        const element = state.elements.find(el => el.id === elementId);
+        if (element) {
+          const defaultSizes: { [key: string]: { width: number; height: number } } = {
+            rectangle: { width: 100, height: 100 },
+            circle: { width: 100, height: 100 },
+            text: { width: 100, height: 30 },
+            line: { width: 100, height: 2 },
+            product_table: { width: 400, height: 200 },
+            customer_info: { width: 300, height: 80 },
+            company_info: { width: 300, height: 120 },
+            company_logo: { width: 150, height: 80 },
+            order_number: { width: 200, height: 40 },
+            document_type: { width: 150, height: 30 },
+            'dynamic-text': { width: 200, height: 60 },
+            mentions: { width: 400, height: 80 }
+          };
+
+          const defaultSize = defaultSizes[element.type] || { width: 100, height: 100 };
+          dispatch({
+            type: 'UPDATE_ELEMENT',
+            payload: {
+              id: elementId,
+              updates: { width: defaultSize.width, height: defaultSize.height }
+            }
+          });
+        }
+        break;
+      }
+      case 'fit-to-content': {
+        // Ajuster la taille de l'élément à son contenu (pour le texte principalement)
+        const element = state.elements.find(el => el.id === elementId);
+        if (element && (element.type === 'text' || element.type === 'dynamic-text')) {
+          // Pour les éléments texte, ajuster la hauteur selon le contenu
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            const props = element as TextElementProperties;
+            const fontSize = props.fontSize || 14;
+            const fontFamily = props.fontFamily || 'Arial';
+            const fontWeight = props.fontWeight || 'normal';
+            const fontStyle = props.fontStyle || 'normal';
+
+            ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+
+            const text = props.text || 'Texte';
+            const lines = text.split('\n');
+            const lineHeight = fontSize + 4;
+            const contentHeight = lines.length * lineHeight + 20; // Marges
+
+            dispatch({
+              type: 'UPDATE_ELEMENT',
+              payload: {
+                id: elementId,
+                updates: { height: Math.max(contentHeight, 30) }
+              }
+            });
+          }
+        }
+        break;
+      }
       case 'delete':
         dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
         break;
@@ -1569,14 +1650,30 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Menu contextuel pour le canvas vide
       return [
         {
+          id: 'section-edit',
+          section: 'ÉDITION'
+        },
+        {
           id: 'paste',
           label: 'Coller',
           icon: '📋',
+          shortcut: 'Ctrl+V',
           action: () => {
             // TODO: Implémenter le collage depuis le presse-papiers
             console.log('Paste functionality not yet implemented');
           },
           disabled: true // Désactiver jusqu'à implémentation
+        },
+        {
+          id: 'select-all',
+          label: 'Tout sélectionner',
+          icon: '☑️',
+          shortcut: 'Ctrl+A',
+          action: () => {
+            // Sélectionner tous les éléments
+            const allElementIds = state.elements.map(el => el.id);
+            dispatch({ type: 'SET_SELECTION', payload: allElementIds });
+          }
         }
       ];
     }
@@ -1586,10 +1683,16 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const isLocked = element?.locked || false;
 
     const items: ContextMenuItem[] = [
+      // Section Ordre des calques
+      {
+        id: 'section-layers',
+        section: 'CALQUES'
+      },
       {
         id: 'bring-to-front',
         label: 'Premier plan',
         icon: '⬆️',
+        shortcut: 'Ctrl+↑',
         action: () => handleContextMenuAction('bring-to-front', elementId),
         disabled: isLocked
       },
@@ -1597,6 +1700,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         id: 'send-to-back',
         label: 'Arrière plan',
         icon: '⬇️',
+        shortcut: 'Ctrl+↓',
         action: () => handleContextMenuAction('send-to-back', elementId),
         disabled: isLocked
       },
@@ -1604,6 +1708,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         id: 'bring-forward',
         label: 'Avancer d\'un plan',
         icon: '↗️',
+        shortcut: 'Ctrl+Shift+↑',
         action: () => handleContextMenuAction('bring-forward', elementId),
         disabled: isLocked
       },
@@ -1611,34 +1716,97 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         id: 'send-backward',
         label: 'Reculer d\'un plan',
         icon: '↙️',
+        shortcut: 'Ctrl+Shift+↓',
         action: () => handleContextMenuAction('send-backward', elementId),
         disabled: isLocked
       },
       { id: 'separator1', separator: true },
+
+      // Section Édition
+      {
+        id: 'section-edit',
+        section: 'ÉDITION'
+      },
       {
         id: 'duplicate',
         label: 'Dupliquer',
         icon: '📋',
+        shortcut: 'Ctrl+D',
         action: () => handleContextMenuAction('duplicate', elementId),
         disabled: isLocked
+      },
+      {
+        id: 'copy',
+        label: 'Copier',
+        icon: '📄',
+        shortcut: 'Ctrl+C',
+        action: () => handleContextMenuAction('copy', elementId),
+        disabled: false
+      },
+      {
+        id: 'cut',
+        label: 'Couper',
+        icon: '✂️',
+        shortcut: 'Ctrl+X',
+        action: () => handleContextMenuAction('cut', elementId),
+        disabled: isLocked
+      },
+      { id: 'separator2', separator: true },
+
+      // Section Taille
+      {
+        id: 'section-size',
+        section: 'TAILLE'
+      },
+      {
+        id: 'reset-size',
+        label: 'Taille par défaut',
+        icon: '📏',
+        shortcut: 'Ctrl+0',
+        action: () => handleContextMenuAction('reset-size', elementId),
+        disabled: isLocked
+      },
+      {
+        id: 'fit-to-content',
+        label: 'Ajuster au contenu',
+        icon: '📐',
+        shortcut: 'Ctrl+Shift+F',
+        action: () => handleContextMenuAction('fit-to-content', elementId),
+        disabled: isLocked || !(element?.type === 'text' || element?.type === 'dynamic-text')
+      },
+      { id: 'separator3', separator: true },
+
+      // Section État
+      {
+        id: 'section-state',
+        section: 'ÉTAT'
       },
       {
         id: 'lock',
         label: isLocked ? 'Déverrouiller' : 'Verrouiller',
         icon: isLocked ? '🔓' : '🔒',
+        shortcut: isLocked ? 'Ctrl+Shift+L' : 'Ctrl+L',
         action: () => handleContextMenuAction('lock', elementId)
       },
-      { id: 'separator2', separator: true },
+      { id: 'separator4', separator: true },
+
+      // Section Danger
+      {
+        id: 'section-danger',
+        section: 'SUPPRESSION'
+      },
       {
         id: 'delete',
         label: 'Supprimer',
         icon: '🗑️',
-        action: () => handleContextMenuAction('delete', elementId)
+        shortcut: 'Suppr',
+        action: () => handleContextMenuAction('delete', elementId),
+        disabled: false
       }
     ];
 
     return items;
-  }, [state.elements, handleContextMenuAction]);
+  }, [state.elements, handleContextMenuAction, dispatch]);
 
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
