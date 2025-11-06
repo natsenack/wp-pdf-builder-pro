@@ -5469,8 +5469,15 @@ class PDF_Builder_Admin {
         }, 50);
 
         // Script d'initialisation React avec vérification périodique
-        document.addEventListener('DOMContentLoaded', function() {
-            debugLog('� DOMContentLoaded fired');
+        function initReactAndTemplate() {
+            debugLog('🚀 [ADMIN] initReactAndTemplate called - document.readyState: ' + document.readyState);
+            
+            var scriptLoads = {
+                'react': !!window.React,
+                'react-dom': !!window.ReactDOM,
+                'pdf-builder-react': !!window.pdfBuilderReact
+            };
+
             debugLog('Current state:', {
                 'React': typeof window.React,
                 'ReactDOM': typeof window.ReactDOM,
@@ -5499,70 +5506,11 @@ class PDF_Builder_Admin {
                 return false;
             }
 
-            // Essayer immédiatement
-            if (!tryInitReact()) {
-                // Si pas prêt, vérifier toutes les 200ms pendant 30 secondes maximum
-                var attempts = 0;
-                var maxAttempts = 150; // 150 * 200ms = 30 secondes
-                var initInterval = setInterval(function() {
-                    attempts++;
-                    if (attempts % 10 === 1) { // Log tous les 10 essais + attempt 1
-                        debugLog('🔄 Attempt #' + attempts + '/' + maxAttempts + ' - Checking dependencies...');
-                        debugLog('Current state:', {
-                            'React': typeof window.React,
-                            'ReactDOM': typeof window.ReactDOM,
-                            'pdfBuilderReact': typeof window.pdfBuilderReact,
-                            'Scripts ready': scriptLoads
-                        });
-                    }
-                    if (tryInitReact()) {
-                        clearInterval(initInterval);
-                        clearInterval(checkInterval);
-                        debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
-                        
-                        // Load builtin template after React is ready
-                        setTimeout(function() {
-                            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                                debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (DOMContentLoaded delay)');
-                                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
-                                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                                    detail: window.pdfBuilderData.builtinTemplate
-                                }));
-                                debugLog('📡 [ADMIN] Dispatched event from DOMContentLoaded');
-                            } else {
-                                debugLog('🔍 [ADMIN] pdfBuilderData not yet available after React init');
-                            }
-                        }, 50);
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(initInterval);
-                        clearInterval(checkInterval);
-                        debugError('=== TIMEOUT AFTER 30 SECONDS ===');
-                        debugError('Final state:', {
-                            'React': typeof window.React,
-                            'ReactDOM': typeof window.ReactDOM,
-                            'pdfBuilderReact': typeof window.pdfBuilderReact,
-                            'React object': window.React,
-                            'ReactDOM object': window.ReactDOM,
-                            'pdfBuilderReact object': window.pdfBuilderReact,
-                            'Scripts status': scriptLoads,
-                            'All window keys with "React"': Object.keys(window).filter(k => k.includes('React') || k.includes('react')),
-                            'All window keys with "pdf"': Object.keys(window).filter(k => k.includes('pdf'))
-                        });
-                        debugError('Check:');
-                        debugError('1. Are scripts actually loading? Check Network tab in DevTools');
-                        debugError('2. Are there CORS errors? Check Console');
-                        debugError('3. Is the React build file (.../pdf-builder-react.js) really being enqueued?');
-                        var loadingDiv = document.getElementById('pdf-builder-react-loading');
-                        if (loadingDiv) {
-                            loadingDiv.innerHTML = '<div style="color: red; padding: 20px;"><strong>Erreur:</strong> Le script React n\'a pas pu être chargé après 30 secondes d\'attente. Vérifiez la console (F12) pour plus de détails. État: React=' + (typeof window.React) + ', ReactDOM=' + (typeof window.ReactDOM) + ', pdfBuilderReact=' + (typeof window.pdfBuilderReact) + '</div>';
-                        }
-                    }
-                }, 200);
-            } else {
-                clearInterval(checkInterval);
+            // Try immediately
+            if (tryInitReact()) {
+                // React loaded immediately
                 debugLog('✅✅✅ React bundle loaded immediately');
                 
-                // Load builtin template after React is ready (immediate case)
                 setTimeout(function() {
                     if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
                         debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (immediate)');
@@ -5571,13 +5519,39 @@ class PDF_Builder_Admin {
                             detail: window.pdfBuilderData.builtinTemplate
                         }));
                         debugLog('📡 [ADMIN] Dispatched event from immediate load');
-                    } else {
-                        debugLog('🔍 [ADMIN] pdfBuilderData not yet available, will try again...');
                     }
                 }, 50);
+            } else {
+                // React not ready yet, poll for it
+                var attempts = 0;
+                var maxAttempts = 150;
+                var initInterval = setInterval(function() {
+                    attempts++;
+                    if (attempts % 10 === 1) {
+                        debugLog('🔄 Attempt #' + attempts + '/' + maxAttempts + ' - Checking dependencies...');
+                    }
+                    if (tryInitReact()) {
+                        clearInterval(initInterval);
+                        debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
+                        
+                        setTimeout(function() {
+                            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                                debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (delayed)');
+                                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                                    detail: window.pdfBuilderData.builtinTemplate
+                                }));
+                                debugLog('📡 [ADMIN] Dispatched event from delayed load');
+                            }
+                        }, 50);
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(initInterval);
+                        debugError('=== TIMEOUT AFTER 30 SECONDS ===');
+                    }
+                }, 200);
             }
 
-            // Global fallback: Monitor for pdfBuilderData availability
+            // Global fallback: Monitor for pdfBuilderData availability (runs regardless of React init)
             var builtin_check_count = 0;
             var builtin_data_ready = setInterval(function() {
                 builtin_check_count++;
@@ -5594,7 +5568,19 @@ class PDF_Builder_Admin {
                     debugLog('❌ [ADMIN] pdfBuilderData not available after 5 seconds');
                 }
             }, 50);
-        });
+        }
+
+        // Call initialization immediately if DOM is ready, otherwise wait for DOMContentLoaded
+        if (document.readyState === 'loading') {
+            debugLog('📋 [ADMIN] DOM still loading, will wait for DOMContentLoaded');
+            document.addEventListener('DOMContentLoaded', function() {
+                debugLog('✅ DOMContentLoaded fired');
+                initReactAndTemplate();
+            });
+        } else {
+            debugLog('✅ [ADMIN] DOM already loaded, initializing now');
+            initReactAndTemplate();
+        }
 
         // ============================================================================
         // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
