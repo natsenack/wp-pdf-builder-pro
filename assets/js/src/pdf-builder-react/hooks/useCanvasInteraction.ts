@@ -384,23 +384,29 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Pour le menu contextuel, nous utilisons les coordonnées absolues de la souris
+    // (pas les coordonnées transformées du canvas)
+    const menuX = event.clientX;
+    const menuY = event.clientY;
+
+    // Pour la détection d'élément, nous utilisons les coordonnées du canvas
     const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+    const canvasX = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
+    const canvasY = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
 
     // Trouver l'élément cliqué
     const clickedElement = state.elements.find(el => {
-      const isInside = x >= el.x && x <= el.x + el.width &&
-                      y >= el.y && y <= el.y + el.height;
+      const isInside = canvasX >= el.x && canvasX <= el.x + el.width &&
+                      canvasY >= el.y && canvasY <= el.y + el.height;
       return isInside;
     });
 
     if (clickedElement) {
       // Ouvrir le menu contextuel pour l'élément
-      onContextMenu(event.clientX, event.clientY, clickedElement.id);
+      onContextMenu(menuX, menuY, clickedElement.id);
     } else {
       // Ouvrir le menu contextuel général du canvas
-      onContextMenu(event.clientX, event.clientY);
+      onContextMenu(menuX, menuY);
     }
   }, [state, canvasRef]);
 

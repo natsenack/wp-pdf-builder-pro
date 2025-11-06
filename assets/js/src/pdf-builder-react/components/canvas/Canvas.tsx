@@ -1586,10 +1586,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     console.log('🎯 Context menu triggered on canvas', event);
-    console.log('Event target:', event.target);
-    console.log('Event type:', event.type);
+    console.log('Event client coords:', event.clientX, event.clientY);
+    console.log('Event page coords:', event.pageX, event.pageY);
     handleContextMenu(event, (x, y, elementId) => {
       console.log('🎯 Showing context menu at', x, y, 'for element', elementId);
+      console.log('🎯 Final position will be:', { x, y });
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);
