@@ -37,7 +37,19 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     if (typeof window !== 'undefined') {
       // Largeur et hauteur estimées du menu compact
       const menuWidth = 160; // Max width du menu compact
-      const menuHeight = items.length * 18 + 20; // Hauteur estimée par élément compact (16px min + padding) + padding menu
+
+      // Calculer la hauteur réelle en fonction du type d'éléments
+      let menuHeight = 0;
+      items.forEach(item => {
+        if (item.section) {
+          menuHeight += 12; // Hauteur des sections
+        } else if (item.separator) {
+          menuHeight += 1; // Hauteur des séparateurs
+        } else {
+          menuHeight += 18; // Hauteur des éléments normaux
+        }
+      });
+      menuHeight += 4; // Padding vertical du menu
 
       // Vérifier si le menu sort à droite
       if (adjustedX + menuWidth > window.innerWidth) {
@@ -49,31 +61,42 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         adjustedY = window.innerHeight - menuHeight - 10;
       }
 
-      // Vérifier les limites à gauche et haut
-      if (adjustedX < 0) adjustedX = 5;
-      if (adjustedY < 0) adjustedY = 5;
+      // Vérifier si le menu sort en haut (après ajustement vers le bas)
+      if (adjustedY < 0) {
+        adjustedY = 10; // Positionner en haut avec une marge
+      }
+
+      // Vérifier les limites à gauche
+      if (adjustedX < 0) adjustedX = 10;
     }
 
     return { x: adjustedX, y: adjustedY };
-  }, [position, items.length]);
+  }, [position, items]);
 
   useEffect(() => {
     if (!isVisible) return;
 
     const handleClickOutside = (event: Event) => {
-      // Ne pas fermer si c'est un clic droit (pour éviter de fermer immédiatement)
-      const mouseEvent = event as unknown as { button?: number };
-      if (mouseEvent.button === 2) return;
+      // Petite attente pour permettre au menu de s'ouvrir d'abord
+      setTimeout(() => {
+        if (!menuRef.current) return;
 
-      // Vérifier si le clic est en dehors du menu
-      if (menuRef.current && !(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
-        onClose();
-      }
+        const mouseEvent = event as unknown as { button?: number };
+        // Ne pas fermer si c'est un clic droit (pour éviter de fermer immédiatement)
+        if (mouseEvent.button === 2) return;
+
+        // Vérifier si le clic est en dehors du menu
+        if (!(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
+          onClose();
+        }
+      }, 10);
     };
 
     const handleContextMenu = (event: Event) => {
       // Empêcher l'ouverture d'un nouveau menu contextuel sur le menu existant
-      event.preventDefault();
+      if (menuRef.current && (menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
+        event.preventDefault();
+      }
     };
 
     const handleEscape = (event: Event) => {
@@ -83,12 +106,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       }
     };
 
-    // Délai pour éviter que le clic droit qui ouvre le menu ne le ferme immédiatement
+    // Délai minimal pour permettre au menu de se rendre
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('contextmenu', handleContextMenu);
       document.addEventListener('keydown', handleEscape);
-    }, 100);
+    }, 50);
 
     return () => {
       clearTimeout(timer);
@@ -97,22 +120,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isVisible, onClose]);
-
-  useEffect(() => {
-    if (!isVisible) return;
-    
-    // Petit délai pour permettre au DOM de se stabiliser
-    const timer = setTimeout(() => {
-      // Pour l'instant, pas d'action spécifique après le rendu
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (isVisible && menuRef.current) {
-      // Menu rendu avec succès - pas besoin de log en production
-    }
-  }, [isVisible]);
 
   if (!isVisible) {
     return null;
@@ -179,9 +186,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 fontWeight: '500',
               }}
             >
-              {item.icon && <span className="context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '9px'}}>{item.icon}</span>}
-              {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: '#334155'}}>{item.label}</span>}
-              {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
+              {item.icon && <span className="context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.disabled ? '#94a3b8' : '#64748b', fontSize: '9px'}}>{item.icon}</span>}
+              {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#334155'}}>{item.label}</span>}
+              {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
             </div>
           )}
         </div>
