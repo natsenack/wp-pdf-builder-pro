@@ -5181,27 +5181,19 @@ class PDF_Builder_Admin {
 
         // Initialize React editor when DOM is ready
         function initReactEditor() {
-            console.log('🔄 [PHP] Attempting to initialize React editor...');
-            
             if (typeof window.pdfBuilderReact === 'undefined') {
-                console.error('❌ [PHP] window.pdfBuilderReact is not defined');
                 return false;
             }
             
             if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
-                console.error('❌ [PHP] initPDFBuilderReact is not a function');
                 return false;
             }
             
-            console.log('✅ [PHP] Calling initPDFBuilderReact...');
             var result = window.pdfBuilderReact.initPDFBuilderReact();
-            console.log('📊 [PHP] initPDFBuilderReact result:', result);
             return result;
         }
 
         function loadExistingTemplateData() {
-            console.log('🔄 [PHP] Checking if existing template data should be loaded...');
-            
             if (typeof window.pdfBuilderData !== 'undefined' &&
                 window.pdfBuilderData.hasExistingData &&
                 window.pdfBuilderData.existingTemplate &&
@@ -5209,23 +5201,18 @@ class PDF_Builder_Admin {
                 window.pdfBuilderReact.loadTemplate) {
 
                 try {
-                    console.log('✅ [PHP] Loading existing template data...');
                     // Load the existing template data into the editor
                     var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
-                    console.log('📊 [PHP] loadTemplate result:', result);
                     
                     // Handle Promise result
                     if (result && typeof result.then === 'function') {
                         // It's a Promise, wait for it to resolve
                         result.then(function(success) {
-                            console.log('📊 [PHP] loadTemplate Promise resolved:', success);
                             if (success === true) {
-                                console.log('✅ [PHP] Template data loaded successfully');
-                            } else {
-                                console.log('⚠️ [PHP] Template data loading returned false');
+                                console.log('✅ Template data loaded successfully');
                             }
                         }).catch(function(error) {
-                            console.error('❌ [PHP] Template data loading failed:', error);
+                            console.error('❌ Template loading failed:', error);
                         });
                         return true; // Promise was created successfully
                     } else {
@@ -5233,13 +5220,10 @@ class PDF_Builder_Admin {
                         return result === true;
                     }
                 } catch (e) {
-                    console.error('❌ [PHP] Error loading existing template data:', e);
-                    // Silently fail if loading existing data fails
                     return false;
                 }
             }
             
-            console.log('⚠️ [PHP] Conditions not met for loading existing data');
             return false;
         }
 
