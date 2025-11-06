@@ -5311,8 +5311,6 @@ class PDF_Builder_Admin {
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
         $builtin_template_data = null;
 
-        error_log('DEBUG: builtin_template_id=' . $builtin_template_id . ', transient_key=' . $transient_key);
-
         if ($builtin_template_id && $transient_key) {
             // Load builtin template from transient (set by builtin-editor-page.php)
             $transient_data = get_transient($transient_key);
@@ -5320,30 +5318,20 @@ class PDF_Builder_Admin {
                 $builtin_template_data = $transient_data;
                 // Clean up the transient after use
                 delete_transient($transient_key);
-                error_log('DEBUG: Loaded from transient');
             } else {
-                error_log('DEBUG: Transient not found or empty, trying file fallback');
                 // Fallback: Load builtin template directly from file
                 $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
-                error_log('DEBUG: Loading from file: ' . $builtin_file);
                 if (file_exists($builtin_file)) {
                     $json_content = file_get_contents($builtin_file);
                     $builtin_template_data = json_decode($json_content, true);
-                    error_log('DEBUG: File loaded, builtin_template_data is ' . (is_array($builtin_template_data) ? 'array' : 'not array'));
-                } else {
-                    error_log('DEBUG: File does not exist: ' . $builtin_file);
                 }
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
             $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
-            error_log('DEBUG: Loading from file: ' . $builtin_file);
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
                 $builtin_template_data = json_decode($json_content, true);
-                error_log('DEBUG: File loaded, builtin_template_data is ' . (is_array($builtin_template_data) ? 'array' : 'not array'));
-            } else {
-                error_log('DEBUG: File does not exist: ' . $builtin_file);
             }
         }
 
@@ -5417,18 +5405,14 @@ class PDF_Builder_Admin {
         
         // Add builtin template data if available
         if ($builtin_template_data) {
-            error_log('DEBUG: Adding builtin template to localize_data');
             $localize_data['builtinTemplate'] = $builtin_template_data;
             $localize_data['isBuiltin'] = true;
             $localize_data['templateId'] = $builtin_template_id;
             // Also set as existing template data so the automatic loading works
             $localize_data['existingTemplate'] = $builtin_template_data;
             $localize_data['hasExistingData'] = true;
-            error_log('DEBUG: hasExistingData set to true');
-            error_log('DEBUG: localize_data keys: ' . implode(', ', array_keys($localize_data)));
         }
         
-        error_log('DEBUG: Before wp_localize_script, hasExistingData in data: ' . (isset($localize_data['hasExistingData']) ? 'YES' : 'NO'));
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
@@ -5683,15 +5667,6 @@ class PDF_Builder_Admin {
 
         function loadExistingTemplateData() {
             console.log('Attempting to load existing template data...');
-            console.log('pdfBuilderData exists:', typeof window.pdfBuilderData !== 'undefined');
-            if (typeof window.pdfBuilderData !== 'undefined') {
-                console.log('hasExistingData:', window.pdfBuilderData.hasExistingData);
-                console.log('existingTemplate exists:', !!window.pdfBuilderData.existingTemplate);
-                console.log('pdfBuilderReact exists:', typeof window.pdfBuilderReact !== 'undefined');
-                if (typeof window.pdfBuilderReact !== 'undefined') {
-                    console.log('loadTemplate exists:', !!window.pdfBuilderReact.loadTemplate);
-                }
-            }
             if (typeof window.pdfBuilderData !== 'undefined' &&
                 window.pdfBuilderData.hasExistingData &&
                 window.pdfBuilderData.existingTemplate &&
