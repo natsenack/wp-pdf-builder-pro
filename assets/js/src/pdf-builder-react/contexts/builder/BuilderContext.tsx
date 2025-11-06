@@ -564,8 +564,23 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       }
     };
 
+    const handleLoadBuiltinTemplate = (event: CustomEvent) => {
+      debugLog('🔄 [LOAD BUILTIN TEMPLATE] Custom event received', event.detail);
+      const templateData = event.detail;
+      if (templateData) {
+        dispatch({
+          type: 'LOAD_TEMPLATE',
+          payload: templateData
+        });
+      }
+    };
+
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
-    return () => document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
+    document.addEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadBuiltinTemplate as EventListener);
+    return () => {
+      document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
+      document.removeEventListener('pdfBuilderLoadBuiltinTemplate', handleLoadBuiltinTemplate as EventListener);
+    };
   }, []);
 
   // Fonction de sauvegarde automatique
