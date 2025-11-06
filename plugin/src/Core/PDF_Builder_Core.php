@@ -753,9 +753,6 @@ class PDF_Builder_Core
         <!-- DEBUG: Is Builtin = <?php echo $builtin_template ? 'YES' : 'NO'; ?> -->
 
         <script type="text/javascript">
-            // DEBUG: Test if PHP is executing
-            console.log('DEBUG: PDF Builder Core script loaded');
-
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
@@ -777,12 +774,6 @@ class PDF_Builder_Core
             if (window.pdfBuilderData.isBuiltin && window.pdfBuilderData.templateData) {
                 window.pdfBuilderData.hasExistingData = true;
                 window.pdfBuilderData.existingTemplate = window.pdfBuilderData.templateData;
-                console.log('DEBUG: Builtin template data set for auto-loading:', window.pdfBuilderData);
-            } else {
-                console.log('DEBUG: Builtin template conditions not met:', {
-                    isBuiltin: window.pdfBuilderData.isBuiltin,
-                    hasTemplateData: !!window.pdfBuilderData.templateData
-                });
             }
 
             // ============================================
