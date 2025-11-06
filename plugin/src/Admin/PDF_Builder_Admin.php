@@ -5209,7 +5209,7 @@ class PDF_Builder_Admin {
                         // It's a Promise, wait for it to resolve
                         result.then(function(success) {
                             if (success === true) {
-                                console.log('✅ Template data loaded successfully');
+                                // Template loaded successfully - silent success
                             }
                         }).catch(function(error) {
                             console.error('❌ Template loading failed:', error);
@@ -5228,21 +5228,16 @@ class PDF_Builder_Admin {
         }
 
         // Initialize React editor immediately
-        console.log('🚀 [PHP] Starting React editor initialization...');
         if (!initReactEditor()) {
-            console.log('⚠️ [PHP] React editor init failed, will retry...');
             var initAttempts = 0;
             var maxInitAttempts = 30; // 15 seconds max
             var initInterval = setInterval(function() {
                 initAttempts++;
-                console.log('🔄 [PHP] Retry init attempt', initAttempts, 'of', maxInitAttempts);
                 if (initReactEditor()) {
-                    console.log('✅ [PHP] React editor initialized successfully on retry');
                     clearInterval(initInterval);
                     
                     // Now try to load existing data once
                     setTimeout(function() {
-                        console.log('🔄 [PHP] Attempting to load existing template data...');
                         loadExistingTemplateData();
                     }, 1000);
                     
@@ -5252,11 +5247,8 @@ class PDF_Builder_Admin {
                 }
             }, 500);
         } else {
-            console.log('✅ [PHP] React editor initialized successfully');
-            
             // Try to load existing data once
             setTimeout(function() {
-                console.log('🔄 [PHP] Attempting to load existing template data...');
                 loadExistingTemplateData();
             }, 1000);
         }
