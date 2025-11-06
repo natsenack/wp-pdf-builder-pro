@@ -5334,6 +5334,9 @@ class PDF_Builder_Admin {
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
+        <script>
+            console.log('[PHP OUTPUT] wp_localize_script executed with pdfBuilderData:', typeof window.pdfBuilderData, 'builtinTemplate:', typeof window.pdfBuilderData?.builtinTemplate);
+        </script>
         <div class="wrap">
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
