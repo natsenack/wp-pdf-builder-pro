@@ -28,7 +28,7 @@ class PDF_Builder_Predefined_Templates_Manager {
         add_action('wp_ajax_pdf_builder_save_predefined_template', [$this, 'ajax_save_predefined_template']);
         add_action('wp_ajax_pdf_builder_load_predefined_template', [$this, 'ajax_load_predefined_template']);
         add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajax_delete_predefined_template']);
-        add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajax_generate_template_preview']);
+        add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajax_refresh_nonce']);
     }
 
     /**
@@ -623,8 +623,21 @@ class PDF_Builder_Predefined_Templates_Manager {
     }
 
     /**
-     * AJAX - Générer un aperçu SVG du modèle
+     * AJAX - Actualiser le nonce
      */
+    public function ajax_refresh_nonce() {
+        try {
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            $fresh_nonce = wp_create_nonce('pdf_builder_predefined_templates');
+            wp_send_json_success(['nonce' => $fresh_nonce]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
     public function ajax_generate_template_preview() {
         try {
             // Vérifications de sécurité

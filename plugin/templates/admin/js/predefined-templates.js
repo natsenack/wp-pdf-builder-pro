@@ -179,8 +179,14 @@
                     populateForm(response.data);
                     showTemplateEditor(response.data);
                 } else {
-                    console.error('Template load failed:', response.data.message);
-                    showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
+                    // Si nonce invalide, essayer de le rafraîchir
+                    if (response.data && response.data.indexOf('Nonce invalide') !== -1) {
+                        console.log('Nonce expired, refreshing...');
+                        refreshNonceAndRetry(slug);
+                    } else {
+                        console.error('Template load failed:', response.data.message);
+                        showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
+                    }
                 }
             },
             error: function(xhr, status, error) {
@@ -192,8 +198,33 @@
     }
 
     /**
-     * Remplir le formulaire avec les données du modèle
+     * Actualiser le nonce et réessayer le chargement
      */
+    function refreshNonceAndRetry(slug) {
+        console.log('Refreshing nonce...');
+        $.ajax({
+            url: pdfBuilderPredefined.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_refresh_nonce'
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Nonce refreshed:', response.data.nonce);
+                    pdfBuilderPredefined.nonce = response.data.nonce;
+                    // Réessayer le chargement avec le nouveau nonce
+                    loadTemplate(slug);
+                } else {
+                    console.error('Failed to refresh nonce');
+                    showErrorMessage('Erreur de sécurité - veuillez rafraîchir la page');
+                }
+            },
+            error: function() {
+                console.error('AJAX error refreshing nonce');
+                showErrorMessage('Erreur de sécurité - veuillez rafraîchir la page');
+            }
+        });
+    }
     function populateForm(data) {
         $('#template-slug').val(data.slug).prop('disabled', true);
         $('#template-name').val(data.name);
