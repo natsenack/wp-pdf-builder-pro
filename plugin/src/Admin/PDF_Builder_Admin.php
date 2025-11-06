@@ -5605,6 +5605,17 @@ class PDF_Builder_Admin {
             if (window.pdfBuilderData) {
                 clearInterval(pdfDataWaiter);
                 debugLog('✅ [ADMIN] pdfBuilderData found at check #' + pdfDataCheckCount);
+                
+                // Dispatch builtin template event if it exists
+                if (window.pdfBuilderData.builtinTemplate) {
+                    debugLog('📊 [ADMIN] Builtin template data found, dispatching event');
+                    var event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                        detail: window.pdfBuilderData.builtinTemplate
+                    });
+                    window.dispatchEvent(event);
+                    debugLog('📡 [ADMIN] Template event dispatched');
+                }
+                
                 callInitIfNeeded();
             } else if (pdfDataCheckCount > 200) {
                 clearInterval(pdfDataWaiter);
