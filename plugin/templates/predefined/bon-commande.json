@@ -1,0 +1,383 @@
+{
+  "name": "Bon de Commande",
+  "category": "commande",
+  "description": "Template de bon de commande avec numéro de commande et liste des produits",
+  "icon": "📦",
+  "version": "1.0",
+  "elements": [
+    {
+      "id": "header-bg",
+      "type": "rectangle",
+      "style": {
+        "position": "absolute",
+        "left": "0",
+        "top": "0",
+        "width": "595px",
+        "height": "100px",
+        "backgroundColor": "#3498db"
+      }
+    },
+    {
+      "id": "header-title",
+      "type": "text",
+      "content": "BON DE COMMANDE",
+      "style": {
+        "fontSize": "28px",
+        "fontWeight": "bold",
+        "color": "white",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "top": "25px",
+        "width": "495px"
+      }
+    },
+    {
+      "id": "order-number",
+      "type": "text",
+      "content": "N° Commande: [ORDER_NUMBER]",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "white",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "65px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "order-date",
+      "type": "text",
+      "content": "Date: [ORDER_DATE]",
+      "style": {
+        "fontSize": "12px",
+        "color": "white",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "80px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "supplier-info",
+      "type": "text",
+      "content": "FOURNISSEUR\n[COMPANY_NAME]\n[COMPANY_ADDRESS]\nTél: [COMPANY_PHONE]\nEmail: [COMPANY_EMAIL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "120px",
+        "width": "200px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "client-info",
+      "type": "text",
+      "content": "CLIENT\n[CLIENT_NAME]\n[CLIENT_COMPANY]\n[CLIENT_ADDRESS]\n[CLIENT_EMAIL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "120px",
+        "width": "200px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "products-title",
+      "type": "text",
+      "content": "ARTICLES COMMANDÉS",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "200px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "table-header-bg",
+      "type": "rectangle",
+      "style": {
+        "position": "absolute",
+        "left": "50px",
+        "top": "220px",
+        "width": "500px",
+        "height": "25px",
+        "backgroundColor": "#ecf0f1"
+      }
+    },
+    {
+      "id": "table-header",
+      "type": "text",
+      "content": "Référence\tDescription\t\t\tQté\tPrix Unit.\tTotal",
+      "style": {
+        "fontSize": "11px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "225px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "product-line-1",
+      "type": "text",
+      "content": "[PRODUCT_1_REF]\t[PRODUCT_1_DESC]\t\t[PRODUCT_1_QTY]\t[PRODUCT_1_PRICE]\t[PRODUCT_1_TOTAL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "255px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "product-line-2",
+      "type": "text",
+      "content": "[PRODUCT_2_REF]\t[PRODUCT_2_DESC]\t\t[PRODUCT_2_QTY]\t[PRODUCT_2_PRICE]\t[PRODUCT_2_TOTAL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "275px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "product-line-3",
+      "type": "text",
+      "content": "[PRODUCT_3_REF]\t[PRODUCT_3_DESC]\t\t[PRODUCT_3_QTY]\t[PRODUCT_3_PRICE]\t[PRODUCT_3_TOTAL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "295px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "subtotal-box",
+      "type": "rectangle",
+      "style": {
+        "position": "absolute",
+        "left": "350px",
+        "top": "330px",
+        "width": "200px",
+        "height": "80px",
+        "backgroundColor": "#f8f9fa",
+        "border": "1px solid #dee2e6"
+      }
+    },
+    {
+      "id": "subtotal-label",
+      "type": "text",
+      "content": "Sous-total HT:",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "360px",
+        "top": "335px",
+        "width": "80px"
+      }
+    },
+    {
+      "id": "subtotal-amount",
+      "type": "text",
+      "content": "[SUBTOTAL]",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "60px",
+        "top": "335px",
+        "width": "120px"
+      }
+    },
+    {
+      "id": "tax-label",
+      "type": "text",
+      "content": "TVA (20%):",
+      "style": {
+        "fontSize": "12px",
+        "color": "#666",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "360px",
+        "top": "355px",
+        "width": "80px"
+      }
+    },
+    {
+      "id": "tax-amount",
+      "type": "text",
+      "content": "[TAX_AMOUNT]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#666",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "60px",
+        "top": "355px",
+        "width": "120px"
+      }
+    },
+    {
+      "id": "total-label",
+      "type": "text",
+      "content": "TOTAL TTC:",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#27ae60",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "360px",
+        "top": "375px",
+        "width": "80px"
+      }
+    },
+    {
+      "id": "total-amount",
+      "type": "text",
+      "content": "[TOTAL_AMOUNT]",
+      "style": {
+        "fontSize": "16px",
+        "fontWeight": "bold",
+        "color": "#27ae60",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "60px",
+        "top": "375px",
+        "width": "120px"
+      }
+    },
+    {
+      "id": "delivery-info",
+      "type": "text",
+      "content": "Informations de livraison:\nAdresse: [DELIVERY_ADDRESS]\nDate souhaitée: [DELIVERY_DATE]\nMode de transport: [DELIVERY_METHOD]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "430px",
+        "width": "250px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "payment-info",
+      "type": "text",
+      "content": "Conditions de paiement:\n[PAYMENT_TERMS]\nDélai: [PAYMENT_DELAY]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "320px",
+        "top": "430px",
+        "width": "230px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "validation-section",
+      "type": "text",
+      "content": "Commande validée par:\n\n__________________________\n[CLIENT_NAME]\nLe [ORDER_DATE]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "bottom": "80px",
+        "width": "250px",
+        "lineHeight": "1.5"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "text",
+      "content": "Conformément à nos conditions générales de vente. Toute commande est ferme et définitive.",
+      "style": {
+        "fontSize": "10px",
+        "color": "#666",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "bottom": "30px",
+        "width": "500px"
+      }
+    }
+  ],
+  "pageSettings": {
+    "size": "A4",
+    "orientation": "portrait",
+    "margins": {
+      "top": 20,
+      "right": 20,
+      "bottom": 20,
+      "left": 20
+    }
+  },
+  "variables": {
+    "COMPANY_NAME": "Ma Société SARL",
+    "COMPANY_ADDRESS": "123 Rue de l'Entreprise\n75000 Paris",
+    "COMPANY_PHONE": "01 23 45 67 89",
+    "COMPANY_EMAIL": "commandes@masociete.com",
+    "ORDER_NUMBER": "CMD-2024-001",
+    "ORDER_DATE": "15/01/2024",
+    "CLIENT_NAME": "M. Martin",
+    "CLIENT_COMPANY": "Entreprise Martin",
+    "CLIENT_ADDRESS": "456 Avenue du Client\n69000 Lyon",
+    "CLIENT_EMAIL": "contact@martin.com",
+    "PRODUCT_1_REF": "REF001",
+    "PRODUCT_1_DESC": "Ordinateur portable professionnel",
+    "PRODUCT_1_QTY": "2",
+    "PRODUCT_1_PRICE": "899.00 €",
+    "PRODUCT_1_TOTAL": "1798.00 €",
+    "PRODUCT_2_REF": "REF002",
+    "PRODUCT_2_DESC": "Écran 27 pouces 4K",
+    "PRODUCT_2_QTY": "1",
+    "PRODUCT_2_PRICE": "349.00 €",
+    "PRODUCT_2_TOTAL": "349.00 €",
+    "PRODUCT_3_REF": "REF003",
+    "PRODUCT_3_DESC": "Clavier ergonomique",
+    "PRODUCT_3_QTY": "2",
+    "PRODUCT_3_PRICE": "89.00 €",
+    "PRODUCT_3_TOTAL": "178.00 €",
+    "SUBTOTAL": "2325.00 €",
+    "TAX_AMOUNT": "465.00 €",
+    "TOTAL_AMOUNT": "2790.00 €",
+    "DELIVERY_ADDRESS": "456 Avenue du Client\n69000 Lyon",
+    "DELIVERY_DATE": "25/01/2024",
+    "DELIVERY_METHOD": "Transporteur express",
+    "PAYMENT_TERMS": "Virement bancaire à 30 jours",
+    "PAYMENT_DELAY": "30 jours fin de mois"
+  }
+}

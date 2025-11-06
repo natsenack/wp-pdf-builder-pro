@@ -1,0 +1,244 @@
+{
+  "name": "Facture Professionnelle",
+  "category": "facture",
+  "description": "Template de facture élégant avec en-tête société, tableau des articles et totaux",
+  "icon": "🧾",
+  "version": "1.0",
+  "elements": [
+    {
+      "id": "header-company",
+      "type": "text",
+      "content": "[COMPANY_NAME]",
+      "style": {
+        "fontSize": "24px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "50px",
+        "width": "300px"
+      }
+    },
+    {
+      "id": "header-address",
+      "type": "text",
+      "content": "[COMPANY_ADDRESS]\n[COMPANY_PHONE]\n[COMPANY_EMAIL]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#666",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "90px",
+        "width": "300px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "invoice-title",
+      "type": "text",
+      "content": "FACTURE",
+      "style": {
+        "fontSize": "36px",
+        "fontWeight": "bold",
+        "color": "#3498db",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "50px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "invoice-number",
+      "type": "text",
+      "content": "N° [INVOICE_NUMBER]",
+      "style": {
+        "fontSize": "16px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "100px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "invoice-date",
+      "type": "text",
+      "content": "Date: [INVOICE_DATE]",
+      "style": {
+        "fontSize": "14px",
+        "color": "#666",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "130px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "client-info",
+      "type": "text",
+      "content": "Facturé à:\n[CLIENT_NAME]\n[CLIENT_ADDRESS]",
+      "style": {
+        "fontSize": "14px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "180px",
+        "width": "300px",
+        "lineHeight": "1.5"
+      }
+    },
+    {
+      "id": "table-header",
+      "type": "rectangle",
+      "style": {
+        "position": "absolute",
+        "left": "50px",
+        "top": "280px",
+        "width": "500px",
+        "height": "30px",
+        "backgroundColor": "#3498db",
+        "border": "1px solid #2980b9"
+      }
+    },
+    {
+      "id": "table-header-text",
+      "type": "text",
+      "content": "Description\t\t\tQté\tPrix Unit.\tTotal",
+      "style": {
+        "fontSize": "12px",
+        "fontWeight": "bold",
+        "color": "white",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "285px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "table-line-1",
+      "type": "text",
+      "content": "[LINE_ITEM_1_DESCRIPTION]\t\t[LINE_ITEM_1_QTY]\t[LINE_ITEM_1_PRICE]\t[LINE_ITEM_1_TOTAL]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "320px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "table-line-2",
+      "type": "text",
+      "content": "[LINE_ITEM_2_DESCRIPTION]\t\t[LINE_ITEM_2_QTY]\t[LINE_ITEM_2_PRICE]\t[LINE_ITEM_2_TOTAL]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "60px",
+        "top": "340px",
+        "width": "480px"
+      }
+    },
+    {
+      "id": "subtotal",
+      "type": "text",
+      "content": "Sous-total: [SUBTOTAL]",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "400px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "tax",
+      "type": "text",
+      "content": "TVA (20%): [TAX_AMOUNT]",
+      "style": {
+        "fontSize": "14px",
+        "color": "#666",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "425px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "total",
+      "type": "text",
+      "content": "TOTAL: [TOTAL_AMOUNT]",
+      "style": {
+        "fontSize": "18px",
+        "fontWeight": "bold",
+        "color": "#27ae60",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "455px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "text",
+      "content": "Merci pour votre confiance !\nConditions de paiement: 30 jours",
+      "style": {
+        "fontSize": "12px",
+        "color": "#666",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "bottom": "50px",
+        "width": "500px",
+        "lineHeight": "1.4"
+      }
+    }
+  ],
+  "pageSettings": {
+    "size": "A4",
+    "orientation": "portrait",
+    "margins": {
+      "top": 20,
+      "right": 20,
+      "bottom": 20,
+      "left": 20
+    }
+  },
+  "variables": {
+    "COMPANY_NAME": "Ma Société",
+    "COMPANY_ADDRESS": "123 Rue de l'Entreprise\n75000 Paris",
+    "COMPANY_PHONE": "01 23 45 67 89",
+    "COMPANY_EMAIL": "contact@masociete.com",
+    "INVOICE_NUMBER": "2024-001",
+    "INVOICE_DATE": "15/01/2024",
+    "CLIENT_NAME": "Client Exemple",
+    "CLIENT_ADDRESS": "456 Avenue du Client\n69000 Lyon",
+    "LINE_ITEM_1_DESCRIPTION": "Service de consultation",
+    "LINE_ITEM_1_QTY": "10",
+    "LINE_ITEM_1_PRICE": "50.00 €",
+    "LINE_ITEM_1_TOTAL": "500.00 €",
+    "LINE_ITEM_2_DESCRIPTION": "Développement web",
+    "LINE_ITEM_2_QTY": "1",
+    "LINE_ITEM_2_PRICE": "1500.00 €",
+    "LINE_ITEM_2_TOTAL": "1500.00 €",
+    "SUBTOTAL": "2000.00 €",
+    "TAX_AMOUNT": "400.00 €",
+    "TOTAL_AMOUNT": "2400.00 €"
+  }
+}

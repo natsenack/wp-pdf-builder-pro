@@ -67,6 +67,11 @@ export const Header = memo(function Header({
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
+  const [showTemplateMenu, setShowTemplateMenu] = useState(false);
+  const [showJsonEditor, setShowJsonEditor] = useState(false);
+  const [jsonEditorContent, setJsonEditorContent] = useState('');
+  const [jsonEditorError, setJsonEditorError] = useState<string | null>(null);
+  const [svgPreview, setSvgPreview] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
@@ -337,20 +342,95 @@ export const Header = memo(function Header({
 
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
 
-        <button
-          onClick={() => setShowJsonModal(true)}
-          onMouseEnter={() => setHoveredButton('json')}
-          onMouseLeave={() => setHoveredButton(null)}
-          style={{
-            ...secondaryButtonStyles,
-            opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
-          }}
-          title="Voir et copier le JSON du canvas"
-        >
-          <span>📄</span>
-          <span>JSON</span>
-        </button>
+        {/* Menu Template Dropdown */}
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => setShowTemplateMenu(!showTemplateMenu)}
+            onMouseEnter={() => setHoveredButton('template')}
+            onMouseLeave={() => setHoveredButton(null)}
+            style={{
+              ...secondaryButtonStyles,
+              opacity: isSaving ? 0.6 : 1,
+              pointerEvents: isSaving ? 'none' : 'auto'
+            }}
+            title="Menu Template"
+          >
+            <span>📝</span>
+            <span>Template</span>
+            <span style={{ marginLeft: '4px', fontSize: '10px' }}>▼</span>
+          </button>
+
+          {/* Dropdown Menu */}
+          {showTemplateMenu && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              backgroundColor: '#ffffff',
+              border: '1px solid #e0e0e0',
+              borderRadius: '6px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 1000,
+              minWidth: '200px',
+              marginTop: '4px'
+            }}>
+              <div style={{
+                padding: '8px 0',
+                fontSize: '14px'
+              }}>
+                <button
+                  onClick={() => {
+                    setShowJsonEditor(true);
+                    setShowTemplateMenu(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 16px',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    color: '#333',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span>✏️</span>
+                  <span>Éditeur JSON</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowJsonModal(true);
+                    setShowTemplateMenu(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 16px',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    color: '#333',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span>�</span>
+                  <span>Copier JSON</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         <button
           onClick={() => setShowSettingsModal(true)}

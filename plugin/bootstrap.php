@@ -101,6 +101,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/render-template-html.php';
     }
 
+    // Charger le handler AJAX pour les templates
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php';
+    }
+
     $loaded = true;
 }
 

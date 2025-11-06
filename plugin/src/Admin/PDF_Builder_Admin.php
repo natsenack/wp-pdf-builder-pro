@@ -224,6 +224,9 @@ class PDF_Builder_Admin {
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
+
+        // Inclure le gestionnaire de modèles prédéfinis
+        include_once plugin_dir_path(dirname(__FILE__)) . '../templates/admin/predefined-templates-manager.php';
         
         // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
         // Cela garantit que les handlers AJAX seront disponibles immédiatement

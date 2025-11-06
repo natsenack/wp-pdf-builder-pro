@@ -198,7 +198,64 @@ if (!defined('ABSPATH')) {
                     <!-- Grille des modèles prédéfinis -->
                     <div id="predefined-templates-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
 
-                        <!-- Aucun modèle prédéfini disponible pour le moment -->
+                        <?php
+                        // Charger les modèles prédéfinis depuis le dossier
+                        $predefined_dir = plugin_dir_path(__FILE__) . 'predefined/';
+                        $templates = [];
+
+                        if (is_dir($predefined_dir)) {
+                            $files = glob($predefined_dir . '*.json');
+                            foreach ($files as $file) {
+                                $slug = basename($file, '.json');
+                                $content = file_get_contents($file);
+                                $data = json_decode($content, true);
+
+                                if ($data && isset($data['name'])) {
+                                    $templates[] = [
+                                        'slug' => $slug,
+                                        'name' => $data['name'],
+                                        'category' => $data['category'] ?? 'autre',
+                                        'description' => $data['description'] ?? '',
+                                        'icon' => $data['icon'] ?? '📄',
+                                        'preview_svg' => $data['preview_svg'] ?? ''
+                                    ];
+                                }
+                            }
+                        }
+
+                        if (empty($templates)): ?>
+                            <!-- Aucun modèle prédéfini disponible pour le moment -->
+                        <?php else: ?>
+                            <?php foreach ($templates as $template):
+                                $type_colors = [
+                                    'facture' => '#007cba',
+                                    'devis' => '#28a745',
+                                    'commande' => '#ffc107',
+                                    'contrat' => '#dc3545',
+                                    'newsletter' => '#6f42c1',
+                                    'autre' => '#6c757d'
+                                ];
+                                $type_color = isset($type_colors[$template['category']]) ? $type_colors[$template['category']] : $type_colors['autre'];
+                            ?>
+                                <!-- Template <?php echo esc_attr($template['name']); ?> -->
+                                <div class="predefined-template-card" data-category="<?php echo esc_attr($template['category']); ?>" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                                    <div style="height: 160px; background: linear-gradient(135deg, <?php echo $template['category'] === 'facture' ? '#667eea 0%, #764ba2 100%' : ($template['category'] === 'devis' ? '#28a745 0%, #20c997 100%' : '#6c757d 0%, #495057 100%'); ?>); display: flex; align-items: center; justify-content: center; position: relative;">
+                                        <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"><?php echo esc_html($template['icon']); ?></div>
+                                        <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: <?php echo $type_color; ?>; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;"><?php echo esc_html(strtoupper($template['category'])); ?></div>
+                                    </div>
+                                    <div style="padding: 20px;">
+                                        <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;"><?php echo esc_html($template['name']); ?></h3>
+                                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;"><?php echo esc_html($template['description']); ?></p>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Template prédéfini</span>
+                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
+                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
+                                        </div>
+                                        <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Utiliser ce modèle</button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
 
                     </div>
                 </div>
@@ -577,6 +634,60 @@ function filterTemplates(filterType) {
                 card.style.display = 'none';
             }
         }
+    });
+}
+
+// Fonction pour sélectionner un template prédéfini
+function selectPredefinedTemplate(templateSlug) {
+    // Afficher un indicateur de chargement
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '⏳ Chargement...';
+    button.disabled = true;
+
+    // Demander le nom du nouveau template
+    const templateName = prompt('Entrez le nom du nouveau template personnalisé :', 'Mon ' + templateSlug.replace(/-/g, ' '));
+
+    if (!templateName || templateName.trim() === '') {
+        // Annuler si pas de nom
+        button.innerHTML = originalText;
+        button.disabled = false;
+        return;
+    }
+
+    // Faire l'appel AJAX pour créer le template
+    jQuery.post(ajaxurl, {
+        action: 'pdf_builder_create_from_predefined',
+        nonce: pdfBuilderTemplatesNonce,
+        template_slug: templateSlug,
+        template_name: templateName.trim()
+    }, function(response) {
+        if (response.success) {
+            // Succès - afficher un message et rediriger
+            showSuccessMessage('Template "' + templateName + '" créé avec succès ! Redirection vers l\'éditeur...');
+
+            // Fermer la modale de la galerie
+            closeTemplateGallery();
+
+            // Rediriger vers l'éditeur après un délai
+            setTimeout(() => {
+                window.location.href = response.data.redirect_url;
+            }, 2000);
+        } else {
+            // Erreur
+            showErrorMessage((response.data && response.data.message) || 'Erreur lors de la création du template');
+
+            // Remettre le bouton normal
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }).fail(function(xhr, status, error) {
+        // Erreur de réseau
+        showErrorMessage('Erreur de connexion: ' + error);
+
+        // Remettre le bouton normal
+        button.innerHTML = originalText;
+        button.disabled = false;
     });
 }
 
