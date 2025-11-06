@@ -5309,11 +5309,7 @@ class PDF_Builder_Admin {
         $builtin_template_id = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
         $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        $builtin_template_data = null;
-
-        error_log('DEBUG: Builtin template check - ID: ' . $builtin_template_id . ', Transient: ' . $transient_key);
-        
-        if ($builtin_template_id && $transient_key) {
+        $builtin_template_data = null;        if ($builtin_template_id && $transient_key) {
             // Load builtin template from transient (set by builtin-editor-page.php)
             $transient_data = get_transient($transient_key);
             if ($transient_data) {
@@ -5327,14 +5323,9 @@ class PDF_Builder_Admin {
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
             $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
-            error_log('DEBUG: Loading from file: ' . $builtin_file . ', exists: ' . (file_exists($builtin_file) ? 'yes' : 'no'));
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
-                error_log('DEBUG: File content length: ' . strlen($json_content));
                 $builtin_template_data = json_decode($json_content, true);
-                error_log('DEBUG: JSON decode result: ' . ($builtin_template_data ? 'success' : 'failed - ' . json_last_error_msg()));
-            } else {
-                error_log('DEBUG: File does not exist: ' . $builtin_file);
             }
         }
 
@@ -5414,7 +5405,6 @@ class PDF_Builder_Admin {
             // Also set as existing template data so the automatic loading works
             $localize_data['existingTemplate'] = $builtin_template_data;
             $localize_data['hasExistingData'] = true;
-            error_log('DEBUG: Builtin template data loaded: ' . json_encode($builtin_template_data));
         }
         
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
