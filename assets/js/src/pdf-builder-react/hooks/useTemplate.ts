@@ -27,7 +27,7 @@ export function useTemplate() {
   };
 
   // Charger un template existant
-  const loadExistingTemplate = async (templateId: string) => {
+  const loadExistingTemplate = useCallback(async (templateId: string) => {
     debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
     try {
       // Faire un appel API pour récupérer les données du template
@@ -100,10 +100,36 @@ export function useTemplate() {
         } as LoadTemplatePayload
       });
 
+      return true;
     } catch (error) {
-      // En cas d'erreur, on peut afficher un message d'erreur à l'utilisateur
+      debugError('❌ [LOAD TEMPLATE] Erreur lors du chargement:', error);
+      return false;
     }
-  };
+  }, [dispatch]);
+
+  // 🎯 Écouter les événements de chargement de template depuis l'API globale
+  useEffect(() => {
+    const handleLoadTemplate = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const templateData = customEvent.detail;
+      debugLog('📡 [useTemplate] Événement pdfBuilderLoadTemplate reçu:', templateData);
+
+      if (!templateData || !templateData.id) {
+        debugError('❌ [useTemplate] Données de template invalides');
+        return;
+      }
+
+      // Charger le template
+      loadExistingTemplate(templateData.id).catch((error: unknown) => {
+        debugError('❌ [useTemplate] Erreur lors du chargement du template:', error);
+      });
+    };
+
+    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+    return () => {
+      document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+    };
+  }, [loadExistingTemplate]);
 
   // Effet pour charger automatiquement un template existant au montage
   useEffect(() => {
@@ -111,7 +137,7 @@ export function useTemplate() {
     if (templateId) {
       loadExistingTemplate(templateId);
     }
-  }, []);
+  }, [loadExistingTemplate]);
 
   const saveTemplate = useCallback(async () => {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
