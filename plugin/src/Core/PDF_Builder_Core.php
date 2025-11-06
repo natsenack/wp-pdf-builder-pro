@@ -959,6 +959,54 @@ class PDF_Builder_Core
             return null;
         }
 
+        // Transformer les éléments pour correspondre au format React
+        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            $transformed_elements = array();
+            foreach ($template_data['elements'] as $element) {
+                $transformed_element = array(
+                    'id' => uniqid('element_', true),
+                    'type' => $element['type'],
+                    'visible' => true,
+                    'locked' => false,
+                    'createdAt' => date('c'),
+                    'updatedAt' => date('c')
+                );
+
+                // Aplatir position
+                if (isset($element['position'])) {
+                    $transformed_element['x'] = $element['position']['x'];
+                    $transformed_element['y'] = $element['position']['y'];
+                }
+
+                // Aplatir size
+                if (isset($element['size'])) {
+                    $transformed_element['width'] = $element['size']['width'];
+                    $transformed_element['height'] = $element['size']['height'];
+                }
+
+                // Mapper content à text
+                if (isset($element['content'])) {
+                    $transformed_element['text'] = $element['content'];
+                }
+
+                // Aplatir style
+                if (isset($element['style']) && is_array($element['style'])) {
+                    foreach ($element['style'] as $key => $value) {
+                        $transformed_element[$key] = $value;
+                    }
+                }
+
+                // Valeurs par défaut selon le type
+                if ($element['type'] === 'text') {
+                    $transformed_element['align'] = 'left';
+                    $transformed_element['rotation'] = 0;
+                }
+
+                $transformed_elements[] = $transformed_element;
+            }
+            $template_data['elements'] = $transformed_elements;
+        }
+
         return $template_data;
     }
 }
