@@ -672,7 +672,7 @@ class PDF_Builder_Template_Manager
 
             // Ajouter des métadonnées pour la modale
             $template_data['id'] = $filename;
-            $template_data['preview_url'] = ''; // Pas de preview pour le moment
+            $template_data['preview_url'] = $this->get_template_preview_url($filename);
 
             // Champs requis pour la modale
             if (!isset($template_data['name'])) {
@@ -691,5 +691,81 @@ class PDF_Builder_Template_Manager
         }
 
         return $templates;
+    }
+
+    /**
+     * Génère ou retourne l'URL de prévisualisation d'un template
+     */
+    public function get_template_preview_url($template_id)
+    {
+        // Chemin vers le fichier de cache des previews
+        $cache_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'cache/';
+        $preview_file = $cache_dir . $template_id . '.png';
+
+        // Vérifier si la preview existe déjà
+        if (file_exists($preview_file) && filemtime($preview_file) > time() - 3600) { // Cache de 1 heure
+            return plugin_dir_url(dirname(dirname(__FILE__))) . 'cache/' . $template_id . '.png';
+        }
+
+        // Générer la preview de manière asynchrone
+        $template_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
+
+        if (file_exists($template_file)) {
+            // Lancer la génération en arrière-plan
+            $this->generate_template_preview_async($template_id, $template_file);
+        }
+
+        // Retourner une URL temporaire ou vide pendant la génération
+        return '';
+    }
+
+    /**
+     * Génère une preview de template de manière asynchrone
+     */
+    private function generate_template_preview_async($template_id, $template_file)
+    {
+        // Utiliser wp_schedule_single_event pour générer la preview en arrière-plan
+        if (!wp_next_scheduled('pdf_builder_generate_template_preview', array($template_id, $template_file))) {
+            wp_schedule_single_event(time() + 5, 'pdf_builder_generate_template_preview', array($template_id, $template_file));
+        }
+    }
+
+    /**
+     * Génère effectivement la preview du template
+     */
+    public function generate_template_preview($template_id, $template_file)
+    {
+        try {
+            $cache_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'cache/';
+
+            // Créer le dossier cache s'il n'existe pas
+            if (!is_dir($cache_dir)) {
+                wp_mkdir_p($cache_dir);
+            }
+
+            // Charger les données du template
+            $template_data = json_decode(file_get_contents($template_file), true);
+            if (!$template_data || !isset($template_data['elements'])) {
+                return false;
+            }
+
+            // Utiliser le générateur de preview existant
+            $generator = new PDF_Builder_Preview_Generator();
+            $preview_url = $generator->generate_preview($template_data, 'png');
+
+            if ($preview_url) {
+                // Copier le fichier généré vers le cache avec le bon nom
+                $preview_file = $cache_dir . $template_id . '.png';
+                if (file_exists($preview_url)) {
+                    copy($preview_url, $preview_file);
+                    return plugin_dir_url(dirname(dirname(__FILE__))) . 'cache/' . $template_id . '.png';
+                }
+            }
+
+        } catch (Exception $e) {
+            error_log('Erreur génération preview template ' . $template_id . ': ' . $e->getMessage());
+        }
+
+        return false;
     }
 }

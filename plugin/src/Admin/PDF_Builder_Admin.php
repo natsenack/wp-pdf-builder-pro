@@ -1335,12 +1335,6 @@ class PDF_Builder_Admin {
                 wp_send_json_error('Erreur interne: Templates non valides');
             }
 
-            // Ajouter l'URL de prévisualisation à chaque template
-            foreach ($templates as &$template) {
-                $template['preview_url'] = $template_manager->get_template_preview_url($template['id']);
-                error_log('PDF Builder: ajax_get_builtin_templates - Template ' . $template['id'] . ' preview URL: ' . $template['preview_url']);
-            }
-
             error_log('PDF Builder: ajax_get_builtin_templates - URLs ajoutées, envoi succès');
 
             wp_send_json_success([

@@ -896,6 +896,10 @@ if (function_exists('add_action')) {
     add_action('wp_ajax_get_builtin_templates', 'pdf_builder_load_core_when_needed', 1);
     add_action('wp_ajax_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
     add_action('wp_ajax_nopriv_get_builtin_templates', 'pdf_builder_ajax_get_builtin_templates');
+
+    // Action cron pour la génération de previews de templates
+    add_action('pdf_builder_generate_template_preview', 'pdf_builder_generate_template_preview_cron');
+
     pdf_builder_register_fallback_hooks();
 }
 
@@ -1071,6 +1075,21 @@ function pdf_builder_enqueue_editor_scripts($hook) {
     // Charger wp_enqueue_media seulement sur les pages du PDF builder
     if (strpos($hook, 'pdf-builder') !== false || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
         wp_enqueue_media();
+    }
+}
+
+/**
+ * Fonction cron pour générer les previews de templates de manière asynchrone
+ */
+function pdf_builder_generate_template_preview_cron($template_id, $template_file) {
+    try {
+        // Charger le Template Manager
+        if (class_exists('PDF_Builder_Template_Manager')) {
+            $template_manager = new PDF_Builder_Template_Manager();
+            $template_manager->generate_template_preview($template_id, $template_file);
+        }
+    } catch (Exception $e) {
+        error_log('Erreur cron génération preview template ' . $template_id . ': ' . $e->getMessage());
     }
 }
 
