@@ -38,6 +38,7 @@ class PDF_Builder_Template_Manager
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajax_auto_save_template']); // Auto-save handler
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
+        add_action('wp_ajax_pdf_builder_create_template_from_gallery', [$this, 'ajax_create_template_from_gallery']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
     }
 
@@ -208,6 +209,97 @@ class PDF_Builder_Template_Manager
             );
         } catch (\Exception $e) {
             \wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX - Créer un template à partir de la galerie prédéfinie
+     */
+    public function ajax_create_template_from_gallery()
+    {
+        try {
+            // Vérification des permissions
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = \wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            }
+
+            if (!$nonce_valid) {
+                \wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupération des données du template
+            $template_data = isset($_POST['template_data']) ? \wp_unslash($_POST['template_data']) : null;
+
+            if (!$template_data || !is_array($template_data)) {
+                \wp_send_json_error('Données du template manquantes ou invalides');
+                return;
+            }
+
+            // Validation des champs requis
+            if (empty($template_data['name']) || empty($template_data['category'])) {
+                \wp_send_json_error('Nom et catégorie du template requis');
+                return;
+            }
+
+            $template_name = \sanitize_text_field($template_data['name']);
+            $template_category = \sanitize_text_field($template_data['category']);
+            $template_description = isset($template_data['description']) ? \sanitize_textarea_field($template_data['description']) : '';
+            $template_elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+
+            // Créer la structure du template
+            $template_structure = [
+                'elements' => $template_elements,
+                'canvasWidth' => 794, // A4 width in pixels at 96 DPI
+                'canvasHeight' => 1123, // A4 height in pixels at 96 DPI
+                'version' => '1.0',
+                'category' => $template_category,
+                'description' => $template_description
+            ];
+
+            $template_json = \wp_json_encode($template_structure);
+            if ($template_json === false) {
+                \wp_send_json_error('Erreur lors de l\'encodage des données template');
+                return;
+            }
+
+            // Création du post WordPress pour le template
+            $post_data = array(
+                'post_title' => $template_name,
+                'post_type' => 'pdf_template',
+                'post_status' => 'publish',
+                'post_date' => \current_time('mysql'),
+                'post_modified' => \current_time('mysql')
+            );
+
+            $template_id = \wp_insert_post($post_data, true);
+            if (\is_wp_error($template_id)) {
+                \wp_send_json_error('Erreur de création du template: ' . $template_id->get_error_message());
+                return;
+            }
+
+            // Sauvegarder les données du template dans les métadonnées
+            \update_post_meta($template_id, '_pdf_template_data', $template_json);
+            \update_post_meta($template_id, '_pdf_template_category', $template_category);
+            \update_post_meta($template_id, '_pdf_template_description', $template_description);
+
+            // Réponse de succès
+            \wp_send_json_success(
+                array(
+                    'message' => 'Template créé avec succès depuis la galerie',
+                    'template_id' => $template_id,
+                    'template_name' => $template_name,
+                    'category' => $template_category
+                )
+            );
+
+        } catch (\Exception $e) {
+            \wp_send_json_error('Erreur lors de la création du template: ' . $e->getMessage());
         }
     }
 

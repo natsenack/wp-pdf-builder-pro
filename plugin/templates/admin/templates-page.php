@@ -24,8 +24,8 @@ if (!defined('ABSPATH')) {
             <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id=0'); ?>" class="button button-primary">
                 ➕ <?php _e('Créer un nouveau template', 'pdf-builder-pro'); ?>
             </a>
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" disabled>
-                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?> (Indisponible)
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
         </div>
 
@@ -168,6 +168,147 @@ if (!defined('ABSPATH')) {
                 echo '<p>' . __('Aucun template trouvé. Créez votre premier template !', 'pdf-builder-pro') . '</p>';
             }
             ?>
+        </div>
+
+        <!-- Modale de la galerie de modèles prédéfinis -->
+        <div id="template-gallery-modal" class="template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div class="template-modal-content" style="background: #fff; border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Choisissez un modèle professionnel pour commencer</p>
+                    </div>
+                    <button onclick="closeTemplateGallery()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+
+                <div style="padding: 30px; max-height: calc(90vh - 120px); overflow-y: auto;">
+                    <!-- Filtres de catégorie -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px;">📄 Tous</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
+                        </div>
+                    </div>
+
+                    <!-- Grille des modèles prédéfinis -->
+                    <div id="predefined-templates-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+
+                        <!-- Template Facture Moderne -->
+                        <div class="predefined-template-card" data-category="facture" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">🧾</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #007cba; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">FACTURE</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Facture Moderne</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Template professionnel avec en-tête société, tableau des articles détaillé et totaux automatiques.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #f0f8ff; color: #007cba; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ En-tête société</span>
+                                    <span style="background: #f0f8ff; color: #007cba; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Tableau articles</span>
+                                    <span style="background: #f0f8ff; color: #007cba; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Totaux & TVA</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('facture-moderne')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                        <!-- Template Devis Élégant -->
+                        <div class="predefined-template-card" data-category="devis" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">📋</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #28a745; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">DEVIS</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Devis Élégant</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Présentation professionnelle avec conditions, validité et signature numérique.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #f0fff0; color: #28a745; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Présentation entreprise</span>
+                                    <span style="background: #f0fff0; color: #28a745; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Conditions & validité</span>
+                                    <span style="background: #f0fff0; color: #28a745; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Signature numérique</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('devis-elegant')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                        <!-- Template Bon de Commande -->
+                        <div class="predefined-template-card" data-category="commande" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">📦</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #ffc107; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">COMMANDE</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Bon de Commande</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Suivi des commandes avec numéro unique, liste des produits et modalités de paiement.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #fff8e1; color: #ffc107; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Numéro de commande</span>
+                                    <span style="background: #fff8e1; color: #ffc107; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Liste des produits</span>
+                                    <span style="background: #fff8e1; color: #ffc107; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Modalités paiement</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('bon-commande')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                        <!-- Template Contrat Professionnel -->
+                        <div class="predefined-template-card" data-category="contrat" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">📑</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #dc3545; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">CONTRAT</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Contrat Professionnel</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Document juridique complet avec parties contractantes et clauses légales.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #ffeef0; color: #dc3545; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Parties contractantes</span>
+                                    <span style="background: #ffeef0; color: #dc3545; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Objet du contrat</span>
+                                    <span style="background: #ffeef0; color: #dc3545; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Clauses légales</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('contrat-professionnel')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                        <!-- Template Newsletter Moderne -->
+                        <div class="predefined-template-card" data-category="newsletter" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">📰</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #6f42c1; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">NEWSLETTER</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Newsletter Moderne</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Communication engageante avec en-tête accrocheur et sections d'articles.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #f3f0ff; color: #6f42c1; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ En-tête accrocheur</span>
+                                    <span style="background: #f3f0ff; color: #6f42c1; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Sections d'articles</span>
+                                    <span style="background: #f3f0ff; color: #6f42c1; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Call-to-action</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('newsletter-moderne')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                        <!-- Template Facture Minimaliste -->
+                        <div class="predefined-template-card" data-category="facture" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
+                            <div style="height: 160px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">📄</div>
+                                <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: #6c757d; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">MINIMALISTE</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">Facture Minimaliste</h3>
+                                <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Design épuré et moderne, parfait pour une image professionnelle discrète.</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+                                    <span style="background: #f8f9fa; color: #6c757d; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Design épuré</span>
+                                    <span style="background: #f8f9fa; color: #6c757d; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Typographie claire</span>
+                                    <span style="background: #f8f9fa; color: #6c757d; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Focus sur le contenu</span>
+                                </div>
+                                <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('facture-minimaliste')">Utiliser ce modèle</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Modale des paramètres du template -->
@@ -552,6 +693,195 @@ function closeTemplateGallery() {
     jQuery('.template-gallery-modal').fadeOut(300);
 }
 
+// Function to open template gallery
+function openTemplateGallery() {
+    document.getElementById('template-gallery-modal').style.display = 'flex';
+    // Initialize gallery filters
+    initializeGalleryFilters();
+}
+
+// Function to initialize gallery filters
+function initializeGalleryFilters() {
+    const filterButtons = document.querySelectorAll('.gallery-filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            const filterType = this.getAttribute('data-filter');
+            filterGalleryTemplates(filterType);
+        });
+    });
+}
+
+// Function to filter gallery templates
+function filterGalleryTemplates(filterType) {
+    const templates = document.querySelectorAll('.predefined-template-card');
+
+    templates.forEach(template => {
+        const category = template.getAttribute('data-category');
+
+        if (filterType === 'all' || category === filterType) {
+            template.style.display = 'block';
+        } else {
+            template.style.display = 'none';
+        }
+    });
+}
+
+// Function to select a predefined template
+function selectPredefinedTemplate(templateSlug) {
+    // Show loading state
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = '⏳ Création en cours...';
+    button.disabled = true;
+
+    // Define template data based on slug
+    const templateData = getTemplateData(templateSlug);
+
+    // Create template via AJAX
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'pdf_builder_create_template_from_gallery',
+            template_data: templateData,
+            nonce: pdfBuilderTemplatesNonce
+        },
+        success: function(response) {
+            if (response.success) {
+                // Close gallery modal
+                closeTemplateGallery();
+
+                // Redirect to editor with new template
+                window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id='); ?>' + response.data.template_id;
+            } else {
+                alert('Erreur lors de la création du template: ' + response.data.message);
+                // Reset button
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        },
+        error: function() {
+            alert('Erreur de communication avec le serveur.');
+            // Reset button
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    });
+}
+
+// Function to get template data based on slug
+function getTemplateData(slug) {
+    const templates = {
+        'facture-moderne': {
+            name: 'Facture Moderne',
+            category: 'facture',
+            description: 'Template professionnel avec en-tête société, tableau des articles détaillé et totaux automatiques.',
+            elements: [
+                // Header section
+                {
+                    type: 'header',
+                    x: 50, y: 50, width: 500, height: 100,
+                    content: {
+                        company_name: '{{company_name}}',
+                        company_address: '{{company_address}}',
+                        company_phone: '{{company_phone}}',
+                        company_email: '{{company_email}}'
+                    }
+                },
+                // Invoice details
+                {
+                    type: 'text',
+                    x: 400, y: 50, width: 150, height: 30,
+                    content: { text: 'FACTURE N° {{invoice_number}}' },
+                    style: { fontSize: 16, fontWeight: 'bold' }
+                },
+                // Client info
+                {
+                    type: 'text',
+                    x: 50, y: 180, width: 250, height: 80,
+                    content: { text: 'Client:\n{{client_name}}\n{{client_address}}' }
+                },
+                // Date
+                {
+                    type: 'text',
+                    x: 400, y: 180, width: 150, height: 20,
+                    content: { text: 'Date: {{invoice_date}}' }
+                },
+                // Items table
+                {
+                    type: 'table',
+                    x: 50, y: 280, width: 500, height: 200,
+                    content: {
+                        headers: ['Description', 'Qté', 'Prix', 'Total'],
+                        rows: '{{invoice_items}}'
+                    }
+                },
+                // Totals
+                {
+                    type: 'text',
+                    x: 350, y: 500, width: 200, height: 80,
+                    content: { text: 'Sous-total: {{subtotal}}\nTVA: {{tax}}\nTotal: {{total}}' },
+                    style: { textAlign: 'right' }
+                }
+            ]
+        },
+        'devis-elegant': {
+            name: 'Devis Élégant',
+            category: 'devis',
+            description: 'Présentation professionnelle avec conditions, validité et signature numérique.',
+            elements: [
+                // Similar structure for quote template
+                {
+                    type: 'header',
+                    x: 50, y: 50, width: 500, height: 100,
+                    content: {
+                        company_name: '{{company_name}}',
+                        company_address: '{{company_address}}'
+                    }
+                },
+                {
+                    type: 'text',
+                    x: 400, y: 50, width: 150, height: 30,
+                    content: { text: 'DEVIS N° {{quote_number}}' },
+                    style: { fontSize: 16, fontWeight: 'bold' }
+                }
+                // Add more elements as needed
+            ]
+        },
+        'bon-commande': {
+            name: 'Bon de Commande',
+            category: 'commande',
+            description: 'Suivi des commandes avec numéro unique, liste des produits et modalités de paiement.',
+            elements: []
+        },
+        'contrat-professionnel': {
+            name: 'Contrat Professionnel',
+            category: 'contrat',
+            description: 'Document juridique complet avec parties contractantes et clauses légales.',
+            elements: []
+        },
+        'newsletter-moderne': {
+            name: 'Newsletter Moderne',
+            category: 'newsletter',
+            description: 'Communication engageante avec en-tête accrocheur et sections d\'articles.',
+            elements: []
+        },
+        'facture-minimaliste': {
+            name: 'Facture Minimaliste',
+            category: 'facture',
+            description: 'Design épuré et moderne, parfait pour une image professionnelle discrète.',
+            elements: []
+        }
+    };
+
+    return templates[slug] || null;
+}
+
 // Initialiser le filtrage au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     // Ajouter les event listeners aux boutons de filtrage
@@ -563,7 +893,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-
+    // Event listener pour ouvrir la galerie de modèles
+    const openGalleryBtn = document.getElementById('open-template-gallery');
+    if (openGalleryBtn) {
+        openGalleryBtn.addEventListener('click', openTemplateGallery);
+    }
 });
 
 // Fermer les modales en cliquant en dehors
@@ -573,11 +907,21 @@ document.getElementById('template-settings-modal').addEventListener('click', fun
     }
 });
 
+// Fermer la galerie de modèles en cliquant en dehors
+document.getElementById('template-gallery-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeTemplateGallery();
+    }
+});
+
 // Fermer avec la touche Échap
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         if (document.getElementById('template-settings-modal').style.display === 'flex') {
             closeTemplateSettings();
+        }
+        if (document.getElementById('template-gallery-modal').style.display === 'flex') {
+            closeTemplateGallery();
         }
     }
 });
@@ -640,7 +984,7 @@ document.addEventListener('keydown', function(e) {
 
 
 
-.filter-btn.active {
+.gallery-filter-btn.active {
     box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
     font-weight: bold !important;
 }
