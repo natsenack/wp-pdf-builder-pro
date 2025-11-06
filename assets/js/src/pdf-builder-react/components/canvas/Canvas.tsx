@@ -4,6 +4,7 @@ import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
+import { ContextMenu, ContextMenuItem } from '../ui/ContextMenu.tsx';
 
 // Fonctions utilitaires de dessin (déplacées en dehors du composant pour éviter les avertissements React Compiler)
 
@@ -954,7 +955,17 @@ interface CanvasProps {
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state } = useBuilder();
+  const { state, dispatch } = useBuilder();
+
+  // État pour le menu contextuel
+  const [contextMenu, setContextMenu] = React.useState<{
+    isVisible: boolean;
+    position: { x: number; y: number };
+    elementId?: string;
+  }>({
+    isVisible: false,
+    position: { x: 0, y: 0 }
+  });
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -970,7 +981,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     elements: state.elements || []
   });
 
-  const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasInteraction({
+  const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu } = useCanvasInteraction({
     canvasRef
   });
 
@@ -1449,6 +1460,133 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     });
   };
 
+  // Fonctions pour gérer le menu contextuel
+  const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
+    setContextMenu({
+      isVisible: true,
+      position: { x, y },
+      elementId
+    });
+  }, []);
+
+  const hideContextMenu = useCallback(() => {
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+  }, []);
+
+  const handleContextMenuAction = useCallback((action: string, elementId?: string) => {
+    if (!elementId) return;
+
+    switch (action) {
+      case 'bring-to-front':
+        // TODO: Implémenter bring-to-front
+        console.log('Bring to front:', elementId);
+        break;
+      case 'send-to-back':
+        // TODO: Implémenter send-to-back
+        console.log('Send to back:', elementId);
+        break;
+      case 'bring-forward':
+        // TODO: Implémenter bring-forward
+        console.log('Bring forward:', elementId);
+        break;
+      case 'send-backward':
+        // TODO: Implémenter send-backward
+        console.log('Send backward:', elementId);
+        break;
+      case 'duplicate':
+        // TODO: Implémenter duplicate
+        console.log('Duplicate:', elementId);
+        break;
+      case 'delete':
+        dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
+        break;
+      case 'lock':
+        // TODO: Implémenter lock/unlock
+        console.log('Toggle lock:', elementId);
+        break;
+    }
+  }, [dispatch]);
+
+  const getContextMenuItems = useCallback((elementId?: string): ContextMenuItem[] => {
+    if (!elementId) {
+      // Menu contextuel pour le canvas vide
+      return [
+        {
+          id: 'paste',
+          label: 'Coller',
+          icon: '📋',
+          action: () => {
+            // TODO: Implémenter le collage
+            console.log('Coller - à implémenter');
+          }
+        }
+      ];
+    }
+
+    // Menu contextuel pour un élément
+    const element = state.elements.find(el => el.id === elementId);
+    const isLocked = element?.locked || false;
+
+    const items: ContextMenuItem[] = [
+      {
+        id: 'bring-to-front',
+        label: 'Premier plan',
+        icon: '⬆️',
+        action: () => handleContextMenuAction('bring-to-front', elementId),
+        disabled: isLocked
+      },
+      {
+        id: 'send-to-back',
+        label: 'Arrière plan',
+        icon: '⬇️',
+        action: () => handleContextMenuAction('send-to-back', elementId),
+        disabled: isLocked
+      },
+      {
+        id: 'bring-forward',
+        label: 'Avancer d\'un plan',
+        icon: '↗️',
+        action: () => handleContextMenuAction('bring-forward', elementId),
+        disabled: isLocked
+      },
+      {
+        id: 'send-backward',
+        label: 'Reculer d\'un plan',
+        icon: '↙️',
+        action: () => handleContextMenuAction('send-backward', elementId),
+        disabled: isLocked
+      },
+      { id: 'separator1', separator: true },
+      {
+        id: 'duplicate',
+        label: 'Dupliquer',
+        icon: '📋',
+        action: () => handleContextMenuAction('duplicate', elementId),
+        disabled: isLocked
+      },
+      {
+        id: 'lock',
+        label: isLocked ? 'Déverrouiller' : 'Verrouiller',
+        icon: isLocked ? '🔓' : '🔒',
+        action: () => handleContextMenuAction('lock', elementId)
+      },
+      { id: 'separator2', separator: true },
+      {
+        id: 'delete',
+        label: 'Supprimer',
+        icon: '🗑️',
+        action: () => handleContextMenuAction('delete', elementId)
+      }
+    ];
+
+    return items;
+  }, [state.elements, handleContextMenuAction]);
+
+  // Gestionnaire de clic droit pour le canvas
+  const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+    handleContextMenu(event, (x, y, elementId) => showContextMenu(x, y, elementId));
+  }, [handleContextMenu, showContextMenu]);
+
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -1489,22 +1627,31 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   }, [renderCanvas, forceUpdate]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      className={className}
-      onClick={handleCanvasClick}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      style={{
-        border: '1px solid #ccc',
-        cursor: 'crosshair',
-        backgroundColor: '#ffffff'
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        className={className}
+        onClick={handleCanvasClick}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onContextMenu={handleCanvasContextMenu}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        style={{
+          border: '1px solid #ccc',
+          cursor: 'crosshair',
+          backgroundColor: '#ffffff'
+        }}
+      />
+      <ContextMenu
+        items={getContextMenuItems(contextMenu.elementId)}
+        position={contextMenu.position}
+        onClose={hideContextMenu}
+        isVisible={contextMenu.isVisible}
+      />
+    </>
   );
 });

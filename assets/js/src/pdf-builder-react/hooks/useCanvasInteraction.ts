@@ -377,10 +377,38 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     }
   }, [state, dispatch, canvasRef, getCursorAtPosition, updateCursor]);
 
+  // Gestionnaire de clic droit pour afficher le menu contextuel
+  const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {
+    event.preventDefault(); // Empêcher le menu contextuel par défaut du navigateur
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
+    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+
+    // Trouver l'élément cliqué
+    const clickedElement = state.elements.find(el => {
+      const isInside = x >= el.x && x <= el.x + el.width &&
+                      y >= el.y && y <= el.y + el.height;
+      return isInside;
+    });
+
+    if (clickedElement) {
+      // Ouvrir le menu contextuel pour l'élément
+      onContextMenu(event.clientX, event.clientY, clickedElement.id);
+    } else {
+      // Ouvrir le menu contextuel général du canvas
+      onContextMenu(event.clientX, event.clientY);
+    }
+  }, [state, canvasRef]);
+
   return {
     handleCanvasClick,
     handleMouseDown,
     handleMouseMove,
-    handleMouseUp
+    handleMouseUp,
+    handleContextMenu
   };
 };
