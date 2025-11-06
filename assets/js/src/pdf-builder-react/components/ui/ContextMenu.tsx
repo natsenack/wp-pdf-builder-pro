@@ -42,14 +42,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       let menuHeight = 0;
       items.forEach(item => {
         if (item.section) {
-          menuHeight += 12; // Hauteur des sections
+          menuHeight += 14; // Hauteur des sections avec padding
         } else if (item.separator) {
-          menuHeight += 1; // Hauteur des séparateurs
+          menuHeight += 3; // Hauteur des séparateurs avec margin
         } else {
           menuHeight += 18; // Hauteur des éléments normaux
         }
       });
-      menuHeight += 4; // Padding vertical du menu
+      menuHeight += 2; // Padding vertical du menu
 
       // Vérifier si le menu sort à droite
       if (adjustedX + menuWidth > window.innerWidth) {
@@ -157,13 +157,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     >
       {items.map((item) => (
         <div key={item.id}>
-          {item.section && (
-            <div className="context-menu-section" style={{padding: '0px 0'}}>
-              <div className="context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px 6px 0px', marginBottom: '0px'}}>{item.section}</div>
+          {item.section ? (
+            <div className="context-menu-section" style={{padding: '2px 6px 1px'}}>
+              <div className="context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px', marginBottom: '0px'}}>{item.section}</div>
             </div>
-          )}
-          {item.separator ? (
-            <div className="context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '0px 0', border: 'none'}}></div>
+          ) : item.separator ? (
+            <div className="context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '1px 0', border: 'none'}}></div>
           ) : (
             <div
               className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
