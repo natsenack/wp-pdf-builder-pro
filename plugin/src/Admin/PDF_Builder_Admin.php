@@ -5571,16 +5571,34 @@ class PDF_Builder_Admin {
         }
 
         // Call initialization immediately if DOM is ready, otherwise wait for DOMContentLoaded
+        var initCalled = false;
+        
+        function callInitIfNeeded() {
+            if (!initCalled) {
+                debugLog('🟢 Calling initReactAndTemplate from timeout fallback');
+                initCalled = true;
+                initReactAndTemplate();
+            }
+        }
+        
         if (document.readyState === 'loading') {
             debugLog('📋 [ADMIN] DOM still loading, will wait for DOMContentLoaded');
             document.addEventListener('DOMContentLoaded', function() {
                 debugLog('✅ DOMContentLoaded fired');
-                initReactAndTemplate();
+                if (!initCalled) {
+                    initCalled = true;
+                    initReactAndTemplate();
+                }
             });
         } else {
             debugLog('✅ [ADMIN] DOM already loaded, initializing now');
+            initCalled = true;
             initReactAndTemplate();
         }
+
+        // Fallback: If not called after 2 seconds, call it anyway
+        setTimeout(callInitIfNeeded, 2000);
+        debugLog('⏱️ [ADMIN] Fallback timeout set for 2 seconds');
 
         // ============================================================================
         // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
