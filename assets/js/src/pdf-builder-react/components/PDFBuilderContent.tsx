@@ -140,7 +140,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 backgroundColor: '#f8f8f8',
                 border: '1px solid #e0e0e0',
                 borderRadius: '4px',
-                overflow: 'hidden',
+                overflow: 'visible',
                 position: 'relative',
                 paddingTop: '20px',
                 paddingBottom: '20px'
