@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './ContextMenu.css';
 
@@ -27,6 +27,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   isVisible
 }) => {
   const menuRef = useRef(null);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
   const adjustedPosition = useMemo(() => {
@@ -34,9 +35,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     let adjustedY = position.y;
 
     if (typeof window !== 'undefined') {
-      // Largeur et hauteur estimées du menu
-      const menuWidth = 250;
-      const menuHeight = items.length * 40 + 50; // Estimation
+      // Largeur et hauteur estimées du menu compact
+      const menuWidth = 160; // Max width du menu compact
+      const menuHeight = items.length * 18 + 20; // Hauteur estimée par élément compact (16px min + padding) + padding menu
 
       // Vérifier si le menu sort à droite
       if (adjustedX + menuWidth > window.innerWidth) {
@@ -59,18 +60,25 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   useEffect(() => {
     if (!isVisible) return;
 
-    const handleClickOutside = (event: React.MouseEvent | Event) => {
-      // Vérifier que l'événement n'est pas un clic droit (contextmenu)
-      if ('button' in event && event.button === 2) return;
+    const handleClickOutside = (event: Event) => {
+      // Ne pas fermer si c'est un clic droit (pour éviter de fermer immédiatement)
+      const mouseEvent = event as unknown as { button?: number };
+      if (mouseEvent.button === 2) return;
 
+      // Vérifier si le clic est en dehors du menu
       if (menuRef.current && !(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
         onClose();
       }
     };
 
+    const handleContextMenu = (event: Event) => {
+      // Empêcher l'ouverture d'un nouveau menu contextuel sur le menu existant
+      event.preventDefault();
+    };
+
     const handleEscape = (event: Event) => {
-      // @ts-expect-error Keyboard event key property
-      if (event.key === 'Escape') {
+      const keyboardEvent = event as unknown as { key?: string };
+      if (keyboardEvent.key === 'Escape') {
         onClose();
       }
     };
@@ -78,12 +86,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     // Délai pour éviter que le clic droit qui ouvre le menu ne le ferme immédiatement
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('contextmenu', handleContextMenu);
       document.addEventListener('keydown', handleEscape);
     }, 100);
 
     return () => {
       clearTimeout(timer);
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isVisible, onClose]);
@@ -134,16 +144,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         minWidth: '120px',
         maxWidth: '160px',
         padding: '1px 0',
-        animation: 'contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'opacity 0.15s ease-in-out',
         transformOrigin: 'top left',
-        // Ajouter l'animation CSS inline
-        WebkitAnimation: 'contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-        MozAnimation: 'contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-        OAnimation: 'contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-        // Définir les keyframes inline
-        animationName: 'contextMenuFadeIn',
-        animationDuration: '0.15s',
-        animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {items.map((item) => (
@@ -159,6 +161,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             <div
               className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
               onClick={() => handleItemClick(item)}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -169,7 +173,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 position: 'relative',
                 minHeight: '16px',
                 border: 'none',
-                background: 'transparent',
+                background: hoveredItem === item.id ? '#f1f5f9' : 'transparent',
                 color: item.disabled ? '#94a3b8' : '#334155',
                 fontSize: '11px',
                 fontWeight: '500',
