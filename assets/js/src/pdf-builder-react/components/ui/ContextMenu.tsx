@@ -94,6 +94,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     return null;
   }
 
+  console.log('🎨 ContextMenu - Calcul position ajustée:', adjustedPosition);
+
   const handleItemClick = (item: ContextMenuItem) => {
     if (!item.disabled && !item.separator && item.action) {
       item.action();
@@ -107,7 +109,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       className="context-menu"
       style={{
         left: `${adjustedPosition.x}px`,
-        top: `${adjustedPosition.y}px`
+        top: `${adjustedPosition.y}px`,
+        width: '200px',
+        height: 'auto',
+        backgroundColor: 'white',
+        border: '1px solid black'
       }}
     >
       {items.map((item) => (
