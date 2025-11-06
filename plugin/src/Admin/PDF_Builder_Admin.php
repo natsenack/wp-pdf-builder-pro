@@ -5407,50 +5407,6 @@ class PDF_Builder_Admin {
 
         // ============================================================================
         // IMMEDIATE BUILTIN TEMPLATE LOADING - dispatch event right away
-        // ============================================================================
-        function loadBuiltinTemplateImmediately() {
-            debugLog('⚡ [ADMIN] Attempting immediate builtin template load...');
-            
-            // Check pdfBuilderData first (from wp_localize_script)
-            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData immediately');
-                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
-                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                    detail: window.pdfBuilderData.builtinTemplate
-                }));
-                debugLog('📡 [ADMIN] Dispatched event immediately from pdfBuilderData');
-                return true;
-            }
-            return false;
-        }
-        
-        // Try immediate load
-        if (!loadBuiltinTemplateImmediately()) {
-            // Fallback: Vérifier aussi les données globales après 1 seconde
-            setTimeout(function() {
-                debugLog('🔍 [ADMIN] Checking for global builtin template data (1s timeout)...');
-                
-                // Check pdfBuilderData first (from wp_localize_script)
-                if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                    debugLog('💾 [ADMIN] Found builtin template in pdfBuilderData');
-                    debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
-                    window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                        detail: window.pdfBuilderData.builtinTemplate
-                    }));
-                    debugLog('📡 [ADMIN] Dispatched event from pdfBuilderData');
-                } else if (window.pdfBuilderBuiltinTemplateData) {
-                    debugLog('💾 [ADMIN] Found global builtin template data, loading...');
-                    debugLog('📊 [ADMIN] Global data:', window.pdfBuilderBuiltinTemplateData);
-                    window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                        detail: window.pdfBuilderBuiltinTemplateData
-                    }));
-                    debugLog('📡 [ADMIN] Dispatched event from global data');
-                } else {
-                    debugLog('❌ [ADMIN] No builtin template data found in either pdfBuilderData or window.pdfBuilderBuiltinTemplateData');
-                }
-            }, 1000);
-        }
-
         // Fonctions de debug conditionnel - ALWAYS LOG sur localhost
         function isDebugEnabled() {
             return true; // Always log on dev
@@ -5563,6 +5519,16 @@ class PDF_Builder_Admin {
                         clearInterval(initInterval);
                         clearInterval(checkInterval);
                         debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
+                        
+                        // Load builtin template after React is ready
+                        if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                            debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (DOMContentLoaded)');
+                            debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                            window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                                detail: window.pdfBuilderData.builtinTemplate
+                            }));
+                            debugLog('📡 [ADMIN] Dispatched event from DOMContentLoaded');
+                        }
                     } else if (attempts >= maxAttempts) {
                         clearInterval(initInterval);
                         clearInterval(checkInterval);
@@ -5591,7 +5557,16 @@ class PDF_Builder_Admin {
             } else {
                 clearInterval(checkInterval);
                 debugLog('✅✅✅ React bundle loaded immediately');
-            }
+                
+                // Load builtin template after React is ready (immediate case)
+                if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                    debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (immediate)');
+                    debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                    window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                        detail: window.pdfBuilderData.builtinTemplate
+                    }));
+                    debugLog('📡 [ADMIN] Dispatched event from immediate load');
+                }
         });
 
         // ============================================================================
