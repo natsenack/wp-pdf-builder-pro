@@ -93,7 +93,7 @@ function pdf_builder_init() {
             pdf_builder_load_bootstrap();
         } else {
             // Log si bootstrap n'existe pas
-            error_log('PDF Builder Pro: Bootstrap introuvable');
+
         }
     }
 

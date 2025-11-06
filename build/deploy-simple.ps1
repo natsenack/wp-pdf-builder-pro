@@ -15,7 +15,6 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-$LocalPluginPath = "D:\wp-pdf-builder-pro\plugin"
 $WorkingDir = "D:\wp-pdf-builder-pro"
 
 Write-Host "`nDEPLOIEMENT PLUGIN - Mode: $Mode" -ForegroundColor Cyan

@@ -51,7 +51,7 @@ class PDF_Builder_Preview_Ajax {
             ));
 
         } catch (Exception $e) {
-            error_log('PDF Builder Preview Error: ' . $e->getMessage());
+
             wp_send_json_error('Erreur lors de la génération de l\'aperçu: ' . $e->getMessage());
         }
     }

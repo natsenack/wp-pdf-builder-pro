@@ -1925,7 +1925,7 @@ window.addEventListener('load', function() {
                         <div class="debug-controls" style="margin-bottom: 15px;">
                             <?php 
                             $debug_mode = get_option('pdf_builder_debug_mode', false);
-                            echo "<script>window.pdfBuilderDebug = " . ($debug_mode ? 'true' : 'false') . "; console.log('Initial pdfBuilderDebug:', window.pdfBuilderDebug);</script>";
+                            echo "<script>window.pdfBuilderDebug = " . ($debug_mode ? 'true' : 'false') . ";</script>";
                             ?>
                             <button type="button" id="toggle-debug-btn" class="button button-secondary">
                                 <?php echo $debug_mode ? __('Désactiver Debug', 'pdf-builder-pro') : __('Activer Debug', 'pdf-builder-pro'); ?>
@@ -3120,7 +3120,7 @@ echo '<style>
             var isCurrentlyEnabled = currentText === '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>';
             var newState = !isCurrentlyEnabled;
 
-            console.log('Debug toggle - Current text:', currentText, 'Is enabled:', isCurrentlyEnabled, 'New state:', newState);
+
 
             $button.prop('disabled', true);
             $button.text('<?php _e('Mise à jour...', 'pdf-builder-pro'); ?>');
@@ -3134,11 +3134,11 @@ echo '<style>
                     nonce: pdfBuilderMaintenanceNonce
                 },
                 success: function(response) {
-                    console.log('AJAX SUCCESS - Full Response:', response);
-                    console.log('AJAX SUCCESS - Debug enabled from server:', response.data.debug_enabled);
-                    console.log('AJAX SUCCESS - Debug logs from server:', response.data.debug_logs);
+
+
+
                     if (response.success) {
-                        console.log('AJAX SUCCESS - Setting button to:', newState ? 'Désactiver Debug' : 'Activer Debug');
+
                         $button.text(newState ? '<?php _e('Désactiver Debug', 'pdf-builder-pro'); ?>' : '<?php _e('Activer Debug', 'pdf-builder-pro'); ?>');
                         $button.siblings('span').text(newState ? '<?php _e('Logs de debug JavaScript activés', 'pdf-builder-pro'); ?>' : '<?php _e('Logs de debug JavaScript désactivés', 'pdf-builder-pro'); ?>');
 
@@ -3149,7 +3149,7 @@ echo '<style>
                         // Mettre à jour la variable globale si elle existe
                         if (typeof window !== 'undefined') {
                             window.pdfBuilderDebug = newState;
-                            console.log('Updated window.pdfBuilderDebug to:', newState);
+
                         }
                     } else {
                         var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la mise à jour du mode debug.', 'pdf-builder-pro'); ?>';

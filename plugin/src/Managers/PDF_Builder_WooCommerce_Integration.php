@@ -370,7 +370,7 @@ class PDF_Builder_WooCommerce_Integration
             // Charger la commande WooCommerce
             $order = wc_get_order($order_id);
             if (!$order) {
-                error_log('PDF Builder: Commande introuvable - ID: ' . $order_id);
+
                 wp_send_json_error('Commande introuvable');
                 return;
             }
@@ -395,7 +395,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             ];
 
-            error_log('PDF Builder Debug - Statut commande: ' . json_encode($debug_info));
+
 
             // Validation du statut de commande - gérer les statuts avec/sans préfixe wc-
             $current_status = $order->get_status();
@@ -419,7 +419,7 @@ class PDF_Builder_WooCommerce_Integration
                 return;
             }
 
-            error_log('PDF Builder: Validation statut réussie pour order ' . $order_id);
+
 
             // Charger le template
             if ($template_id > 0) {

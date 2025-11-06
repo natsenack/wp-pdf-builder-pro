@@ -1004,15 +1004,15 @@ class PDF_Builder_Admin {
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
-        error_log('[PHP] Script URL: ' . $script_url);
-        error_log('[PHP] PDF_BUILDER_PRO_VERSION constant: ' . PDF_BUILDER_PRO_VERSION);
+
+
         
         // Forcer une version unique à CHAQUE rechargement pour forcer le cache bust complet
         // Inclure le timestamp exact du serveur (actualisé à chaque page)
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
         
         wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true);
-        error_log('[PHP] Script enqueued successfully with version: ' . $version_param);
+
 
         // Charger les scripts de l'API Preview 1.4
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
@@ -1330,7 +1330,7 @@ class PDF_Builder_Admin {
             }
 
         } catch (Exception $e) {
-            error_log('PDF Builder: Erreur lors de l\'installation du template builtin: ' . $e->getMessage());
+
             wp_send_json_error('Erreur interne du serveur');
         }
     }
@@ -1340,64 +1340,64 @@ class PDF_Builder_Admin {
      */
     public function ajax_get_builtin_templates()
     {
-        error_log("PDF Builder Debug - ajax_get_builtin_templates called");
-        error_log("PDF Builder Debug - POST data: " . print_r($_POST, true));
+
+
 
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
-                error_log('PDF Builder: ajax_get_builtin_templates - Permissions insuffisantes');
+
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-                error_log('PDF Builder: ajax_get_builtin_templates - Nonce invalide: ' . ($_POST['nonce'] ?? 'not set'));
+
                 wp_send_json_error('Sécurité: Nonce invalide');
             }
 
-            error_log('PDF Builder: ajax_get_builtin_templates - Permissions et nonce OK');
+
 
             // S'assurer que les constantes sont définies
             if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
                 $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
                 define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path($plugin_file));
-                error_log('PDF Builder: ajax_get_builtin_templates - Defined PDF_BUILDER_PLUGIN_DIR: ' . PDF_BUILDER_PLUGIN_DIR);
+
             }
             if (!defined('PDF_BUILDER_PLUGIN_URL')) {
                 $plugin_file = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/pdf-builder-pro.php';
                 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url($plugin_file));
-                error_log('PDF Builder: ajax_get_builtin_templates - Defined PDF_BUILDER_PLUGIN_URL: ' . PDF_BUILDER_PLUGIN_URL);
+
             }
 
             // Obtenir le Template Manager
             $template_manager = $this->get_template_manager();
-            error_log('PDF Builder: ajax_get_builtin_templates - Template Manager instance: ' . (is_object($template_manager) ? get_class($template_manager) : 'null'));
+
 
             if (!$template_manager) {
-                error_log('PDF Builder: ajax_get_builtin_templates - Template Manager null');
+
                 wp_send_json_error('Erreur interne: Template Manager non disponible');
             }
 
-            error_log('PDF Builder: ajax_get_builtin_templates - Template Manager OK, appel get_builtin_templates');
+
 
             // Récupérer les templates builtin
             $templates = $template_manager->get_builtin_templates();
-            error_log('PDF Builder: ajax_get_builtin_templates - Templates récupérés: ' . (is_array($templates) ? count($templates) : 'not array'));
+
 
             if (!is_array($templates)) {
-                error_log('PDF Builder: ajax_get_builtin_templates - Templates is not an array: ' . print_r($templates, true));
+
                 wp_send_json_error('Erreur interne: Templates non valides');
             }
 
-            error_log('PDF Builder: ajax_get_builtin_templates - URLs ajoutées, envoi succès');
+
 
             wp_send_json_success([
                 'templates' => $templates
             ]);
 
         } catch (Exception $e) {
-            error_log('PDF Builder: Erreur lors de la récupération des templates builtin: ' . $e->getMessage());
+
             wp_send_json_error('Erreur interne du serveur');
         }
     }
@@ -4314,42 +4314,42 @@ class PDF_Builder_Admin {
      */
     public function get_template_manager()
     {
-        error_log('PDF Builder Debug - get_template_manager() called, current template_manager: ' . (is_object($this->template_manager) ? get_class($this->template_manager) : 'null'));
+
 
         if ($this->template_manager === null) {
-            error_log('PDF Builder Debug - Template manager is null, trying to create it');
+
 
             // Vérifier si la classe existe dans le namespace global
             if (class_exists('\PDF_Builder_Template_Manager')) {
-                error_log('PDF Builder Debug - PDF_Builder_Template_Manager class exists, creating instance');
+
                 $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
-                error_log('PDF Builder Debug - Template manager instance created: ' . (is_object($this->template_manager) ? 'success' : 'failed'));
+
             } else {
-                error_log('PDF Builder Debug - PDF_Builder_Template_Manager class does not exist, trying manual load');
+
 
                 // Classe non chargée, essayer de la charger manuellement
                 $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
-                error_log('PDF Builder Debug - Template manager file path: ' . $template_manager_file);
-                error_log('PDF Builder Debug - File exists: ' . (file_exists($template_manager_file) ? 'yes' : 'no'));
+
+
 
                 if (file_exists($template_manager_file)) {
-                    error_log('PDF Builder Debug - Loading template manager file');
+
                     require_once $template_manager_file;
 
                     if (class_exists('\PDF_Builder_Template_Manager')) {
-                        error_log('PDF Builder Debug - Class loaded successfully, creating instance');
+
                         $this->template_manager = new \PDF_Builder_Template_Manager($this->core ?? $this);
-                        error_log('PDF Builder Debug - Template manager instance created after manual load: ' . (is_object($this->template_manager) ? 'success' : 'failed'));
+
                     } else {
-                        error_log('PDF Builder Debug - Class still does not exist after manual load');
+
                     }
                 } else {
-                    error_log('PDF Builder Debug - Template manager file not found');
+
                 }
             }
         }
 
-        error_log('PDF Builder Debug - get_template_manager() returning: ' . (is_object($this->template_manager) ? get_class($this->template_manager) : 'null'));
+
         return $this->template_manager;
     }
 
@@ -4753,14 +4753,14 @@ class PDF_Builder_Admin {
         $debug_enabled = isset($_POST['debug_enabled']) ? (int) $_POST['debug_enabled'] : 0;
         $debug_enabled = (bool) $debug_enabled;
         
-        error_log('AJAX TOGGLE DEBUG - Requested state: ' . ($debug_enabled ? 'true' : 'false'));
+
 
         // Sauvegarder dans les options WordPress
         update_option('pdf_builder_debug_mode', $debug_enabled);
         
         // Vérifier que c'est bien sauvegardé
         $saved_value = get_option('pdf_builder_debug_mode', false);
-        error_log('AJAX TOGGLE DEBUG - After save, get_option returns: ' . ($saved_value ? 'true' : 'false'));
+
         
         // Forcer un refresh du cache des options si nécessaire
         wp_cache_flush();
@@ -5278,7 +5278,7 @@ class PDF_Builder_Admin {
         wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
         // Declare global variable BEFORE loading bundle - Force rebuild 2025-11-06 03:37
-        $inline_script = "window.pdfBuilderReact = {}; console.log('[PDF-Builder] Global variable pre-declared');";
+        $inline_script = "window.pdfBuilderReact = {};";
         wp_add_inline_script('react-dom', $inline_script);
 
         // Enqueue PDF Builder React scripts from local build
@@ -5363,35 +5363,15 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
-            // Fonctions de debug
-            function debugLog(...args) {
-                console.log('%c[PDF-Builder]', 'color: #00a0d2; font-weight: bold;', ...args);
-            }
-
-            function debugError(...args) {
-                console.error('%c[PDF-Builder ERROR]', 'color: #dc3545; font-weight: bold;', ...args);
-            }
-
-            function debugWarn(...args) {
-                console.warn('%c[PDF-Builder WARN]', 'color: #ff9800; font-weight: bold;', ...args);
-            }
-
             // Écouter les événements de chargement de templates builtin
             window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
-            debugLog('📡 [ADMIN] Received builtin template load event:', event.detail);
-            debugLog('📊 [ADMIN] Event detail structure:', {
-                hasId: !!event.detail?.id,
-                hasName: !!event.detail?.name,
-                elementsCount: event.detail?.elements?.length || 0,
-                hasCanvas: !!event.detail?.canvas
-            });
 
             // Attendre que l'éditeur soit prêt, puis charger le template
             function loadBuiltinTemplateWhenReady() {
-                debugLog('🔍 [ADMIN] Checking if editor is ready for builtin template...');
-                debugLog('🔍 [ADMIN] Window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-                debugLog('🔍 [ADMIN] Has loadTemplate:', !!(window.pdfBuilderReact && window.pdfBuilderReact.loadTemplate));
-                debugLog('🔍 [ADMIN] Has getEditorState:', !!(window.pdfBuilderReact && window.pdfBuilderReact.getEditorState));
+
+
+
+
 
                 if (typeof window.pdfBuilderReact !== 'undefined' &&
                     window.pdfBuilderReact.loadTemplate &&
@@ -5399,20 +5379,20 @@ class PDF_Builder_Admin {
 
                     try {
                         var editorState = window.pdfBuilderReact.getEditorState();
-                        debugLog('📊 [ADMIN] Current editor state:', editorState);
+
 
                         // Charger le template builtin
-                        debugLog('🚀 [ADMIN] Calling loadTemplate with:', event.detail);
+
                         var result = window.pdfBuilderReact.loadTemplate(event.detail);
-                        debugLog('✅ [ADMIN] Builtin template loaded, result:', result);
+
                         return true;
                     } catch(e) {
-                        debugError('❌ [ADMIN] Error loading builtin template:', e.message, e.stack);
+
                         return false;
                     }
                 }
 
-                debugLog('⏳ [ADMIN] Editor not ready for builtin template, retrying...');
+
                 return false;
             }
 
@@ -5426,7 +5406,7 @@ class PDF_Builder_Admin {
                     if (loadBuiltinTemplateWhenReady()) {
                         clearInterval(loadInterval);
                     } else if (loadAttempts >= maxLoadAttempts) {
-                        debugError('❌ Failed to load builtin template after', maxLoadAttempts, 'attempts');
+
                         clearInterval(loadInterval);
                     }
                 }, 500);
@@ -5435,31 +5415,8 @@ class PDF_Builder_Admin {
 
         // ============================================================================
         // IMMEDIATE BUILTIN TEMPLATE LOADING - dispatch event right away
-        // Fonctions de debug conditionnel - ALWAYS LOG sur localhost
-        function isDebugEnabled() {
-            return true; // Always log on dev
-        }
-
-        function debugLog(...args) {
-            console.log('%c[PDF-Builder]', 'color: #00a0d2; font-weight: bold;', ...args);
-        }
-
-        function debugError(...args) {
-            console.error('%c[PDF-Builder ERROR]', 'color: #dc3545; font-weight: bold;', ...args);
-        }
-
-        function debugWarn(...args) {
-            console.warn('%c[PDF-Builder WARN]', 'color: #ff9800; font-weight: bold;', ...args);
-        }
 
         // Log des scripts enqueued
-        debugLog('=== REACT PDF BUILDER INITIALIZATION START ===');
-        debugLog('Window scripts info:', {
-            'React': typeof window.React,
-            'ReactDOM': typeof window.ReactDOM,
-            'pdfBuilderReact': typeof window.pdfBuilderReact,
-            'document.readyState': document.readyState
-        });
 
         // Monitor script loading
         var scriptLoads = {
@@ -5471,12 +5428,7 @@ class PDF_Builder_Admin {
         // Intercepter les erreurs de script
         window.addEventListener('error', function(event) {
             if (event.filename && event.filename.includes('react')) {
-                debugError('SCRIPT ERROR:', {
-                    message: event.message,
-                    filename: event.filename,
-                    lineno: event.lineno,
-                    colno: event.colno
-                });
+                // Script error handling (logging removed)
             }
         });
 
@@ -5484,21 +5436,21 @@ class PDF_Builder_Admin {
         var checkInterval = setInterval(function() {
             if (window.React && !scriptLoads.react) {
                 scriptLoads.react = true;
-                debugLog('✅ React CDN script loaded:', window.React.version || 'version unknown');
+
             }
             if (window.ReactDOM && !scriptLoads['react-dom']) {
                 scriptLoads['react-dom'] = true;
-                debugLog('✅ React-DOM CDN script loaded');
+
             }
             if (window.pdfBuilderReact && !scriptLoads['pdf-builder-react']) {
                 scriptLoads['pdf-builder-react'] = true;
-                debugLog('✅ PDF Builder React bundle script loaded');
+
             }
         }, 50);
 
         // Script d'initialisation React avec vérification périodique
         function initReactAndTemplate() {
-            debugLog('🚀 [ADMIN] initReactAndTemplate called - document.readyState: ' + document.readyState);
+
             
             var scriptLoads = {
                 'react': !!window.React,
@@ -5506,47 +5458,36 @@ class PDF_Builder_Admin {
                 'pdf-builder-react': !!window.pdfBuilderReact
             };
 
-            debugLog('Current state:', {
-                'React': typeof window.React,
-                'ReactDOM': typeof window.ReactDOM,
-                'pdfBuilderReact': typeof window.pdfBuilderReact,
-                'Scripts loaded': scriptLoads
-            });
-
             function tryInitReact() {
-                debugLog('🔍 Attempt: Checking for pdfBuilderReact...', {
-                    'Type': typeof window.pdfBuilderReact,
-                    'Has initPDFBuilderReact': window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function'
-                });
 
                 if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                    debugLog('✅ Calling initPDFBuilderReact()...');
+
                     try {
                         var result = window.pdfBuilderReact.initPDFBuilderReact();
-                        debugLog('✅✅ initPDFBuilderReact returned:', result);
+
                         return result === true;
                     } catch(e) {
-                        debugError('❌ Exception in initPDFBuilderReact:', e.message, e.stack);
+
                         return false;
                     }
                 }
-                debugLog('⏳ pdfBuilderReact not ready yet');
+
                 return false;
             }
 
             // Try immediately
             if (tryInitReact()) {
                 // React loaded immediately
-                debugLog('✅✅✅ React bundle loaded immediately');
+
                 
                 setTimeout(function() {
                     if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                        debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (immediate)');
-                        debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+
+
                         window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                             detail: window.pdfBuilderData.builtinTemplate
                         }));
-                        debugLog('📡 [ADMIN] Dispatched event from immediate load');
+
                     }
                 }, 50);
             } else {
@@ -5556,25 +5497,25 @@ class PDF_Builder_Admin {
                 var initInterval = setInterval(function() {
                     attempts++;
                     if (attempts % 10 === 1) {
-                        debugLog('🔄 Attempt #' + attempts + '/' + maxAttempts + ' - Checking dependencies...');
+
                     }
                     if (tryInitReact()) {
                         clearInterval(initInterval);
-                        debugLog('✅✅✅ React bundle loaded and initialized after ' + attempts + ' attempts!');
+
                         
                         setTimeout(function() {
                             if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
-                                debugLog('✅ [ADMIN] Found builtin template in pdfBuilderData (delayed)');
-                                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+
+
                                 window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                                     detail: window.pdfBuilderData.builtinTemplate
                                 }));
-                                debugLog('📡 [ADMIN] Dispatched event from delayed load');
+
                             }
                         }, 50);
                     } else if (attempts >= maxAttempts) {
                         clearInterval(initInterval);
-                        debugError('=== TIMEOUT AFTER 30 SECONDS ===');
+
                     }
                 }, 200);
             }
@@ -5585,15 +5526,15 @@ class PDF_Builder_Admin {
                 builtin_check_count++;
                 if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
                     clearInterval(builtin_data_ready);
-                    debugLog('✅ [ADMIN] pdfBuilderData NOW AVAILABLE (check #' + builtin_check_count + ')');
-                    debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+
+
                     window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                         detail: window.pdfBuilderData.builtinTemplate
                     }));
-                    debugLog('📡 [ADMIN] Dispatched event from global monitor');
+
                 } else if (builtin_check_count >= 100) {
                     clearInterval(builtin_data_ready);
-                    debugLog('❌ [ADMIN] pdfBuilderData not available after 5 seconds');
+
                 }
             }, 50);
         }
@@ -5603,51 +5544,51 @@ class PDF_Builder_Admin {
         
         function callInitIfNeeded() {
             if (!initCalled) {
-                debugLog('🟢 Calling initReactAndTemplate from fallback');
+
                 initCalled = true;
                 initReactAndTemplate();
             }
         }
         
         if (document.readyState === 'loading') {
-            debugLog('📋 [ADMIN] DOM still loading, will wait for DOMContentLoaded');
+
             document.addEventListener('DOMContentLoaded', function() {
-                debugLog('✅ DOMContentLoaded fired');
+
                 if (!initCalled) {
                     initCalled = true;
                     initReactAndTemplate();
                 }
             });
         } else {
-            debugLog('✅ [ADMIN] DOM already loaded, initializing now');
+
             initCalled = true;
             initReactAndTemplate();
         }
 
         // Fallback: Wait for pdfBuilderData to be available, then init
-        debugLog('⏱️ [ADMIN] Waiting for pdfBuilderData...');
+
         
         var pdfDataCheckCount = 0;
         var pdfDataWaiter = setInterval(function() {
             pdfDataCheckCount++;
             if (window.pdfBuilderData) {
                 clearInterval(pdfDataWaiter);
-                debugLog('✅ [ADMIN] pdfBuilderData found at check #' + pdfDataCheckCount);
+
                 
                 // Dispatch builtin template event if it exists
                 if (window.pdfBuilderData.builtinTemplate) {
-                    debugLog('📊 [ADMIN] Builtin template data found, dispatching event');
+
                     var event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
                         detail: window.pdfBuilderData.builtinTemplate
                     });
                     window.dispatchEvent(event);
-                    debugLog('📡 [ADMIN] Template event dispatched');
+
                 }
                 
                 callInitIfNeeded();
             } else if (pdfDataCheckCount > 200) {
                 clearInterval(pdfDataWaiter);
-                debugWarn('⚠️ [ADMIN] pdfBuilderData timeout');
+
                 callInitIfNeeded();
             }
         }, 50);
@@ -5656,7 +5597,7 @@ class PDF_Builder_Admin {
         // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
         // ============================================================================
         // Intercept fetch requests to force builtin template_id in auto-save calls
-        debugLog('🎬 [BUILTIN INTERCEPTOR] Setting up fetch interceptor for auto-save');
+
         
         (function setupBuiltinAutoSaveInterceptor() {
             // Get builtin template ID from URL or global variable
@@ -5664,11 +5605,11 @@ class PDF_Builder_Admin {
             const builtinTemplateId = urlParams.get('builtin_template');
             
             if (!builtinTemplateId) {
-                debugLog('⏭️ [BUILTIN INTERCEPTOR] No builtin_template in URL, skipping interceptor');
+
                 return;
             }
             
-            debugLog('🎬 [BUILTIN INTERCEPTOR] FUNCTION EXECUTED - Intercepting for builtin:', builtinTemplateId);
+
             
             // Store original fetch
             const originalFetch = window.fetch;
@@ -5685,20 +5626,20 @@ class PDF_Builder_Admin {
                         const action = body.get('action');
                         
                         if (action === 'pdf_builder_auto_save_template') {
-                            debugLog('🎯 [BUILTIN INTERCEPTOR] Detected auto-save request');
-                            debugLog('📝 [BUILTIN INTERCEPTOR] Current template_id:', body.get('template_id'));
+
+
                             
                             // Force template_id to builtin ID
                             body.set('template_id', builtinTemplateId);
                             
-                            debugLog('✅ [BUILTIN INTERCEPTOR] Forced template_id to:', builtinTemplateId);
-                            debugLog('📡 [BUILTIN INTERCEPTOR] Sending to server with updated body');
+
+
                             
                             // Update config with new body
                             config.body = body.toString();
                         }
                     } catch (e) {
-                        debugError('❌ [BUILTIN INTERCEPTOR] Error processing request:', e.message);
+
                     }
                 }
                 
@@ -5706,7 +5647,7 @@ class PDF_Builder_Admin {
                 return originalFetch.apply(this, args);
             };
             
-            debugLog('✅ [BUILTIN INTERCEPTOR] Fetch interceptor installed successfully');
+
         })();
         
         </script>

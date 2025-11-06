@@ -52,7 +52,7 @@ class PDF_Builder_Preview_Generator {
             return $this->save_and_get_url();
 
         } catch (Exception $e) {
-            error_log('PDF Builder Preview Generation Error: ' . $e->getMessage());
+
             throw $e;
         }
     }

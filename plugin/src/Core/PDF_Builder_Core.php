@@ -767,26 +767,26 @@ class PDF_Builder_Core
             };
 
             // Debug: Afficher les données passées à React
-            console.log('🔍 [PDF BUILDER] Données passées à React:', window.pdfBuilderData);
+
             if (window.pdfBuilderData.templateData) {
-                console.log('📊 [PDF BUILDER] Template data elements:', window.pdfBuilderData.templateData.elements);
+
             }
 
             // ============================================
             // INTERCEPTEUR BUILTIN - Force reload 2025-11-06 02:45:00
             // ============================================
             (function interceptBuiltinAutoSave() {
-                console.log('🎬 [BUILTIN INTERCEPTOR] FUNCTION EXECUTED');
-                console.log('📊 [BUILTIN] isBuiltin:', window.pdfBuilderData?.isBuiltin);
-                console.log('📊 [BUILTIN] builtinTemplate:', window.pdfBuilderData?.builtinTemplate);
+
+
+
                 
                 if (!window.pdfBuilderData?.isBuiltin) {
-                    console.log('ℹ️ [BUILTIN] Not a builtin, skipping');
+
                     return;
                 }
 
                 const builtinId = window.pdfBuilderData.builtinTemplate;
-                console.log('✅ [BUILTIN] Installing interceptor for:', builtinId);
+
 
                 // Hook fetch
                 const originalFetch = window.fetch;
@@ -796,11 +796,11 @@ class PDF_Builder_Core
                     
                     if (typeof url === 'string' && url.includes('admin-ajax.php')) {
                         if (options.body && typeof options.body === 'string' && options.body.includes('pdf_builder_auto_save_template')) {
-                            console.log('🎯 [BUILTIN] Auto-save intercepted!');
+
                             const params = new URLSearchParams(options.body);
                             const oldId = params.get('template_id');
                             params.set('template_id', builtinId);
-                            console.log('🔄 [BUILTIN] Changed template_id:', oldId, '=>', builtinId);
+
                             options.body = params.toString();
                             args[1] = options;
                         }
@@ -809,16 +809,16 @@ class PDF_Builder_Core
                     return originalFetch.apply(this, args);
                 };
                 
-                console.log('✅ [BUILTIN] Interceptor installed successfully');
+
             })();
             // ============================================
 
 
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
             <?php if ($template_data && $builtin_template): ?>
-            console.log('🏗️ [PDF BUILDER] Préparation injection builtin - Template:', <?php echo json_encode($builtin_template); ?>, 'Data:', <?php echo json_encode(count($template_data['elements'] ?? [])); ?>);
+
             window.pdfBuilderData.builtinData = <?php echo json_encode($template_data); ?>;
-            console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderData.builtinData);
+
 
             // Injecter les données dans l'éditeur React après son chargement
             let injectionAttempts = 0;
@@ -826,8 +826,8 @@ class PDF_Builder_Core
 
             function tryInjectBuiltinData() {
                 injectionAttempts++;
-                console.log(`🔄 [PDF BUILDER] Tentative d'injection ${injectionAttempts}/${maxAttempts} - Template:`, window.pdfBuilderData.builtinTemplate);
-                console.log(`🔍 [PDF BUILDER] Données disponibles:`, {
+
+
                     builtinTemplate: window.pdfBuilderData.builtinTemplate,
                     builtinData: !!window.pdfBuilderData.builtinData,
                     elementsCount: window.pdfBuilderData.builtinData?.elements?.length || 0
@@ -842,7 +842,7 @@ class PDF_Builder_Core
                     document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
                 ];
 
-                console.log('🔍 [PDF BUILDER] Éditeurs disponibles:', possibleEditors.map((e, i) => ({
+
                     index: i,
                     exists: !!e,
                     hasDispatch: !!(e && typeof e.dispatch === 'function'),
@@ -851,7 +851,7 @@ class PDF_Builder_Core
 
                 for (const editor of possibleEditors) {
                     if (editor && typeof editor.dispatch === 'function') {
-                        console.log('🚀 [PDF BUILDER] Éditeur trouvé avec dispatch, préparation injection...');
+
                         try {
                             const payload = {
                                 type: 'LOAD_TEMPLATE',
@@ -865,15 +865,15 @@ class PDF_Builder_Core
                                     }
                                 }
                             };
-                            console.log('📤 [PDF BUILDER] Payload à envoyer:', JSON.stringify(payload, null, 2));
+
                             const result = editor.dispatch(payload);
-                            console.log('✅ [PDF BUILDER] Dispatch réussi, résultat:', result);
+
                             return true;
                         } catch (error) {
-                            console.error('❌ [PDF BUILDER] Erreur lors du dispatch:', error.message, error.stack);
+
                         }
                     } else if (editor) {
-                        console.log('⚠️ [PDF BUILDER] Éditeur trouvé mais pas de dispatch:', typeof editor.dispatch);
+
                     }
                 }
 
@@ -891,12 +891,12 @@ class PDF_Builder_Core
                                 }
                             }
                         });
-                        console.log('📡 [PDF BUILDER] Envoi événement personnalisé avec détail:', event.detail);
+
                         window.dispatchEvent(event);
-                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé avec succès');
+
                         return true;
                     } catch (e) {
-                        console.error('❌ [PDF BUILDER] Erreur envoi événement:', e);
+
                     }
                 }
 
@@ -911,7 +911,7 @@ class PDF_Builder_Core
                             height: window.pdfBuilderData.builtinData.canvasHeight || 1123
                         }
                     };
-                    console.log('💾 [PDF BUILDER] Données stockées dans variable globale:', {
+
                         id: window.pdfBuilderBuiltinTemplateData.id,
                         name: window.pdfBuilderBuiltinTemplateData.name,
                         elementsCount: window.pdfBuilderBuiltinTemplateData.elements.length,
@@ -923,7 +923,7 @@ class PDF_Builder_Core
                 if (injectionAttempts < maxAttempts) {
                     setTimeout(tryInjectBuiltinData, 100);
                 } else {
-                    console.error('❌ [PDF BUILDER] Échec de l\'injection après', maxAttempts, 'tentatives');
+
                 }
             }
 

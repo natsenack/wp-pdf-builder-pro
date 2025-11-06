@@ -3,29 +3,7 @@
  * À intégrer dans votre éditeur ou metabox WooCommerce
  */
 
-// Fonctions de debug conditionnel
-function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
-}
-
-function debugLog(...args) {
-    if (isDebugEnabled()) {
-        console.log(...args);
-    }
-}
-
-function debugError(...args) {
-    if (isDebugEnabled()) {
-        console.error(...args);
-    }
-}
-
-function debugWarn(...args) {
-    if (isDebugEnabled()) {
-        console.warn(...args);
-    }
-}
+/* global document, window, alert, localStorage, URLSearchParams, setTimeout */
 
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
@@ -110,11 +88,11 @@ class PDFEditorPreviewIntegration {
             });
 
             if (result) {
-                debugLog('✅ Aperçu éditeur généré avec succès');
+                // Preview generated successfully
             }
 
-        } catch (error) {
-            debugError('❌ Erreur génération aperçu éditeur:', error);
+        } catch {
+
             alert('Erreur lors de la génération de l\'aperçu. Vérifiez la console pour plus de détails.');
         }
     }
@@ -253,11 +231,11 @@ class PDFMetaboxPreviewIntegration {
             });
 
             if (result) {
-                debugLog('✅ Aperçu commande généré avec succès');
+                // Preview generated successfully
             }
 
-        } catch (error) {
-            debugError('❌ Erreur génération aperçu commande:', error);
+        } catch {
+
             alert('Erreur lors de la génération de l\'aperçu. Vérifiez la console pour plus de détails.');
         }
     }
@@ -293,7 +271,7 @@ class PDFMetaboxPreviewIntegration {
             }
         }
 
-        debugWarn('⚠️ ID de commande non trouvé automatiquement');
+
         return null;
     }
 
@@ -306,8 +284,8 @@ class PDFMetaboxPreviewIntegration {
         if (templateDataElement) {
             try {
                 return JSON.parse(templateDataElement.value || templateDataElement.dataset.templateData);
-            } catch (e) {
-                debugWarn('Données template mal formatées:', e);
+            } catch {
+                // Invalid JSON, continue to next method
             }
         }
 
@@ -378,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.pdf-canvas-editor') ||
         window.location.href.includes('pdf-builder-editor')) {
 
-        debugLog('🎨 Initialisation intégration éditeur...');
+
         window.pdfEditorPreview = new PDFEditorPreviewIntegration(window.pdfCanvasEditor);
     }
 
@@ -395,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                            document.querySelector('.postbox');
 
             if (metabox) {
-                debugLog('🛒 Initialisation intégration metabox...');
+
                 window.pdfMetaboxPreview = new PDFMetaboxPreviewIntegration(metabox);
             }
         }, 1000);
@@ -422,28 +400,28 @@ window.generateQuickPreview = async function(templateData = null, orderId = null
                           window.location.href.includes('action=edit'));
 
         if (isEditor) {
-            debugLog('🎨 Mode éditeur détecté');
+
             const data = templateData || window.pdfEditorPreview?.getTemplateData();
             return await window.generateEditorPreview(data);
         }
 
         if (isMetabox) {
-            debugLog('🛒 Mode metabox détecté');
+
             const data = templateData || window.pdfMetaboxPreview?.getTemplateData();
             const id = orderId || window.pdfMetaboxPreview?.getOrderId();
             return await window.generateOrderPreview(data, id);
         }
 
-        debugWarn('⚠️ Contexte non reconnu pour l\'aperçu');
+
         return null;
 
     } catch (error) {
-        debugError('❌ Erreur génération aperçu rapide:', error);
+
         return null;
     }
 };
 
-debugLog('🚀 Intégrations API Preview 1.4 chargées !');
-debugLog('💡 Raccourcis:');
-debugLog('   - Ctrl+P (Cmd+P) : Aperçu rapide');
-debugLog('   - generateQuickPreview() : Détection automatique du contexte');
+
+
+
+

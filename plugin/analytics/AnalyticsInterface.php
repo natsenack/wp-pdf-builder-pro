@@ -355,7 +355,7 @@ class AnalyticsTracker implements AnalyticsInterface {
         if (!empty($data)) {
             $message .= " - " . json_encode($data);
         }
-        error_log($message);
+
     }
 
     /**
@@ -364,7 +364,7 @@ class AnalyticsTracker implements AnalyticsInterface {
      * @param string $message Message
      */
     private function logWarning(string $message): void {
-        error_log("[Analytics Warning] {$message}");
+
     }
 
     /**
@@ -378,7 +378,7 @@ class AnalyticsTracker implements AnalyticsInterface {
         if (!empty($context)) {
             $full_message .= " - Context: " . json_encode($context);
         }
-        error_log($full_message);
+
     }
 
     /**
@@ -387,6 +387,6 @@ class AnalyticsTracker implements AnalyticsInterface {
      * @param string $message Message
      */
     private function logInfo(string $message): void {
-        error_log("[Analytics Info] {$message}");
+
     }
 }

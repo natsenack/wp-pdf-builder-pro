@@ -763,10 +763,10 @@ class PDF_Builder_Template_Manager
                 }
             }
 
-            error_log('Erreur génération preview SVG pour ' . $template_id . ': ' . $output);
+
 
         } catch (Exception $e) {
-            error_log('Erreur génération preview template ' . $template_id . ': ' . $e->getMessage());
+
         }
 
         return false;

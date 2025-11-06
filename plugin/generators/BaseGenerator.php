@@ -272,7 +272,7 @@ abstract class BaseGenerator {
      * @param string $message Message d'erreur
      */
     protected function logError(string $message): void {
-        error_log("[PDF Generator Error] {$message}");
+
     }
 
     /**
@@ -281,7 +281,7 @@ abstract class BaseGenerator {
      * @param string $message Message d'avertissement
      */
     protected function logWarning(string $message): void {
-        error_log("[PDF Generator Warning] {$message}");
+
     }
 
     /**
@@ -290,6 +290,6 @@ abstract class BaseGenerator {
      * @param string $message Message d'information
      */
     protected function logInfo(string $message): void {
-        error_log("[PDF Generator Info] {$message}");
+
     }
 }

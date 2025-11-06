@@ -22,14 +22,6 @@ function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_bui
     $nonce_check = wp_verify_nonce($nonce_value, $nonce_action);
     // DEBUG: Accepter temporairement tout pour tester
     if ($nonce_check === false || $nonce_check === 0) {
-        // Pour debug: log le nonce reçu
-        error_log('[PDF Builder] Nonce check failed: ' . var_export([
-            'nonce_check' => $nonce_check,
-            'nonce_value' => $nonce_value,
-            'nonce_action' => $nonce_action,
-            'post_nonce' => $_POST['nonce'] ?? 'MISSING'
-        ], true));
-        
         // DEBUG: Accepter quand même pour voir où est l'erreur vraie
         // Ne pas rejeter, laisser passer pour continuer
     }
@@ -604,7 +596,7 @@ function pdf_builder_ajax_auto_save_builtin_wrapper() {
 
     if (file_exists($builtin_file)) {
         // C'est un template builtin, sauvegarder dans le fichier JSON
-        error_log('[PDF BUILDER] Auto-save détecte un template BUILTIN: ' . $template_id);
+
         
         // Décoder les éléments
         $elements_data = json_decode(stripslashes($elements), true);

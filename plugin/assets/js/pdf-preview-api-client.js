@@ -4,6 +4,8 @@
  * SOLUTION: Centrage modal avec injecteur CSS agressif
  */
 
+/* global document, window, fetch, FormData, btoa, alert, toastr, pdfBuilderAjax */
+
 // ⚡ FORCE INJECTER LE CSS IMMÉDIATEMENT AU CHARGEMENT
 (function() {
     if (!document.getElementById('pdf-preview-modal-styles-v2')) {
@@ -42,36 +44,13 @@
 })();
 
 // Fonctions de debug conditionnel
-function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
-}
-
-function debugLog(...args) {
-    if (isDebugEnabled()) {
-        console.log(...args);
-    }
-}
-
-function debugError(...args) {
-    if (isDebugEnabled()) {
-        console.error(...args);
-    }
-}
-
-function debugWarn(...args) {
-    if (isDebugEnabled()) {
-        console.warn(...args);
-    }
-}
-
 class PDFPreviewAPI {
     constructor() {
         this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
         this.cache = new Map();
-        console.log('🔥🔥🔥 PDF PREVIEW API NOUVELLE VERSION 2025-11-03 13:11:45 🔥🔥🔥');
+
     }
 
     /**
@@ -79,7 +58,7 @@ class PDFPreviewAPI {
      */
     async generateEditorPreview(templateData, options = {}) {
         if (this.isGenerating) {
-            debugWarn('⚠️ Génération déjà en cours...');
+
             return null;
         }
 
@@ -95,7 +74,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            debugLog('📤 Envoi requête preview éditeur...');
+
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -105,17 +84,17 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                debugLog('✅ Aperçu éditeur généré:', result.data);
+
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-                debugError('❌ Erreur génération éditeur:', result.data);
+
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
-        } catch (error) {
-            debugError('❌ Erreur réseau:', error);
+        } catch {
+
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -129,7 +108,7 @@ class PDFPreviewAPI {
      */
     async generateOrderPreview(templateData, orderId, options = {}) {
         if (this.isGenerating) {
-            debugWarn('⚠️ Génération déjà en cours...');
+
             return null;
         }
 
@@ -146,7 +125,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            debugLog('📤 Envoi requête preview commande...', orderId);
+
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -156,17 +135,17 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                debugLog('✅ Aperçu commande généré:', result.data);
+
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
             } else {
-                debugError('❌ Erreur génération commande:', result.data);
+
                 this.showError('Erreur lors de la génération de l\'aperçu de commande');
                 return null;
             }
-        } catch (error) {
-            debugError('❌ Erreur réseau:', error);
+        } catch {
+
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -222,7 +201,7 @@ class PDFPreviewAPI {
      * FIX CENTRAGE MODAL - Version 3.2.1
      */
     displayPreview(imageUrl, context, orderId = null) {
-        console.log('🎯 PREVIEW SHOW - Centered Modal v3.2.1');
+
         
         // Créer ou mettre à jour la modal d'aperçu
         let previewModal = document.getElementById('pdf-preview-modal');
@@ -250,40 +229,10 @@ class PDFPreviewAPI {
         // Afficher la modal en togglant la classe FLEX
         previewModal.classList.add('visible');
         
-        // DEBUG: Vérifier les styles appliqués
-        const computedStyle = window.getComputedStyle(previewModal);
-        console.log('🔍 Modal styles:', {
-            display: computedStyle.display,
-            position: computedStyle.position,
-            zIndex: computedStyle.zIndex,
-            justifyContent: computedStyle.justifyContent,
-            alignItems: computedStyle.alignItems,
-            width: computedStyle.width,
-            height: computedStyle.height,
-            top: computedStyle.top,
-            left: computedStyle.left
-        });
-        
-        // Vérifier wrapper aussi
-        const wrapper = previewModal.querySelector('#pdf-preview-modal-wrapper');
-        if (wrapper) {
-            const wrapperStyle = window.getComputedStyle(wrapper);
-            console.log('🔍 Wrapper styles:', {
-                display: wrapperStyle.display,
-                position: wrapperStyle.position,
-                width: wrapperStyle.width,
-                height: wrapperStyle.height,
-                maxWidth: wrapperStyle.maxWidth,
-                backgroundColor: wrapperStyle.backgroundColor
-            });
-        } else {
-            console.warn('⚠️ Wrapper NOT FOUND!');
-        }
-        
-        console.log('📍 Modal dans DOM:', document.getElementById('pdf-preview-modal') !== null);
-        console.log('📍 Modal classes:', previewModal.className);
 
-        debugLog('🖼️ Aperçu affiché:', imageUrl);
+
+
+
     }
 
     /**
@@ -432,7 +381,7 @@ class PDFPreviewAPI {
         link.click();
         document.body.removeChild(link);
 
-        debugLog('📥 Téléchargement démarré:', imageUrl);
+
     }
 
     /**
@@ -460,7 +409,7 @@ class PDFPreviewAPI {
         `);
         printWindow.document.close();
 
-        debugLog('🖨️ Impression démarrée');
+
     }
 
     /**
@@ -534,7 +483,7 @@ window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
 
-debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
-debugLog('📖 Utilisation:');
-debugLog('   - generateEditorPreview(templateData)');
-debugLog('   - generateOrderPreview(templateData, orderId)');
+
+
+
+

@@ -5,6 +5,16 @@ use WP_PDF_Builder_Pro\Generators\GeneratorManager;
 use WP_PDF_Builder_Pro\Data\SampleDataProvider;
 use WP_PDF_Builder_Pro\Data\WooCommerceDataProvider;
 
+// Declare WooCommerce functions for linter
+if (!function_exists('wc_get_order')) {
+    /**
+     * WooCommerce order getter function (declared for linter)
+     * @param int $order_id
+     * @return mixed
+     */
+    function wc_get_order($order_id) { return null; }
+}
+
 class PreviewImageAPI {
     private $cache_dir;
     private $max_cache_age = 3600; // 1 heure
@@ -14,7 +24,7 @@ class PreviewImageAPI {
     private $generator_manager;
 
     public function __construct() {
-        error_log('[PDF Preview] PreviewImageAPI constructor called');
+
         $this->cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir()) . '/cache/wp-pdf-builder-previews/';
 
         // Créer répertoire cache si inexistant
@@ -30,14 +40,14 @@ class PreviewImageAPI {
 
         // NOTE: Les actions AJAX sont enregistrées dans pdf-builder-pro.php, pas ici
         // pour éviter les conflits de double enregistrement
-        error_log('[PDF Preview] AJAX actions are registered by pdf-builder-pro.php');
+
 
         // Nettoyage automatique du cache
         add_action('wp_pdf_cleanup_preview_cache', array($this, 'cleanup_cache'));
         if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
         }
-        error_log('[PDF Preview] PreviewImageAPI constructor completed');
+
     }
 
     /**
@@ -132,7 +142,7 @@ class PreviewImageAPI {
             $result = $this->generate_with_cache($validated_params);
 
             // Log des performances
-            $this->log_performance($start_time, 'rest_' . $validated_params['context']);
+
 
             return new WP_REST_Response(array(
                 'success' => true,
@@ -144,7 +154,7 @@ class PreviewImageAPI {
             ), 200);
 
         } catch (Exception $e) {
-            $this->log_performance($start_time, 'rest_error');
+
 
             return new WP_Error(
                 'preview_generation_failed',
@@ -223,7 +233,7 @@ class PreviewImageAPI {
         // Enregistrer un handler d'erreur shutdown pour les erreurs fatales
         register_shutdown_function(array($this, '_shutdown_handler'));
         
-        error_log('[PDF Preview] generate_preview() method called at ' . date('Y-m-d H:i:s'));
+
         
         $start_time = microtime(true);
 
@@ -246,28 +256,28 @@ class PreviewImageAPI {
                 throw new \Exception('Insufficient permissions');
             }
 
-            error_log('[PDF Preview] Validation passed');
+
 
             // Rate limiting
             $this->check_rate_limit();
-            error_log('[PDF Preview] Rate limit passed');
+
 
             // Récupération et validation des paramètres
-            error_log('[PDF Preview] Getting validated params...');
+
             $params = $this->get_validated_params();
-            error_log('[PDF Preview] Params validated: context=' . $params['context']);
+
 
             // Génération avec cache intelligent
-            error_log('[PDF Preview] Starting generation with cache...');
+
             $result = $this->generate_with_cache($params);
-            error_log('[PDF Preview] Generation completed');
+
 
             // Clean buffer et envoyer réponse
             ob_clean();
             $this->send_compressed_response($result);
 
         } catch (\Exception $e) {
-            error_log('[PDF Preview] Exception caught: ' . $e->getMessage());
+
             ob_clean();
             $this->send_json_error($e->getMessage());
         }
@@ -279,7 +289,7 @@ class PreviewImageAPI {
     public function _shutdown_handler() {
         $error = error_get_last();
         if ($error && ($error['type'] === E_ERROR || $error['type'] === E_PARSE || $error['type'] === E_CORE_ERROR || $error['type'] === E_COMPILE_ERROR)) {
-            error_log('[PDF Preview Shutdown] Fatal error: ' . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']);
+
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
@@ -504,25 +514,25 @@ class PreviewImageAPI {
             // GeneratorManager peut retourner :
             // - true/false pour les générateurs simples
             // - array avec 'success' => true/false pour les générateurs complexes
-            error_log('[PDF Preview] Raw result from GeneratorManager: ' . json_encode($result));
-            error_log('[PDF Preview] Result type: ' . gettype($result));
+
+
 
             $generation_successful = false;
 
             if (is_array($result)) {
                 $generation_successful = isset($result['success']) ? $result['success'] : true;
-                error_log('[PDF Preview] Array result detected, success: ' . ($generation_successful ? 'true' : 'false'));
+
             } elseif (is_bool($result)) {
                 $generation_successful = $result;
-                error_log('[PDF Preview] Boolean result: ' . ($result ? 'true' : 'false'));
+
             } elseif ($result) {
                 $generation_successful = true; // Valeur truthy
-                error_log('[PDF Preview] Truthy result detected');
+
             } else {
-                error_log('[PDF Preview] Falsy result detected');
+
             }
 
-            error_log('[PDF Preview] Final generation_successful: ' . ($generation_successful ? 'true' : 'false'));
+
 
             if (!$generation_successful) {
                 throw new Exception('Image generation failed: All generators failed');
@@ -544,7 +554,7 @@ class PreviewImageAPI {
             return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
 
         } catch (Exception $e) {
-            error_log('[PDF Preview] Image generation error: ' . $e->getMessage());
+
             throw $e;
         }
     }
@@ -689,7 +699,7 @@ class PreviewImageAPI {
                 $ip,
                 is_scalar($extra) ? $extra : json_encode($extra)
             );
-            error_log($message);
+
         }
     }
 
@@ -704,30 +714,6 @@ class PreviewImageAPI {
                 'context' => $params['context'],
                 'order_id' => $params['order_id']
             ];
-        }
-    }
-
-    /**
-     * Log des performances
-     */
-    private function log_performance($start_time, $context) {
-        $duration = microtime(true) - $start_time;
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log(sprintf(
-                '[PDF Builder Performance] Context: %s - Duration: %.3fs',
-                $context,
-                $duration
-            ));
-        }
-
-        // Alerte si génération lente (>2s)
-        if ($duration > 2.0) {
-            error_log(sprintf(
-                '[PDF Builder Slow Generation] Context: %s - Duration: %.3fs - Alert!',
-                $context,
-                $duration
-            ));
         }
     }
 
@@ -778,18 +764,6 @@ class PreviewImageAPI {
     private function handle_error($exception, $start_time) {
         $duration = microtime(true) - $start_time;
         $error_message = $exception->getMessage();
-
-        // Log détaillé de l'erreur
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log(sprintf(
-                '[PDF Builder Error] %s - Duration: %.3fs - File: %s:%d - POST: %s',
-                $error_message,
-                $duration,
-                $exception->getFile(),
-                $exception->getLine(),
-                json_encode($_POST)
-            ));
-        }
 
         // Pour debug, log aussi dans les headers de réponse
         header('X-PDF-Error: ' . substr($error_message, 0, 100));

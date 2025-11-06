@@ -402,7 +402,7 @@ class PDF_Builder_PDF_Generator
 
             return $this->save_pdf($dompdf, $filename);
         } catch (Exception $e) {
-            error_log('PDF Generator Error: ' . $e->getMessage());
+
             return null;
         }
     }
@@ -433,7 +433,7 @@ class PDF_Builder_PDF_Generator
 
             return $pdf_path;
         } catch (Exception $e) {
-            error_log('PDF Save Error: ' . $e->getMessage());
+
             return false;
         }
     }
@@ -462,7 +462,7 @@ class PDF_Builder_PDF_Generator
                 'html' => $html
             ];
         } catch (Exception $e) {
-            error_log('Template Render Error: ' . $e->getMessage());
+
             return [
                 'success' => false,
                 'error' => $e->getMessage()

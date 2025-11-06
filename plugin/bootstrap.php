@@ -319,17 +319,17 @@ function pdf_builder_load_core_when_needed() {
     }
 
     if ($load_core) {
-        error_log('PDF Builder - Loading core for action: ' . ($_REQUEST['action'] ?? 'unknown'));
+
         pdf_builder_load_core();
-        error_log('PDF Builder - Core loaded, class exists: ' . (class_exists('PDF_Builder\Core\PDF_Builder_Core') ? 'yes' : 'no'));
+
         
         if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
             try {
                 \PDF_Builder\Core\PDF_Builder_Core::getInstance()->init();
                 $core_loaded = true;
-                error_log('PDF Builder - Core initialized successfully');
+
             } catch (Exception $e) {
-                error_log('PDF Builder - Core initialization failed: ' . $e->getMessage());
+
                 // Ne pas utiliser wp_die() car cela peut causer une erreur 500 en AJAX
                 // wp_die('Plugin initialization failed: ' . esc_html($e->getMessage()));
                 return; // Sortir sans charger le core
@@ -602,7 +602,7 @@ function pdf_builder_ajax_get_template() {
 
     // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
     if (!$template) {
-        error_log('PDF Builder: Template ' . $template_id . ' not found in custom table, checking wp_posts');
+
         $post = get_post($template_id);
         
         if ($post && $post->post_type === 'pdf_template') {
@@ -618,12 +618,12 @@ function pdf_builder_ajax_get_template() {
                     'created_at' => $post->post_date,
                     'updated_at' => $post->post_modified
                 );
-                error_log('PDF Builder: Template found in wp_posts: ' . $post->ID);
+
             } else {
-                error_log('PDF Builder: Template found in wp_posts but no _pdf_template_data meta');
+
             }
         } else {
-            error_log('PDF Builder: Template not found in wp_posts either');
+
         }
     }
 
@@ -636,7 +636,7 @@ function pdf_builder_ajax_get_template() {
     $template_data = json_decode($template['template_data'], true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        error_log('PDF Builder: Erreur JSON decode - ' . json_last_error_msg() . ' - Raw data: ' . substr($template['template_data'], 0, 500));
+
         wp_send_json_error(__('Erreur lors du décodage des données du template.', 'pdf-builder-pro'));
         return;
     }
@@ -648,36 +648,36 @@ function pdf_builder_ajax_get_template() {
     // Vérifier si c'est le nouveau format (objet avec elements/canvas) ou l'ancien format (tableau direct)
     if (is_array($template_data) && isset($template_data['elements'])) {
         // Nouveau format : {"elements": [...], "canvas": {...}}
-        error_log('PDF Builder: Using new format template data');
+
         $elements = $template_data['elements'];
         $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
     } elseif (is_array($template_data)) {
         // Ancien format : directement un tableau d'éléments
-        error_log('PDF Builder: Using old format template data (direct array)');
+
         $elements = $template_data;
         $canvas = null;
     } else {
-        error_log('PDF Builder: Invalid template data format: ' . gettype($template_data));
+
         wp_send_json_error(__('Format de données du template invalide.', 'pdf-builder-pro'));
         return;
     }
 
     // Traiter les éléments (même logique pour les deux formats)
     if (is_string($elements)) {
-        error_log('PDF Builder: Decoding elements string, length: ' . strlen($elements));
+
         // D'abord supprimer les slashes d'échappement, puis décoder
         $unescaped_elements = stripslashes($elements);
         $decoded_elements = json_decode($unescaped_elements, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             $elements = $decoded_elements;
-            error_log('PDF Builder: Successfully decoded ' . count($elements) . ' elements after stripslashes');
+
         } else {
-            error_log('PDF Builder: Failed to decode elements after stripslashes: ' . json_last_error_msg() . ' - First 500 chars: ' . substr($unescaped_elements, 0, 500));
+
             $elements = [];
         }
     } elseif (!is_array($elements)) {
         // Si ce n'est ni un array ni une string, initialiser comme array vide
-        error_log('PDF Builder: Elements is not string or array: ' . gettype($elements));
+
         $elements = [];
     }
 
@@ -698,20 +698,20 @@ function pdf_builder_ajax_get_template() {
 
     // Vérifier que elements est défini (peut être un array vide pour un nouveau template)
     if (!isset($elements)) {
-        error_log('PDF Builder: Elements not set after processing');
+
         wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
     }
 
     // Retourner les données du template
     // Log des positions des éléments pour debug
-    error_log('PDF Builder: Template ' . $template_id . ' - Elements count: ' . count($elements));
+
     foreach ($elements as $index => $element) {
         if (isset($element['type'])) {
             if ($element['type'] === 'company_info') {
-                error_log('PDF Builder: Company_info element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+
             } elseif ($element['type'] === 'order_number') {
-                error_log('PDF Builder: Order_number element at index ' . $index . ': x=' . ($element['x'] ?? 'undefined') . ', y=' . ($element['y'] ?? 'undefined') . ', width=' . ($element['width'] ?? 'undefined') . ', height=' . ($element['height'] ?? 'undefined'));
+
             }
         }
     }
@@ -817,7 +817,7 @@ function pdf_builder_ajax_save_template() {
     }
 
     // Debug: log what we're storing
-    error_log('PDF Builder: Storing template data - Length: ' . strlen($json_data) . ' - First 500 chars: ' . substr($json_data, 0, 500));
+
 
     if ($template_id > 0) {
         // Mettre à jour un template existant
@@ -1089,7 +1089,7 @@ function pdf_builder_generate_template_preview_cron($template_id, $template_file
             $template_manager->generate_template_preview($template_id, $template_file);
         }
     } catch (Exception $e) {
-        error_log('Erreur cron génération preview template ' . $template_id . ': ' . $e->getMessage());
+
     }
 }
 

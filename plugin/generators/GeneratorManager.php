@@ -290,7 +290,7 @@ class GeneratorManager {
                 $this->saveResultForParent($result);
                 exit(0);
             } catch (\Throwable $e) {
-                error_log("Child process error: " . $e->getMessage());
+
                 exit(1);
             }
         }
@@ -377,7 +377,7 @@ class GeneratorManager {
      * @param string $message Message d'erreur
      */
     private function logError(string $message): void {
-        error_log("[GeneratorManager Error] {$message}");
+
     }
 
     /**
@@ -386,6 +386,6 @@ class GeneratorManager {
      * @param string $message Message d'information
      */
     private function logInfo(string $message): void {
-        error_log("[GeneratorManager Info] {$message}");
+
     }
 }

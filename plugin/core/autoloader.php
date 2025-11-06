@@ -63,10 +63,7 @@ class PDF_Builder_Autoloader {
             $file = self::$base_path . $base_dir . $relative_class . '.php';
 
             // Debug: uncomment for troubleshooting
-            error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
 
-            // Debug: uncomment for troubleshooting
-            // error_log("PDF_Builder_Autoloader: Looking for class '$class' in file '$file'");
 
             // If the file exists, require it
             if (file_exists($file)) {
@@ -78,11 +75,11 @@ class PDF_Builder_Autoloader {
                     return true;
                 } else {
                     // Class/interface not found in file - this might indicate a namespace mismatch
-                    error_log("PDF_Builder_Autoloader: Class/interface '$class' not found in expected file '$file'");
+
                 }
             } else {
                 // File not found - log for debugging
-                error_log("PDF_Builder_Autoloader: File '$file' not found for class '$class'");
+
             }
         }
 

@@ -376,7 +376,7 @@ class PreviewStateManager {
         if (!empty($reason)) {
             $message .= " ({$reason})";
         }
-        error_log($message);
+
     }
 
     /**
@@ -385,7 +385,7 @@ class PreviewStateManager {
      * @param string $message Message d'erreur
      */
     private function logError(string $message): void {
-        error_log("[StateManager Error] {$message}");
+
     }
 
     /**
@@ -394,7 +394,7 @@ class PreviewStateManager {
      * @param string $message Message d'avertissement
      */
     private function logWarning(string $message): void {
-        error_log("[StateManager Warning] {$message}");
+
     }
 
     /**
@@ -403,6 +403,6 @@ class PreviewStateManager {
      * @param string $message Message d'information
      */
     private function logInfo(string $message): void {
-        error_log("[StateManager Info] {$message}");
+
     }
 }
