@@ -814,13 +814,36 @@ class PDF_Builder_Core
                 if (window.dispatchEvent) {
                     try {
                         const event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                            detail: window.pdfBuilderData.builtinData
+                            detail: {
+                                id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
+                                name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
+                                elements: window.pdfBuilderData.builtinData.elements || [],
+                                canvas: {
+                                    width: window.pdfBuilderData.builtinData.canvasWidth || 794,
+                                    height: window.pdfBuilderData.builtinData.canvasHeight || 1123
+                                }
+                            }
                         });
                         window.dispatchEvent(event);
-                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé');
+                        console.log('📡 [PDF BUILDER] Événement personnalisé envoyé avec données complètes');
+                        return true;
                     } catch (e) {
                         console.error('❌ [PDF BUILDER] Erreur envoi événement:', e);
                     }
+                }
+
+                // Si rien ne marche, essayer de définir une variable globale que l'éditeur peut vérifier
+                if (!window.pdfBuilderBuiltinTemplateData) {
+                    window.pdfBuilderBuiltinTemplateData = {
+                        id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
+                        name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
+                        elements: window.pdfBuilderData.builtinData.elements || [],
+                        canvas: {
+                            width: window.pdfBuilderData.builtinData.canvasWidth || 794,
+                            height: window.pdfBuilderData.builtinData.canvasHeight || 1123
+                        }
+                    };
+                    console.log('💾 [PDF BUILDER] Données stockées dans variable globale');
                 }
 
                 // Réessayer si on n'a pas dépassé le nombre max de tentatives

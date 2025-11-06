@@ -5276,6 +5276,61 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
+        // Écouter les événements de chargement de templates builtin
+        window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
+            debugLog('📡 Received builtin template load event:', event.detail);
+
+            // Attendre que l'éditeur soit prêt, puis charger le template
+            function loadBuiltinTemplateWhenReady() {
+                if (typeof window.pdfBuilderReact !== 'undefined' &&
+                    window.pdfBuilderReact.loadTemplate &&
+                    window.pdfBuilderReact.getEditorState) {
+
+                    try {
+                        var editorState = window.pdfBuilderReact.getEditorState();
+                        debugLog('📊 Current editor state:', editorState);
+
+                        // Charger le template builtin
+                        var result = window.pdfBuilderReact.loadTemplate(event.detail);
+                        debugLog('✅ Builtin template loaded:', result);
+                        return true;
+                    } catch(e) {
+                        debugError('❌ Error loading builtin template:', e.message);
+                        return false;
+                    }
+                }
+
+                debugLog('⏳ Editor not ready for builtin template, retrying...');
+                return false;
+            }
+
+            // Essayer immédiatement
+            if (!loadBuiltinTemplateWhenReady()) {
+                // Réessayer toutes les 500ms pendant 10 secondes
+                var loadAttempts = 0;
+                var maxLoadAttempts = 20;
+                var loadInterval = setInterval(function() {
+                    loadAttempts++;
+                    if (loadBuiltinTemplateWhenReady()) {
+                        clearInterval(loadInterval);
+                    } else if (loadAttempts >= maxLoadAttempts) {
+                        debugError('❌ Failed to load builtin template after', maxLoadAttempts, 'attempts');
+                        clearInterval(loadInterval);
+                    }
+                }, 500);
+            }
+        });
+
+        // Vérifier aussi les données globales au cas où l'événement n'aurait pas été envoyé
+        setTimeout(function() {
+            if (window.pdfBuilderBuiltinTemplateData) {
+                debugLog('💾 Found global builtin template data, loading...');
+                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                    detail: window.pdfBuilderBuiltinTemplateData
+                }));
+            }
+        }, 1000);
+
         // Fonctions de debug conditionnel - ALWAYS LOG sur localhost
         function isDebugEnabled() {
             return true; // Always log on dev
