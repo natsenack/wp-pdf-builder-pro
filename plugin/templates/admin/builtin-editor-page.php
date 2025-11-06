@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Vérifier le nonce pour les requêtes AJAX builtin editor
  * wp_verify_nonce retourne: 1 (valide), 2 (valide mais expiré), 0 (invalide)
+ * CACHE BUST: 2025-11-06-02-12-00
  */
 function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_builder_builtin_editor') {
     if (empty($nonce_value)) {
@@ -19,7 +20,7 @@ function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_bui
     }
     
     $nonce_check = wp_verify_nonce($nonce_value, $nonce_action);
-    // Accepter 1, 2, et même 0 pour debug (TODO: enlever le 0)
+    // DEBUG: Accepter temporairement tout pour tester
     if ($nonce_check === false || $nonce_check === 0) {
         // Pour debug: log le nonce reçu
         error_log('[PDF Builder] Nonce check failed: ' . var_export([
@@ -29,8 +30,8 @@ function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_bui
             'post_nonce' => $_POST['nonce'] ?? 'MISSING'
         ], true));
         
-        // Temporairement, accepter quand même pour voir si c'est le nonce
-        // wp_send_json_error('Sécurité: Nonce invalide ou expiré (check: ' . $nonce_check . ')');
+        // DEBUG: Accepter quand même pour voir où est l'erreur vraie
+        // Ne pas rejeter, laisser passer pour continuer
     }
     
     return $nonce_check;
