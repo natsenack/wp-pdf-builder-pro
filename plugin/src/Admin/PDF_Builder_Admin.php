@@ -5567,6 +5567,7 @@ class PDF_Builder_Admin {
                     }));
                     debugLog('📡 [ADMIN] Dispatched event from immediate load');
                 }
+            }
         });
 
         // ============================================================================
