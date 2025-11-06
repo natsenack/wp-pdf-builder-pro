@@ -75,6 +75,8 @@
         // Éditer un modèle existant
         $(document).on('click', '.edit-template', function() {
             const slug = $(this).data('slug');
+            console.log('Edit button clicked for template:', slug);
+            console.log('Loading template data...');
             loadTemplate(slug);
         });
 
@@ -156,6 +158,7 @@
      * Charger un modèle pour l'édition
      */
     function loadTemplate(slug) {
+        console.log('loadTemplate called with slug:', slug);
         showLoadingState();
 
         $.ajax({
@@ -167,16 +170,20 @@
                 nonce: pdfBuilderPredefined.nonce
             },
             success: function(response) {
+                console.log('AJAX success response:', response);
                 hideLoadingState();
 
                 if (response.success) {
+                    console.log('Template loaded successfully, populating form...');
                     populateForm(response.data);
                     showTemplateEditor(response.data);
                 } else {
+                    console.error('Template load failed:', response.data.message);
                     showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error, xhr.responseText);
                 hideLoadingState();
                 showErrorMessage(pdfBuilderPredefined.strings.loadError);
             }
