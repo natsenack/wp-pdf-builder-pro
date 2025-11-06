@@ -5598,6 +5598,21 @@ class PDF_Builder_Admin {
 
         // Fallback: Wait for pdfBuilderData to be available, then init
         debugLog('⏱️ [ADMIN] Waiting for pdfBuilderData to become available...');
+        
+        // Check if pdfBuilderData script tag exists in DOM
+        var scriptTags = document.querySelectorAll('script');
+        var foundPdfBuilderScript = false;
+        for (var i = 0; i < scriptTags.length; i++) {
+            if (scriptTags[i].textContent && scriptTags[i].textContent.includes('pdfBuilderData')) {
+                debugLog('✅ [ADMIN] Found pdfBuilderData script tag in DOM');
+                foundPdfBuilderScript = true;
+                break;
+            }
+        }
+        if (!foundPdfBuilderScript) {
+            debugWarn('⚠️ [ADMIN] pdfBuilderData script tag NOT found in DOM - wp_localize_script may have failed');
+        }
+        
         var pdfDataCheckCount = 0;
         var pdfDataWaiter = setInterval(function() {
             pdfDataCheckCount++;
@@ -5607,7 +5622,7 @@ class PDF_Builder_Admin {
                 callInitIfNeeded();
             } else if (pdfDataCheckCount > 200) { // 200 * 50ms = 10 seconds
                 clearInterval(pdfDataWaiter);
-                debugLog('⚠️ [ADMIN] pdfBuilderData not available after 10 seconds, initializing anyway');
+                debugWarn('⚠️ [ADMIN] pdfBuilderData not available after 10 seconds, initializing anyway');
                 callInitIfNeeded();
             }
         }, 50);
