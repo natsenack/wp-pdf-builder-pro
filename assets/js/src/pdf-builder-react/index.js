@@ -15,6 +15,14 @@ import {
   resetAPI
 } from './api/global-api';
 
+// ============================================================================
+// DEBUG: Immediate console logs to verify JS execution
+// ============================================================================
+console.log('🔥🔥🔥 PDF BUILDER JS BUNDLE LOADED - EXECUTING 🔥🔥🔥');
+console.log('📦 Current window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+console.log('⚛️ React available:', typeof React);
+console.log('⚛️ ReactDOM available:', typeof ReactDOM);
+
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -145,30 +153,33 @@ debugLog('🌐 Assigning to window...');
 
 // Wrapper IIFE for immediate execution
 (function() {
+  console.log('🎯 IIFE STARTING - PDF Builder React initialization');
+  console.log('🔍 Before assignment - window.pdfBuilderReact exists:', typeof window.pdfBuilderReact);
+  
   if (typeof window === 'undefined') {
-    debugError('❌ window is not available');
+    console.error('❌ CRITICAL: window is not available');
     return;
   }
 
-  debugLog('🔍 Before assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+  console.log('✅ Window is available, assigning pdfBuilderReact...');
 
   // CRITICAL: Assign the exports object directly and immediately
   window.pdfBuilderReact = exports;
-  debugLog('✅ Direct assignment successful');
-
-  // Verify immediately
-  debugLog('🔍 After assignment - window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-  debugLog('🔍 window.pdfBuilderReact object keys:', Object.keys(window.pdfBuilderReact || {}));
-  debugLog('🔍 window.pdfBuilderReact.initPDFBuilderReact:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
+  console.log('✅ Assignment completed');
+  console.log('🔍 After assignment - window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  console.log('🔍 window.pdfBuilderReact object keys:', Object.keys(window.pdfBuilderReact || {}));
+  console.log('🔍 initPDFBuilderReact available:', typeof (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact));
 
   // Force verify with timing
   if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    debugLog('✅✅ SUCCESS: initPDFBuilderReact is callable!');
+    console.log('✅✅ SUCCESS: initPDFBuilderReact is callable!');
   } else {
-    debugError('❌❌ CRITICAL: initPDFBuilderReact is NOT available!');
-    debugError('window.pdfBuilderReact:', window.pdfBuilderReact);
-    debugError('exports object:', exports);
+    console.error('❌❌ CRITICAL: initPDFBuilderReact is NOT available!');
+    console.error('window.pdfBuilderReact:', window.pdfBuilderReact);
+    console.error('exports object:', exports);
   }
+  
+  console.log('🎉 IIFE COMPLETED - PDF Builder React ready');
 }).call(window);
 
 debugLog('🎉 PDF Builder React bundle execution completed');
