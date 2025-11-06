@@ -5404,6 +5404,7 @@ class PDF_Builder_Admin {
             // Also set as existing template data so the automatic loading works
             $localize_data['existingTemplate'] = $builtin_template_data;
             $localize_data['hasExistingData'] = true;
+            error_log('DEBUG: Builtin template data loaded: ' . json_encode($builtin_template_data));
         }
         
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
@@ -5684,7 +5685,8 @@ class PDF_Builder_Admin {
 
         // Try to load existing data immediately, then retry periodically
         // Skip for builtin templates as they load via existing template logic now
-        if (!(window.pdfBuilderData && window.pdfBuilderData.isBuiltin) && !loadExistingTemplateData()) {
+        var isBuiltin = window.pdfBuilderData && window.pdfBuilderData.isBuiltin;
+        if (!isBuiltin && !loadExistingTemplateData()) {
             var loadDataAttempts = 0;
             var maxLoadDataAttempts = 30; // 15 seconds max
             var loadDataInterval = setInterval(function() {
