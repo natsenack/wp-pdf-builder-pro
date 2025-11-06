@@ -720,12 +720,17 @@ class PDF_Builder_Core
         $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
 
         $template_data = null;
-        if ($builtin_template && $transient_key) {
-            $template_data = get_transient($transient_key);
-            if ($template_data) {
-                // Marquer comme template builtin pour l'interface
-                $template_data['is_builtin'] = true;
-                $template_data['builtin_id'] = $builtin_template;
+        if ($builtin_template) {
+            // Charger directement depuis le fichier JSON (ne pas utiliser transient car session peut changer)
+            $builtin_file = plugin_dir_path(dirname(__FILE__)) . 'templates/builtin/' . $builtin_template . '.json';
+            if (file_exists($builtin_file)) {
+                $json_content = file_get_contents($builtin_file);
+                $template_data = json_decode($json_content, true);
+                if ($template_data) {
+                    // Marquer comme template builtin pour l'interface
+                    $template_data['is_builtin'] = true;
+                    $template_data['builtin_id'] = $builtin_template;
+                }
             }
         }
 
