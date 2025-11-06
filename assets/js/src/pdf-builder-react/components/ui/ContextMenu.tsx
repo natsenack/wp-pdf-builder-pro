@@ -113,9 +113,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         width: '200px',
         height: 'auto',
         backgroundColor: 'white',
-        border: '1px solid black'
+        border: '2px solid red',
+        padding: '10px',
+        zIndex: 999999
       }}
     >
+      <div style={{ color: 'black', fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>
+        🧪 DEBUG MENU - {items.length} items
+      </div>
       {items.map((item) => (
         <div
           key={item.id}
