@@ -394,9 +394,15 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const menuY = event.clientY;
 
     // Pour la détection d'élément, nous utilisons les coordonnées du canvas
+    // Les éléments sont stockés dans l'espace monde (avec pan et zoom)
+    // Pour la détection, utilisons les coordonnées dans l'espace canvas
     const rect = canvas.getBoundingClientRect();
-    const canvasX = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const canvasY = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+    const rawCanvasX = event.clientX - rect.left;
+    const rawCanvasY = event.clientY - rect.top;
+
+    // Transformer en coordonnées monde (inverse des transformations du canvas)
+    const canvasX = (rawCanvasX - state.canvas.pan.x) / state.canvas.zoom;
+    const canvasY = (rawCanvasY - state.canvas.pan.y) / state.canvas.zoom;
 
     console.log('📍 Coordonnées:', { menuX, menuY, canvasX, canvasY });
     console.log('📊 Éléments disponibles:', state.elements.length);
