@@ -129,11 +129,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         zIndex: 999999,
         background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
         border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        minWidth: '180px',
-        maxWidth: '240px',
-        padding: '4px 0',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
+        minWidth: '120px',
+        maxWidth: '160px',
+        padding: '1px 0',
         animation: 'contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
         transformOrigin: 'top left',
         // Ajouter l'animation CSS inline
@@ -149,12 +149,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       {items.map((item) => (
         <div key={item.id}>
           {item.section && (
-            <div className="context-menu-section" style={{padding: '2px 0'}}>
-              <div className="context-menu-section-title" style={{fontSize: '10px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '2px 12px 1px', marginBottom: '1px'}}>{item.section}</div>
+            <div className="context-menu-section" style={{padding: '0px 0'}}>
+              <div className="context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px 6px 0px', marginBottom: '0px'}}>{item.section}</div>
             </div>
           )}
           {item.separator ? (
-            <div className="context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '2px 0', border: 'none'}}></div>
+            <div className="context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '0px 0', border: 'none'}}></div>
           ) : (
             <div
               className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
@@ -162,22 +162,22 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                padding: '6px 12px',
+                padding: '1px 4px',
                 cursor: item.disabled ? 'not-allowed' : 'pointer',
                 userSelect: 'none',
                 transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 position: 'relative',
-                minHeight: '28px',
+                minHeight: '16px',
                 border: 'none',
                 background: 'transparent',
                 color: item.disabled ? '#94a3b8' : '#334155',
-                fontSize: '13px',
+                fontSize: '11px',
                 fontWeight: '500',
               }}
             >
-              {item.icon && <span className="context-menu-item-icon" style={{width: '16px', height: '16px', marginRight: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '14px'}}>{item.icon}</span>}
-              {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '13px', fontWeight: '500', color: '#334155'}}>{item.label}</span>}
-              {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '11px', fontWeight: '500', color: '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '1px 4px', borderRadius: '3px', marginLeft: '8px'}}>{item.shortcut}</span>}
+              {item.icon && <span className="context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '9px'}}>{item.icon}</span>}
+              {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: '#334155'}}>{item.label}</span>}
+              {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
             </div>
           )}
         </div>
