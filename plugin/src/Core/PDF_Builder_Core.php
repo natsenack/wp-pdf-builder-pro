@@ -950,7 +950,7 @@ class PDF_Builder_Core
         }
 
         // Chemin vers le fichier
-        $file_path = plugin_dir_path(__FILE__) . 'plugin/templates/builtin/' . $template_id . '.json';
+        $file_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'templates/builtin/' . $template_id . '.json';
 
         if (!file_exists($file_path)) {
             return null;
