@@ -23,6 +23,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
+  console.log('ContextMenu render - isVisible:', isVisible, 'position:', position, 'items:', items.length);
+
   const menuRef = useRef(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
@@ -89,13 +91,20 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   }, [isVisible]);
 
   if (!isVisible) {
+    console.log('ContextMenu not rendering - isVisible is false');
     return null;
   }
 
+  console.log('ContextMenu rendering at position:', adjustedPosition);
+
   const handleItemClick = (item: ContextMenuItem) => {
+    console.log('Context menu item clicked:', item.id, 'disabled:', item.disabled, 'separator:', item.separator, 'has action:', !!item.action);
     if (!item.disabled && !item.separator && item.action) {
+      console.log('Executing action for item:', item.id);
       item.action();
       onClose();
+    } else {
+      console.log('Action not executed');
     }
   };
 
