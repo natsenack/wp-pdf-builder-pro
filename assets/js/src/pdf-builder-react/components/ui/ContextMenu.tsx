@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import './ContextMenu.css';
 
 export interface ContextMenuItem {
@@ -58,8 +59,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   useEffect(() => {
     if (!isVisible) return;
 
-    const handleClickOutside = (event: Event) => {
+    const handleClickOutside = (event: any) => {
+      // Vérifier que l'événement n'est pas un clic droit (contextmenu)
+      if (event.button === 2) return;
+
       if (menuRef.current && !(menuRef.current as any).contains(event.target)) {
+        console.log('Click outside detected, closing menu');
         onClose();
       }
     };
@@ -67,14 +72,19 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     const handleEscape = (event: Event) => {
       // @ts-expect-error Keyboard event key property
       if (event.key === 'Escape') {
+        console.log('Escape key pressed, closing menu');
         onClose();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    // Délai pour éviter que le clic droit qui ouvre le menu ne le ferme immédiatement
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+    }, 100);
 
     return () => {
+      clearTimeout(timer);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
@@ -108,7 +118,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  return (
+  if (!isVisible) {
+    console.log('ContextMenu not rendering - isVisible is false');
+    return null;
+  }
+
+  console.log('ContextMenu rendering at position:', adjustedPosition);
+
+  const menuElement = (
     <div
       ref={menuRef}
       className="context-menu"
@@ -138,4 +155,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ))}
     </div>
   );
+
+  // Utiliser un Portal pour rendre le menu au niveau du document body
+  return createPortal(menuElement, document.body);
 };
