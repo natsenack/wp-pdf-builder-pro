@@ -764,6 +764,69 @@ class PDF_Builder_Core
                 console.log('📊 [PDF BUILDER] Template data elements:', window.pdfBuilderData.templateData.elements);
             }
 
+            // INTERCEPTEUR BUILTIN - Forcer le template_id pour les templates builtin
+            // 2025-11-06-04-00-00
+            (function() {
+                if (!window.pdfBuilderData.isBuiltin) {
+                    console.log('📝 [BUILTIN INTERCEPTOR] Ce n\'est pas un template builtin, intercepteur désactivé');
+                    return;
+                }
+
+                console.log('🔐 [BUILTIN INTERCEPTOR] Template builtin détecté:', window.pdfBuilderData.builtinTemplate);
+
+                // Intercepter fetch()
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    let url = args[0];
+                    let options = args[1] || {};
+
+                    // Déterminer l'URL complète
+                    if (typeof url === 'string') {
+                        // Vérifier si c'est un appel à admin-ajax.php
+                        if (url.includes('admin-ajax.php') || url.includes('/wp-admin/admin-ajax.php')) {
+                            // Vérifier si c'est un auto-save
+                            const body = options.body;
+                            if (typeof body === 'string' && body.includes('action=pdf_builder_auto_save_template')) {
+                                console.log('🎯 [BUILTIN INTERCEPTOR] Auto-save détecté, interception en cours');
+                                
+                                // Modifier le body pour forcer le template_id au builtin
+                                const params = new URLSearchParams(body);
+                                const oldTemplateId = params.get('template_id');
+                                params.set('template_id', window.pdfBuilderData.builtinTemplate);
+                                
+                                console.log('🔄 [BUILTIN INTERCEPTOR] Changement template_id:', oldTemplateId, '=>', window.pdfBuilderData.builtinTemplate);
+                                
+                                options.body = params.toString();
+                                args[1] = options;
+                            }
+                        }
+                    }
+
+                    return originalFetch.apply(this, args);
+                };
+
+                console.log('✅ [BUILTIN INTERCEPTOR] Intercepteur fetch installé');
+
+                // Aussi intercepter jQuery si disponible
+                if (window.jQuery && window.jQuery.ajax) {
+                    const originalAjax = window.jQuery.ajax;
+                    window.jQuery.ajax = function(options) {
+                        if (options.data && options.data.action === 'pdf_builder_auto_save_template') {
+                            console.log('🎯 [BUILTIN INTERCEPTOR] jQuery AJAX auto-save détecté');
+                            
+                            // Modifier data pour forcer le template_id
+                            if (typeof options.data === 'object') {
+                                const oldTemplateId = options.data.template_id;
+                                options.data.template_id = window.pdfBuilderData.builtinTemplate;
+                                console.log('🔄 [BUILTIN INTERCEPTOR] jQuery - Changement template_id:', oldTemplateId, '=>', window.pdfBuilderData.builtinTemplate);
+                            }
+                        }
+                        return originalAjax.call(this, options);
+                    };
+                    console.log('✅ [BUILTIN INTERCEPTOR] Intercepteur jQuery AJAX installé');
+                }
+            })();
+
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
             <?php if ($template_data && $builtin_template): ?>
             console.log('🏗️ [PDF BUILDER] Préparation injection builtin - Template:', <?php echo json_encode($builtin_template); ?>, 'Data:', <?php echo json_encode(count($template_data['elements'] ?? [])); ?>);
