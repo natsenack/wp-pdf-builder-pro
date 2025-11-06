@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="494" viewBox="0 0 350 494" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="15.69" width="330" height="466.62" fill="#f0f0f0" rx="4"/>
+  <rect x="10" y="13.69" width="330" height="466.62" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="4"/>
+  <defs>
+    <clipPath id="pageClip">
+      <rect x="10" y="13.69" width="330" height="466.62"/>
+    </clipPath>
+  </defs>
+  <g id="page-content" transform="translate(10,13.69)" clip-path="url(#pageClip)">
+    <g id="header">
+    </g>
+    <g id="company-info">
+    </g>
+    <g id="customer-info">
+    <text x="166.24685138539" y="56.874055415617" font-family="Arial" font-size="7" fill="#000000" font-weight="bold">CLIENT:</text>
+    <text x="166.24685138539" y="65.874055415617" font-family="Arial" font-size="7" fill="#000000" font-weight="normal">Sample Text</text>
+    </g>
+    <g id="order-info">
+    <text x="20.780856423174" y="29.758186397985" font-family="Arial" font-size="8.9773299748111" fill="#007cba" text-anchor="start" font-weight="bold">FACTURE</text>
+    <text x="228.58942065491" y="28.780856423174" font-family="Arial" font-size="8" fill="#000000" text-anchor="end"></text>
+    <line x1="20.780856423174" y1="41.561712846348" x2="309.21914357683" y2="42.392947103275" stroke="#007cba" stroke-width="1"/>
+    <text x="20.780856423174" y="56.874055415617" font-family="Arial" font-size="7" fill="#000000">Entreprise XYZ</text>
+    <text x="20.780856423174" y="65.874055415617" font-family="Arial" font-size="7" fill="#000000">123 Rue de la Paix</text>
+    </g>
+    <g id="products-table">
+    <rect x="20.780856423174" y="83.123425692695" width="288.43828715365" height="12" fill="#28a745" stroke="#dee2e6" stroke-width="0.5"/>
+    <text x="23.780856423174" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Produit</text>
+    <text x="179.42191435768" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Qté</text>
+    <text x="237.10957178841" y="89.523425692695" font-family="Arial" font-size="8" fill="#ffffff" font-weight="bold">Prix</text>
+    <rect x="20.780856423174" y="95.123425692695" width="288.43828715365" height="12" fill="#f9f9f9" stroke="#dee2e6" stroke-width="0.5"/>
+    <text x="23.780856423174" y="101.5234256927" font-family="Arial" font-size="8" fill="#000000">Produit Sample 1</text>
+    <text x="179.42191435768" y="101.5234256927" font-family="Arial" font-size="8" fill="#000000">2</text>
+    <text x="237.10957178841" y="101.5234256927" font-family="Arial" font-size="8" fill="#000000">€50.00</text>
+    <rect x="20.780856423174" y="107.1234256927" width="288.43828715365" height="12" fill="#ffffff" stroke="#dee2e6" stroke-width="0.5"/>
+    <text x="23.780856423174" y="113.5234256927" font-family="Arial" font-size="8" fill="#000000">Produit Sample 2</text>
+    <text x="179.42191435768" y="113.5234256927" font-family="Arial" font-size="8" fill="#000000">1</text>
+    <text x="237.10957178841" y="113.5234256927" font-family="Arial" font-size="8" fill="#000000">€75.50</text>
+    </g>
+    <g id="order-totals">
+    <text x="228.58942065491" y="182.55919395466" font-family="Arial" font-size="8" fill="#000000" text-anchor="end"></text>
+    </g>
+    <g id="footer">
+    </g>
+  </g>
+</svg>

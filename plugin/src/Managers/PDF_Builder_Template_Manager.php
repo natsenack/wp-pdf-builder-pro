@@ -743,24 +743,27 @@ class PDF_Builder_Template_Manager
                 wp_mkdir_p($cache_dir);
             }
 
-            // Charger les données du template
-            $template_data = json_decode(file_get_contents($template_file), true);
-            if (!$template_data || !isset($template_data['elements'])) {
-                return false;
-            }
+            // Utiliser le script generate-svg-preview.php existant
+            $script_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'generate-svg-preview.php';
+            $command = "php \"$script_path\" \"$template_id\" 2>&1";
 
-            // Utiliser le générateur de preview existant
-            $generator = new PDF_Builder_Preview_Generator();
-            $preview_url = $generator->generate_preview($template_data, 'png');
+            // Exécuter le script
+            $output = shell_exec($command);
 
-            if ($preview_url) {
-                // Copier le fichier généré vers le cache avec le bon nom
-                $preview_file = $cache_dir . $template_id . '.png';
-                if (file_exists($preview_url)) {
-                    copy($preview_url, $preview_file);
+            if ($output && strpos($output, '✅ Aperçu SVG généré') !== false) {
+                // Le script a réussi, chercher le fichier SVG généré
+                $svg_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/images/templates/' . $template_id . '-preview.svg';
+
+                if (file_exists($svg_file)) {
+                    // Copier vers le cache avec le nom PNG attendu
+                    $png_file = $cache_dir . $template_id . '.png';
+                    copy($svg_file, $png_file);
+
                     return plugin_dir_url(dirname(dirname(__FILE__))) . 'cache/' . $template_id . '.png';
                 }
             }
+
+            error_log('Erreur génération preview SVG pour ' . $template_id . ': ' . $output);
 
         } catch (Exception $e) {
             error_log('Erreur génération preview template ' . $template_id . ': ' . $e->getMessage());
