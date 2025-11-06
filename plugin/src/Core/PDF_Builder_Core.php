@@ -770,6 +770,12 @@ class PDF_Builder_Core
 
             }
 
+            // Pour les templates builtin, définir hasExistingData pour que le chargement automatique fonctionne
+            if (window.pdfBuilderData.isBuiltin && window.pdfBuilderData.templateData) {
+                window.pdfBuilderData.hasExistingData = true;
+                window.pdfBuilderData.existingTemplate = window.pdfBuilderData.templateData;
+            }
+
             // ============================================
             // INTERCEPTEUR BUILTIN - Force reload 2025-11-06 02:45:00
             // ============================================
