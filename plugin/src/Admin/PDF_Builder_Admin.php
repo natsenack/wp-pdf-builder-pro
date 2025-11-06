@@ -5313,18 +5313,26 @@ class PDF_Builder_Admin {
         
         if ($builtin_template_id && $transient_key) {
             // Load builtin template from transient (set by builtin-editor-page.php)
+            error_log('[PHP] Looking for transient: ' . $transient_key);
             $transient_data = get_transient($transient_key);
             if ($transient_data) {
                 $builtin_template_data = $transient_data;
+                error_log('[PHP] Transient found, data loaded for: ' . $builtin_template_id);
                 // Clean up the transient after use
                 delete_transient($transient_key);
+            } else {
+                error_log('[PHP] Transient NOT found: ' . $transient_key);
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
+            error_log('[PHP] Loading builtin template from file: ' . $builtin_template_id);
             $builtin_file = plugin_dir_path(__FILE__) . '../../templates/builtin/' . $builtin_template_id . '.json';
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
                 $builtin_template_data = json_decode($json_content, true);
+                error_log('[PHP] Loaded from file, elements: ' . count($builtin_template_data['elements'] ?? []));
+            } else {
+                error_log('[PHP] File not found: ' . $builtin_file);
             }
         }
 
@@ -5344,6 +5352,9 @@ class PDF_Builder_Admin {
             $localize_data['builtinTemplate'] = $builtin_template_data;
             $localize_data['isBuiltin'] = true;
             $localize_data['templateId'] = $builtin_template_id;
+            error_log('[PHP] Builtin template data loaded for: ' . $builtin_template_id . ', elements count: ' . count($builtin_template_data['elements']));
+        } else {
+            error_log('[PHP] No builtin template data found for: ' . ($builtin_template_id ?: 'none'));
         }
         
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
