@@ -2,9 +2,6 @@
  * PDF Builder Pro - Predefined Templates Manager JavaScript
  */
 
-// Debug: log that the script is loaded
-console.log('PDF Builder Predefined Templates JS file loaded');
-
 (function($) {
     'use strict';
 
@@ -12,10 +9,6 @@ console.log('PDF Builder Predefined Templates JS file loaded');
     let currentEditingSlug = null;
 
     $(document).ready(function() {
-        // Simple check if jQuery is working
-        if (typeof $ !== 'undefined') {
-            console.log('jQuery loaded, initializing PDF Builder templates...');
-        }
         initializeInterface();
         setupEventListeners();
     });
@@ -24,22 +17,6 @@ console.log('PDF Builder Predefined Templates JS file loaded');
      * Initialiser l'interface
      */
     function initializeInterface() {
-        // Check if elements exist
-        if (document.getElementById('new-template-btn')) {
-            console.log('New template button found');
-        } else {
-            console.log('New template button NOT found');
-        }
-
-        // Check for edit/delete buttons
-        const editButtons = document.querySelectorAll('.edit-template');
-        const deleteButtons = document.querySelectorAll('.delete-template');
-        const previewButtons = document.querySelectorAll('.generate-preview');
-
-        console.log('Edit buttons found:', editButtons.length);
-        console.log('Delete buttons found:', deleteButtons.length);
-        console.log('Preview buttons found:', previewButtons.length);
-
         // Initialiser CodeMirror pour l'éditeur JSON
         initializeCodeMirror();
 
@@ -74,63 +51,52 @@ console.log('PDF Builder Predefined Templates JS file loaded');
      * Configurer les écouteurs d'événements
      */
     function setupEventListeners() {
-        console.log('Setting up event listeners...');
-
         // Nouveau modèle
         $('#new-template-btn').on('click', function() {
-            console.log('New template button clicked');
             showTemplateEditor();
         });
 
         // Annuler l'édition
         $('#cancel-edit-btn').on('click', function() {
-            console.log('Cancel button clicked');
             hideTemplateEditor();
         });
 
         // Sauvegarder le modèle
         $('#template-form').on('submit', function(e) {
-            console.log('Form submitted');
             e.preventDefault();
             saveTemplate();
         });
 
         // Valider le JSON
         $('#validate-json-btn').on('click', function() {
-            console.log('Validate JSON button clicked');
             validateJson();
         });
 
         // Éditer un modèle existant
         $(document).on('click', '.edit-template', function() {
             const slug = $(this).data('slug');
-            console.log('Edit template clicked for:', slug);
             loadTemplate(slug);
         });
 
         // Supprimer un modèle
         $(document).on('click', '.delete-template', function() {
             const slug = $(this).data('slug');
-            console.log('Delete template clicked for:', slug);
             deleteTemplate(slug);
         });
 
         // Générer un aperçu
         $(document).on('click', '.generate-preview', function() {
             const slug = $(this).data('slug');
-            console.log('Generate preview clicked for:', slug);
             generatePreview(slug);
         });
 
         // Actualiser la liste
         $('#refresh-templates-btn').on('click', function() {
-            console.log('Refresh templates clicked');
             refreshTemplatesList();
         });
 
         // Fermer la modale d'aperçu
         $(document).on('click', '.close-modal', function() {
-            console.log('Close modal clicked');
             $('#preview-modal').hide();
         });
 
