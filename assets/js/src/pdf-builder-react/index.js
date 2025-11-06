@@ -1,3 +1,7 @@
+// ============================================================================
+// PDF Builder React Bundle - Entry Point
+// ============================================================================
+
 // Import des composants React
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -14,12 +18,6 @@ import {
   saveTemplate,
   resetAPI
 } from './api/global-api';
-
-// ============================================================================
-// DEBUG: Immediate console logs to verify JS execution
-// ============================================================================
-console.log('🔥 PDF Builder JS loaded successfully');
-console.log('📦 window.pdfBuilderReact available:', typeof window.pdfBuilderReact);
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
@@ -161,7 +159,7 @@ debugLog('🌐 Assigning to window...');
   
   // Verify immediately
   if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    console.log('✅ PDF Builder React ready - initPDFBuilderReact available');
+    // Silent success - editor is ready
   } else {
     console.error('❌ PDF Builder React init failed');
   }
