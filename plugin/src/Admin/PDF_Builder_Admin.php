@@ -218,6 +218,9 @@ class PDF_Builder_Admin {
      */
     private function initHooks()
     {
+        // Inclure les fichiers de pages admin nécessaires pour les actions AJAX
+        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/builtin-editor-page.php';
+
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
 
@@ -358,9 +361,6 @@ class PDF_Builder_Admin {
      */
     public function addAdminMenu()
     {
-        // Inclure les fichiers de pages admin
-        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/builtin-editor-page.php';
-
         // Menu principal avec icône distinctive
         add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 30);
 // Page d'accueil (sous-menu principal masqué)
