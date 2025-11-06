@@ -763,6 +763,42 @@ class PDF_Builder_Core
             if (window.pdfBuilderData.templateData) {
                 console.log('📊 [PDF BUILDER] Template data elements:', window.pdfBuilderData.templateData.elements);
             }
+
+            // Pour les templates builtin, injecter les données directement dans l'éditeur React
+            <?php if ($template_data && $builtin_template): ?>
+            window.pdfBuilderBuiltinData = <?php echo json_encode($template_data); ?>;
+            console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderBuiltinData);
+
+            // Injecter les données dans l'éditeur React après son chargement
+            setTimeout(function() {
+                if (window.pdfBuilderEditor && window.pdfBuilderBuiltinData) {
+                    console.log('🚀 [PDF BUILDER] Injection des données builtin dans l\'éditeur...');
+                    try {
+                        // Simuler le dispatch LOAD_TEMPLATE avec les données builtin
+                        if (window.pdfBuilderEditor.dispatch) {
+                            window.pdfBuilderEditor.dispatch({
+                                type: 'LOAD_TEMPLATE',
+                                payload: {
+                                    id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
+                                    name: window.pdfBuilderBuiltinData.name || 'Template Builtin',
+                                    elements: window.pdfBuilderBuiltinData.elements || [],
+                                    canvas: {
+                                        width: window.pdfBuilderBuiltinData.canvasWidth || 794,
+                                        height: window.pdfBuilderBuiltinData.canvasHeight || 1123
+                                    }
+                                }
+                            });
+                            console.log('✅ [PDF BUILDER] Données builtin injectées avec succès');
+                        }
+                    } catch (error) {
+                        console.error('❌ [PDF BUILDER] Erreur lors de l\'injection des données builtin:', error);
+                    }
+                } else {
+                    console.log('⏳ [PDF BUILDER] Éditeur React pas encore prêt, retry dans 1s...');
+                    setTimeout(arguments.callee, 1000);
+                }
+            }, 1000);
+            <?php endif; ?>
         </script>
         <?php
     }
