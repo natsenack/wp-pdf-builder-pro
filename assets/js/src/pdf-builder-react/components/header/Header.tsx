@@ -79,6 +79,8 @@ export const Header = memo(function Header({
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [newTag, setNewTag] = useState('');
+  const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
+  const [predefinedTemplates, setPredefinedTemplates] = useState<any[]>([]);
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
   const {
@@ -152,6 +154,21 @@ export const Header = memo(function Header({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
+
+  // Effet pour fermer le dropdown des modèles prédéfinis quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      const target = event.target as any;
+      if (showPredefinedTemplates && !target.closest('[data-predefined-dropdown]')) {
+        setShowPredefinedTemplates(false);
+      }
+    };
+
+    if (showPredefinedTemplates) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showPredefinedTemplates]);
 
   const buttonBaseStyles = {
     padding: '10px 16px',
@@ -296,6 +313,148 @@ export const Header = memo(function Header({
           <span>➕</span>
           <span>Nouveau</span>
         </button>
+
+        <div style={{ position: 'relative' }} data-predefined-dropdown>
+          <button
+            onClick={() => setShowPredefinedTemplates(!showPredefinedTemplates)}
+            onMouseEnter={() => setHoveredButton('predefined')}
+            onMouseLeave={() => setHoveredButton(null)}
+            style={{
+              ...secondaryButtonStyles,
+              opacity: isSaving ? 0.6 : 1,
+              pointerEvents: isSaving ? 'none' : 'auto'
+            }}
+            title="Modèles prédéfinis"
+          >
+            <span>🎨</span>
+            <span>Modèles Prédéfinis</span>
+            <span style={{ marginLeft: '4px', fontSize: '12px' }}>▼</span>
+          </button>
+
+          {showPredefinedTemplates && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              background: 'white',
+              border: '1px solid #e0e0e0',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              zIndex: 1001,
+              minWidth: '280px',
+              maxHeight: '400px',
+              overflowY: 'auto'
+            }}>
+              <div style={{
+                padding: '12px 16px',
+                borderBottom: '1px solid #e0e0e0',
+                background: '#f8f9fa',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#23282d'
+              }}>
+                🎨 Modèles Prédéfinis
+              </div>
+
+              {/* Liste des modèles prédéfinis */}
+              <div style={{ padding: '8px 0' }}>
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #f0f0f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}
+                  onClick={() => {
+                    // Ouvrir la page des templates prédéfinis
+                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    setShowPredefinedTemplates(false);
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span style={{ fontSize: '20px' }}>🧾</span>
+                  <div>
+                    <div style={{ fontWeight: '500', color: '#23282d' }}>Facture Professionnelle</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour factures</div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #f0f0f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}
+                  onClick={() => {
+                    // Ouvrir la page des templates prédéfinis
+                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    setShowPredefinedTemplates(false);
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span style={{ fontSize: '20px' }}>📋</span>
+                  <div>
+                    <div style={{ fontWeight: '500', color: '#23282d' }}>Devis Commercial</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour devis</div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #f0f0f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}
+                  onClick={() => {
+                    // Ouvrir la page des templates prédéfinis
+                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    setShowPredefinedTemplates(false);
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span style={{ fontSize: '20px' }}>📦</span>
+                  <div>
+                    <div style={{ fontWeight: '500', color: '#23282d' }}>Bon de Commande</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour commandes</div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    color: '#007cba',
+                    fontWeight: '500'
+                  }}
+                  onClick={() => {
+                    // Ouvrir la page des templates prédéfinis
+                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    setShowPredefinedTemplates(false);
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span style={{ fontSize: '16px' }}>📚</span>
+                  <span>Voir tous les modèles...</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         <button
           onClick={() => {

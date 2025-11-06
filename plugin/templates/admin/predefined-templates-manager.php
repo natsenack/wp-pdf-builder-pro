@@ -49,7 +49,7 @@ class PDF_Builder_Predefined_Templates_Manager {
      * Enqueue scripts et styles pour la page admin
      */
     public function enqueue_admin_scripts($hook) {
-        if ($hook !== 'pdf-builder-templates_page_pdf-builder-predefined-templates') {
+        if ($hook !== 'pdf-builder-pro_page_pdf-builder-predefined-templates') {
             return;
         }
 
@@ -102,6 +102,138 @@ class PDF_Builder_Predefined_Templates_Manager {
 
         $templates = $this->get_predefined_templates();
         ?>
+        <style>
+        /* Styles de base inline pour la page des modèles prédéfinis */
+        .pdf-builder-predefined-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .templates-list-section, .template-editor-section {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .templates-list-section { max-width: 400px; }
+        .template-editor-section { max-width: 600px; }
+        .templates-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+        .templates-list { max-height: 600px; overflow-y: auto; }
+        .template-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+        .template-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .template-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .template-header h3 { margin: 0; font-size: 16px; color: #23282d; }
+        .template-actions { display: flex; gap: 5px; }
+        .template-meta { margin-bottom: 10px; }
+        .category {
+            display: inline-block;
+            background: #007cba;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .description { display: block; color: #666; font-size: 13px; line-height: 1.4; }
+        .template-preview { text-align: center; margin-top: 10px; }
+        .template-preview img { max-width: 100%; height: auto; border-radius: 4px; }
+        .no-preview {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            color: #666;
+            font-style: italic;
+        }
+        .form-row { margin-bottom: 20px; }
+        .form-row label { display: block; font-weight: bold; margin-bottom: 5px; color: #23282d; }
+        .form-row input, .form-row select, .form-row textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .json-editor-container {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .json-editor-container textarea {
+            border: none;
+            border-radius: 0;
+            margin: 0;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            resize: none;
+            width: 100%;
+            min-height: 300px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .no-templates {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+        .pdf-builder-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .modal-header h3 { margin: 0; }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .modal-body { padding: 20px; }
+        </style>
         <div class="wrap">
             <h1><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
 
