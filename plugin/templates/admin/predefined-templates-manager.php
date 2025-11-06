@@ -16,7 +16,7 @@ class PDF_Builder_Predefined_Templates_Manager {
     private $templates_dir;
 
     public function __construct() {
-        $this->templates_dir = plugin_dir_path(__FILE__) . 'predefined/';
+        $this->templates_dir = plugin_dir_path(dirname(__FILE__)) . 'predefined/';
 
         // Créer le dossier s'il n'existe pas
         if (!file_exists($this->templates_dir)) {
