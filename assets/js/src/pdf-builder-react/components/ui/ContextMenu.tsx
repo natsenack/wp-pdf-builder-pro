@@ -101,17 +101,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   useEffect(() => {
     if (isVisible && menuRef.current) {
       const element = menuRef.current as HTMLElement;
-      console.log('ContextMenu: Menu element added to DOM', element);
-      const rect = element.getBoundingClientRect();
-      console.log('ContextMenu: Menu position:', rect);
-      console.log('ContextMenu: Window dimensions:', { width: window.innerWidth, height: window.innerHeight });
-      console.log('ContextMenu: Menu computed style position:', window.getComputedStyle(element).position);
-      console.log('ContextMenu: Menu computed style left:', window.getComputedStyle(element).left);
-      console.log('ContextMenu: Menu computed style top:', window.getComputedStyle(element).top);
-      console.log('ContextMenu: Menu computed style z-index:', window.getComputedStyle(element).zIndex);
-      console.log('ContextMenu: Menu computed style display:', window.getComputedStyle(element).display);
-      console.log('ContextMenu: Menu computed style visibility:', window.getComputedStyle(element).visibility);
-      console.log('ContextMenu: Menu computed style opacity:', window.getComputedStyle(element).opacity);
+      console.log('ContextMenu: Menu rendered successfully at position:', element.getBoundingClientRect());
     }
   }, [isVisible]);
 
@@ -135,18 +125,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       className="context-menu"
       style={{
         position: 'fixed',
-        left: `100px`, // DEBUG: Fixed position to test visibility
-        top: `100px`,  // DEBUG: Fixed position to test visibility
+        left: `${adjustedPosition.x}px`,
+        top: `${adjustedPosition.y}px`,
         opacity: 1,
         visibility: 'visible',
         pointerEvents: 'auto',
         zIndex: 999999,
-        transform: 'translate(0, 0)', // DEBUG: Force no transform
       }}
     >
-      <div style={{padding: '10px', background: '#ff0000', color: '#ffffff', fontSize: '16px', fontWeight: 'bold'}}>
-        🚨 DEBUG: Menu is rendering! 🚨
-      </div>
       {items.map((item) => (
         <div key={item.id}>
           {item.section && (
