@@ -1463,6 +1463,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonctions pour gérer le menu contextuel
   const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
+    console.log('🎛️ showContextMenu appelée avec:', { x, y, elementId });
     setContextMenu({
       isVisible: true,
       position: { x, y },
@@ -1642,8 +1643,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+    console.log('🎯 Clic droit détecté sur canvas');
     event.preventDefault();
     handleContextMenu(event, (x, y, elementId) => {
+      console.log('📋 Affichage menu contextuel:', { x, y, elementId });
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);

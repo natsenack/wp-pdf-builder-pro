@@ -379,10 +379,14 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   // Gestionnaire de clic droit pour afficher le menu contextuel
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {
+    console.log('🎯 handleContextMenu appelée');
     event.preventDefault(); // Empêcher le menu contextuel par défaut du navigateur
 
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.log('❌ Canvas non trouvé');
+      return;
+    }
 
     // Pour le menu contextuel, nous utilisons les coordonnées absolues de la souris
     // (pas les coordonnées transformées du canvas)
@@ -394,6 +398,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const canvasX = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
     const canvasY = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
 
+    console.log('📍 Coordonnées:', { menuX, menuY, canvasX, canvasY });
+    console.log('📊 Éléments disponibles:', state.elements.length);
+
     // Trouver l'élément cliqué
     // TODO: Améliorer la détection pour les éléments tournés
     const clickedElement = state.elements.find(el => {
@@ -401,14 +408,19 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       // Cela fonctionne pour les éléments non tournés et donne une approximation pour les tournés
       const isInside = canvasX >= el.x && canvasX <= el.x + el.width &&
                       canvasY >= el.y && canvasY <= el.y + el.height;
+      if (isInside) {
+        console.log('✅ Élément trouvé:', el.id);
+      }
       return isInside;
     });
 
     if (clickedElement) {
       // Ouvrir le menu contextuel pour l'élément
+      console.log('🎛️ Menu pour élément:', clickedElement.id);
       onContextMenu(menuX, menuY, clickedElement.id);
     } else {
       // Ouvrir le menu contextuel général du canvas
+      console.log('🎛️ Menu général du canvas');
       onContextMenu(menuX, menuY);
     }
   }, [state, canvasRef]);
