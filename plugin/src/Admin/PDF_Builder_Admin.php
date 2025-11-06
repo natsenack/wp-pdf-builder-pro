@@ -5309,20 +5309,31 @@ class PDF_Builder_Admin {
         $builtin_template_id = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
         $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        $builtin_template_data = null;        if ($builtin_template_id && $transient_key) {
+        $builtin_template_data = null;
+
+        error_log('DEBUG: builtin_template_id=' . $builtin_template_id . ', transient_key=' . $transient_key);
+
+        if ($builtin_template_id && $transient_key) {
             // Load builtin template from transient (set by builtin-editor-page.php)
             $transient_data = get_transient($transient_key);
             if ($transient_data) {
                 $builtin_template_data = $transient_data;
                 // Clean up the transient after use
                 delete_transient($transient_key);
+                error_log('DEBUG: Loaded from transient');
+            } else {
+                error_log('DEBUG: Transient not found or empty');
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
             $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
+            error_log('DEBUG: Loading from file: ' . $builtin_file);
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
                 $builtin_template_data = json_decode($json_content, true);
+                error_log('DEBUG: File loaded, builtin_template_data is ' . (is_array($builtin_template_data) ? 'array' : 'not array'));
+            } else {
+                error_log('DEBUG: File does not exist: ' . $builtin_file);
             }
         }
 
