@@ -552,15 +552,21 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Slug du modèle manquant');
             }
 
+            error_log('PDF Builder: Loading template with slug: ' . $slug);
+            error_log('PDF Builder: Templates dir: ' . $this->templates_dir);
+
             $template = $this->load_template_from_file($slug);
 
             if (!$template) {
+                error_log('PDF Builder: Template not found for slug: ' . $slug);
                 wp_send_json_error('Modèle non trouvé');
             }
 
+            error_log('PDF Builder: Template loaded successfully: ' . $slug);
             wp_send_json_success($template);
 
         } catch (Exception $e) {
+            error_log('PDF Builder: Error loading template: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
