@@ -49,9 +49,15 @@ class PDF_Builder_Predefined_Templates_Manager {
      * Enqueue scripts et styles pour la page admin
      */
     public function enqueue_admin_scripts($hook) {
+        // Debug: log the hook
+        error_log('PDF Builder Templates - Hook received: ' . $hook);
+
         if ($hook !== 'pdf-builder-pro_page_pdf-builder-predefined-templates') {
+            error_log('PDF Builder Templates - Hook mismatch, not loading scripts');
             return;
         }
+
+        error_log('PDF Builder Templates - Loading scripts for hook: ' . $hook);
 
         // CodeMirror pour l'éditeur JSON
         wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);

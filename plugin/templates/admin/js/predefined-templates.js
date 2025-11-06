@@ -2,6 +2,9 @@
  * PDF Builder Pro - Predefined Templates Manager JavaScript
  */
 
+// Debug: log that the script is loaded
+console.log('PDF Builder Predefined Templates JS file loaded');
+
 (function($) {
     'use strict';
 
