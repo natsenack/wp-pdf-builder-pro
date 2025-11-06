@@ -1,102 +1,6 @@
 import React, { useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 
-// Import du service de personnalisation pour les calculs de position
-// Note: Cette import pourrait nécessiter un ajustement selon l'architecture
-const getCustomizationService = () => {
-  // Pour l'instant, on simule le calcul de position dynamique
-  return {
-    getDefaultProperties: (type: string, existingElements: unknown[] = []) => {
-      // Positions de base stratégiques
-      const basePositions: { [key: string]: { x: number, y: number } } = {
-        'product_table': { x: 50, y: 50 },
-        'customer_info': { x: 50, y: 220 },
-        'company_info': { x: 50, y: 340 },
-        'document_type': { x: 50, y: 430 },
-        'mentions': { x: 50, y: 480 },
-        'dynamic-text': { x: 50, y: 550 },
-        'company_logo': { x: 350, y: 50 },
-        'order_number': { x: 350, y: 130 },
-        'woocommerce-order-date': { x: 350, y: 160 },
-        'woocommerce-invoice-number': { x: 350, y: 190 },
-        'text': { x: 50, y: 600 },
-        'text-title': { x: 50, y: 10 },
-        'text-subtitle': { x: 50, y: 60 },
-        'rectangle': { x: 50, y: 700 },
-        'circle': { x: 150, y: 700 },
-        'arrow': { x: 250, y: 700 },
-        'image': { x: 400, y: 500 }
-      };
-
-      const basePosition = basePositions[type] || { x: 50, y: 50 };
-
-      // Si pas d'éléments existants, retourner la position de base
-      if (existingElements.length === 0) {
-        return {
-          x: basePosition.x,
-          y: basePosition.y,
-          width: 100,
-          height: 50,
-          // ... autres propriétés par défaut
-        };
-      }
-
-      // Calcul dynamique similaire à pdf-canvas-customization.js
-      const isLeftColumn = ['product_table', 'customer_info', 'company_info', 'document_type', 'mentions', 'dynamic-text', 'text', 'text-title', 'text-subtitle', 'rectangle'].includes(type);
-      const isRightColumn = ['company_logo', 'order_number', 'woocommerce-order-date', 'woocommerce-invoice-number'].includes(type);
-
-      let columnX = 0, columnWidth = 600;
-      if (isLeftColumn) {
-        columnX = 0;
-        columnWidth = 300;
-      } else if (isRightColumn) {
-        columnX = 300;
-        columnWidth = 300;
-      }
-
-      // Trouver l'espace disponible
-      const columnElements = existingElements
-        .filter(el => {
-          const element = el as { x?: number; y?: number; width?: number; height?: number };
-          const elX = element.x || 0;
-          const elWidth = element.width || 100;
-          return elX < columnX + columnWidth && elX + elWidth > columnX;
-        })
-        .sort((a, b) => {
-          const elemA = a as { y?: number };
-          const elemB = b as { y?: number };
-          return (elemA.y || 0) - (elemB.y || 0);
-        });
-
-      let currentY = 10;
-      const elementHeight = 50; // Hauteur par défaut
-      const spacing = 20;
-
-      for (const element of columnElements) {
-        const elem = element as { y?: number; height?: number };
-        const elementBottom = (elem.y || 0) + (elem.height || 50) + spacing;
-        if (currentY + elementHeight <= (elem.y || 0)) {
-          break;
-        }
-        currentY = Math.max(currentY, elementBottom);
-      }
-
-      const maxY = 800;
-      if (currentY + elementHeight > maxY) {
-        currentY = maxY - elementHeight - 10;
-      }
-
-      return {
-        x: basePosition.x,
-        y: Math.max(10, currentY),
-        width: 100,
-        height: 50,
-        // ... autres propriétés par défaut
-      };
-    }
-  };
-};
-
 interface UseCanvasDropProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   canvasWidth: number;
@@ -104,7 +8,7 @@ interface UseCanvasDropProps {
   elements: unknown[]; // Éléments existants pour calcul dynamique des positions
 }
 
-export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeight: _canvasHeight, elements }: UseCanvasDropProps) => {
+export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeight: _canvasHeight, elements: _elements }: UseCanvasDropProps) => {
   const { dispatch } = useBuilder();
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -117,18 +21,16 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      // Calculer la position dynamique basée sur les éléments existants
-      const customizationService = getCustomizationService();
-      const dynamicProps = customizationService.getDefaultProperties(elementData.type, elements);
-
-      // Créer un nouvel élément avec les propriétés calculées dynamiquement
+      // Créer un nouvel élément avec l'ordre correct de fusion
       const newElement = {
         id: `element_${Date.now()}`,
         type: elementData.type,
-        // Commencer par les propriétés calculées dynamiquement (x, y, width, height)
-        ...dynamicProps,
-        // Puis fusionner avec toutes les propriétés des defaultProps (y compris celles qui pourraient être manquantes)
+        // D'abord : les defaultProps complètes (largeur, hauteur, styles, etc.)
         ...elementData.defaultProps,
+        // Ensuite : les positions calculées dynamiquement (x, y uniquement, peuvent overrider les defaultProps)
+        // Les autres propriétés calculées (width, height) sont ignorées si déjà dans defaultProps
+        x: elementData.defaultProps?.x ?? 50,
+        y: elementData.defaultProps?.y ?? 50,
         // Propriétés requises par BaseElement
         visible: true,
         locked: false,
@@ -142,7 +44,7 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
     } catch {
       // Erreur silencieuse lors du drop
     }
-  }, [canvasRef, elements, dispatch]);
+  }, [canvasRef, dispatch]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
