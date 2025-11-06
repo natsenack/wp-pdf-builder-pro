@@ -23,7 +23,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
-  console.log('🎛️ ContextMenu render - isVisible:', isVisible, 'position:', position, 'items:', items);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
@@ -49,8 +48,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       // Vérifier les limites à gauche et haut
       if (adjustedX < 0) adjustedX = 5;
       if (adjustedY < 0) adjustedY = 5;
-
-      console.log('🎛️ ContextMenu - adjusted position:', { original: position, adjusted: { x: adjustedX, y: adjustedY } });
     }
 
     return { x: adjustedX, y: adjustedY };
@@ -85,26 +82,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   useEffect(() => {
     if (!isVisible) return;
     
+    // Petit délai pour permettre au DOM de se stabiliser
     const timer = setTimeout(() => {
-      console.log('🎛️ ContextMenu - DOM check after render:', menuRef.current);
-      if (menuRef.current) {
-        const rect = menuRef.current.getBoundingClientRect();
-        console.log('🎛️ ContextMenu - DOM rect:', rect);
-        console.log('🎛️ ContextMenu - is visible in viewport:', 
-          rect.top >= 0 && 
-          rect.left >= 0 && 
-          rect.bottom <= window.innerHeight && 
-          rect.right <= window.innerWidth
-        );
-      } else {
-        console.log('🎛️ ContextMenu - NO DOM ELEMENT FOUND!');
-      }
+      // Pour l'instant, pas d'action spécifique après le rendu
     }, 200);
     return () => clearTimeout(timer);
   }, [isVisible]);
 
   if (!isVisible) {
-    console.log('🎛️ ContextMenu - not visible, returning null');
     return null;
   }
 
@@ -112,7 +97,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
   const handleItemClick = (item: ContextMenuItem) => {
     if (!item.disabled && !item.separator && item.action) {
-      console.log('🎛️ ContextMenu - item clicked:', item.label);
       item.action();
       onClose();
     }
@@ -125,44 +109,46 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       style={{
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
-        background: 'red',
-        border: '5px solid blue',
-        zIndex: 99999,
         position: 'fixed',
-        minWidth: '250px',
-        padding: '15px',
-        boxShadow: '0 0 20px rgba(0,0,0,0.8)',
-        fontSize: '16px',
-        fontWeight: 'bold'
+        backgroundColor: '#ffffff',
+        border: '1px solid #cccccc',
+        borderRadius: '4px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 9999,
+        minWidth: '200px',
+        maxWidth: '300px',
+        fontSize: '14px',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}
     >
-      <div style={{
-        padding: '10px',
-        background: 'yellow',
-        marginBottom: '10px',
-        fontSize: '12px',
-        fontFamily: 'monospace'
-      }}>
-        🚨 DEBUG MENU 🚨<br/>
-        Position: {adjustedPosition.x}, {adjustedPosition.y}<br/>
-        Items: {items.length}<br/>
-        Time: {new Date().toLocaleTimeString()}
-      </div>
-      {items.map((item, index) => (
+      {items.map((item) => (
         <div 
           key={item.id} 
           onClick={() => handleItemClick(item)}
           style={{
-            padding: '10px',
-            margin: '2px 0',
-            backgroundColor: index % 2 === 0 ? '#ffcccc' : '#ffaaaa',
-            border: '2px solid #ff0000',
+            padding: '8px 12px',
             cursor: item.separator ? 'default' : 'pointer',
-            fontSize: '14px',
-            display: item.separator ? 'none' : 'block'
+            backgroundColor: item.disabled ? '#f5f5f5' : 'transparent',
+            color: item.disabled ? '#999999' : '#333333',
+            borderBottom: item.separator ? '1px solid #e0e0e0' : 'none',
+            display: item.separator ? 'none' : 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            userSelect: 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (!item.disabled && !item.separator) {
+              e.currentTarget.style.backgroundColor = '#f0f0f0';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!item.disabled && !item.separator) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
           }}
         >
-          {item.icon} {item.label}
+          {item.icon && <span style={{ fontSize: '16px' }}>{item.icon}</span>}
+          {item.label && <span>{item.label}</span>}
         </div>
       ))}
     </div>

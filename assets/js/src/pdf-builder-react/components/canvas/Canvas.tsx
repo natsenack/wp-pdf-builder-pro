@@ -1479,35 +1479,91 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     if (!elementId) return;
 
     switch (action) {
-      case 'bring-to-front':
-        // TODO: Implémenter bring-to-front
-        console.log('Bring to front:', elementId);
+      case 'bring-to-front': {
+        // Déplacer l'élément à la fin du tableau (devant tous les autres)
+        const elementIndex = state.elements.findIndex(el => el.id === elementId);
+        if (elementIndex !== -1) {
+          const element = state.elements[elementIndex];
+          const newElements = [
+            ...state.elements.slice(0, elementIndex),
+            ...state.elements.slice(elementIndex + 1),
+            element
+          ];
+          dispatch({ type: 'SET_ELEMENTS', payload: newElements });
+        }
         break;
-      case 'send-to-back':
-        // TODO: Implémenter send-to-back
-        console.log('Send to back:', elementId);
+      }
+      case 'send-to-back': {
+        // Déplacer l'élément au début du tableau (derrière tous les autres)
+        const elementIndex = state.elements.findIndex(el => el.id === elementId);
+        if (elementIndex !== -1) {
+          const element = state.elements[elementIndex];
+          const newElements = [
+            element,
+            ...state.elements.slice(0, elementIndex),
+            ...state.elements.slice(elementIndex + 1)
+          ];
+          dispatch({ type: 'SET_ELEMENTS', payload: newElements });
+        }
         break;
-      case 'bring-forward':
-        // TODO: Implémenter bring-forward
-        console.log('Bring forward:', elementId);
+      }
+      case 'bring-forward': {
+        // Déplacer l'élément d'une position vers l'avant
+        const elementIndex = state.elements.findIndex(el => el.id === elementId);
+        if (elementIndex !== -1 && elementIndex < state.elements.length - 1) {
+          const newElements = [...state.elements];
+          [newElements[elementIndex], newElements[elementIndex + 1]] =
+          [newElements[elementIndex + 1], newElements[elementIndex]];
+          dispatch({ type: 'SET_ELEMENTS', payload: newElements });
+        }
         break;
-      case 'send-backward':
-        // TODO: Implémenter send-backward
-        console.log('Send backward:', elementId);
+      }
+      case 'send-backward': {
+        // Déplacer l'élément d'une position vers l'arrière
+        const elementIndex = state.elements.findIndex(el => el.id === elementId);
+        if (elementIndex > 0) {
+          const newElements = [...state.elements];
+          [newElements[elementIndex], newElements[elementIndex - 1]] =
+          [newElements[elementIndex - 1], newElements[elementIndex]];
+          dispatch({ type: 'SET_ELEMENTS', payload: newElements });
+        }
         break;
-      case 'duplicate':
-        // TODO: Implémenter duplicate
-        console.log('Duplicate:', elementId);
+      }
+      case 'duplicate': {
+        // Dupliquer l'élément avec un nouvel ID et un léger décalage
+        const element = state.elements.find(el => el.id === elementId);
+        if (element) {
+          const duplicatedElement = {
+            ...element,
+            id: `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            x: element.x + 10,
+            y: element.y + 10,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          dispatch({ type: 'ADD_ELEMENT', payload: duplicatedElement });
+        }
         break;
+      }
       case 'delete':
         dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
         break;
-      case 'lock':
-        // TODO: Implémenter lock/unlock
-        console.log('Toggle lock:', elementId);
+      case 'lock': {
+        // Basculer l'état verrouillé de l'élément
+        const element = state.elements.find(el => el.id === elementId);
+        if (element) {
+          dispatch({
+            type: 'UPDATE_ELEMENT',
+            payload: {
+              id: elementId,
+              updates: { locked: !element.locked }
+            }
+          });
+        }
         break;
+      }
     }
-  }, [dispatch]);
+  }, [state.elements, dispatch]);
 
   const getContextMenuItems = useCallback((elementId?: string): ContextMenuItem[] => {
     if (!elementId) {
