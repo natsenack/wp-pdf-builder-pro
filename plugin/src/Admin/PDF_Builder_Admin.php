@@ -5348,8 +5348,21 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
-        // Écouter les événements de chargement de templates builtin
-        window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
+            // Fonctions de debug
+            function debugLog(...args) {
+                console.log('%c[PDF-Builder]', 'color: #00a0d2; font-weight: bold;', ...args);
+            }
+
+            function debugError(...args) {
+                console.error('%c[PDF-Builder ERROR]', 'color: #dc3545; font-weight: bold;', ...args);
+            }
+
+            function debugWarn(...args) {
+                console.warn('%c[PDF-Builder WARN]', 'color: #ff9800; font-weight: bold;', ...args);
+            }
+
+            // Écouter les événements de chargement de templates builtin
+            window.addEventListener('pdfBuilderLoadBuiltinTemplate', function(event) {
             debugLog('📡 [ADMIN] Received builtin template load event:', event.detail);
             debugLog('📊 [ADMIN] Event detail structure:', {
                 hasId: !!event.detail?.id,
