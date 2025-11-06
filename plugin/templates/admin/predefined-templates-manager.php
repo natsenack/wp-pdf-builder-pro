@@ -544,6 +544,10 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
+            // Debug nonce
+            error_log('PDF Builder: Checking nonce - POST nonce: ' . ($_POST['nonce'] ?? 'NOT SET'));
+            error_log('PDF Builder: Expected action: pdf_builder_predefined_templates');
+
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
 
             $slug = sanitize_key($_POST['slug'] ?? '');

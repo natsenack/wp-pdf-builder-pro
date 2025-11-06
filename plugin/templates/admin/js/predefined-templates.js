@@ -159,6 +159,7 @@
      */
     function loadTemplate(slug) {
         console.log('loadTemplate called with slug:', slug);
+        console.log('Sending nonce:', pdfBuilderPredefined.nonce);
         showLoadingState();
 
         $.ajax({
