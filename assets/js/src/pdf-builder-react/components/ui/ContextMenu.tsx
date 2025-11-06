@@ -102,8 +102,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     if (isVisible && menuRef.current) {
       const element = menuRef.current as HTMLElement;
       console.log('ContextMenu: Menu element added to DOM', element);
-      console.log('ContextMenu: Menu styles:', window.getComputedStyle(element));
-      console.log('ContextMenu: Menu position:', element.getBoundingClientRect());
+      const rect = element.getBoundingClientRect();
+      console.log('ContextMenu: Menu position:', rect);
+      console.log('ContextMenu: Window dimensions:', { width: window.innerWidth, height: window.innerHeight });
+      console.log('ContextMenu: Menu computed style position:', window.getComputedStyle(element).position);
+      console.log('ContextMenu: Menu computed style left:', window.getComputedStyle(element).left);
+      console.log('ContextMenu: Menu computed style top:', window.getComputedStyle(element).top);
+      console.log('ContextMenu: Menu computed style z-index:', window.getComputedStyle(element).zIndex);
+      console.log('ContextMenu: Menu computed style display:', window.getComputedStyle(element).display);
+      console.log('ContextMenu: Menu computed style visibility:', window.getComputedStyle(element).visibility);
+      console.log('ContextMenu: Menu computed style opacity:', window.getComputedStyle(element).opacity);
     }
   }, [isVisible]);
 
@@ -126,11 +134,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ref={menuRef}
       className="context-menu"
       style={{
+        position: 'absolute', // DEBUG: Try absolute instead of fixed
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
         opacity: 1,
         visibility: 'visible',
         pointerEvents: 'auto',
+        zIndex: 999999,
       }}
     >
       {items.map((item) => (
