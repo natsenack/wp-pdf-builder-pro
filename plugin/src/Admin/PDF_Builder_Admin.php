@@ -351,6 +351,7 @@ class PDF_Builder_Admin {
 // Hooks AJAX pour l'éditeur de templates builtin
         add_action('wp_ajax_pdf_builder_load_builtin_templates', 'pdf_builder_ajax_load_builtin_templates');
         add_action('wp_ajax_pdf_builder_load_builtin_template', 'pdf_builder_ajax_load_builtin_template');
+        add_action('wp_ajax_pdf_builder_load_template_for_modal', 'pdf_builder_ajax_load_template_for_modal');
         add_action('wp_ajax_pdf_builder_save_builtin_template', 'pdf_builder_ajax_save_builtin_template');
         add_action('wp_ajax_pdf_builder_create_builtin_template', 'pdf_builder_ajax_create_builtin_template');
         add_action('wp_ajax_pdf_builder_delete_builtin_template', 'pdf_builder_ajax_delete_builtin_template');

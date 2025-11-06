@@ -305,6 +305,39 @@ function pdf_builder_ajax_load_builtin_template() {
 }
 
 /**
+ * AJAX - Charger un template pour la modale (NEW - no nonce check)
+ */
+function pdf_builder_ajax_load_template_for_modal() {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+    }
+
+    $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
+
+    if (empty($template_id)) {
+        wp_send_json_error('Template ID manquant');
+    }
+
+    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
+
+    if (!file_exists($file_path)) {
+        wp_send_json_error('Template file not found');
+    }
+
+    $content = file_get_contents($file_path);
+    if ($content === false) {
+        wp_send_json_error('Cannot read template file');
+    }
+
+    $data = json_decode($content, true);
+    if ($data === null) {
+        wp_send_json_error('Invalid JSON');
+    }
+
+    wp_send_json_success(array('template' => $data));
+}
+
+/**
  * AJAX - Sauvegarder un template builtin
  */
 function pdf_builder_ajax_save_builtin_template() {

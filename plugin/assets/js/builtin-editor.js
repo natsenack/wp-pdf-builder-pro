@@ -102,7 +102,14 @@
             console.log('🔍 [BUILTIN EDITOR] .template-edit-btn found in item:', item.find('.template-edit-btn').length, 'elements');
             console.log('🔍 [BUILTIN EDITOR] .template-delete-btn found in item:', item.find('.template-delete-btn').length, 'elements');
 
-            item.on('click', function() {
+            // Click handler for the template item - but NOT on action buttons
+            item.on('click', function(e) {
+                // Don't navigate if clicking on buttons
+                if ($(e.target).closest('.template-actions').length) {
+                    console.log('🚫 [BUILTIN EDITOR] Click was on action buttons, ignoring');
+                    return false;
+                }
+                console.log('📂 [BUILTIN EDITOR] Template item clicked, loading template');
                 loadTemplate(template.id);
             });
 
@@ -268,14 +275,13 @@
     function showEditTemplateModal(templateId) {
         console.log('🔄 [BUILTIN EDITOR] Loading template modal for:', templateId);
         
-        // Load template data
+        // Load template data using NEW action without nonce checks
         $.ajax({
             url: pdfBuilderBuiltinEditor.ajaxurl,
             type: 'POST',
             data: {
-                action: 'pdf_builder_load_builtin_template',
-                template_id: templateId,
-                nonce: pdfBuilderBuiltinEditor.nonce
+                action: 'pdf_builder_load_template_for_modal',
+                template_id: templateId
             },
             success: function(response) {
                 console.log('✅ [BUILTIN EDITOR] Template loaded:', response);
