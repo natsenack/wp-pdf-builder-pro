@@ -49,16 +49,10 @@ class PDF_Builder_Predefined_Templates_Manager {
      * Enqueue scripts et styles pour la page admin
      */
     public function enqueue_admin_scripts($hook) {
-        // Debug: log the hook
-        error_log('PDF Builder Templates - Hook received: ' . $hook);
-
         // Load only on predefined templates page
         if ($hook !== 'pdf-builder_page_pdf-builder-predefined-templates') {
-            error_log('PDF Builder Templates - Hook mismatch, not loading scripts for: ' . $hook);
             return;
         }
-
-        error_log('PDF Builder Templates - Loading scripts for hook: ' . $hook);
         wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);
         wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
