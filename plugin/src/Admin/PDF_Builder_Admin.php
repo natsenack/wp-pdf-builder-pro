@@ -5179,7 +5179,29 @@ class PDF_Builder_Admin {
         // ============================================================================
         // Automatically load existing template data when editor is ready
 
+        // Initialize React editor when DOM is ready
+        function initReactEditor() {
+            console.log('🔄 [PHP] Attempting to initialize React editor...');
+            
+            if (typeof window.pdfBuilderReact === 'undefined') {
+                console.error('❌ [PHP] window.pdfBuilderReact is not defined');
+                return false;
+            }
+            
+            if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
+                console.error('❌ [PHP] initPDFBuilderReact is not a function');
+                return false;
+            }
+            
+            console.log('✅ [PHP] Calling initPDFBuilderReact...');
+            var result = window.pdfBuilderReact.initPDFBuilderReact();
+            console.log('📊 [PHP] initPDFBuilderReact result:', result);
+            return result;
+        }
+
         function loadExistingTemplateData() {
+            console.log('🔄 [PHP] Checking if existing template data should be loaded...');
+            
             if (typeof window.pdfBuilderData !== 'undefined' &&
                 window.pdfBuilderData.hasExistingData &&
                 window.pdfBuilderData.existingTemplate &&
@@ -5187,30 +5209,74 @@ class PDF_Builder_Admin {
                 window.pdfBuilderReact.loadTemplate) {
 
                 try {
+                    console.log('✅ [PHP] Loading existing template data...');
                     // Load the existing template data into the editor
                     var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
+                    console.log('📊 [PHP] loadTemplate result:', result);
                     return result === true;
                 } catch (e) {
+                    console.error('❌ [PHP] Error loading existing template data:', e);
                     // Silently fail if loading existing data fails
                     return false;
                 }
             }
+            
+            console.log('⚠️ [PHP] Conditions not met for loading existing data');
             return false;
         }
 
-        // Try to load existing data immediately, then retry periodically
-        // Load existing template data when editor is ready
-        if (!loadExistingTemplateData()) {
-            var loadDataAttempts = 0;
-            var maxLoadDataAttempts = 30; // 15 seconds max
-            var loadDataInterval = setInterval(function() {
-                loadDataAttempts++;
-                if (loadExistingTemplateData()) {
-                    clearInterval(loadDataInterval);
-                } else if (loadDataAttempts >= maxLoadDataAttempts) {
-                    clearInterval(loadDataInterval);
+        // Initialize React editor immediately
+        console.log('🚀 [PHP] Starting React editor initialization...');
+        if (!initReactEditor()) {
+            console.log('⚠️ [PHP] React editor init failed, will retry...');
+            var initAttempts = 0;
+            var maxInitAttempts = 30; // 15 seconds max
+            var initInterval = setInterval(function() {
+                initAttempts++;
+                console.log('🔄 [PHP] Retry init attempt', initAttempts, 'of', maxInitAttempts);
+                if (initReactEditor()) {
+                    console.log('✅ [PHP] React editor initialized successfully on retry');
+                    clearInterval(initInterval);
+                    
+                    // Now try to load existing data
+                    setTimeout(function() {
+                        if (!loadExistingTemplateData()) {
+                            var loadDataAttempts = 0;
+                            var maxLoadDataAttempts = 30; // 15 seconds max
+                            var loadDataInterval = setInterval(function() {
+                                loadDataAttempts++;
+                                if (loadExistingTemplateData()) {
+                                    clearInterval(loadDataInterval);
+                                } else if (loadDataAttempts >= maxLoadDataAttempts) {
+                                    clearInterval(loadDataInterval);
+                                }
+                            }, 500);
+                        }
+                    }, 1000);
+                    
+                } else if (initAttempts >= maxInitAttempts) {
+                    console.error('❌ [PHP] Failed to initialize React editor after', maxInitAttempts, 'attempts');
+                    clearInterval(initInterval);
                 }
             }, 500);
+        } else {
+            console.log('✅ [PHP] React editor initialized successfully');
+            
+            // Try to load existing data immediately, then retry periodically
+            setTimeout(function() {
+                if (!loadExistingTemplateData()) {
+                    var loadDataAttempts = 0;
+                    var maxLoadDataAttempts = 30; // 15 seconds max
+                    var loadDataInterval = setInterval(function() {
+                        loadDataAttempts++;
+                        if (loadExistingTemplateData()) {
+                            clearInterval(loadDataInterval);
+                        } else if (loadDataAttempts >= maxLoadDataAttempts) {
+                            clearInterval(loadDataInterval);
+                        }
+                    }, 500);
+                }
+            }, 1000);
         }
 
         </script>
