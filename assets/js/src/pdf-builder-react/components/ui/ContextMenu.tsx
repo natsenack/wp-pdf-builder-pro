@@ -23,8 +23,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
-  console.log('🎨 ContextMenu rendu avec:', { items, position, isVisible });
-
   const menuRef = useRef(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
@@ -94,8 +92,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     return null;
   }
 
-  console.log('🎨 ContextMenu - Calcul position ajustée:', adjustedPosition);
-
   const handleItemClick = (item: ContextMenuItem) => {
     if (!item.disabled && !item.separator && item.action) {
       item.action();
@@ -118,9 +114,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         zIndex: 999999
       }}
     >
-      <div style={{ color: 'black', fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>
-        🧪 DEBUG MENU - {items.length} items
-      </div>
       {items.map((item) => (
         <div
           key={item.id}

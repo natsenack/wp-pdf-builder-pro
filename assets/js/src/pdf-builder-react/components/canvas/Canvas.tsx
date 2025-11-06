@@ -1463,14 +1463,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonctions pour gérer le menu contextuel
   const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
-    console.log('🎛️ showContextMenu appelée avec:', { x, y, elementId });
-    const newState = {
+    setContextMenu({
       isVisible: true,
       position: { x, y },
       elementId
-    };
-    console.log('🎛️ Nouveau state contextMenu:', newState);
-    setContextMenu(newState);
+    });
   }, []);
 
   const hideContextMenu = useCallback(() => {
@@ -1645,10 +1642,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
-    console.log('🎯 Clic droit détecté sur canvas');
     event.preventDefault();
     handleContextMenu(event, (x, y, elementId) => {
-      console.log('📋 Affichage menu contextuel:', { x, y, elementId });
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);
@@ -1713,22 +1708,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         }}
       />
       {typeof document !== 'undefined' && ReactDOM.createPortal(
-        (() => {
-          console.log('🎨 Rendu ContextMenu avec props:', {
-            items: getContextMenuItems(contextMenu.elementId),
-            position: contextMenu.position,
-            isVisible: contextMenu.isVisible,
-            elementId: contextMenu.elementId
-          });
-          return (
-            <ContextMenu
-              items={getContextMenuItems(contextMenu.elementId)}
-              position={contextMenu.position}
-              onClose={hideContextMenu}
-              isVisible={contextMenu.isVisible}
-            />
-          );
-        })(),
+        <ContextMenu
+          items={getContextMenuItems(contextMenu.elementId)}
+          position={contextMenu.position}
+          onClose={hideContextMenu}
+          isVisible={contextMenu.isVisible}
+        />,
         document.body
       )}
     </>
