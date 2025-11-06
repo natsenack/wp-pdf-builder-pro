@@ -120,7 +120,8 @@ export function useTemplate() {
         hasCanvas: 'canvas' in templateData,
         canvasType: typeof templateData.canvas,
         canvasValue: templateData.canvas,
-        allKeys: Object.keys(templateData)
+        allKeys: Object.keys(templateData),
+        elementsCount: Array.isArray(templateData.elements) ? templateData.elements.length : 'not array'
       });
 
       if (!templateData || !templateData.id) {

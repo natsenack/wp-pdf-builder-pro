@@ -24,22 +24,17 @@ export function registerEditorInstance(instance: any) {
 export async function loadTemplate(templateData: any) {
   debugLog('[Global API] loadTemplate called', { templateId: templateData?.id });
 
-  if (!editorInstance) {
-    debugError('[Global API] Editor instance not available');
-    return false;
-  }
-
   try {
     currentTemplate = templateData;
-    
+
     // Dispatcher un événement personnalisé que PDFBuilder écoutera
     const event = new CustomEvent('pdfBuilderLoadTemplate', {
       detail: templateData
     });
-    
+
     document.dispatchEvent(event);
     debugLog('[Global API] Template load event dispatched', { templateId: templateData?.id });
-    
+
     return true;
   } catch (error) {
     debugError('[Global API] Error loading template', error);
