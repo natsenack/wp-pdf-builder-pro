@@ -65,12 +65,5 @@ export function initPDFBuilderReact() {
   }
 }
 
-// Auto-initialisation si le DOM est déjà prêt
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initPDFBuilderReact);
-} else {
-  initPDFBuilderReact();
-}
-
-// Export pour utilisation manuelle
+// Export pour utilisation manuelle (WordPress l'appelle explicitement)
 (window as any).initPDFBuilderReact = initPDFBuilderReact;
