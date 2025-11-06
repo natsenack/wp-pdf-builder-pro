@@ -5322,7 +5322,17 @@ class PDF_Builder_Admin {
                 delete_transient($transient_key);
                 error_log('DEBUG: Loaded from transient');
             } else {
-                error_log('DEBUG: Transient not found or empty');
+                error_log('DEBUG: Transient not found or empty, trying file fallback');
+                // Fallback: Load builtin template directly from file
+                $builtin_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $builtin_template_id . '.json';
+                error_log('DEBUG: Loading from file: ' . $builtin_file);
+                if (file_exists($builtin_file)) {
+                    $json_content = file_get_contents($builtin_file);
+                    $builtin_template_data = json_decode($json_content, true);
+                    error_log('DEBUG: File loaded, builtin_template_data is ' . (is_array($builtin_template_data) ? 'array' : 'not array'));
+                } else {
+                    error_log('DEBUG: File does not exist: ' . $builtin_file);
+                }
             }
         } elseif ($builtin_template_id) {
             // Fallback: Load builtin template directly from file
