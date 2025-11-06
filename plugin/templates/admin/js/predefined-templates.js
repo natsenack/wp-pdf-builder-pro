@@ -28,6 +28,15 @@
             console.log('New template button NOT found');
         }
 
+        // Check for edit/delete buttons
+        const editButtons = document.querySelectorAll('.edit-template');
+        const deleteButtons = document.querySelectorAll('.delete-template');
+        const previewButtons = document.querySelectorAll('.generate-preview');
+
+        console.log('Edit buttons found:', editButtons.length);
+        console.log('Delete buttons found:', deleteButtons.length);
+        console.log('Preview buttons found:', previewButtons.length);
+
         // Initialiser CodeMirror pour l'éditeur JSON
         initializeCodeMirror();
 
