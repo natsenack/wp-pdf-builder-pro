@@ -98,6 +98,15 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     return () => clearTimeout(timer);
   }, [isVisible]);
 
+  useEffect(() => {
+    if (isVisible && menuRef.current) {
+      const element = menuRef.current as HTMLElement;
+      console.log('ContextMenu: Menu element added to DOM', element);
+      console.log('ContextMenu: Menu styles:', window.getComputedStyle(element));
+      console.log('ContextMenu: Menu position:', element.getBoundingClientRect());
+    }
+  }, [isVisible]);
+
   if (!isVisible) {
     console.log('ContextMenu not rendering - isVisible is false');
     return null;
@@ -149,5 +158,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   );
 
   // Utiliser un Portal pour rendre le menu au niveau du document body
+  console.log('ContextMenu: About to create portal with', items.length, 'items');
   return createPortal(menuElement, document.body);
 };

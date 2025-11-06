@@ -1,13 +1,13 @@
 .context-menu {
   position: fixed !important;
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
-  border: 2px solid #ff0000 !important; /* DEBUG: Red border to make menu visible */
+  background: #ff0000 !important; /* DEBUG: Bright red background */
+  border: 3px solid #000000 !important; /* DEBUG: Black border */
   border-radius: 12px !important;
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.15),
     0 4px 20px rgba(0, 0, 0, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-  z-index: 99999 !important;
+  z-index: 999999 !important; /* DEBUG: Even higher z-index */
   min-width: 240px !important;
   max-width: 320px !important;
   padding: 8px 0 !important;
@@ -20,6 +20,7 @@
   visibility: visible !important;
   pointer-events: auto !important;
   display: block !important;
+  color: #ffffff !important; /* DEBUG: White text on red background */
 }
 
 @keyframes context-menu-appear {
@@ -43,17 +44,18 @@
   position: relative;
   min-height: 36px;
   border: none;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1) !important; /* DEBUG: Semi-transparent white background */
+  color: #ffffff !important; /* DEBUG: White text */
 }
 
 .context-menu-item:hover:not(.disabled) {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  background: rgba(255, 255, 255, 0.2) !important; /* DEBUG: More visible on hover */
   transform: translateX(2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .context-menu-item:active:not(.disabled) {
-  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  background: rgba(255, 255, 255, 0.3) !important; /* DEBUG: Even more visible on click */
   transform: translateX(1px);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
