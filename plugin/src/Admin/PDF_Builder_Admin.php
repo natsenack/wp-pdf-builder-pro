@@ -5307,10 +5307,20 @@ class PDF_Builder_Admin {
 
         // Check if loading a builtin template
         $builtin_template_id = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
+        $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
         $builtin_template_data = null;
         
-        if ($builtin_template_id) {
-            // Load builtin template from file
+        if ($builtin_template_id && $transient_key) {
+            // Load builtin template from transient (set by builtin-editor-page.php)
+            $transient_data = get_transient($transient_key);
+            if ($transient_data) {
+                $builtin_template_data = $transient_data;
+                // Clean up the transient after use
+                delete_transient($transient_key);
+            }
+        } elseif ($builtin_template_id) {
+            // Fallback: Load builtin template directly from file
             $builtin_file = plugin_dir_path(__FILE__) . '../../templates/builtin/' . $builtin_template_id . '.json';
             if (file_exists($builtin_file)) {
                 $json_content = file_get_contents($builtin_file);
@@ -5322,6 +5332,7 @@ class PDF_Builder_Admin {
         $localize_data = [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
+            'templateId' => $template_id,
             'strings' => [
                 'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
                 'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
@@ -5790,121 +5801,6 @@ class PDF_Builder_Admin {
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
-    }
-
-    /**
-     * Page de l'éditeur React
-     */
-    public function react_editor_page()
-    {
-        $this->checkAdminPermissions();
-
-        // Vérifier si c'est un template builtin
-        $builtin_template = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : '';
-        $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : '';
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-
-        $builtin_data = null;
-        if (!empty($builtin_template) && !empty($transient_key)) {
-            // Récupérer les données du template builtin depuis le transient
-            $transient_data = get_transient($transient_key);
-            if ($transient_data) {
-                $builtin_data = $transient_data;
-                // Supprimer le transient après utilisation
-                delete_transient($transient_key);
-            }
-        }
-
-        // Localiser les données pour JavaScript
-        $script_data = [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
-            'builtin_data' => $builtin_data,
-            'template_id' => $template_id,
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-            ]
-        ];
-
-        wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderData', $script_data);
-
-        ?>
-        <div class="wrap">
-            <div class="pdf-builder-react-editor">
-                <div id="pdf-builder-react-root"></div>
-                <div id="pdf-builder-react-loading" class="pdf-builder-loading">
-                    <div class="spinner"></div>
-                    <p><?php _e('Chargement de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
-                </div>
-                <div id="pdf-builder-react-editor" style="display: none;">
-                    <!-- L'éditeur sera rendu ici par React -->
-                </div>
-            </div>
-        </div>
-
-        <script>
-        // Initialisation de l'éditeur React
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 [ADMIN] DOMContentLoaded - Initializing React Editor');
-
-            // Attendre que React et ReactDOM soient chargés
-            function checkReactLoaded() {
-                if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
-                    console.log('✅ [ADMIN] React libraries loaded');
-
-                    // Attendre que le bundle React soit chargé
-                    if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                        console.log('✅ [ADMIN] PDF Builder React bundle loaded');
-
-                        // Initialiser l'éditeur React
-                        const result = window.pdfBuilderReact.initPDFBuilderReact();
-                        console.log('✅ [ADMIN] initPDFBuilderReact result:', result);
-
-                        // Si c'est un template builtin, déclencher le chargement
-                        if (window.pdfBuilderData && window.pdfBuilderData.builtin_data) {
-                            console.log('📊 [ADMIN] Builtin template data found, dispatching event');
-
-                            // Dispatcher un événement personnalisé pour charger le template builtin
-                            const event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                                detail: window.pdfBuilderData.builtin_data
-                            });
-                            document.dispatchEvent(event);
-                        }
-                    } else {
-                        console.log('⏳ [ADMIN] Waiting for PDF Builder React bundle...');
-                        setTimeout(checkReactLoaded, 100);
-                    }
-                } else {
-                    console.log('⏳ [ADMIN] Waiting for React libraries...');
-                    setTimeout(checkReactLoaded, 100);
-                }
-            }
-
-            checkReactLoaded();
-        });
-        </script>
-
-        <style>
-        .pdf-builder-react-editor {
-            background: #fff;
-            border: 1px solid #ccd0d4;
-            border-radius: 8px;
-            min-height: 600px;
-        }
-
-        .pdf-builder-loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .pdf-builder-loading .spinner {
-            float: none;
-            margin: 0 auto 20px;
-        }
-        </style>
-        <?php
     }
 }
 
