@@ -758,7 +758,7 @@ class PDF_Builder_Core
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                builtinTemplate: <?php echo $builtin_template ? json_encode($builtin_template) : 'null'; ?>,
+                builtinTemplate: <?php echo $builtin_template_data ? json_encode($builtin_template_data) : 'null'; ?>,
                 templateData: <?php echo $template_data ? json_encode($template_data) : 'null'; ?>,
                 isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
                 isBuiltin: <?php echo $builtin_template ? 'true' : 'false'; ?>,
@@ -815,8 +815,6 @@ class PDF_Builder_Core
 
 
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
-            <?php if ($template_data && $builtin_template): ?>
-
             window.pdfBuilderData.builtinData = <?php echo json_encode($template_data); ?>;
 
 
@@ -825,9 +823,12 @@ class PDF_Builder_Core
             const maxAttempts = 50; // 5 secondes max
 
             function tryInjectBuiltinData() {
+                if (!window.pdfBuilderData.builtinData) {
+                    return;
+                }
                 injectionAttempts++;
 
-
+                console.log('Builtin template injection attempt ' + injectionAttempts, {
                     builtinTemplate: window.pdfBuilderData.builtinTemplate,
                     builtinData: !!window.pdfBuilderData.builtinData,
                     elementsCount: window.pdfBuilderData.builtinData?.elements?.length || 0
@@ -842,12 +843,14 @@ class PDF_Builder_Core
                     document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
                 ];
 
-
-                    index: i,
-                    exists: !!e,
-                    hasDispatch: !!(e && typeof e.dispatch === 'function'),
-                    type: e?.constructor?.name || 'unknown'
-                })));
+                possibleEditors.forEach((e, i) => {
+                    console.log('Editor ' + i + ':', {
+                        index: i,
+                        exists: !!e,
+                        hasDispatch: !!(e && typeof e.dispatch === 'function'),
+                        type: e?.constructor?.name || 'unknown'
+                    });
+                });
 
                 for (const editor of possibleEditors) {
                     if (editor && typeof editor.dispatch === 'function') {
@@ -912,6 +915,7 @@ class PDF_Builder_Core
                         }
                     };
 
+                    console.log('Setting global builtin template data:', {
                         id: window.pdfBuilderBuiltinTemplateData.id,
                         name: window.pdfBuilderBuiltinTemplateData.name,
                         elementsCount: window.pdfBuilderBuiltinTemplateData.elements.length,
@@ -929,7 +933,6 @@ class PDF_Builder_Core
 
             // Démarrer l'injection après un court délai
             setTimeout(tryInjectBuiltinData, 500);
-            <?php endif; ?>
         </script>
         <?php
     }
