@@ -90,6 +90,42 @@ class PDF_Builder_Predefined_Templates_Manager {
                 'previewError' => __('Erreur lors de la génération de l\'aperçu.', 'pdf-builder-pro')
             ]
         ]);
+
+        // Script pour gérer les paramètres URL (pour création automatique de template)
+        wp_add_inline_script('pdf-builder-predefined-templates', '
+            jQuery(document).ready(function($) {
+                // Vérifier si des paramètres URL sont présents pour création automatique
+                const urlParams = new URLSearchParams(window.location.search);
+                const slug = urlParams.get("slug");
+                const name = urlParams.get("name");
+                const category = urlParams.get("category");
+                const description = urlParams.get("description");
+                const icon = urlParams.get("icon");
+                const json = urlParams.get("json");
+
+                if (slug && name && category && json) {
+                    // Remplir automatiquement le formulaire
+                    $("#template-slug").val(slug);
+                    $("#template-name").val(name);
+                    $("#template-category").val(category);
+                    $("#template-description").val(description);
+                    $("#template-icon").val(icon || "📄");
+
+                    // Décoder le JSON depuis l\'URL
+                    try {
+                        const decodedJson = decodeURIComponent(json);
+                        $("#template-json").val(decodedJson);
+
+                        // Auto-valider et sauvegarder
+                        setTimeout(function() {
+                            $("#save-template-btn").trigger("click");
+                        }, 500);
+                    } catch (e) {
+                        alert("Erreur lors du décodage du JSON depuis l\'URL: " + e.message);
+                    }
+                }
+            });
+        ');
     }
 
     /**
@@ -418,13 +454,16 @@ class PDF_Builder_Predefined_Templates_Manager {
             return false;
         }
 
+        // Nettoyer les données pour s'assurer qu'elles sont dans le bon format
+        $clean_data = $this->clean_template_json_for_predefined($data);
+
         return [
             'slug' => $slug,
             'name' => $data['name'] ?? '',
             'category' => $data['category'] ?? 'autre',
             'description' => $data['description'] ?? '',
             'icon' => $data['icon'] ?? '📄',
-            'json' => $content,
+            'json' => wp_json_encode($clean_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
             'preview_svg' => $data['preview_svg'] ?? ''
         ];
     }
@@ -439,15 +478,18 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
-            check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
+            // Vérifier le nonce (obligatoire pour POST, optionnel pour GET depuis URL)
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
+            }
 
-            // Récupération des données
-            $slug = sanitize_key($_POST['slug'] ?? '');
-            $name = sanitize_text_field($_POST['name'] ?? '');
-            $category = sanitize_key($_POST['category'] ?? '');
-            $description = sanitize_textarea_field($_POST['description'] ?? '');
-            $icon = sanitize_text_field($_POST['icon'] ?? '📄');
-            $json_config = stripslashes($_POST['json'] ?? '');
+            // Récupération des données (POST en priorité, GET en fallback pour gros JSON)
+            $slug = sanitize_key($_POST['slug'] ?? $_GET['slug'] ?? '');
+            $name = sanitize_text_field($_POST['name'] ?? $_GET['name'] ?? '');
+            $category = sanitize_key($_POST['category'] ?? $_GET['category'] ?? '');
+            $description = sanitize_textarea_field($_POST['description'] ?? $_GET['description'] ?? '');
+            $icon = sanitize_text_field($_POST['icon'] ?? $_GET['icon'] ?? '📄');
+            $json_config = stripslashes($_POST['json'] ?? $_GET['json'] ?? '');
 
             // Validation
             if (empty($slug) || empty($name) || empty($category) || empty($json_config)) {
@@ -460,9 +502,12 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Configuration JSON invalide: ' . json_last_error_msg());
             }
 
-            // Le JSON envoyé depuis l'éditeur contient déjà la structure complète (template + elements)
+            // Nettoyer le JSON pour en faire un modèle prédéfini réutilisable
+            $cleaned_data = $this->clean_template_json_for_predefined($json_data);
+
+            // Le JSON nettoyé contient déjà la structure complète (template + elements)
             // On l'utilise directement comme contenu du fichier
-            $template_data = $json_data;
+            $template_data = $cleaned_data;
 
             // Ajouter les métadonnées du modèle prédéfini
             $template_data['name'] = $name;
@@ -645,6 +690,50 @@ class PDF_Builder_Predefined_Templates_Manager {
         $svg .= '</svg>';
 
         return $svg;
+    }
+
+    /**
+     * Nettoie le JSON d'un template pour en faire un modèle prédéfini réutilisable
+     */
+    private function clean_template_json_for_predefined($json_data) {
+        // Supprimer les propriétés spécifiques à la session d'édition
+        $session_properties = ['id', 'isNew', 'isModified', 'isSaving', 'lastSaved'];
+        foreach ($session_properties as $prop) {
+            unset($json_data[$prop]);
+        }
+
+        // Nettoyer les éléments
+        if (isset($json_data['elements']) && is_array($json_data['elements'])) {
+            foreach ($json_data['elements'] as &$element) {
+                // Supprimer les propriétés spécifiques à la session
+                $element_session_props = ['createdAt', 'updatedAt'];
+                foreach ($element_session_props as $prop) {
+                    unset($element[$prop]);
+                }
+
+                // Régénérer l'ID de l'élément pour éviter les conflits lors de la réutilisation
+                // Garder le préfixe "element_" mais régénérer la partie aléatoire
+                if (isset($element['id'])) {
+                    $timestamp = time();
+                    $random = substr(md5(uniqid('', true)), 0, 10);
+                    $element['id'] = 'element_' . $timestamp . '_' . $random;
+                }
+
+                // S'assurer que les propriétés essentielles sont présentes avec des valeurs par défaut
+                $element['visible'] = $element['visible'] ?? true;
+                $element['locked'] = $element['locked'] ?? false;
+                $element['opacity'] = $element['opacity'] ?? 100;
+                $element['rotation'] = $element['rotation'] ?? 0;
+                $element['scale'] = $element['scale'] ?? 100;
+            }
+        }
+
+        // Ajouter des propriétés de template par défaut si elles n'existent pas
+        $json_data['canvasWidth'] = $json_data['canvasWidth'] ?? 794;
+        $json_data['canvasHeight'] = $json_data['canvasHeight'] ?? 1123;
+        $json_data['version'] = $json_data['version'] ?? '1.0';
+
+        return $json_data;
     }
 }
 
