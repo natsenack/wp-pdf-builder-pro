@@ -113,6 +113,15 @@ export function useTemplate() {
       const customEvent = event as CustomEvent;
       const templateData = customEvent.detail;
       debugLog('📡 [useTemplate] Événement pdfBuilderLoadTemplate reçu:', templateData);
+      debugLog('🔍 [useTemplate] Propriétés du templateData:', {
+        hasElements: 'elements' in templateData,
+        elementsType: typeof templateData.elements,
+        elementsValue: templateData.elements,
+        hasCanvas: 'canvas' in templateData,
+        canvasType: typeof templateData.canvas,
+        canvasValue: templateData.canvas,
+        allKeys: Object.keys(templateData)
+      });
 
       if (!templateData || !templateData.id) {
         debugError('❌ [useTemplate] Données de template invalides');
