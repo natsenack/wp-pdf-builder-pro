@@ -751,6 +751,9 @@ class PDF_Builder_Core
             </div>
         </div>
 
+        <!-- DEBUG: Builtin Template = <?php echo $builtin_template ? htmlspecialchars($builtin_template) : 'NULL'; ?> -->
+        <!-- DEBUG: Is Builtin = <?php echo $builtin_template ? 'YES' : 'NO'; ?> -->
+
         <script type="text/javascript">
             // Passer les données à React
             window.pdfBuilderData = {
