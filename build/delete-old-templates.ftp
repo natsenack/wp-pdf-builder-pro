@@ -1,9 +1,0 @@
-open ftp.threeaxe.fr
-username
-password
-cd /wp-content/plugins/wp-pdf-builder-pro/templates/builtin
-del classic.json
-del corporate.json
-del minimal.json
-del modern.json
-bye

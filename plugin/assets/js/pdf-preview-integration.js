@@ -415,7 +415,7 @@ window.generateQuickPreview = async function(templateData = null, orderId = null
 
         return null;
 
-    } catch (error) {
+    } catch {
 
         return null;
     }
