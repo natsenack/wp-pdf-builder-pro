@@ -24,8 +24,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   isVisible
 }) => {
-  console.log('ContextMenu render - isVisible:', isVisible, 'position:', position, 'items:', items.length);
-
   const menuRef = useRef(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
@@ -64,7 +62,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       if (event.button === 2) return;
 
       if (menuRef.current && !(menuRef.current as any).contains(event.target)) {
-        console.log('Click outside detected, closing menu');
         onClose();
       }
     };
@@ -72,7 +69,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     const handleEscape = (event: Event) => {
       // @ts-expect-error Keyboard event key property
       if (event.key === 'Escape') {
-        console.log('Escape key pressed, closing menu');
         onClose();
       }
     };
@@ -108,13 +104,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   console.log('ContextMenu rendering at position:', adjustedPosition);
 
   const handleItemClick = (item: ContextMenuItem) => {
-    console.log('Context menu item clicked:', item.id, 'disabled:', item.disabled, 'separator:', item.separator, 'has action:', !!item.action);
     if (!item.disabled && !item.separator && item.action) {
-      console.log('Executing action for item:', item.id);
       item.action();
       onClose();
-    } else {
-      console.log('Action not executed');
     }
   };
 

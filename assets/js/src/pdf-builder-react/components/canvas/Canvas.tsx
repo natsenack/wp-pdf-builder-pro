@@ -1471,7 +1471,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   }, []);
 
   const hideContextMenu = useCallback(() => {
-    console.log('Hiding context menu');
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   }, []);
 
@@ -1644,9 +1643,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
-    console.log('Context menu event triggered at:', event.clientX, event.clientY);
     handleContextMenu(event, (x, y, elementId) => {
-      console.log('Showing context menu at:', x, y, 'for element:', elementId);
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);
