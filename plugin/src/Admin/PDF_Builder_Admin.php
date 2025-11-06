@@ -5680,7 +5680,8 @@ class PDF_Builder_Admin {
         }
 
         // Try to load existing data immediately, then retry periodically
-        if (!loadExistingTemplateData()) {
+        // Skip for builtin templates as they load via event listener
+        if (!window.pdfBuilderData?.isBuiltin && !loadExistingTemplateData()) {
             var loadDataAttempts = 0;
             var maxLoadDataAttempts = 30; // 15 seconds max
             var loadDataInterval = setInterval(function() {
