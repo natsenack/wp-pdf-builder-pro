@@ -120,7 +120,8 @@ export function useTemplate() {
       }
 
       // Pour les templates builtin, charger directement les données depuis l'événement
-      if (templateData.elements && templateData.canvas !== undefined) {
+      // Un template builtin a soit des elements, soit un canvas défini (même null)
+      if (templateData.elements !== undefined || templateData.canvas !== undefined) {
         debugLog('🎯 [useTemplate] Template builtin détecté, chargement direct');
 
         // Parse les données si nécessaire
@@ -132,6 +133,9 @@ export function useTemplate() {
             elements = JSON.parse(templateData.elements);
           } else if (Array.isArray(templateData.elements)) {
             elements = templateData.elements;
+          } else if (templateData.elements) {
+            // Si c'est un objet mais pas un array, essayer de le convertir
+            elements = [templateData.elements];
           }
 
           if (typeof templateData.canvas === 'string') {
@@ -149,7 +153,8 @@ export function useTemplate() {
           id: templateData.id,
           name: templateData.name,
           elementsCount: elements.length,
-          canvas: canvas
+          canvas: canvas,
+          rawElements: templateData.elements
         });
 
         dispatch({
