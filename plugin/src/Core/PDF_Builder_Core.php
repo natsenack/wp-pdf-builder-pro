@@ -766,8 +766,8 @@ class PDF_Builder_Core
 
             // Pour les templates builtin, injecter les données directement dans l'éditeur React
             <?php if ($template_data && $builtin_template): ?>
-            window.pdfBuilderBuiltinData = <?php echo json_encode($template_data); ?>;
-            console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderBuiltinData);
+            window.pdfBuilderData.builtinData = <?php echo json_encode($template_data); ?>;
+            console.log('🏗️ [PDF BUILDER] Données builtin injectées:', window.pdfBuilderData.builtinData);
 
             // Injecter les données dans l'éditeur React après son chargement
             let injectionAttempts = 0;
@@ -794,11 +794,11 @@ class PDF_Builder_Core
                                 type: 'LOAD_TEMPLATE',
                                 payload: {
                                     id: 'builtin_' + window.pdfBuilderData.builtinTemplate,
-                                    name: window.pdfBuilderBuiltinData.name || 'Template Builtin',
-                                    elements: window.pdfBuilderBuiltinData.elements || [],
+                                    name: window.pdfBuilderData.builtinData.name || 'Template Builtin',
+                                    elements: window.pdfBuilderData.builtinData.elements || [],
                                     canvas: {
-                                        width: window.pdfBuilderBuiltinData.canvasWidth || 794,
-                                        height: window.pdfBuilderBuiltinData.canvasHeight || 1123
+                                        width: window.pdfBuilderData.builtinData.canvasWidth || 794,
+                                        height: window.pdfBuilderData.builtinData.canvasHeight || 1123
                                     }
                                 }
                             });
@@ -814,7 +814,7 @@ class PDF_Builder_Core
                 if (window.dispatchEvent) {
                     try {
                         const event = new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
-                            detail: window.pdfBuilderBuiltinData
+                            detail: window.pdfBuilderData.builtinData
                         });
                         window.dispatchEvent(event);
                         console.log('📡 [PDF BUILDER] Événement personnalisé envoyé');
