@@ -5540,6 +5540,64 @@ class PDF_Builder_Admin {
                 debugLog('✅✅✅ React bundle loaded immediately');
             }
         });
+
+        // ============================================================================
+        // BUILTIN TEMPLATE AUTO-SAVE INTERCEPTOR
+        // ============================================================================
+        // Intercept fetch requests to force builtin template_id in auto-save calls
+        debugLog('🎬 [BUILTIN INTERCEPTOR] Setting up fetch interceptor for auto-save');
+        
+        (function setupBuiltinAutoSaveInterceptor() {
+            // Get builtin template ID from URL or global variable
+            const urlParams = new URLSearchParams(window.location.search);
+            const builtinTemplateId = urlParams.get('builtin_template');
+            
+            if (!builtinTemplateId) {
+                debugLog('⏭️ [BUILTIN INTERCEPTOR] No builtin_template in URL, skipping interceptor');
+                return;
+            }
+            
+            debugLog('🎬 [BUILTIN INTERCEPTOR] FUNCTION EXECUTED - Intercepting for builtin:', builtinTemplateId);
+            
+            // Store original fetch
+            const originalFetch = window.fetch;
+            
+            // Replace fetch with wrapper
+            window.fetch = function(...args) {
+                const [resource, config] = args;
+                const resourceStr = typeof resource === 'string' ? resource : resource.url || '';
+                
+                // Check if this is an auto-save request
+                if (resourceStr.includes('admin-ajax.php') && config && config.body) {
+                    try {
+                        const body = new URLSearchParams(config.body);
+                        const action = body.get('action');
+                        
+                        if (action === 'pdf_builder_auto_save_template') {
+                            debugLog('🎯 [BUILTIN INTERCEPTOR] Detected auto-save request');
+                            debugLog('📝 [BUILTIN INTERCEPTOR] Current template_id:', body.get('template_id'));
+                            
+                            // Force template_id to builtin ID
+                            body.set('template_id', builtinTemplateId);
+                            
+                            debugLog('✅ [BUILTIN INTERCEPTOR] Forced template_id to:', builtinTemplateId);
+                            debugLog('📡 [BUILTIN INTERCEPTOR] Sending to server with updated body');
+                            
+                            // Update config with new body
+                            config.body = body.toString();
+                        }
+                    } catch (e) {
+                        debugError('❌ [BUILTIN INTERCEPTOR] Error processing request:', e.message);
+                    }
+                }
+                
+                // Call original fetch
+                return originalFetch.apply(this, args);
+            };
+            
+            debugLog('✅ [BUILTIN INTERCEPTOR] Fetch interceptor installed successfully');
+        })();
+        
         </script>
 
         <style>
