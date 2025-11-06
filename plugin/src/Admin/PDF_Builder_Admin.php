@@ -5301,15 +5301,37 @@ class PDF_Builder_Admin {
             ]
         ]);
 
+        // Check if loading a builtin template
+        $builtin_template_id = isset($_GET['builtin_template']) ? sanitize_text_field($_GET['builtin_template']) : null;
+        $builtin_template_data = null;
+        
+        if ($builtin_template_id) {
+            // Load builtin template from file
+            $builtin_file = plugin_dir_path(__FILE__) . '../../templates/builtin/' . $builtin_template_id . '.json';
+            if (file_exists($builtin_file)) {
+                $json_content = file_get_contents($builtin_file);
+                $builtin_template_data = json_decode($json_content, true);
+            }
+        }
+
         // Localize script with data
-        wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
+        $localize_data = [
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'strings' => [
                 'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
                 'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
             ]
-        ]);
+        ];
+        
+        // Add builtin template data if available
+        if ($builtin_template_data) {
+            $localize_data['builtinTemplate'] = $builtin_template_data;
+            $localize_data['isBuiltin'] = true;
+            $localize_data['templateId'] = $builtin_template_id;
+        }
+        
+        wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
         ?>
         <div class="wrap">
@@ -5386,7 +5408,16 @@ class PDF_Builder_Admin {
         // Vérifier aussi les données globales au cas où l'événement n'aurait pas été envoyé
         setTimeout(function() {
             debugLog('🔍 [ADMIN] Checking for global builtin template data...');
-            if (window.pdfBuilderBuiltinTemplateData) {
+            
+            // Check pdfBuilderData first (from wp_localize_script)
+            if (window.pdfBuilderData && window.pdfBuilderData.builtinTemplate) {
+                debugLog('💾 [ADMIN] Found builtin template in pdfBuilderData');
+                debugLog('📊 [ADMIN] Builtin template data:', window.pdfBuilderData.builtinTemplate);
+                window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
+                    detail: window.pdfBuilderData.builtinTemplate
+                }));
+                debugLog('📡 [ADMIN] Dispatched event from pdfBuilderData');
+            } else if (window.pdfBuilderBuiltinTemplateData) {
                 debugLog('💾 [ADMIN] Found global builtin template data, loading...');
                 debugLog('📊 [ADMIN] Global data:', window.pdfBuilderBuiltinTemplateData);
                 window.dispatchEvent(new CustomEvent('pdfBuilderLoadBuiltinTemplate', {
@@ -5394,7 +5425,7 @@ class PDF_Builder_Admin {
                 }));
                 debugLog('📡 [ADMIN] Dispatched event from global data');
             } else {
-                debugLog('❌ [ADMIN] No global builtin template data found');
+                debugLog('❌ [ADMIN] No builtin template data found in either pdfBuilderData or window.pdfBuilderBuiltinTemplateData');
             }
         }, 1000);
 
