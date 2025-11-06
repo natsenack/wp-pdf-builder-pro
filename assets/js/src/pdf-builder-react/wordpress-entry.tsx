@@ -7,6 +7,17 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
 import { debugLog, debugError, debugWarn } from './utils/debug';
+import {
+  registerEditorInstance,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  resetAPI,
+  type GlobalAPI
+} from './api/global-api';
 
 // Fonction d'initialisation appelée par WordPress
 declare global {
@@ -65,5 +76,34 @@ export function initPDFBuilderReact() {
   }
 }
 
+// Déclarer l'interface globale pour TypeScript
+declare global {
+  interface Window {
+    initPDFBuilderReact: typeof initPDFBuilderReact;
+    pdfBuilderReact: {
+      loadTemplate: typeof loadTemplate;
+      getEditorState: typeof getEditorState;
+      setEditorState: typeof setEditorState;
+      getCurrentTemplate: typeof getCurrentTemplate;
+      exportTemplate: typeof exportTemplate;
+      saveTemplate: typeof saveTemplate;
+      registerEditorInstance: typeof registerEditorInstance;
+      resetAPI: typeof resetAPI;
+    };
+  }
+}
+
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
-(window as any).initPDFBuilderReact = initPDFBuilderReact;
+window.initPDFBuilderReact = initPDFBuilderReact;
+
+// Exporter l'API complète pour WordPress
+window.pdfBuilderReact = {
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  registerEditorInstance,
+  resetAPI
+};
