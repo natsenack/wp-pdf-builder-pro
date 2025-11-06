@@ -5666,7 +5666,6 @@ class PDF_Builder_Admin {
         // Automatically load existing template data when editor is ready
 
         function loadExistingTemplateData() {
-            console.log('Attempting to load existing template data...');
             if (typeof window.pdfBuilderData !== 'undefined' &&
                 window.pdfBuilderData.hasExistingData &&
                 window.pdfBuilderData.existingTemplate &&
@@ -5674,18 +5673,14 @@ class PDF_Builder_Admin {
                 window.pdfBuilderReact.loadTemplate) {
 
                 try {
-                    console.log('Loading existing template data:', window.pdfBuilderData.existingTemplate);
                     // Load the existing template data into the editor
                     var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
-                    console.log('Load result:', result);
                     return result === true;
                 } catch (e) {
-                    console.error('Error loading existing template data:', e);
                     // Silently fail if loading existing data fails
                     return false;
                 }
             }
-            console.log('Conditions not met for loading existing data');
             return false;
         }
 

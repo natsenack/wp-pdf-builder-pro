@@ -832,12 +832,6 @@ class PDF_Builder_Core
                 }
                 injectionAttempts++;
 
-                console.log('Builtin template injection attempt ' + injectionAttempts, {
-                    builtinTemplate: window.pdfBuilderData.builtinTemplate,
-                    builtinData: !!window.pdfBuilderData.builtinData,
-                    elementsCount: window.pdfBuilderData.builtinData?.elements?.length || 0
-                });
-
                 // Essayer différentes méthodes d'accès à l'éditeur
                 const possibleEditors = [
                     window.pdfBuilderEditor,
@@ -846,15 +840,6 @@ class PDF_Builder_Core
                     // Chercher dans le DOM
                     document.querySelector('[data-react-pdf-builder]')?.__reactInternalInstance,
                 ];
-
-                possibleEditors.forEach((e, i) => {
-                    console.log('Editor ' + i + ':', {
-                        index: i,
-                        exists: !!e,
-                        hasDispatch: !!(e && typeof e.dispatch === 'function'),
-                        type: e?.constructor?.name || 'unknown'
-                    });
-                });
 
                 for (const editor of possibleEditors) {
                     if (editor && typeof editor.dispatch === 'function') {
@@ -918,13 +903,6 @@ class PDF_Builder_Core
                             height: window.pdfBuilderData.builtinData.canvasHeight || 1123
                         }
                     };
-
-                    console.log('Setting global builtin template data:', {
-                        id: window.pdfBuilderBuiltinTemplateData.id,
-                        name: window.pdfBuilderBuiltinTemplateData.name,
-                        elementsCount: window.pdfBuilderBuiltinTemplateData.elements.length,
-                        canvas: window.pdfBuilderBuiltinTemplateData.canvas
-                    });
                 }
 
                 // Réessayer si on n'a pas dépassé le nombre max de tentatives
