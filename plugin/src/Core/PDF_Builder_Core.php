@@ -765,10 +765,17 @@ class PDF_Builder_Core
             }
 
             // INTERCEPTEUR BUILTIN - Forcer le template_id pour les templates builtin
-            // 2025-11-06-04-00-00
+            // 2025-11-06-04-15-00 - DEBUG START
             (function() {
-                if (!window.pdfBuilderData.isBuiltin) {
-                    console.log('📝 [BUILTIN INTERCEPTOR] Ce n\'est pas un template builtin, intercepteur désactivé');
+                console.log('🎬 [BUILTIN INTERCEPTOR] Script lancé');
+                console.log('📊 [BUILTIN INTERCEPTOR] pdfBuilderData:', {
+                    isBuiltin: window.pdfBuilderData?.isBuiltin,
+                    builtinTemplate: window.pdfBuilderData?.builtinTemplate,
+                    templateId: window.pdfBuilderData?.templateId
+                });
+
+                if (!window.pdfBuilderData?.isBuiltin) {
+                    console.log('📝 [BUILTIN INTERCEPTOR] Ce n\'est pas un template builtin (isBuiltin =', window.pdfBuilderData?.isBuiltin, '), intercepteur désactivé');
                     return;
                 }
 
