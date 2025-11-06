@@ -74,8 +74,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       style={{
         left: position.x,
         top: position.y,
+        background: 'red', // Debug: rendre visible
+        border: '2px solid blue',
+        zIndex: 99999
       }}
     >
+      <div style={{ padding: '10px', background: 'yellow' }}>
+        DEBUG MENU - Position: {position.x}, {position.y}
+      </div>
       {items.map((item) => (
         <React.Fragment key={item.id}>
           {item.separator && <div className="context-menu-separator" />}
