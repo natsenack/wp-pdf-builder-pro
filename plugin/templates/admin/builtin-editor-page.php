@@ -270,15 +270,13 @@ function pdf_builder_ajax_load_builtin_templates() {
 
 /**
  * AJAX - Charger un template builtin spécifique pour la modale d'édition
+ * NO NONCE CHECK - Simple read operation
  */
 function pdf_builder_ajax_load_builtin_template() {
-    // Vérifier les permissions
+    // Only check permissions, no nonce
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
     }
-
-    // IMPORTANT: Pas de vérification de nonce ici - c'est une lecture simple
-    // Le nonce sera vérifié dans les actions de modification (create, update, delete)
 
     $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
 
