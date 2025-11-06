@@ -904,6 +904,7 @@ class PDF_Builder_Admin {
             'pdf-builder-pro_page_pdf-builder-react-editor', // Éditeur React
             'pdf-builder-pro_page_pdf-builder-settings',
             'pdf-builder-pro_page_pdf-builder-developer',
+            'pdf-builder-pro_page_pdf-builder-predefined-templates', // Gestion des modèles prédéfinis
             'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
         ];
 
