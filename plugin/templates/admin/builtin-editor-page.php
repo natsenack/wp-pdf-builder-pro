@@ -92,25 +92,28 @@ function pdf_builder_builtin_templates_list_page() {
 
         <!-- Templates pour les modales -->
         <script type="text/template" id="template-list-item-template">
-            <div class="template-list-item" data-template-id="<%= id %>" style="display: flex; gap: 15px; padding: 15px; border: 1px solid #ddd; margin: 10px 0; border-radius: 4px; background: #fff;">
-                <div class="template-thumbnail" style="flex-shrink: 0;">
-                    <div class="template-preview-mini" style="width: 80px; height: 60px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 30px;">
+            <div class="template-list-item" data-template-id="<%= id %>">
+                <div class="template-thumbnail">
+                    <div class="template-preview-mini" style="width: 80px; height: 60px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                         📄
                     </div>
                 </div>
-                <div class="template-info" style="flex: 1;">
-                    <h4 style="margin: 0 0 5px 0;"><%= name %></h4>
-                    <p style="margin: 0 0 5px 0; color: #666;"><%= description || 'Aucune description' %></p>
-                    <small style="color: #999;"><%= category || 'general' %> | v<%= version || '1.0' %></small>
+                <div class="template-info">
+                    <h4><%= name %></h4>
+                    <p><%= description || 'Aucune description' %></p>
+                    <small><%= category || 'general' %> | v<%= version || '1.0' %></small>
                 </div>
-                <div class="template-actions" style="display: flex; gap: 8px; flex-direction: column; justify-content: center;">
-                    <form method="POST" action="<?php echo admin_url('admin-ajax.php'); ?>" style="display: inline-block;">
-                        <input type="hidden" name="action" value="pdf_builder_delete_builtin_template">
-                        <input type="hidden" name="template_id" value="<%= id %>">
-                        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('pdf_builder_builtin_editor'); ?>">
-                        <button type="submit" class="button button-small button-link-delete" style="background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 12px;" onclick="return confirm('<?php _e('Êtes-vous sûr ?', 'pdf-builder-pro'); ?>');">🗑️ Supprimer</button>
-                    </form>
-                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-builtin-editor&template='); ?><%= id %>" class="button button-small" style="text-align: center; background: #0073aa; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; text-decoration: none; font-size: 12px; display: inline-block;">✏️ Éditer</a>
+                <div class="template-actions">
+                    <button class="template-edit-btn" data-template-id="<%= id %>" title="<?php _e('Modifier les paramètres', 'pdf-builder-pro'); ?>">
+                        <span class="dashicons dashicons-admin-generic"></span>
+                    </button>
+                    <button class="template-delete-btn" data-template-id="<%= id %>" title="<?php _e('Supprimer le template', 'pdf-builder-pro'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
+                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-builtin-editor&template='); ?><%= id %>" class="button button-primary button-small">
+                        <span class="dashicons dashicons-edit"></span>
+                        <?php _e('Éditer', 'pdf-builder-pro'); ?>
+                    </a>
                 </div>
             </div>
         </script>
