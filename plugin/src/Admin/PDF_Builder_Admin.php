@@ -5213,7 +5213,25 @@ class PDF_Builder_Admin {
                     // Load the existing template data into the editor
                     var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
                     console.log('📊 [PHP] loadTemplate result:', result);
-                    return result === true;
+                    
+                    // Handle Promise result
+                    if (result && typeof result.then === 'function') {
+                        // It's a Promise, wait for it to resolve
+                        result.then(function(success) {
+                            console.log('📊 [PHP] loadTemplate Promise resolved:', success);
+                            if (success === true) {
+                                console.log('✅ [PHP] Template data loaded successfully');
+                            } else {
+                                console.log('⚠️ [PHP] Template data loading returned false');
+                            }
+                        }).catch(function(error) {
+                            console.error('❌ [PHP] Template data loading failed:', error);
+                        });
+                        return true; // Promise was created successfully
+                    } else {
+                        // It's a synchronous result
+                        return result === true;
+                    }
                 } catch (e) {
                     console.error('❌ [PHP] Error loading existing template data:', e);
                     // Silently fail if loading existing data fails
@@ -5238,20 +5256,10 @@ class PDF_Builder_Admin {
                     console.log('✅ [PHP] React editor initialized successfully on retry');
                     clearInterval(initInterval);
                     
-                    // Now try to load existing data
+                    // Now try to load existing data once
                     setTimeout(function() {
-                        if (!loadExistingTemplateData()) {
-                            var loadDataAttempts = 0;
-                            var maxLoadDataAttempts = 30; // 15 seconds max
-                            var loadDataInterval = setInterval(function() {
-                                loadDataAttempts++;
-                                if (loadExistingTemplateData()) {
-                                    clearInterval(loadDataInterval);
-                                } else if (loadDataAttempts >= maxLoadDataAttempts) {
-                                    clearInterval(loadDataInterval);
-                                }
-                            }, 500);
-                        }
+                        console.log('🔄 [PHP] Attempting to load existing template data...');
+                        loadExistingTemplateData();
                     }, 1000);
                     
                 } else if (initAttempts >= maxInitAttempts) {
@@ -5262,20 +5270,10 @@ class PDF_Builder_Admin {
         } else {
             console.log('✅ [PHP] React editor initialized successfully');
             
-            // Try to load existing data immediately, then retry periodically
+            // Try to load existing data once
             setTimeout(function() {
-                if (!loadExistingTemplateData()) {
-                    var loadDataAttempts = 0;
-                    var maxLoadDataAttempts = 30; // 15 seconds max
-                    var loadDataInterval = setInterval(function() {
-                        loadDataAttempts++;
-                        if (loadExistingTemplateData()) {
-                            clearInterval(loadDataInterval);
-                        } else if (loadDataAttempts >= maxLoadDataAttempts) {
-                            clearInterval(loadDataInterval);
-                        }
-                    }, 500);
-                }
+                console.log('🔄 [PHP] Attempting to load existing template data...');
+                loadExistingTemplateData();
             }, 1000);
         }
 
