@@ -367,6 +367,14 @@ function openTemplateSettings(templateId, templateName) {
     // Afficher la modale des paramètres
     document.getElementById('template-settings-modal').style.display = 'flex';
 
+    // Remettre le bouton d'enregistrement à son état initial
+    const saveButton = document.querySelector('.template-modal-footer .button-primary');
+    if (saveButton) {
+        saveButton.innerHTML = '💾 Enregistrer';
+        saveButton.style.background = '';
+        saveButton.disabled = false;
+    }
+
     // Pré-remplir les champs avec les données actuelles
     document.getElementById('template-name-input').value = templateName;
 
