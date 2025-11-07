@@ -143,6 +143,93 @@ if (isset($_POST['clear_cache']) &&
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès.</p></div>';
     }
 }
+
+// Handle individual tab submissions
+if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $pdf_settings = [
+            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name')),
+            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
+            'include_metadata' => isset($_POST['include_metadata']),
+            'embed_fonts' => isset($_POST['embed_fonts']),
+            'auto_crop' => isset($_POST['auto_crop']),
+            'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres PDF enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $security_settings = [
+            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $security_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sécurité enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $canvas_settings = [
+            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
+            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
+            'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
+            'container_background_color' => sanitize_text_field($_POST['container_background_color'] ?? '#f8f9fa'),
+            'show_margins' => isset($_POST['show_margins']),
+            'margin_top' => intval($_POST['margin_top'] ?? 28),
+            'margin_right' => intval($_POST['margin_right'] ?? 28),
+            'margin_bottom' => intval($_POST['margin_bottom'] ?? 28),
+            'margin_left' => intval($_POST['margin_left'] ?? 10),
+            'show_grid' => isset($_POST['show_grid']),
+            'grid_size' => intval($_POST['grid_size'] ?? 10),
+            'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
+            'snap_to_grid' => isset($_POST['snap_to_grid']),
+            'snap_to_elements' => isset($_POST['snap_to_elements']),
+            'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
+            'show_guides' => isset($_POST['show_guides']),
+            'default_zoom' => intval($_POST['default_zoom'] ?? 100),
+            'zoom_step' => intval($_POST['zoom_step'] ?? 25),
+            'min_zoom' => intval($_POST['min_zoom'] ?? 10),
+            'max_zoom' => intval($_POST['max_zoom'] ?? 500),
+            'enable_zoom_wheel' => isset($_POST['enable_zoom_wheel']),
+            'enable_pan_drag' => isset($_POST['enable_pan_drag']),
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $canvas_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $dev_settings = [
+            'debug_mode' => isset($_POST['debug_mode']),
+            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'enable_debug_js' => isset($_POST['enable_debug_js']),
+            'enable_debug_ajax' => isset($_POST['enable_debug_ajax']),
+            'enable_debug_performance' => isset($_POST['enable_debug_performance']),
+            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['log_retention'] ?? 30),
+            'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
+            'enable_profiling' => isset($_POST['enable_profiling']),
+            'force_https' => isset($_POST['force_https']),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
 ?>  
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
@@ -718,6 +805,10 @@ if (isset($_POST['clear_cache']) &&
                     <li><strong>Pour email :</strong> Utilisez la qualité "Basse" + Optimiser pour le web + Recadrage auto</li>
                 </ul>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_pdf" class="button button-primary">Enregistrer les paramètres PDF</button>
+            </p>
         </div>
         
         <div id="securite" class="tab-content" style="display: none;">
@@ -800,6 +891,10 @@ if (isset($_POST['clear_cache']) &&
                     <li><strong>Sauvegardes :</strong> Effectuez des sauvegardes régulières</li>
                 </ul>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_security" class="button button-primary">Enregistrer les paramètres de sécurité</button>
+            </p>
         </div>
         
         <div id="roles" class="tab-content" style="display: none;">
@@ -1532,6 +1627,10 @@ if (isset($_POST['clear_cache']) &&
                     <li><strong>Sécurité :</strong> Les versions auto-save permettent de récupérer en cas de crash</li>
                 </ul>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_canvas" class="button button-primary">Enregistrer les paramètres Canvas</button>
+            </p>
         </div>
         
         <div id="templates" class="tab-content" style="display: none;">
@@ -2153,6 +2252,10 @@ if (isset($_POST['clear_cache']) &&
                     <li>Testez avec les différents niveaux de log</li>
                 </ul>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
+            </p>
         </div>
     </form>
 
