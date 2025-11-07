@@ -190,34 +190,40 @@ if (isset($_POST['clear_cache']) &&
             
             <p class="submit">
                 <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-                <button type="button" onclick="debugForm();" class="button">Debug Form</button>
-                <script>
-                function debugForm() {
-                    setTimeout(() => {
-                        console.log('=== FORM DEBUG ===');
-                        const form = document.getElementById('settings-form');
-                        console.log('Form found:', !!form);
-                        if (form) {
-                            console.log('Form elements count:', form.elements.length);
-                            console.log('Form method:', form.method);
-                            console.log('Form action:', form.action);
-
-                            for(let i = 0; i < form.elements.length; i++) {
-                                const el = form.elements[i];
-                                console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
-                            }
-
-                            const formData = new FormData(form);
-                            console.log('FormData entries:');
-                            for (let [key, value] of formData.entries()) {
-                                console.log(`  ${key}: ${value}`);
-                            }
-                        }
-                        console.log('=== END DEBUG ===');
-                    }, 500);
-                }
-                </script>
+                <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
+        </div>
+    </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('debug-btn').addEventListener('click', function() {
+            console.log('=== FORM DEBUG START ===');
+            const form = document.getElementById('settings-form');
+            console.log('Form found:', !!form);
+
+            if (form) {
+                console.log('Form elements count:', form.elements.length);
+                console.log('Form method:', form.method);
+                console.log('Form action:', form.action);
+
+                for(let i = 0; i < form.elements.length; i++) {
+                    const el = form.elements[i];
+                    console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
+                }
+
+                const formData = new FormData(form);
+                console.log('FormData entries count:', [...formData.entries()].length);
+                for (let [key, value] of formData.entries()) {
+                    console.log(`FormData: ${key} = ${value}`);
+                }
+            } else {
+                console.log('Form not found!');
+            }
+            console.log('=== FORM DEBUG END ===');
+        });
+    });
+    </script>
         </div>
         
         <div id="licence" class="tab-content" style="display: none;">
