@@ -2950,7 +2950,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 this.innerHTML = '⏳ Sauvegarde...';
                 
                 // Collecter les données du formulaire
-                const currentTab = this.getAttribute('name').replace('submit_', '');
+                const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
                 let formData = new FormData();
                 
                 // Ajouter l'action et l'onglet
