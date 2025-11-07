@@ -21,7 +21,9 @@ $settings = get_option('pdf_builder_settings', []);
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Form submission detected');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        error_log('DEBUG: Nonce verified successfully');
         // Check for max_input_vars limit
         $max_input_vars = ini_get('max_input_vars');
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
