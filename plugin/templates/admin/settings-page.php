@@ -1523,10 +1523,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 </table>
                 
                 <p class="submit">
-                    <button type="submit" name="submit_notifications" class="button button-primary">
-                        Sauvegarder les Notifications
-                    </button>
-                    <button type="button" id="test-notifications" class="button button-secondary" style="margin-left: 10px;">
+                    <button type="button" id="test-notifications" class="button button-secondary">
                         🧪 Tester les Notifications
                     </button>
                 </p>
