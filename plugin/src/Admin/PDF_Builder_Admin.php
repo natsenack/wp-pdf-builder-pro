@@ -3311,6 +3311,7 @@ class PDF_Builder_Admin {
      */
     public function ajax_save_settings()
     {
+        error_log('PDF Builder: ajax_save_settings called from PDF_Builder_Admin');
         // Déterminer l'onglet actuel
         $current_tab = $_POST['current_tab'] ?? 'general';
 

@@ -229,6 +229,12 @@ function pdf_builder_ajax_save_settings() {
                 $nonce_valid = true;
             }
             break;
+        case 'notifications':
+            if (isset($_POST['pdf_builder_notifications_nonce']) && 
+                wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_notifications')) {
+                $nonce_valid = true;
+            }
+            break;
         default:
             if (isset($_POST['pdf_builder_settings_nonce']) && 
                 wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -366,12 +372,22 @@ function pdf_builder_ajax_save_settings() {
             break;
 
         case 'notifications':
-            $notifications_settings = [
-                'enable_email_notifications' => !empty($_POST['enable_email_notifications']) && $_POST['enable_email_notifications'] === '1',
-                'notification_email' => sanitize_email($_POST['notification_email'] ?? ''),
-                'notify_on_errors' => !empty($_POST['notify_on_errors']) && $_POST['notify_on_errors'] === '1',
-                'notify_on_success' => !empty($_POST['notify_on_success']) && $_POST['notify_on_success'] === '1',
+            // Sauvegarder les paramètres de notifications séparément
+            $notification_settings = [
+                'email_notifications_enabled' => !empty($_POST['email_notifications_enabled']) && $_POST['email_notifications_enabled'] === '1',
+                'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
+                'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'error'),
+                'notification_on_generation' => !empty($_POST['notification_on_generation']) && $_POST['notification_on_generation'] === '1',
+                'notification_on_error' => !empty($_POST['notification_on_error']) && $_POST['notification_on_error'] === '1',
+                'notification_on_deletion' => !empty($_POST['notification_on_deletion']) && $_POST['notification_on_deletion'] === '1',
             ];
+            
+            foreach ($notification_settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+            
+            $notices[] = 'Paramètres de notifications enregistrés avec succès';
+            break;
             update_option('pdf_builder_settings', array_merge($settings, $notifications_settings));
             $notices[] = 'Paramètres de notifications enregistrés avec succès';
             break;
