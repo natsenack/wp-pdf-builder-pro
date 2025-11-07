@@ -192,8 +192,14 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="cache_enabled">Cache activé</label></th>
                     <td>
-                        <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?> />
-                        <p class="description">Améliore les performances en mettant en cache les données</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le cache</span>
+                        </div>
+                        <div class="toggle-description">Améliore les performances en mettant en cache les données</div>
                     </td>
                 </tr>
                 <tr>
@@ -433,9 +439,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
                     <td>
-                        <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
-                               <?php checked($settings['auto_save_enabled'] ?? false); ?> />
-                        <p class="description">Sauvegarde automatique pendant l'édition</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
+                                       <?php checked($settings['auto_save_enabled'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Sauvegarde automatique</span>
+                        </div>
+                        <div class="toggle-description">Sauvegarde automatique pendant l'édition</div>
                     </td>
                 </tr>
                 <tr>
@@ -566,9 +578,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="include_metadata">Inclure les Métadonnées</label></th>
                     <td>
-                        <input type="checkbox" id="include_metadata" name="include_metadata" value="1" 
-                               <?php checked($settings['include_metadata'] ?? false); ?> />
-                        <p class="description">Ajoute les données de titre, auteur, date, etc.</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="include_metadata" name="include_metadata" value="1" 
+                                       <?php checked($settings['include_metadata'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Métadonnées PDF</span>
+                        </div>
+                        <div class="toggle-description">Ajoute les données de titre, auteur, date, etc.</div>
                     </td>
                 </tr>
             </table>
@@ -1687,14 +1705,25 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
                     <td>
-                        <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
-                        <p class="description">Active le mode développeur avec logs détaillés</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le mode développeur</span>
+                        </div>
+                        <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
                     <td>
-                        <input type="password" id="developer_password" name="developer_password" placeholder="Laisser vide pour aucun mot de passe" style="width: 300px;" />
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="password" id="developer_password" name="developer_password" placeholder="Laisser vide pour aucun mot de passe" style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                            <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                👁️ Afficher
+                            </button>
+                        </div>
                         <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
                     </td>
                 </tr>
@@ -2113,6 +2142,110 @@ if (isset($_POST['clear_cache']) &&
     }
 </style>
 
+<!-- Styles pour les boutons toggle -->
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input:checked + .toggle-slider {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .toggle-label {
+        display: inline-block;
+        vertical-align: middle;
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .toggle-description {
+        margin-left: 70px;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    /* États hover et focus */
+    .toggle-switch:hover .toggle-slider {
+        box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+
+    .toggle-switch input:focus + .toggle-slider {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Animation d'activation */
+    .toggle-slider {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toggle-slider:before {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* États disabled */
+    .toggle-switch input:disabled + .toggle-slider {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .toggle-switch input:disabled ~ .toggle-label {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.nav-tab');
@@ -2241,6 +2374,52 @@ if (isset($_POST['clear_cache']) &&
                 imageQualityValue.textContent = this.value + '%';
             });
         }
+        
+        // Gestion des boutons toggle
+        function initToggles() {
+            const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const slider = this.nextElementSibling;
+                    if (this.checked) {
+                        slider.classList.add('checked');
+                    } else {
+                        slider.classList.remove('checked');
+                    }
+                });
+                
+                // État initial
+                if (toggle.checked) {
+                    toggle.nextElementSibling.classList.add('checked');
+                }
+            });
+        }
+        
+        // Gestion de l'affichage du mot de passe
+        function initPasswordToggle() {
+            const passwordInput = document.getElementById('developer_password');
+            const toggleButton = document.getElementById('toggle_password');
+            
+            if (passwordInput && toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleButton.innerHTML = '🙈 Masquer';
+                        toggleButton.classList.remove('button-secondary');
+                        toggleButton.classList.add('button-primary');
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleButton.innerHTML = '👁️ Afficher';
+                        toggleButton.classList.remove('button-primary');
+                        toggleButton.classList.add('button-secondary');
+                    }
+                });
+            }
+        }
+        
+        // Initialiser les toggles au chargement
+        initToggles();
+        initPasswordToggle();
         
         // Gestion des rôles
         const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
