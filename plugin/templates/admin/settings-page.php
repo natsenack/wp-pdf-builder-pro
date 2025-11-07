@@ -2613,10 +2613,35 @@ if (isset($_POST['clear_cache']) &&
         // Debug form submission
         const settingsForm = document.getElementById('settings-form');
         if (settingsForm) {
+            console.log('PDF Builder: Form element found');
+            
             settingsForm.addEventListener('submit', function(e) {
+                console.log('PDF Builder: ===== FORM SUBMIT EVENT =====');
                 console.log('PDF Builder: Form submitted with', this.elements.length, 'elements');
+                console.log('PDF Builder: Form method:', this.method);
+                console.log('PDF Builder: Form action:', this.action);
+                
+                // Check if submit button is present
+                const submitBtn = this.querySelector('button[name="submit"]');
+                console.log('PDF Builder: Submit button found:', !!submitBtn);
+                
+                // Check nonce
+                const nonceField = this.querySelector('input[name="pdf_builder_settings_nonce"]');
+                console.log('PDF Builder: Nonce field found:', !!nonceField);
+                console.log('PDF Builder: Nonce value:', nonceField ? nonceField.value : 'NONE');
+                
                 // Don't prevent default, just log
             });
+            
+            // Also log on click of submit button
+            const submitBtn = settingsForm.querySelector('button[name="submit"]');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    console.log('PDF Builder: Submit button clicked');
+                });
+            }
+        } else {
+            console.error('PDF Builder: Form element NOT found!');
         }
         
         // Gestion des rôles
