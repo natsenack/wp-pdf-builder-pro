@@ -335,9 +335,9 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
     ];
     
     error_log('DEBUG AJAX: Sending JSON response: ' . json_encode($response));
+    error_log('DEBUG AJAX: About to call wp_die() with JSON response');
     header('Content-Type: application/json');
-    echo json_encode($response);
-    exit;
+    wp_die(json_encode($response)); // Utiliser wp_die au lieu de echo + exit
 } else {
     error_log('DEBUG AJAX: Not an AJAX request. ajax_save=' . (isset($_POST['ajax_save']) ? $_POST['ajax_save'] : 'not set'));
     error_log('DEBUG AJAX: HTTP_X_REQUESTED_WITH=' . (isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : 'not set'));
