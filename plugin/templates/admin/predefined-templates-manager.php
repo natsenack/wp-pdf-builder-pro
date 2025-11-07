@@ -32,7 +32,6 @@ class PDF_Builder_Predefined_Templates_Manager {
         add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajax_refresh_nonce']);
 
         // Paramètres développeur
-        add_action('admin_init', [$this, 'register_developer_settings']);
         add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajax_developer_auth']);
         add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajax_developer_logout']);
     }
@@ -161,75 +160,36 @@ class PDF_Builder_Predefined_Templates_Manager {
      * Enregistrer les paramètres développeur
      */
     public function register_developer_settings() {
-        // Ajouter une section dans les paramètres généraux
-        add_settings_section(
-            'pdf_builder_developer_section',
-            __('🔧 PDF Builder - Mode Développeur', 'pdf-builder-pro'),
-            [$this, 'developer_settings_section_callback'],
-            'general'
-        );
-
-        // Paramètre pour activer le mode développeur
-        register_setting('general', 'pdf_builder_developer_enabled', [
-            'type' => 'boolean',
-            'default' => false,
-            'sanitize_callback' => 'wp_validate_boolean'
-        ]);
-
-        add_settings_field(
-            'pdf_builder_developer_enabled',
-            __('Activer le mode développeur', 'pdf-builder-pro'),
-            [$this, 'developer_enabled_field_callback'],
-            'general',
-            'pdf_builder_developer_section'
-        );
-
-        // Paramètre pour le mot de passe développeur
-        register_setting('general', 'pdf_builder_developer_password', [
-            'type' => 'string',
-            'default' => '',
-            'sanitize_callback' => 'sanitize_text_field'
-        ]);
-
-        add_settings_field(
-            'pdf_builder_developer_password',
-            __('Mot de passe développeur', 'pdf-builder-pro'),
-            [$this, 'developer_password_field_callback'],
-            'general',
-            'pdf_builder_developer_section'
-        );
+        // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour la section développeur
      */
     public function developer_settings_section_callback() {
-        echo '<p>' . __('Configurez l\'accès au mode développeur pour la gestion des modèles prédéfinis.', 'pdf-builder-pro') . '</p>';
+        // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour le champ activation développeur
      */
     public function developer_enabled_field_callback() {
-        $enabled = get_option('pdf_builder_developer_enabled', false);
-        echo '<input type="checkbox" name="pdf_builder_developer_enabled" value="1" ' . checked(1, $enabled, false) . ' />';
-        echo '<p class="description">' . __('Cochez pour activer l\'accès aux outils de développement.', 'pdf-builder-pro') . '</p>';
+        // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour le champ mot de passe développeur
      */
     public function developer_password_field_callback() {
-        $password = get_option('pdf_builder_developer_password', '');
-        echo '<input type="password" name="pdf_builder_developer_password" value="' . esc_attr($password) . '" class="regular-text" />';
-        echo '<p class="description">' . __('Mot de passe requis pour accéder aux outils de développement.', 'pdf-builder-pro') . '</p>';
+        // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Vérifier si l'utilisateur est authentifié en mode développeur
      */
     private function is_developer_authenticated() {
-        if (!get_option('pdf_builder_developer_enabled', false)) {
+        $settings = get_option('pdf_builder_settings', []);
+        if (empty($settings['developer_enabled'])) {
             return false;
         }
 
@@ -243,12 +203,13 @@ class PDF_Builder_Predefined_Templates_Manager {
      */
     public function ajax_developer_auth() {
         try {
-            if (!get_option('pdf_builder_developer_enabled', false)) {
+            $settings = get_option('pdf_builder_settings', []);
+            if (empty($settings['developer_enabled'])) {
                 wp_send_json_error('Mode développeur désactivé');
             }
 
             $password = sanitize_text_field($_POST['password'] ?? '');
-            $stored_password = get_option('pdf_builder_developer_password', '');
+            $stored_password = $settings['developer_password'] ?? '';
 
             if (empty($password) || $password !== $stored_password) {
                 wp_send_json_error('Mot de passe incorrect');
@@ -296,12 +257,13 @@ class PDF_Builder_Predefined_Templates_Manager {
         }
 
         // Vérifier l'authentification développeur
-        if (!get_option('pdf_builder_developer_enabled', false)) {
+        $settings = get_option('pdf_builder_settings', []);
+        if (empty($settings['developer_enabled'])) {
             ?>
             <div class="wrap">
                 <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
                 <div class="notice notice-warning">
-                    <p><?php _e('Le mode développeur n\'est pas activé. Allez dans <strong>Réglages → Général</strong> pour l\'activer.', 'pdf-builder-pro'); ?></p>
+                    <p><?php _e('Le mode développeur n\'est pas activé. Allez dans <strong>PDF Builder → ⚙️ Paramètres → Mode Développeur</strong> pour l\'activer.', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
             <?php

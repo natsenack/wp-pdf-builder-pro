@@ -125,7 +125,10 @@ class TempConfig {
             'enable_keyboard_shortcuts' => true,
             'show_fps' => false,
             'email_notifications' => false,
-            'admin_email' => get_option('admin_email')
+            'admin_email' => get_option('admin_email'),
+            // Paramètres Développeur
+            'developer_enabled' => false,
+            'developer_password' => ''
         ];
 
         return isset($settings[$key]) ? $settings[$key] : ($defaults[$key] ?? $default);
@@ -579,6 +582,7 @@ window.addEventListener('load', function() {
                 <a href="#canvas" class="nav-tab"><?php _e('Canvas', 'pdf-builder-pro'); ?></a>
                 <a href="#templates" class="nav-tab"><?php _e('Templates', 'pdf-builder-pro'); ?></a>
                 <a href="#maintenance" class="nav-tab"><?php _e('Maintenance', 'pdf-builder-pro'); ?></a>
+                <a href="#developer" class="nav-tab"><?php _e('🔧 Développeur', 'pdf-builder-pro'); ?></a>
             </div>
 
             <!-- Message pour les utilisateurs sans JavaScript -->
@@ -1967,6 +1971,79 @@ window.addEventListener('load', function() {
                                 <td><?php echo $this->get_template_count(); ?></td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Développeur -->
+            <div id="developer" class="tab-content">
+                <h2><?php _e('🔧 Mode Développeur', 'pdf-builder-pro'); ?></h2>
+
+                <div class="developer-settings">
+                    <div class="notice notice-info" style="margin-bottom: 20px;">
+                        <p><?php _e('⚠️ <strong>Zone réservée aux développeurs</strong> - Ces paramètres contrôlent l\'accès aux outils de développement avancés.', 'pdf-builder-pro'); ?></p>
+                    </div>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Activer le mode développeur', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <label for="developer_enabled">
+                                    <input type="checkbox" name="pdf_builder_settings[developer_enabled]" id="developer_enabled" value="1"
+                                           <?php checked(isset($settings['developer_enabled']) && $settings['developer_enabled']); ?> />
+                                    <?php _e('Activer l\'accès aux outils de développement', 'pdf-builder-pro'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php _e('Permet l\'accès à la page "📝 Gestion des Modèles Prédéfinis" et autres outils développeur.', 'pdf-builder-pro'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <input type="password" name="pdf_builder_settings[developer_password]" id="developer_password"
+                                       value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" class="regular-text" />
+                                <p class="description">
+                                    <?php _e('Mot de passe requis pour accéder aux outils de développement. Laissez vide pour désactiver.', 'pdf-builder-pro'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('État actuel', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <?php
+                                $is_enabled = isset($settings['developer_enabled']) && $settings['developer_enabled'];
+                                $has_password = !empty($settings['developer_password']);
+                                ?>
+                                <div class="developer-status">
+                                    <span class="status-indicator <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>">
+                                        <?php echo $is_enabled ? '✅' : '❌'; ?> Mode développeur <?php echo $is_enabled ? 'activé' : 'désactivé'; ?>
+                                    </span>
+                                    <?php if ($is_enabled): ?>
+                                        <br>
+                                        <span class="status-indicator <?php echo $has_password ? 'enabled' : 'disabled'; ?>">
+                                            <?php echo $has_password ? '🔒' : '🔓'; ?> Authentification <?php echo $has_password ? 'activée' : 'désactivée'; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <style>
+                                .status-indicator.enabled { color: #28a745; font-weight: bold; }
+                                .status-indicator.disabled { color: #dc3545; font-weight: bold; }
+                                </style>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="developer-info" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007cba;">
+                        <h3><?php _e('Informations pour les développeurs', 'pdf-builder-pro'); ?></h3>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><?php _e('La page "📝 Gestion des Modèles Prédéfinis" permet de créer et modifier les modèles prédéfinis.', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Utilisez un mot de passe fort pour sécuriser l\'accès.', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('L\'authentification est liée à la session PHP et expire automatiquement.', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Les développeurs peuvent se déconnecter manuellement via le bouton en haut à droite.', 'pdf-builder-pro'); ?></li>
+                        </ul>
                     </div>
                 </div>
             </div>
