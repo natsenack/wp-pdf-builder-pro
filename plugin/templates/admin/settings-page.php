@@ -1886,7 +1886,6 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         </p>
     </form>
 </div>
-                    </div>
 <style>
     .nav-tab-wrapper {
         border-bottom: 1px solid #ccc;
