@@ -1,0 +1,6 @@
+open ftp://deploy:deploy123@65.108.242.181
+cd wp-content/plugins/wp-pdf-builder-pro
+put plugin\src\Core\PDF_Builder_Core.php
+put plugin\bootstrap.php
+put plugin\hotfix-notifications.php
+quit

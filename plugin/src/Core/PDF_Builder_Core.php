@@ -120,7 +120,7 @@ class PDF_Builder_Core
         add_action('init', [$this, 'initialize_directories']);
 
         // Initialiser le gestionnaire de notifications
-        // add_action('init', [$this, 'initialize_notification_manager']); // Temporairement désactivé
+        // add_action('init', [$this, 'initialize_notification_manager']); // SUPPRIMÉ - méthode supprimée
     }
 
     /**
@@ -162,15 +162,6 @@ class PDF_Builder_Core
                 }
             }
         }
-    }
-
-    /**
-     * Initialiser le gestionnaire de notifications - TEMPORAIREMENT DÉSACTIVÉ POUR ÉVITER ERREUR FATALE
-     */
-    public function initialize_notification_manager_DISABLED()
-    {
-        // Méthode renommée temporairement pour éviter l'erreur fatale
-        return;
     }
 
     /**
