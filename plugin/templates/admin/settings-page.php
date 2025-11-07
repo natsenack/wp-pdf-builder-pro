@@ -81,6 +81,9 @@ $settings = get_option("pdf_builder_settings", []);
     <div class="nav-tab-wrapper">
         <a href="#general" class="nav-tab nav-tab-active">General</a>
         <a href="#advanced" class="nav-tab">Advanced</a>
+        <a href="#canvas" class="nav-tab">Canvas</a>
+        <a href="#export" class="nav-tab">Export</a>
+        <a href="#security" class="nav-tab">Security</a>
     </div>
     
     <script type="text/javascript">
@@ -131,6 +134,40 @@ $settings = get_option("pdf_builder_settings", []);
                     <th>Cache</th>
                     <td><input type="checkbox" name="cache_enabled" value="1" <?php checked($settings["cache_enabled"] ?? false); ?> /></td>
                 </tr>
+            </table>
+        </div>
+        
+        <div id="canvas" class="tab-content" style="display:none; padding:20px; background:#f5f5f5;">
+            <h2>Canvas Settings</h2>
+            <table class="form-table">
+                <tr><th>Width</th><td><input type="number" name="canvas_width" value="794" /></td></tr>
+                <tr><th>Height</th><td><input type="number" name="canvas_height" value="1123" /></td></tr>
+                <tr><th>Background</th><td><input type="color" name="canvas_bg" value="#ffffff" /></td></tr>
+                <tr><th>Grid Size</th><td><input type="number" name="grid_size" value="10" /></td></tr>
+                <tr><th>Snap to Grid</th><td><input type="checkbox" name="snap_grid" /></td></tr>
+                <tr><th>Show Guides</th><td><input type="checkbox" name="show_guides" checked /></td></tr>
+            </table>
+        </div>
+        
+        <div id="export" class="tab-content" style="display:none; padding:20px; background:#f5f5f5;">
+            <h2>Export Settings</h2>
+            <table class="form-table">
+                <tr><th>Quality</th><td><select name="export_quality"><option>Draft</option><option selected>Print</option><option>High</option></select></td></tr>
+                <tr><th>Format</th><td><select name="export_format"><option selected>PDF</option><option>PNG</option><option>JPG</option></select></td></tr>
+                <tr><th>Compress Images</th><td><input type="checkbox" name="compress_images" checked /></td></tr>
+                <tr><th>Image Quality</th><td><input type="range" name="image_quality" min="50" max="100" value="85" /></td></tr>
+                <tr><th>Include Metadata</th><td><input type="checkbox" name="include_metadata" checked /></td></tr>
+            </table>
+        </div>
+        
+        <div id="security" class="tab-content" style="display:none; padding:20px; background:#f5f5f5;">
+            <h2>Security Settings</h2>
+            <table class="form-table">
+                <tr><th>Debug Mode</th><td><input type="checkbox" name="debug_security" /></td></tr>
+                <tr><th>Max Template Size</th><td><input type="number" name="max_template_size" value="52428800" /></td></tr>
+                <tr><th>Rate Limiting</th><td><input type="number" name="rate_limit" value="100" /> requests/minute</td></tr>
+                <tr><th>Auto Save</th><td><input type="checkbox" name="auto_save" checked /></td></tr>
+                <tr><th>Auto Save Interval</th><td><input type="number" name="auto_save_interval" value="30" /> seconds</td></tr>
             </table>
         </div>
         
