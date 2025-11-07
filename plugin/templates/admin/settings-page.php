@@ -365,8 +365,6 @@ window.addEventListener('load', function() {
 });
 </script>
 
-<div class="wrap">
-
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <script type="text/javascript">
@@ -2195,7 +2193,6 @@ window.addEventListener('load', function() {
     </form>
 
     </div> <!-- #pdf-builder-settings-tabs -->
-</div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
 <script type="text/javascript">
