@@ -568,14 +568,68 @@ window.addEventListener('load', function() {
     <div class="wrap">
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
-    <div class="postbox-container" style="width: 100%; padding-right: 0;">
-    <div class="metabox-holder">
-    <div class="meta-box-sortables">
+    <div id="poststuff">
+    <div id="post-body" class="metabox-holder columns-1">
+    <div id="post-body-content">
 
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
-        <div class="pdf-builder-settings postbox" style="border: none; box-shadow: none; background: transparent;">
+        <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
+
+            <style>
+            .pdf-builder-settings .nav-tab-wrapper {
+                margin-bottom: 20px;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .pdf-builder-settings .nav-tab {
+                display: inline-block;
+                padding: 8px 16px;
+                margin-right: 4px;
+                border: 1px solid #ccc;
+                border-bottom: none;
+                background: #f1f1f1;
+                color: #666;
+                text-decoration: none;
+                border-radius: 4px 4px 0 0;
+                cursor: pointer;
+            }
+
+            .pdf-builder-settings .nav-tab.nav-tab-active,
+            .pdf-builder-settings .nav-tab:hover {
+                background: #fff;
+                color: #000;
+                border-bottom: 1px solid #fff;
+            }
+
+            .pdf-builder-settings .tab-content {
+                display: none;
+                padding: 20px;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 0 4px 4px 4px;
+            }
+
+            .pdf-builder-settings .tab-content.active {
+                display: block;
+            }
+
+            .pdf-builder-settings .form-table {
+                background: transparent;
+                margin: 0;
+            }
+
+            .pdf-builder-settings .form-table th {
+                width: 200px;
+                padding: 20px 10px 20px 0;
+                vertical-align: top;
+            }
+
+            .pdf-builder-settings .form-table td {
+                padding: 15px 10px;
+            }
+            </style>
 
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
@@ -2075,10 +2129,11 @@ window.addEventListener('load', function() {
             <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>">
         </p>
     </form>
-    </div> <!-- .pdf-builder-settings -->
-    </div> <!-- .meta-box-sortables -->
-    </div> <!-- .metabox-holder -->
-    </div> <!-- .postbox-container -->
+
+    </div> <!-- #pdf-builder-settings-tabs -->
+    </div> <!-- #post-body-content -->
+    </div> <!-- #post-body -->
+    </div> <!-- #poststuff -->
 </div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
