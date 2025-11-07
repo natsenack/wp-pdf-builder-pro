@@ -33,6 +33,51 @@ $settings = get_option("pdf_builder_settings", []);
 <div class="wrap">
     <h1>Settings</h1>
     
+    <style>
+    .nav-tab-wrapper {
+        margin: 0 0 20px 0;
+        padding: 0;
+        border-bottom: 1px solid #ccc;
+        background: transparent;
+    }
+    .nav-tab {
+        display: inline-block;
+        padding: 8px 16px;
+        margin: 0 4px -1px 0;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        background: #f1f1f1;
+        color: #666;
+        text-decoration: none;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+    }
+    .nav-tab.nav-tab-active {
+        background: #fff;
+        color: #000;
+        border-bottom: 1px solid #fff;
+    }
+    .tab-content {
+        padding: 20px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 0 4px 4px 4px;
+        margin-bottom: 20px;
+    }
+    .form-table {
+        width: 100%;
+        background: transparent;
+    }
+    .form-table th {
+        width: 200px;
+        text-align: left;
+        font-weight: 600;
+    }
+    .form-table td {
+        padding: 10px 0;
+    }
+    </style>
+    
     <div class="nav-tab-wrapper">
         <a href="#general" class="nav-tab nav-tab-active">General</a>
         <a href="#advanced" class="nav-tab">Advanced</a>
