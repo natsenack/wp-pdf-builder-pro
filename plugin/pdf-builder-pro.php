@@ -346,10 +346,9 @@ function pdf_builder_ajax_save_settings() {
 
         case 'securite':
             $securite_settings = [
-                'enable_cors' => !empty($_POST['enable_cors']) && $_POST['enable_cors'] === '1',
-                'allowed_origins' => sanitize_text_field($_POST['allowed_origins'] ?? ''),
-                'enable_csrf_protection' => !empty($_POST['enable_csrf_protection']) && $_POST['enable_csrf_protection'] === '1',
-                'session_timeout' => intval($_POST['session_timeout'] ?? 3600),
+                'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+                'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+                'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $securite_settings));
             $notices[] = 'Paramètres de sécurité enregistrés avec succès';
