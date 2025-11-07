@@ -398,6 +398,60 @@ function updateTemplateTitle() {
     
     const categoryLabel = categoryLabels[category] || 'Template';
     titleElement.innerHTML = `⚙️ Paramètres du ${categoryLabel}`;
+    
+    // Mettre à jour aussi le badge de la carte template correspondante
+    updateTemplateCardBadge(category);
+}
+
+function updateTemplateCardBadge(category) {
+    // Trouver la carte template correspondante
+    const templateCard = document.querySelector(`.template-card [onclick*="${currentTemplateId}"]`);
+    if (!templateCard) return;
+    
+    const card = templateCard.closest('.template-card');
+    if (!card) return;
+    
+    // Mettre à jour le badge
+    const badge = card.querySelector('.template-type-badge');
+    if (!badge) return;
+    
+    const categoryColors = {
+        'facture': '#007cba',
+        'devis': '#28a745',
+        'commande': '#ffc107',
+        'contrat': '#dc3545',
+        'newsletter': '#6f42c1',
+        'autre': '#6c757d'
+    };
+    
+    const categoryLabels = {
+        'facture': 'Facture',
+        'devis': 'Devis',
+        'commande': 'Commande',
+        'contrat': 'Contrat',
+        'newsletter': 'Newsletter',
+        'autre': 'Autre'
+    };
+    
+    const color = categoryColors[category] || categoryColors['autre'];
+    const label = categoryLabels[category] || categoryLabels['autre'];
+    
+    badge.style.background = color;
+    badge.textContent = label;
+    
+    // Mettre à jour aussi l'icône si elle existe
+    const iconElement = card.querySelector('div[style*="font-size: 3rem"]');
+    if (iconElement) {
+        const categoryIcons = {
+            'facture': '🧾',
+            'devis': '📋',
+            'commande': '📦',
+            'contrat': '📑',
+            'newsletter': '📰',
+            'autre': '📄'
+        };
+        iconElement.textContent = categoryIcons[category] || categoryIcons['autre'];
+    }
 }
 
 function loadTemplateSettings(templateId) {
