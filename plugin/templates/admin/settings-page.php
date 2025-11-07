@@ -2954,6 +2954,27 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 formData.append('action', 'pdf_builder_save_settings'); // Action AJAX WordPress
                 formData.append('current_tab', this.getAttribute('name').replace('submit_', '')); // Onglet actif
                 
+                // Collecter spécifiquement les paramètres développeur si on est dans l'onglet développeur
+                if (this.getAttribute('name') === 'submit_developpeur') {
+                    // Collect developer settings
+                    const developerSettings = {};
+                    document.querySelectorAll('#developpeur input[type="checkbox"]').forEach(checkbox => {
+                        const key = checkbox.name;
+                        if (key) {
+                            developerSettings[key] = checkbox.checked ? '1' : '0';
+                            formData.append(key, checkbox.checked ? '1' : '0');
+                        }
+                    });
+                    
+                    // Also collect text inputs in developer tab
+                    document.querySelectorAll('#developpeur input[type="password"], #developpeur input[type="text"]').forEach(input => {
+                        const key = input.name;
+                        if (key) {
+                            formData.append(key, input.value);
+                        }
+                    });
+                }
+                
                 // Debug: vérifier que ajax_save est bien ajouté
                 console.log('📤 AJAX FormData contents:');
                 for (let [key, value] of formData.entries()) {
