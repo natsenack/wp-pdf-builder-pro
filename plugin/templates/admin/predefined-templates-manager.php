@@ -350,10 +350,6 @@ class PDF_Builder_Predefined_Templates_Manager {
                             <select id="template-category" name="category" required>
                                 <option value="facture"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
                                 <option value="devis"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
-                                <option value="commande"><?php _e('Bon de commande', 'pdf-builder-pro'); ?></option>
-                                <option value="contrat"><?php _e('Contrat', 'pdf-builder-pro'); ?></option>
-                                <option value="newsletter"><?php _e('Newsletter', 'pdf-builder-pro'); ?></option>
-                                <option value="autre"><?php _e('Autre', 'pdf-builder-pro'); ?></option>
                             </select>
                         </div>
 
