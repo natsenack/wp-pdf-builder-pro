@@ -8,23 +8,31 @@ if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
 }
 
-if (!is_user_logged_in() || !current_user_can('read')) {
-    wp_die(__('You must be logged in', 'pdf-builder-pro'));
+if (!is_user_logged_in() || !current_user_can('manage_options')) {
+    wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
 }
 
 // Debug: Page loaded
-error_log('PDF Builder: Settings page loaded at ' . date('Y-m-d H:i:s'));
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    error_log('PDF Builder: Settings page loaded at ' . date('Y-m-d H:i:s'));
+}
 
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
-error_log('DEBUG: Settings page loaded, POST data: ' . json_encode($_POST));
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    error_log('DEBUG: Settings page loaded, POST data: ' . json_encode($_POST));
+}
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Form submission detected');
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('DEBUG: Form submission detected');
+    }
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        error_log('DEBUG: Nonce verified successfully');
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('DEBUG: Nonce verified successfully');
+        }
         // Check for max_input_vars limit
         $max_input_vars = ini_get('max_input_vars');
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
@@ -103,9 +111,13 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
         ];
-        error_log('DEBUG: About to save settings: ' . json_encode($to_save));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('DEBUG: About to save settings: ' . json_encode($to_save));
+        }
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
-        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed'));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed'));
+        }
         if ($result) {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
