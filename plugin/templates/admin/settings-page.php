@@ -1020,8 +1020,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <form method="post">
                 <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
                 
-                <!-- Boutons de sélection rapide -->
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <!-- Boutons de contrôle rapide -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                     <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
                         Sélectionner Tout
                     </button>
@@ -1034,6 +1034,18 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <span class="description" style="margin-left: 10px;">
                         Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
                     </span>
+                </div>
+                
+                <!-- Bouton de sauvegarde en haut -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
+                    <p class="submit" style="margin: 0;">
+                        <button type="submit" name="submit_roles" class="button button-primary" style="font-size: 14px; padding: 8px 16px;">
+                            💾 Sauvegarder les Rôles
+                        </button>
+                        <span class="description" style="margin-left: 15px; color: #0056b3;">
+                            Cliquez ici pour enregistrer vos modifications
+                        </span>
+                    </p>
                 </div>
                 
                 <!-- Boutons toggle pour les rôles -->
@@ -1195,11 +1207,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     }
                 </style>
                 
-                <p class="submit">
-                    <button type="submit" name="submit_roles" class="button button-primary">
-                        Sauvegarder les Rôles
-                    </button>
-                </p>
             </form>
             
             <script>
