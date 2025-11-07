@@ -103,29 +103,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         ];
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
         if ($result) {
-            // Analyser les changements pour un message plus spécifique
-            $changed_categories = [];
-            
-            // Vérifier les changements par catégorie
-            $general_fields = ['debug_mode', 'log_level', 'cache_enabled', 'cache_ttl'];
-            $pdf_fields = ['pdf_quality', 'default_format', 'default_orientation', 'export_quality', 'export_format', 'pdf_author', 'pdf_subject'];
-            $canvas_fields = ['auto_save_enabled', 'auto_save_interval', 'compress_images', 'image_quality', 'optimize_for_web', 'enable_hardware_acceleration', 'limit_fps', 'max_fps', 'show_margins', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'show_grid', 'grid_size', 'grid_color', 'snap_to_grid', 'snap_to_elements', 'snap_tolerance', 'show_guides', 'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step', 'multi_select', 'copy_paste_enabled', 'undo_levels', 'redo_levels', 'auto_save_versions'];
-            $security_fields = ['max_template_size', 'max_execution_time', 'memory_limit'];
-            $developer_fields = ['developer_enabled', 'developer_password', 'debug_php_errors', 'debug_javascript', 'debug_ajax', 'debug_performance', 'debug_database', 'log_file_size', 'log_retention', 'disable_hooks', 'enable_profiling', 'force_https'];
-            
-            foreach ($to_save as $key => $value) {
-                $old_value = $settings[$key] ?? null;
-                if ($old_value !== $value) {
-                    if (in_array($key, $general_fields)) $changed_categories['général'] = true;
-                    elseif (in_array($key, $pdf_fields)) $changed_categories['PDF'] = true;
-                    elseif (in_array($key, $canvas_fields)) $changed_categories['canvas'] = true;
-                    elseif (in_array($key, $security_fields)) $changed_categories['sécurité'] = true;
-                    elseif (in_array($key, $developer_fields)) $changed_categories['développeur'] = true;
-                }
-            }
-            
-            $categories_text = !empty($changed_categories) ? ' (' . implode(', ', array_keys($changed_categories)) . ')' : '';
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès' . $categories_text . '.</p></div>';
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
         }
@@ -2629,8 +2607,6 @@ if (isset($_POST['clear_cache']) &&
         // Initialiser les toggles au chargement
         initToggles();
         initPasswordToggle();
-        
-        // Fonction pour afficher des notifications toast
         function showToast(message, type = 'success', duration = 3000) {
             // Supprimer les toasts existants
             const existingToasts = document.querySelectorAll('.pdf-toast-notification');
