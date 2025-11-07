@@ -321,6 +321,20 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         $settings = get_option('pdf_builder_settings', []);
     }
 }
+
+// Gestion des requêtes AJAX
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+    // C'est une requête AJAX, retourner une réponse JSON
+    $response = [
+        'success' => !empty($notices),
+        'message' => !empty($notices) ? 'Paramètres sauvegardés avec succès' : 'Erreur lors de la sauvegarde',
+        'notices' => $notices
+    ];
+    
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit;
+}
 ?>  
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
