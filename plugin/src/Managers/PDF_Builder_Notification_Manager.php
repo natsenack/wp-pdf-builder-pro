@@ -302,6 +302,9 @@ class PDF_Builder_Notification_Manager {
             // Log de configuration
             error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
 
+            // Log avant envoi
+            error_log("PDF Builder: About to send email via PHPMailer to $to with subject: $subject");
+
             // Envoyer l'email
             $result = $phpmailer->send();
 
@@ -315,7 +318,8 @@ class PDF_Builder_Notification_Manager {
             return $result;
 
         } catch (Exception $e) {
-            error_log("PDF Builder: SMTP Error - " . $e->getMessage());
+            error_log("PDF Builder: SMTP Exception caught - " . $e->getMessage());
+            error_log("PDF Builder: SMTP Exception trace - " . $e->getTraceAsString());
             return false;
         }
     }
