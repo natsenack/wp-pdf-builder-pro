@@ -111,14 +111,33 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
         ];
+        $new_settings = array_merge($settings, $to_save);
+        
+        // Check if settings actually changed
+        $settings_changed = !empty(array_diff_assoc($new_settings, $settings));
+        
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: About to save settings: ' . json_encode($to_save));
+            error_log('DEBUG: Settings changed: ' . ($settings_changed ? 'yes' : 'no'));
+            error_log('DEBUG: Current settings size: ' . strlen(serialize($settings)));
+            error_log('DEBUG: New settings size: ' . strlen(serialize($new_settings)));
         }
-        $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
+        
+        $result = update_option('pdf_builder_settings', $new_settings);
+        
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed'));
+            if (!$result && $settings_changed) {
+                error_log('DEBUG: update_option failed despite changes. Current settings: ' . json_encode($settings));
+                error_log('DEBUG: New settings: ' . json_encode($new_settings));
+                global $wpdb;
+                if (isset($wpdb->last_error) && $wpdb->last_error) {
+                    error_log('DEBUG: Database error: ' . $wpdb->last_error);
+                }
+            }
         }
-        if ($result) {
+        
+        if ($result || !$settings_changed) {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
