@@ -16,7 +16,7 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 <div class="wrap">
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     
-    <div style="background: #000; color: #0f0; padding: 50px; margin: 50px 0; font-size: 24px; min-height: 500px; font-family: monospace; text-align: center;">
+    <div style="background: #f3cfcfff; color: #0f0; padding: 50px; margin: 50px 0; font-size: 24px; min-height: 1800px; font-family: monospace; text-align: center;">
         <p>ZONE DE CONTENU PRINCIPALE</p>
         <p style="margin-top: 200px;">Footer devrait être DESSOUS cette boîte noire</p>
     </div>
