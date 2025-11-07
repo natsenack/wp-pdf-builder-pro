@@ -365,8 +365,6 @@ window.addEventListener('load', function() {
 });
 </script>
 
-    <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-
     <script type="text/javascript">
     // Définir les variables globales nécessaires
     window.ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
@@ -565,7 +563,12 @@ window.addEventListener('load', function() {
     }
     ?>
 
+    <div class="wrap">
     <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
+
+    <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+            <form method="post" id="pdf-builder-settings-form">
 
             <style>
             /* Styles pour la page des paramètres PDF Builder Pro */
@@ -2199,6 +2202,7 @@ window.addEventListener('load', function() {
 
     </div> <!-- #pdf-builder-settings-tabs -->
     <div style="clear: both;"></div>
+    </div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
 <script type="text/javascript">
