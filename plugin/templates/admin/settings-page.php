@@ -970,17 +970,30 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             // Traitement de la sauvegarde des rôles autorisés
             if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
                 error_log('DEBUG: Button "Enregistrer les rôles" clicked');
+                error_log('DEBUG: POST data keys: ' . implode(', ', array_keys($_POST)));
+                error_log('DEBUG: pdf_builder_allowed_roles: ' . print_r($_POST['pdf_builder_allowed_roles'] ?? 'NOT SET', true));
+                
                 if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
+                    error_log('DEBUG: Nonce verified successfully');
+                    
                     $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) 
                         ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
                         : [];
                     
+                    error_log('DEBUG: Processed allowed_roles: ' . print_r($allowed_roles, true));
+                    
                     if (empty($allowed_roles)) {
                         $allowed_roles = ['administrator']; // Au minimum l'admin
+                        error_log('DEBUG: Empty roles, setting default administrator');
                     }
                     
                     update_option('pdf_builder_allowed_roles', $allowed_roles);
+                    error_log('DEBUG: Saved allowed_roles to database: ' . print_r($allowed_roles, true));
+                    
                     $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Rôles autorisés mis à jour avec succès.</p></div>';
+                } else {
+                    error_log('DEBUG: Nonce verification FAILED');
+                    $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité (nonce invalide).</p></div>';
                 }
             }
             
@@ -1194,10 +1207,25 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     // Empêcher l'interférence AJAX avec le formulaire des rôles
                     const rolesForm = document.querySelector('#roles form');
                     if (rolesForm) {
+                        // Log pour déboguer
+                        console.log('🔍 Roles form found, adding submit protection');
+                        
                         rolesForm.addEventListener('submit', function(e) {
+                            console.log('📝 Roles form submit event triggered');
+                            console.log('📋 Form data:', new FormData(this));
+                            
                             // Laisser le formulaire se soumettre normalement (POST)
-                            console.log('📝 Roles form submitted via POST');
+                            console.log('✅ Allowing normal POST submission');
                         });
+                        
+                        // Empêcher tout autre event listener AJAX
+                        rolesForm.addEventListener('click', function(e) {
+                            if (e.target.type === 'submit') {
+                                console.log('🔘 Submit button clicked:', e.target.name);
+                            }
+                        }, true); // useCapture = true
+                    } else {
+                        console.error('❌ Roles form not found!');
                     }
                     
                     const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
@@ -1211,15 +1239,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
                         if (selectedCount) {
                             selectedCount.textContent = checkedBoxes.length;
+                            console.log('🔢 Updated count:', checkedBoxes.length);
                         }
                     }
-                    
-                    // Les toggles fonctionnent automatiquement avec les labels, pas besoin de JS supplémentaire
-                    // Mais on peut ajouter des animations ou effets supplémentaires si besoin
                     
                     // Bouton Sélectionner Tout
                     if (selectAllBtn) {
                         selectAllBtn.addEventListener('click', function() {
+                            console.log('🎯 Select All clicked');
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = true;
@@ -1232,6 +1259,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     // Bouton Rôles Courants
                     if (selectCommonBtn) {
                         selectCommonBtn.addEventListener('click', function() {
+                            console.log('🎯 Select Common clicked');
                             const commonRoles = ['administrator', 'editor', 'shop_manager'];
                             roleToggles.forEach(function(checkbox) {
                                 const isCommon = commonRoles.includes(checkbox.value);
@@ -1246,6 +1274,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     // Bouton Désélectionner Tout
                     if (selectNoneBtn) {
                         selectNoneBtn.addEventListener('click', function() {
+                            console.log('🎯 Select None clicked');
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = false;
@@ -1257,11 +1286,15 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     
                     // Mettre à jour le compteur quand un toggle change
                     roleToggles.forEach(function(checkbox) {
-                        checkbox.addEventListener('change', updateSelectedCount);
+                        checkbox.addEventListener('change', function() {
+                            console.log('🔄 Toggle changed:', this.value, this.checked);
+                            updateSelectedCount();
+                        });
                     });
                     
                     // Initialiser le compteur
                     updateSelectedCount();
+                    console.log('🚀 Roles toggle script loaded');
                 });
             </script>
             
