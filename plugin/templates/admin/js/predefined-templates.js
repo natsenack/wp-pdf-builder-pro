@@ -273,7 +273,8 @@
                     }
 
                     showSuccessMessage(pdfBuilderPredefined.strings.saveSuccess);
-                    hideTemplateEditor();
+                    // Ne plus fermer automatiquement l'éditeur après sauvegarde
+                    // hideTemplateEditor();
                     refreshTemplatesList();
                 } else {
                     showErrorMessage(response.data.message || pdfBuilderPredefined.strings.saveError);

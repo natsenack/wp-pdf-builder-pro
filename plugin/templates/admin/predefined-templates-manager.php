@@ -400,7 +400,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                                 💾 <?php _e('Sauvegarder', 'pdf-builder-pro'); ?>
                             </button>
                             <button type="button" id="cancel-edit-btn" class="button button-secondary">
-                                ❌ <?php _e('Annuler', 'pdf-builder-pro'); ?>
+                                🚪 <?php _e('Fermer', 'pdf-builder-pro'); ?>
                             </button>
                             <button type="button" id="validate-json-btn" class="button button-secondary">
                                 ✅ <?php _e('Valider JSON', 'pdf-builder-pro'); ?>
