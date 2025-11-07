@@ -407,28 +407,14 @@ window.addEventListener('load', function() {
             }
             
             // Vérifier le conteneur principal
-            const settingsTabs = document.getElementById('pdf-builder-settings-tabs');
-            console.log('🔍 Settings tabs container:', settingsTabs);
+            const settingsTabs = document.querySelector('.wrap');
+            console.log('🔍 Settings container:', settingsTabs);
             if (settingsTabs) {
                 console.log('   - Container dimensions:', settingsTabs.offsetWidth + 'x' + settingsTabs.offsetHeight);
                 console.log('   - Container position:', getComputedStyle(settingsTabs).position);
                 console.log('   - Container z-index:', getComputedStyle(settingsTabs).zIndex);
-                console.log('   - Container min-height:', getComputedStyle(settingsTabs).minHeight);
-                console.log('   - Container padding-bottom:', getComputedStyle(settingsTabs).paddingBottom);
-                console.log('   - Container margin:', getComputedStyle(settingsTabs).margin);
-                console.log('   - Container top:', getComputedStyle(settingsTabs).top);
                 console.log('   - Container offsetTop:', settingsTabs.offsetTop);
                 console.log('   - Container bounding rect:', settingsTabs.getBoundingClientRect());
-                
-                // Analyser les enfants du container
-                const children = settingsTabs.children;
-                console.log('   - Container children count:', children.length);
-                for (let i = 0; i < Math.min(children.length, 3); i++) {
-                    const child = children[i];
-                    console.log(`     - Child ${i}:`, child.tagName + (child.id ? '#' + child.id : '') + (child.className ? '.' + child.className : ''));
-                    console.log(`       - Child position:`, getComputedStyle(child).position);
-                    console.log(`       - Child z-index:`, getComputedStyle(child).zIndex);
-                }
             }        // Vérifier le footer WordPress
         const wpFooter = document.getElementById('wpfooter');
         console.log('🔍 WordPress Footer:', wpFooter);
@@ -693,33 +679,21 @@ window.addEventListener('load', function() {
     ?>
 
     <div class="wrap">
-    <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
 
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
             <form method="post" id="pdf-builder-settings-form">
 
             <style>
-            /* Styles pour la page des paramètres PDF Builder Pro */
-            /*.pdf-builder-settings {
-                width: 100%;
-                margin-top: 20px;
-                clear: both;
-                position: relative;
-                z-index: 10;
-                padding-bottom: 60px;
-                min-height: calc(100vh - 200px);
-                margin-bottom: 40px;
-            }*/
-
-            .pdf-builder-settings .nav-tab-wrapper {
+            /* Styles pour la page des paramètres PDF Builder Pro - Navigation uniquement */
+            .nav-tab-wrapper {
                 margin: 0 0 20px 0;
                 padding: 0;
                 border-bottom: 1px solid #ccc;
                 background: transparent;
             }
 
-            .pdf-builder-settings .nav-tab {
+            .nav-tab {
                 display: inline-block;
                 padding: 8px 16px;
                 margin: 0 4px -1px 0;
@@ -736,14 +710,14 @@ window.addEventListener('load', function() {
                 top: 1px;
             }
 
-            .pdf-builder-settings .nav-tab.nav-tab-active,
-            .pdf-builder-settings .nav-tab:hover {
+            .nav-tab.nav-tab-active,
+            .nav-tab:hover {
                 background: #fff;
                 color: #000;
                 border-bottom: 1px solid #fff;
             }
 
-            .pdf-builder-settings .tab-content {
+            .tab-content {
                 display: none;
                 padding: 20px;
                 background: #fff;
@@ -753,17 +727,17 @@ window.addEventListener('load', function() {
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
-            .pdf-builder-settings .tab-content.active {
+            .tab-content.active {
                 display: block;
             }
 
-            .pdf-builder-settings .form-table {
+            .form-table {
                 background: transparent;
                 margin: 0;
                 width: 100%;
             }
 
-            .pdf-builder-settings .form-table th {
+            .form-table th {
                 width: 200px;
                 padding: 20px 10px 20px 0;
                 vertical-align: top;
@@ -771,27 +745,27 @@ window.addEventListener('load', function() {
                 color: #23282d;
             }
 
-            .pdf-builder-settings .form-table td {
+            .form-table td {
                 padding: 15px 10px;
                 vertical-align: top;
             }
 
-            .pdf-builder-settings .form-table tr {
+            .form-table tr {
                 border-bottom: 1px solid #f0f0f0;
             }
 
-            .pdf-builder-settings .form-table tr:last-child {
+            .form-table tr:last-child {
                 border-bottom: none;
             }
 
-            .pdf-builder-settings .description {
+            .description {
                 color: #666;
                 font-style: italic;
                 margin-top: 5px;
                 font-size: 13px;
             }
 
-            .pdf-builder-settings .submit {
+            .submit {
                 padding: 20px 0;
                 border-top: 1px solid #ccc;
                 margin-top: 20px;
@@ -800,12 +774,12 @@ window.addEventListener('load', function() {
 
             /* Responsive */
             @media screen and (max-width: 782px) {
-                .pdf-builder-settings .form-table th {
+                .form-table th {
                     width: 100%;
                     padding-bottom: 10px;
                 }
 
-                .pdf-builder-settings .form-table td {
+                .form-table td {
                     width: 100%;
                     padding-top: 0;
                 }
@@ -2311,8 +2285,6 @@ window.addEventListener('load', function() {
         </p>
     </form>
 
-    </div> <!-- #pdf-builder-settings-tabs -->
-    <div style="clear: both;"></div>
     </div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
