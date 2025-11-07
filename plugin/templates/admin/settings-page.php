@@ -2638,10 +2638,27 @@ if (isset($_POST['clear_cache']) &&
             
             // Also log on click of submit button
             const submitBtn = settingsForm.querySelector('button[name="submit"]');
+            console.log('PDF Builder: Submit button element:', submitBtn);
+            console.log('PDF Builder: Submit button found:', !!submitBtn);
+            
             if (submitBtn) {
+                console.log('PDF Builder: Attaching click listener to submit button');
                 submitBtn.addEventListener('click', function(e) {
-                    console.log('PDF Builder: Submit button clicked');
+                    console.log('PDF Builder: ===== SUBMIT BUTTON CLICKED =====');
+                    console.log('PDF Builder: Button text:', this.textContent);
+                    console.log('PDF Builder: Button name:', this.name);
+                    console.log('PDF Builder: Button type:', this.type);
                 });
+            } else {
+                console.error('PDF Builder: Submit button NOT found in form!');
+                // Try alternative selectors
+                const altBtn1 = document.querySelector('button[name="submit"]');
+                const altBtn2 = document.querySelector('.button-primary');
+                const altBtn3 = document.querySelector('input[type="submit"]');
+                console.log('PDF Builder: Alternative button search:');
+                console.log('  button[name="submit"]:', !!altBtn1);
+                console.log('  .button-primary:', !!altBtn2);
+                console.log('  input[type="submit"]:', !!altBtn3);
             }
         } else {
             console.error('PDF Builder: Form element NOT found!');
