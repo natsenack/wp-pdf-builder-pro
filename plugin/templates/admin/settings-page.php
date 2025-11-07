@@ -2545,10 +2545,10 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 console.log('🔥 PDF Builder - Button clicked:', {
                     buttonName: this.getAttribute('name') || 'unnamed',
                     buttonValue: this.value || 'no-value',
-                    formAction: this.closest('form') ? this.closest('form').action : 'no-form',
-                    formMethod: this.closest('form') ? this.closest('form').method : 'no-form',
+                    formAction: document.getElementById('settings-form') ? document.getElementById('settings-form').action : 'no-form',
+                    formMethod: document.getElementById('settings-form') ? document.getElementById('settings-form').method : 'no-form',
                     formData: (() => {
-                        const form = this.closest('form');
+                        const form = document.getElementById('settings-form');
                         if (form) {
                             const formData = new FormData(form);
                             let data = {};
