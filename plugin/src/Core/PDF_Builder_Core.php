@@ -170,7 +170,7 @@ class PDF_Builder_Core
     public function initialize_notification_manager()
     {
         // Initialiser le gestionnaire de notifications (Singleton)
-        PDF_Builder_Notification_Manager::get_instance();
+        \PDF_Builder_Notification_Manager::get_instance();
     }
 
     /**
