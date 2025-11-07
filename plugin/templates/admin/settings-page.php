@@ -230,6 +230,36 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
         $settings = get_option('pdf_builder_settings', []);
     }
 }
+
+if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $performance_settings = [
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'compress_images' => isset($_POST['compress_images']),
+            'image_quality' => intval($_POST['image_quality'] ?? 85),
+            'optimize_for_web' => isset($_POST['optimize_for_web']),
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+            'limit_fps' => isset($_POST['limit_fps']),
+            'max_fps' => intval($_POST['max_fps'] ?? 60),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de performance enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        $maintenance_settings = [
+            // Les paramètres de maintenance sont principalement des actions, pas des sauvegardes de config
+            // Mais on peut sauvegarder des préférences de maintenance si nécessaire
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $maintenance_settings));
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de maintenance enregistrés avec succès.</p></div>';
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
 ?>  
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
@@ -353,39 +383,6 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
         </div>
-    </form>
-
-    <script>
-        console.log('DEBUG SCRIPT LOADED');
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DEBUG DOMContentLoaded fired');
-            document.getElementById('debug-btn').addEventListener('click', function() {
-                console.log('=== FORM DEBUG START ===');
-                const form = document.getElementById('settings-form');
-                console.log('Form found:', !!form);
-
-                if (form) {
-                    console.log('Form elements count:', form.elements.length);
-                    console.log('Form method:', form.method);
-                    console.log('Form action:', form.action);
-
-                    for(let i = 0; i < form.elements.length; i++) {
-                        const el = form.elements[i];
-                        console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
-                    }
-
-                    const formData = new FormData(form);
-                    console.log('FormData entries count:', [...formData.entries()].length);
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`FormData: ${key} = ${value}`);
-                    }
-                } else {
-                    console.log('Form not found!');
-                }
-                console.log('=== FORM DEBUG END ===');
-            });
-        });
-    </script>
         
         <div id="licence" class="tab-content" style="display: none;">
             <h2>Gestion de la Licence</h2>
@@ -692,6 +689,10 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
                     <p style="margin: 0;"><strong>💡 Conseil :</strong> Videz le cache si vous rencontrez des problèmes de génération PDF ou si les changements n'apparaissent pas.</p>
                 </div>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_performance" class="button button-primary">Enregistrer les paramètres de performance</button>
+            </p>
         </div>
         
         <div id="pdf" class="tab-content" style="display: none;">
@@ -1978,6 +1979,10 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
                     <li>Maintenez WordPress à jour</li>
                 </ul>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_maintenance" class="button button-primary">Enregistrer les paramètres de maintenance</button>
+            </p>
         </div>
         
         <div id="developpeur" class="tab-content" style="display: none;">
