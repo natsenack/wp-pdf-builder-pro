@@ -26,6 +26,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres" (General) clicked');
     if (defined('WP_DEBUG') && WP_DEBUG) {
         error_log('DEBUG: Form submission detected');
     }
@@ -158,6 +159,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
 if (isset($_POST['clear_cache']) &&
     (isset($_POST['pdf_builder_clear_cache_nonce_performance']) ||
      isset($_POST['pdf_builder_clear_cache_nonce_maintenance']))) {
+    error_log('DEBUG: Button "Vider le Cache" clicked');
 
     $nonce_verified = false;
     if (isset($_POST['pdf_builder_clear_cache_nonce_performance'])) {
@@ -183,6 +185,7 @@ if (isset($_POST['clear_cache']) &&
 
 // Handle individual tab submissions
 if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres PDF" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $pdf_settings = [
             'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
@@ -201,6 +204,7 @@ if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) 
 }
 
 if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres de sécurité" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $security_settings = [
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
@@ -214,6 +218,7 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce
 }
 
 if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres Canvas" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $canvas_settings = [
             'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
@@ -249,6 +254,7 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
 }
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $dev_settings = [
             'debug_mode' => isset($_POST['debug_mode']),
@@ -269,6 +275,7 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
 }
 
 if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres de performance" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $performance_settings = [
             'auto_save_enabled' => isset($_POST['auto_save_enabled']),
@@ -287,6 +294,7 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_settings_no
 }
 
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Button "Enregistrer les paramètres de maintenance" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $maintenance_settings = [
             // Les paramètres de maintenance sont principalement des actions, pas des sauvegardes de config
@@ -432,6 +440,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
+                error_log('DEBUG: Button "Activer la licence" clicked');
                 if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
                     $new_key = sanitize_text_field($_POST['license_key'] ?? '');
                     if (!empty($new_key)) {
@@ -448,6 +457,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             
             // Traitement désactivation licence
             if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
+                error_log('DEBUG: Button "Désactiver la licence" clicked');
                 if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                     delete_option('pdf_builder_license_key');
                     delete_option('pdf_builder_license_expires');
@@ -941,6 +951,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <?php
             // Traitement de la sauvegarde des rôles autorisés
             if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
+                error_log('DEBUG: Button "Enregistrer les rôles" clicked');
                 if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
                     $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) 
                         ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
@@ -1113,6 +1124,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <?php
             // Traitement de la sauvegarde des notifications
             if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
+                error_log('DEBUG: Button "Enregistrer les notifications" clicked');
                 if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_notifications')) {
                     $notification_settings = [
                         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
@@ -1679,6 +1691,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <?php
             // Traitement de la sauvegarde
             if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
+                error_log('DEBUG: Button "Enregistrer les templates" clicked');
                 if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
                     $template_mappings = [];
                     if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
