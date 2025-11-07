@@ -155,7 +155,7 @@ if (!defined('ABSPATH')) {
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="alert(\'Fonctionnalité en développement\')" title="Dupliquer">📋</button>';
+                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" disabled title="Fonctionnalité à venir">📋 Dupliquer</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
@@ -500,9 +500,6 @@ function loadTemplateSettings(templateId) {
             
             // Ajouter un event listener pour mettre à jour le titre en temps réel
             document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
-            
-            // Ajouter un event listener pour mettre à jour le titre en temps réel
-            document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
         }
     }).fail(function(xhr, status, error) {
         console.error('Erreur AJAX lors du chargement des paramètres:', error);
@@ -646,15 +643,11 @@ function deleteTemplate(templateId, templateName) {
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
-// Toggle default template
-
     // Trouver l'icône du template actuel en utilisant l'attribut onclick
     const currentIcon = Array.from(document.querySelectorAll('.default-template-icon')).find(icon =>
         icon.onclick && icon.onclick.toString().includes(`toggleDefaultTemplate(${templateId}`)
     );
     const isCurrentlyDefault = currentIcon && currentIcon.style.opacity === '1';
-
-    // Current icon found
 
     // Préparer les données pour AJAX
     const data = {
@@ -663,9 +656,6 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         is_default: isCurrentlyDefault ? 0 : 1,
         nonce: pdfBuilderTemplatesNonce
     };
-
-    // AJAX data
-    // ajaxurl
 
     // Afficher un indicateur de chargement
     if (currentIcon) {
@@ -959,58 +949,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Fonctions pour gérer les modèles prédéfinis
-function createFromPredefined(slug) {
-    // Trouver le nom du template dans la carte
-    const templateCard = document.querySelector(`.predefined-template-card[data-category][onclick*="${slug}"]`);
-    let templateName = `Template basé sur ${slug}`;
 
-    if (templateCard) {
-        const nameElement = templateCard.querySelector('h3');
-        if (nameElement) {
-            templateName = nameElement.textContent.trim();
-        }
-    }
-
-    if (confirm(`Voulez-vous créer un nouveau template basé sur "${templateName}" ?`)) {
-        // Afficher un indicateur de chargement
-        const button = event.target;
-        const originalText = button.innerHTML;
-        button.innerHTML = '⏳ Création...';
-        button.disabled = true;
-
-        // Faire l'appel AJAX pour créer le template
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                action: 'pdf_builder_create_from_predefined',
-                template_slug: slug,
-                template_name: templateName,
-                nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Rediriger vers l'éditeur avec le nouveau template
-                window.location.href = data.data.redirect_url;
-            } else {
-                alert('Erreur lors de la création du template : ' + (data.data || 'Erreur inconnue'));
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Erreur AJAX:', error);
-            alert('Erreur lors de la création du template');
-            button.innerHTML = originalText;
-            button.disabled = false;
-        });
-    }
-}
 </script>
 
 <style>

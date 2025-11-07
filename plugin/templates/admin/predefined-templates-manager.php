@@ -551,22 +551,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
-            // Debug nonce
-            $received_nonce = $_POST['nonce'] ?? '';
-            error_log('PDF Builder: Received nonce: ' . $received_nonce);
-            error_log('PDF Builder: Expected action: pdf_builder_predefined_templates');
-
-            // Vérification manuelle du nonce pour debug
-            $nonce_valid = wp_verify_nonce($received_nonce, 'pdf_builder_predefined_templates');
-            error_log('PDF Builder: Nonce verification result: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
-
-            // Temporairement désactiver la vérification nonce pour debug
-            if (!$nonce_valid) {
-                error_log('PDF Builder: Nonce verification failed - possible expiration or mismatch');
-                wp_send_json_error('Nonce invalide - vérifiez que la page n\'est pas expirée');
-            }
-
-            // check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
+            check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
 
             $slug = sanitize_key($_POST['slug'] ?? '');
 
