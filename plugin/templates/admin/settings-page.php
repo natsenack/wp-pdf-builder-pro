@@ -269,37 +269,36 @@ if (isset($_POST['clear_cache']) &&
     </form>
 
     <script>
-    console.log('DEBUG SCRIPT LOADED');
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DEBUG DOMContentLoaded fired');
-        document.getElementById('debug-btn').addEventListener('click', function() {
-            console.log('=== FORM DEBUG START ===');
-            const form = document.getElementById('settings-form');
-            console.log('Form found:', !!form);
+        console.log('DEBUG SCRIPT LOADED');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DEBUG DOMContentLoaded fired');
+            document.getElementById('debug-btn').addEventListener('click', function() {
+                console.log('=== FORM DEBUG START ===');
+                const form = document.getElementById('settings-form');
+                console.log('Form found:', !!form);
 
-            if (form) {
-                console.log('Form elements count:', form.elements.length);
-                console.log('Form method:', form.method);
-                console.log('Form action:', form.action);
+                if (form) {
+                    console.log('Form elements count:', form.elements.length);
+                    console.log('Form method:', form.method);
+                    console.log('Form action:', form.action);
 
-                for(let i = 0; i < form.elements.length; i++) {
-                    const el = form.elements[i];
-                    console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
+                    for(let i = 0; i < form.elements.length; i++) {
+                        const el = form.elements[i];
+                        console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
+                    }
+
+                    const formData = new FormData(form);
+                    console.log('FormData entries count:', [...formData.entries()].length);
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`FormData: ${key} = ${value}`);
+                    }
+                } else {
+                    console.log('Form not found!');
                 }
-
-                const formData = new FormData(form);
-                console.log('FormData entries count:', [...formData.entries()].length);
-                for (let [key, value] of formData.entries()) {
-                    console.log(`FormData: ${key} = ${value}`);
-                }
-            } else {
-                console.log('Form not found!');
-            }
-            console.log('=== FORM DEBUG END ===');
+                console.log('=== FORM DEBUG END ===');
+            });
         });
-    });
     </script>
-        </div>
         
         <div id="licence" class="tab-content" style="display: none;">
             <h2>Gestion de la Licence</h2>
@@ -2155,354 +2154,14 @@ if (isset($_POST['clear_cache']) &&
                 </ul>
             </div>
         </div>
-        
-        <div id="performance" class="tab-content" style="display: none;">
-            <h2>Paramètres Performance</h2>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚡ Performance</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="max_execution_time">Temps d'exécution max (secondes)</label></th>
-                    <td>
-                        <input type="number" id="max_execution_time" name="max_execution_time" value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="30" max="600" />
-                        <p class="description">Temps maximum pour générer un PDF (défaut: 300)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="memory_limit">Limite mémoire</label></th>
-                    <td>
-                        <select id="memory_limit" name="memory_limit">
-                            <option value="128M" <?php selected($settings['memory_limit'] ?? '256M', '128M'); ?>>128M</option>
-                            <option value="256M" <?php selected($settings['memory_limit'] ?? '256M', '256M'); ?>>256M</option>
-                            <option value="512M" <?php selected($settings['memory_limit'] ?? '256M', '512M'); ?>>512M</option>
-                            <option value="1G" <?php selected($settings['memory_limit'] ?? '256M', '1G'); ?>>1G</option>
-                        </select>
-                        <p class="description">Mémoire allouée pour la génération PDF</p>
-                    </td>
-                </tr>
-            </table>
-            
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-            </p>
-        </div>
-        
-        <div id="pdf" class="tab-content" style="display: none;">
-            <h2>Paramètres PDF</h2>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="export_quality">Qualité d'Export</label></th>
-                    <td>
-                        <select id="export_quality" name="export_quality">
-                            <option value="screen" <?php selected($settings['export_quality'] ?? 'print', 'screen'); ?>>Écran (72 DPI)</option>
-                            <option value="print" <?php selected($settings['export_quality'] ?? 'print', 'print'); ?>>Impression (300 DPI)</option>
-                            <option value="prepress" <?php selected($settings['export_quality'] ?? 'print', 'prepress'); ?>>Pré-presse (600 DPI)</option>
-                        </select>
-                        <p class="description">Définit la résolution de sortie du PDF</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="export_format">Format d'Export</label></th>
-                    <td>
-                        <select id="export_format" name="export_format">
-                            <option value="pdf" <?php selected($settings['export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
-                            <option value="png" <?php selected($settings['export_format'] ?? 'pdf', 'png'); ?>>PNG</option>
-                            <option value="jpg" <?php selected($settings['export_format'] ?? 'pdf', 'jpg'); ?>>JPEG</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-            </p>
-        </div>
-        
-        <div id="canvas" class="tab-content" style="display: none;">
-            <h2>Paramètres Canvas</h2>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📐 Dimensions</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="default_canvas_width">Largeur par défaut</label></th>
-                    <td>
-                        <input type="number" id="default_canvas_width" name="default_canvas_width" value="<?php echo intval($settings['default_canvas_width'] ?? 794); ?>" min="100" max="2000" />
-                        <p class="description">Largeur du canvas en pixels (A4: 794px)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="default_canvas_height">Hauteur par défaut</label></th>
-                    <td>
-                        <input type="number" id="default_canvas_height" name="default_canvas_height" value="<?php echo intval($settings['default_canvas_height'] ?? 1123); ?>" min="100" max="3000" />
-                        <p class="description">Hauteur du canvas en pixels (A4: 1123px)</p>
-                    </td>
-                </tr>
-            </table>
-            
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-            </p>
-        </div>
-        
-        <div id="developpeur" class="tab-content" style="display: none;">
-            <h2>Paramètres Développeur</h2>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🐛 Debug</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="debug_mode">Mode debug</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_mode" name="debug_mode" value="1" <?php checked($settings['debug_mode'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Activer le debug</span>
-                        </div>
-                        <div class="toggle-description">Affiche les informations de debug</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="log_level">Niveau de log</label></th>
-                    <td>
-                        <select id="log_level" name="log_level">
-                            <option value="error" <?php selected($settings['log_level'] ?? 'info', 'error'); ?>>Erreur</option>
-                            <option value="warning" <?php selected($settings['log_level'] ?? 'info', 'warning'); ?>>Avertissement</option>
-                            <option value="info" <?php selected($settings['log_level'] ?? 'info', 'info'); ?>>Info</option>
-                            <option value="debug" <?php selected($settings['log_level'] ?? 'info', 'debug'); ?>>Debug</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-            </p>
-        </div>
-        
     </form>
-</div>
-<style>
-    .nav-tab-wrapper {
-        border-bottom: 2px solid #e1e1e1;
-        padding: 0;
-        background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
-        border-radius: 8px 8px 0 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        position: relative;
-        overflow: visible;
-    }
 
-    .nav-tab {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid #e1e1e1;
-        border-bottom: none;
-        color: #5a5a5a;
-        cursor: pointer;
-        margin-right: 4px;
-        margin-bottom: 0;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-        border-radius: 8px 8px 0 0;
-        font-weight: 500;
-        font-size: 13px;
-        position: relative;
-        min-height: 44px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        margin-left: 0px !important;
-    }
-
-    .nav-tab:hover {
-        background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
-        color: #2563eb;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        border-color: #3b82f6;
-    }
-
-    .nav-tab-active {
-        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-        border-bottom: 2px solid #2563eb;
-        color: #1e40af;
-        font-weight: 600;
-        transform: translateY(-1px);
-        box-shadow:
-            0 2px 8px rgba(37, 99, 235, 0.2),
-            inset 0 1px 0 rgba(255,255,255,0.8);
-        border-color: #2563eb;
-        z-index: 2;
-    }
-
-    .nav-tab-active .tab-icon {
-        transform: scale(1.1);
-        filter: brightness(1.2);
-    }
-
-    .nav-tab .tab-icon {
-        font-size: 16px;
-        transition: all 0.3s ease;
-        display: inline-block;
-        line-height: 1;
-    }
-
-    .nav-tab .tab-text {
-        font-weight: inherit;
-        transition: all 0.3s ease;
-    }
-
-    /* Indicateurs visuels pour onglets importants */
-    .nav-tab[data-tab="securite"] .tab-icon::after {
-        content: "✓";
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        background: #10b981;
-        color: white;
-        border-radius: 50%;
-        width: 14px;
-        height: 14px;
-        font-size: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        border: 1px solid white;
-    }
-
-    .nav-tab[data-tab="licence"] .tab-icon::after {
-        content: "★";
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        background: #f59e0b;
-        color: white;
-        border-radius: 50%;
-        width: 14px;
-        height: 14px;
-        font-size: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        border: 1px solid white;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .nav-tab-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 5px;
-        }
-
-        .nav-tab {
-            flex-shrink: 0;
-            padding: 10px 16px;
-            font-size: 12px;
-            min-width: 80px;
-        }
-
-        .nav-tab .tab-text {
-            display: none;
-        }
-
-        .nav-tab .tab-icon {
-            font-size: 18px;
-        }
-    }
-
-    /* Animation d'entrée */
-    .nav-tab {
-        animation: slideInFromTop 0.5s ease-out;
-        animation-fill-mode: both;
-    }
-
-    .nav-tab:nth-child(1) { animation-delay: 0.1s; }
-    .nav-tab:nth-child(2) { animation-delay: 0.15s; }
-    .nav-tab:nth-child(3) { animation-delay: 0.2s; }
-    .nav-tab:nth-child(4) { animation-delay: 0.25s; }
-    .nav-tab:nth-child(5) { animation-delay: 0.3s; }
-    .nav-tab:nth-child(6) { animation-delay: 0.35s; }
-    .nav-tab:nth-child(7) { animation-delay: 0.4s; }
-    .nav-tab:nth-child(8) { animation-delay: 0.45s; }
-    .nav-tab:nth-child(9) { animation-delay: 0.5s; }
-    .nav-tab:nth-child(10) { animation-delay: 0.55s; }
-    .nav-tab:nth-child(11) { animation-delay: 0.6s; }
-
-    @keyframes slideInFromTop {
-        0% {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Indicateur de chargement */
-    .nav-tab.loading {
-        position: relative;
-        pointer-events: none;
-    }
-
-    .nav-tab.loading::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 16px;
-        height: 16px;
-        margin: -8px 0 0 -8px;
-        border: 2px solid #e1e1e1;
-        border-top: 2px solid #2563eb;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Accessibilité améliorée */
-    .nav-tab:focus {
-        outline: 2px solid #2563eb;
-        outline-offset: 2px;
-        background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
-    }
-
-    .nav-tab[aria-selected="true"] {
-        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-        border-bottom: 2px solid #2563eb;
-        color: #1e40af;
-        font-weight: 600;
-    }
-
-    .tab-content {
-        background: #fff;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-top: none;
-    }
-</style>
-
-<!-- Styles pour les boutons toggle -->
 <style>
     .toggle-switch {
         position: relative;
         display: inline-block;
         width: 50px;
         height: 24px;
-        margin-right: 10px;
-        vertical-align: middle;
     }
 
     .toggle-switch input {
@@ -2519,7 +2178,7 @@ if (isset($_POST['clear_cache']) &&
         right: 0;
         bottom: 0;
         background-color: #ccc;
-        transition: 0.3s;
+        transition: .4s;
         border-radius: 24px;
     }
 
@@ -2531,63 +2190,37 @@ if (isset($_POST['clear_cache']) &&
         left: 3px;
         bottom: 3px;
         background-color: white;
-        transition: 0.3s;
+        transition: .4s;
         border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     input:checked + .toggle-slider {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        background-color: #2196F3;
     }
 
     input:checked + .toggle-slider:before {
         transform: translateX(26px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .toggle-label {
-        display: inline-block;
-        vertical-align: middle;
-        font-weight: 500;
-        color: #374151;
-        cursor: pointer;
-        user-select: none;
     }
 
     .toggle-container {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
+        gap: 10px;
+    }
+
+    .toggle-label {
+        font-weight: 500;
+        color: #333;
     }
 
     .toggle-description {
-        margin-left: 70px;
-        color: #6b7280;
-        font-size: 13px;
-        line-height: 1.4;
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+        padding-left: 60px;
     }
 
-    /* États hover et focus */
-    .toggle-switch:hover .toggle-slider {
-        box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-    }
-
-    .toggle-switch input:focus + .toggle-slider {
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Animation d'activation */
-    .toggle-slider {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .toggle-slider:before {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* États disabled */
-    .toggle-switch input:disabled + .toggle-slider {
+    .toggle-switch input:disabled ~ .toggle-slider {
         opacity: 0.5;
         cursor: not-allowed;
     }
@@ -2611,323 +2244,133 @@ if (isset($_POST['clear_cache']) &&
                 content.style.display = 'none';
                 content.setAttribute('aria-hidden', 'true');
             });
-
+            
             // Désactiver tous les onglets
             tabs.forEach(function(tab) {
                 tab.classList.remove('nav-tab-active');
                 tab.setAttribute('aria-selected', 'false');
-                tab.removeAttribute('tabindex');
             });
-
-            // Afficher le contenu cible
+            
+            // Afficher l'onglet cible
             const targetContent = document.getElementById(targetId);
             if (targetContent) {
                 targetContent.style.display = 'block';
                 targetContent.setAttribute('aria-hidden', 'false');
             }
-
+            
             // Activer l'onglet cliqué
-            if (clickedTab) {
-                clickedTab.classList.add('nav-tab-active');
-                clickedTab.setAttribute('aria-selected', 'true');
-                clickedTab.setAttribute('tabindex', '0');
-                clickedTab.focus();
-            }
-
-            // Sauvegarder l'onglet actif dans localStorage
-            localStorage.setItem('pdf_builder_active_tab', targetId);
-
-            // Animation de chargement temporaire
-            if (clickedTab) {
-                clickedTab.classList.add('loading');
-                setTimeout(() => {
-                    clickedTab.classList.remove('loading');
-                }, 300);
+            clickedTab.classList.add('nav-tab-active');
+            clickedTab.setAttribute('aria-selected', 'true');
+            
+            // Mettre à jour l'URL hash
+            if (history.pushState) {
+                history.pushState(null, null, '#' + targetId);
+            } else {
+                window.location.hash = '#' + targetId;
             }
         }
-
-        // Gestionnaire d'événements pour les onglets
-        tabs.forEach(function(tab, index) {
-            // Ajouter les attributs d'accessibilité
-            tab.setAttribute('role', 'tab');
-            tab.setAttribute('aria-controls', tab.getAttribute('href').substring(1));
-            tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
-
-            // Écouteur de clic
+        
+        // Gestionnaire d'événement pour les onglets
+        tabs.forEach(function(tab) {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
+                const targetId = this.getAttribute('data-tab');
                 switchTab(targetId, this);
             });
-
-            // Écouteur de touches pour l'accessibilité
-            tab.addEventListener('keydown', function(e) {
-                let targetTab = null;
-
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        e.preventDefault();
-                        targetTab = this.previousElementSibling || tabs[tabs.length - 1];
-                        break;
-                    case 'ArrowRight':
-                        e.preventDefault();
-                        targetTab = this.nextElementSibling || tabs[0];
-                        break;
-                    case 'Home':
-                        e.preventDefault();
-                        targetTab = tabs[0];
-                        break;
-                    case 'End':
-                        e.preventDefault();
-                        targetTab = tabs[tabs.length - 1];
-                        break;
-                    case 'Enter':
-                    case ' ':
-                        e.preventDefault();
-                        const targetId = this.getAttribute('href').substring(1);
-                        switchTab(targetId, this);
-                        return;
-                }
-
-                if (targetTab) {
-                    targetTab.focus();
-                }
-            });
         });
-
-        // Restaurer l'onglet actif depuis localStorage
-        const savedTab = localStorage.getItem('pdf_builder_active_tab');
-        if (savedTab) {
-            const savedTabElement = document.querySelector(`a[href="#${savedTab}"]`);
-            if (savedTabElement) {
-                switchTab(savedTab, savedTabElement);
+        
+        // Gestion du hash dans l'URL au chargement
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const targetTab = document.querySelector('.nav-tab[data-tab="' + hash + '"]');
+            if (targetTab) {
+                switchTab(hash, targetTab);
             }
         }
-
-        // Initialiser l'accessibilité
-        contents.forEach(function(content) {
-            content.setAttribute('role', 'tabpanel');
-            content.setAttribute('aria-hidden', content.style.display === 'none');
-        });
-
-        // Animation d'entrée des onglets
-        tabs.forEach(function(tab, index) {
-            setTimeout(() => {
-                tab.style.opacity = '1';
-                tab.style.transform = 'translateY(0)';
-            }, index * 50);
-        });
         
-        // Slider pour la qualité des images
-        const imageQualitySlider = document.getElementById('image_quality');
-        const imageQualityValue = document.getElementById('image_quality_value');
-        
-        if (imageQualitySlider && imageQualityValue) {
-            imageQualitySlider.addEventListener('input', function() {
-                imageQualityValue.textContent = this.value + '%';
+        // Gestion des boutons de soumission par onglet
+        const submitButtons = document.querySelectorAll('button[name="submit"]');
+        submitButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                // Trouver l'onglet actif
+                const activeTab = document.querySelector('.nav-tab-active');
+                if (activeTab) {
+                    const tabId = activeTab.getAttribute('data-tab');
+                    console.log('Submitting form for tab:', tabId);
+                }
             });
-        }
+        });
         
-        // Gestion des boutons toggle
-        function initToggles() {
-            const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-            toggles.forEach(toggle => {
-                toggle.addEventListener('change', function() {
-                    const slider = this.nextElementSibling;
+        // Toggle switches
+        const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+        toggleSwitches.forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                const label = this.parentElement.nextElementSibling;
+                if (label && label.classList.contains('toggle-label')) {
                     if (this.checked) {
-                        slider.classList.add('checked');
+                        label.style.fontWeight = 'bold';
+                        label.style.color = '#2196F3';
                     } else {
-                        slider.classList.remove('checked');
+                        label.style.fontWeight = 'normal';
+                        label.style.color = '#333';
                     }
-                });
-                
-                // État initial
+                }
+            });
+            
+            // Initial state
+            const label = toggle.parentElement.nextElementSibling;
+            if (label && label.classList.contains('toggle-label')) {
                 if (toggle.checked) {
-                    toggle.nextElementSibling.classList.add('checked');
+                    label.style.fontWeight = 'bold';
+                    label.style.color = '#2196F3';
                 }
-            });
-        }
+            }
+        });
         
-        // Gestion de l'affichage du mot de passe
-        function initPasswordToggle() {
-            const passwordInput = document.getElementById('developer_password');
-            const toggleButton = document.getElementById('toggle_password');
-            
-            if (passwordInput && toggleButton) {
-                toggleButton.addEventListener('click', function() {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        toggleButton.innerHTML = '🙈 Masquer';
-                        toggleButton.classList.remove('button-secondary');
-                        toggleButton.classList.add('button-primary');
-                    } else {
-                        passwordInput.type = 'password';
-                        toggleButton.innerHTML = '👁️ Afficher';
-                        toggleButton.classList.remove('button-primary');
-                        toggleButton.classList.add('button-secondary');
-                    }
+        // Range sliders with value display
+        const rangeInputs = document.querySelectorAll('input[type="range"]');
+        rangeInputs.forEach(function(range) {
+            const valueDisplay = document.getElementById(range.id + '_value');
+            if (valueDisplay) {
+                range.addEventListener('input', function() {
+                    valueDisplay.textContent = this.value + '%';
                 });
             }
-        }
+        });
         
-        // Initialiser les toggles au chargement
-        initToggles();
-        initPasswordToggle();
-        function showToast(message, type = 'success', duration = 3000) {
-            // Supprimer les toasts existants
-            const existingToasts = document.querySelectorAll('.pdf-toast-notification');
-            existingToasts.forEach(toast => toast.remove());
-            
-            // Créer le toast
-            const toast = document.createElement('div');
-            toast.className = `pdf-toast-notification notice notice-${type} is-dismissible`;
-            toast.style.cssText = `
-                position: fixed;
-                top: 40px;
-                right: 20px;
-                z-index: 9999;
-                min-width: 300px;
-                max-width: 500px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                border-left: 4px solid ${type === 'success' ? '#46b450' : type === 'error' ? '#dc3232' : '#ffb900'};
-                animation: slideInRight 0.3s ease-out;
-            `;
-            
-            toast.innerHTML = `
-                <p style="margin: 0; padding: 8px 12px;">
-                    <strong>${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</strong> 
-                    ${message}
-                </p>
-                <button type="button" class="notice-dismiss" style="position: absolute; top: 0; right: 1px; border: none; background: none; cursor: pointer; padding: 9px;">
-                    <span class="screen-reader-text">Fermer</span>
-                </button>
-            `;
-            
-            // Ajouter l'animation CSS
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                .pdf-toast-notification.fade-out {
-                    animation: fadeOut 0.3s ease-out forwards;
-                }
-                @keyframes fadeOut {
-                    from { opacity: 1; transform: translateX(0); }
-                    to { opacity: 0; transform: translateX(100%); }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Ajouter au DOM
-            document.body.appendChild(toast);
-            
-            // Gestionnaire pour fermer
-            const dismissBtn = toast.querySelector('.notice-dismiss');
-            dismissBtn.addEventListener('click', () => {
-                toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 300);
-            });
-            
-            // Auto-fermeture
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.classList.add('fade-out');
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, duration);
-        }
-        
-        // Ajouter des notifications pour les changements de toggles
-        function addToggleNotifications() {
-            const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-            toggles.forEach(toggle => {
-                toggle.addEventListener('change', function() {
-                    const label = this.closest('.toggle-container').querySelector('.toggle-label');
-                    const labelText = label ? label.textContent.trim() : 'Paramètre';
-                    const status = this.checked ? 'activé' : 'désactivé';
-                    
-                    showToast(`${labelText} ${status}`, 'success', 2000);
-                });
-            });
-        }
-        
-        // Appeler après l'initialisation des toggles
-        setTimeout(addToggleNotifications, 100);
-        
-        // Gestion des rôles
-        const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
-        const selectAllBtn = document.getElementById('select-all-roles');
-        const selectCommonBtn = document.getElementById('select-common-roles');
-        const selectedCountSpan = document.getElementById('selected-count');
-        
-        function updateCount() {
-            if (rolesSelect && selectedCountSpan) {
-                const selected = Array.from(rolesSelect.options).filter(opt => opt.selected).length;
-                selectedCountSpan.textContent = selected;
-            }
-        }
-        
-        if (selectAllBtn && rolesSelect) {
-            selectAllBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                Array.from(rolesSelect.options).forEach(opt => opt.selected = true);
-                updateCount();
-            });
-        }
-        
-        if (selectCommonBtn && rolesSelect) {
-            selectCommonBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                Array.from(rolesSelect.options).forEach(opt => {
-                    opt.selected = commonRoles.includes(opt.value);
-                });
-                updateCount();
-            });
-        }
-        
-        if (rolesSelect) {
-            rolesSelect.addEventListener('change', updateCount);
-        }
-        // Gestion du bouton de test des notifications
+        // Test notifications button
         const testNotificationsBtn = document.getElementById('test-notifications');
         if (testNotificationsBtn) {
             testNotificationsBtn.addEventListener('click', function() {
-                if (confirm('Voulez-vous envoyer un email de test des notifications ?')) {
-                    // Désactiver le bouton pendant l'envoi
-                    this.disabled = true;
-                    this.textContent = 'Envoi en cours...';
-
-                    // Envoyer la requête AJAX
-                    fetch(ajaxurl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            action: 'pdf_builder_test_notifications',
-                            nonce: document.querySelector('input[name="pdf_builder_notifications_nonce"]')?.value || ''
-                        })
+                this.disabled = true;
+                this.textContent = '🧪 Test en cours...';
+                
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'test_notifications',
+                        nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Email de test envoyé avec succès ! Vérifiez votre boîte mail.');
-                        } else {
-                            alert('Erreur lors de l\'envoi du test : ' + (data.data || 'Erreur inconnue'));
-                        }
-                    })
-                    .catch(error => {
-                        alert('Erreur réseau : ' + error.message);
-                    })
-                    .finally(() => {
-                        // Réactiver le bouton
-                        this.disabled = false;
-                        this.textContent = '🧪 Tester les Notifications';
-                    });
-                }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ Test des notifications réussi ! Vérifiez vos emails.');
+                    } else {
+                        alert('❌ Erreur lors du test : ' + (data.data || 'Erreur inconnue'));
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Erreur réseau : ' + error.message);
+                })
+                .finally(() => {
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.textContent = '🧪 Tester les Notifications';
+                });
             });
         }
     });
