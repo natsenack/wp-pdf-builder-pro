@@ -261,7 +261,20 @@ function pdf_builder_ajax_save_settings() {
                 'enable_profiling' => isset($_POST['enable_profiling']),
                 'force_https' => isset($_POST['force_https']),
             ];
-            update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+            
+            error_log('DEBUG AJAX: Developer settings to save: ' . print_r($dev_settings, true));
+            error_log('DEBUG AJAX: Current settings before merge: ' . print_r($settings, true));
+            
+            $new_settings = array_merge($settings, $dev_settings);
+            error_log('DEBUG AJAX: Settings after merge: ' . print_r($new_settings, true));
+            
+            $result = update_option('pdf_builder_settings', $new_settings);
+            error_log('DEBUG AJAX: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+            
+            // Vérifier que c'est bien sauvegardé
+            $saved_settings = get_option('pdf_builder_settings', []);
+            error_log('DEBUG AJAX: Settings after reload: ' . print_r($saved_settings, true));
+            
             $notices[] = 'Paramètres développeur enregistrés avec succès';
             break;
 
