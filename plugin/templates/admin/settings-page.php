@@ -701,16 +701,16 @@ window.addEventListener('load', function() {
 
             <style>
             /* Styles pour la page des paramètres PDF Builder Pro */
-            .pdf-builder-settings {
+            /*.pdf-builder-settings {
                 width: 100%;
                 margin-top: 20px;
                 clear: both;
                 position: relative;
                 z-index: 10;
-                padding-bottom: 100px;
-                min-height: calc(100vh - 120px);
-                margin-bottom: 60px;
-            }
+                padding-bottom: 60px;
+                min-height: calc(100vh - 200px);
+                margin-bottom: 40px;
+            }*/
 
             .pdf-builder-settings .nav-tab-wrapper {
                 margin: 0 0 20px 0;
