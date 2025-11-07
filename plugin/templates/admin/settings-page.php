@@ -1251,17 +1251,29 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="snap_to_grid">Magnétisme Grille</label></th>
                     <td>
-                        <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
-                               <?php checked($settings['snap_to_grid'] ?? false); ?> />
-                        <p class="description">Les éléments s'accrochent à la grille</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
+                                       <?php checked($settings['snap_to_grid'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer magnétisme</span>
+                        </div>
+                        <div class="toggle-description">Les éléments s'accrochent à la grille</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="snap_to_elements">Magnétisme Éléments</label></th>
                     <td>
-                        <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
-                               <?php checked($settings['snap_to_elements'] ?? false); ?> />
-                        <p class="description">Les éléments s'accrochent les uns aux autres</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
+                                       <?php checked($settings['snap_to_elements'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer magnétisme</span>
+                        </div>
+                        <div class="toggle-description">Les éléments s'accrochent les uns aux autres</div>
                     </td>
                 </tr>
                 <tr>
@@ -1275,9 +1287,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="show_guides">Afficher Guides</label></th>
                     <td>
-                        <input type="checkbox" id="show_guides" name="show_guides" value="1" 
-                               <?php checked($settings['show_guides'] ?? false); ?> />
-                        <p class="description">Affiche les guides de positionnement</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show_guides" name="show_guides" value="1" 
+                                       <?php checked($settings['show_guides'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Guides visibles</span>
+                        </div>
+                        <div class="toggle-description">Affiche les guides de positionnement</div>
                     </td>
                 </tr>
             </table>
@@ -1316,17 +1334,29 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="zoom_with_wheel">Zoom à la Molette</label></th>
                     <td>
-                        <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
-                               <?php checked($settings['zoom_with_wheel'] ?? false); ?> />
-                        <p class="description">Permet de zoomer avec la molette souris</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
+                                       <?php checked($settings['zoom_with_wheel'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Zoom molette</span>
+                        </div>
+                        <div class="toggle-description">Permet de zoomer avec la molette souris</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="pan_with_mouse">Panoramique à la Souris</label></th>
                     <td>
-                        <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
-                               <?php checked($settings['pan_with_mouse'] ?? false); ?> />
-                        <p class="description">Permet de déplacer le canvas en glissant</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
+                                       <?php checked($settings['pan_with_mouse'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Panoramique souris</span>
+                        </div>
+                        <div class="toggle-description">Permet de déplacer le canvas en glissant</div>
                     </td>
                 </tr>
             </table>
@@ -1336,9 +1366,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="show_resize_handles">Afficher Poignées</label></th>
                     <td>
-                        <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
-                               <?php checked($settings['show_resize_handles'] ?? false); ?> />
-                        <p class="description">Affiche les poignées de redimensionnement</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
+                                       <?php checked($settings['show_resize_handles'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Poignées visibles</span>
+                        </div>
+                        <div class="toggle-description">Affiche les poignées de redimensionnement</div>
                     </td>
                 </tr>
                 <tr>
@@ -1351,9 +1387,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="enable_rotation">Rotation d'Éléments</label></th>
                     <td>
-                        <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
-                               <?php checked($settings['enable_rotation'] ?? false); ?> />
-                        <p class="description">Permet la rotation des éléments</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
+                                       <?php checked($settings['enable_rotation'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Rotation activée</span>
+                        </div>
+                        <div class="toggle-description">Permet la rotation des éléments</div>
                     </td>
                 </tr>
                 <tr>
@@ -1366,17 +1408,29 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="multi_select">Sélection Multiple</label></th>
                     <td>
-                        <input type="checkbox" id="multi_select" name="multi_select" value="1" 
-                               <?php checked($settings['multi_select'] ?? false); ?> />
-                        <p class="description">Permet de sélectionner plusieurs éléments</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="multi_select" name="multi_select" value="1" 
+                                       <?php checked($settings['multi_select'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Multi-sélection</span>
+                        </div>
+                        <div class="toggle-description">Permet de sélectionner plusieurs éléments</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="copy_paste_enabled">Copier/Coller</label></th>
                     <td>
-                        <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1" 
-                               <?php checked($settings['copy_paste_enabled'] ?? false); ?> />
-                        <p class="description">Active les raccourcis Ctrl+C / Ctrl+V</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1" 
+                                       <?php checked($settings['copy_paste_enabled'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Copier/coller</span>
+                        </div>
+                        <div class="toggle-description">Active les raccourcis Ctrl+C / Ctrl+V</div>
                     </td>
                 </tr>
             </table>
@@ -1807,36 +1861,66 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
                     <td>
-                        <input type="checkbox" id="debug_php_errors" name="debug_php_errors" value="1" <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'checked' : ''; ?> />
-                        <p class="description">Affiche les erreurs/warnings PHP du plugin</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_php_errors" name="debug_php_errors" value="1" <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug PHP</span>
+                        </div>
+                        <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
                     <td>
-                        <input type="checkbox" id="debug_javascript" name="debug_javascript" value="1" <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'checked' : ''; ?> />
-                        <p class="description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_javascript" name="debug_javascript" value="1" <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug JS</span>
+                        </div>
+                        <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
                     <td>
-                        <input type="checkbox" id="debug_ajax" name="debug_ajax" value="1" <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'checked' : ''; ?> />
-                        <p class="description">Enregistre toutes les requêtes AJAX avec requête/réponse</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_ajax" name="debug_ajax" value="1" <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug AJAX</span>
+                        </div>
+                        <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="debug_performance">Métriques Performance</label></th>
                     <td>
-                        <input type="checkbox" id="debug_performance" name="debug_performance" value="1" <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'checked' : ''; ?> />
-                        <p class="description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_performance" name="debug_performance" value="1" <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug perf.</span>
+                        </div>
+                        <div class="toggle-description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="debug_database">Requêtes BD</label></th>
                     <td>
-                        <input type="checkbox" id="debug_database" name="debug_database" value="1" <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'checked' : ''; ?> />
-                        <p class="description">Enregistre les requêtes SQL exécutées par le plugin</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_database" name="debug_database" value="1" <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug DB</span>
+                        </div>
+                        <div class="toggle-description">Enregistre les requêtes SQL exécutées par le plugin</div>
                     </td>
                 </tr>
             </table>
@@ -1886,15 +1970,27 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="enable_profiling">Profiling PHP</label></th>
                     <td>
-                        <input type="checkbox" id="enable_profiling" name="enable_profiling" value="1" <?php echo isset($settings['enable_profiling']) && $settings['enable_profiling'] ? 'checked' : ''; ?> />
-                        <p class="description">Active le profiling PHP (impact sur les performances). Générer des rapports xdebug</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enable_profiling" name="enable_profiling" value="1" <?php echo isset($settings['enable_profiling']) && $settings['enable_profiling'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Profiling actif</span>
+                        </div>
+                        <div class="toggle-description">Active le profiling PHP (impact sur les performances). Générer des rapports xdebug</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="force_https">Forcer HTTPS API</label></th>
                     <td>
-                        <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
-                        <p class="description">Force les appels API externes en HTTPS (sécurité renforcée)</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">HTTPS forcé</span>
+                        </div>
+                        <div class="toggle-description">Force les appels API externes en HTTPS (sécurité renforcée)</div>
                     </td>
                 </tr>
             </table>
