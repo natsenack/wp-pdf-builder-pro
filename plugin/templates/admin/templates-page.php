@@ -475,6 +475,9 @@ function deleteTemplate(templateId, templateName) {
     deleteButton.disabled = true;
     deleteButton.innerHTML = '⏳ Suppression...';
 
+    // Trouver la carte template parente
+    const templateCard = deleteButton.closest('.template-card');
+
     // Faire l'appel AJAX pour supprimer le template
     jQuery.ajax({
         url: ajaxurl,
@@ -486,15 +489,17 @@ function deleteTemplate(templateId, templateName) {
         },
         success: function(response) {
             if (response.success) {
-                // Succès
-                deleteButton.innerHTML = '✅ Supprimé';
-                deleteButton.style.background = '#28a745';
+                // Succès - supprimer la carte du DOM avec animation
+                templateCard.style.transition = 'all 0.3s ease';
+                templateCard.style.opacity = '0';
+                templateCard.style.transform = 'scale(0.95)';
+
+                setTimeout(() => {
+                    templateCard.remove();
+                }, 300);
 
                 // Afficher un message de succès temporaire
-                alert('✅ Template "' + templateName + '" supprimé avec succès !');
-
-                // Recharger la page pour voir les changements
-                location.reload();
+                showSuccessMessage('✅ Template "' + templateName + '" supprimé avec succès !');
             } else {
                 // Erreur
                 deleteButton.innerHTML = '❌ Erreur';
