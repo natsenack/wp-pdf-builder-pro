@@ -268,8 +268,37 @@ function pdf_builder_ajax_save_settings() {
             $new_settings = array_merge($settings, $dev_settings);
             error_log('DEBUG AJAX: Settings after merge: ' . print_r($new_settings, true));
             
+            // Test de permissions et de base de données
+            error_log('DEBUG AJAX: Current user ID: ' . get_current_user_id());
+            error_log('DEBUG AJAX: Current user capabilities: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
+            
+            // Test avec une option simple d'abord
+            $test_option = 'pdf_builder_test_' . time();
+            $test_result = update_option($test_option, 'test_value');
+            error_log('DEBUG AJAX: Test option result: ' . ($test_result ? 'SUCCESS' : 'FAILED'));
+            
+            // Vérifier la taille des données
+            $serialized = serialize($new_settings);
+            error_log('DEBUG AJAX: Serialized data size: ' . strlen($serialized) . ' bytes');
+            
             $result = update_option('pdf_builder_settings', $new_settings);
             error_log('DEBUG AJAX: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+            
+            if (!$result) {
+                // Essayer de comprendre pourquoi
+                global $wpdb;
+                $last_error = $wpdb->last_error;
+                error_log('DEBUG AJAX: Database last error: ' . $last_error);
+                
+                // Essayer avec add_option au lieu de update_option
+                $add_result = add_option('pdf_builder_settings', $new_settings);
+                error_log('DEBUG AJAX: add_option result: ' . ($add_result ? 'SUCCESS' : 'FAILED'));
+                
+                if ($add_result) {
+                    error_log('DEBUG AJAX: Used add_option instead of update_option');
+                    $result = true;
+                }
+            }
             
             // Vérifier que c'est bien sauvegardé
             $saved_settings = get_option('pdf_builder_settings', []);
