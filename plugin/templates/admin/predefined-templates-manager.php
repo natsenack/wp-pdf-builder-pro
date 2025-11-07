@@ -28,6 +28,7 @@ class PDF_Builder_Predefined_Templates_Manager {
         add_action('wp_ajax_pdf_builder_save_predefined_template', [$this, 'ajax_save_predefined_template']);
         add_action('wp_ajax_pdf_builder_load_predefined_template', [$this, 'ajax_load_predefined_template']);
         add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajax_delete_predefined_template']);
+        add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajax_generate_template_preview']);
         add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajax_refresh_nonce']);
     }
 
