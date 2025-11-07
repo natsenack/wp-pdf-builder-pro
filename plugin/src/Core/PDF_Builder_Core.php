@@ -165,14 +165,12 @@ class PDF_Builder_Core
     }
 
     /**
-     * Initialiser le gestionnaire de notifications
+     * Initialiser le gestionnaire de notifications - TEMPORAIREMENT DÉSACTIVÉ POUR ÉVITER ERREUR FATALE
      */
-    public function initialize_notification_manager()
+    public function initialize_notification_manager_DISABLED()
     {
-        // Initialiser le gestionnaire de notifications (Singleton) - seulement si la classe existe
-        if (class_exists('PDF_Builder_Notification_Manager')) {
-            PDF_Builder_Notification_Manager::get_instance();
-        }
+        // Méthode renommée temporairement pour éviter l'erreur fatale
+        return;
     }
 
     /**
