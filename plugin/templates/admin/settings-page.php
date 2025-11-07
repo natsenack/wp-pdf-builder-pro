@@ -1622,6 +1622,9 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 </table>
                 
                 <p class="submit">
+                    <button type="button" id="test-smtp-connection" class="button button-secondary">
+                        🔗 Tester la Connexion SMTP
+                    </button>
                     <button type="button" id="test-notifications" class="button button-secondary">
                         🧪 Tester les Notifications
                     </button>
@@ -2934,7 +2937,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     }
     
     /* Exception pour le bouton de test dans l'onglet notifications */
-    #notifications #test-notifications {
+    #notifications #test-notifications,
+    #notifications #test-smtp-connection {
         display: inline-block !important;
     }
     
@@ -3393,6 +3397,43 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     // Réactiver le bouton
                     this.disabled = false;
                     this.textContent = '🧪 Tester les Notifications';
+                });
+            });
+        }
+
+        // Test SMTP connection button
+        const testSmtpBtn = document.getElementById('test-smtp-connection');
+        if (testSmtpBtn) {
+            testSmtpBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = '🔗 Test en cours...';
+                
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'pdf_builder_test_smtp_connection',
+                        nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ Connexion SMTP réussie ! Les paramètres sont corrects.');
+                    } else {
+                        const errorMessage = data.data?.message || data.data || 'Erreur inconnue';
+                        alert('❌ Échec de la connexion SMTP : ' + errorMessage);
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Erreur réseau : ' + error.message);
+                })
+                .finally(() => {
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.textContent = '🔗 Tester la Connexion SMTP';
                 });
             });
         }

@@ -364,6 +364,8 @@ class PDF_Builder_Admin {
         
         // Test notifications handler
         add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
+        // Test SMTP connection handler
+        add_action('wp_ajax_pdf_builder_test_smtp_connection', [$this, 'ajax_test_smtp_connection']);
     }
 
     /**
@@ -4761,6 +4763,99 @@ class PDF_Builder_Admin {
             } else {
                 wp_send_json_error([
                     'message' => __('Gestionnaire de notifications non disponible', 'pdf-builder-pro')
+                ]);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error([
+                'message' => __('Erreur lors du test : ', 'pdf-builder-pro') . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * AJAX handler pour tester la connexion SMTP
+     */
+    public function ajax_test_smtp_connection()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications')) {
+                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Vérifier si SMTP est activé
+            if (!get_option('pdf_builder_smtp_enabled', false)) {
+                wp_send_json_error(['message' => __('SMTP n\'est pas activé', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Récupérer les paramètres SMTP
+            $smtp_host = get_option('pdf_builder_smtp_host', '');
+            $smtp_port = get_option('pdf_builder_smtp_port', 587);
+            $smtp_encryption = get_option('pdf_builder_smtp_encryption', 'tls');
+            $smtp_username = get_option('pdf_builder_smtp_username', '');
+            $smtp_password = get_option('pdf_builder_smtp_password', '');
+
+            // Vérifier que les paramètres requis sont présents
+            if (empty($smtp_host) || empty($smtp_username) || empty($smtp_password)) {
+                wp_send_json_error(['message' => __('Paramètres SMTP incomplets', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Charger PHPMailer si ce n'est pas déjà fait
+            if (!class_exists('PHPMailer')) {
+                require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+            }
+
+            // Tester la connexion SMTP
+            $phpmailer = new PHPMailer\PHPMailer\PHPMailer(true);
+
+            try {
+                // Configuration SMTP
+                $phpmailer->isSMTP();
+                $phpmailer->Host = $smtp_host;
+                $phpmailer->Port = $smtp_port;
+                $phpmailer->SMTPAuth = true;
+                $phpmailer->Username = $smtp_username;
+                $phpmailer->Password = $smtp_password;
+
+                // Configuration du chiffrement
+                if ($smtp_encryption === 'ssl') {
+                    $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                } elseif ($smtp_encryption === 'tls') {
+                    $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                } else {
+                    $phpmailer->SMTPSecure = '';
+                }
+
+                // Timeout pour le test
+                $phpmailer->Timeout = 10;
+
+                // Tester la connexion sans envoyer d'email
+                if ($phpmailer->smtpConnect()) {
+                    $phpmailer->smtpClose();
+                    wp_send_json_success([
+                        'message' => __('Connexion SMTP réussie', 'pdf-builder-pro')
+                    ]);
+                } else {
+                    wp_send_json_error([
+                        'message' => __('Échec de la connexion SMTP', 'pdf-builder-pro')
+                    ]);
+                }
+
+            } catch (Exception $e) {
+                wp_send_json_error([
+                    'message' => __('Erreur SMTP : ', 'pdf-builder-pro') . $e->getMessage()
                 ]);
             }
 
