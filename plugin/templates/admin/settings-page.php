@@ -324,6 +324,9 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
 
 // Gestion des requêtes AJAX
 if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
+    error_log('DEBUG AJAX: AJAX request detected with ajax_save=' . $_POST['ajax_save']);
+    error_log('DEBUG AJAX: POST data: ' . print_r($_POST, true));
+    
     // C'est une requête AJAX, retourner une réponse JSON
     $response = [
         'success' => !empty($notices),
@@ -331,9 +334,13 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
         'notices' => $notices
     ];
     
+    error_log('DEBUG AJAX: Sending JSON response: ' . json_encode($response));
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;
+} else {
+    error_log('DEBUG AJAX: Not an AJAX request. ajax_save=' . (isset($_POST['ajax_save']) ? $_POST['ajax_save'] : 'not set'));
+    error_log('DEBUG AJAX: HTTP_X_REQUESTED_WITH=' . (isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : 'not set'));
 }
 ?>  
 <div class="wrap">
@@ -2718,6 +2725,12 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
                 // Collecter les données du formulaire
                 const formData = new FormData(form);
                 formData.append('ajax_save', '1'); // Marquer comme requête AJAX
+                
+                // Debug: vérifier que ajax_save est bien ajouté
+                console.log('📤 AJAX FormData contents:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`  ${key}: ${value}`);
+                }
                 
                 // Envoyer en AJAX
                 fetch(window.location.href, {
