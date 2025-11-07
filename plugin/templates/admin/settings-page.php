@@ -18,7 +18,15 @@ $settings = get_option('pdf_builder_settings', []);
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    // Debug: Log form submission
+    error_log('PDF Builder: Form submitted, POST count: ' . count($_POST));
+
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        // Check for max_input_vars limit
+        $max_input_vars = ini_get('max_input_vars');
+        if ($max_input_vars && count($_POST) >= $max_input_vars) {
+            $notices[] = '<div class="notice notice-error"><p><strong>⚠️</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
+        }
         $to_save = [
             'debug_mode' => isset($_POST['debug_mode']),
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
@@ -93,8 +101,14 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
         ];
-        update_option('pdf_builder_settings', array_merge($settings, $to_save));
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
+        $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
+        if ($result) {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
+            error_log('PDF Builder: Settings saved successfully');
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
+            error_log('PDF Builder: Failed to save settings');
+        }
         $settings = get_option('pdf_builder_settings', []);
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
@@ -180,7 +194,7 @@ if (isset($_POST['clear_cache']) &&
         </a>
     </div>
     
-    <form method="post" class="settings-form">
+    <form method="post" class="settings-form" id="settings-form">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
         <div id="general" class="tab-content" style="display: block;">
@@ -2588,6 +2602,15 @@ if (isset($_POST['clear_cache']) &&
         // Initialiser les toggles au chargement
         initToggles();
         initPasswordToggle();
+        
+        // Debug form submission
+        const settingsForm = document.getElementById('settings-form');
+        if (settingsForm) {
+            settingsForm.addEventListener('submit', function(e) {
+                console.log('PDF Builder: Form submitted with', this.elements.length, 'elements');
+                // Don't prevent default, just log
+            });
+        }
         
         // Gestion des rôles
         const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
