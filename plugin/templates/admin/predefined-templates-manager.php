@@ -132,7 +132,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                 // Gestion de la déconnexion développeur
                 $("#developer-logout-btn").on("click", function(e) {
                     e.preventDefault();
-                    if (confirm("<?php echo esc_js(__('Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?', 'pdf-builder-pro')); ?>")) {
+                    if (confirm("Are you sure you want to logout from developer mode?")) {
                         $.ajax({
                             url: ajaxurl,
                             type: "POST",
@@ -143,11 +143,11 @@ class PDF_Builder_Predefined_Templates_Manager {
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    alert("<?php _e('Erreur lors de la déconnexion', 'pdf-builder-pro'); ?>");
+                                    alert("Logout error");
                                 }
                             },
                             error: function() {
-                                alert("<?php _e('Erreur lors de la déconnexion', 'pdf-builder-pro'); ?>");
+                                alert("Logout error");
                             }
                         });
                     }
