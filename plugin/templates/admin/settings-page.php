@@ -2086,9 +2086,6 @@ if (isset($_POST['clear_cache']) &&
             </div>
         </div>
         
-        <p class="submit">
-            <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-        </p>
     </form>
 </div>
 <style>
