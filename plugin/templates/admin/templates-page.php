@@ -381,23 +381,49 @@ function closeTemplateSettings() {
 }
 
 function loadTemplateSettings(templateId) {
-    // Simulation du chargement des paramètres (à remplacer par un vrai appel AJAX)
-    // Pour l'instant, on met des valeurs par défaut
-    document.getElementById('template-description-input').value = 'Description du template...';
-    document.getElementById('template-public').checked = false;
-    document.getElementById('template-paper-size').value = 'A4';
-    document.getElementById('template-orientation').value = 'portrait';
+    // Faire l'appel AJAX pour charger les paramètres
+    jQuery.post(ajaxurl, {
+        action: 'pdf_builder_load_template_settings',
+        template_id: templateId,
+        nonce: pdfBuilderTemplatesNonce
+    }, function(response) {
+        if (response.success) {
+            // Remplir les champs avec les données chargées
+            const settings = response.data;
+            document.getElementById('template-name-input').value = settings.name || '';
+            document.getElementById('template-description-input').value = settings.description || '';
+            document.getElementById('template-category').value = settings.category || 'autre';
+            document.getElementById('template-public').checked = settings.is_public || false;
+            document.getElementById('template-paper-size').value = settings.paper_size || 'A4';
+            document.getElementById('template-orientation').value = settings.orientation || 'portrait';
+        } else {
+            // Erreur - utiliser des valeurs par défaut
+            console.error('Erreur lors du chargement des paramètres:', response.data.message);
+            document.getElementById('template-description-input').value = 'Description du template...';
+            document.getElementById('template-public').checked = false;
+            document.getElementById('template-paper-size').value = 'A4';
+            document.getElementById('template-orientation').value = 'portrait';
 
-    // Déterminer la catégorie basée sur le nom
-    const templateName = document.getElementById('template-name-input').value.toLowerCase();
-    let category = 'autre';
-    if (templateName.includes('facture')) category = 'facture';
-    else if (templateName.includes('devis')) category = 'devis';
-    else if (templateName.includes('commande')) category = 'commande';
-    else if (templateName.includes('contrat')) category = 'contrat';
-    else if (templateName.includes('newsletter')) category = 'newsletter';
+            // Déterminer la catégorie basée sur le nom
+            const templateName = document.getElementById('template-name-input').value.toLowerCase();
+            let category = 'autre';
+            if (templateName.includes('facture')) category = 'facture';
+            else if (templateName.includes('devis')) category = 'devis';
+            else if (templateName.includes('commande')) category = 'commande';
+            else if (templateName.includes('contrat')) category = 'contrat';
+            else if (templateName.includes('newsletter')) category = 'newsletter';
 
-    document.getElementById('template-category').value = category;
+            document.getElementById('template-category').value = category;
+        }
+    }).fail(function(xhr, status, error) {
+        console.error('Erreur AJAX lors du chargement des paramètres:', error);
+        // Valeurs par défaut en cas d'erreur
+        document.getElementById('template-description-input').value = 'Description du template...';
+        document.getElementById('template-public').checked = false;
+        document.getElementById('template-paper-size').value = 'A4';
+        document.getElementById('template-orientation').value = 'portrait';
+        document.getElementById('template-category').value = 'autre';
+    });
 }
 
 function saveTemplateSettings() {
@@ -431,8 +457,8 @@ function saveTemplateSettings() {
             // Fermer la modale après un délai
             setTimeout(() => {
                 closeTemplateSettings();
-                // Recharger la page pour voir les changements
-                location.reload();
+                // Afficher un message de succès sans recharger la page
+                showSuccessMessage('Paramètres du template sauvegardés avec succès !');
             }, 1500);
         } else {
             // Erreur

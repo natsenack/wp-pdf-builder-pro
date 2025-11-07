@@ -16,6 +16,7 @@ class PDF_Builder_Templates_Ajax {
         add_action('wp_ajax_pdf_builder_create_from_predefined', array($this, 'create_from_predefined'));
 
         // Actions pour les templates personnalisés
+        add_action('wp_ajax_pdf_builder_load_template_settings', array($this, 'load_template_settings'));
         add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'save_template_settings'));
         add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'set_default_template'));
         add_action('wp_ajax_pdf_builder_delete_template', array($this, 'delete_template'));
@@ -147,6 +148,58 @@ class PDF_Builder_Templates_Ajax {
     }
 
     /**
+     * Charge les paramètres d'un template
+     */
+    public function load_template_settings() {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+            }
+
+            $template_id = intval($_POST['template_id'] ?? 0);
+
+            if (empty($template_id)) {
+                wp_send_json_error('ID du template manquant');
+            }
+
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Récupérer le template
+            $template = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+
+            if (!$template) {
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Extraire les informations depuis template_data si elles existent
+            $template_data = json_decode($template['template_data'] ?? '{}', true);
+            $settings = array(
+                'name' => $template['name'],
+                'description' => $template_data['description'] ?? 'Description du template...',
+                'category' => $template_data['category'] ?? 'autre',
+                'is_public' => $template_data['is_public'] ?? false,
+                'paper_size' => $template_data['paper_size'] ?? 'A4',
+                'orientation' => $template_data['orientation'] ?? 'portrait'
+            );
+
+            wp_send_json_success($settings);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Sauvegarde les paramètres d'un template
      */
     public function save_template_settings() {
@@ -186,15 +239,31 @@ class PDF_Builder_Templates_Ajax {
                 wp_send_json_error('Template non trouvé');
             }
 
-            // Mettre à jour les paramètres
+            // Récupérer les données actuelles du template
+            $current_template = $wpdb->get_row(
+                $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+
+            $template_data = json_decode($current_template['template_data'] ?? '{}', true);
+
+            // Mettre à jour les paramètres dans template_data
+            $template_data['description'] = $description;
+            $template_data['category'] = $category;
+            $template_data['is_public'] = $is_public;
+            $template_data['paper_size'] = $paper_size;
+            $template_data['orientation'] = $orientation;
+
+            // Mettre à jour le template
             $result = $wpdb->update(
                 $table_templates,
                 array(
                     'name' => $name,
+                    'template_data' => wp_json_encode($template_data),
                     'updated_at' => current_time('mysql')
                 ),
                 array('id' => $template_id),
-                array('%s', '%s'),
+                array('%s', '%s', '%s'),
                 array('%d')
             );
 
