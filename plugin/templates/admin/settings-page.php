@@ -575,7 +575,8 @@ window.addEventListener('load', function() {
                 clear: both;
                 position: relative;
                 z-index: 10;
-                padding-bottom: 100px;
+                padding-bottom: 150px;
+                min-height: 70vh;
             }
 
             .pdf-builder-settings .nav-tab-wrapper {
