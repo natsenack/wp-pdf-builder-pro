@@ -2437,6 +2437,9 @@ if (isset($_POST['clear_cache']) &&
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('PDF Builder: ===== JAVASCRIPT LOADED =====');
+        console.log('PDF Builder: DOM Content Loaded');
+        
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
 
