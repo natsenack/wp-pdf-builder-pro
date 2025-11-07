@@ -20,6 +20,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
+error_log('DEBUG: Settings loaded from database: ' . print_r($settings, true));
 if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('DEBUG: Settings page loaded, POST data keys: ' . implode(', ', array_keys($_POST)));
 }
@@ -247,7 +248,9 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
+    error_log('DEBUG: POST data: ' . print_r($_POST, true));
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        error_log('DEBUG: Nonce verified successfully');
         $dev_settings = [
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -263,9 +266,15 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
         ];
-        update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+        error_log('DEBUG: Developer settings to save: ' . print_r($dev_settings, true));
+        $result = update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+        error_log('DEBUG: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         $settings = get_option('pdf_builder_settings', []);
+        error_log('DEBUG: Settings after reload: ' . print_r($settings, true));
+    } else {
+        error_log('DEBUG: Nonce verification FAILED');
+        $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
 }
 
@@ -2542,6 +2551,26 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     timestamp: new Date().toISOString()
                 });
 
+                // Logs détaillés pour l'onglet développeur
+                if (buttonName === 'submit_developpeur') {
+                    console.log('🔧 Developer tab form data:', {
+                        developer_enabled: document.getElementById('developer_enabled')?.checked || false,
+                        developer_password: document.getElementById('developer_password')?.value || '',
+                        debug_php_errors: document.getElementById('debug_php_errors')?.checked || false,
+                        debug_javascript: document.getElementById('debug_javascript')?.checked || false,
+                        debug_ajax: document.getElementById('debug_ajax')?.checked || false,
+                        debug_performance: document.getElementById('debug_performance')?.checked || false,
+                        debug_database: document.getElementById('debug_database')?.checked || false,
+                        log_level: document.getElementById('log_level')?.value || 'info',
+                        log_file_size: document.getElementById('log_file_size')?.value || '10',
+                        log_retention: document.getElementById('log_retention')?.value || '30',
+                        disable_hooks: document.getElementById('disable_hooks')?.value || '',
+                        enable_profiling: document.getElementById('enable_profiling')?.checked || false,
+                        force_https: document.getElementById('force_https')?.checked || false,
+                        nonce: document.querySelector('input[name="pdf_builder_settings_nonce"]')?.value || 'no-nonce'
+                    });
+                }
+
                 // Trouver l'onglet actif
                 const activeTab = document.querySelector('.nav-tab-active');
                 if (activeTab) {
@@ -2674,6 +2703,15 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         });
 
         console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
+
+        // Log des paramètres actuels chargés
+        console.log('📊 Current settings loaded:', {
+            developer_enabled: document.getElementById('developer_enabled')?.checked || false,
+            debug_javascript: document.getElementById('debug_javascript')?.checked || false,
+            debug_php_errors: document.getElementById('debug_php_errors')?.checked || false,
+            log_level: document.getElementById('log_level')?.value || 'info',
+            timestamp: new Date().toISOString()
+        });
 
         // ============================================
         // OUTILS DE DÉVELOPPEMENT - Onglet Développeur
