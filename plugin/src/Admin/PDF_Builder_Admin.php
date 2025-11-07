@@ -4756,11 +4756,14 @@ class PDF_Builder_Admin {
                         'message' => __('Email de test envoyé avec succès', 'pdf-builder-pro')
                     ]);
                 } else {
-                    // Récupérer les dernières erreurs PHP pour les retourner
+                    // Récupérer l'erreur SMTP si elle a été stockée
+                    $smtp_error = isset($GLOBALS['pdf_builder_smtp_error']) ? $GLOBALS['pdf_builder_smtp_error'] : '';
                     $last_error = error_get_last();
                     $error_details = '';
 
-                    if ($last_error) {
+                    if ($smtp_error) {
+                        $error_details = "Erreur SMTP: " . $smtp_error;
+                    } elseif ($last_error) {
                         $error_details = sprintf(
                             "Dernière erreur PHP: %s dans %s ligne %d",
                             $last_error['message'],
