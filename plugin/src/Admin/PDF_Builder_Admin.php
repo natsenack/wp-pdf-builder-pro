@@ -4810,52 +4810,33 @@ class PDF_Builder_Admin {
                 return;
             }
 
-            // Charger PHPMailer si ce n'est pas déjà fait
-            if (!class_exists('PHPMailer')) {
-                require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
-                require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
-                require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
-            }
+            // Tester la connexion SMTP avec une connexion socket basique
+            $connection = @fsockopen(
+                ($smtp_encryption === 'ssl' ? 'ssl://' : '') . $smtp_host,
+                $smtp_port,
+                $errno,
+                $errstr,
+                10 // timeout 10 secondes
+            );
 
-            // Tester la connexion SMTP
-            $phpmailer = new PHPMailer\PHPMailer\PHPMailer(true);
+            if ($connection) {
+                // Lire la réponse du serveur
+                $response = fgets($connection, 1024);
+                fclose($connection);
 
-            try {
-                // Configuration SMTP
-                $phpmailer->isSMTP();
-                $phpmailer->Host = $smtp_host;
-                $phpmailer->Port = $smtp_port;
-                $phpmailer->SMTPAuth = true;
-                $phpmailer->Username = $smtp_username;
-                $phpmailer->Password = $smtp_password;
-
-                // Configuration du chiffrement
-                if ($smtp_encryption === 'ssl') {
-                    $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-                } elseif ($smtp_encryption === 'tls') {
-                    $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                } else {
-                    $phpmailer->SMTPSecure = '';
-                }
-
-                // Timeout pour le test
-                $phpmailer->Timeout = 10;
-
-                // Tester la connexion sans envoyer d'email
-                if ($phpmailer->smtpConnect()) {
-                    $phpmailer->smtpClose();
+                // Vérifier si la réponse contient "220" (réponse SMTP standard)
+                if (strpos($response, '220') === 0) {
                     wp_send_json_success([
                         'message' => __('Connexion SMTP réussie', 'pdf-builder-pro')
                     ]);
                 } else {
                     wp_send_json_error([
-                        'message' => __('Échec de la connexion SMTP', 'pdf-builder-pro')
+                        'message' => __('Serveur SMTP répond mais avec une réponse inattendue', 'pdf-builder-pro')
                     ]);
                 }
-
-            } catch (Exception $e) {
+            } else {
                 wp_send_json_error([
-                    'message' => __('Erreur SMTP : ', 'pdf-builder-pro') . $e->getMessage()
+                    'message' => __('Impossible de se connecter au serveur SMTP : ', 'pdf-builder-pro') . $errstr
                 ]);
             }
 
