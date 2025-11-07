@@ -1993,4 +1993,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php wp_footer(); ?>
+<?php /*wp_footer(); ?>
