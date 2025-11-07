@@ -32,6 +32,9 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $to_save = [
             'test_field' => sanitize_text_field($_POST['test_field'] ?? ''),
             'cache_enabled' => isset($_POST['cache_enabled']),
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
         ];
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
         if ($result) {
@@ -151,13 +154,6 @@ if (isset($_POST['clear_cache']) &&
                 </tr>
             </table>
             
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-                <button type="button" onclick="console.log('Form data:', new FormData(document.getElementById('settings-form'))); alert('Test submit');" class="button">Test Submit</button>
-            </p>
-        </div>
-    </form>
-            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📄 Paramètres PDF</h3>
             <table class="form-table">
                 <tr>
@@ -191,6 +187,11 @@ if (isset($_POST['clear_cache']) &&
                     </td>
                 </tr>
             </table>
+            
+            <p class="submit">
+                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
+                <button type="button" onclick="console.log('Form data:', new FormData(document.getElementById('settings-form'))); alert('Test submit');" class="button">Test Submit</button>
+            </p>
         </div>
         
         <div id="licence" class="tab-content" style="display: none;">
