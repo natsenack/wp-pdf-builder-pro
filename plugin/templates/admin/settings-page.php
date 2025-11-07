@@ -102,8 +102,18 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
 }
 
 // Handle cache clear
-if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'])) {
-    if (wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce'], 'pdf_builder_clear_cache')) {
+if (isset($_POST['clear_cache']) &&
+    (isset($_POST['pdf_builder_clear_cache_nonce_performance']) ||
+     isset($_POST['pdf_builder_clear_cache_nonce_maintenance']))) {
+
+    $nonce_verified = false;
+    if (isset($_POST['pdf_builder_clear_cache_nonce_performance'])) {
+        $nonce_verified = wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce_performance'], 'pdf_builder_clear_cache_performance');
+    } elseif (isset($_POST['pdf_builder_clear_cache_nonce_maintenance'])) {
+        $nonce_verified = wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce_maintenance'], 'pdf_builder_clear_cache_maintenance');
+    }
+
+    if ($nonce_verified) {
         // Clear transients and cache
         delete_transient('pdf_builder_cache');
         delete_transient('pdf_builder_templates');
@@ -419,25 +429,6 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         
         <div id="performance" class="tab-content" style="display: none;">
             <h2>Paramètres de Performance</h2>
-            
-            <?php
-            // Traitement du vidage du cache
-            if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'])) {
-                if (wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce'], 'pdf_builder_clear_cache')) {
-                    delete_transients_by_prefix('pdf_builder_');
-                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès !</p></div>';
-                }
-            }
-            
-            function delete_transients_by_prefix($prefix) {
-                global $wpdb;
-                $wpdb->query($wpdb->prepare(
-                    "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-                    $wpdb->esc_like('_transient_' . $prefix) . '%'
-                ));
-            }
-            ?>
-            
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
@@ -514,7 +505,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                 <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
                 
                 <form method="post" style="display: inline;">
-                    <?php wp_nonce_field('pdf_builder_clear_cache', 'pdf_builder_clear_cache_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_clear_cache_performance', 'pdf_builder_clear_cache_nonce_performance'); ?>
                     <button type="submit" name="clear_cache" class="button button-secondary">
                         🗑️ Vider le Cache
                     </button>
@@ -1499,7 +1490,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <form method="post" style="display: inline;">
-                    <?php wp_nonce_field('pdf_builder_clear_cache', 'pdf_builder_clear_cache_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_clear_cache_maintenance', 'pdf_builder_clear_cache_nonce_maintenance'); ?>
                     <button type="submit" name="clear_cache" class="button button-secondary" style="width: 100%;">
                         🗑️ Vider le Cache
                     </button>
