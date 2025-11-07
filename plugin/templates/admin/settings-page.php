@@ -565,6 +565,7 @@ window.addEventListener('load', function() {
     }
     ?>
 
+    <div class="wrap">
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
@@ -2065,6 +2066,7 @@ window.addEventListener('load', function() {
             <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>">
         </p>
     </form>
+</div>
 </div>
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
