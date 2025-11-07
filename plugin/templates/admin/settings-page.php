@@ -323,7 +323,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
 }
 
 // Gestion des requêtes AJAX
-if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
     // C'est une requête AJAX, retourner une réponse JSON
     $response = [
         'success' => !empty($notices),
@@ -2717,14 +2717,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
                 
                 // Collecter les données du formulaire
                 const formData = new FormData(form);
+                formData.append('ajax_save', '1'); // Marquer comme requête AJAX
                 
                 // Envoyer en AJAX
                 fetch(window.location.href, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
+                    body: formData
+                    // Plus besoin du header X-Requested-With
                 })
                 .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
