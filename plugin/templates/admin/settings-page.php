@@ -38,6 +38,36 @@ $settings = get_option("pdf_builder_settings", []);
         <a href="#advanced" class="nav-tab">Advanced</a>
     </div>
     
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var navTabs = document.querySelectorAll('.nav-tab');
+        navTabs.forEach(function(tab) {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                var tabHref = this.getAttribute('href');
+                var targetId = tabHref.substring(1);
+                var targetElement = document.getElementById(targetId);
+                
+                if (!targetElement) return;
+                
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(function(el) {
+                    el.style.display = 'none';
+                });
+                
+                // Remove active class from all nav tabs
+                document.querySelectorAll('.nav-tab').forEach(function(el) {
+                    el.classList.remove('nav-tab-active');
+                });
+                
+                // Show selected tab
+                targetElement.style.display = 'block';
+                this.classList.add('nav-tab-active');
+            });
+        });
+    });
+    </script>
+    
     <form method="post">
         <div id="general" class="tab-content active" style="display:block; padding:20px; background:#f5f5f5;">
             <h2>General Settings</h2>
@@ -65,7 +95,7 @@ $settings = get_option("pdf_builder_settings", []);
         </p>
     </form>
     
-    <div style="background: #000; color: #0f0; padding: 50px; margin: 50px 0; min-height: 500px; text-align: center;">
+    <div style="background: #000; color: #0f0; padding: 50px; margin: 50px 0; min-height: 1500px; text-align: center;">
         <p>TEST BOX - Footer should be below</p>
     </div>
 </div>
