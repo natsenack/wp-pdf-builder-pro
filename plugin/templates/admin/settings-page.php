@@ -190,7 +190,33 @@ if (isset($_POST['clear_cache']) &&
             
             <p class="submit">
                 <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-                <button type="button" onclick="setTimeout(() => { console.log('Form found:', document.getElementById('settings-form')); const form = document.getElementById('settings-form'); console.log('Form elements:', form.elements.length); for(let i = 0; i < form.elements.length; i++) { console.log('Element ' + i + ':', form.elements[i].name, '=', form.elements[i].value); } console.log('Form data:', new FormData(form)); }, 100);" class="button">Debug Form</button>
+                <button type="button" onclick="debugForm();" class="button">Debug Form</button>
+                <script>
+                function debugForm() {
+                    setTimeout(() => {
+                        console.log('=== FORM DEBUG ===');
+                        const form = document.getElementById('settings-form');
+                        console.log('Form found:', !!form);
+                        if (form) {
+                            console.log('Form elements count:', form.elements.length);
+                            console.log('Form method:', form.method);
+                            console.log('Form action:', form.action);
+
+                            for(let i = 0; i < form.elements.length; i++) {
+                                const el = form.elements[i];
+                                console.log(`Element ${i}: name="${el.name}" type="${el.type}" value="${el.value}" checked="${el.checked}"`);
+                            }
+
+                            const formData = new FormData(form);
+                            console.log('FormData entries:');
+                            for (let [key, value] of formData.entries()) {
+                                console.log(`  ${key}: ${value}`);
+                            }
+                        }
+                        console.log('=== END DEBUG ===');
+                    }, 500);
+                }
+                </script>
             </p>
         </div>
         
