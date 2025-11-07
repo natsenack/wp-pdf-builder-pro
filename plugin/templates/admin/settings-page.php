@@ -2726,15 +2726,14 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.text())
+                .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
-                    console.log('✅ AJAX response received');
+                    console.log('✅ AJAX response received:', data);
                     
-                    // Vérifier si la sauvegarde a réussi (chercher les notices de succès dans la réponse)
-                    if (data.includes('notice-success') || data.includes('paramètres enregistrés')) {
+                    if (data.success) {
                         // Succès
                         if (saveStatus) {
-                            saveStatus.textContent = '✅ Sauvegardé !';
+                            saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé !');
                             saveStatus.className = 'save-status show success';
                         }
                         this.innerHTML = '✅ Sauvegardé !';
@@ -2750,9 +2749,9 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
                         
                     } else {
                         // Erreur
-                        console.error('❌ Save failed - no success notice found in response');
+                        console.error('❌ Save failed:', data.message);
                         if (saveStatus) {
-                            saveStatus.textContent = '❌ Erreur de sauvegarde';
+                            saveStatus.textContent = '❌ ' + (data.message || 'Erreur de sauvegarde');
                             saveStatus.className = 'save-status show error';
                         }
                         this.innerHTML = '❌ Erreur';
