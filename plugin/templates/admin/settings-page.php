@@ -79,7 +79,6 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'redo_levels' => intval($_POST['redo_levels'] ?? 50),
             'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
             // Développeur
-            'debug_mode' => isset($_POST['debug_mode']),
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -412,22 +411,6 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
             
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="cache_enabled">Cache Activé</label></th>
-                    <td>
-                        <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" 
-                               <?php checked($settings['cache_enabled'] ?? false); ?> />
-                        <p class="description">Active la mise en cache pour améliorer les performances</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="cache_ttl">TTL Cache (secondes)</label></th>
-                    <td>
-                        <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" 
-                               min="1" max="86400" step="60" />
-                        <p class="description">Durée de vie du cache en secondes (3600 = 1 heure, 86400 = 1 jour)</p>
-                    </td>
-                </tr>
-                <tr>
                     <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
                     <td>
                         <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
@@ -517,46 +500,8 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         <div id="pdf" class="tab-content" style="display: none;">
             <h2>Paramètres PDF</h2>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Format & Orientation</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="default_format">Format par Défaut</label></th>
-                    <td>
-                        <select id="default_format" name="default_format">
-                            <option value="A3" <?php selected($settings['default_format'] ?? 'A4', 'A3'); ?>>A3</option>
-                            <option value="A4" <?php selected($settings['default_format'] ?? 'A4', 'A4'); ?>>A4</option>
-                            <option value="A5" <?php selected($settings['default_format'] ?? 'A4', 'A5'); ?>>A5</option>
-                            <option value="Letter" <?php selected($settings['default_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
-                            <option value="Legal" <?php selected($settings['default_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
-                        </select>
-                        <p class="description">Format de page par défaut pour les nouveaux PDFs</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="default_orientation">Orientation par Défaut</label></th>
-                    <td>
-                        <select id="default_orientation" name="default_orientation">
-                            <option value="portrait" <?php selected($settings['default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-                            <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
             <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
-                    <td>
-                        <select id="pdf_quality" name="pdf_quality">
-                            <option value="low" <?php selected($settings['pdf_quality'] ?? 'high', 'low'); ?>>Basse (fichiers plus petits)</option>
-                            <option value="medium" <?php selected($settings['pdf_quality'] ?? 'high', 'medium'); ?>>Moyenne</option>
-                            <option value="high" <?php selected($settings['pdf_quality'] ?? 'high', 'high'); ?>>Haute (meilleure qualité)</option>
-                            <option value="ultra" <?php selected($settings['pdf_quality'] ?? 'high', 'ultra'); ?>>Ultra HD</option>
-                        </select>
-                        <p class="description">Plus haute = meilleure qualité mais fichiers plus gros</p>
-                    </td>
-                </tr>
                 <tr>
                     <th scope="row"><label for="export_quality">Qualité d'Export</label></th>
                     <td>
@@ -1563,13 +1508,6 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
             <p>Outils pour les développeurs et le débogage avancé.</p>
             
             <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="developer_mode">Mode Développeur</label></th>
-                    <td>
-                        <input type="checkbox" id="developer_mode" name="developer_mode" value="1" />
-                        <p class="description">Active les logs et outils de développement avancés</p>
-                    </td>
-                </tr>
                 <tr>
                     <th scope="row"><label>Console de Debug</label></th>
                     <td>
