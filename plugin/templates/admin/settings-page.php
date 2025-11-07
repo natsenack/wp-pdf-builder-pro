@@ -2954,6 +2954,13 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             const tabName = tabNames[activeTabId] || 'Paramètres';
             button.innerHTML = `💾 Enregistrer ${tabName}`;
             
+            // Cacher le bouton dans les onglets qui ont leurs propres boutons
+            if (activeTabId === 'roles' || activeTabId === 'templates') {
+                button.style.display = 'none';
+            } else {
+                button.style.display = 'block';
+            }
+            
             // Masquer le statut précédent
             if (status) {
                 status.classList.remove('show', 'success', 'error');
