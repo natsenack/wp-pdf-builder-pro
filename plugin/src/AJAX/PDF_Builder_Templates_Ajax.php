@@ -20,6 +20,7 @@ class PDF_Builder_Templates_Ajax {
         add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'save_template_settings'));
         add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'set_default_template'));
         add_action('wp_ajax_pdf_builder_delete_template', array($this, 'delete_template'));
+        add_action('wp_ajax_pdf_builder_duplicate_template', array($this, 'duplicate_template'));
     }
 
     /**
@@ -401,6 +402,69 @@ class PDF_Builder_Templates_Ajax {
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Duplique un template existant
+     */
+    public function duplicate_template() {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+            }
+
+            $template_id = intval($_POST['template_id'] ?? 0);
+            $template_name = sanitize_text_field($_POST['template_name'] ?? '');
+
+            if (empty($template_id) || empty($template_name)) {
+                wp_send_json_error('ID du template ou nom manquant');
+            }
+
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Vérifier que le template existe
+            $existing = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $table_templates WHERE id = %d",
+                $template_id
+            ));
+
+            if (!$existing) {
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Créer une copie du template
+            $result = $wpdb->insert(
+                $table_templates,
+                array(
+                    'name' => $template_name,
+                    'created_at' => current_time('mysql'),
+                    'updated_at' => current_time('mysql'),
+                    'is_default' => 0
+                ),
+                array('%s', '%s', '%s', '%d')
+            );
+
+            if ($result === false) {
+                wp_send_json_error('Erreur lors de la duplication du template');
+            }
+
+            $new_template_id = $wpdb->insert_id;
+
+            wp_send_json_success(array(
+                'message' => 'Template dupliqué avec succès',
+                'template_id' => $new_template_id
+            ));
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la duplication: ' . $e->getMessage());
         }
     }
 }

@@ -155,7 +155,7 @@ if (!defined('ABSPATH')) {
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" disabled title="Fonctionnalité à venir">📋 Dupliquer</button>';
+                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋 Dupliquer</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
@@ -803,6 +803,57 @@ function filterTemplates(filterType) {
                 card.style.display = 'none';
             }
         }
+    });
+}
+
+// Fonction pour dupliquer un template
+function duplicateTemplate(templateId, templateName) {
+    // Afficher un indicateur de chargement
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '⏳ Duplication...';
+    button.disabled = true;
+
+    // Demander le nom du nouveau template
+    const newTemplateName = prompt('Entrez le nom du template dupliqué :', templateName + ' (Copie)');
+
+    if (!newTemplateName || newTemplateName.trim() === '') {
+        // Annuler si pas de nom
+        button.innerHTML = originalText;
+        button.disabled = false;
+        return;
+    }
+
+    // Faire l'appel AJAX pour dupliquer le template
+    jQuery.post(ajaxurl, {
+        action: 'pdf_builder_duplicate_template',
+        nonce: pdfBuilderTemplatesNonce,
+        template_id: templateId,
+        template_name: newTemplateName.trim()
+    }, function(response) {
+        if (response.success) {
+            // Succès - afficher un message et recharger la page
+            showSuccessMessage('Template "' + newTemplateName + '" dupliqué avec succès !');
+
+            // Recharger la page après un délai pour afficher le nouveau template
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } else {
+            // Erreur
+            showErrorMessage((response.data && response.data.message) || 'Erreur lors de la duplication du template');
+
+            // Remettre le bouton normal
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }).fail(function(xhr, status, error) {
+        // Erreur de réseau
+        showErrorMessage('Erreur de connexion: ' + error);
+
+        // Remettre le bouton normal
+        button.innerHTML = originalText;
+        button.disabled = false;
     });
 }
 
