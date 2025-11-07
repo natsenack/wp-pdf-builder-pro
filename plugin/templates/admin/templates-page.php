@@ -469,14 +469,60 @@ function confirmDeleteTemplate(templateId, templateName) {
 }
 
 function deleteTemplate(templateId, templateName) {
-    // Simulation de la suppression (à remplacer par un vrai appel AJAX)
-// Suppression du template
+    // Désactiver le bouton pendant la suppression
+    const deleteButton = event.target;
+    const originalText = deleteButton.innerHTML;
+    deleteButton.disabled = true;
+    deleteButton.innerHTML = '⏳ Suppression...';
 
-    // Afficher un message de succès temporaire
-    alert('✅ Template "' + templateName + '" supprimé avec succès !');
+    // Faire l'appel AJAX pour supprimer le template
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'pdf_builder_delete_template',
+            template_id: templateId,
+            nonce: pdfBuilderTemplatesNonce
+        },
+        success: function(response) {
+            if (response.success) {
+                // Succès
+                deleteButton.innerHTML = '✅ Supprimé';
+                deleteButton.style.background = '#28a745';
 
-    // Recharger la page pour voir les changements
-    location.reload();
+                // Afficher un message de succès temporaire
+                alert('✅ Template "' + templateName + '" supprimé avec succès !');
+
+                // Recharger la page pour voir les changements
+                location.reload();
+            } else {
+                // Erreur
+                deleteButton.innerHTML = '❌ Erreur';
+                deleteButton.style.background = '#dc3545';
+                alert('Erreur lors de la suppression: ' + (response.data.message || 'Erreur inconnue'));
+
+                // Remettre le bouton normal après un délai
+                setTimeout(() => {
+                    deleteButton.innerHTML = originalText;
+                    deleteButton.style.background = '';
+                    deleteButton.disabled = false;
+                }, 3000);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Erreur de connexion
+            deleteButton.innerHTML = '❌ Erreur';
+            deleteButton.style.background = '#dc3545';
+            alert('Erreur de connexion lors de la suppression');
+
+            // Remettre le bouton normal après un délai
+            setTimeout(() => {
+                deleteButton.innerHTML = originalText;
+                deleteButton.style.background = '';
+                deleteButton.disabled = false;
+            }, 3000);
+        }
+    });
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
