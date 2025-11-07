@@ -3281,7 +3281,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     if (data.success) {
                         alert('✅ Test des notifications réussi ! Vérifiez vos emails.');
                     } else {
-                        alert('❌ Erreur lors du test : ' + (data.data || 'Erreur inconnue'));
+                        const errorMessage = data.data?.message || data.data || 'Erreur inconnue';
+                        alert('❌ Erreur lors du test : ' + errorMessage);
                     }
                 })
                 .catch(error => {
