@@ -117,28 +117,57 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès.</p></div>';
     }
 }
-?>
-
-<!--<div>-->
-
-    
+?>  
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
     
     <?php foreach ($notices as $notice) echo $notice; ?>
     
     <div class="nav-tab-wrapper wp-clearfix">
-        <a href="#general" class="nav-tab nav-tab-active">Général</a>
-        <a href="#licence" class="nav-tab">Licence</a>
-        <a href="#performance" class="nav-tab">Performance</a>
-        <a href="#pdf" class="nav-tab">PDF</a>
-        <a href="#securite" class="nav-tab">Sécurité</a>
-        <a href="#roles" class="nav-tab">Rôles</a>
-        <a href="#notifications" class="nav-tab">Notifications</a>
-        <a href="#canvas" class="nav-tab">Canvas</a>
-        <a href="#templates" class="nav-tab">Templates</a>
-        <a href="#maintenance" class="nav-tab">Maintenance</a>
-        <a href="#developpeur" class="nav-tab">Développeur</a>
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
+            <span class="tab-icon">⚙️</span>
+            <span class="tab-text">Général</span>
+        </a>
+        <a href="#licence" class="nav-tab" data-tab="licence">
+            <span class="tab-icon">🔑</span>
+            <span class="tab-text">Licence</span>
+        </a>
+        <a href="#performance" class="nav-tab" data-tab="performance">
+            <span class="tab-icon">🚀</span>
+            <span class="tab-text">Performance</span>
+        </a>
+        <a href="#pdf" class="nav-tab" data-tab="pdf">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">PDF</span>
+        </a>
+        <a href="#securite" class="nav-tab" data-tab="securite">
+            <span class="tab-icon">🔒</span>
+            <span class="tab-text">Sécurité</span>
+        </a>
+        <a href="#roles" class="nav-tab" data-tab="roles">
+            <span class="tab-icon">👥</span>
+            <span class="tab-text">Rôles</span>
+        </a>
+        <a href="#notifications" class="nav-tab" data-tab="notifications">
+            <span class="tab-icon">🔔</span>
+            <span class="tab-text">Notifications</span>
+        </a>
+        <a href="#canvas" class="nav-tab" data-tab="canvas">
+            <span class="tab-icon">🎨</span>
+            <span class="tab-text">Canvas</span>
+        </a>
+        <a href="#templates" class="nav-tab" data-tab="templates">
+            <span class="tab-icon">📋</span>
+            <span class="tab-text">Templates</span>
+        </a>
+        <a href="#maintenance" class="nav-tab" data-tab="maintenance">
+            <span class="tab-icon">🔧</span>
+            <span class="tab-text">Maintenance</span>
+        </a>
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
+            <span class="tab-icon">👨‍💻</span>
+            <span class="tab-text">Développeur</span>
+        </a>
     </div>
     
     <form method="post" class="settings-form" style="padding-bottom: 100px;">
@@ -1885,37 +1914,207 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
 </div>
 <style>
     .nav-tab-wrapper {
-        border-bottom: 1px solid #ccc;
-        margin: 20px 0;
-        white-space: nowrap;
-        overflow-x: auto;
+        border-bottom: 2px solid #e1e1e1;
+        margin: 25px 0 30px 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+        border-radius: 8px 8px 0 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        position: relative;
+        overflow: visible;
     }
-    
+
     .nav-tab {
-        background: #f5f5f5;
-        border: 1px solid #ccc;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e1e1e1;
         border-bottom: none;
-        color: #0073aa;
+        color: #5a5a5a;
         cursor: pointer;
-        margin-right: 2px;
-        padding: 10px 15px;
+        margin-right: 4px;
+        margin-bottom: 0;
+        padding: 12px 20px;
         text-decoration: none;
-        display: inline-block;
-        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         white-space: nowrap;
+        border-radius: 8px 8px 0 0;
+        font-weight: 500;
+        font-size: 13px;
+        position: relative;
+        min-height: 44px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    
+
     .nav-tab:hover {
-        background: #e9e9e9;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+        color: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        border-color: #3b82f6;
     }
-    
+
     .nav-tab-active {
-        background: #fff;
-        border-bottom: 1px solid #fff;
-        color: #000;
-        font-weight: bold;
+        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+        border-bottom: 2px solid #2563eb;
+        color: #1e40af;
+        font-weight: 600;
+        transform: translateY(-1px);
+        box-shadow:
+            0 2px 8px rgba(37, 99, 235, 0.2),
+            inset 0 1px 0 rgba(255,255,255,0.8);
+        border-color: #2563eb;
+        z-index: 2;
     }
-    
+
+    .nav-tab-active .tab-icon {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+    }
+
+    .nav-tab .tab-icon {
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        line-height: 1;
+    }
+
+    .nav-tab .tab-text {
+        font-weight: inherit;
+        transition: all 0.3s ease;
+    }
+
+    /* Indicateurs visuels pour onglets importants */
+    .nav-tab[data-tab="securite"] .tab-icon::after {
+        content: "✓";
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #10b981;
+        color: white;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 1px solid white;
+    }
+
+    .nav-tab[data-tab="licence"] .tab-icon::after {
+        content: "★";
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #f59e0b;
+        color: white;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 1px solid white;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .nav-tab-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+        }
+
+        .nav-tab {
+            flex-shrink: 0;
+            padding: 10px 16px;
+            font-size: 12px;
+            min-width: 80px;
+        }
+
+        .nav-tab .tab-text {
+            display: none;
+        }
+
+        .nav-tab .tab-icon {
+            font-size: 18px;
+        }
+    }
+
+    /* Animation d'entrée */
+    .nav-tab {
+        animation: slideInFromTop 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .nav-tab:nth-child(1) { animation-delay: 0.1s; }
+    .nav-tab:nth-child(2) { animation-delay: 0.15s; }
+    .nav-tab:nth-child(3) { animation-delay: 0.2s; }
+    .nav-tab:nth-child(4) { animation-delay: 0.25s; }
+    .nav-tab:nth-child(5) { animation-delay: 0.3s; }
+    .nav-tab:nth-child(6) { animation-delay: 0.35s; }
+    .nav-tab:nth-child(7) { animation-delay: 0.4s; }
+    .nav-tab:nth-child(8) { animation-delay: 0.45s; }
+    .nav-tab:nth-child(9) { animation-delay: 0.5s; }
+    .nav-tab:nth-child(10) { animation-delay: 0.55s; }
+    .nav-tab:nth-child(11) { animation-delay: 0.6s; }
+
+    @keyframes slideInFromTop {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Indicateur de chargement */
+    .nav-tab.loading {
+        position: relative;
+        pointer-events: none;
+    }
+
+    .nav-tab.loading::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid #e1e1e1;
+        border-top: 2px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Accessibilité améliorée */
+    .nav-tab:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+    }
+
+    .nav-tab[aria-selected="true"] {
+        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+        border-bottom: 2px solid #2563eb;
+        color: #1e40af;
+        font-weight: 600;
+    }
+
     .tab-content {
         background: #fff;
         padding: 20px;
@@ -1928,18 +2127,119 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
-        
-        tabs.forEach(function(tab) {
+
+        // Fonction pour changer d'onglet
+        function switchTab(targetId, clickedTab) {
+            // Masquer tous les contenus
+            contents.forEach(function(content) {
+                content.style.display = 'none';
+                content.setAttribute('aria-hidden', 'true');
+            });
+
+            // Désactiver tous les onglets
+            tabs.forEach(function(tab) {
+                tab.classList.remove('nav-tab-active');
+                tab.setAttribute('aria-selected', 'false');
+                tab.removeAttribute('tabindex');
+            });
+
+            // Afficher le contenu cible
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+                targetContent.setAttribute('aria-hidden', 'false');
+            }
+
+            // Activer l'onglet cliqué
+            if (clickedTab) {
+                clickedTab.classList.add('nav-tab-active');
+                clickedTab.setAttribute('aria-selected', 'true');
+                clickedTab.setAttribute('tabindex', '0');
+                clickedTab.focus();
+            }
+
+            // Sauvegarder l'onglet actif dans localStorage
+            localStorage.setItem('pdf_builder_active_tab', targetId);
+
+            // Animation de chargement temporaire
+            if (clickedTab) {
+                clickedTab.classList.add('loading');
+                setTimeout(() => {
+                    clickedTab.classList.remove('loading');
+                }, 300);
+            }
+        }
+
+        // Gestionnaire d'événements pour les onglets
+        tabs.forEach(function(tab, index) {
+            // Ajouter les attributs d'accessibilité
+            tab.setAttribute('role', 'tab');
+            tab.setAttribute('aria-controls', tab.getAttribute('href').substring(1));
+            tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
+
+            // Écouteur de clic
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
-                
-                contents.forEach(function(c) { c.style.display = 'none'; });
-                tabs.forEach(function(t) { t.classList.remove('nav-tab-active'); });
-                
-                const id = this.getAttribute('href').substring(1);
-                document.getElementById(id).style.display = 'block';
-                this.classList.add('nav-tab-active');
+                const targetId = this.getAttribute('href').substring(1);
+                switchTab(targetId, this);
             });
+
+            // Écouteur de touches pour l'accessibilité
+            tab.addEventListener('keydown', function(e) {
+                let targetTab = null;
+
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        targetTab = this.previousElementSibling || tabs[tabs.length - 1];
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        targetTab = this.nextElementSibling || tabs[0];
+                        break;
+                    case 'Home':
+                        e.preventDefault();
+                        targetTab = tabs[0];
+                        break;
+                    case 'End':
+                        e.preventDefault();
+                        targetTab = tabs[tabs.length - 1];
+                        break;
+                    case 'Enter':
+                    case ' ':
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href').substring(1);
+                        switchTab(targetId, this);
+                        return;
+                }
+
+                if (targetTab) {
+                    targetTab.focus();
+                }
+            });
+        });
+
+        // Restaurer l'onglet actif depuis localStorage
+        const savedTab = localStorage.getItem('pdf_builder_active_tab');
+        if (savedTab) {
+            const savedTabElement = document.querySelector(`a[href="#${savedTab}"]`);
+            if (savedTabElement) {
+                switchTab(savedTab, savedTabElement);
+            }
+        }
+
+        // Initialiser l'accessibilité
+        contents.forEach(function(content) {
+            content.setAttribute('role', 'tabpanel');
+            content.setAttribute('aria-hidden', content.style.display === 'none');
+        });
+
+        // Animation d'entrée des onglets
+        tabs.forEach(function(tab, index) {
+            setTimeout(() => {
+                tab.style.opacity = '1';
+                tab.style.transform = 'translateY(0)';
+            }, index * 50);
         });
         
         // Slider pour la qualité des images
@@ -1989,5 +2289,3 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         }
     });
 </script>
-
-<?php /*wp_footer();*/ ?>
