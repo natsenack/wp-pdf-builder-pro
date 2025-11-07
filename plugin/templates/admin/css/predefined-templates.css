@@ -139,6 +139,16 @@
     border-radius: 4px;
 }
 
+.preview-actions {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.preview-actions .button {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
 .no-preview {
     padding: 20px;
     background: #f8f9fa;

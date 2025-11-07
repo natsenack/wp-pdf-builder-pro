@@ -320,6 +320,11 @@ class PDF_Builder_Predefined_Templates_Manager {
                                     <div class="template-preview">
                                         <?php if (!empty($template['preview_svg'])): ?>
                                             <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
+                                            <div class="preview-actions">
+                                                <button class="regenerate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
+                                                    🔄 <?php _e('Régénérer Aperçu', 'pdf-builder-pro'); ?>
+                                                </button>
+                                            </div>
                                         <?php else: ?>
                                             <div class="no-preview">
                                                 <button class="generate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
