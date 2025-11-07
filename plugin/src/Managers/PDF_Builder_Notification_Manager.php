@@ -108,7 +108,10 @@ class PDF_Builder_Notification_Manager {
         $to = $this->get_admin_email();
 
         // Vérifier si SMTP est activé
-        if (get_option('pdf_builder_smtp_enabled', false)) {
+        $smtp_enabled = get_option('pdf_builder_smtp_enabled', false);
+        error_log("PDF Builder: SMTP enabled check - smtp_enabled = " . ($smtp_enabled ? 'true' : 'false'));
+
+        if ($smtp_enabled) {
             error_log("PDF Builder: Using SMTP for notification - $subject");
             return $this->send_smtp_email($to, $subject, $message);
         }
