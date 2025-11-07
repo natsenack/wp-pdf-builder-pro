@@ -666,7 +666,7 @@ class PDF_Builder_Predefined_Templates_Manager {
 
             // Générer un aperçu SVG simple basé sur les éléments du template
             $json_data = json_decode($template['json'], true);
-            $svg_preview = $this->generate_svg_preview($json_data['config']);
+            $svg_preview = $this->generate_svg_preview($json_data);
 
             // Mettre à jour le fichier avec l'aperçu
             $json_data['preview_svg'] = $svg_preview;
@@ -720,9 +720,6 @@ class PDF_Builder_Predefined_Templates_Manager {
                 $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $color . '" stroke="#ccc" stroke-width="0.5" opacity="0.7"/>';
             }
         }
-
-        // Texte "APERÇU"
-        $svg .= '<text x="' . ($width/2) . '" y="' . ($height/2) . '" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12" fill="#666">APERÇU</text>';
 
         $svg .= '</svg>';
 
