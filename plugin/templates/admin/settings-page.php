@@ -718,8 +718,175 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="roles" class="tab-content" style="display: none;">
-            <h2>Rôles & Permissions</h2>
-            <p>Gestion des rôles...</p>
+            <h2>Gestion des Rôles et Permissions</h2>
+            
+            <?php
+            // Traitement de la sauvegarde des rôles autorisés
+            if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
+                    $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) 
+                        ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
+                        : [];
+                    
+                    if (empty($allowed_roles)) {
+                        $allowed_roles = ['administrator']; // Au minimum l'admin
+                    }
+                    
+                    update_option('pdf_builder_allowed_roles', $allowed_roles);
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Rôles autorisés mis à jour avec succès.</p></div>';
+                }
+            }
+            
+            global $wp_roles;
+            $all_roles = $wp_roles->roles;
+            $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+            if (!is_array($allowed_roles)) {
+                $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+            }
+            
+            $role_descriptions = [
+                'administrator' => 'Accès complet à toutes les fonctionnalités',
+                'editor' => 'Peut publier et gérer les articles',
+                'author' => 'Peut publier ses propres articles',
+                'contributor' => 'Peut soumettre des articles pour révision',
+                'subscriber' => 'Peut uniquement lire les articles',
+                'shop_manager' => 'Gestionnaire de boutique WooCommerce',
+                'customer' => 'Client WooCommerce',
+            ];
+            ?>
+            
+            <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
+            
+            <form method="post">
+                <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
+                
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="pdf_builder_allowed_roles">Rôles avec Accès</label></th>
+                        <td>
+                            <!-- Boutons de sélection rapide -->
+                            <div style="margin-bottom: 15px;">
+                                <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
+                                    Sélectionner Tout
+                                </button>
+                                <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
+                                    Rôles Courants
+                                </button>
+                                <span class="description" style="margin-left: 10px;">
+                                    Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
+                                </span>
+                            </div>
+                            
+                            <select name="pdf_builder_allowed_roles[]" id="pdf_builder_allowed_roles" multiple="multiple" 
+                                    style="height: 250px; width: 100%; max-width: 500px;">
+                                <?php foreach ($all_roles as $role_key => $role):
+                                    $role_name = translate_user_role($role['name']);
+                                    $is_selected = in_array($role_key, $allowed_roles);
+                                    $description = $role_descriptions[$role_key] ?? 'Rôle personnalisé';
+                                ?>
+                                    <option value="<?php echo esc_attr($role_key); ?>" 
+                                            <?php selected($is_selected); ?>
+                                            title="<?php echo esc_attr($description); ?>">
+                                        <?php echo esc_html($role_name); ?> 
+                                        <em style="color: #666;">(<?php echo esc_html($role_key); ?>)</em>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            
+                            <p class="description">
+                                💡 Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs rôles<br>
+                                📝 Survolez les rôles pour voir leur description
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <p class="submit">
+                    <button type="submit" name="submit_roles" class="button button-primary">
+                        Sauvegarder les Rôles
+                    </button>
+                </p>
+            </form>
+            
+            <!-- Permissions incluses -->
+            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                <h3 style="margin-top: 0; color: #003d66;">🔐 Permissions Incluses</h3>
+                <p style="margin: 10px 0; color: #003d66;">Les rôles sélectionnés auront accès à :</p>
+                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
+                    <li>✅ Création, édition et suppression de templates PDF</li>
+                    <li>✅ Génération et téléchargement de PDF</li>
+                    <li>✅ Accès aux paramètres et configuration</li>
+                    <li>✅ Prévisualisation avant génération</li>
+                    <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
+                </ul>
+            </div>
+            
+            <!-- Avertissement important -->
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #856404;">⚠️ Informations Importantes</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #856404;">
+                    <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
+                    <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
+                    <li>Minimum requis : au moins un rôle sélectionné</li>
+                </ul>
+            </div>
+            
+            <!-- Conseils d'utilisation -->
+            <div style="background: #f0f0f0; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0;">💡 Conseils d'Utilisation</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Basique :</strong> Sélectionnez "Administrator" et "Editor"</li>
+                    <li><strong>WooCommerce :</strong> Ajoutez "Shop Manager"</li>
+                    <li><strong>Multi-utilisateurs :</strong> Utilisez "Rôles Courants" pour configuration rapide</li>
+                    <li><strong>Sécurité :</strong> Limitez l'accès aux rôles les moins permissifs nécessaires</li>
+                </ul>
+            </div>
+            
+            <!-- Tableau de référence des rôles -->
+            <div style="margin-top: 30px;">
+                <h3>📋 Référence des Rôles WordPress</h3>
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Rôle</th>
+                            <th style="width: 50%;">Description</th>
+                            <th style="width: 30%; text-align: center;">Recommandé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Administrator</strong></td>
+                            <td>Accès complet à toutes les fonctionnalités WordPress et PDF Builder Pro</td>
+                            <td style="text-align: center; color: #46b450;">✓ Oui</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Editor</strong></td>
+                            <td>Peut publier et gérer tous les articles, y compris les PDFs</td>
+                            <td style="text-align: center; color: #46b450;">✓ Oui</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Author</strong></td>
+                            <td>Peut publier ses propres articles avec générateur PDF</td>
+                            <td style="text-align: center;">○ Optionnel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contributor</strong></td>
+                            <td>Peut soumettre des brouillons mais n'a accès qu'à la prévisualisation</td>
+                            <td style="text-align: center;">○ Optionnel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shop Manager</strong></td>
+                            <td>Gestionnaire WooCommerce, accès aux factures et devis PDF</td>
+                            <td style="text-align: center; color: #46b450;">✓ Pour boutiques</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer</strong></td>
+                            <td>Client WooCommerce, accès à ses commandes</td>
+                            <td style="text-align: center; color: #dc3232;">✗ Non</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div id="notifications" class="tab-content" style="display: none;">
@@ -820,6 +987,42 @@ document.addEventListener('DOMContentLoaded', function() {
         imageQualitySlider.addEventListener('input', function() {
             imageQualityValue.textContent = this.value + '%';
         });
+    }
+    
+    // Gestion des rôles
+    const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
+    const selectAllBtn = document.getElementById('select-all-roles');
+    const selectCommonBtn = document.getElementById('select-common-roles');
+    const selectedCountSpan = document.getElementById('selected-count');
+    
+    function updateCount() {
+        if (rolesSelect && selectedCountSpan) {
+            const selected = Array.from(rolesSelect.options).filter(opt => opt.selected).length;
+            selectedCountSpan.textContent = selected;
+        }
+    }
+    
+    if (selectAllBtn && rolesSelect) {
+        selectAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            Array.from(rolesSelect.options).forEach(opt => opt.selected = true);
+            updateCount();
+        });
+    }
+    
+    if (selectCommonBtn && rolesSelect) {
+        selectCommonBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const commonRoles = ['administrator', 'editor', 'shop_manager'];
+            Array.from(rolesSelect.options).forEach(opt => {
+                opt.selected = commonRoles.includes(opt.value);
+            });
+            updateCount();
+        });
+    }
+    
+    if (rolesSelect) {
+        rolesSelect.addEventListener('change', updateCount);
     }
 });
 </script>
