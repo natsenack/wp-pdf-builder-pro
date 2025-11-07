@@ -2834,6 +2834,12 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     #templates .submit {
         display: block;
     }
+    
+    /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
+    #roles #global-save-btn,
+    #templates #global-save-btn {
+        display: none !important;
+    }
 </style>
 
 <script>
