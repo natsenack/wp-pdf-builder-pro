@@ -90,6 +90,43 @@
     line-height: 1.4;
 }
 
+.template-json {
+    margin-bottom: 10px;
+}
+
+.template-json details {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+.template-json summary {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #23282d;
+    user-select: none;
+}
+
+.template-json summary:hover {
+    background: #e9ecef;
+}
+
+.template-json pre {
+    margin: 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 0 0 4px 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #333;
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+}
+
 .template-preview {
     text-align: center;
     margin-top: 10px;

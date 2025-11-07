@@ -311,6 +311,12 @@ class PDF_Builder_Predefined_Templates_Manager {
                                         <span class="category"><?php echo esc_html($template['category']); ?></span>
                                         <span class="description"><?php echo esc_html($template['description']); ?></span>
                                     </div>
+                                    <div class="template-json">
+                                        <details>
+                                            <summary><?php _e('📄 Voir le JSON', 'pdf-builder-pro'); ?></summary>
+                                            <pre><?php echo esc_html(wp_json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
+                                        </details>
+                                    </div>
                                     <div class="template-preview">
                                         <?php if (!empty($template['preview_svg'])): ?>
                                             <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
