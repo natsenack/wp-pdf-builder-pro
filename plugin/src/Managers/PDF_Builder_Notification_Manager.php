@@ -257,7 +257,7 @@ class PDF_Builder_Notification_Manager {
 
         try {
             // Utiliser PHPMailer inclus avec WordPress
-            $phpmailer = new PHPMailer\PHPMailer\PHPMailer(true);
+            $phpmailer = new PHPMailer(true);
 
             // Configuration SMTP
             $phpmailer->isSMTP();
@@ -269,9 +269,9 @@ class PDF_Builder_Notification_Manager {
 
             // Configuration du chiffrement
             if ($smtp_encryption === 'ssl') {
-                $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             } elseif ($smtp_encryption === 'tls') {
-                $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             } else {
                 $phpmailer->SMTPSecure = '';
             }
