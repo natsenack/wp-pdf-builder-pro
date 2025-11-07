@@ -55,7 +55,7 @@ if (!defined('ABSPATH')) {
 
             <?php
             // Charger les modèles prédéfinis depuis le dossier
-            $predefined_dir = plugin_dir_path(__FILE__) . '../../predefined/';
+            $predefined_dir = plugin_dir_path(__FILE__) . '../predefined/';
             $predefined_templates = [];
 
             if (is_dir($predefined_dir)) {
@@ -270,6 +270,12 @@ if (!defined('ABSPATH')) {
                         <?php
                         // Charger les modèles prédéfinis depuis le dossier
                         $predefined_dir = plugin_dir_path(__FILE__) . 'predefined/';
+                        
+                        // Créer le dossier s'il n'existe pas
+                        if (!file_exists($predefined_dir)) {
+                            wp_mkdir_p($predefined_dir);
+                        }
+                        
                         $templates = [];
 
                         if (is_dir($predefined_dir)) {

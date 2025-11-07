@@ -275,7 +275,7 @@ class PDF_Builder_Predefined_Templates_Manager {
             <div class="pdf-builder-predefined-container">
                 <!-- Liste des modèles -->
                 <div class="templates-list-section">
-                    <h2><?php _e('Modèles Existants', 'pdf-builder-pro'); ?></h2>
+                    <h2><?php _e('🎨 Galerie de Modèles Prédéfinis', 'pdf-builder-pro'); ?></h2>
 
                     <div class="templates-actions">
                         <button id="new-template-btn" class="button button-primary">
