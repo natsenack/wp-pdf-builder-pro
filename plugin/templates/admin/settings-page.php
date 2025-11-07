@@ -2709,6 +2709,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 // Collecter les données du formulaire
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_settings'); // Action AJAX WordPress
+                formData.append('current_tab', this.getAttribute('name').replace('submit_', '')); // Onglet actif
                 
                 // Debug: vérifier que ajax_save est bien ajouté
                 console.log('📤 AJAX FormData contents:');
