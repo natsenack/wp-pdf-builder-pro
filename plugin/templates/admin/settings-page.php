@@ -1,25 +1,30 @@
 <?php
 /**
  * Page des Paramètres - PDF Builder Pro
- * VERSION SIMPLIFIÉE POUR DEBUG - TEST FOOTER
+ * VERSION TEST - FOOTER DEBUG
  */
-
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access denied');
 }
-
 if (!is_user_logged_in() || !current_user_can('read')) {
-    wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
+    wp_die('Must be logged in');
 }
 ?>
-
 <div class="wrap">
-    <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-    
-    <div style="background: #f3cfcfff; color: #0f0; padding: 50px; margin: 50px 0; font-size: 24px; min-height: 2800px; font-family: monospace; text-align: center;">
-        <p>ZONE DE CONTENU PRINCIPALE</p>
-        <p style="margin-top: 200px;">Footer devrait être DESSOUS cette boîte noire</p>
+    <h1>Settings</h1>
+    <div style="background: #000; color: #0f0; padding: 50px; margin: 50px 0; min-height: 500px;">
+        <p>CONTENT AREA</p>
+        <p style="margin-top: 200px;">Footer should be BELOW this box</p>
     </div>
-    
 </div>
-
+<?php
+wp_footer();
+class TempConfig {
+    private $option_name = 'pdf_builder_settings';
+    public function get($key, $default = '') {
+        $settings = get_option($this->option_name, []);
+        return isset($settings[$key]) ? $settings[$key] : $default;
+    }
+}
+$config = new TempConfig();
+?>
