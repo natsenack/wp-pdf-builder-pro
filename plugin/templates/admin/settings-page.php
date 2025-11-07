@@ -2828,6 +2828,12 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     .tab-content .submit {
         display: none;
     }
+    
+    /* Exception pour les onglets qui utilisent des formulaires POST séparés */
+    #roles .submit,
+    #templates .submit {
+        display: block;
+    }
 </style>
 
 <script>
