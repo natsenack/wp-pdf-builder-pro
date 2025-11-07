@@ -262,66 +262,14 @@ function pdf_builder_ajax_save_settings() {
                 'force_https' => isset($_POST['force_https']),
             ];
             
-            error_log('DEBUG AJAX: Developer settings to save: ' . print_r($dev_settings, true));
-            error_log('DEBUG AJAX: Current settings before merge: ' . print_r($settings, true));
-            
             $new_settings = array_merge($settings, $dev_settings);
-            error_log('DEBUG AJAX: Settings after merge: ' . print_r($new_settings, true));
             
-            // Test de permissions et de base de données
-            error_log('DEBUG AJAX: Current user ID: ' . get_current_user_id());
-            error_log('DEBUG AJAX: Current user capabilities: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
-            
-            // Vérifier si l'option existe déjà
-            $option_exists = get_option('pdf_builder_settings', false);
-            error_log('DEBUG AJAX: Option exists: ' . ($option_exists !== false ? 'YES' : 'NO'));
-            
-            if ($option_exists !== false) {
-                error_log('DEBUG AJAX: Existing option type: ' . gettype($option_exists));
-                error_log('DEBUG AJAX: Existing option is_array: ' . (is_array($option_exists) ? 'YES' : 'NO'));
-                if (is_array($option_exists)) {
-                    error_log('DEBUG AJAX: Existing option count: ' . count($option_exists));
-                }
-            }
-            
-            // Test avec une option simple d'abord
-            $test_option = 'pdf_builder_test_' . time();
-            $test_result = update_option($test_option, 'test_value');
-            error_log('DEBUG AJAX: Test option result: ' . ($test_result ? 'SUCCESS' : 'FAILED'));
-            
-            // Vérifier la taille des données
-            $serialized = serialize($new_settings);
-            error_log('DEBUG AJAX: Serialized data size: ' . strlen($serialized) . ' bytes');
-            
-            // Essayer de supprimer l'option existante d'abord
-            $delete_result = delete_option('pdf_builder_settings');
-            error_log('DEBUG AJAX: delete_option result: ' . ($delete_result ? 'SUCCESS' : 'FAILED'));
-            
-            // Maintenant essayer add_option
-            $result = add_option('pdf_builder_settings', $new_settings);
-            error_log('DEBUG AJAX: add_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
-            
+            // Si update_option échoue, supprimer et recréer l'option
+            $result = update_option('pdf_builder_settings', $new_settings);
             if (!$result) {
-                // Essayer avec update_option sur une option vide
-                $result = update_option('pdf_builder_settings', $new_settings);
-                error_log('DEBUG AJAX: update_option after delete: ' . ($result ? 'SUCCESS' : 'FAILED'));
-                
-                if (!$result) {
-                    // Dernière tentative : utiliser une option avec un nom différent
-                    $backup_option = 'pdf_builder_settings_backup_' . time();
-                    $backup_result = update_option($backup_option, $new_settings);
-                    error_log('DEBUG AJAX: Backup option result: ' . ($backup_result ? 'SUCCESS' : 'FAILED'));
-                    
-                    if ($backup_result) {
-                        error_log('DEBUG AJAX: Used backup option: ' . $backup_option);
-                        $result = true;
-                    }
-                }
+                delete_option('pdf_builder_settings');
+                $result = add_option('pdf_builder_settings', $new_settings);
             }
-            
-            // Vérifier que c'est bien sauvegardé
-            $saved_settings = get_option('pdf_builder_settings', []);
-            error_log('DEBUG AJAX: Settings after reload: ' . print_r($saved_settings, true));
             
             $notices[] = 'Paramètres développeur enregistrés avec succès';
             break;
