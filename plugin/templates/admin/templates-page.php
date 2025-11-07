@@ -45,76 +45,6 @@ if (!defined('ABSPATH')) {
 
         <div id="templates-list" style="margin-top: 20px;">
 
-            <!-- Section Modèles Prédéfinis -->
-            <h3 style="margin: 30px 0 15px 0; color: #23282d; border-bottom: 2px solid #667eea; padding-bottom: 10px;">
-                🎨 Modèles Prédéfinis
-            </h3>
-            <p style="color: #666; margin-bottom: 20px;">
-                Commencez avec des modèles professionnels prédéfinis et personnalisez-les selon vos besoins.
-            </p>
-
-            <?php
-            // Charger les modèles prédéfinis depuis le dossier
-            $predefined_dir = plugin_dir_path(__FILE__) . '../predefined/';
-            $predefined_templates = [];
-
-            if (is_dir($predefined_dir)) {
-                $files = glob($predefined_dir . '*.json');
-                foreach ($files as $file) {
-                    $slug = basename($file, '.json');
-                    $content = file_get_contents($file);
-                    $data = json_decode($content, true);
-
-                    if ($data && isset($data['name'])) {
-                        $predefined_templates[] = [
-                            'slug' => $slug,
-                            'name' => $data['name'],
-                            'category' => $data['category'] ?? 'autre',
-                            'description' => $data['description'] ?? '',
-                            'icon' => $data['icon'] ?? '📄',
-                            'preview_svg' => $data['preview_svg'] ?? ''
-                        ];
-                    }
-                }
-            }
-
-            if (!empty($predefined_templates)) {
-                echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">';
-
-                foreach ($predefined_templates as $template) {
-                    $type_colors = [
-                        'facture' => '#007cba',
-                        'devis' => '#28a745',
-                        'commande' => '#ffc107',
-                        'contrat' => '#dc3545',
-                        'newsletter' => '#6f42c1',
-                        'autre' => '#6c757d'
-                    ];
-                    $type_color = isset($type_colors[$template['category']]) ? $type_colors[$template['category']] : $type_colors['autre'];
-
-                    echo '<div class="predefined-template-card" data-category="' . esc_attr($template['category']) . '" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform=\'translateY(-4px)\'; this.style.boxShadow=\'0 8px 25px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.08)\';">';
-                    echo '<div style="height: 160px; background: linear-gradient(135deg, ' . ($template['category'] === 'facture' ? '#667eea 0%, #764ba2 100%' : ($template['category'] === 'devis' ? '#28a745 0%, #20c997 100%' : '#6c757d 0%, #495057 100%')) . '); display: flex; align-items: center; justify-content: center; position: relative;">';
-                    echo '<div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">' . esc_html($template['icon']) . '</div>';
-                    echo '<div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: ' . $type_color . '; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">' . esc_html(strtoupper($template['category'])) . '</div>';
-                    echo '</div>';
-                    echo '<div style="padding: 20px;">';
-                    echo '<h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;">' . esc_html($template['name']) . '</h3>';
-                    echo '<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">' . esc_html($template['description']) . '</p>';
-                    echo '<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">';
-                    echo '<span style="background: #f0f8ff; color: ' . $type_color . '; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Template prédéfini</span>';
-                    echo '<span style="background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à l\'emploi</span>';
-                    echo '</div>';
-                    echo '<div style="display: flex; gap: 10px;">';
-                    echo '<button class="button button-primary" style="width: 100%;" onclick="createFromPredefined(\'' . esc_attr($template['slug']) . '\')">🚀 Utiliser ce modèle</button>';
-                    echo '</div>';
-                    echo '</div>';
-                    echo '</div>';
-                }
-
-                echo '</div>';
-            }
-            ?>
-
             <!-- Section Templates Utilisateur -->
             <h3 style="margin: 30px 0 15px 0; color: #23282d; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                 📝 Mes Templates Personnalisés
@@ -269,7 +199,7 @@ if (!defined('ABSPATH')) {
 
                         <?php
                         // Charger les modèles prédéfinis depuis le dossier
-                        $predefined_dir = plugin_dir_path(__FILE__) . 'predefined/';
+                        $predefined_dir = plugin_dir_path(__FILE__) . '../predefined/';
                         
                         // Créer le dossier s'il n'existe pas
                         if (!file_exists($predefined_dir)) {
