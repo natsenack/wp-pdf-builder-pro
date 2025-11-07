@@ -1386,8 +1386,177 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="templates" class="tab-content" style="display: none;">
-            <h2>Templates</h2>
-            <p>Gestion des templates...</p>
+            <h2>Gestion des Templates</h2>
+            
+            <?php
+            // Récupérer les templates sauvegardés
+            $templates = get_posts([
+                'post_type' => 'pdf_template',
+                'posts_per_page' => -1,
+                'orderby' => 'title',
+                'order' => 'ASC'
+            ]);
+            
+            $template_count = count($templates);
+            ?>
+            
+            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #003d66;">📋 Vue d'ensemble</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; color: #003d66;">
+                    <div>
+                        <strong>Templates créés :</strong> <?php echo $template_count; ?>
+                    </div>
+                    <div>
+                        <strong>Espace utilisé :</strong> Calculé automatiquement
+                    </div>
+                    <div>
+                        <strong>Limit :</strong> Illimité (Premium)
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Actions Rapides</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <a href="<?php echo admin_url('post-new.php?post_type=pdf_template'); ?>" class="button button-primary">
+                    ➕ Créer un Nouveau Template
+                </a>
+                <a href="<?php echo admin_url('edit.php?post_type=pdf_template'); ?>" class="button button-secondary">
+                    📁 Voir Tous les Templates
+                </a>
+                <button type="button" class="button button-secondary" onclick="alert('Sauvegarde en cours...');">
+                    💾 Exporter Templates
+                </button>
+                <button type="button" class="button button-secondary" onclick="alert('Importation non disponible dans la version actuelle');">
+                    📥 Importer Templates
+                </button>
+            </div>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Templates Récents</h3>
+            
+            <?php if (!empty($templates)): ?>
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">ID</th>
+                            <th style="width: 40%;">Titre</th>
+                            <th style="width: 20%;">Date de Création</th>
+                            <th style="width: 20%;">Auteur</th>
+                            <th style="width: 15%; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach (array_slice($templates, 0, 10) as $template): ?>
+                            <tr>
+                                <td><?php echo $template->ID; ?></td>
+                                <td>
+                                    <strong><?php echo esc_html($template->post_title ?: '(Sans titre)'); ?></strong>
+                                </td>
+                                <td><?php echo date_i18n('d/m/Y H:i', strtotime($template->post_date)); ?></td>
+                                <td><?php echo esc_html(get_the_author_meta('display_name', $template->post_author)); ?></td>
+                                <td style="text-align: center;">
+                                    <a href="<?php echo admin_url('post.php?post=' . $template->ID . '&action=edit'); ?>" 
+                                       class="button button-small">Éditer</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                
+                <?php if ($template_count > 10): ?>
+                    <p style="margin-top: 15px; text-align: center;">
+                        <a href="<?php echo admin_url('edit.php?post_type=pdf_template'); ?>" class="button button-secondary">
+                            Voir les <?php echo $template_count - 10; ?> autres templates →
+                        </a>
+                    </p>
+                <?php endif; ?>
+            <?php else: ?>
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px;">
+                    <p style="margin: 0; color: #856404;">
+                        <strong>Aucun template créé pour le moment.</strong><br>
+                        Cliquez sur le bouton "Créer un Nouveau Template" pour commencer.
+                    </p>
+                </div>
+            <?php endif; ?>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Paramètres de Templates</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label>Format de Nommage</label></th>
+                    <td>
+                        <code style="background: #f5f5f5; padding: 10px; border-radius: 4px; display: inline-block;">
+                            [Titre] - [Date] - [ID]
+                        </code>
+                        <p class="description">Les templates sont automatiquement nommés avec cette convention</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Format par Défaut</label></th>
+                    <td>
+                        <p style="margin: 0;">Les nouveaux templates hériteront du format PDF défini dans l'onglet "PDF"</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Permissions</label></th>
+                    <td>
+                        <p style="margin: 0;">Voir l'onglet "Rôles" pour contrôler qui peut créer/éditer les templates</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Catégories de Templates</h3>
+            
+            <?php
+            $categories = get_terms([
+                'taxonomy' => 'pdf_template_category',
+                'hide_empty' => false
+            ]);
+            ?>
+            
+            <?php if (!empty($categories)): ?>
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Catégorie</th>
+                            <th style="width: 20%; text-align: center;">Templates</th>
+                            <th style="width: 40%;">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categories as $category): 
+                            $count = $category->count;
+                        ?>
+                            <tr>
+                                <td><strong><?php echo esc_html($category->name); ?></strong></td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td><?php echo esc_html($category->description ?: '—'); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p style="color: #666;">Aucune catégorie de template définie.</p>
+            <?php endif; ?>
+            
+            <!-- Conseils pour les templates -->
+            <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                <h3 style="margin-top: 0;">💡 Bonnes Pratiques</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Organiser :</strong> Utilisez les catégories pour organiser vos templates</li>
+                    <li><strong>Nommer :</strong> Donnez des noms clairs et descriptifs</li>
+                    <li><strong>Tester :</strong> Testez chaque template avant de l'utiliser en production</li>
+                    <li><strong>Sauvegarder :</strong> Exportez régulièrement vos templates importants</li>
+                    <li><strong>Variables :</strong> Utilisez les variables dynamiques pour plus de flexibilité</li>
+                </ul>
+            </div>
+            
+            <!-- Versions et historique -->
+            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #003d66;">📜 Historique des Versions</h3>
+                <p style="margin: 0; color: #003d66;">
+                    WordPress conserve automatiquement l'historique de révision de chaque template.<br>
+                    Vous pouvez restaurer une ancienne version à tout moment depuis l'écran d'édition.
+                </p>
+            </div>
         </div>
         
         <div id="maintenance" class="tab-content" style="display: none;">
