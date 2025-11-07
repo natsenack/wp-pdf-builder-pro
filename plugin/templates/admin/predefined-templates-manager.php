@@ -690,8 +690,8 @@ class PDF_Builder_Predefined_Templates_Manager {
         $width = $config['canvasWidth'] ?? 794;
         $height = $config['canvasHeight'] ?? 1123;
 
-        // Calculer les proportions pour l'aperçu (max 200x200)
-        $ratio = min(200 / $width, 200 / $height);
+        // Calculer les proportions pour l'aperçu (max 300x300)
+        $ratio = min(300 / $width, 300 / $height);
         $preview_width = $width * $ratio;
         $preview_height = $height * $ratio;
 
