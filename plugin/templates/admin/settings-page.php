@@ -613,8 +613,108 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="securite" class="tab-content" style="display: none;">
-            <h2>Sécurité</h2>
-            <p>Options de sécurité...</p>
+            <h2>Paramètres de Sécurité</h2>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Logging & Debugging</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="debug_mode">Mode Debug</label></th>
+                    <td>
+                        <input type="checkbox" id="debug_mode" name="debug_mode" value="1" 
+                               <?php checked($settings['debug_mode'] ?? false); ?> />
+                        <p class="description">⚠️ Active les logs détaillés. À désactiver en production !</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="log_level">Niveau de Log</label></th>
+                    <td>
+                        <select id="log_level" name="log_level">
+                            <option value="debug" <?php selected($settings['log_level'] ?? 'info', 'debug'); ?>>Debug (tout enregistre)</option>
+                            <option value="info" <?php selected($settings['log_level'] ?? 'info', 'info'); ?>>Info (événements importants)</option>
+                            <option value="warning" <?php selected($settings['log_level'] ?? 'info', 'warning'); ?>>Avertissement (avertissements et erreurs)</option>
+                            <option value="error" <?php selected($settings['log_level'] ?? 'info', 'error'); ?>>Erreur (erreurs seulement)</option>
+                        </select>
+                        <p class="description">Détermine quels événements seront enregistrés dans les logs</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Limites & Protections</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="max_template_size">Taille Max Template (octets)</label></th>
+                    <td>
+                        <input type="number" id="max_template_size" name="max_template_size" 
+                               value="<?php echo intval($settings['max_template_size'] ?? 52428800); ?>" min="1048576" step="1048576" />
+                        <p class="description">Maximum: ~<?php echo number_format(intval($settings['max_template_size'] ?? 52428800) / 1048576); ?> MB</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="max_execution_time">Temps Max d'Exécution (secondes)</label></th>
+                    <td>
+                        <input type="number" id="max_execution_time" name="max_execution_time" 
+                               value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="1" max="3600" />
+                        <p class="description">Temps avant timeout pour la génération PDF</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="memory_limit">Limite Mémoire</label></th>
+                    <td>
+                        <input type="text" id="memory_limit" name="memory_limit" 
+                               value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>" 
+                               placeholder="256M" />
+                        <p class="description">Format: 256M, 512M, 1G. Doit être ≥ max template size</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Protection & Validation</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label>Nonces</label></th>
+                    <td>
+                        <p style="margin: 0;">✓ Les nonces expirent après <strong>24 heures</strong> pour plus de sécurité</p>
+                        <p style="margin: 0; margin-top: 10px;">✓ Tous les formulaires sont protégés par des nonces WordPress</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Rate Limiting</label></th>
+                    <td>
+                        <p style="margin: 0;">✓ Le rate limiting est automatiquement activé pour prévenir les abus</p>
+                        <p style="margin: 0; margin-top: 10px;">Limite: <strong>100 requêtes par minute</strong> par IP</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Permissions</label></th>
+                    <td>
+                        <p style="margin: 0;">✓ Accès à PDF Builder Pro limité aux rôles autorisés</p>
+                        <p style="margin: 0; margin-top: 10px;">Voir l'onglet "Rôles" pour configurer les accès</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <!-- Section Sécurité avancée -->
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
+                <h3>🔒 Sécurité Avancée</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>✓ Sanitization de toutes les entrées utilisateur</li>
+                    <li>✓ Validation des fichiers uploadés</li>
+                    <li>✓ Protection XSS et CSRF</li>
+                    <li>✓ Permissions WordPress vérifiées</li>
+                    <li>✓ Logs sécurisés des actions critiques</li>
+                </ul>
+            </div>
+            
+            <!-- Conseils de sécurité -->
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #856404;">💡 Conseils Sécurité</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #856404;">
+                    <li><strong>Production :</strong> Désactivez le mode debug et mettez "Error" en log level</li>
+                    <li><strong>Memory limit :</strong> Doit être suffisant pour vos plus gros PDFs</li>
+                    <li><strong>Mises à jour :</strong> Gardez WordPress et les plugins à jour</li>
+                    <li><strong>Sauvegardes :</strong> Effectuez des sauvegardes régulières</li>
+                </ul>
+            </div>
         </div>
         
         <div id="roles" class="tab-content" style="display: none;">
