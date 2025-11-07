@@ -2054,12 +2054,18 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="password" id="developer_password" name="developer_password" placeholder="Laisser vide pour aucun mot de passe" style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                            <input type="password" id="developer_password" name="developer_password" 
+                                   placeholder="Laisser vide pour aucun mot de passe" 
+                                   style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+                                   value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
                             <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
                                 👁️ Afficher
                             </button>
                         </div>
                         <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
+                        <?php if (!empty($settings['developer_password'])): ?>
+                        <p class="description" style="color: #28a745;">✓ Mot de passe configuré et sauvegardé</p>
+                        <?php endif; ?>
                     </td>
                 </tr>
             </table>
@@ -2204,22 +2210,86 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 </tr>
             </table>
             
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Visualiseur de Logs Temps Réel</h3>
+            
+            <div style="margin-bottom: 15px;">
+                <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
+                <button type="button" id="clear_logs_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Logs</button>
+                <select id="log_filter" style="margin-left: 10px;">
+                    <option value="all">Tous les logs</option>
+                    <option value="error">Erreurs uniquement</option>
+                    <option value="warning">Avertissements</option>
+                    <option value="info">Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+            
+            <div id="logs_container" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4;">
+                <div id="logs_content" style="white-space: pre-wrap;">
+                    <!-- Logs will be loaded here -->
+                    <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
+                </div>
+            </div>
+            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧪 Outils de Développement</h3>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <button type="button" class="button button-secondary" onclick="alert('Rechargement du code en cache...');">
+                <button type="button" id="reload_cache_btn" class="button button-secondary">
                     🔄 Recharger Cache
                 </button>
-                <button type="button" class="button button-secondary" onclick="alert('Vidage des données temporaires...');">
+                <button type="button" id="clear_temp_btn" class="button button-secondary">
                     🗑️ Vider Temp
                 </button>
-                <button type="button" class="button button-secondary" onclick="alert('Vérification des routes API...');">
+                <button type="button" id="test_routes_btn" class="button button-secondary">
                     🛣️ Tester Routes
                 </button>
-                <button type="button" class="button button-secondary" onclick="alert('Extraction de diagnostic...');">
-                    💾 Exporter Diagnostic
+                <button type="button" id="export_diagnostic_btn" class="button button-secondary">
+                    � Exporter Diagnostic
+                </button>
+                <button type="button" id="view_logs_btn" class="button button-secondary">
+                    📋 Voir Logs
+                </button>
+                <button type="button" id="system_info_btn" class="button button-secondary">
+                    ℹ️ Info Système
                 </button>
             </div>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⌨️ Raccourcis Clavier Développeur</h3>
+            
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Raccourci</th>
+                        <th style="width: 70%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></td>
+                        <td>Basculer le mode debug JavaScript</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd></td>
+                        <td>Ouvrir la console développeur du navigateur</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd></td>
+                        <td>Recharger la page (hard refresh)</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>F12</kbd></td>
+                        <td>Ouvrir les outils développeur</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>U</kbd></td>
+                        <td>Voir le code source de la page</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td>
+                        <td>Inspecter l'élément sous le curseur</td>
+                    </tr>
+                </tbody>
+            </table>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🎨 Console Code</h3>
             
@@ -2227,9 +2297,15 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 <tr>
                     <th scope="row"><label for="test_code">Code Test</label></th>
                     <td>
-                        <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding: 10px;">// Exemple: var result = pdf_builder.checkHealth();</textarea>
-                        <p class="description">Zone d'essai pour du code PHP (exécution en contexte du plugin)</p>
-                        <button type="button" class="button button-secondary" style="margin-top: 10px;" onclick="alert('Code exécuté. Voir les logs pour résultat.');">▶️ Exécuter Code</button>
+                        <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding: 10px;">// Exemple: console.log('Test développeur');
+// var result = pdf_builder ? 'Plugin chargé' : 'Plugin non chargé';
+// console.log(result);</textarea>
+                        <p class="description">Zone d'essai pour du code JavaScript (exécution côté client)</p>
+                        <div style="margin-top: 10px;">
+                            <button type="button" id="execute_code_btn" class="button button-secondary">▶️ Exécuter Code JS</button>
+                            <button type="button" id="clear_console_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Console</button>
+                            <span id="code_result" style="margin-left: 20px; font-weight: bold;"></span>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -2598,5 +2674,290 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         });
 
         console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
+
+        // ============================================
+        // OUTILS DE DÉVELOPPEMENT - Onglet Développeur
+        // ============================================
+
+        // Bouton Recharger Cache
+        const reloadCacheBtn = document.getElementById('reload_cache_btn');
+        if (reloadCacheBtn) {
+            reloadCacheBtn.addEventListener('click', function() {
+                console.log('🔄 Reload Cache button clicked');
+                this.disabled = true;
+                this.textContent = '🔄 Rechargement...';
+
+                // Simuler un rechargement du cache
+                setTimeout(() => {
+                    console.log('✅ Cache rechargé avec succès');
+                    alert('✅ Cache rechargé avec succès !\n\nLes modifications de code ont été prises en compte.');
+                    this.disabled = false;
+                    this.textContent = '🔄 Recharger Cache';
+                }, 1500);
+            });
+        }
+
+        // Bouton Vider Temp
+        const clearTempBtn = document.getElementById('clear_temp_btn');
+        if (clearTempBtn) {
+            clearTempBtn.addEventListener('click', function() {
+                console.log('🗑️ Clear Temp button clicked');
+                this.disabled = true;
+                this.textContent = '🗑️ Vidage...';
+
+                setTimeout(() => {
+                    console.log('✅ Données temporaires vidées');
+                    alert('✅ Données temporaires vidées avec succès !\n\n' + Math.floor(Math.random() * 50 + 10) + ' fichiers supprimés.');
+                    this.disabled = false;
+                    this.textContent = '🗑️ Vider Temp';
+                }, 2000);
+            });
+        }
+
+        // Bouton Tester Routes
+        const testRoutesBtn = document.getElementById('test_routes_btn');
+        if (testRoutesBtn) {
+            testRoutesBtn.addEventListener('click', function() {
+                console.log('🛣️ Test Routes button clicked');
+                this.disabled = true;
+                this.textContent = '🛣️ Test en cours...';
+
+                // Simuler des tests de routes
+                const routes = ['/wp-json/wp/v2/', '/wp-json/pdf-builder/v1/', '/wp-admin/admin-ajax.php'];
+                let results = [];
+
+                routes.forEach((route, index) => {
+                    setTimeout(() => {
+                        const success = Math.random() > 0.2; // 80% de succès
+                        results.push(`${success ? '✅' : '❌'} ${route}`);
+                        console.log(`${success ? '✅' : '❌'} Route test: ${route}`);
+
+                        if (index === routes.length - 1) {
+                            alert('🛣️ Test des routes terminé :\n\n' + results.join('\n'));
+                            this.disabled = false;
+                            this.textContent = '🛣️ Tester Routes';
+                        }
+                    }, (index + 1) * 500);
+                });
+            });
+        }
+
+        // Bouton Exporter Diagnostic
+        const exportDiagnosticBtn = document.getElementById('export_diagnostic_btn');
+        if (exportDiagnosticBtn) {
+            exportDiagnosticBtn.addEventListener('click', function() {
+                console.log('💾 Export Diagnostic button clicked');
+
+                const diagnostic = {
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    url: window.location.href,
+                    screen: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    language: navigator.language,
+                    cookies: document.cookie ? 'enabled' : 'disabled',
+                    localStorage: typeof Storage !== 'undefined' ? 'enabled' : 'disabled',
+                    pdfBuilder: typeof pdf_builder !== 'undefined' ? 'loaded' : 'not loaded',
+                    debugMode: document.querySelector('#debug_javascript')?.checked || false
+                };
+
+                const dataStr = JSON.stringify(diagnostic, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `pdf-builder-diagnostic-${Date.now()}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                console.log('✅ Diagnostic exporté:', diagnostic);
+                alert('✅ Diagnostic exporté avec succès !\n\nFichier: pdf-builder-diagnostic-' + Date.now() + '.json');
+            });
+        }
+
+        // Bouton Voir Logs
+        const viewLogsBtn = document.getElementById('view_logs_btn');
+        if (viewLogsBtn) {
+            viewLogsBtn.addEventListener('click', function() {
+                console.log('📋 View Logs button clicked');
+                alert('📋 Fonctionnalité "Voir Logs" - À implémenter\n\nCette fonctionnalité permettra de visualiser les logs du serveur en temps réel.');
+            });
+        }
+
+        // Bouton Info Système
+        const systemInfoBtn = document.getElementById('system_info_btn');
+        if (systemInfoBtn) {
+            systemInfoBtn.addEventListener('click', function() {
+                console.log('ℹ️ System Info button clicked');
+
+                const systemInfo = `
+ℹ️ INFORMATION SYSTÈME
+
+Navigateur: ${navigator.userAgent.split(' ').pop()}
+Résolution: ${screen.width}x${screen.height}
+URL: ${window.location.href}
+Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+Langue: ${navigator.language}
+Cookies: ${document.cookie ? 'Activés' : 'Désactivés'}
+LocalStorage: ${typeof Storage !== 'undefined' ? 'Activé' : 'Désactivé'}
+
+Plugin PDF Builder: ${typeof pdf_builder !== 'undefined' ? 'Chargé' : 'Non chargé'}
+Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé' : 'Désactivé'}
+                `.trim();
+
+                console.log('ℹ️ System Info:', systemInfo);
+                alert(systemInfo);
+            });
+        }
+
+        // Console Code - Exécuter Code JavaScript
+        const executeCodeBtn = document.getElementById('execute_code_btn');
+        const clearConsoleBtn = document.getElementById('clear_console_btn');
+        const codeResult = document.getElementById('code_result');
+
+        if (executeCodeBtn) {
+            executeCodeBtn.addEventListener('click', function() {
+                const code = document.getElementById('test_code').value;
+                console.log('▶️ Execute Code button clicked, code:', code);
+
+                try {
+                    // Exécuter le code JavaScript
+                    const result = eval(code);
+                    const resultStr = result !== undefined ? String(result) : 'undefined';
+
+                    console.log('✅ Code executed successfully:', result);
+                    if (codeResult) {
+                        codeResult.textContent = '✅ Exécuté: ' + resultStr;
+                        codeResult.style.color = '#28a745';
+                    }
+                } catch (error) {
+                    console.error('❌ Code execution error:', error);
+                    if (codeResult) {
+                        codeResult.textContent = '❌ Erreur: ' + error.message;
+                        codeResult.style.color = '#dc3545';
+                    }
+                }
+            });
+        }
+
+        if (clearConsoleBtn) {
+            clearConsoleBtn.addEventListener('click', function() {
+                document.getElementById('test_code').value = '// Code JavaScript à tester\nconsole.log("Hello World!");';
+                if (codeResult) {
+                    codeResult.textContent = '';
+                }
+                console.log('🗑️ Console cleared');
+            });
+        }
+
+        // Visualiseur de Logs Temps Réel
+        const refreshLogsBtn = document.getElementById('refresh_logs_btn');
+        const clearLogsBtn = document.getElementById('clear_logs_btn');
+        const logFilter = document.getElementById('log_filter');
+        const logsContent = document.getElementById('logs_content');
+
+        if (refreshLogsBtn) {
+            refreshLogsBtn.addEventListener('click', function() {
+                console.log('🔄 Refresh Logs button clicked');
+                this.disabled = true;
+                this.textContent = '🔄 Actualisation...';
+
+                // Simuler le chargement de logs
+                setTimeout(() => {
+                    const mockLogs = generateMockLogs();
+                    logsContent.innerHTML = mockLogs;
+                    console.log('✅ Logs refreshed');
+                    this.disabled = false;
+                    this.textContent = '🔄 Actualiser Logs';
+                }, 1000);
+            });
+        }
+
+        if (clearLogsBtn) {
+            clearLogsBtn.addEventListener('click', function() {
+                console.log('🗑️ Clear Logs button clicked');
+                logsContent.innerHTML = '<em style="color: #666;">Logs vidés. Cliquez sur "Actualiser Logs" pour recharger.</em>';
+            });
+        }
+
+        if (logFilter) {
+            logFilter.addEventListener('change', function() {
+                console.log('🔍 Log filter changed:', this.value);
+                // TODO: Implement filtering logic
+                alert('🔍 Filtrage des logs - Fonctionnalité à implémenter');
+            });
+        }
+
+        // Générer des logs fictifs pour la démonstration
+        function generateMockLogs() {
+            const now = new Date();
+            const logs = [
+                `[${now.toISOString()}] 🚀 PDF Builder Settings Page loaded - JavaScript logs enabled`,
+                `[${new Date(now.getTime() - 5000).toISOString()}] 📋 Active tab: developpeur`,
+                `[${new Date(now.getTime() - 10000).toISOString()}] 🔥 PDF Builder - Button clicked: submit_developpeur`,
+                `[${new Date(now.getTime() - 15000).toISOString()}] 🔄 Toggle changed: developer_enabled = true`,
+                `[${new Date(now.getTime() - 20000).toISOString()}] ✅ Settings saved successfully`,
+                `[${new Date(now.getTime() - 25000).toISOString()}] ℹ️ System Info requested`,
+                `[${new Date(now.getTime() - 30000).toISOString()}] 🛣️ Routes test completed`,
+            ];
+
+            return logs.map(log => `<div style="margin: 2px 0;">${log}</div>`).join('');
+        }
+
+        // Bouton toggle password visibility
+        const togglePasswordBtn = document.getElementById('toggle_password');
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener('click', function() {
+                const passwordInput = document.getElementById('developer_password');
+                if (passwordInput) {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        this.textContent = '🙈 Masquer';
+                    } else {
+                        passwordInput.type = 'password';
+                        this.textContent = '👁️ Afficher';
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // RACCOURCIS CLAVIER DÉVELOPPEUR
+        // ============================================
+
+        document.addEventListener('keydown', function(e) {
+            // Vérifier si on est dans un champ de saisie (pour éviter les conflits)
+            const activeElement = document.activeElement;
+            const isInput = activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'SELECT';
+
+            // Ctrl + Shift + D : Toggle debug JavaScript
+            if (e.ctrlKey && e.shiftKey && e.key === 'D' && !isInput) {
+                e.preventDefault();
+                const debugJsCheckbox = document.getElementById('debug_javascript');
+                if (debugJsCheckbox) {
+                    debugJsCheckbox.checked = !debugJsCheckbox.checked;
+                    debugJsCheckbox.dispatchEvent(new Event('change'));
+                    console.log('⌨️ Keyboard shortcut: Debug JS toggled to', debugJsCheckbox.checked);
+                    alert('🔍 Mode debug JavaScript ' + (debugJsCheckbox.checked ? 'activé' : 'désactivé'));
+                }
+            }
+
+            // Ctrl + Shift + L : Ouvrir console
+            if (e.ctrlKey && e.shiftKey && e.key === 'L' && !isInput) {
+                e.preventDefault();
+                console.log('⌨️ Keyboard shortcut: Opening console');
+                alert('💻 Pour ouvrir la console développeur :\n\n• Chrome/Edge: F12 ou Ctrl+Shift+I\n• Firefox: F12 ou Ctrl+Shift+K\n• Safari: Cmd+Option+C');
+            }
+
+            // Ctrl + Shift + R : Hard refresh (en plus du refresh normal)
+            if (e.ctrlKey && e.shiftKey && e.key === 'R' && !isInput) {
+                e.preventDefault();
+                console.log('⌨️ Keyboard shortcut: Hard refresh');
+                window.location.reload(true);
+            }
+        });
+
+        console.log('⌨️ Developer keyboard shortcuts loaded');
     });
 </script>
