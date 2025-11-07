@@ -2681,7 +2681,15 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         if (globalSaveBtn) {
             globalSaveBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Empêcher la soumission normale du formulaire
+                
                 console.log('💾 Global save button clicked for tab:', this.getAttribute('name'));
+                
+                const form = document.getElementById('settings-form');
+                if (!form) {
+                    console.error('❌ Settings form not found!');
+                    return;
+                }
                 
                 // Afficher le statut de sauvegarde
                 if (saveStatus) {
@@ -2693,8 +2701,75 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 this.disabled = true;
                 this.innerHTML = '⏳ Sauvegarde...';
                 
-                // Le formulaire se soumettra normalement
-                // Le statut sera mis à jour côté serveur avec les notices PHP
+                // Collecter les données du formulaire
+                const formData = new FormData(form);
+                
+                // Envoyer en AJAX
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log('✅ AJAX response received');
+                    
+                    // Vérifier si la sauvegarde a réussi (chercher les notices de succès dans la réponse)
+                    if (data.includes('notice-success') || data.includes('paramètres enregistrés')) {
+                        // Succès
+                        if (saveStatus) {
+                            saveStatus.textContent = '✅ Sauvegardé !';
+                            saveStatus.className = 'save-status show success';
+                        }
+                        this.innerHTML = '✅ Sauvegardé !';
+                        
+                        // Remettre à l'état normal après 2 secondes
+                        setTimeout(() => {
+                            this.disabled = false;
+                            updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
+                            if (saveStatus) {
+                                saveStatus.className = 'save-status';
+                            }
+                        }, 2000);
+                        
+                    } else {
+                        // Erreur
+                        console.error('❌ Save failed - no success notice found in response');
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ Erreur de sauvegarde';
+                            saveStatus.className = 'save-status show error';
+                        }
+                        this.innerHTML = '❌ Erreur';
+                        this.disabled = false;
+                        
+                        // Remettre à l'état normal après 3 secondes
+                        setTimeout(() => {
+                            updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
+                            if (saveStatus) {
+                                saveStatus.className = 'save-status';
+                            }
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ AJAX error:', error);
+                    if (saveStatus) {
+                        saveStatus.textContent = '❌ Erreur réseau';
+                        saveStatus.className = 'save-status show error';
+                    }
+                    this.innerHTML = '❌ Erreur';
+                    this.disabled = false;
+                    
+                    // Remettre à l'état normal après 3 secondes
+                    setTimeout(() => {
+                        updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
+                        if (saveStatus) {
+                            saveStatus.className = 'save-status';
+                        }
+                    }, 3000);
+                });
             });
         }
         
