@@ -4707,7 +4707,7 @@ class PDF_Builder_Admin {
 
             // Tester l'envoi de notification
             if (class_exists('PDF_Builder_Notification_Manager')) {
-                $notification_manager = PDF_Builder_Notification_Manager::get_instance();
+                $notification_manager = \PDF_Builder_Notification_Manager::get_instance();
                 $result = $notification_manager->send_test_notification();
 
                 if ($result) {
