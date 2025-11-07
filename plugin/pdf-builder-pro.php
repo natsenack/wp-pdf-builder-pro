@@ -386,7 +386,24 @@ function pdf_builder_ajax_save_settings() {
                 update_option('pdf_builder_' . $key, $value);
             }
             
-            $notices[] = 'Paramètres de notifications enregistrés avec succès';
+            // Sauvegarder les paramètres SMTP
+            $smtp_settings = [
+                'smtp_enabled' => !empty($_POST['smtp_enabled']) && $_POST['smtp_enabled'] === '1',
+                'smtp_host' => sanitize_text_field($_POST['smtp_host'] ?? 'smtp.gmail.com'),
+                'smtp_port' => intval($_POST['smtp_port'] ?? 587),
+                'smtp_encryption' => sanitize_text_field($_POST['smtp_encryption'] ?? 'tls'),
+                'smtp_auth' => !empty($_POST['smtp_auth']) && $_POST['smtp_auth'] === '1',
+                'smtp_username' => sanitize_text_field($_POST['smtp_username'] ?? ''),
+                'smtp_password' => sanitize_text_field($_POST['smtp_password'] ?? ''),
+                'smtp_from_email' => sanitize_email($_POST['smtp_from_email'] ?? get_option('admin_email')),
+                'smtp_from_name' => sanitize_text_field($_POST['smtp_from_name'] ?? get_bloginfo('name')),
+            ];
+            
+            foreach ($smtp_settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+            
+            $notices[] = 'Paramètres de notifications et SMTP enregistrés avec succès';
             break;
             update_option('pdf_builder_settings', array_merge($settings, $notifications_settings));
             $notices[] = 'Paramètres de notifications enregistrés avec succès';

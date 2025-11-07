@@ -1522,6 +1522,105 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     </tr>
                 </table>
                 
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Configuration SMTP</h3>
+                <p class="description" style="margin-bottom: 15px;">Configurez un serveur SMTP pour l'envoi des notifications par email</p>
+                
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="smtp_enabled">Activer SMTP</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="smtp_enabled" name="smtp_enabled" value="1" 
+                                           <?php checked(get_option('pdf_builder_smtp_enabled')); ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Utiliser SMTP</span>
+                            </div>
+                            <div class="toggle-description">Active l'envoi d'emails via serveur SMTP au lieu de la fonction mail() par défaut</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_host">Serveur SMTP</label></th>
+                        <td>
+                            <input type="text" id="smtp_host" name="smtp_host" 
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_host', 'smtp.gmail.com')); ?>" 
+                                   class="regular-text" placeholder="smtp.gmail.com" />
+                            <p class="description">Adresse du serveur SMTP (ex: smtp.gmail.com, smtp.mailgun.org)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_port">Port SMTP</label></th>
+                        <td>
+                            <input type="number" id="smtp_port" name="smtp_port" 
+                                   value="<?php echo intval(get_option('pdf_builder_smtp_port', 587)); ?>" 
+                                   min="1" max="65535" class="small-text" />
+                            <p class="description">Port du serveur SMTP (587 pour TLS, 465 pour SSL, 25 pour non-chiffré)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_encryption">Chiffrement</label></th>
+                        <td>
+                            <select id="smtp_encryption" name="smtp_encryption">
+                                <option value="tls" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'tls'); ?>>TLS</option>
+                                <option value="ssl" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'ssl'); ?>>SSL</option>
+                                <option value="none" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'none'); ?>>Aucun</option>
+                            </select>
+                            <p class="description">Type de chiffrement pour la connexion SMTP</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_auth">Authentification</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="smtp_auth" name="smtp_auth" value="1" 
+                                           <?php checked(get_option('pdf_builder_smtp_auth', true)); ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Authentification requise</span>
+                            </div>
+                            <div class="toggle-description">La plupart des serveurs SMTP nécessitent une authentification</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_username">Nom d'utilisateur</label></th>
+                        <td>
+                            <input type="text" id="smtp_username" name="smtp_username" 
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_username')); ?>" 
+                                   class="regular-text" placeholder="votre-email@gmail.com" />
+                            <p class="description">Nom d'utilisateur pour l'authentification SMTP</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_password">Mot de passe</label></th>
+                        <td>
+                            <input type="password" id="smtp_password" name="smtp_password" 
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_password')); ?>" 
+                                   class="regular-text" placeholder="••••••••" />
+                            <p class="description">Mot de passe pour l'authentification SMTP</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_from_email">Email expéditeur</label></th>
+                        <td>
+                            <input type="email" id="smtp_from_email" name="smtp_from_email" 
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_email', get_option('admin_email'))); ?>" 
+                                   class="regular-text" />
+                            <p class="description">Adresse email utilisée comme expéditeur (From)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="smtp_from_name">Nom expéditeur</label></th>
+                        <td>
+                            <input type="text" id="smtp_from_name" name="smtp_from_name" 
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_name', get_bloginfo('name'))); ?>" 
+                                   class="regular-text" />
+                            <p class="description">Nom affiché comme expéditeur</p>
+                        </td>
+                    </tr>
+                </table>
+                
                 <p class="submit">
                     <button type="button" id="test-notifications" class="button button-secondary">
                         🧪 Tester les Notifications
