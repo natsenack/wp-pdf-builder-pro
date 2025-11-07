@@ -2439,10 +2439,13 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 const buttonName = this.getAttribute('name') || 'unnamed';
                 const buttonValue = this.value || 'no-value';
                 const form = this.closest('form');
-                const formData = new FormData(form);
-                const formDataObject = {};
-                for (let [key, value] of formData.entries()) {
-                    formDataObject[key] = value;
+                let formDataObject = {};
+                
+                if (form) {
+                    const formData = new FormData(form);
+                    for (let [key, value] of formData.entries()) {
+                        formDataObject[key] = value;
+                    }
                 }
 
                 console.log('🔥 PDF Builder - Button clicked:', {
