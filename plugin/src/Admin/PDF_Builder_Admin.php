@@ -351,26 +351,26 @@ class PDF_Builder_Admin {
             }
         }
 
-// Hook AJAX pour sauvegarder les paramètres
+        // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
-// Hook AJAX pour migrer les templates obsolètes
+        // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
         add_action('wp_ajax_pdf_builder_migrate_templates_to_posts', [$this, 'ajax_migrate_templates_to_posts']);
-// Hook AJAX pour toggle debug mode
+        // Hook AJAX pour toggle debug mode
         add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']);
-// Hook AJAX pour toggle debug mode principal
+        // Hook AJAX pour toggle debug mode principal
         add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
     }
 
     /**
      * Ajoute le menu d'administration
      */
-    public function addAdminMenu()
-    {
+    public function addAdminMenu() {
         // Menu principal avec icône distinctive
         add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 30);
-// Page d'accueil (sous-menu principal masqué)
+        
+        // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
             'pdf-builder-pro',
             __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
@@ -379,11 +379,14 @@ class PDF_Builder_Admin {
             'pdf-builder-pro', // Même slug que le menu principal
             [$this, 'adminPage']
         );
-// Éditeur React (nouvelle version)
+        
+        // Éditeur React (nouvelle version)
         add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
-// Gestion des templates
+        
+        // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
-// Paramètres et configuration
+        
+        // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
     }
 
@@ -3414,6 +3417,13 @@ class PDF_Builder_Admin {
             'developer_enabled' => isset($_POST['pdf_builder_settings']['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['pdf_builder_settings']['developer_password'] ?? '')
         ];
+        
+        // DEBUG: Log des paramètres développeur reçus
+        error_log('DEBUG - Developer settings received:');
+        error_log('developer_enabled isset: ' . (isset($_POST['pdf_builder_settings']['developer_enabled']) ? 'YES' : 'NO'));
+        error_log('developer_enabled value: ' . ($_POST['pdf_builder_settings']['developer_enabled'] ?? 'NOT SET'));
+        error_log('developer_password: ' . ($_POST['pdf_builder_settings']['developer_password'] ?? 'NOT SET'));
+        
 // Sauvegarde des informations entreprise
         if (isset($_POST['company_vat'])) {
             update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));

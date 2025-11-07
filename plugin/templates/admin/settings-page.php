@@ -2002,11 +2002,23 @@ window.addEventListener('load', function() {
                         <tr>
                             <th scope="row"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></th>
                             <td>
-                                <input type="password" name="pdf_builder_settings[developer_password]" id="developer_password"
-                                       value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" class="regular-text" />
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="password" name="pdf_builder_settings[developer_password]" id="developer_password"
+                                           value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" class="regular-text" />
+                                    <button type="button" id="toggle-password-btn" class="button button-small" style="min-width: auto;">👁️</button>
+                                </div>
                                 <p class="description">
                                     <?php _e('Mot de passe requis pour accéder aux outils de développement. Laissez vide pour désactiver.', 'pdf-builder-pro'); ?>
                                 </p>
+                                <?php if (!empty($settings['developer_password'])): ?>
+                                <p class="description" style="color: #28a745;">
+                                    ✅ Mot de passe configuré (<?php echo strlen($settings['developer_password']); ?> caractères)
+                                </p>
+                                <?php else: ?>
+                                <p class="description" style="color: #dc3545;">
+                                    ❌ Aucun mot de passe configuré
+                                </p>
+                                <?php endif; ?>
                             </td>
                         </tr>
 
@@ -2017,13 +2029,13 @@ window.addEventListener('load', function() {
                                 $is_enabled = isset($settings['developer_enabled']) && $settings['developer_enabled'];
                                 $has_password = !empty($settings['developer_password']);
                                 ?>
-                                <div class="developer-status">
-                                    <span class="status-indicator <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>">
+                                <div class="developer-status" id="developer-status-display">
+                                    <span class="status-indicator <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>" id="status-enabled">
                                         <?php echo $is_enabled ? '✅' : '❌'; ?> Mode développeur <?php echo $is_enabled ? 'activé' : 'désactivé'; ?>
                                     </span>
                                     <?php if ($is_enabled): ?>
                                         <br>
-                                        <span class="status-indicator <?php echo $has_password ? 'enabled' : 'disabled'; ?>">
+                                        <span class="status-indicator <?php echo $has_password ? 'enabled' : 'disabled'; ?>" id="status-password">
                                             <?php echo $has_password ? '🔒' : '🔓'; ?> Authentification <?php echo $has_password ? 'activée' : 'désactivée'; ?>
                                         </span>
                                     <?php endif; ?>
@@ -2061,6 +2073,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Définir les variables globales nécessaires
     window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
     window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+    
+    // Fonction pour mettre à jour l'indicateur d'état du mode développeur
+    window.updateDeveloperStatus = function() {
+        var developerEnabledCheckbox = document.getElementById('developer_enabled');
+        var passwordField = document.getElementById('developer_password');
+        var statusDisplay = document.getElementById('developer-status-display');
+        
+        if (!statusDisplay || !developerEnabledCheckbox || !passwordField) {
+            return;
+        }
+        
+        var isEnabled = developerEnabledCheckbox.checked;
+        var hasPassword = passwordField.value.trim().length > 0;
+        
+        // Construire le nouvel HTML
+        var statusHTML = '';
+        statusHTML += '<span class="status-indicator ' + (isEnabled ? 'enabled' : 'disabled') + '" id="status-enabled">';
+        statusHTML += (isEnabled ? '✅' : '❌') + ' Mode développeur ' + (isEnabled ? 'activé' : 'désactivé');
+        statusHTML += '</span>';
+        
+        if (isEnabled) {
+            statusHTML += '<br>';
+            statusHTML += '<span class="status-indicator ' + (hasPassword ? 'enabled' : 'disabled') + '" id="status-password">';
+            statusHTML += (hasPassword ? '🔒' : '🔓') + ' Authentification ' + (hasPassword ? 'activée' : 'désactivée');
+            statusHTML += '</span>';
+        }
+        
+        // Mettre à jour le DOM
+        statusDisplay.innerHTML = statusHTML;
+    };
     
     // Récupérer les éléments
     var submitBtn = document.getElementById('submit');
@@ -2141,6 +2183,12 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append('action', 'pdf_builder_save_settings');
         params.append('nonce', window.pdfBuilderSettingsNonce);
         
+        // DEBUG: Log des données envoyées
+        console.log('Données envoyées:');
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+        
         // Faire la requête AJAX
         fetch(ajaxurl, {
             method: 'POST',
@@ -2166,6 +2214,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (typeof data === 'object') {
                 if (data.success) {
                     showNotification(data.data || 'Paramètres sauvegardés avec succès !', 'success');
+                    // Mettre à jour l'indicateur d'état du mode développeur
+                    updateDeveloperStatus();
                 } else {
                     showNotification(data.data || 'Erreur lors de la sauvegarde', 'error');
                 }
@@ -2173,8 +2223,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Réponse textuelle
                 if (data.includes('success')) {
                     showNotification('Paramètres sauvegardés avec succès !', 'success');
+                    updateDeveloperStatus();
                 } else {
                     showNotification('Paramètres sauvegardés.', 'success');
+                    updateDeveloperStatus();
                 }
             }
         })
@@ -2187,711 +2239,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Fonction pour rafraîchir les paramètres globaux en temps réel
-    function refreshGlobalSettings() {
-        // Faire un appel AJAX pour récupérer les paramètres mis à jour
-        fetch(ajaxurl + '?action=pdf_builder_get_settings&nonce=' + window.pdfBuilderSettingsNonce, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            if (data.success && data.data) {
-                // Mettre à jour la variable globale JavaScript
-                window.pdfBuilderCanvasSettings = data.data;
-                
-                // Déclencher un événement personnalisé pour notifier les composants React
-                var event = new CustomEvent('pdfBuilderSettingsUpdated', {
-                    detail: { settings: data.data }
-                });
-                window.dispatchEvent(event);
-                
-                showNotification('Paramètres appliqués en temps réel !', 'success');
+    // Gestionnaire pour le bouton toggle du mot de passe développeur
+    var togglePasswordBtn = document.getElementById('toggle-password-btn');
+    var passwordField = document.getElementById('developer_password');
+    
+    if (togglePasswordBtn && passwordField) {
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                this.textContent = '🙈';
+                this.title = 'Masquer le mot de passe';
             } else {
-                showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
-            }
-        })
-        .catch(function(error) {
-            showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
-        });
-    }
-    
-    // Fonction pour afficher les notifications
-    function showNotification(message, type) {
-        // Supprimer les notifications existantes
-        var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
-        existingNotifications.forEach(function(notif) {
-            notif.remove();
-        });
-        
-        // Créer la notification
-        var notification = document.createElement('div');
-        notification.className = 'pdf-builder-notification ' + (type === 'success' ? 'success' : 'error');
-        notification.innerHTML = '<span>' + message + '</span>';
-        notification.style.cssText = `
-            position: fixed;
-            top: 40px;
-            right: 20px;
-            background: ${type === 'success' ? '#4CAF50' : '#f44336'};
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 14px;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Animer l'apparition
-        setTimeout(function() {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateX(0)';
-        }, 10);
-        
-        // Masquer automatiquement après 3 secondes
-        setTimeout(function() {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(function() {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
-    }
-    
-    // Gestionnaire pour les boutons AJAX spécifiques par section
-    var ajaxSaveBtns = document.querySelectorAll('.ajax-save-btn');
-    ajaxSaveBtns.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            var section = this.getAttribute('data-section');
-            var originalText = this.textContent;
-            
-            // Désactiver le bouton et changer le texte
-            this.disabled = true;
-            this.textContent = '⏳ Enregistrement...';
-            
-            // Préparer les données avec le bon submit name
-            var params = new URLSearchParams();
-            
-            // Ajouter tous les champs du formulaire
-            var formData = new FormData(form);
-            for (var pair of formData.entries()) {
-                params.append(pair[0], pair[1]);
-            }
-            
-            // Ajouter le submit spécifique
-            params.append('submit_' + section, 'on');
-            params.append('action', 'pdf_builder_save_settings');
-            params.append('nonce', window.pdfBuilderSettingsNonce);
-            
-            // Faire la requête AJAX
-            fetch(ajaxurl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: params.toString()
-            })
-            .then(function(response) {
-                return response.json().catch(function() {
-                    return response.text();
-                });
-            })
-            .then(function(data) {
-                // Réactiver le bouton
-                this.disabled = false;
-                this.textContent = originalText;
-                
-                // Afficher la notification de succès
-                showNotification('Paramètres de ' + section + ' enregistrés avec succès !', 'success');
-            }.bind(this))
-            .catch(function(error) {
-                this.disabled = false;
-                this.textContent = originalText;
-                showNotification('Erreur: ' + error.message, 'error');
-            }.bind(this));
-        });
-    });
-    
-    // ============================================================================
-    // GESTION DES DÉPENDANCES ENTRE CHECKBOXES (Désactiver les enfants)
-    // ============================================================================
-    
-    // Mapping des dépendances: checkbox parent -> liste des champs enfants
-    var dependencyMap = {
-        'show_grid': ['grid_size', 'grid_color', 'grid_opacity'],
-        'snap_to_grid': [],
-        'snap_to_elements': [],
-        'snap_to_margins': [],
-        'show_guides': ['lock_guides'],
-        'enable_rotation': ['rotation_step', 'rotation_snap'],
-        'multi_select': ['select_all_shortcut', 'show_selection_bounds'],
-        'copy_paste_enabled': ['duplicate_on_drag'],
-        'compress_images': ['image_quality', 'max_image_size'],
-        'include_metadata': ['pdf_author', 'pdf_subject'],
-        'auto_save_enabled': ['auto_save_interval', 'auto_save_versions'],
-        'limit_fps': ['max_fps'],
-        'enable_hardware_acceleration': [],
-        'enable_keyboard_shortcuts': []
-    };
-    
-    // Fonction pour mettre à jour l'état des champs dépendants
-    function updateDependentFields(parentCheckboxId) {
-        var parentCheckbox = document.getElementById(parentCheckboxId);
-        if (!parentCheckbox) return;
-        
-        var isChecked = parentCheckbox.checked;
-        var dependentFields = dependencyMap[parentCheckboxId];
-        
-        if (!dependentFields) return;
-        
-        dependentFields.forEach(function(fieldId) {
-            var field = document.getElementById(fieldId);
-            if (field) {
-                // Désactiver/activer le champ
-                field.disabled = !isChecked;
-                
-                // Appliquer un style visuel
-                if (!isChecked) {
-                    field.style.opacity = '0.5';
-                    field.style.pointerEvents = 'none';
-                } else {
-                    field.style.opacity = '1';
-                    field.style.pointerEvents = 'auto';
-                }
-            }
-            
-            // Aussi chercher les labels associés
-            var label = document.querySelector('label[for="' + fieldId + '"]');
-            if (label) {
-                if (!isChecked) {
-                    label.style.opacity = '0.5';
-                    label.style.color = '#999';
-                } else {
-                    label.style.opacity = '1';
-                    label.style.color = 'inherit';
-                }
-            }
-            
-            // Chercher les divs conteneurs
-            var parentDiv = field ? field.closest('div') : null;
-            if (parentDiv) {
-                if (!isChecked) {
-                    parentDiv.style.opacity = '0.5';
-                } else {
-                    parentDiv.style.opacity = '1';
-                }
+                passwordField.type = 'password';
+                this.textContent = '👁️';
+                this.title = 'Afficher le mot de passe';
             }
         });
     }
     
-    // Initialiser les dépendances au chargement
-    Object.keys(dependencyMap).forEach(function(parentId) {
-        updateDependentFields(parentId);
-    });
+    // Ajouter des listeners pour mettre à jour l'état en temps réel
+    var developerEnabledCheckbox = document.getElementById('developer_enabled');
+    var passwordField = document.getElementById('developer_password');
     
-    // Ajouter les event listeners
-    Object.keys(dependencyMap).forEach(function(parentId) {
-        var checkbox = document.getElementById(parentId);
-        if (checkbox) {
-            checkbox.addEventListener('change', function() {
-                updateDependentFields(parentId);
-            });
-        }
-    });
+    if (developerEnabledCheckbox) {
+        developerEnabledCheckbox.addEventListener('change', function() {
+            updateDeveloperStatus();
+        });
+    }
+    
+    if (passwordField) {
+        passwordField.addEventListener('input', function() {
+            updateDeveloperStatus();
+        });
+    }
 });
 </script>
-
-</div>
-
-</div>
-
-<?php
-// CSS pour la page des paramètres
-echo '<style>
-.pdf-builder-settings {
-    margin-top: 20px;
-}
-
-.nav-tab-wrapper {
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ccc;
-}
-
-.nav-tab {
-    display: inline-block;
-    padding: 8px 16px;
-    margin-right: 4px;
-    border: 1px solid #ccc;
-    border-bottom: none;
-    background: #f1f1f1;
-    color: #555;
-    text-decoration: none;
-    border-radius: 4px 4px 0 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.nav-tab:hover {
-    background: #e9e9e9;
-    color: #333;
-}
-
-.nav-tab-active {
-    background: #fff !important;
-    border-bottom: 1px solid #fff !important;
-    color: #000 !important;
-    position: relative;
-    top: 1px;
-}
-
-.tab-content {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 0 8px 8px 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: -1px;
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.tab-content h2 {
-    margin: 0 0 20px 0;
-    color: #23282d;
-    border-bottom: 1px solid #e5e5e5;
-    padding-bottom: 10px;
-}
-
-.pdf-builder-maintenance {
-    margin-top: 40px;
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.pdf-builder-maintenance h2 {
-    margin: 0 0 15px 0;
-    color: #23282d;
-}
-
-.maintenance-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.maintenance-actions .button {
-    padding: 8px 16px;
-}
-
-/* Styles pour les sections Canvas */
-.pdf-builder-settings-section {
-    background: #fff;
-    border: 1px solid #ccd0d4;
-    border-radius: 4px;
-    margin: 20px 0;
-    padding: 20px;
-}
-
-.pdf-builder-settings-section h3 {
-    margin-top: 0;
-    color: #1d2327;
-    font-size: 1.3em;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.pdf-builder-settings-section .form-table th {
-    width: 200px;
-    padding: 15px 10px 15px 0;
-}
-
-.pdf-builder-settings-section .form-table td {
-    padding: 15px 10px;
-}
-
-/* Styles pour l\'onglet Rôles */
-.roles-management {
-    max-width: none;
-}
-
-.roles-section {
-    margin-bottom: 30px;
-}
-
-.roles-section h3 {
-    margin: 0 0 15px 0;
-    color: #23282d;
-    font-size: 16px;
-}
-
-.roles-section table {
-    margin-bottom: 15px;
-}
-
-.roles-section table th,
-.roles-section table td {
-    padding: 8px 12px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.roles-section table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    border-bottom: 2px solid #e5e5e5;
-}
-
-.roles-section table td {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.roles-section table td input[type="checkbox"] {
-    margin: 0;
-}
-
-.roles-section table td strong {
-    color: #23282d;
-}
-
-.roles-section table td small {
-    color: #666;
-    font-size: 12px;
-}
-
-.roles-actions {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-}
-
-/* Styles pour la gestion des roles */
-.role-selection-controls {
-    margin-bottom: 15px;
-    padding: 15px;
-    background: #f8f9fa;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-}
-
-.role-selection-controls .button {
-    margin-right: 8px;
-    margin-bottom: 5px;
-}
-
-.role-selection-controls .description {
-    font-style: italic;
-    color: #666;
-}
-
-#pdf_builder_allowed_roles {
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-}
-
-#pdf_builder_allowed_roles:focus {
-    border-color: #007cba;
-    box-shadow: 0 0 0 1px #007cba;
-}
-
-#pdf_builder_allowed_roles.error {
-    border-color: #dc3232 !important;
-    box-shadow: 0 0 0 1px #dc3232 !important;
-}
-
-.role-validation-message {
-    color: #dc3232;
-    font-weight: bold;
-    padding: 8px 12px;
-    background: #ffeaea;
-    border: 1px solid #facfd2;
-    border-radius: 4px;
-    margin-top: 8px;
-}
-
-.roles-info .notice {
-    margin-bottom: 15px;
-}
-
-.roles-info .notice ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.roles-info .notice ul li {
-    margin-bottom: 5px;
-}
-
-.roles-info .notice ul li:before {
-    content: "•";
-    color: #007cba;
-    font-weight: bold;
-    margin-right: 8px;
-}
-
-#pdf_builder_allowed_roles option:hover {
-    background-color: #f0f8ff;
-}
-
-.roles-actions h3 {
-    margin: 0 0 15px 0;
-    color: #23282d;
-    font-size: 16px;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.action-buttons .button {
-    padding: 8px 16px;
-}
-
-.action-buttons .button .dashicons {
-    margin-left: 5px;
-}
-
-.roles-info {
-    margin-top: 20px;
-}
-
-.roles-info h3 {
-    margin: 0 0 15px 0;
-    color: #23282d;
-    font-size: 16px;
-}
-
-#roles-status {
-    margin-top: 15px;
-}
-
-/* Styles for Maintenance tab */
-.maintenance-status {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.maintenance-status .notice {
-    margin: 0;
-    padding: 10px 12px;
-}
-
-.maintenance-status .notice-success {
-    border-left-color: #46b450;
-    background-color: #f0f9f0;
-}
-
-.maintenance-status .notice-error {
-    border-left-color: #dc3232;
-    background-color: #fef2f2;
-}
-
-.maintenance-status .notice-info {
-    border-left-color: #00a0d2;
-    background-color: #f0f8ff;
-}
-
-.maintenance-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.maintenance-section {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.maintenance-section h3 {
-    margin: 0 0 15px 0;
-    color: #23282d;
-    font-size: 16px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.maintenance-section p {
-    margin: 0 0 15px 0;
-    color: #666;
-}
-
-.maintenance-section .button {
-    margin-right: 10px;
-    margin-bottom: 5px;
-}
-
-.maintenance-section .button-warning {
-    background-color: #d63638;
-    border-color: #d63638;
-    color: #fff;
-}
-
-.maintenance-section .button-warning:hover {
-    background-color: #b32d2e;
-    border-color: #b32d2e;
-}
-
-/* MODERN TABS SYSTEM - NEW AND IMPROVED */
-.modern-tabs-container {
-    margin: 30px 0;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-}
-
-.modern-tabs-header {
-    display: flex;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-bottom: 2px solid #dee2e6;
-    flex-wrap: wrap;
-}
-
-.modern-tab-button {
-    flex: 1;
-    min-width: 160px;
-    padding: 16px 24px;
-    background: transparent;
-    border: none;
-    border-right: 1px solid #dee2e6;
-    color: #6c757d;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.modern-tab-button:last-child {
-    border-right: none;
-}
-
-.modern-tab-button:hover {
-    background: rgba(0, 123, 186, 0.05);
-    color: #007cba;
-    transform: translateY(-2px);
-}
-
-.modern-tab-button.active {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
-    transform: translateY(-2px);
-}
-
-.modern-tab-button.active::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.modern-tabs-content {
-    padding: 0;
-}
-
-.modern-tab-panel {
-    display: none;
-    padding: 30px;
-    background: #ffffff;
-}
-
-.modern-tab-panel:first-child {
-    display: block;
-}
-
-.modern-tab-panel h3 {
-    margin-top: 0;
-    color: #495057;
-    font-size: 20px;
-    font-weight: 700;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .modern-tabs-header {
-        flex-direction: column;
-    }
-
-    .modern-tab-button {
-        flex: 1 1 100%;
-        min-width: auto;
-        border-right: none;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .modern-tab-button:last-child {
-        border-bottom: none;
-    }
-
-    .modern-tab-panel {
-        padding: 20px;
-    }
-}
-
-/* Fix footer positioning */
-#wpfooter {
-    position: static !important;
-    clear: both !important;
-    margin-top: 50px !important;
-}
-
-/* Ensure proper page layout */
-.wrap {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-    min-height: auto !important;
-}
-
-/* Ensure content stays within bounds */
-.pdf-builder-settings {
-    margin-bottom: 100px !important;
-    padding-bottom: 50px !important;
-}
-</style>';
-?>
-
-    // Tab functionality moved to inline script above
-    </script>
 
 <script type="text/javascript">
 (function($) {

@@ -132,7 +132,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                 // Gestion de la déconnexion développeur
                 $("#developer-logout-btn").on("click", function(e) {
                     e.preventDefault();
-                    if (confirm("Are you sure you want to logout from developer mode?")) {
+                    if (confirm("Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?")) {
                         $.ajax({
                             url: ajaxurl,
                             type: "POST",
