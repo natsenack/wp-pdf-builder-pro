@@ -38,6 +38,14 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
             'limit_fps' => isset($_POST['limit_fps']),
             'max_fps' => intval($_POST['max_fps'] ?? 60),
+            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name')),
+            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
+            'include_metadata' => isset($_POST['include_metadata']),
+            'embed_fonts' => isset($_POST['embed_fonts']),
+            'auto_crop' => isset($_POST['auto_crop']),
+            'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $to_save));
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
@@ -473,7 +481,135 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         
         <div id="pdf" class="tab-content" style="display: none;">
             <h2>Paramètres PDF</h2>
-            <p>Configuration PDF...</p>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Format & Orientation</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="default_format">Format par Défaut</label></th>
+                    <td>
+                        <select id="default_format" name="default_format">
+                            <option value="A3" <?php selected($settings['default_format'] ?? 'A4', 'A3'); ?>>A3</option>
+                            <option value="A4" <?php selected($settings['default_format'] ?? 'A4', 'A4'); ?>>A4</option>
+                            <option value="A5" <?php selected($settings['default_format'] ?? 'A4', 'A5'); ?>>A5</option>
+                            <option value="Letter" <?php selected($settings['default_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
+                            <option value="Legal" <?php selected($settings['default_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
+                        </select>
+                        <p class="description">Format de page par défaut pour les nouveaux PDFs</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="default_orientation">Orientation par Défaut</label></th>
+                    <td>
+                        <select id="default_orientation" name="default_orientation">
+                            <option value="portrait" <?php selected($settings['default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
+                            <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
+                    <td>
+                        <select id="pdf_quality" name="pdf_quality">
+                            <option value="low" <?php selected($settings['pdf_quality'] ?? 'high', 'low'); ?>>Basse (fichiers plus petits)</option>
+                            <option value="medium" <?php selected($settings['pdf_quality'] ?? 'high', 'medium'); ?>>Moyenne</option>
+                            <option value="high" <?php selected($settings['pdf_quality'] ?? 'high', 'high'); ?>>Haute (meilleure qualité)</option>
+                            <option value="ultra" <?php selected($settings['pdf_quality'] ?? 'high', 'ultra'); ?>>Ultra HD</option>
+                        </select>
+                        <p class="description">Plus haute = meilleure qualité mais fichiers plus gros</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="export_quality">Qualité d'Export</label></th>
+                    <td>
+                        <select id="export_quality" name="export_quality">
+                            <option value="screen" <?php selected($settings['export_quality'] ?? 'print', 'screen'); ?>>Écran (72 DPI)</option>
+                            <option value="print" <?php selected($settings['export_quality'] ?? 'print', 'print'); ?>>Impression (300 DPI)</option>
+                            <option value="prepress" <?php selected($settings['export_quality'] ?? 'print', 'prepress'); ?>>Pré-presse (600 DPI)</option>
+                        </select>
+                        <p class="description">Définit la résolution de sortie du PDF</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="export_format">Format d'Export</label></th>
+                    <td>
+                        <select id="export_format" name="export_format">
+                            <option value="pdf" <?php selected($settings['export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
+                            <option value="png" <?php selected($settings['export_format'] ?? 'pdf', 'png'); ?>>PNG</option>
+                            <option value="jpg" <?php selected($settings['export_format'] ?? 'pdf', 'jpg'); ?>>JPEG</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Métadonnées & Contenu</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="pdf_author">Auteur du PDF</label></th>
+                    <td>
+                        <input type="text" id="pdf_author" name="pdf_author" value="<?php echo esc_attr($settings['pdf_author'] ?? get_bloginfo('name')); ?>" 
+                               class="regular-text" />
+                        <p class="description">Sera inclus dans les propriétés du PDF</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="pdf_subject">Sujet du PDF</label></th>
+                    <td>
+                        <input type="text" id="pdf_subject" name="pdf_subject" value="<?php echo esc_attr($settings['pdf_subject'] ?? ''); ?>" 
+                               class="regular-text" placeholder="Ex: Facture, Devis, etc." />
+                        <p class="description">Sujet dans les propriétés du PDF</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="include_metadata">Inclure les Métadonnées</label></th>
+                    <td>
+                        <input type="checkbox" id="include_metadata" name="include_metadata" value="1" 
+                               <?php checked($settings['include_metadata'] ?? false); ?> />
+                        <p class="description">Ajoute les données de titre, auteur, date, etc.</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Optimisation & Compression</h3>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="embed_fonts">Intégrer les Polices</label></th>
+                    <td>
+                        <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1" 
+                               <?php checked($settings['embed_fonts'] ?? false); ?> />
+                        <p class="description">Inclut les polices personnalisées dans le PDF (fichiers plus gros)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="auto_crop">Recadrage Automatique</label></th>
+                    <td>
+                        <input type="checkbox" id="auto_crop" name="auto_crop" value="1" 
+                               <?php checked($settings['auto_crop'] ?? false); ?> />
+                        <p class="description">Supprime les marges blanches automatiquement</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="max_image_size">Taille Max des Images (px)</label></th>
+                    <td>
+                        <input type="number" id="max_image_size" name="max_image_size" value="<?php echo intval($settings['max_image_size'] ?? 2048); ?>" 
+                               min="512" max="8192" step="256" />
+                        <p class="description">Les images plus grandes seront redimensionnées</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <!-- Aide & Conseils -->
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
+                <h3>💡 Conseils d'Optimisation</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Pour impression :</strong> Utilisez la qualité "Haute" + Pré-presse + Polices intégrées</li>
+                    <li><strong>Pour web :</strong> Utilisez la qualité "Moyenne" + Écran + Compression images</li>
+                    <li><strong>Pour email :</strong> Utilisez la qualité "Basse" + Optimiser pour le web + Recadrage auto</li>
+                </ul>
+            </div>
         </div>
         
         <div id="securite" class="tab-content" style="display: none;">
