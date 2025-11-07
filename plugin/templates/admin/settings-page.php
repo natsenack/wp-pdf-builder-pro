@@ -568,25 +568,29 @@ window.addEventListener('load', function() {
     <div class="wrap">
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
-    <div id="poststuff">
-    <div id="post-body" class="metabox-holder columns-1">
-    <div id="post-body-content">
-
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
 
             <style>
+            /* Styles pour la page des paramètres PDF Builder Pro */
+            .pdf-builder-settings {
+                max-width: 100%;
+                margin-top: 20px;
+            }
+
             .pdf-builder-settings .nav-tab-wrapper {
-                margin-bottom: 20px;
+                margin: 0 0 20px 0;
+                padding: 0;
                 border-bottom: 1px solid #ccc;
+                background: transparent;
             }
 
             .pdf-builder-settings .nav-tab {
                 display: inline-block;
                 padding: 8px 16px;
-                margin-right: 4px;
+                margin: 0 4px -1px 0;
                 border: 1px solid #ccc;
                 border-bottom: none;
                 background: #f1f1f1;
@@ -594,6 +598,10 @@ window.addEventListener('load', function() {
                 text-decoration: none;
                 border-radius: 4px 4px 0 0;
                 cursor: pointer;
+                font-size: 14px;
+                line-height: 1.4;
+                position: relative;
+                top: 1px;
             }
 
             .pdf-builder-settings .nav-tab.nav-tab-active,
@@ -609,6 +617,8 @@ window.addEventListener('load', function() {
                 background: #fff;
                 border: 1px solid #ccc;
                 border-radius: 0 4px 4px 4px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
             .pdf-builder-settings .tab-content.active {
@@ -618,16 +628,55 @@ window.addEventListener('load', function() {
             .pdf-builder-settings .form-table {
                 background: transparent;
                 margin: 0;
+                width: 100%;
             }
 
             .pdf-builder-settings .form-table th {
                 width: 200px;
                 padding: 20px 10px 20px 0;
                 vertical-align: top;
+                font-weight: 600;
+                color: #23282d;
             }
 
             .pdf-builder-settings .form-table td {
                 padding: 15px 10px;
+                vertical-align: top;
+            }
+
+            .pdf-builder-settings .form-table tr {
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .pdf-builder-settings .form-table tr:last-child {
+                border-bottom: none;
+            }
+
+            .pdf-builder-settings .description {
+                color: #666;
+                font-style: italic;
+                margin-top: 5px;
+                font-size: 13px;
+            }
+
+            .pdf-builder-settings .submit {
+                padding: 20px 0;
+                border-top: 1px solid #ccc;
+                margin-top: 20px;
+                text-align: left;
+            }
+
+            /* Responsive */
+            @media screen and (max-width: 782px) {
+                .pdf-builder-settings .form-table th {
+                    width: 100%;
+                    padding-bottom: 10px;
+                }
+
+                .pdf-builder-settings .form-table td {
+                    width: 100%;
+                    padding-top: 0;
+                }
             }
             </style>
 
@@ -2131,9 +2180,6 @@ window.addEventListener('load', function() {
     </form>
 
     </div> <!-- #pdf-builder-settings-tabs -->
-    </div> <!-- #post-body-content -->
-    </div> <!-- #post-body -->
-    </div> <!-- #poststuff -->
 </div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
