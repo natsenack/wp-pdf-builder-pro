@@ -125,8 +125,14 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         
         $result = update_option('pdf_builder_settings', $new_settings);
         
+        // Debug: Always log the result for troubleshooting
+        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no'));
+        
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed'));
+            error_log('DEBUG: About to save settings: ' . json_encode($to_save));
+            error_log('DEBUG: Settings changed: ' . ($settings_changed ? 'yes' : 'no'));
+            error_log('DEBUG: Current settings size: ' . strlen(serialize($settings)));
+            error_log('DEBUG: New settings size: ' . strlen(serialize($new_settings)));
             if (!$result && $settings_changed) {
                 error_log('DEBUG: update_option failed despite changes. Current settings: ' . json_encode($settings));
                 error_log('DEBUG: New settings: ' . json_encode($new_settings));

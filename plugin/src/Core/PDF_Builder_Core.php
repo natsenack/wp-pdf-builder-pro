@@ -128,9 +128,19 @@ class PDF_Builder_Core
      */
     public function initialize_directories()
     {
-        // Obtenir le répertoire d'upload WordPress
-        $upload_dir = wp_upload_dir();
-        $base_dir = $upload_dir['basedir'];
+        try {
+            // Obtenir le répertoire d'upload WordPress
+            $upload_dir = wp_upload_dir();
+            if (isset($upload_dir['error']) && $upload_dir['error']) {
+                error_log('PDF Builder: Upload directory error: ' . $upload_dir['error']);
+                return;
+            }
+            
+            $base_dir = $upload_dir['basedir'];
+            if (empty($base_dir) || !is_writable($base_dir)) {
+                error_log('PDF Builder: Upload directory not writable: ' . $base_dir);
+                return;
+            }
 
         // Dossiers à créer
         $directories = array(
@@ -161,6 +171,9 @@ class PDF_Builder_Core
                     file_put_contents($index_path, '<?php // Silence is golden');
                 }
             }
+        }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: Error in initialize_directories: ' . $e->getMessage());
         }
     }
 
@@ -206,6 +219,7 @@ class PDF_Builder_Core
                 array($this, 'settings_page')
             );
         } catch (\Exception $e) {
+            error_log('PDF Builder Core: Error in register_admin_menu: ' . $e->getMessage());
         }
     }
 
