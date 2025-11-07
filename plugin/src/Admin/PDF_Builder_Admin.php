@@ -4811,6 +4811,7 @@ class PDF_Builder_Admin {
             }
 
             // Tester la connexion SMTP avec les commandes SMTP basiques
+            $debug_info = [];
             $connection = @fsockopen(
                 ($smtp_encryption === 'ssl' ? 'ssl://' : '') . $smtp_host,
                 $smtp_port,
@@ -4820,27 +4821,88 @@ class PDF_Builder_Admin {
             );
 
             if ($connection) {
-                // Activer le chiffrement TLS si nécessaire
-                if ($smtp_encryption === 'tls') {
-                    stream_socket_enable_crypto($connection, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-                }
+                $debug_info[] = "Connected to {$smtp_host}:{$smtp_port} (ssl_prefix=" . ($smtp_encryption === 'ssl' ? 'yes' : 'no') . ")";
 
                 // Lire la réponse initiale
                 $response = fgets($connection, 1024);
+                $debug_info[] = "Server greeting: " . trim($response);
+
+                // Vérifier si la réponse contient "220"
                 if (strpos($response, '220') !== 0) {
                     fclose($connection);
                     wp_send_json_error([
-                        'message' => __('Serveur SMTP ne répond pas correctement', 'pdf-builder-pro')
+                        'message' => __('Serveur SMTP ne répond pas correctement. Réponse: ', 'pdf-builder-pro') . trim($response),
+                        'debug' => $debug_info
                     ]);
                     return;
                 }
 
                 // Envoyer EHLO
-                fwrite($connection, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
-                $response = '';
+                fwrite($connection, "EHLO " . ($_SERVER['SERVER_NAME'] ?? 'localhost') . "\r\n");
+                $ehlo_response = '';
                 while (($line = fgets($connection, 1024)) !== false) {
-                    $response .= $line;
-                    if (substr($line, 3, 1) === ' ') break; // Fin de la réponse multi-ligne
+                    $ehlo_response .= $line;
+                    $debug_info[] = "EHLO: " . trim($line);
+                    if (isset($line[3]) && $line[3] === ' ') break; // Fin de la réponse multi-ligne
+                }
+
+                // Vérifier que EHLO a retourné 250
+                if (strpos($ehlo_response, '250') === false) {
+                    fclose($connection);
+                    wp_send_json_error([
+                        'message' => __('Commande EHLO rejetée par le serveur SMTP', 'pdf-builder-pro'),
+                        'debug' => $debug_info
+                    ]);
+                    return;
+                }
+
+                // Si le mode demandé est TLS (STARTTLS), demander STARTTLS puis activer crypto
+                if ($smtp_encryption === 'tls') {
+                    // Vérifier si le serveur annonce STARTTLS
+                    if (stripos($ehlo_response, 'STARTTLS') === false) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Le serveur SMTP ne supporte pas STARTTLS, vérifiez le port / chiffrement.', 'pdf-builder-pro'),
+                            'debug' => $debug_info
+                        ]);
+                        return;
+                    }
+
+                    // Envoyer STARTTLS
+                    fwrite($connection, "STARTTLS\r\n");
+                    $starttls_response = fgets($connection, 1024);
+                    $debug_info[] = "STARTTLS response: " . trim($starttls_response);
+
+                    if (strpos($starttls_response, '220') !== 0) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Échec de la négociation STARTTLS. Réponse: ', 'pdf-builder-pro') . trim($starttls_response),
+                            'debug' => $debug_info
+                        ]);
+                        return;
+                    }
+
+                    // Activer TLS
+                    $crypto_ok = @stream_socket_enable_crypto($connection, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+                    $debug_info[] = 'stream_socket_enable_crypto result: ' . ($crypto_ok ? 'ok' : 'failed');
+
+                    if (!$crypto_ok) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Échec de l\'activation du chiffrement TLS (STARTTLS). Vérifiez la configuration OpenSSL/port.', 'pdf-builder-pro'),
+                            'debug' => $debug_info
+                        ]);
+                        return;
+                    }
+
+                    // Ré-envoyer EHLO après STARTTLS
+                    fwrite($connection, "EHLO " . ($_SERVER['SERVER_NAME'] ?? 'localhost') . "\r\n");
+                    $ehlo_response = '';
+                    while (($line = fgets($connection, 1024)) !== false) {
+                        $ehlo_response .= $line;
+                        $debug_info[] = "EHLO (post-STARTTLS): " . trim($line);
+                        if (isset($line[3]) && $line[3] === ' ') break;
+                    }
                 }
 
                 // Tester l'authentification si nécessaire
@@ -4848,11 +4910,13 @@ class PDF_Builder_Admin {
                     // Envoyer AUTH LOGIN
                     fwrite($connection, "AUTH LOGIN\r\n");
                     $response = fgets($connection, 1024);
+                    $debug_info[] = "AUTH LOGIN response: " . trim($response);
 
                     if (strpos($response, '334') !== 0) {
                         fclose($connection);
                         wp_send_json_error([
-                            'message' => __('Authentification SMTP non supportée par le serveur', 'pdf-builder-pro')
+                            'message' => __('Authentification SMTP non supportée par le serveur. Réponse: ', 'pdf-builder-pro') . trim($response),
+                            'debug' => $debug_info
                         ]);
                         return;
                     }
@@ -4860,11 +4924,13 @@ class PDF_Builder_Admin {
                     // Envoyer le nom d'utilisateur encodé en base64
                     fwrite($connection, base64_encode($smtp_username) . "\r\n");
                     $response = fgets($connection, 1024);
+                    $debug_info[] = "Username response: " . trim($response);
 
                     if (strpos($response, '334') !== 0) {
                         fclose($connection);
                         wp_send_json_error([
-                            'message' => __('Nom d\'utilisateur SMTP invalide', 'pdf-builder-pro')
+                            'message' => __('Nom d\'utilisateur SMTP invalide. Réponse: ', 'pdf-builder-pro') . trim($response),
+                            'debug' => $debug_info
                         ]);
                         return;
                     }
@@ -4872,11 +4938,13 @@ class PDF_Builder_Admin {
                     // Envoyer le mot de passe encodé en base64
                     fwrite($connection, base64_encode($smtp_password) . "\r\n");
                     $response = fgets($connection, 1024);
+                    $debug_info[] = "Password response: " . trim($response);
 
                     if (strpos($response, '235') !== 0) {
                         fclose($connection);
                         wp_send_json_error([
-                            'message' => __('Mot de passe SMTP invalide', 'pdf-builder-pro')
+                            'message' => __('Mot de passe SMTP invalide. Réponse: ', 'pdf-builder-pro') . trim($response),
+                            'debug' => $debug_info
                         ]);
                         return;
                     }
@@ -4884,14 +4952,18 @@ class PDF_Builder_Admin {
 
                 // Fermer proprement la connexion
                 fwrite($connection, "QUIT\r\n");
+                $quit_response = fgets($connection, 1024);
+                $debug_info[] = "QUIT response: " . trim($quit_response);
                 fclose($connection);
 
                 wp_send_json_success([
-                    'message' => __('Connexion et authentification SMTP réussies', 'pdf-builder-pro')
+                    'message' => __('Connexion et authentification SMTP réussies', 'pdf-builder-pro'),
+                    'debug' => $debug_info
                 ]);
             } else {
                 wp_send_json_error([
-                    'message' => __('Impossible de se connecter au serveur SMTP : ', 'pdf-builder-pro') . $errstr
+                    'message' => __('Impossible de se connecter au serveur SMTP : ', 'pdf-builder-pro') . $errstr,
+                    'debug' => ["fsockopen error: {$errno} - {$errstr}"]
                 ]);
             }
 

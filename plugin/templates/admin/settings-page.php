@@ -3420,11 +3420,19 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 })
                 .then(response => response.json())
                 .then(data => {
+                    // Log debug information (si présent) dans la console pour aider le diagnostique
+                    if (data.data && data.data.debug) {
+                        console.group('PDF Builder SMTP debug');
+                        data.data.debug.forEach(line => console.log(line));
+                        console.groupEnd();
+                    }
+
                     if (data.success) {
-                        alert('✅ Connexion SMTP réussie ! Les paramètres sont corrects.');
+                        alert('✅ Connexion SMTP réussie ! Ouvrez la console pour voir le debug.');
                     } else {
                         const errorMessage = data.data?.message || data.data || 'Erreur inconnue';
-                        alert('❌ Échec de la connexion SMTP : ' + errorMessage);
+                        console.error('SMTP test failed:', errorMessage);
+                        alert('❌ Échec de la connexion SMTP : ' + errorMessage + '\n(Ouvrez la console pour plus de détails)');
                     }
                 })
                 .catch(error => {
