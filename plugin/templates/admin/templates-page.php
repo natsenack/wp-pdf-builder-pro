@@ -279,7 +279,7 @@ if (!defined('ABSPATH')) {
         <div id="template-settings-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;">
             <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
                 <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                    <h2 style="margin: 0; color: #23282d;">⚙️ Paramètres du Template</h2>
+                    <h2 id="template-settings-title" style="margin: 0; color: #23282d;">⚙️ Paramètres du Template</h2>
                     <button onclick="closeTemplateSettings()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0;">×</button>
                 </div>
 
@@ -380,6 +380,26 @@ function closeTemplateSettings() {
     currentTemplateId = null;
 }
 
+function updateTemplateTitle() {
+    const categorySelect = document.getElementById('template-category');
+    const titleElement = document.getElementById('template-settings-title');
+    
+    if (!categorySelect || !titleElement) return;
+    
+    const category = categorySelect.value;
+    const categoryLabels = {
+        'facture': 'Facture',
+        'devis': 'Devis',
+        'commande': 'Bon de Commande',
+        'contrat': 'Contrat',
+        'newsletter': 'Newsletter',
+        'autre': 'Template'
+    };
+    
+    const categoryLabel = categoryLabels[category] || 'Template';
+    titleElement.innerHTML = `⚙️ Paramètres du ${categoryLabel}`;
+}
+
 function loadTemplateSettings(templateId) {
     // Faire l'appel AJAX pour charger les paramètres
     jQuery.post(ajaxurl, {
@@ -396,6 +416,12 @@ function loadTemplateSettings(templateId) {
             document.getElementById('template-public').checked = settings.is_public || false;
             document.getElementById('template-paper-size').value = settings.paper_size || 'A4';
             document.getElementById('template-orientation').value = settings.orientation || 'portrait';
+            
+            // Mettre à jour le titre en fonction de la catégorie
+            updateTemplateTitle();
+            
+            // Ajouter un event listener pour mettre à jour le titre en temps réel
+            document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
         } else {
             // Erreur - utiliser des valeurs par défaut
             console.error('Erreur lors du chargement des paramètres:', response.data.message);
@@ -414,6 +440,15 @@ function loadTemplateSettings(templateId) {
             else if (templateName.includes('newsletter')) category = 'newsletter';
 
             document.getElementById('template-category').value = category;
+            
+            // Mettre à jour le titre en fonction de la catégorie
+            updateTemplateTitle();
+            
+            // Ajouter un event listener pour mettre à jour le titre en temps réel
+            document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
+            
+            // Ajouter un event listener pour mettre à jour le titre en temps réel
+            document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
         }
     }).fail(function(xhr, status, error) {
         console.error('Erreur AJAX lors du chargement des paramètres:', error);
