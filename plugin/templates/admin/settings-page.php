@@ -2950,46 +2950,41 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 this.innerHTML = '⏳ Sauvegarde...';
                 
                 // Collecter les données du formulaire
-                let formData;
+                const currentTab = this.getAttribute('name').replace('submit_', '');
+                let formData = new FormData();
                 
-                if (this.getAttribute('name') === 'submit_developpeur') {
-                    // Pour l'onglet développeur, construire FormData manuellement pour éviter les conflits
-                    formData = new FormData();
-                    
-                    // Ajouter l'action et l'onglet
-                    formData.append('action', 'pdf_builder_save_settings');
-                    formData.append('current_tab', 'developpeur');
-                    
-                    // Ajouter le nonce
-                    const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
-                    if (nonceField) {
-                        formData.append('pdf_builder_settings_nonce', nonceField.value);
-                    }
-                    
-                    // Collecter spécifiquement les paramètres développeur (éviter les doublons)
-                    const developerCheckboxes = {};
-                    document.querySelectorAll('#developpeur table.form-table input[type="checkbox"]').forEach(checkbox => {
+                // Ajouter l'action et l'onglet
+                formData.append('action', 'pdf_builder_save_settings');
+                formData.append('current_tab', currentTab);
+                
+                // Ajouter le nonce
+                const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+                if (nonceField) {
+                    formData.append('pdf_builder_settings_nonce', nonceField.value);
+                }
+                
+                // Collecter les données selon l'onglet actif
+                const tabElement = document.getElementById(currentTab);
+                if (tabElement) {
+                    // Collecter les checkboxes (éviter les doublons)
+                    const checkboxes = {};
+                    tabElement.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                         const key = checkbox.name;
-                        if (key && !developerCheckboxes[key]) { // Prendre seulement le premier de chaque name
-                            developerCheckboxes[key] = true;
+                        if (key && !checkboxes[key]) {
+                            checkboxes[key] = true;
                             formData.append(key, checkbox.checked ? '1' : '0');
                         }
                     });
                     
-                    // Collecter les inputs texte du développeur (éviter les doublons)
-                    const developerInputs = {};
-                    document.querySelectorAll('#developpeur table.form-table input[type="password"], #developpeur table.form-table input[type="text"]').forEach(input => {
+                    // Collecter les inputs texte, password, email, number
+                    const inputs = {};
+                    tabElement.querySelectorAll('input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="range"], select, textarea').forEach(input => {
                         const key = input.name;
-                        if (key && !developerInputs[key]) { // Prendre seulement le premier de chaque name
-                            developerInputs[key] = true;
+                        if (key && !inputs[key]) {
+                            inputs[key] = true;
                             formData.append(key, input.value);
                         }
                     });
-                } else {
-                    // Pour les autres onglets, utiliser le formulaire normal
-                    formData = new FormData(form);
-                    formData.append('action', 'pdf_builder_save_settings');
-                    formData.append('current_tab', this.getAttribute('name').replace('submit_', ''));
                 }
                 
                 // Debug: vérifier que ajax_save est bien ajouté
@@ -2998,8 +2993,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     console.log(`  ${key}: ${value}`);
                 }
                 
-                // Log spécifique pour les paramètres développeur
-                if (this.getAttribute('name') === 'submit_developpeur') {
+                // Log spécifique selon l'onglet
+                if (currentTab === 'developpeur') {
                     console.log('🔧 Developer settings being sent:');
                     console.log('  developer_enabled:', formData.get('developer_enabled'));
                     console.log('  debug_php_errors:', formData.get('debug_php_errors'));
@@ -3032,14 +3027,16 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         // Log des valeurs après sauvegarde
                         console.log('✅ Save successful, checking checkbox states...');
                         setTimeout(() => {
-                            const debugJsCheckbox = document.getElementById('debug_javascript');
-                            const debugPhpCheckbox = document.getElementById('debug_php_errors');
-                            const developerEnabledCheckbox = document.getElementById('developer_enabled');
-                            
-                            console.log('🔍 Checkbox states immediately after save:');
-                            console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
-                            console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
-                            console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+                            if (currentTab === 'developpeur') {
+                                const debugJsCheckbox = document.getElementById('debug_javascript');
+                                const debugPhpCheckbox = document.getElementById('debug_php_errors');
+                                const developerEnabledCheckbox = document.getElementById('developer_enabled');
+                                
+                                console.log('🔍 Checkbox states immediately after save:');
+                                console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
+                                console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
+                                console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+                            }
                         }, 100);
                         
                         // Remettre à l'état normal après 2 secondes
