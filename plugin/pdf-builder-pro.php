@@ -247,19 +247,19 @@ function pdf_builder_ajax_save_settings() {
 
         case 'developpeur':
             $dev_settings = [
-                'developer_enabled' => isset($_POST['developer_enabled']),
+                'developer_enabled' => !empty($_POST['developer_enabled']) && $_POST['developer_enabled'] === '1',
                 'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-                'debug_php_errors' => isset($_POST['debug_php_errors']),
-                'debug_javascript' => isset($_POST['debug_javascript']),
-                'debug_ajax' => isset($_POST['debug_ajax']),
-                'debug_performance' => isset($_POST['debug_performance']),
-                'debug_database' => isset($_POST['debug_database']),
+                'debug_php_errors' => !empty($_POST['debug_php_errors']) && $_POST['debug_php_errors'] === '1',
+                'debug_javascript' => !empty($_POST['debug_javascript']) && $_POST['debug_javascript'] === '1',
+                'debug_ajax' => !empty($_POST['debug_ajax']) && $_POST['debug_ajax'] === '1',
+                'debug_performance' => !empty($_POST['debug_performance']) && $_POST['debug_performance'] === '1',
+                'debug_database' => !empty($_POST['debug_database']) && $_POST['debug_database'] === '1',
                 'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
                 'log_file_size' => intval($_POST['log_file_size'] ?? 10),
                 'log_retention' => intval($_POST['log_retention'] ?? 30),
                 'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
-                'enable_profiling' => isset($_POST['enable_profiling']),
-                'force_https' => isset($_POST['force_https']),
+                'enable_profiling' => !empty($_POST['enable_profiling']) && $_POST['enable_profiling'] === '1',
+                'force_https' => !empty($_POST['force_https']) && $_POST['force_https'] === '1',
             ];
             
             $new_settings = array_merge($settings, $dev_settings);
