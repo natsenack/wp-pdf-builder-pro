@@ -344,7 +344,6 @@ if ($isAjax) {
 // Charger les paramètres pour l'affichage
 $settings = get_option('pdf_builder_settings', []);
 ?>
-
 <!-- Debug script to check React availability -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
@@ -2821,9 +2820,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })(jQuery);
 </script>
 
-
-
 <?php
 // Fin du fichier
-?>
 
