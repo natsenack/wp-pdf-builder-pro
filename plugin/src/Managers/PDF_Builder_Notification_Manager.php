@@ -236,6 +236,8 @@ class PDF_Builder_Notification_Manager {
      * Envoyer un email via SMTP
      */
     private function send_smtp_email($to, $subject, $message) {
+        error_log("PDF Builder: send_smtp_email called with to=$to, subject=$subject");
+
         // Récupérer les paramètres SMTP
         $smtp_host = get_option('pdf_builder_smtp_host', '');
         $smtp_port = get_option('pdf_builder_smtp_port', 587);
@@ -244,6 +246,8 @@ class PDF_Builder_Notification_Manager {
         $smtp_password = get_option('pdf_builder_smtp_password', '');
         $smtp_from_email = get_option('pdf_builder_smtp_from_email', get_option('admin_email'));
         $smtp_from_name = get_option('pdf_builder_smtp_from_name', get_bloginfo('name'));
+
+        error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
 
         // Vérifier que les paramètres requis sont présents
         if (empty($smtp_host) || empty($smtp_username) || empty($smtp_password)) {
