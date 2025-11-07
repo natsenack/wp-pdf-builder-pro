@@ -2965,26 +2965,42 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 
                 // Collecter les données selon l'onglet actif
                 const tabElement = document.getElementById(currentTab);
+                console.log('🎯 Collecting data for tab:', currentTab, 'Element found:', !!tabElement);
+                
                 if (tabElement) {
                     // Collecter les checkboxes (éviter les doublons)
                     const checkboxes = {};
-                    tabElement.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    const checkboxElements = tabElement.querySelectorAll('input[type="checkbox"]');
+                    console.log('📋 Found', checkboxElements.length, 'checkboxes in tab', currentTab);
+                    
+                    checkboxElements.forEach(checkbox => {
                         const key = checkbox.name;
                         if (key && !checkboxes[key]) {
                             checkboxes[key] = true;
                             formData.append(key, checkbox.checked ? '1' : '0');
+                            console.log('  ✅ Checkbox:', key, '=', checkbox.checked ? '1' : '0');
+                        } else if (key) {
+                            console.log('  ⚠️ Duplicate checkbox ignored:', key);
                         }
                     });
                     
                     // Collecter les inputs texte, password, email, number
                     const inputs = {};
-                    tabElement.querySelectorAll('input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="range"], select, textarea').forEach(input => {
+                    const inputElements = tabElement.querySelectorAll('input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="range"], select, textarea');
+                    console.log('📝 Found', inputElements.length, 'input/select elements in tab', currentTab);
+                    
+                    inputElements.forEach(input => {
                         const key = input.name;
                         if (key && !inputs[key]) {
                             inputs[key] = true;
                             formData.append(key, input.value);
+                            console.log('  ✅ Input:', key, '=', input.value);
+                        } else if (key) {
+                            console.log('  ⚠️ Duplicate input ignored:', key);
                         }
                     });
+                } else {
+                    console.error('❌ Tab element not found for:', currentTab);
                 }
                 
                 // Debug: vérifier que ajax_save est bien ajouté
