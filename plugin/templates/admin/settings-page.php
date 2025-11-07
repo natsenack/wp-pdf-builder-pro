@@ -196,29 +196,6 @@ if (isset($_POST['clear_cache']) &&
         </a>
     </div>
     
-    <div class="nav-tab-wrapper">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
-            <span class="tab-icon">⚙️</span>
-            <span class="tab-text">Général</span>
-        </a>
-        <a href="#performance" class="nav-tab" data-tab="performance">
-            <span class="tab-icon">⚡</span>
-            <span class="tab-text">Performance</span>
-        </a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">PDF</span>
-        </a>
-        <a href="#canvas" class="nav-tab" data-tab="canvas">
-            <span class="tab-icon">🎨</span>
-            <span class="tab-text">Canvas</span>
-        </a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
-            <span class="tab-icon">👨‍💻</span>
-            <span class="tab-text">Développeur</span>
-        </a>
-    </div>
-    
     <form method="post" class="settings-form" id="settings-form">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
