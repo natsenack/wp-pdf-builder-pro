@@ -961,9 +961,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         </div>
         
         <div id="roles" class="tab-content" style="display: none;">
-            <style>
-                #roles #global-save-btn { display: none !important; }
-            </style>
             <h2>Gestion des Rôles et Permissions</h2>
             
             <!-- Message de confirmation que l'onglet est chargé -->
