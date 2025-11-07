@@ -886,13 +886,7 @@ class PDF_Builder_Admin {
             }
         }
 
-        ?>
-        <div class="wrap">
-        <?php
         include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/settings-page.php';
-        ?>
-        </div>
-        <?php
     }
 
     /**

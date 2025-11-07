@@ -570,8 +570,9 @@ window.addEventListener('load', function() {
             <style>
             /* Styles pour la page des paramètres PDF Builder Pro */
             .pdf-builder-settings {
-                max-width: 100%;
+                width: 100%;
                 margin-top: 20px;
+                clear: both;
             }
 
             .pdf-builder-settings .nav-tab-wrapper {
@@ -2193,6 +2194,7 @@ window.addEventListener('load', function() {
     </form>
 
     </div> <!-- #pdf-builder-settings-tabs -->
+    <div style="clear: both;"></div>
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
 <script type="text/javascript">
