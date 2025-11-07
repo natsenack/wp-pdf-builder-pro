@@ -2832,6 +2832,11 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         display: block;
     }
     
+    /* Exception pour le bouton de test dans l'onglet notifications */
+    #notifications #test-notifications {
+        display: inline-block !important;
+    }
+    
     /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
     #roles #global-save-btn,
     #templates #global-save-btn {
@@ -3046,6 +3051,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     nonceName = 'pdf_builder_pdf_nonce';
                 } else if (currentTab === 'performance') {
                     nonceName = 'pdf_builder_performance_nonce';
+                } else if (currentTab === 'notifications') {
+                    nonceName = 'pdf_builder_notifications_nonce';
                 }
                 
                 const nonceField = document.querySelector(`input[name="${nonceName}"]`);
@@ -3261,7 +3268,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        action: 'test_notifications',
+                        action: 'pdf_builder_test_notifications',
                         nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
                     })
                 })
