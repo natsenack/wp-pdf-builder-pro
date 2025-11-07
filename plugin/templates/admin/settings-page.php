@@ -2828,7 +2828,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     
     /* Exception pour les onglets qui utilisent des formulaires POST séparés */
     #roles .submit,
-    #templates .submit {
+    #templates .submit,
+    #notifications .submit {
         display: block;
     }
     
@@ -3058,6 +3059,9 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 const nonceField = document.querySelector(`input[name="${nonceName}"]`);
                 if (nonceField) {
                     formData.append(nonceName, nonceField.value);
+                    console.log(`🔐 Nonce found for ${currentTab}:`, nonceField.value);
+                } else {
+                    console.error(`❌ Nonce field not found for ${currentTab}: input[name="${nonceName}"]`);
                 }
                 
                 // Collecter les données selon l'onglet actif
