@@ -966,6 +966,11 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             </style>
             <h2>Gestion des Rôles et Permissions</h2>
             
+            <!-- Message de confirmation que l'onglet est chargé -->
+            <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+                ✅ Onglet Rôles chargé - Bouton de sauvegarde visible ci-dessous
+            </div>
+            
             <?php
             // Traitement de la sauvegarde des rôles autorisés
             if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
