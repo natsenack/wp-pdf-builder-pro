@@ -114,8 +114,8 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         ];
         $new_settings = array_merge($settings, $to_save);
         
-        // Check if settings actually changed
-        $settings_changed = !empty(array_diff_assoc($new_settings, $settings));
+        // Check if settings actually changed - use serialize for deep comparison
+        $settings_changed = serialize($new_settings) !== serialize($settings);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: About to save settings: ' . json_encode($to_save));
@@ -127,7 +127,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $result = update_option('pdf_builder_settings', $new_settings);
         
         // Debug: Always log the result for troubleshooting
-        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no'));
+        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no') . ' (result=' . var_export($result, true) . ', settings_changed=' . var_export($settings_changed, true) . ')');
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: About to save settings: ' . json_encode($to_save));
@@ -145,8 +145,10 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         }
         
         if ($result || !$settings_changed) {
+            error_log('DEBUG: Success condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false'));
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
+            error_log('DEBUG: Error condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false'));
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
         }
         $settings = get_option('pdf_builder_settings', []);
