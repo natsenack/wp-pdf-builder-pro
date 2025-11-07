@@ -1807,9 +1807,12 @@ window.addEventListener('load', function() {
                         $order_statuses = $status_manager->detect_woocommerce_statuses();
                     } else {
                         // Fallback vers l'ancienne méthode
-                        $woocommerce_available = function_exists('wc_get_order_statuses');
-                        if ($woocommerce_available) {
-                            $order_statuses = wc_get_order_statuses();
+                        if (class_exists('WooCommerce') && function_exists('wc_get_order_statuses')) {
+                            try {
+                                $order_statuses = call_user_func('wc_get_order_statuses');
+                            } catch (Exception $e) {
+                                $order_statuses = [];
+                            }
                         } else {
                             $order_statuses = [
                                 'wc-pending' => __('En attente', 'pdf-builder-pro'),
