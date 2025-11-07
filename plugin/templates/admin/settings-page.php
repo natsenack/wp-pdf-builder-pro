@@ -30,6 +30,14 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
             'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'compress_images' => isset($_POST['compress_images']),
+            'image_quality' => intval($_POST['image_quality'] ?? 85),
+            'optimize_for_web' => isset($_POST['optimize_for_web']),
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+            'limit_fps' => isset($_POST['limit_fps']),
+            'max_fps' => intval($_POST['max_fps'] ?? 60),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $to_save));
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
@@ -339,15 +347,128 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="performance" class="tab-content" style="display: none;">
-            <h2>Performance</h2>
+            <h2>Paramètres de Performance</h2>
+            
+            <?php
+            // Traitement du vidage du cache
+            if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce'], 'pdf_builder_clear_cache')) {
+                    delete_transients_by_prefix('pdf_builder_');
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès !</p></div>';
+                }
+            }
+            
+            function delete_transients_by_prefix($prefix) {
+                global $wpdb;
+                $wpdb->query($wpdb->prepare(
+                    "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+                    $wpdb->esc_like('_transient_' . $prefix) . '%'
+                ));
+            }
+            ?>
+            
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                    <th scope="row"><label for="cache_enabled">Cache Activé</label></th>
                     <td>
-                        <input type="checkbox" id="cache_enabled" name="cache_enabled" <?php checked($settings['cache_enabled'] ?? false); ?> />
+                        <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" 
+                               <?php checked($settings['cache_enabled'] ?? false); ?> />
+                        <p class="description">Active la mise en cache pour améliorer les performances</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="cache_ttl">TTL Cache (secondes)</label></th>
+                    <td>
+                        <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" 
+                               min="1" max="86400" step="60" />
+                        <p class="description">Durée de vie du cache en secondes (3600 = 1 heure, 86400 = 1 jour)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
+                    <td>
+                        <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
+                               <?php checked($settings['auto_save_enabled'] ?? false); ?> />
+                        <p class="description">Sauvegarde automatique pendant l'édition</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="auto_save_interval">Intervalle Auto-save (secondes)</label></th>
+                    <td>
+                        <input type="number" id="auto_save_interval" name="auto_save_interval" value="<?php echo intval($settings['auto_save_interval'] ?? 30); ?>" 
+                               min="10" max="300" step="10" />
+                        <p class="description">Intervalle entre chaque sauvegarde automatique</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="compress_images">Compresser les Images</label></th>
+                    <td>
+                        <input type="checkbox" id="compress_images" name="compress_images" value="1" 
+                               <?php checked($settings['compress_images'] ?? false); ?> />
+                        <p class="description">Compresse les images pour réduire la taille des PDFs</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="image_quality">Qualité des Images (%)</label></th>
+                    <td>
+                        <input type="range" id="image_quality" name="image_quality" value="<?php echo intval($settings['image_quality'] ?? 85); ?>" 
+                               min="30" max="100" step="5" style="width: 300px;" />
+                        <span id="image_quality_value" style="margin-left: 10px; font-weight: bold;">
+                            <?php echo intval($settings['image_quality'] ?? 85); ?>%
+                        </span>
+                        <p class="description">Plus faible = fichiers plus petits mais moins de détails</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="optimize_for_web">Optimiser pour le Web</label></th>
+                    <td>
+                        <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1" 
+                               <?php checked($settings['optimize_for_web'] ?? false); ?> />
+                        <p class="description">Réduit la taille du fichier pour une meilleure distribution web</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="enable_hardware_acceleration">Accélération Matérielle</label></th>
+                    <td>
+                        <input type="checkbox" id="enable_hardware_acceleration" name="enable_hardware_acceleration" value="1" 
+                               <?php checked($settings['enable_hardware_acceleration'] ?? false); ?> />
+                        <p class="description">Utilise les ressources GPU si disponibles</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="limit_fps">Limiter les FPS</label></th>
+                    <td>
+                        <input type="checkbox" id="limit_fps" name="limit_fps" value="1" 
+                               <?php checked($settings['limit_fps'] ?? false); ?> />
+                        <p class="description">Limite le rendu pour économiser les ressources</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="max_fps">FPS Maximum</label></th>
+                    <td>
+                        <input type="number" id="max_fps" name="max_fps" value="<?php echo intval($settings['max_fps'] ?? 60); ?>" 
+                               min="15" max="240" />
+                        <p class="description">Images par seconde maximales (15-240 FPS)</p>
                     </td>
                 </tr>
             </table>
+            
+            <!-- Section Nettoyage -->
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
+                <h3>Nettoyage & Maintenance</h3>
+                <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
+                
+                <form method="post" style="display: inline;">
+                    <?php wp_nonce_field('pdf_builder_clear_cache', 'pdf_builder_clear_cache_nonce'); ?>
+                    <button type="submit" name="clear_cache" class="button button-secondary">
+                        🗑️ Vider le Cache
+                    </button>
+                </form>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px;">
+                    <p style="margin: 0;"><strong>💡 Conseil :</strong> Videz le cache si vous rencontrez des problèmes de génération PDF ou si les changements n'apparaissent pas.</p>
+                </div>
+            </div>
         </div>
         
         <div id="pdf" class="tab-content" style="display: none;">
@@ -454,6 +575,16 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('nav-tab-active');
         });
     });
+    
+    // Slider pour la qualité des images
+    const imageQualitySlider = document.getElementById('image_quality');
+    const imageQualityValue = document.getElementById('image_quality_value');
+    
+    if (imageQualitySlider && imageQualityValue) {
+        imageQualitySlider.addEventListener('input', function() {
+            imageQualityValue.textContent = this.value + '%';
+        });
+    }
 });
 </script>
 
