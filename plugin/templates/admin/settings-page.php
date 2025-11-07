@@ -30,78 +30,8 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             $notices[] = '<div class="notice notice-error"><p><strong>⚠️</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
         }
         $to_save = [
-            'debug_mode' => isset($_POST['debug_mode']),
-            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'test_field' => sanitize_text_field($_POST['test_field'] ?? ''),
             'cache_enabled' => isset($_POST['cache_enabled']),
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
-            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-            'compress_images' => isset($_POST['compress_images']),
-            'image_quality' => intval($_POST['image_quality'] ?? 85),
-            'optimize_for_web' => isset($_POST['optimize_for_web']),
-            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
-            'limit_fps' => isset($_POST['limit_fps']),
-            'max_fps' => intval($_POST['max_fps'] ?? 60),
-            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
-            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
-            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name')),
-            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
-            'include_metadata' => isset($_POST['include_metadata']),
-            'embed_fonts' => isset($_POST['embed_fonts']),
-            'auto_crop' => isset($_POST['auto_crop']),
-            'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
-            // Canvas
-            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
-            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
-            'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
-            'container_background_color' => sanitize_text_field($_POST['container_background_color'] ?? '#f8f9fa'),
-            'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => intval($_POST['margin_top'] ?? 28),
-            'margin_right' => intval($_POST['margin_right'] ?? 28),
-            'margin_bottom' => intval($_POST['margin_bottom'] ?? 28),
-            'margin_left' => intval($_POST['margin_left'] ?? 10),
-            'show_grid' => isset($_POST['show_grid']),
-            'grid_size' => intval($_POST['grid_size'] ?? 10),
-            'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
-            'snap_to_grid' => isset($_POST['snap_to_grid']),
-            'snap_to_elements' => isset($_POST['snap_to_elements']),
-            'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
-            'show_guides' => isset($_POST['show_guides']),
-            'default_zoom' => intval($_POST['default_zoom'] ?? 100),
-            'zoom_step' => intval($_POST['zoom_step'] ?? 25),
-            'min_zoom' => intval($_POST['min_zoom'] ?? 10),
-            'max_zoom' => intval($_POST['max_zoom'] ?? 500),
-            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
-            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
-            'show_resize_handles' => isset($_POST['show_resize_handles']),
-            'handle_size' => intval($_POST['handle_size'] ?? 8),
-            'enable_rotation' => isset($_POST['enable_rotation']),
-            'rotation_step' => intval($_POST['rotation_step'] ?? 15),
-            'multi_select' => isset($_POST['multi_select']),
-            'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
-            'undo_levels' => intval($_POST['undo_levels'] ?? 50),
-            'redo_levels' => intval($_POST['redo_levels'] ?? 50),
-            'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
-            // Développeur
-            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-            'developer_enabled' => isset($_POST['developer_enabled']),
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['debug_php_errors']),
-            'debug_javascript' => isset($_POST['debug_javascript']),
-            'debug_ajax' => isset($_POST['debug_ajax']),
-            'debug_performance' => isset($_POST['debug_performance']),
-            'debug_database' => isset($_POST['debug_database']),
-            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['log_retention'] ?? 30),
-            'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
-            'enable_profiling' => isset($_POST['enable_profiling']),
-            'force_https' => isset($_POST['force_https']),
         ];
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
         if ($result) {
@@ -198,11 +128,15 @@ if (isset($_POST['clear_cache']) &&
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
         <div id="general" class="tab-content" style="display: block;">
-            <h2>Paramètres Généraux</h2>
-            <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
+            <h2>Test Form</h2>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="test_field">Test Field</label></th>
+                    <td>
+                        <input type="text" id="test_field" name="test_field" value="test value" />
+                    </td>
+                </tr>
                 <tr>
                     <th scope="row"><label for="cache_enabled">Cache activé</label></th>
                     <td>
@@ -213,17 +147,16 @@ if (isset($_POST['clear_cache']) &&
                             </label>
                             <span class="toggle-label">Activer le cache</span>
                         </div>
-                        <div class="toggle-description">Améliore les performances en mettant en cache les données</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-                    <td>
-                        <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
-                        <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                     </td>
                 </tr>
             </table>
+            
+            <p class="submit">
+                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
+                <button type="button" onclick="console.log('Form data:', new FormData(document.getElementById('settings-form'))); alert('Test submit');" class="button">Test Submit</button>
+            </p>
+        </div>
+    </form>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📄 Paramètres PDF</h3>
             <table class="form-table">
