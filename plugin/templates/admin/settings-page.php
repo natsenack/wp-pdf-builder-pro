@@ -2788,6 +2788,35 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     
     document.addEventListener('DOMContentLoaded', function() {
         
+        // Log des paramètres actuels au chargement
+        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
+        
+        // Récupérer les paramètres PHP et les logger
+        const currentSettings = {
+            developer_enabled: <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'true' : 'false'; ?>,
+            debug_javascript: <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>,
+            debug_php_errors: <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'true' : 'false'; ?>,
+            debug_ajax: <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'true' : 'false'; ?>,
+            debug_performance: <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'true' : 'false'; ?>,
+            debug_database: <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'true' : 'false'; ?>,
+            log_level: '<?php echo esc_js($settings['log_level'] ?? 'info'); ?>',
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('📊 Current settings loaded:', currentSettings);
+        
+        // Vérifier les valeurs des checkboxes au chargement
+        setTimeout(() => {
+            const debugJsCheckbox = document.getElementById('debug_javascript');
+            const debugPhpCheckbox = document.getElementById('debug_php_errors');
+            const developerEnabledCheckbox = document.getElementById('developer_enabled');
+            
+            console.log('🔍 Checkbox states at page load:');
+            console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
+            console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
+            console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+        }, 100);
+        
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
 
@@ -2931,6 +2960,17 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     console.log(`  ${key}: ${value}`);
                 }
                 
+                // Log spécifique pour les paramètres développeur
+                if (this.getAttribute('name') === 'submit_developpeur') {
+                    console.log('🔧 Developer settings being sent:');
+                    console.log('  developer_enabled:', formData.get('developer_enabled'));
+                    console.log('  debug_php_errors:', formData.get('debug_php_errors'));
+                    console.log('  debug_javascript:', formData.get('debug_javascript'));
+                    console.log('  debug_ajax:', formData.get('debug_ajax'));
+                    console.log('  debug_performance:', formData.get('debug_performance'));
+                    console.log('  debug_database:', formData.get('debug_database'));
+                }
+                
                 // Envoyer en AJAX via l'API WordPress
                 fetch(ajaxurl, {
                     method: 'POST',
@@ -2950,6 +2990,19 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                             saveStatus.className = 'save-status show success';
                         }
                         this.innerHTML = '✅ Sauvegardé !';
+                        
+                        // Log des valeurs après sauvegarde
+                        console.log('✅ Save successful, checking checkbox states...');
+                        setTimeout(() => {
+                            const debugJsCheckbox = document.getElementById('debug_javascript');
+                            const debugPhpCheckbox = document.getElementById('debug_php_errors');
+                            const developerEnabledCheckbox = document.getElementById('developer_enabled');
+                            
+                            console.log('🔍 Checkbox states immediately after save:');
+                            console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
+                            console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
+                            console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+                        }, 100);
                         
                         // Remettre à l'état normal après 2 secondes
                         setTimeout(() => {

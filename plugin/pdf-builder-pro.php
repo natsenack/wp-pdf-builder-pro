@@ -264,12 +264,24 @@ function pdf_builder_ajax_save_settings() {
             
             $new_settings = array_merge($settings, $dev_settings);
             
+            // Log des paramètres avant sauvegarde
+            error_log('DEBUG AJAX: About to save developer settings: ' . print_r($dev_settings, true));
+            error_log('DEBUG AJAX: Final merged settings: ' . print_r($new_settings, true));
+            
             // Si update_option échoue, supprimer et recréer l'option
             $result = update_option('pdf_builder_settings', $new_settings);
+            error_log('DEBUG AJAX: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+            
             if (!$result) {
                 delete_option('pdf_builder_settings');
                 $result = add_option('pdf_builder_settings', $new_settings);
+                error_log('DEBUG AJAX: add_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
             }
+            
+            // Vérifier immédiatement après sauvegarde
+            $verify_settings = get_option('pdf_builder_settings', []);
+            error_log('DEBUG AJAX: Settings immediately after save: ' . print_r($verify_settings, true));
+            error_log('DEBUG AJAX: debug_php_errors value: ' . (isset($verify_settings['debug_php_errors']) ? ($verify_settings['debug_php_errors'] ? 'true' : 'false') : 'NOT SET'));
             
             $notices[] = 'Paramètres développeur enregistrés avec succès';
             break;
