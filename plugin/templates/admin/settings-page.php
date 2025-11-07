@@ -2433,14 +2433,32 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         }
         
         // Gestion des boutons de soumission par onglet
-        const submitButtons = document.querySelectorAll('button[name="submit"]');
+        const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
         submitButtons.forEach(function(button) {
             button.addEventListener('click', function(e) {
+                const buttonName = this.getAttribute('name') || 'unnamed';
+                const buttonValue = this.value || 'no-value';
+                const form = this.closest('form');
+                const formData = new FormData(form);
+                const formDataObject = {};
+                for (let [key, value] of formData.entries()) {
+                    formDataObject[key] = value;
+                }
+
+                console.log('🔥 PDF Builder - Button clicked:', {
+                    buttonName: buttonName,
+                    buttonValue: buttonValue,
+                    formAction: form ? form.action : 'no-form',
+                    formMethod: form ? form.method : 'no-form',
+                    formData: formDataObject,
+                    timestamp: new Date().toISOString()
+                });
+
                 // Trouver l'onglet actif
                 const activeTab = document.querySelector('.nav-tab-active');
                 if (activeTab) {
                     const tabId = activeTab.getAttribute('data-tab');
-                    console.log('Submitting form for tab:', tabId);
+                    console.log('📋 Active tab:', tabId);
                 }
             });
         });
@@ -2449,6 +2467,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
         toggleSwitches.forEach(function(toggle) {
             toggle.addEventListener('change', function() {
+                const toggleId = this.id || 'unnamed-toggle';
+                const isChecked = this.checked;
+                console.log('🔄 Toggle changed:', {
+                    id: toggleId,
+                    checked: isChecked,
+                    timestamp: new Date().toISOString()
+                });
+
                 const label = this.parentElement.nextElementSibling;
                 if (label && label.classList.contains('toggle-label')) {
                     if (this.checked) {
@@ -2460,7 +2486,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     }
                 }
             });
-            
+
             // Initial state
             const label = toggle.parentElement.nextElementSibling;
             if (label && label.classList.contains('toggle-label')) {
@@ -2517,5 +2543,48 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 });
             });
         }
+
+        // Surveillance des messages de notification WordPress
+        const noticeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && node.classList.contains('notice')) {
+                            const isSuccess = node.classList.contains('notice-success');
+                            const isError = node.classList.contains('notice-error');
+                            const message = node.textContent.trim();
+
+                            console.log('📢 WordPress Notice:', {
+                                type: isSuccess ? 'success' : (isError ? 'error' : 'info'),
+                                message: message,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Observer les conteneurs de notices
+        const noticeContainers = document.querySelectorAll('.wrap > .notice, #wpbody-content > .notice');
+        noticeContainers.forEach(function(container) {
+            noticeObserver.observe(container, { childList: true });
+        });
+
+        // Log initial des notices présentes
+        const existingNotices = document.querySelectorAll('.notice');
+        existingNotices.forEach(function(notice) {
+            const isSuccess = notice.classList.contains('notice-success');
+            const isError = notice.classList.contains('notice-error');
+            const message = notice.textContent.trim();
+
+            console.log('📢 Existing Notice:', {
+                type: isSuccess ? 'success' : (isError ? 'error' : 'info'),
+                message: message,
+                timestamp: new Date().toISOString()
+            });
+        });
+
+        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
     });
 </script>
