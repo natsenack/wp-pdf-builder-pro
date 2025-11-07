@@ -745,34 +745,16 @@ class PDF_Builder_Predefined_Templates_Manager {
 
                 } else {
                     // Rendu simplifié pour les autres types d'éléments
-                    $color = '#e3f2fd';
-                    switch ($type) {
-                        case 'image': $color = '#fff3e0'; break;
-                        case 'table': $color = '#f3e5f5'; break;
-                        case 'rectangle': $color = '#fce4ec'; break;
-                        case 'customer_info': $color = '#e8f5e8'; break;
-                        case 'company_info': $color = '#e8f5e8'; break;
-                        case 'line': $color = '#f0f0f0'; break;
-                        default: $color = '#f5f5f5'; break;
-                    }
+                    $elementStyle = $this->get_element_preview_style($type);
 
-                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $color . '" stroke="#ccc" stroke-width="0.5" opacity="0.8"/>';
+                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $elementStyle['color'] . '" stroke="#ccc" stroke-width="0.5" opacity="0.8"/>';
 
-                    // Ajouter une icône ou texte pour identifier le type
-                    $iconText = '';
-                    switch ($type) {
-                        case 'image': $iconText = '🖼️'; break;
-                        case 'table': $iconText = '📊'; break;
-                        case 'customer_info': $iconText = '👤'; break;
-                        case 'company_info': $iconText = '🏢'; break;
-                        case 'line': $iconText = '━'; break;
-                    }
-
-                    if ($iconText) {
+                    // Ajouter une icône pour identifier le type
+                    if ($elementStyle['icon']) {
                         $iconSize = min($w, $h) * 0.4;
                         $iconX = $x + ($w / 2);
                         $iconY = $y + ($h / 2) + ($iconSize * 0.3);
-                        $svg .= '<text x="' . $iconX . '" y="' . $iconY . '" text-anchor="middle" font-size="' . $iconSize . '" fill="#666">' . $iconText . '</text>';
+                        $svg .= '<text x="' . $iconX . '" y="' . $iconY . '" text-anchor="middle" font-size="' . $iconSize . '" fill="#666">' . $elementStyle['icon'] . '</text>';
                     }
                 }
             }
@@ -781,6 +763,55 @@ class PDF_Builder_Predefined_Templates_Manager {
         $svg .= '</svg>';
 
         return $svg;
+    }
+
+    /**
+     * Obtenir le style d'aperçu pour un type d'élément
+     */
+    private function get_element_preview_style($type) {
+        $styles = [
+            // Médias
+            'image' => ['color' => '#fff3e0', 'icon' => '🖼️'],
+            'logo' => ['color' => '#fff3e0', 'icon' => '🏷️'],
+            'company_logo' => ['color' => '#fff3e0', 'icon' => '🏷️'],
+
+            // Données structurées
+            'table' => ['color' => '#f3e5f5', 'icon' => '📊'],
+            'product_table' => ['color' => '#f3e5f5', 'icon' => '📋'],
+            'customer_info' => ['color' => '#e8f5e8', 'icon' => '👤'],
+            'company_info' => ['color' => '#e8f5e8', 'icon' => '🏢'],
+
+            // Formulaires
+            'barcode' => ['color' => '#e1f5fe', 'icon' => '📱'],
+            'qr_code' => ['color' => '#e1f5fe', 'icon' => '📱'],
+            'signature' => ['color' => '#fff8e1', 'icon' => '✍️'],
+            'checkbox' => ['color' => '#f3e5f5', 'icon' => '☑️'],
+
+            // Champs de données
+            'date' => ['color' => '#e8f5e8', 'icon' => '📅'],
+            'number' => ['color' => '#e8f5e8', 'icon' => '🔢'],
+            'currency' => ['color' => '#e8f5e8', 'icon' => '💰'],
+            'email' => ['color' => '#e8f5e8', 'icon' => '📧'],
+            'phone' => ['color' => '#e8f5e8', 'icon' => '📞'],
+            'address' => ['color' => '#e8f5e8', 'icon' => '🏠'],
+            'order_number' => ['color' => '#e8f5e8', 'icon' => '🔢'],
+            'dynamic-text' => ['color' => '#e8f5e8', 'icon' => '📝'],
+
+            // Contenu
+            'mentions' => ['color' => '#fce4ec', 'icon' => '📄'],
+            'document_type' => ['color' => '#fce4ec', 'icon' => '📄'],
+
+            // Layout
+            'rectangle' => ['color' => '#fce4ec', 'icon' => '▭'],
+            'line' => ['color' => '#f0f0f0', 'icon' => '━'],
+            'header' => ['color' => '#fce4ec', 'icon' => '📄'],
+            'footer' => ['color' => '#fce4ec', 'icon' => '📄'],
+
+            // Défaut
+            'default' => ['color' => '#f5f5f5', 'icon' => '']
+        ];
+
+        return $styles[$type] ?? $styles['default'];
     }
 
     /**
