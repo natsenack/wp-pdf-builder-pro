@@ -164,9 +164,9 @@ if (isset($_POST['clear_cache']) &&
 }
 
 // Handle individual tab submissions
-if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
+if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_pdf_nonce'])) {
     error_log('DEBUG: PDF tab submission detected');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+    if (wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf_settings')) {
         error_log('DEBUG: PDF tab nonce verified');
         $pdf_settings = [
             'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
@@ -273,9 +273,9 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
     }
 }
 
-if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_settings_nonce'])) {
+if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres de performance" clicked');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+    if (wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance_settings')) {
         $performance_settings = [
             'auto_save_enabled' => isset($_POST['auto_save_enabled']),
             'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
@@ -627,7 +627,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         <div id="performance" class="tab-content" style="display: none;">
             <form method="post" action="">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
                 <input type="hidden" name="current_tab" value="performance">
                 <h2>Paramètres de Performance</h2>
             <table class="form-table">
@@ -755,7 +755,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         <div id="pdf" class="tab-content" style="display: none;">
             <form method="post" action="">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
                 <input type="hidden" name="current_tab" value="pdf">
                 <h2>Paramètres PDF</h2>
             
