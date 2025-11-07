@@ -698,15 +698,22 @@ window.addEventListener('load', function() {
             <form method="post" id="pdf-builder-settings-form">
 
             <style>
-            /* Styles pour la page des paramètres PDF Builder Pro */
+            /* Fix pour le footer WordPress qui apparaît au-dessus du contenu */
+            body.pdf-builder_page_pdf-builder-settings #wpfooter {
+                position: relative !important;
+                top: auto !important;
+                margin-top: 100px !important;
+                z-index: 1 !important;
+            }
             .pdf-builder-settings {
                 width: 100%;
                 margin-top: 20px;
                 clear: both;
                 position: relative;
                 z-index: 10;
-                padding-bottom: 200px;
-                min-height: calc(100vh - 200px);
+                padding-bottom: 100px;
+                min-height: calc(100vh - 120px);
+                margin-bottom: 60px;
             }
 
             .pdf-builder-settings .nav-tab-wrapper {
