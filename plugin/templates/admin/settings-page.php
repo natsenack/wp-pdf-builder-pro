@@ -461,9 +461,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="compress_images">Compresser les Images</label></th>
                     <td>
-                        <input type="checkbox" id="compress_images" name="compress_images" value="1" 
-                               <?php checked($settings['compress_images'] ?? false); ?> />
-                        <p class="description">Compresse les images pour réduire la taille des PDFs</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="compress_images" name="compress_images" value="1" 
+                                       <?php checked($settings['compress_images'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Compression d'images</span>
+                        </div>
+                        <div class="toggle-description">Compresse les images pour réduire la taille des PDFs</div>
                     </td>
                 </tr>
                 <tr>
@@ -480,25 +486,43 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="optimize_for_web">Optimiser pour le Web</label></th>
                     <td>
-                        <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1" 
-                               <?php checked($settings['optimize_for_web'] ?? false); ?> />
-                        <p class="description">Réduit la taille du fichier pour une meilleure distribution web</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1" 
+                                       <?php checked($settings['optimize_for_web'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Optimisation web</span>
+                        </div>
+                        <div class="toggle-description">Réduit la taille du fichier pour une meilleure distribution web</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="enable_hardware_acceleration">Accélération Matérielle</label></th>
                     <td>
-                        <input type="checkbox" id="enable_hardware_acceleration" name="enable_hardware_acceleration" value="1" 
-                               <?php checked($settings['enable_hardware_acceleration'] ?? false); ?> />
-                        <p class="description">Utilise les ressources GPU si disponibles</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enable_hardware_acceleration" name="enable_hardware_acceleration" value="1" 
+                                       <?php checked($settings['enable_hardware_acceleration'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">GPU activé</span>
+                        </div>
+                        <div class="toggle-description">Utilise les ressources GPU si disponibles</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="limit_fps">Limiter les FPS</label></th>
                     <td>
-                        <input type="checkbox" id="limit_fps" name="limit_fps" value="1" 
-                               <?php checked($settings['limit_fps'] ?? false); ?> />
-                        <p class="description">Limite le rendu pour économiser les ressources</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="limit_fps" name="limit_fps" value="1" 
+                                       <?php checked($settings['limit_fps'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Limitation FPS</span>
+                        </div>
+                        <div class="toggle-description">Limite le rendu pour économiser les ressources</div>
                     </td>
                 </tr>
                 <tr>
@@ -596,17 +620,29 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="embed_fonts">Intégrer les Polices</label></th>
                     <td>
-                        <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1" 
-                               <?php checked($settings['embed_fonts'] ?? false); ?> />
-                        <p class="description">Inclut les polices personnalisées dans le PDF (fichiers plus gros)</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1" 
+                                       <?php checked($settings['embed_fonts'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Polices intégrées</span>
+                        </div>
+                        <div class="toggle-description">Inclut les polices personnalisées dans le PDF (fichiers plus gros)</div>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="auto_crop">Recadrage Automatique</label></th>
                     <td>
-                        <input type="checkbox" id="auto_crop" name="auto_crop" value="1" 
-                               <?php checked($settings['auto_crop'] ?? false); ?> />
-                        <p class="description">Supprime les marges blanches automatiquement</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto_crop" name="auto_crop" value="1" 
+                                       <?php checked($settings['auto_crop'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Recadrage auto</span>
+                        </div>
+                        <div class="toggle-description">Supprime les marges blanches automatiquement</div>
                     </td>
                 </tr>
                 <tr>
@@ -922,9 +958,15 @@ if (isset($_POST['clear_cache']) &&
                     <tr>
                         <th scope="row"><label for="email_notifications_enabled">Notifications Email</label></th>
                         <td>
-                            <input type="checkbox" id="email_notifications_enabled" name="email_notifications_enabled" value="1" 
-                                   <?php checked($email_notifications); ?> />
-                            <p class="description">Active les notifications par email pour les erreurs et événements importants</p>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="email_notifications_enabled" name="email_notifications_enabled" value="1" 
+                                           <?php checked($email_notifications); ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Notifications email</span>
+                            </div>
+                            <div class="toggle-description">Active les notifications par email pour les erreurs et événements importants</div>
                         </td>
                     </tr>
                     <tr>
@@ -954,22 +996,40 @@ if (isset($_POST['clear_cache']) &&
                     <tr>
                         <th scope="row"><label for="notification_on_generation">Génération PDF</label></th>
                         <td>
-                            <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1" />
-                            <p class="description">Notifier à chaque génération de PDF réussie</p>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Génération réussie</span>
+                            </div>
+                            <div class="toggle-description">Notifier à chaque génération de PDF réussie</div>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="notification_on_error">Erreurs</label></th>
                         <td>
-                            <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1" />
-                            <p class="description">Notifier en cas d'erreur lors de la génération</p>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Erreurs de génération</span>
+                            </div>
+                            <div class="toggle-description">Notifier en cas d'erreur lors de la génération</div>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="notification_on_deletion">Suppression</label></th>
                         <td>
-                            <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1" />
-                            <p class="description">Notifier lors de la suppression de templates</p>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Suppression templates</span>
+                            </div>
+                            <div class="toggle-description">Notifier lors de la suppression de templates</div>
                         </td>
                     </tr>
                 </table>
@@ -1118,9 +1178,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="show_margins">Afficher les Marges</label></th>
                     <td>
-                        <input type="checkbox" id="show_margins" name="show_margins" value="1" 
-                               <?php checked($settings['show_margins'] ?? false); ?> />
-                        <p class="description">Affiche les lignes de marge sur le canvas</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show_margins" name="show_margins" value="1" 
+                                       <?php checked($settings['show_margins'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Marges visibles</span>
+                        </div>
+                        <div class="toggle-description">Affiche les lignes de marge sur le canvas</div>
                     </td>
                 </tr>
                 <tr>
@@ -1157,9 +1223,15 @@ if (isset($_POST['clear_cache']) &&
                 <tr>
                     <th scope="row"><label for="show_grid">Afficher Grille</label></th>
                     <td>
-                        <input type="checkbox" id="show_grid" name="show_grid" value="1" 
-                               <?php checked($settings['show_grid'] ?? false); ?> />
-                        <p class="description">Affiche une grille de référence</p>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show_grid" name="show_grid" value="1" 
+                                       <?php checked($settings['show_grid'] ?? false); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Grille visible</span>
+                        </div>
+                        <div class="toggle-description">Affiche une grille de référence</div>
                     </td>
                 </tr>
                 <tr>
