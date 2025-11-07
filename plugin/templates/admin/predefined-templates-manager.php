@@ -502,6 +502,7 @@ class PDF_Builder_Predefined_Templates_Manager {
             }
 
             // Récupération des données (POST en priorité, GET en fallback pour gros JSON)
+            $old_slug = sanitize_key($_POST['old_slug'] ?? $_GET['old_slug'] ?? '');
             $slug = sanitize_key($_POST['slug'] ?? $_GET['slug'] ?? '');
             $name = sanitize_text_field($_POST['name'] ?? $_GET['name'] ?? '');
             $category = sanitize_key($_POST['category'] ?? $_GET['category'] ?? '');
@@ -512,6 +513,23 @@ class PDF_Builder_Predefined_Templates_Manager {
             // Validation
             if (empty($slug) || empty($name) || empty($category) || empty($json_config)) {
                 wp_send_json_error('Tous les champs obligatoires doivent être remplis');
+            }
+
+            // Vérifier si c'est un renommage (changement de slug)
+            $is_rename = !empty($old_slug) && $old_slug !== $slug;
+
+            if ($is_rename) {
+                // Vérifier que l'ancien fichier existe
+                $old_file_path = $this->templates_dir . $old_slug . '.json';
+                if (!file_exists($old_file_path)) {
+                    wp_send_json_error('Le modèle original n\'existe pas');
+                }
+
+                // Vérifier que le nouveau slug n'est pas déjà utilisé
+                $new_file_path = $this->templates_dir . $slug . '.json';
+                if (file_exists($new_file_path)) {
+                    wp_send_json_error('Un modèle avec ce slug existe déjà');
+                }
             }
 
             // Validation du JSON
@@ -535,6 +553,19 @@ class PDF_Builder_Predefined_Templates_Manager {
             $template_data['created_at'] = current_time('mysql');
             $template_data['updated_at'] = current_time('mysql');
 
+            // Gestion du renommage si nécessaire
+            if ($is_rename) {
+                $old_file_path = $this->templates_dir . $old_slug . '.json';
+                $new_file_path = $this->templates_dir . $slug . '.json';
+
+                // Renommer le fichier
+                if (!rename($old_file_path, $new_file_path)) {
+                    wp_send_json_error('Erreur lors du renommage du fichier');
+                }
+
+                error_log('PDF Builder: Template renamed from ' . $old_slug . ' to ' . $slug);
+            }
+
             // Sauvegarde dans le fichier
             $file_path = $this->templates_dir . $slug . '.json';
             $result = file_put_contents($file_path, wp_json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -545,7 +576,8 @@ class PDF_Builder_Predefined_Templates_Manager {
 
             wp_send_json_success([
                 'message' => 'Modèle sauvegardé avec succès',
-                'slug' => $slug
+                'slug' => $slug,
+                'renamed' => $is_rename ? $old_slug : null
             ]);
 
         } catch (Exception $e) {

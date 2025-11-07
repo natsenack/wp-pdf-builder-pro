@@ -227,7 +227,7 @@
         });
     }
     function populateForm(data) {
-        $('#template-slug').val(data.slug).prop('disabled', true);
+        $('#template-slug').val(data.slug).prop('disabled', false);
         $('#template-name').val(data.name);
         $('#template-category').val(data.category);
         $('#template-description').val(data.description);
@@ -266,6 +266,12 @@
                 hideLoadingState();
 
                 if (response.success) {
+                    // Mettre à jour le slug actuel si le modèle a été renommé
+                    if (response.data.renamed) {
+                        currentEditingSlug = response.data.slug;
+                        console.log('Template renamed from', response.data.renamed, 'to', response.data.slug);
+                    }
+
                     showSuccessMessage(pdfBuilderPredefined.strings.saveSuccess);
                     hideTemplateEditor();
                     refreshTemplatesList();
@@ -287,6 +293,7 @@
         const jsonValue = codeMirrorEditor ? codeMirrorEditor.getValue() : $('#template-json').val();
 
         return {
+            old_slug: currentEditingSlug, // Slug original pour gérer le renommage
             slug: $('#template-slug').val().trim(),
             name: $('#template-name').val().trim(),
             category: $('#template-category').val(),
