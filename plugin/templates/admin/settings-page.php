@@ -180,7 +180,7 @@ if (isset($_POST['clear_cache']) &&
         </a>
     </div>
     
-    <form method="post" class="settings-form" style="padding-bottom: 100px;">
+    <form method="post" class="settings-form">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
         <div id="general" class="tab-content" style="display: block;">
@@ -1906,7 +1906,6 @@ if (isset($_POST['clear_cache']) &&
 <style>
     .nav-tab-wrapper {
         border-bottom: 2px solid #e1e1e1;
-        margin: 25px 0 30px 0;
         padding: 0;
         background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
         border-radius: 8px 8px 0 0;
