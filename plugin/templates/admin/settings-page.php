@@ -2950,29 +2950,42 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 this.innerHTML = '⏳ Sauvegarde...';
                 
                 // Collecter les données du formulaire
-                const formData = new FormData(form);
-                formData.append('action', 'pdf_builder_save_settings'); // Action AJAX WordPress
-                formData.append('current_tab', this.getAttribute('name').replace('submit_', '')); // Onglet actif
+                let formData;
                 
-                // Collecter spécifiquement les paramètres développeur si on est dans l'onglet développeur
                 if (this.getAttribute('name') === 'submit_developpeur') {
-                    // Collect developer settings
-                    const developerSettings = {};
+                    // Pour l'onglet développeur, construire FormData manuellement pour éviter les conflits
+                    formData = new FormData();
+                    
+                    // Ajouter l'action et l'onglet
+                    formData.append('action', 'pdf_builder_save_settings');
+                    formData.append('current_tab', 'developpeur');
+                    
+                    // Ajouter le nonce
+                    const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+                    if (nonceField) {
+                        formData.append('pdf_builder_settings_nonce', nonceField.value);
+                    }
+                    
+                    // Collecter spécifiquement les paramètres développeur
                     document.querySelectorAll('#developpeur input[type="checkbox"]').forEach(checkbox => {
                         const key = checkbox.name;
                         if (key) {
-                            developerSettings[key] = checkbox.checked ? '1' : '0';
                             formData.append(key, checkbox.checked ? '1' : '0');
                         }
                     });
                     
-                    // Also collect text inputs in developer tab
+                    // Collecter les inputs texte du développeur
                     document.querySelectorAll('#developpeur input[type="password"], #developpeur input[type="text"]').forEach(input => {
                         const key = input.name;
                         if (key) {
                             formData.append(key, input.value);
                         }
                     });
+                } else {
+                    // Pour les autres onglets, utiliser le formulaire normal
+                    formData = new FormData(form);
+                    formData.append('action', 'pdf_builder_save_settings');
+                    formData.append('current_tab', this.getAttribute('name').replace('submit_', ''));
                 }
                 
                 // Debug: vérifier que ajax_save est bien ajouté
