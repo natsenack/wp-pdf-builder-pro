@@ -29,8 +29,8 @@ if (!defined('ABSPATH')) {
             </button>
         </div>
 
-        <!-- Section de filtrage - Désactivée car les modèles prédéfinis sont maintenant dans le modal -->
-        <!-- <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+        <!-- Section de filtrage -->
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
                 <button class="filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
                 <button class="filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
             </div>
-        </div> -->
+        </div>
 
         <div id="templates-list" style="margin-top: 20px;">
 
