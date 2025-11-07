@@ -240,6 +240,10 @@ function pdf_builder_ajax_save_settings() {
                 'enable_hardware_acceleration' => !empty($_POST['enable_hardware_acceleration']) && $_POST['enable_hardware_acceleration'] === '1',
                 'limit_fps' => !empty($_POST['limit_fps']) && $_POST['limit_fps'] === '1',
                 'max_fps' => intval($_POST['max_fps'] ?? 60),
+                // Paramètres PDF dans l'onglet général
+                'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+                'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+                'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $general_settings));
             $notices[] = 'Paramètres généraux enregistrés avec succès';
