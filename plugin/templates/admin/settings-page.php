@@ -682,11 +682,13 @@ window.addEventListener('load', function() {
     </script>
 
     <?php
-    // Afficher les messages de notification stockés
+    // Afficher les messages de notification stockés via admin_notices
     if (!empty($admin_notices)) {
-        foreach ($admin_notices as $notice) {
-            echo $notice;
-        }
+        add_action('admin_notices', function() use ($admin_notices) {
+            foreach ($admin_notices as $notice) {
+                echo $notice;
+            }
+        });
     }
     ?>
 
@@ -698,13 +700,7 @@ window.addEventListener('load', function() {
             <form method="post" id="pdf-builder-settings-form">
 
             <style>
-            /* Fix pour le footer WordPress qui apparaît au-dessus du contenu */
-            body.pdf-builder_page_pdf-builder-settings #wpfooter {
-                position: relative !important;
-                top: auto !important;
-                margin-top: 100px !important;
-                z-index: 1 !important;
-            }
+            /* Styles pour la page des paramètres PDF Builder Pro */
             .pdf-builder-settings {
                 width: 100%;
                 margin-top: 20px;
@@ -813,25 +809,6 @@ window.addEventListener('load', function() {
                     width: 100%;
                     padding-top: 0;
                 }
-            }
-
-            /* Fix for footer positioning - ensure content appears above footer */
-            .wrap {
-                position: relative;
-                z-index: 1;
-                clear: both;
-            }
-
-            .wrap::after {
-                content: "";
-                display: block;
-                clear: both;
-            }
-
-            /* Ensure notifications don't interfere with footer */
-            .notice, .updated, .error {
-                position: relative !important;
-                z-index: 10 !important;
             }
             </style>
 
@@ -2380,47 +2357,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var form = document.querySelector('form[method="post"]');
     var originalButtonValue = submitBtn ? submitBtn.value : '';
     
-    // Créer un conteneur de notification
-    var notificationContainer = document.createElement('div');
-    notificationContainer.id = 'pdf-builder-notification';
-    notificationContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px; min-width: 300px; padding: 0;';
-    document.body.appendChild(notificationContainer);
-    
-    // Fonction pour afficher une notification
+    // Fonction pour afficher une notification (utilise le système WordPress)
     function showNotification(message, type) {
-        var icon = type === 'success' ? '✓' : '✗';
-        var bgColor = type === 'success' ? '#d4edda' : '#f8d7da';
-        var borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
-        var textColor = type === 'success' ? '#155724' : '#721c24';
+        // Créer une notification WordPress standard
+        var noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
+        var noticeHTML = '<div class="notice ' + noticeClass + ' is-dismissible"><p>' + message + '</p></div>';
         
-        var notification = document.createElement('div');
-        notification.style.cssText = 'background: ' + bgColor + '; border: 1px solid ' + borderColor + '; border-radius: 4px; padding: 12px 16px; margin-bottom: 10px; color: ' + textColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out;';
-        notification.innerHTML = '<strong>' + icon + ' ' + message + '</strong>';
-        
-        notificationContainer.insertBefore(notification, notificationContainer.firstChild);
-        
-        // Supprimer la notification après 5 secondes
-        setTimeout(function() {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(function() {
-                notification.remove();
-            }, 300);
-        }, 5000);
+        // L'ajouter au conteneur de notifications WordPress
+        var noticesContainer = document.querySelector('.wrap h1') || document.querySelector('.wrap');
+        if (noticesContainer && noticesContainer.parentNode) {
+            noticesContainer.parentNode.insertBefore(
+                document.createRange().createContextualFragment(noticeHTML),
+                noticesContainer
+            );
+        }
     }
-    
-    // Ajouter les styles d'animation
-    var style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(400px); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
     
     // Gérer le clic du bouton submit
     if (submitBtn) {
@@ -2978,7 +2929,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })(jQuery);
 </script>
 
-
+    </div> <!-- Fermeture du wrap -->
 
 <?php
 // Fin du fichier
