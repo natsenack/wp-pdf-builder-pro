@@ -30,6 +30,11 @@ class PDF_Builder_Predefined_Templates_Manager {
         add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajax_delete_predefined_template']);
         add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajax_generate_template_preview']);
         add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajax_refresh_nonce']);
+
+        // Paramètres développeur
+        add_action('admin_init', [$this, 'register_developer_settings']);
+        add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajax_developer_auth']);
+        add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajax_developer_logout']);
     }
 
     /**
@@ -124,8 +129,162 @@ class PDF_Builder_Predefined_Templates_Manager {
                         alert("Erreur lors du décodage du JSON depuis l\'URL: " + e.message);
                     }
                 }
+
+                // Gestion de la déconnexion développeur
+                $("#developer-logout-btn").on("click", function(e) {
+                    e.preventDefault();
+                    if (confirm("<?php _e('Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?', 'pdf-builder-pro'); ?>")) {
+                        $.ajax({
+                            url: ajaxurl,
+                            type: "POST",
+                            data: {
+                                action: "pdf_builder_developer_logout"
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    location.reload();
+                                } else {
+                                    alert("<?php _e('Erreur lors de la déconnexion', 'pdf-builder-pro'); ?>");
+                                }
+                            },
+                            error: function() {
+                                alert("<?php _e('Erreur lors de la déconnexion', 'pdf-builder-pro'); ?>");
+                            }
+                        });
+                    }
+                });
             });
         ');
+    }
+
+    /**
+     * Enregistrer les paramètres développeur
+     */
+    public function register_developer_settings() {
+        // Ajouter une section dans les paramètres généraux
+        add_settings_section(
+            'pdf_builder_developer_section',
+            __('🔧 PDF Builder - Mode Développeur', 'pdf-builder-pro'),
+            [$this, 'developer_settings_section_callback'],
+            'general'
+        );
+
+        // Paramètre pour activer le mode développeur
+        register_setting('general', 'pdf_builder_developer_enabled', [
+            'type' => 'boolean',
+            'default' => false,
+            'sanitize_callback' => 'wp_validate_boolean'
+        ]);
+
+        add_settings_field(
+            'pdf_builder_developer_enabled',
+            __('Activer le mode développeur', 'pdf-builder-pro'),
+            [$this, 'developer_enabled_field_callback'],
+            'general',
+            'pdf_builder_developer_section'
+        );
+
+        // Paramètre pour le mot de passe développeur
+        register_setting('general', 'pdf_builder_developer_password', [
+            'type' => 'string',
+            'default' => '',
+            'sanitize_callback' => 'sanitize_text_field'
+        ]);
+
+        add_settings_field(
+            'pdf_builder_developer_password',
+            __('Mot de passe développeur', 'pdf-builder-pro'),
+            [$this, 'developer_password_field_callback'],
+            'general',
+            'pdf_builder_developer_section'
+        );
+    }
+
+    /**
+     * Callback pour la section développeur
+     */
+    public function developer_settings_section_callback() {
+        echo '<p>' . __('Configurez l\'accès au mode développeur pour la gestion des modèles prédéfinis.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour le champ activation développeur
+     */
+    public function developer_enabled_field_callback() {
+        $enabled = get_option('pdf_builder_developer_enabled', false);
+        echo '<input type="checkbox" name="pdf_builder_developer_enabled" value="1" ' . checked(1, $enabled, false) . ' />';
+        echo '<p class="description">' . __('Cochez pour activer l\'accès aux outils de développement.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour le champ mot de passe développeur
+     */
+    public function developer_password_field_callback() {
+        $password = get_option('pdf_builder_developer_password', '');
+        echo '<input type="password" name="pdf_builder_developer_password" value="' . esc_attr($password) . '" class="regular-text" />';
+        echo '<p class="description">' . __('Mot de passe requis pour accéder aux outils de développement.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Vérifier si l'utilisateur est authentifié en mode développeur
+     */
+    private function is_developer_authenticated() {
+        if (!get_option('pdf_builder_developer_enabled', false)) {
+            return false;
+        }
+
+        // Vérifier la session développeur
+        $session_key = 'pdf_builder_developer_auth_' . session_id();
+        return isset($_SESSION[$session_key]) && $_SESSION[$session_key] === true;
+    }
+
+    /**
+     * AJAX - Authentification développeur
+     */
+    public function ajax_developer_auth() {
+        try {
+            if (!get_option('pdf_builder_developer_enabled', false)) {
+                wp_send_json_error('Mode développeur désactivé');
+            }
+
+            $password = sanitize_text_field($_POST['password'] ?? '');
+            $stored_password = get_option('pdf_builder_developer_password', '');
+
+            if (empty($password) || $password !== $stored_password) {
+                wp_send_json_error('Mot de passe incorrect');
+            }
+
+            // Démarrer la session si nécessaire
+            if (!session_id()) {
+                session_start();
+            }
+
+            // Authentifier pour cette session
+            $session_key = 'pdf_builder_developer_auth_' . session_id();
+            $_SESSION[$session_key] = true;
+
+            wp_send_json_success(['message' => 'Authentification réussie']);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX - Déconnexion développeur
+     */
+    public function ajax_developer_logout() {
+        try {
+            if (session_id()) {
+                $session_key = 'pdf_builder_developer_auth_' . session_id();
+                unset($_SESSION[$session_key]);
+            }
+
+            wp_send_json_success(['message' => 'Déconnexion réussie']);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -134,6 +293,24 @@ class PDF_Builder_Predefined_Templates_Manager {
     public function render_admin_page() {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+        }
+
+        // Vérifier l'authentification développeur
+        if (!get_option('pdf_builder_developer_enabled', false)) {
+            ?>
+            <div class="wrap">
+                <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
+                <div class="notice notice-warning">
+                    <p><?php _e('Le mode développeur n\'est pas activé. Allez dans <strong>Réglages → Général</strong> pour l\'activer.', 'pdf-builder-pro'); ?></p>
+                </div>
+            </div>
+            <?php
+            return;
+        }
+
+        if (!$this->is_developer_authenticated()) {
+            $this->render_developer_login_form();
+            return;
         }
 
         $templates = $this->get_predefined_templates();
@@ -271,7 +448,12 @@ class PDF_Builder_Predefined_Templates_Manager {
         .modal-body { padding: 20px; }
         </style>
         <div class="wrap">
-            <h1><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="margin: 0;"><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
+                <button id="developer-logout-btn" class="button button-secondary" style="background: #dc3545; border-color: #dc3545; color: white;">
+                    🚪 <?php _e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
+                </button>
+            </div>
 
             <div class="pdf-builder-predefined-container">
                 <!-- Liste des modèles -->
@@ -423,6 +605,143 @@ class PDF_Builder_Predefined_Templates_Manager {
                 </div>
             </div>
         </div>
+        <?php
+    }
+
+    /**
+     * Rendre le formulaire de connexion développeur
+     */
+    private function render_developer_login_form() {
+        ?>
+        <style>
+        .developer-login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .developer-login-container h1 {
+            color: #23282d;
+            margin-bottom: 10px;
+        }
+        .developer-login-container .description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .developer-login-form .form-row {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .developer-login-form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #23282d;
+        }
+        .developer-login-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .developer-login-form .button {
+            width: 100%;
+            padding: 12px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .developer-login-form .button:hover {
+            background: #005a87;
+        }
+        .login-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .login-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .login-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        </style>
+
+        <div class="wrap">
+            <div class="developer-login-container">
+                <h1><?php _e('🔐 Accès Développeur', 'pdf-builder-pro'); ?></h1>
+                <p class="description">
+                    <?php _e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
+                </p>
+
+                <form id="developer-login-form" class="developer-login-form">
+                    <div class="form-row">
+                        <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
+                        <input type="password" id="developer-password" name="password" required
+                               placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" />
+                    </div>
+
+                    <button type="submit" class="button button-primary">
+                        🔓 <?php _e('Se connecter', 'pdf-builder-pro'); ?>
+                    </button>
+                </form>
+
+                <div id="login-message" class="login-message"></div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('#developer-login-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const password = $('#developer-password').val();
+                const $message = $('#login-message');
+                const $button = $(this).find('button');
+                const originalText = $button.text();
+
+                $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
+                $message.hide();
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_developer_auth',
+                        password: password
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $message.removeClass('error').addClass('success').text(response.data.message).show();
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            $message.removeClass('success').addClass('error').text(response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
+                            $button.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function() {
+                        $message.removeClass('success').addClass('error').text('<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
+                        $button.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+        });
+        </script>
         <?php
     }
 
