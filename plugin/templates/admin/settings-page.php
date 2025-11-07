@@ -3059,9 +3059,10 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 const nonceField = document.querySelector(`input[name="${nonceName}"]`);
                 if (nonceField) {
                     formData.append(nonceName, nonceField.value);
-                    console.log(`🔐 Nonce found for ${currentTab}:`, nonceField.value);
+                    console.log(`🔐 Nonce found for ${currentTab}:`, nonceField.value, `Field name: ${nonceName}`);
                 } else {
                     console.error(`❌ Nonce field not found for ${currentTab}: input[name="${nonceName}"]`);
+                    console.log('Available nonce fields:', document.querySelectorAll('input[name*="nonce"]'));
                 }
                 
                 // Collecter les données selon l'onglet actif

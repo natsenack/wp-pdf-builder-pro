@@ -3335,7 +3335,8 @@ class PDF_Builder_Admin {
 
         if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_name)) {
             error_log("PDF Builder: Nonce verification failed for tab $current_tab. Expected nonce: $nonce_name, Field: $nonce_field, Value: " . ($_POST[$nonce_field] ?? 'NOT_SET'));
-            wp_send_json_error('Nonce invalide pour onglet ' . $current_tab);
+            error_log("PDF Builder: Available POST keys: " . implode(', ', array_keys($_POST)));
+            wp_send_json_error('Nonce invalide pour onglet ' . $current_tab . ' - Debug: ' . $nonce_name . ' / ' . ($_POST[$nonce_field] ?? 'NOT_SET'));
             return;
         }
 
