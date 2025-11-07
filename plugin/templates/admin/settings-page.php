@@ -190,7 +190,7 @@ if (isset($_POST['clear_cache']) &&
             
             <p class="submit">
                 <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-                <button type="button" onclick="console.log('Form data:', new FormData(document.getElementById('settings-form'))); alert('Test submit');" class="button">Test Submit</button>
+                <button type="button" onclick="console.log('Form found:', document.getElementById('settings-form')); console.log('Form elements:', document.getElementById('settings-form').elements); console.log('Form data length:', document.getElementById('settings-form').elements.length); alert('Check console');" class="button">Debug Form</button>
             </p>
         </div>
         
