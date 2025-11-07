@@ -106,13 +106,15 @@ class PDF_Builder_Notification_Manager {
         }
 
         $to = $this->get_admin_email();
-        
+
         // Vérifier si SMTP est activé
         if (get_option('pdf_builder_smtp_enabled', false)) {
+            error_log("PDF Builder: Using SMTP for notification - $subject");
             return $this->send_smtp_email($to, $subject, $message);
         }
-        
+
         // Utiliser wp_mail() par défaut
+        error_log("PDF Builder: Using wp_mail() for notification - $subject");
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
             'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>'
@@ -136,9 +138,7 @@ class PDF_Builder_Notification_Manager {
         }
 
         return $result;
-    }
-
-    /**
+    }    /**
      * Notifier la génération réussie d'un PDF
      */
     public function notify_pdf_generated($order_id, $template_id) {
@@ -267,6 +267,12 @@ class PDF_Builder_Notification_Manager {
             $phpmailer->Username = $smtp_username;
             $phpmailer->Password = $smtp_password;
 
+            // Debug PHPMailer
+            $phpmailer->SMTPDebug = 2;
+            $phpmailer->Debugoutput = function($str, $level) {
+                error_log("PHPMailer Debug [$level]: $str");
+            };
+
             // Configuration du chiffrement
             if ($smtp_encryption === 'ssl') {
                 $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
@@ -285,6 +291,9 @@ class PDF_Builder_Notification_Manager {
             $phpmailer->Subject = $subject;
             $phpmailer->Body = nl2br($message);
             $phpmailer->AltBody = strip_tags($message);
+
+            // Log de configuration
+            error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
 
             // Envoyer l'email
             $result = $phpmailer->send();
