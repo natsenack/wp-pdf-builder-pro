@@ -126,8 +126,12 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         
         $result = update_option('pdf_builder_settings', $new_settings);
         
+        // Check if the option was actually saved by verifying it
+        $saved_settings = get_option('pdf_builder_settings', []);
+        $actually_saved = !empty($saved_settings) && serialize($saved_settings) === serialize($new_settings);
+        
         // Debug: Always log the result for troubleshooting
-        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no') . ' (result=' . var_export($result, true) . ', settings_changed=' . var_export($settings_changed, true) . ')');
+        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no') . ', actually_saved: ' . ($actually_saved ? 'yes' : 'no') . ' (result=' . var_export($result, true) . ', settings_changed=' . var_export($settings_changed, true) . ')');
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: About to save settings: ' . json_encode($to_save));
@@ -144,11 +148,12 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             }
         }
         
-        if ($result || !$settings_changed) {
-            error_log('DEBUG: Success condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false'));
+        error_log('DEBUG: About to check success condition');
+        if ($result || !$settings_changed || $actually_saved) {
+            error_log('DEBUG: Success condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false') . ', actually_saved: ' . ($actually_saved ? 'true' : 'false'));
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
-            error_log('DEBUG: Error condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false'));
+            error_log('DEBUG: Error condition met - result: ' . ($result ? 'true' : 'false') . ', changed: ' . ($settings_changed ? 'true' : 'false') . ', actually_saved: ' . ($actually_saved ? 'true' : 'false'));
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
         }
         $settings = get_option('pdf_builder_settings', []);
