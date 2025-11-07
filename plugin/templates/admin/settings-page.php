@@ -890,8 +890,185 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="notifications" class="tab-content" style="display: none;">
-            <h2>Notifications</h2>
-            <p>Paramètres de notification...</p>
+            <h2>Paramètres de Notifications</h2>
+            
+            <?php
+            // Traitement de la sauvegarde des notifications
+            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_notifications')) {
+                    $notification_settings = [
+                        'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
+                        'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
+                        'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'error'),
+                        'notification_on_generation' => isset($_POST['notification_on_generation']),
+                        'notification_on_error' => isset($_POST['notification_on_error']),
+                        'notification_on_deletion' => isset($_POST['notification_on_deletion']),
+                    ];
+                    
+                    foreach ($notification_settings as $key => $value) {
+                        update_option('pdf_builder_' . $key, $value);
+                    }
+                    
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notifications sauvegardés.</p></div>';
+                }
+            }
+            
+            $email_notifications = get_option('pdf_builder_email_notifications_enabled', false);
+            $admin_email = get_option('pdf_builder_admin_email', get_option('admin_email'));
+            $notification_level = get_option('pdf_builder_notification_log_level', 'error');
+            ?>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Notifications par Email</h3>
+            
+            <form method="post">
+                <?php wp_nonce_field('pdf_builder_notifications', 'pdf_builder_notifications_nonce'); ?>
+                
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="email_notifications_enabled">Notifications Email</label></th>
+                        <td>
+                            <input type="checkbox" id="email_notifications_enabled" name="email_notifications_enabled" value="1" 
+                                   <?php checked($email_notifications); ?> />
+                            <p class="description">Active les notifications par email pour les erreurs et événements importants</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="admin_email">Email Administrateur</label></th>
+                        <td>
+                            <input type="email" id="admin_email" name="admin_email" value="<?php echo esc_attr($admin_email); ?>" 
+                                   class="regular-text" />
+                            <p class="description">Adresse email pour recevoir les notifications système</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="notification_log_level">Niveau de Notification</label></th>
+                        <td>
+                            <select id="notification_log_level" name="notification_log_level">
+                                <option value="error" <?php selected($notification_level, 'error'); ?>>Erreurs uniquement</option>
+                                <option value="warning" <?php selected($notification_level, 'warning'); ?>>Erreurs et avertissements</option>
+                                <option value="info" <?php selected($notification_level, 'info'); ?>>Tous les événements importants</option>
+                            </select>
+                            <p class="description">Détermine quels événements déclencheront une notification email</p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Événements de Notification</h3>
+                
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="notification_on_generation">Génération PDF</label></th>
+                        <td>
+                            <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1" />
+                            <p class="description">Notifier à chaque génération de PDF réussie</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="notification_on_error">Erreurs</label></th>
+                        <td>
+                            <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1" />
+                            <p class="description">Notifier en cas d'erreur lors de la génération</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="notification_on_deletion">Suppression</label></th>
+                        <td>
+                            <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1" />
+                            <p class="description">Notifier lors de la suppression de templates</p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <p class="submit">
+                    <button type="submit" name="submit_notifications" class="button button-primary">
+                        Sauvegarder les Notifications
+                    </button>
+                </p>
+            </form>
+            
+            <!-- Informations sur les notifications -->
+            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                <h3 style="margin-top: 0; color: #003d66;">📧 Informations sur les Notifications</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
+                    <li><strong>Email actuel :</strong> <?php echo esc_html($admin_email); ?></li>
+                    <li>Les notifications sont envoyées aux administrateurs autorisés</li>
+                    <li>Les emails peuvent être personnalisés via des filtres WordPress</li>
+                    <li>Les logs de notification sont conservés pendant 30 jours</li>
+                </ul>
+            </div>
+            
+            <!-- Exemples de notifications -->
+            <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0;">💡 Exemples de Notifications</h3>
+                <p><strong>Erreur :</strong> "PDF generation failed for order #1234: Memory limit exceeded"</p>
+                <p><strong>Avertissement :</strong> "Large template detected: file size 45MB, consider optimizing"</p>
+                <p><strong>Info :</strong> "Successfully generated 150 PDFs in batch process (12.5s)"</p>
+            </div>
+            
+            <!-- Tableau des types de notifications -->
+            <div style="margin-top: 30px;">
+                <h3>📋 Types de Notifications</h3>
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Type</th>
+                            <th style="width: 35%;">Description</th>
+                            <th style="width: 20%; text-align: center;">Niveau</th>
+                            <th style="width: 20%; text-align: center;">Activé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Génération Réussie</strong></td>
+                            <td>Un PDF a été généré avec succès</td>
+                            <td style="text-align: center;">Info</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_generation')); ?> />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Erreur</strong></td>
+                            <td>Une erreur s'est produite lors de la génération</td>
+                            <td style="text-align: center; color: #dc3232;">Erreur</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_error')); ?> />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Avertissement</strong></td>
+                            <td>Dépassement de limite de ressources</td>
+                            <td style="text-align: center; color: #ffb900;">Avertissement</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled checked />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Suppression</strong></td>
+                            <td>Un template a été supprimé</td>
+                            <td style="text-align: center;">Info</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_deletion')); ?> />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maintenance</strong></td>
+                            <td>Mises à jour et maintenance du système</td>
+                            <td style="text-align: center;">Info</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled checked />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Activation License</strong></td>
+                            <td>Licence activée ou expirée</td>
+                            <td style="text-align: center;">Info</td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" disabled checked />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div id="canvas" class="tab-content" style="display: none;">
