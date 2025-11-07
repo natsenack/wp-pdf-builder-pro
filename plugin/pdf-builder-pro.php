@@ -140,6 +140,9 @@ add_action('admin_init', 'pdf_builder_load_for_ajax');
 add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
+// Actions AJAX pour la sauvegarde des paramètres
+add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings');
+
 /**
  * Charger le plugin pour les requêtes AJAX
  */
@@ -194,4 +197,77 @@ function pdf_builder_handle_pdf_downloads() {
             }
         }
     }
+}
+
+/**
+ * Gérer la sauvegarde AJAX des paramètres
+ */
+function pdf_builder_ajax_save_settings() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_die(json_encode([
+            'success' => false,
+            'message' => 'Permissions insuffisantes'
+        ]));
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['pdf_builder_settings_nonce']) || 
+        !wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        wp_die(json_encode([
+            'success' => false,
+            'message' => 'Nonce invalide'
+        ]));
+    }
+
+    $notices = [];
+    $settings = get_option('pdf_builder_settings', []);
+
+    // Traiter selon le bouton cliqué
+    if (isset($_POST['submit'])) {
+        // Sauvegarde général
+        $general_settings = [
+            'cache_enabled' => isset($_POST['cache_enabled']),
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'compress_images' => isset($_POST['compress_images']),
+            'image_quality' => intval($_POST['image_quality'] ?? 85),
+            'optimize_for_web' => isset($_POST['optimize_for_web']),
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+            'limit_fps' => isset($_POST['limit_fps']),
+            'max_fps' => intval($_POST['max_fps'] ?? 60),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $general_settings));
+        $notices[] = 'Paramètres généraux enregistrés avec succès';
+    }
+
+    if (isset($_POST['submit_developpeur'])) {
+        // Sauvegarde développeur
+        $dev_settings = [
+            'developer_enabled' => isset($_POST['developer_enabled']),
+            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+            'debug_php_errors' => isset($_POST['debug_php_errors']),
+            'debug_javascript' => isset($_POST['debug_javascript']),
+            'debug_ajax' => isset($_POST['debug_ajax']),
+            'debug_performance' => isset($_POST['debug_performance']),
+            'debug_database' => isset($_POST['debug_database']),
+            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['log_retention'] ?? 30),
+            'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
+            'enable_profiling' => isset($_POST['enable_profiling']),
+            'force_https' => isset($_POST['force_https']),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+        $notices[] = 'Paramètres développeur enregistrés avec succès';
+    }
+
+    // Autres onglets peuvent être ajoutés ici...
+
+    wp_die(json_encode([
+        'success' => !empty($notices),
+        'message' => !empty($notices) ? implode(', ', $notices) : 'Aucune modification sauvegardée',
+        'notices' => $notices
+    ]));
 }

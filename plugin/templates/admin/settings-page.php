@@ -321,27 +321,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         $settings = get_option('pdf_builder_settings', []);
     }
 }
-
-// Gestion des requêtes AJAX
-if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
-    error_log('DEBUG AJAX: AJAX request detected with ajax_save=' . $_POST['ajax_save']);
-    error_log('DEBUG AJAX: POST data: ' . print_r($_POST, true));
-    
-    // C'est une requête AJAX, retourner une réponse JSON
-    $response = [
-        'success' => !empty($notices),
-        'message' => !empty($notices) ? 'Paramètres sauvegardés avec succès' : 'Erreur lors de la sauvegarde',
-        'notices' => $notices
-    ];
-    
-    error_log('DEBUG AJAX: Sending JSON response: ' . json_encode($response));
-    error_log('DEBUG AJAX: About to call wp_die() with JSON response');
-    header('Content-Type: application/json');
-    wp_die(json_encode($response)); // Utiliser wp_die au lieu de echo + exit
-} else {
-    error_log('DEBUG AJAX: Not an AJAX request. ajax_save=' . (isset($_POST['ajax_save']) ? $_POST['ajax_save'] : 'not set'));
-    error_log('DEBUG AJAX: HTTP_X_REQUESTED_WITH=' . (isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : 'not set'));
-}
 ?>  
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
@@ -2588,6 +2567,11 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
 </style>
 
 <script>
+    // Définir ajaxurl si pas déjà défini
+    if (typeof ajaxurl === 'undefined') {
+        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         
         const tabs = document.querySelectorAll('.nav-tab');
@@ -2724,7 +2708,7 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
                 
                 // Collecter les données du formulaire
                 const formData = new FormData(form);
-                formData.append('ajax_save', '1'); // Marquer comme requête AJAX
+                formData.append('action', 'pdf_builder_save_settings'); // Action AJAX WordPress
                 
                 // Debug: vérifier que ajax_save est bien ajouté
                 console.log('📤 AJAX FormData contents:');
@@ -2732,11 +2716,13 @@ if (isset($_POST['ajax_save']) && $_POST['ajax_save'] === '1') {
                     console.log(`  ${key}: ${value}`);
                 }
                 
-                // Envoyer en AJAX
-                fetch(window.location.href, {
+                // Envoyer en AJAX via l'API WordPress
+                fetch(ajaxurl, {
                     method: 'POST',
-                    body: formData
-                    // Plus besoin du header X-Requested-With
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 })
                 .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
