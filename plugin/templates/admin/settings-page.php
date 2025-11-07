@@ -21,14 +21,7 @@ $settings = get_option('pdf_builder_settings', []);
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    // Debug: Log form submission with more details
-    error_log('PDF Builder: ===== FORM SUBMISSION START =====');
-    error_log('PDF Builder: Form submitted, POST count: ' . count($_POST));
-    error_log('PDF Builder: Nonce present: ' . (isset($_POST['pdf_builder_settings_nonce']) ? 'YES' : 'NO'));
-    error_log('PDF Builder: Submit button: ' . (isset($_POST['submit']) ? 'YES' : 'NO'));
-
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        error_log('PDF Builder: Nonce verified successfully');
         // Check for max_input_vars limit
         $max_input_vars = ini_get('max_input_vars');
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
@@ -111,10 +104,8 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
         if ($result) {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
-            error_log('PDF Builder: Settings saved successfully - END OF PROCESS');
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres.</p></div>';
-            error_log('PDF Builder: Failed to save settings - update_option returned false');
         }
         $settings = get_option('pdf_builder_settings', []);
     } else {
@@ -1019,7 +1010,8 @@ if (isset($_POST['clear_cache']) &&
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1" />
+                                    <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1" 
+                                           <?php checked(get_option('pdf_builder_notification_on_generation')); ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">Génération réussie</span>
@@ -1032,7 +1024,8 @@ if (isset($_POST['clear_cache']) &&
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1" />
+                                    <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1" 
+                                           <?php checked(get_option('pdf_builder_notification_on_error')); ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">Erreurs de génération</span>
@@ -1045,7 +1038,8 @@ if (isset($_POST['clear_cache']) &&
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1" />
+                                    <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1" 
+                                           <?php checked(get_option('pdf_builder_notification_on_deletion')); ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">Suppression templates</span>
@@ -1058,6 +1052,9 @@ if (isset($_POST['clear_cache']) &&
                 <p class="submit">
                     <button type="submit" name="submit_notifications" class="button button-primary">
                         Sauvegarder les Notifications
+                    </button>
+                    <button type="button" id="test-notifications" class="button button-secondary" style="margin-left: 10px;">
+                        🧪 Tester les Notifications
                     </button>
                 </p>
             </form>
@@ -2437,8 +2434,6 @@ if (isset($_POST['clear_cache']) &&
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('PDF Builder: ===== JAVASCRIPT LOADED =====');
-        console.log('PDF Builder: DOM Content Loaded');
         
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
@@ -2613,55 +2608,6 @@ if (isset($_POST['clear_cache']) &&
         initToggles();
         initPasswordToggle();
         
-        // Debug form submission
-        const settingsForm = document.getElementById('settings-form');
-        if (settingsForm) {
-            console.log('PDF Builder: Form element found');
-            
-            settingsForm.addEventListener('submit', function(e) {
-                console.log('PDF Builder: ===== FORM SUBMIT EVENT =====');
-                console.log('PDF Builder: Form submitted with', this.elements.length, 'elements');
-                console.log('PDF Builder: Form method:', this.method);
-                console.log('PDF Builder: Form action:', this.action);
-                
-                // Check if submit button is present
-                const submitBtn = this.querySelector('button[name="submit"]');
-                console.log('PDF Builder: Submit button found:', !!submitBtn);
-                
-                // Check nonce
-                const nonceField = this.querySelector('input[name="pdf_builder_settings_nonce"]');
-                console.log('PDF Builder: Nonce field found:', !!nonceField);
-                console.log('PDF Builder: Nonce value:', nonceField ? nonceField.value : 'NONE');
-                
-                // Don't prevent default, just log
-            });
-            
-            // Also log on click of submit button
-            // Try to find button in form first, then globally
-            let submitBtn = settingsForm.querySelector('button[name="submit"]');
-            if (!submitBtn) {
-                console.log('PDF Builder: Button not found in form, searching globally');
-                submitBtn = document.querySelector('button[name="submit"]');
-            }
-            
-            console.log('PDF Builder: Submit button element:', submitBtn);
-            console.log('PDF Builder: Submit button found:', !!submitBtn);
-            
-            if (submitBtn) {
-                console.log('PDF Builder: Attaching click listener to submit button');
-                submitBtn.addEventListener('click', function(e) {
-                    console.log('PDF Builder: ===== SUBMIT BUTTON CLICKED =====');
-                    console.log('PDF Builder: Button text:', this.textContent);
-                    console.log('PDF Builder: Button name:', this.name);
-                    console.log('PDF Builder: Button type:', this.type);
-                });
-            } else {
-                console.error('PDF Builder: Submit button NOT found anywhere!');
-            }
-        } else {
-            console.error('PDF Builder: Form element NOT found!');
-        }
-        
         // Gestion des rôles
         const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
         const selectAllBtn = document.getElementById('select-all-roles');
@@ -2696,6 +2642,45 @@ if (isset($_POST['clear_cache']) &&
         
         if (rolesSelect) {
             rolesSelect.addEventListener('change', updateCount);
+        }
+        // Gestion du bouton de test des notifications
+        const testNotificationsBtn = document.getElementById('test-notifications');
+        if (testNotificationsBtn) {
+            testNotificationsBtn.addEventListener('click', function() {
+                if (confirm('Voulez-vous envoyer un email de test des notifications ?')) {
+                    // Désactiver le bouton pendant l'envoi
+                    this.disabled = true;
+                    this.textContent = 'Envoi en cours...';
+
+                    // Envoyer la requête AJAX
+                    fetch(ajaxurl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            action: 'pdf_builder_test_notifications',
+                            nonce: document.querySelector('input[name="pdf_builder_notifications_nonce"]')?.value || ''
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Email de test envoyé avec succès ! Vérifiez votre boîte mail.');
+                        } else {
+                            alert('Erreur lors de l\'envoi du test : ' + (data.data || 'Erreur inconnue'));
+                        }
+                    })
+                    .catch(error => {
+                        alert('Erreur réseau : ' + error.message);
+                    })
+                    .finally(() => {
+                        // Réactiver le bouton
+                        this.disabled = false;
+                        this.textContent = '🧪 Tester les Notifications';
+                    });
+                }
+            });
         }
     });
 </script>

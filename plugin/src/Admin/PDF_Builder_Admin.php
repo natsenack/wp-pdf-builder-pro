@@ -361,6 +361,9 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']);
         // Hook AJAX pour toggle debug mode principal
         add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
+        
+        // Test notifications handler
+        add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
     }
 
     /**
@@ -4682,6 +4685,51 @@ class PDF_Builder_Admin {
                 __('Mode debug principal désactivé', 'pdf-builder-pro'),
             'debug_enabled' => $debug_enabled
         ]);
+    }
+
+    /**
+     * AJAX handler pour tester les notifications
+     */
+    public function ajax_test_notifications()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications')) {
+                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Tester l'envoi de notification
+            if (class_exists('PDF_Builder_Notification_Manager')) {
+                $notification_manager = PDF_Builder_Notification_Manager::get_instance();
+                $result = $notification_manager->send_test_notification();
+
+                if ($result) {
+                    wp_send_json_success([
+                        'message' => __('Email de test envoyé avec succès', 'pdf-builder-pro')
+                    ]);
+                } else {
+                    wp_send_json_error([
+                        'message' => __('Échec de l\'envoi de l\'email de test', 'pdf-builder-pro')
+                    ]);
+                }
+            } else {
+                wp_send_json_error([
+                    'message' => __('Gestionnaire de notifications non disponible', 'pdf-builder-pro')
+                ]);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error([
+                'message' => __('Erreur lors du test : ', 'pdf-builder-pro') . $e->getMessage()
+            ]);
+        }
     }
 
     /**

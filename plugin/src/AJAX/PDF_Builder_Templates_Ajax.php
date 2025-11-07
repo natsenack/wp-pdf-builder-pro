@@ -396,6 +396,15 @@ class PDF_Builder_Templates_Ajax {
                 wp_send_json_error('Erreur lors de la suppression du template');
             }
 
+            // Récupérer le nom du template pour la notification
+            $template_name = $wpdb->get_var($wpdb->prepare(
+                "SELECT name FROM $table_templates WHERE id = %d",
+                $template_id
+            ));
+
+            // Déclencher le hook de suppression de template
+            do_action('pdf_builder_template_deleted', $template_id, $template_name ?: 'Template #' . $template_id);
+
             wp_send_json_success(array(
                 'message' => 'Template supprimé avec succès'
             ));

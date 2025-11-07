@@ -51,6 +51,7 @@ class PDF_Builder_Core
             'PDF_Builder_Feature_Manager.php',
             'PDF_Builder_License_Manager.php',
             'PDF_Builder_Logger.php',
+            'PDF_Builder_Notification_Manager.php',
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
@@ -117,6 +118,9 @@ class PDF_Builder_Core
 
         // Initialiser les dossiers au hook WordPress 'init' (plus tardif)
         add_action('init', [$this, 'initialize_directories']);
+
+        // Initialiser le gestionnaire de notifications
+        add_action('init', [$this, 'initialize_notification_manager']);
     }
 
     /**
@@ -158,6 +162,15 @@ class PDF_Builder_Core
                 }
             }
         }
+    }
+
+    /**
+     * Initialiser le gestionnaire de notifications
+     */
+    public function initialize_notification_manager()
+    {
+        // Initialiser le gestionnaire de notifications (Singleton)
+        PDF_Builder_Notification_Manager::get_instance();
     }
 
     /**

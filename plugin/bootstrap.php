@@ -41,6 +41,7 @@ function pdf_builder_load_core() {
         'PDF_Builder_Feature_Manager.php',
         'PDF_Builder_License_Manager.php',
         'PDF_Builder_Logger.php',
+        'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_PDF_Generator.php',
         'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Settings_Manager.php',

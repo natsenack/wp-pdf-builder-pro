@@ -386,7 +386,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer un PDF avec Dompdf pour un rendu fidèle
      */
-    public function generate_pdf($html_content, $filename = 'document.pdf')
+    public function generate_pdf($html_content, $filename = 'document.pdf', $context = [])
     {
         try {
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
@@ -400,8 +400,10 @@ class PDF_Builder_PDF_Generator
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
 
-            return $this->save_pdf($dompdf, $filename);
+            return $this->save_pdf($dompdf, $filename, $context);
         } catch (Exception $e) {
+            // Déclencher le hook d'erreur de génération PDF
+            do_action('pdf_builder_pdf_generation_error', $context['order_id'] ?? 0, $e->getMessage());
 
             return null;
         }
@@ -414,7 +416,7 @@ class PDF_Builder_PDF_Generator
      * @param string $filename Nom du fichier
      * @return string|false Chemin du fichier ou false en cas d'erreur
      */
-    public function save_pdf($dompdf, $filename = 'document.pdf')
+    public function save_pdf($dompdf, $filename = 'document.pdf', $context = [])
     {
         try {
             $upload_dir = wp_upload_dir();
@@ -430,6 +432,9 @@ class PDF_Builder_PDF_Generator
             if (file_put_contents($pdf_path, $pdf_content) === false) {
                 throw new Exception('Impossible de sauvegarder le fichier PDF');
             }
+
+            // Déclencher le hook de succès de génération PDF
+            do_action('pdf_builder_pdf_generated', $context['order_id'] ?? 0, $context['template_id'] ?? 0);
 
             return $pdf_path;
         } catch (Exception $e) {
