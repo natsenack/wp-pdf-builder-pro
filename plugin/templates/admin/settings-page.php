@@ -371,6 +371,84 @@ window.addEventListener('load', function() {
     window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
     window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
     
+    // DEBUG: Logs pour analyser le problème du footer
+    console.log('🚀 PDF Builder Settings - Debug Start');
+    
+    // Vérifier la structure après un délai
+    setTimeout(function() {
+        console.log('📋 Structure Analysis:');
+        
+        // Vérifier le wrap
+        const wrap = document.querySelector('.wrap');
+        console.log('🔍 Wrap element:', wrap);
+        if (wrap) {
+            console.log('   - Wrap dimensions:', wrap.offsetWidth + 'x' + wrap.offsetHeight);
+            console.log('   - Wrap position:', getComputedStyle(wrap).position);
+            console.log('   - Wrap z-index:', getComputedStyle(wrap).zIndex);
+        }
+        
+        // Vérifier le conteneur principal
+        const settingsTabs = document.getElementById('pdf-builder-settings-tabs');
+        console.log('🔍 Settings tabs container:', settingsTabs);
+        if (settingsTabs) {
+            console.log('   - Container dimensions:', settingsTabs.offsetWidth + 'x' + settingsTabs.offsetHeight);
+            console.log('   - Container position:', getComputedStyle(settingsTabs).position);
+            console.log('   - Container z-index:', getComputedStyle(settingsTabs).zIndex);
+            console.log('   - Container min-height:', getComputedStyle(settingsTabs).minHeight);
+            console.log('   - Container padding-bottom:', getComputedStyle(settingsTabs).paddingBottom);
+        }
+        
+        // Vérifier le footer WordPress
+        const wpFooter = document.getElementById('wpfooter');
+        console.log('🔍 WordPress Footer:', wpFooter);
+        if (wpFooter) {
+            console.log('   - Footer dimensions:', wpFooter.offsetWidth + 'x' + wpFooter.offsetHeight);
+            console.log('   - Footer position:', getComputedStyle(wpFooter).position);
+            console.log('   - Footer z-index:', getComputedStyle(wpFooter).zIndex);
+            console.log('   - Footer display:', getComputedStyle(wpFooter).display);
+            console.log('   - Footer top:', getComputedStyle(wpFooter).top);
+        } else {
+            // Essayer d'autres sélecteurs pour le footer
+            const footerSelectors = ['#wpfooter', '#footer', '.wp-footer', 'footer'];
+            for (const selector of footerSelectors) {
+                const footer = document.querySelector(selector);
+                if (footer) {
+                    console.log('🔍 Footer found with selector:', selector, footer);
+                    console.log('   - Footer dimensions:', footer.offsetWidth + 'x' + footer.offsetHeight);
+                    console.log('   - Footer position:', getComputedStyle(footer).position);
+                    console.log('   - Footer z-index:', getComputedStyle(footer).zIndex);
+                    break;
+                }
+            }
+        }
+        
+        // Vérifier les éléments fixed/absolute
+        const fixedElements = document.querySelectorAll('[style*="position: fixed"], [style*="position: absolute"]');
+        console.log('🔍 Fixed/Absolute elements found:', fixedElements.length);
+        fixedElements.forEach((el, index) => {
+            console.log(`   ${index + 1}. Element:`, el.tagName + (el.id ? '#' + el.id : '') + (el.className ? '.' + el.className : ''));
+            console.log('      - Position:', getComputedStyle(el).position);
+            console.log('      - Z-index:', getComputedStyle(el).zIndex);
+            console.log('      - Top:', getComputedStyle(el).top);
+        });
+        
+        // Vérifier les notifications
+        const notifications = document.querySelectorAll('.notice, .updated, .error');
+        console.log('🔍 Admin notices:', notifications.length);
+        notifications.forEach((notice, index) => {
+            console.log(`   ${index + 1}. Notice:`, notice.className);
+            console.log('      - Position:', getComputedStyle(notice).position);
+            console.log('      - Z-index:', getComputedStyle(notice).zIndex);
+        });
+        
+        console.log('📏 Document dimensions:');
+        console.log('   - Document height:', document.documentElement.scrollHeight);
+        console.log('   - Window height:', window.innerHeight);
+        console.log('   - Body height:', document.body.offsetHeight);
+        
+        console.log('✅ PDF Builder Settings - Debug Complete');
+    }, 1000);
+    
     // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
     if (typeof wp === 'undefined') {
         // Définir un objet wp complet pour éviter les erreurs de plugins tiers
@@ -2788,9 +2866,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         var message = newState ?
                             '<?php _e('Mode debug principal activé ! Les logs détaillés seront maintenant enregistrés.', 'pdf-builder-pro'); ?>' :
-                            '<?php _e('Mode debug principal désactivé ! Les logs détaillés sont maintenant masqués.', 'pdf-builder-pro'); ?>';
-                        showMaintenanceStatus(message, 'success');
-                    } else {
                             '<?php _e('Mode debug principal désactivé ! Les logs détaillés sont maintenant masqués.', 'pdf-builder-pro'); ?>';
                         showMaintenanceStatus(message, 'success');
                     } else {
