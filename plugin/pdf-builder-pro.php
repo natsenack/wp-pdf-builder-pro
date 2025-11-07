@@ -211,9 +211,33 @@ function pdf_builder_ajax_save_settings() {
         ]));
     }
 
-    // Vérifier le nonce
-    if (!isset($_POST['pdf_builder_settings_nonce']) || 
-        !wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+    // Déterminer l'onglet actif pour vérifier le bon nonce
+    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+
+    // Vérifier le nonce selon l'onglet
+    $nonce_valid = false;
+    switch ($current_tab) {
+        case 'pdf':
+            if (isset($_POST['pdf_builder_pdf_nonce']) && 
+                wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf_settings')) {
+                $nonce_valid = true;
+            }
+            break;
+        case 'performance':
+            if (isset($_POST['pdf_builder_performance_nonce']) && 
+                wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance_settings')) {
+                $nonce_valid = true;
+            }
+            break;
+        default:
+            if (isset($_POST['pdf_builder_settings_nonce']) && 
+                wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+                $nonce_valid = true;
+            }
+            break;
+    }
+
+    if (!$nonce_valid) {
         wp_die(json_encode([
             'success' => false,
             'message' => 'Nonce invalide'
@@ -307,11 +331,14 @@ function pdf_builder_ajax_save_settings() {
 
         case 'pdf':
             $pdf_settings = [
-                'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-                'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-                'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+                'include_metadata' => !empty($_POST['include_metadata']) && $_POST['include_metadata'] === '1',
                 'embed_fonts' => !empty($_POST['embed_fonts']) && $_POST['embed_fonts'] === '1',
-                'compress_pdf' => !empty($_POST['compress_pdf']) && $_POST['compress_pdf'] === '1',
+                'auto_crop' => !empty($_POST['auto_crop']) && $_POST['auto_crop'] === '1',
+                'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+                'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+                'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? ''),
+                'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
+                'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
             $notices[] = 'Paramètres PDF enregistrés avec succès';
