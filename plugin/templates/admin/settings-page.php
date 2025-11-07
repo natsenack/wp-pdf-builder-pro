@@ -152,8 +152,190 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="licence" class="tab-content" style="display: none;">
-            <h2>Licence</h2>
-            <p>Configuration de licence...</p>
+            <h2>Gestion de la Licence</h2>
+            
+            <?php
+            $license_status = get_option('pdf_builder_license_status', 'free');
+            $license_key = get_option('pdf_builder_license_key', '');
+            $license_expires = get_option('pdf_builder_license_expires', '');
+            $is_premium = $license_status !== 'free' && $license_status !== 'expired';
+            
+            // Traitement activation licence
+            if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
+                    $new_key = sanitize_text_field($_POST['license_key'] ?? '');
+                    if (!empty($new_key)) {
+                        update_option('pdf_builder_license_key', $new_key);
+                        update_option('pdf_builder_license_status', 'active');
+                        update_option('pdf_builder_license_expires', date('Y-m-d', strtotime('+1 year')));
+                        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence activée avec succès !</p></div>';
+                        $is_premium = true;
+                        $license_key = $new_key;
+                        $license_status = 'active';
+                    }
+                }
+            }
+            
+            // Traitement désactivation licence
+            if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
+                    delete_option('pdf_builder_license_key');
+                    delete_option('pdf_builder_license_expires');
+                    update_option('pdf_builder_license_status', 'free');
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée.</p></div>';
+                    $is_premium = false;
+                    $license_key = '';
+                    $license_status = 'free';
+                }
+            }
+            ?>
+            
+            <!-- Statut de la licence -->
+            <div style="background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0;">Statut de la Licence</h3>
+                
+                <div style="display: inline-block; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-bottom: 15px; color: white;
+                            background: <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>;">
+                    <?php echo $is_premium ? '✓ Premium Activé' : '○ Gratuit'; ?>
+                </div>
+                
+                <?php if ($is_premium): ?>
+                    <div style="margin-bottom: 15px;">
+                        <p><strong>Clé de licence :</strong> <?php echo substr($license_key, 0, 4) . '****' . substr($license_key, -4); ?></p>
+                        <?php if ($license_expires): ?>
+                            <p><strong>Expire le :</strong> <?php echo esc_html($license_expires); ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: white;">🔓 Passez à la version Premium</h4>
+                        <p style="margin: 0 0 15px 0;">Débloquez toutes les fonctionnalités avancées et créez des PDFs professionnels sans limites !</p>
+                        <a href="https://pdfbuilderpro.com/pricing" class="button button-primary" target="_blank" 
+                           style="background: white; color: #667eea; border: none; font-weight: bold;">
+                            Voir les tarifs →
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Activation/Désactivation -->
+            <?php if (!$is_premium): ?>
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h3>Activer une Licence Premium</h3>
+                <p>Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.</p>
+                
+                <form method="post">
+                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="license_key">Clé de licence</label></th>
+                            <td>
+                                <input type="text" id="license_key" name="license_key" class="regular-text" 
+                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px;">
+                                <p class="description">Vous pouvez trouver votre clé dans votre compte client.</p>
+                            </td>
+                        </tr>
+                    </table>
+                    <p class="submit">
+                        <button type="submit" name="activate_license" class="button button-primary">
+                            Activer la licence
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <?php else: ?>
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h3>Gestion de la Licence</h3>
+                <p>Votre licence premium est active. Vous pouvez la désactiver pour la transférer vers un autre site.</p>
+                
+                <form method="post">
+                    <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                    <p class="submit">
+                        <button type="submit" name="deactivate_license" class="button button-secondary"
+                                onclick="return confirm('Êtes-vous sûr de vouloir désactiver cette licence ?');">
+                            Désactiver la licence
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Comparaison des fonctionnalités -->
+            <div style="margin-top: 30px;">
+                <h3>Comparaison des Fonctionnalités</h3>
+                <table class="wp-list-table widefat fixed striped" style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Fonctionnalité</th>
+                            <th style="width: 15%; text-align: center;">Gratuit</th>
+                            <th style="width: 15%; text-align: center;">Premium</th>
+                            <th style="width: 30%;">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Templates de base</strong></td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>4 templates prédéfinis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Éléments standards</strong></td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Texte, image, ligne, rectangle</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intégration WooCommerce</strong></td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Variables de commande</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Génération PDF</strong></td>
+                            <td style="text-align: center; color: #ffb900;">50/mois</td>
+                            <td style="text-align: center; color: #46b450;">✓ Illimitée</td>
+                            <td>Création de documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Templates avancés</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Bibliothèque complète</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Éléments premium</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Codes-barres, QR codes, graphiques</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Génération en masse</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Création multiple de documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API développeur</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Accès complet à l'API REST</td>
+                        </tr>
+                        <tr>
+                            <td><strong>White-label</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>Rebranding complet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Support prioritaire</strong></td>
+                            <td style="text-align: center; color: #dc3232;">✗</td>
+                            <td style="text-align: center; color: #46b450;">✓</td>
+                            <td>24/7 avec SLA garanti</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div id="performance" class="tab-content" style="display: none;">
