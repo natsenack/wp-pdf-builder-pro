@@ -2733,10 +2733,17 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 formData.append('action', 'pdf_builder_save_settings');
                 formData.append('current_tab', currentTab);
                 
-                // Ajouter le nonce
-                const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+                // Ajouter le nonce selon l'onglet
+                let nonceName = 'pdf_builder_settings_nonce';
+                if (currentTab === 'pdf') {
+                    nonceName = 'pdf_builder_pdf_nonce';
+                } else if (currentTab === 'performance') {
+                    nonceName = 'pdf_builder_performance_nonce';
+                }
+                
+                const nonceField = document.querySelector(`input[name="${nonceName}"]`);
                 if (nonceField) {
-                    formData.append('pdf_builder_settings_nonce', nonceField.value);
+                    formData.append(nonceName, nonceField.value);
                 }
                 
                 // Collecter les données selon l'onglet actif
