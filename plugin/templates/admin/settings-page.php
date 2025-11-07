@@ -243,11 +243,14 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
     error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $dev_settings = [
-            'debug_mode' => isset($_POST['debug_mode']),
+            'developer_enabled' => isset($_POST['developer_enabled']),
+            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+            'debug_php_errors' => isset($_POST['debug_php_errors']),
+            'debug_javascript' => isset($_POST['debug_javascript']),
+            'debug_ajax' => isset($_POST['debug_ajax']),
+            'debug_performance' => isset($_POST['debug_performance']),
+            'debug_database' => isset($_POST['debug_database']),
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-            'enable_debug_js' => isset($_POST['enable_debug_js']),
-            'enable_debug_ajax' => isset($_POST['enable_debug_ajax']),
-            'enable_debug_performance' => isset($_POST['enable_debug_performance']),
             'log_file_size' => intval($_POST['log_file_size'] ?? 10),
             'log_retention' => intval($_POST['log_retention'] ?? 30),
             'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
