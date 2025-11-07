@@ -674,6 +674,25 @@ window.addEventListener('load', function() {
                     padding-top: 0;
                 }
             }
+
+            /* Fix for footer positioning - ensure content appears above footer */
+            .wrap {
+                position: relative;
+                z-index: 1;
+                clear: both;
+            }
+
+            .wrap::after {
+                content: "";
+                display: block;
+                clear: both;
+            }
+
+            /* Ensure notifications don't interfere with footer */
+            .notice, .updated, .error {
+                position: relative !important;
+                z-index: 10 !important;
+            }
             </style>
 
             <!-- Onglets -->
