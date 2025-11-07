@@ -1386,176 +1386,154 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         </div>
         
         <div id="templates" class="tab-content" style="display: none;">
-            <h2>Gestion des Templates</h2>
+            <h2>Assignation des Templates</h2>
+            
+            <p style="margin-bottom: 20px;">Assignez automatiquement des templates aux différents statuts de commande WooCommerce.</p>
             
             <?php
-            // Récupérer les templates sauvegardés
+            // Traitement de la sauvegarde
+            if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
+                    $template_mappings = [];
+                    if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+                        foreach ($_POST['order_status_templates'] as $status => $template_id) {
+                            $template_id = intval($template_id);
+                            if ($template_id > 0) {
+                                $template_mappings[sanitize_text_field($status)] = $template_id;
+                            }
+                        }
+                    }
+                    update_option('pdf_builder_order_status_templates', $template_mappings);
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Templates assignés avec succès.</p></div>';
+                }
+            }
+            
+            // Récupérer les statuts de commande WooCommerce
+            $order_statuses = [];
+            
+            if (function_exists('wc_get_order_statuses')) {
+                $order_statuses = wc_get_order_statuses();
+            } else {
+                // Fallback : statuts standards
+                $order_statuses = [
+                    'wc-pending' => 'En attente',
+                    'wc-processing' => 'En cours',
+                    'wc-on-hold' => 'En attente de paiement',
+                    'wc-completed' => 'Terminée',
+                    'wc-cancelled' => 'Annulée',
+                    'wc-refunded' => 'Remboursée',
+                    'wc-failed' => 'Échec du paiement'
+                ];
+            }
+            
+            // Récupérer les mappings actuels
+            $current_mappings = get_option('pdf_builder_order_status_templates', []);
+            
+            // Récupérer les templates disponibles
             $templates = get_posts([
                 'post_type' => 'pdf_template',
                 'posts_per_page' => -1,
                 'orderby' => 'title',
                 'order' => 'ASC'
             ]);
-            
-            $template_count = count($templates);
             ?>
             
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #003d66;">📋 Vue d'ensemble</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; color: #003d66;">
-                    <div>
-                        <strong>Templates créés :</strong> <?php echo $template_count; ?>
-                    </div>
-                    <div>
-                        <strong>Espace utilisé :</strong> Calculé automatiquement
-                    </div>
-                    <div>
-                        <strong>Limit :</strong> Illimité (Premium)
-                    </div>
-                </div>
-            </div>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Actions Rapides</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <a href="<?php echo admin_url('post-new.php?post_type=pdf_template'); ?>" class="button button-primary">
-                    ➕ Créer un Nouveau Template
-                </a>
-                <a href="<?php echo admin_url('edit.php?post_type=pdf_template'); ?>" class="button button-secondary">
-                    📁 Voir Tous les Templates
-                </a>
-                <button type="button" class="button button-secondary" onclick="alert('Sauvegarde en cours...');">
-                    💾 Exporter Templates
-                </button>
-                <button type="button" class="button button-secondary" onclick="alert('Importation non disponible dans la version actuelle');">
-                    📥 Importer Templates
-                </button>
-            </div>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Templates Récents</h3>
-            
-            <?php if (!empty($templates)): ?>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
+            <form method="post">
+                <?php wp_nonce_field('pdf_builder_templates', 'pdf_builder_templates_nonce'); ?>
+                
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Mappage des Statuts aux Templates</h3>
+                
+                <table class="form-table">
+                    <?php foreach ($order_statuses as $status_key => $status_name):
+                        $display_status = str_replace('wc-', '', $status_key);
+                        $selected_template = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : '';
+                    ?>
                         <tr>
-                            <th style="width: 5%;">ID</th>
-                            <th style="width: 40%;">Titre</th>
-                            <th style="width: 20%;">Date de Création</th>
-                            <th style="width: 20%;">Auteur</th>
-                            <th style="width: 15%; text-align: center;">Actions</th>
+                            <th scope="row">
+                                <label for="template_<?php echo esc_attr($display_status); ?>">
+                                    <strong><?php echo esc_html($status_name); ?></strong><br>
+                                    <code style="color: #666;"><?php echo esc_html($display_status); ?></code>
+                                </label>
+                            </th>
+                            <td>
+                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]" 
+                                        id="template_<?php echo esc_attr($display_status); ?>" class="regular-text">
+                                    <option value="">-- Utiliser le template par défaut --</option>
+                                    <?php foreach ($templates as $template): ?>
+                                        <option value="<?php echo intval($template->ID); ?>" 
+                                                <?php selected($selected_template, $template->ID); ?>>
+                                            <?php echo esc_html($template->post_title ?: '(Sans titre)'); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <p class="description">
+                                    Template automatique pour les commandes avec ce statut
+                                </p>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach (array_slice($templates, 0, 10) as $template): ?>
-                            <tr>
-                                <td><?php echo $template->ID; ?></td>
-                                <td>
-                                    <strong><?php echo esc_html($template->post_title ?: '(Sans titre)'); ?></strong>
-                                </td>
-                                <td><?php echo date_i18n('d/m/Y H:i', strtotime($template->post_date)); ?></td>
-                                <td><?php echo esc_html(get_the_author_meta('display_name', $template->post_author)); ?></td>
-                                <td style="text-align: center;">
-                                    <a href="<?php echo admin_url('post.php?post=' . $template->ID . '&action=edit'); ?>" 
-                                       class="button button-small">Éditer</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+                    <?php endforeach; ?>
                 </table>
                 
-                <?php if ($template_count > 10): ?>
-                    <p style="margin-top: 15px; text-align: center;">
-                        <a href="<?php echo admin_url('edit.php?post_type=pdf_template'); ?>" class="button button-secondary">
-                            Voir les <?php echo $template_count - 10; ?> autres templates →
-                        </a>
-                    </p>
-                <?php endif; ?>
-            <?php else: ?>
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px;">
-                    <p style="margin: 0; color: #856404;">
-                        <strong>Aucun template créé pour le moment.</strong><br>
-                        Cliquez sur le bouton "Créer un Nouveau Template" pour commencer.
-                    </p>
-                </div>
-            <?php endif; ?>
+                <p class="submit">
+                    <button type="submit" name="submit_templates" class="button button-primary">
+                        Sauvegarder les Assignations
+                    </button>
+                </p>
+            </form>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Paramètres de Templates</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label>Format de Nommage</label></th>
-                    <td>
-                        <code style="background: #f5f5f5; padding: 10px; border-radius: 4px; display: inline-block;">
-                            [Titre] - [Date] - [ID]
-                        </code>
-                        <p class="description">Les templates sont automatiquement nommés avec cette convention</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Format par Défaut</label></th>
-                    <td>
-                        <p style="margin: 0;">Les nouveaux templates hériteront du format PDF défini dans l'onglet "PDF"</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Permissions</label></th>
-                    <td>
-                        <p style="margin: 0;">Voir l'onglet "Rôles" pour contrôler qui peut créer/éditer les templates</p>
-                    </td>
-                </tr>
-            </table>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Catégories de Templates</h3>
-            
-            <?php
-            $categories = get_terms([
-                'taxonomy' => 'pdf_template_category',
-                'hide_empty' => false
-            ]);
-            ?>
-            
-            <?php if (!empty($categories)): ?>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th style="width: 40%;">Catégorie</th>
-                            <th style="width: 20%; text-align: center;">Templates</th>
-                            <th style="width: 40%;">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($categories as $category): 
-                            $count = $category->count;
-                        ?>
-                            <tr>
-                                <td><strong><?php echo esc_html($category->name); ?></strong></td>
-                                <td style="text-align: center;"><?php echo $count; ?></td>
-                                <td><?php echo esc_html($category->description ?: '—'); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p style="color: #666;">Aucune catégorie de template définie.</p>
-            <?php endif; ?>
-            
-            <!-- Conseils pour les templates -->
-            <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0;">💡 Bonnes Pratiques</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Organiser :</strong> Utilisez les catégories pour organiser vos templates</li>
-                    <li><strong>Nommer :</strong> Donnez des noms clairs et descriptifs</li>
-                    <li><strong>Tester :</strong> Testez chaque template avant de l'utiliser en production</li>
-                    <li><strong>Sauvegarder :</strong> Exportez régulièrement vos templates importants</li>
-                    <li><strong>Variables :</strong> Utilisez les variables dynamiques pour plus de flexibilité</li>
+            <!-- Info WooCommerce -->
+            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                <h3 style="margin-top: 0; color: #003d66;">📦 Intégration WooCommerce</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
+                    <li><strong>Statuts disponibles :</strong> <?php echo count($order_statuses); ?> statuts détectés</li>
+                    <li><strong>Templates disponibles :</strong> <?php echo count($templates); ?> templates</li>
+                    <li>Chaque statut de commande peut avoir son propre template</li>
+                    <li>Les commandes utiliseront automatiquement le template assigné à leur statut</li>
+                    <li>Laissez vide pour utiliser le template par défaut</li>
                 </ul>
             </div>
             
-            <!-- Versions et historique -->
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #003d66;">📜 Historique des Versions</h3>
-                <p style="margin: 0; color: #003d66;">
-                    WordPress conserve automatiquement l'historique de révision de chaque template.<br>
-                    Vous pouvez restaurer une ancienne version à tout moment depuis l'écran d'édition.
-                </p>
+            <!-- Tableau récapitulatif -->
+            <div style="margin-top: 30px;">
+                <h3>📋 Vue d'ensemble des Assignations</h3>
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Statut</th>
+                            <th style="width: 50%;">Template Assigné</th>
+                            <th style="width: 20%; text-align: center;">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($order_statuses as $status_key => $status_name):
+                            $template_id = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : false;
+                            $template_name = $template_id ? get_the_title($template_id) : '(Défaut)';
+                            $template_type = $template_id ? 'Personnalisé' : 'Défaut';
+                        ?>
+                            <tr>
+                                <td><strong><?php echo esc_html($status_name); ?></strong></td>
+                                <td><?php echo esc_html($template_name); ?></td>
+                                <td style="text-align: center;">
+                                    <span style="display: inline-block; padding: 3px 10px; border-radius: 3px; background: <?php echo $template_id ? '#d4edda' : '#e9ecef'; ?>; color: <?php echo $template_id ? '#155724' : '#666'; ?>;">
+                                        <?php echo $template_type; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Conseils d'utilisation -->
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #856404;">💡 Conseils d'Utilisation</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #856404;">
+                    <li><strong>Factures :</strong> Assignez un template "Facture" au statut "Terminée"</li>
+                    <li><strong>Confirmations :</strong> Utilisez un template "Confirmation" pour le statut "En attente"</li>
+                    <li><strong>Avis d'expédition :</strong> Assignez au statut "En cours"</li>
+                    <li><strong>Avoirs :</strong> Créez un template "Avoir" pour les remboursements</li>
+                    <li>Les templates peuvent inclure des variables dynamiques (numéro de commande, client, articles, etc.)</li>
+                </ul>
             </div>
         </div>
         
