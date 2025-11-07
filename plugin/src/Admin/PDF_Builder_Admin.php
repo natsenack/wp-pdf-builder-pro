@@ -368,7 +368,7 @@ class PDF_Builder_Admin {
      */
     public function addAdminMenu() {
         // Menu principal avec icône distinctive
-        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 30);
+        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 65);
         
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
@@ -5296,6 +5296,354 @@ class PDF_Builder_Admin {
 
         <style>
         .pdf-builder-react-editor {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            min-height: 600px;
+        }
+
+        .pdf-builder-loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .pdf-builder-loading .spinner {
+            float: none;
+            margin: 0 auto 20px;
+        }
+        </style>
+        <?php
+    }
+
+    /**
+     * Page des paramètres du plugin
+     */
+    public function settings_page()
+    {
+        $this->checkAdminPermissions();
+
+        // Traitement des formulaires soumis
+        if (isset($_POST['submit'])) {
+            $this->handle_settings_submission();
+        }
+
+        // Récupération des paramètres actuels
+        $settings = get_option('pdf_builder_settings', []);
+        $developer_enabled = isset($settings['developer_enabled']) ? $settings['developer_enabled'] : false;
+        $developer_password = isset($settings['developer_password']) ? $settings['developer_password'] : '';
+
+        ?>
+        <div class="wrap">
+            <div class="pdf-builder-settings">
+                <div class="settings-header">
+                    <h1>⚙️ <?php _e('Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+                    <p class="settings-subtitle"><?php _e('Configuration générale du plugin PDF Builder Pro', 'pdf-builder-pro'); ?></p>
+                </div>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_settings_nonce'); ?>
+
+                    <!-- Section Générale -->
+                    <div class="settings-section">
+                        <h2><?php _e('Configuration Générale', 'pdf-builder-pro'); ?></h2>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Activer le cache', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="enable_cache" value="1"
+                                               <?php checked(get_option('pdf_builder_enable_cache', true)); ?> />
+                                        <?php _e('Activer la mise en cache des PDFs générés', 'pdf-builder-pro'); ?>
+                                    </label>
+                                    <p class="description"><?php _e('Améliore les performances en stockant temporairement les PDFs générés.', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Durée du cache', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="cache_duration" value="<?php echo esc_attr(get_option('pdf_builder_cache_duration', 3600)); ?>" class="small-text" />
+                                    <?php _e('secondes', 'pdf-builder-pro'); ?>
+                                    <p class="description"><?php _e('Durée avant expiration du cache (3600 secondes = 1 heure).', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Section Développeur -->
+                    <div class="settings-section">
+                        <h2><?php _e('🔧 Mode Développeur', 'pdf-builder-pro'); ?></h2>
+                        <p><?php _e('⚠️ <strong>Zone réservée aux développeurs</strong> - Ces paramètres contrôlent l\'accès aux outils de développement avancés.', 'pdf-builder-pro'); ?></p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Activer le mode développeur', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1"
+                                               <?php checked($developer_enabled); ?> />
+                                        <?php _e('Permet l\'accès à la page "📝 Gestion des Modèles Prédéfinis" et autres outils développeur.', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr id="developer_password_row" style="<?php echo $developer_enabled ? '' : 'display: none;'; ?>">
+                                <th scope="row"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="password" name="developer_password" id="developer_password"
+                                           value="<?php echo esc_attr($developer_password); ?>" class="regular-text" />
+                                    <p class="description"><?php _e('Mot de passe requis pour accéder aux outils développeur.', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Section WooCommerce -->
+                    <div class="settings-section">
+                        <h2><?php _e('🛒 Intégration WooCommerce', 'pdf-builder-pro'); ?></h2>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Activer l\'intégration WooCommerce', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="woocommerce_integration" value="1"
+                                               <?php checked(get_option('pdf_builder_woocommerce_integration', true)); ?> />
+                                        <?php _e('Afficher les boutons PDF dans les commandes WooCommerce', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <?php submit_button(__('Enregistrer les paramètres', 'pdf-builder-pro')); ?>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Toggle visibilité du champ mot de passe développeur
+            $('#developer_enabled').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#developer_password_row').show();
+                } else {
+                    $('#developer_password_row').hide();
+                }
+            });
+        });
+        </script>
+
+        <style>
+        .pdf-builder-settings {
+            max-width: 1200px;
+        }
+
+        .settings-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccd0d4;
+        }
+
+        .settings-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .settings-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .settings-section {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .settings-section h2 {
+            margin-top: 0;
+            color: #23282d;
+            font-size: 1.3em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .settings-section p {
+            margin-top: 0;
+            color: #666;
+        }
+
+        .form-table th {
+            width: 250px;
+            padding: 20px 10px 20px 0;
+        }
+
+        .form-table td {
+            padding: 15px 10px;
+        }
+
+        .description {
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        </style>
+        <?php
+    }
+
+    /**
+     * Gestionnaire de soumission du formulaire de paramètres
+     */
+    private function handle_settings_submission()
+    {
+        // Vérification du nonce
+        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'pdf_builder_settings_nonce')) {
+            wp_die(__('Sécurité: Nonce invalide', 'pdf-builder-pro'));
+        }
+
+        // Vérification des permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        // Récupération des paramètres actuels
+        $settings = get_option('pdf_builder_settings', []);
+
+        // Configuration générale
+        update_option('pdf_builder_enable_cache', isset($_POST['enable_cache']));
+        update_option('pdf_builder_cache_duration', intval($_POST['cache_duration']));
+
+        // Mode développeur
+        $settings['developer_enabled'] = isset($_POST['developer_enabled']);
+        $settings['developer_password'] = sanitize_text_field($_POST['developer_password']);
+
+        // Sauvegarde des paramètres développeur
+        update_option('pdf_builder_settings', $settings);
+
+        // Intégration WooCommerce
+        update_option('pdf_builder_woocommerce_integration', isset($_POST['woocommerce_integration']));
+
+        // Message de succès
+        add_settings_error(
+            'pdf_builder_settings',
+            'settings_updated',
+            __('Paramètres enregistrés avec succès.', 'pdf-builder-pro'),
+            'updated'
+        );
+    }
+
+    /**
+     * Page des templates
+     */
+    public function templatesPage()
+    {
+        $this->checkAdminPermissions();
+
+        ?>
+        <div class="wrap">
+            <div class="pdf-builder-templates">
+                <div class="templates-header">
+                    <h1>📋 <?php _e('Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
+                    <p class="templates-subtitle"><?php _e('Créez, modifiez et organisez vos modèles de documents PDF', 'pdf-builder-pro'); ?></p>
+                </div>
+
+                <div class="templates-content">
+                    <p><?php _e('La page de gestion des templates est en cours de développement.', 'pdf-builder-pro'); ?></p>
+                    <p><?php _e('Utilisez l\'éditeur React pour créer vos templates :', 'pdf-builder-pro'); ?>
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="button button-primary">
+                            <?php _e('Ouvrir l\'Éditeur React', 'pdf-builder-pro'); ?>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <style>
+        .pdf-builder-templates {
+            max-width: 1200px;
+        }
+
+        .templates-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccd0d4;
+        }
+
+        .templates-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .templates-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .templates-content {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+        </style>
+        <?php
+    }
+
+    /**
+     * Page de l'éditeur React
+     */
+    public function react_editor_page()
+    {
+        $this->checkAdminPermissions();
+
+        ?>
+        <div class="wrap">
+            <div class="pdf-builder-react-editor">
+                <div class="editor-header">
+                    <h1>⚛️ <?php _e('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+                    <p class="editor-subtitle"><?php _e('Éditeur visuel moderne pour créer vos templates PDF', 'pdf-builder-pro'); ?></p>
+                </div>
+
+                <div class="editor-content">
+                    <div id="pdf-builder-react-root">
+                        <div class="pdf-builder-loading">
+                            <span class="spinner is-active"></span>
+                            <p><?php _e('Chargement de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+        .pdf-builder-react-editor {
+            max-width: 100%;
+        }
+
+        .editor-header {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccd0d4;
+        }
+
+        .editor-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .editor-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .editor-content {
             background: #fff;
             border: 1px solid #ccd0d4;
             border-radius: 8px;
