@@ -1212,6 +1212,18 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     }
                 </style>
                 
+                <!-- Bouton de sauvegarde en bas aussi -->
+                <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
+                    <p class="submit" style="margin: 0;">
+                        <button type="submit" name="submit_roles" class="button button-primary" style="font-size: 14px; padding: 8px 16px;">
+                            💾 Sauvegarder les Rôles (Bas de page)
+                        </button>
+                        <span class="description" style="margin-left: 15px; color: #0056b3;">
+                            Cliquez ici pour enregistrer vos modifications
+                        </span>
+                    </p>
+                </div>
+                
             </form>
             
             <script>
