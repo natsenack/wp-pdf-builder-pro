@@ -78,10 +78,9 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'undo_levels' => intval($_POST['undo_levels'] ?? 50),
             'redo_levels' => intval($_POST['redo_levels'] ?? 50),
             'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
-            // Maintenance
-            'maintenance_log_retention' => intval($_POST['log_retention'] ?? 30),
-            'maintenance_log_size' => intval($_POST['log_file_size'] ?? 10),
             // Développeur
+            'debug_mode' => isset($_POST['debug_mode']),
+            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
             'debug_php_errors' => isset($_POST['debug_php_errors']),
@@ -145,25 +144,10 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         
         <div id="general" class="tab-content" style="display: block;">
             <h2>Paramètres Généraux</h2>
+            <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="log_level">Niveau de log</label></th>
-                    <td>
-                        <select id="log_level" name="log_level">
-                            <option value="debug" <?php selected($settings['log_level'] ?? 'info', 'debug'); ?>>Debug</option>
-                            <option value="info" <?php selected($settings['log_level'] ?? 'info', 'info'); ?>>Info</option>
-                            <option value="warning" <?php selected($settings['log_level'] ?? 'info', 'warning'); ?>>Avertissement</option>
-                            <option value="error" <?php selected($settings['log_level'] ?? 'info', 'error'); ?>>Erreur</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_mode">Mode Debug</label></th>
-                    <td>
-                        <input type="checkbox" id="debug_mode" name="debug_mode" value="1" <?php checked($settings['debug_mode'] ?? false); ?> />
-                        <p class="description">Active les logs détaillés pour le débogage</p>
-                    </td>
-                </tr>
                 <tr>
                     <th scope="row"><label for="cache_enabled">Cache activé</label></th>
                     <td>
@@ -178,27 +162,10 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                         <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                     </td>
                 </tr>
-                <tr>
-                    <th scope="row"><label for="max_template_size">Taille max template (octets)</label></th>
-                    <td>
-                        <input type="number" id="max_template_size" name="max_template_size" value="<?php echo intval($settings['max_template_size'] ?? 52428800); ?>" min="1048576" />
-                        <p class="description">Taille maximale des fichiers template (défaut: 50MB)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="max_execution_time">Temps max d'exécution (secondes)</label></th>
-                    <td>
-                        <input type="number" id="max_execution_time" name="max_execution_time" value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="1" max="3600" />
-                        <p class="description">Temps maximum pour générer un PDF (défaut: 300)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="memory_limit">Limite mémoire</label></th>
-                    <td>
-                        <input type="text" id="memory_limit" name="memory_limit" value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>" placeholder="256M" />
-                        <p class="description">Ex: 256M, 512M, 1G (défaut: 256M)</p>
-                    </td>
-                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📄 Paramètres PDF</h3>
+            <table class="form-table">
                 <tr>
                     <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
                     <td>
@@ -228,6 +195,9 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                             <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
                         </select>
                     </td>
+                </tr>
+            </table>
+        </div>
                 </tr>
             </table>
         </div>
@@ -679,39 +649,16 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         
         <div id="securite" class="tab-content" style="display: none;">
             <h2>Paramètres de Sécurité</h2>
+            <p style="color: #666;">Configurations de sécurité et limites système. Pour le debug et logging, voir l'onglet Développeur.</p>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Logging & Debugging</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="debug_mode">Mode Debug</label></th>
-                    <td>
-                        <input type="checkbox" id="debug_mode" name="debug_mode" value="1" 
-                               <?php checked($settings['debug_mode'] ?? false); ?> />
-                        <p class="description">⚠️ Active les logs détaillés. À désactiver en production !</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="log_level">Niveau de Log</label></th>
-                    <td>
-                        <select id="log_level" name="log_level">
-                            <option value="debug" <?php selected($settings['log_level'] ?? 'info', 'debug'); ?>>Debug (tout enregistre)</option>
-                            <option value="info" <?php selected($settings['log_level'] ?? 'info', 'info'); ?>>Info (événements importants)</option>
-                            <option value="warning" <?php selected($settings['log_level'] ?? 'info', 'warning'); ?>>Avertissement (avertissements et erreurs)</option>
-                            <option value="error" <?php selected($settings['log_level'] ?? 'info', 'error'); ?>>Erreur (erreurs seulement)</option>
-                        </select>
-                        <p class="description">Détermine quels événements seront enregistrés dans les logs</p>
-                    </td>
-                </tr>
-            </table>
-            
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Limites & Protections</h3>
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚙️ Limites & Protections Système</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="max_template_size">Taille Max Template (octets)</label></th>
                     <td>
                         <input type="number" id="max_template_size" name="max_template_size" 
                                value="<?php echo intval($settings['max_template_size'] ?? 52428800); ?>" min="1048576" step="1048576" />
-                        <p class="description">Maximum: ~<?php echo number_format(intval($settings['max_template_size'] ?? 52428800) / 1048576); ?> MB</p>
+                        <p class="description">Maximum: ~<?php echo number_format(intval($settings['max_template_size'] ?? 52428800) / 1048576); ?> MB (défaut: 50 MB)</p>
                     </td>
                 </tr>
                 <tr>
@@ -719,7 +666,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                     <td>
                         <input type="number" id="max_execution_time" name="max_execution_time" 
                                value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="1" max="3600" />
-                        <p class="description">Temps avant timeout pour la génération PDF</p>
+                        <p class="description">Temps avant timeout pour la génération PDF (défaut: 300 secondes)</p>
                     </td>
                 </tr>
                 <tr>
@@ -728,15 +675,15 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                         <input type="text" id="memory_limit" name="memory_limit" 
                                value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>" 
                                placeholder="256M" />
-                        <p class="description">Format: 256M, 512M, 1G. Doit être ≥ max template size</p>
+                        <p class="description">Format: 256M, 512M, 1G. Doit être ≥ taille max template (défaut: 256M)</p>
                     </td>
                 </tr>
             </table>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Protection & Validation</h3>
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Protections</h3>
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label>Nonces</label></th>
+                    <th scope="row"><label>Nonces WordPress</label></th>
                     <td>
                         <p style="margin: 0;">✓ Les nonces expirent après <strong>24 heures</strong> pour plus de sécurité</p>
                         <p style="margin: 0; margin-top: 10px;">✓ Tous les formulaires sont protégés par des nonces WordPress</p>
