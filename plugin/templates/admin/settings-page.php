@@ -2936,6 +2936,30 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         // Test notifications button
         const testNotificationsBtn = document.getElementById('test-notifications');
+        if (testNotificationsBtn) {
+            testNotificationsBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = '🧪 Test en cours...';
+                
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'test_notifications',
+                        nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ Test des notifications réussi ! Vérifiez vos emails.');
+                    } else {
+                        alert('❌ Erreur lors du test : ' + (data.data || 'Erreur inconnue'));
+                    }
+                })
+                .catch(error => {
                     alert('❌ Erreur réseau : ' + error.message);
                 })
                 .finally(() => {
