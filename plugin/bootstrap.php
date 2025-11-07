@@ -9,6 +9,12 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
+// Initialiser les variables $_SERVER manquantes pour éviter les Undefined array key errors
+// Cela corrige les erreurs strict PHP 8.1+ quand wp-config.php accède à des clés HTTP_* inexistantes
+if (!isset($_SERVER['HTTP_B701CD7'])) {
+    $_SERVER['HTTP_B701CD7'] = '';
+}
+
 // Fonction pour charger le core du plugin
 function pdf_builder_load_core() {
     static $loaded = false;
