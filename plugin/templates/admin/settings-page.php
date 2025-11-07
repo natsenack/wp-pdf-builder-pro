@@ -18,6 +18,7 @@ error_log('PDF Builder: Settings page loaded at ' . date('Y-m-d H:i:s'));
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
+error_log('DEBUG: Settings page loaded, POST data: ' . json_encode($_POST));
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
@@ -36,7 +37,9 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
         ];
+        error_log('DEBUG: About to save settings: ' . json_encode($to_save));
         $result = update_option('pdf_builder_settings', array_merge($settings, $to_save));
+        error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed'));
         if ($result) {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } else {
