@@ -2966,18 +2966,22 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         formData.append('pdf_builder_settings_nonce', nonceField.value);
                     }
                     
-                    // Collecter spécifiquement les paramètres développeur (uniquement dans les tables de formulaire)
+                    // Collecter spécifiquement les paramètres développeur (éviter les doublons)
+                    const developerCheckboxes = {};
                     document.querySelectorAll('#developpeur table.form-table input[type="checkbox"]').forEach(checkbox => {
                         const key = checkbox.name;
-                        if (key) {
+                        if (key && !developerCheckboxes[key]) { // Prendre seulement le premier de chaque name
+                            developerCheckboxes[key] = true;
                             formData.append(key, checkbox.checked ? '1' : '0');
                         }
                     });
                     
-                    // Collecter les inputs texte du développeur (uniquement dans les tables de formulaire)
+                    // Collecter les inputs texte du développeur (éviter les doublons)
+                    const developerInputs = {};
                     document.querySelectorAll('#developpeur table.form-table input[type="password"], #developpeur table.form-table input[type="text"]').forEach(input => {
                         const key = input.name;
-                        if (key) {
+                        if (key && !developerInputs[key]) { // Prendre seulement le premier de chaque name
+                            developerInputs[key] = true;
                             formData.append(key, input.value);
                         }
                     });
