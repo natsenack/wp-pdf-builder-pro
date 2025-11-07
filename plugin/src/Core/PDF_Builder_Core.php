@@ -120,7 +120,7 @@ class PDF_Builder_Core
         add_action('init', [$this, 'initialize_directories']);
 
         // Initialiser le gestionnaire de notifications
-        add_action('init', [$this, 'initialize_notification_manager']);
+        // add_action('init', [$this, 'initialize_notification_manager']); // Temporairement désactivé
     }
 
     /**
