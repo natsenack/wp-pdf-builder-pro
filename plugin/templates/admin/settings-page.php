@@ -377,6 +377,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
     <form method="post" class="settings-form" id="settings-form">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
+        <!-- Bouton de sauvegarde flottant -->
+        <div id="floating-save-button" class="floating-save-container">
+            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn">
+                💾 Enregistrer
+            </button>
+            <div class="save-status" id="save-status"></div>
+        </div>
+        
         <div id="general" class="tab-content" style="display: block;">
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
@@ -2479,6 +2487,83 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         opacity: 0.5;
         cursor: not-allowed;
     }
+
+    /* Bouton de sauvegarde flottant */
+    .floating-save-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+    .floating-save-btn {
+        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 24px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    .floating-save-btn:hover {
+        background: linear-gradient(135deg, #005a87 0%, #004466 100%);
+        box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .floating-save-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+    }
+
+    .floating-save-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .save-status {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    .save-status.show {
+        opacity: 1;
+    }
+
+    .save-status.success {
+        background: rgba(0, 128, 0, 0.9);
+    }
+
+    .save-status.error {
+        background: rgba(220, 53, 69, 0.9);
+    }
+
+    /* Masquer les boutons individuels des onglets */
+    .tab-content .submit {
+        display: none;
+    }
 </style>
 
 <script>
@@ -2512,11 +2597,61 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             clickedTab.classList.add('nav-tab-active');
             clickedTab.setAttribute('aria-selected', 'true');
             
+            // Mettre à jour le bouton flottant selon l'onglet
+            updateFloatingButton(targetId);
+            
             // Mettre à jour l'URL hash
             if (history.pushState) {
                 history.pushState(null, null, '#' + targetId);
             } else {
                 window.location.hash = '#' + targetId;
+            }
+        }
+        
+        // Fonction pour mettre à jour le bouton flottant selon l'onglet actif
+        function updateFloatingButton(activeTabId) {
+            const button = document.getElementById('global-save-btn');
+            const status = document.getElementById('save-status');
+            
+            if (!button) return;
+            
+            // Définir le name du bouton selon l'onglet
+            const tabButtonMap = {
+                'general': 'submit',
+                'pdf': 'submit_pdf', 
+                'security': 'submit_security',
+                'canvas': 'submit_canvas',
+                'performance': 'submit_performance',
+                'maintenance': 'submit_maintenance',
+                'developpeur': 'submit_developpeur',
+                'roles': 'submit_roles',
+                'notifications': 'submit_notifications',
+                'templates': 'submit_templates'
+            };
+            
+            const buttonName = tabButtonMap[activeTabId] || 'submit';
+            button.setAttribute('name', buttonName);
+            
+            // Mettre à jour le texte du bouton selon l'onglet
+            const tabNames = {
+                'general': 'Général',
+                'pdf': 'PDF',
+                'security': 'Sécurité', 
+                'canvas': 'Canvas',
+                'performance': 'Performance',
+                'maintenance': 'Maintenance',
+                'developpeur': 'Développeur',
+                'roles': 'Rôles',
+                'notifications': 'Notifications',
+                'templates': 'Templates'
+            };
+            
+            const tabName = tabNames[activeTabId] || 'Paramètres';
+            button.innerHTML = `💾 Enregistrer ${tabName}`;
+            
+            // Masquer le statut précédent
+            if (status) {
+                status.classList.remove('show', 'success', 'error');
             }
         }
         
@@ -2538,76 +2673,40 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             }
         }
         
-        // Gestion des boutons de soumission par onglet
-        const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
-        submitButtons.forEach(function(button) {
-            button.addEventListener('click', function(e) {
-                console.log('🔥 PDF Builder - Button clicked:', {
-                    buttonName: this.getAttribute('name') || 'unnamed',
-                    buttonValue: this.value || 'no-value',
-                    formAction: document.getElementById('settings-form') ? document.getElementById('settings-form').action : 'no-form',
-                    formMethod: document.getElementById('settings-form') ? document.getElementById('settings-form').method : 'no-form',
-                    formData: (() => {
-                        const form = document.getElementById('settings-form');
-                        if (form) {
-                            const formData = new FormData(form);
-                            let data = {};
-                            for (let [key, value] of formData.entries()) {
-                                data[key] = value;
-                            }
-                            return data;
-                        }
-                        return {};
-                    })(),
-                    timestamp: new Date().toISOString()
-                });
 
-                // Logs détaillés pour l'onglet développeur
-                if (this.getAttribute('name') === 'submit_developpeur') {
-                    console.log('🔧 Developer tab form data:', {
-                        developer_enabled: document.getElementById('developer_enabled')?.checked || false,
-                        developer_password: document.getElementById('developer_password')?.value || '',
-                        debug_php_errors: document.getElementById('debug_php_errors')?.checked || false,
-                        debug_javascript: document.getElementById('debug_javascript')?.checked || false,
-                        debug_ajax: document.getElementById('debug_ajax')?.checked || false,
-                        debug_performance: document.getElementById('debug_performance')?.checked || false,
-                        debug_database: document.getElementById('debug_database')?.checked || false,
-                        log_level: document.getElementById('log_level')?.value || 'info',
-                        log_file_size: document.getElementById('log_file_size')?.value || '10',
-                        log_retention: document.getElementById('log_retention')?.value || '30',
-                        disable_hooks: document.getElementById('disable_hooks')?.value || '',
-                        enable_profiling: document.getElementById('enable_profiling')?.checked || false,
-                        force_https: document.getElementById('force_https')?.checked || false,
-                        nonce: document.querySelector('input[name="pdf_builder_settings_nonce"]')?.value || 'no-nonce'
-                    });
 
-                    // Vérifier si le formulaire va être soumis
-                    const form = this.closest('form');
-                    if (form) {
-                        console.log('📤 About to submit developer form:', {
-                            action: form.action,
-                            method: form.method,
-                            enctype: form.enctype,
-                            willSubmit: true
-                        });
 
-                        // Ajouter un listener pour voir si la soumission réussit
-                        form.addEventListener('submit', function(e) {
-                            console.log('📤 Form submit event fired for developer tab');
-                        }, { once: true });
-                    } else {
-                        console.error('❌ No form found for developer submit button!');
-                    }
+        const globalSaveBtn = document.getElementById('global-save-btn');
+        const saveStatus = document.getElementById('save-status');
+        
+        if (globalSaveBtn) {
+            globalSaveBtn.addEventListener('click', function(e) {
+                console.log('💾 Global save button clicked for tab:', this.getAttribute('name'));
+                
+                // Afficher le statut de sauvegarde
+                if (saveStatus) {
+                    saveStatus.textContent = '⏳ Sauvegarde en cours...';
+                    saveStatus.className = 'save-status show';
                 }
-
-                // Trouver l'onglet actif
-                const activeTab = document.querySelector('.nav-tab-active');
-                if (activeTab) {
-                    const tabId = activeTab.getAttribute('data-tab');
-                    console.log('📋 Active tab:', tabId);
-                }
+                
+                // Désactiver le bouton pendant la sauvegarde
+                this.disabled = true;
+                this.innerHTML = '⏳ Sauvegarde...';
+                
+                // Le formulaire se soumettra normalement
+                // Le statut sera mis à jour côté serveur avec les notices PHP
             });
-        });
+        }
+        
+        // Initialiser le bouton flottant pour l'onglet actif au chargement
+        const activeTab = document.querySelector('.nav-tab-active');
+        if (activeTab) {
+            const activeTabId = activeTab.getAttribute('data-tab');
+            updateFloatingButton(activeTabId);
+        } else {
+            // Par défaut, onglet general
+            updateFloatingButton('general');
+        }
         
         // Toggle switches
         const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
