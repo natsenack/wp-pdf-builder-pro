@@ -700,24 +700,81 @@ class PDF_Builder_Predefined_Templates_Manager {
         // Fond blanc
         $svg .= '<rect width="100%" height="100%" fill="white" stroke="#ddd" stroke-width="1"/>';
 
-        // Aperçu simple des éléments
+        // Aperçu des éléments avec rendu réel
         if (isset($config['elements']) && is_array($config['elements'])) {
             foreach ($config['elements'] as $element) {
+                $type = $element['type'] ?? 'text';
                 $x = $element['x'] ?? 0;
                 $y = $element['y'] ?? 0;
                 $w = $element['width'] ?? 100;
                 $h = $element['height'] ?? 20;
 
-                // Couleur basée sur le type d'élément
-                $color = '#e3f2fd';
-                switch ($element['type'] ?? 'text') {
-                    case 'text': $color = '#e8f5e8'; break;
-                    case 'image': $color = '#fff3e0'; break;
-                    case 'table': $color = '#f3e5f5'; break;
-                    case 'rectangle': $color = '#fce4ec'; break;
-                }
+                if ($type === 'text' && isset($element['content'])) {
+                    // Rendu réel du texte
+                    $content = $element['content'];
+                    $fontSize = $element['fontSize'] ?? $element['style']['fontSize'] ?? 14;
+                    $color = $element['color'] ?? $element['style']['color'] ?? '#000000';
+                    $fontWeight = $element['fontWeight'] ?? $element['style']['fontWeight'] ?? 'normal';
+                    $textAlign = $element['style']['textAlign'] ?? 'left';
 
-                $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $color . '" stroke="#ccc" stroke-width="0.5" opacity="0.7"/>';
+                    // Convertir la taille de police pour l'aperçu (réduire proportionnellement)
+                    $scaledFontSize = max(8, $fontSize * $ratio);
+
+                    // Position Y ajustée (SVG text baseline)
+                    $textY = $y + ($h * 0.7);
+
+                    // Gestion de l'alignement horizontal
+                    $textAnchor = 'start';
+                    if ($textAlign === 'center') {
+                        $textAnchor = 'middle';
+                    } elseif ($textAlign === 'right') {
+                        $textAnchor = 'end';
+                    }
+
+                    $textX = $x;
+                    if ($textAlign === 'center') {
+                        $textX = $x + ($w / 2);
+                    } elseif ($textAlign === 'right') {
+                        $textX = $x + $w;
+                    }
+
+                    // Limiter le texte pour l'aperçu
+                    $displayText = strlen($content) > 30 ? substr($content, 0, 27) . '...' : $content;
+
+                    $svg .= '<text x="' . $textX . '" y="' . $textY . '" text-anchor="' . $textAnchor . '" font-family="Arial, sans-serif" font-size="' . $scaledFontSize . '" font-weight="' . $fontWeight . '" fill="' . $color . '">' . htmlspecialchars($displayText) . '</text>';
+
+                } else {
+                    // Rendu simplifié pour les autres types d'éléments
+                    $color = '#e3f2fd';
+                    switch ($type) {
+                        case 'image': $color = '#fff3e0'; break;
+                        case 'table': $color = '#f3e5f5'; break;
+                        case 'rectangle': $color = '#fce4ec'; break;
+                        case 'customer_info': $color = '#e8f5e8'; break;
+                        case 'company_info': $color = '#e8f5e8'; break;
+                        case 'line': $color = '#f0f0f0'; break;
+                        default: $color = '#f5f5f5'; break;
+                    }
+
+                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $color . '" stroke="#ccc" stroke-width="0.5" opacity="0.8"/>';
+
+                    // Ajouter une icône ou texte pour identifier le type
+                    $iconText = '';
+                    switch ($type) {
+                        case 'image': $iconText = '🖼️'; break;
+                        case 'table': $iconText = '📊'; break;
+                        case 'customer_info': $iconText = '👤'; break;
+                        case 'company_info': $iconText = '🏢'; break;
+                        case 'line': $iconText = '━'; break;
+                    }
+
+                    if ($iconText) {
+                        $iconSize = min($w, $h) * 0.4;
+                        $iconX = $x + ($w / 2);
+                        $iconY = $y + ($h / 2) + ($iconSize * 0.3);
+                        $svg .= '<text x="' . $iconX . '" y="' . $iconY . '" text-anchor="middle" font-size="' . $iconSize . '" fill="#666">' . $iconText . '</text>';
+                    }
+                }
             }
         }
 
