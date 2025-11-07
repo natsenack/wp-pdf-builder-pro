@@ -13,6 +13,7 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
 }
 
 // Debug: Page loaded
+error_log('DEBUG: Settings page PHP file loaded and executed at ' . date('Y-m-d H:i:s'));
 if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('PDF Builder: Settings page loaded at ' . date('Y-m-d H:i:s'));
 }
@@ -21,6 +22,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
 error_log('DEBUG: Settings loaded from database: ' . print_r($settings, true));
+error_log('DEBUG: About to check POST data...');
 if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('DEBUG: Settings page loaded, POST data keys: ' . implode(', ', array_keys($_POST)));
 }
@@ -28,6 +30,8 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
     error_log('DEBUG: FULL POST data received: ' . print_r($_POST, true));
+} else {
+    error_log('DEBUG: No POST data received (normal page load)');
 }
 
 // Process form
