@@ -1922,7 +1922,6 @@ if (isset($_POST['clear_cache']) &&
         cursor: pointer;
         margin-right: 4px;
         margin-bottom: 0;
-        padding: 12px 20px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
