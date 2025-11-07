@@ -3409,7 +3409,10 @@ class PDF_Builder_Admin {
             'show_fps' => isset($_POST['show_fps']),
             'email_notifications' => isset($_POST['email_notifications']),
             'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
-            'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'info')
+            'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'info'),
+            // Paramètres développeur
+            'developer_enabled' => isset($_POST['pdf_builder_settings']['developer_enabled']),
+            'developer_password' => sanitize_text_field($_POST['pdf_builder_settings']['developer_password'] ?? '')
         ];
 // Sauvegarde des informations entreprise
         if (isset($_POST['company_vat'])) {
@@ -3426,8 +3429,21 @@ class PDF_Builder_Admin {
         }
 
         // Sauvegarde des paramètres
+        $developer_settings = [];
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            if (in_array($key, ['developer_enabled', 'developer_password'])) {
+                // Paramètres développeur sauvegardés dans pdf_builder_settings
+                $developer_settings[$key] = $value;
+            } else {
+                update_option('pdf_builder_' . $key, $value);
+            }
+        }
+
+        // Sauvegarde des paramètres développeur dans pdf_builder_settings
+        if (!empty($developer_settings)) {
+            $current_settings = get_option('pdf_builder_settings', []);
+            $updated_settings = array_merge($current_settings, $developer_settings);
+            update_option('pdf_builder_settings', $updated_settings);
         }
 
         // Traitement spécifique des rôles autorisés
@@ -3574,6 +3590,9 @@ class PDF_Builder_Admin {
 // Paramètres de notifications
         $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
         $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
+// Paramètres développeur
+        $settings['developer_enabled'] = isset($_POST['pdf_builder_settings']['developer_enabled']);
+        $settings['developer_password'] = sanitize_text_field($_POST['pdf_builder_settings']['developer_password'] ?? '');
 // Paramètres des rôles autorisés avec validation améliorée
         $new_allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? array_map(function ($role) {
 
