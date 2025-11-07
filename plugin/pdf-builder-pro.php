@@ -232,14 +232,6 @@ function pdf_builder_ajax_save_settings() {
             $general_settings = [
                 'cache_enabled' => !empty($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1',
                 'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-                'auto_save_enabled' => !empty($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1',
-                'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-                'compress_images' => !empty($_POST['compress_images']) && $_POST['compress_images'] === '1',
-                'image_quality' => intval($_POST['image_quality'] ?? 85),
-                'optimize_for_web' => !empty($_POST['optimize_for_web']) && $_POST['optimize_for_web'] === '1',
-                'enable_hardware_acceleration' => !empty($_POST['enable_hardware_acceleration']) && $_POST['enable_hardware_acceleration'] === '1',
-                'limit_fps' => !empty($_POST['limit_fps']) && $_POST['limit_fps'] === '1',
-                'max_fps' => intval($_POST['max_fps'] ?? 60),
                 // Paramètres PDF dans l'onglet général
                 'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
                 'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
@@ -300,10 +292,14 @@ function pdf_builder_ajax_save_settings() {
 
         case 'performance':
             $performance_settings = [
-                'memory_limit' => intval($_POST['memory_limit'] ?? 256),
-                'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-                'enable_opcache' => !empty($_POST['enable_opcache']) && $_POST['enable_opcache'] === '1',
-                'enable_compression' => !empty($_POST['enable_compression']) && $_POST['enable_compression'] === '1',
+                'auto_save_enabled' => !empty($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1',
+                'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+                'compress_images' => !empty($_POST['compress_images']) && $_POST['compress_images'] === '1',
+                'image_quality' => intval($_POST['image_quality'] ?? 85),
+                'optimize_for_web' => !empty($_POST['optimize_for_web']) && $_POST['optimize_for_web'] === '1',
+                'enable_hardware_acceleration' => !empty($_POST['enable_hardware_acceleration']) && $_POST['enable_hardware_acceleration'] === '1',
+                'limit_fps' => !empty($_POST['limit_fps']) && $_POST['limit_fps'] === '1',
+                'max_fps' => intval($_POST['max_fps'] ?? 60),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
             $notices[] = 'Paramètres de performance enregistrés avec succès';
