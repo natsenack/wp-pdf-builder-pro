@@ -3311,19 +3311,55 @@ class PDF_Builder_Admin {
      */
     public function ajax_save_settings()
     {
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
-            wp_send_json_error('Nonce invalide');
+        // Déterminer l'onglet actuel
+        $current_tab = $_POST['current_tab'] ?? 'general';
+
+        // Vérification de sécurité selon l'onglet
+        $nonce_name = 'pdf_builder_settings';
+        if ($current_tab === 'pdf') {
+            $nonce_name = 'pdf_builder_pdf';
+        } elseif ($current_tab === 'performance') {
+            $nonce_name = 'pdf_builder_performance';
+        } elseif ($current_tab === 'notifications') {
+            $nonce_name = 'pdf_builder_notifications';
+        }
+
+        $nonce_field = 'nonce';
+        if ($current_tab === 'pdf') {
+            $nonce_field = 'pdf_builder_pdf_nonce';
+        } elseif ($current_tab === 'performance') {
+            $nonce_field = 'pdf_builder_performance_nonce';
+        } elseif ($current_tab === 'notifications') {
+            $nonce_field = 'pdf_builder_notifications_nonce';
+        }
+
+        if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_name)) {
+            wp_send_json_error('Nonce invalide pour onglet ' . $current_tab);
             return;
         }
 
-        // Vérification des permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
+        // Traitement selon l'onglet
+        if ($current_tab === 'notifications') {
+            // Sauvegarde des paramètres de notifications
+            $notification_settings = [
+                'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
+                'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
+                'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'error'),
+                'notification_on_generation' => isset($_POST['notification_on_generation']),
+                'notification_on_error' => isset($_POST['notification_on_error']),
+                'notification_on_deletion' => isset($_POST['notification_on_deletion']),
+            ];
+
+            foreach ($notification_settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+
+            wp_send_json_success('Paramètres de notifications sauvegardés avec succès');
             return;
         }
 
-        // Traitement des paramètres comme dans la logique non-AJAX
+        // Pour les autres onglets, traitement normal
+        // ...existing code...
         $settings = [
             'debug_mode' => isset($_POST['debug_mode']),
             'cache_enabled' => isset($_POST['cache_enabled']),
