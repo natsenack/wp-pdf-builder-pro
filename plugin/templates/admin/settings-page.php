@@ -124,6 +124,11 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
     
     <?php foreach ($notices as $notice) echo $notice; ?>
     
+<div class="wrap">
+    <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
+    
+    <?php foreach ($notices as $notice) echo $notice; ?>
+    
     <div class="nav-tab-wrapper wp-clearfix">
         <a href="#general" class="nav-tab nav-tab-active">Général</a>
         <a href="#licence" class="nav-tab">Licence</a>
@@ -138,7 +143,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
         <a href="#developpeur" class="nav-tab">Développeur</a>
     </div>
     
-    <form method="post" class="settings-form">
+    <form method="post" class="settings-form" style="padding-bottom: 100px;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
         <div id="general" class="tab-content" style="display: block;">
