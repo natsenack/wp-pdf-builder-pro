@@ -2966,16 +2966,16 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         formData.append('pdf_builder_settings_nonce', nonceField.value);
                     }
                     
-                    // Collecter spécifiquement les paramètres développeur
-                    document.querySelectorAll('#developpeur input[type="checkbox"]').forEach(checkbox => {
+                    // Collecter spécifiquement les paramètres développeur (uniquement dans les tables de formulaire)
+                    document.querySelectorAll('#developpeur table.form-table input[type="checkbox"]').forEach(checkbox => {
                         const key = checkbox.name;
                         if (key) {
                             formData.append(key, checkbox.checked ? '1' : '0');
                         }
                     });
                     
-                    // Collecter les inputs texte du développeur
-                    document.querySelectorAll('#developpeur input[type="password"], #developpeur input[type="text"]').forEach(input => {
+                    // Collecter les inputs texte du développeur (uniquement dans les tables de formulaire)
+                    document.querySelectorAll('#developpeur table.form-table input[type="password"], #developpeur table.form-table input[type="text"]').forEach(input => {
                         const key = input.name;
                         if (key) {
                             formData.append(key, input.value);
