@@ -568,10 +568,14 @@ window.addEventListener('load', function() {
     <div class="wrap">
     <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
+    <div class="postbox-container" style="width: 100%; padding-right: 0;">
+    <div class="metabox-holder">
+    <div class="meta-box-sortables">
+
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
-        <div class="pdf-builder-settings">
+        <div class="pdf-builder-settings postbox" style="border: none; box-shadow: none; background: transparent;">
 
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
@@ -2071,8 +2075,11 @@ window.addEventListener('load', function() {
             <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>">
         </p>
     </form>
-</div>
-</div>
+    </div> <!-- .pdf-builder-settings -->
+    </div> <!-- .meta-box-sortables -->
+    </div> <!-- .metabox-holder -->
+    </div> <!-- .postbox-container -->
+</div> <!-- .wrap -->
 
 <!-- Script pour la sauvegarde dynamique des paramètres (AJAX) -->
 <script type="text/javascript">
