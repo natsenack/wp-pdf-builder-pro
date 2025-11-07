@@ -2972,6 +2972,17 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 
                 // Collecter les données du formulaire
                 const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
+                
+                // Exclure l'onglet roles du système AJAX (il utilise POST normal)
+                if (currentTab === 'roles') {
+                    console.log('🚫 Roles tab uses POST normal, not AJAX. Use the specific save button.');
+                    alert('⚠️ L\'onglet Rôles utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Rôles" dans l\'onglet.');
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.innerHTML = '💾 Enregistrer';
+                    return;
+                }
+                
                 let formData = new FormData();
                 
                 // Ajouter l'action et l'onglet
