@@ -2085,7 +2085,6 @@ if (isset($_POST['clear_cache']) &&
         
         <p class="submit">
             <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
-            <button type="button" onclick="console.log('Form data:', new FormData(document.getElementById('settings-form'))); alert('Test submit');" class="button">Test Submit</button>
         </p>
     </form>
 </div>
