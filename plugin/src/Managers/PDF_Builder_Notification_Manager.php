@@ -264,40 +264,40 @@ class PDF_Builder_Notification_Manager {
 
         try {
             // Utiliser PHPMailer inclus avec WordPress
-            $phpmailer = new PHPMailer(true);
+            @$phpmailer = new PHPMailer(true);
 
             // Configuration SMTP
-            $phpmailer->isSMTP();
-            $phpmailer->Host = $smtp_host;
-            $phpmailer->Port = $smtp_port;
-            $phpmailer->SMTPAuth = true;
-            $phpmailer->Username = $smtp_username;
-            $phpmailer->Password = $smtp_password;
+            @$phpmailer->isSMTP();
+            @$phpmailer->Host = $smtp_host;
+            @$phpmailer->Port = $smtp_port;
+            @$phpmailer->SMTPAuth = true;
+            @$phpmailer->Username = $smtp_username;
+            @$phpmailer->Password = $smtp_password;
 
             // Debug PHPMailer
-            $phpmailer->SMTPDebug = 2;
-            $phpmailer->Debugoutput = function($str, $level) {
+            @$phpmailer->SMTPDebug = 2;
+            @$phpmailer->Debugoutput = function($str, $level) {
                 error_log("PHPMailer Debug [$level]: $str");
             };
 
             // Configuration du chiffrement
             if ($smtp_encryption === 'ssl') {
-                $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                @$phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             } elseif ($smtp_encryption === 'tls') {
-                $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                @$phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             } else {
-                $phpmailer->SMTPSecure = '';
+                @$phpmailer->SMTPSecure = '';
             }
 
             // Configuration de l'expéditeur
-            $phpmailer->setFrom($smtp_from_email, $smtp_from_name);
-            $phpmailer->addAddress($to);
+            @$phpmailer->setFrom($smtp_from_email, $smtp_from_name);
+            @$phpmailer->addAddress($to);
 
             // Configuration du message
-            $phpmailer->isHTML(true);
-            $phpmailer->Subject = $subject;
-            $phpmailer->Body = nl2br($message);
-            $phpmailer->AltBody = strip_tags($message);
+            @$phpmailer->isHTML(true);
+            @$phpmailer->Subject = $subject;
+            @$phpmailer->Body = nl2br($message);
+            @$phpmailer->AltBody = strip_tags($message);
 
             // Log de configuration
             error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
@@ -306,7 +306,7 @@ class PDF_Builder_Notification_Manager {
             error_log("PDF Builder: About to send email via PHPMailer to $to with subject: $subject");
 
             // Envoyer l'email
-            $result = $phpmailer->send();
+            @$result = $phpmailer->send();
 
             // Logger l'envoi
             if ($result) {
