@@ -119,7 +119,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
 }
 ?>
 
-<div>
+<!--<div>-->
 
     
 <div class="wrap">
@@ -197,9 +197,6 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
                             <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
                         </select>
                     </td>
-                </tr>
-            </table>
-        </div>
                 </tr>
             </table>
         </div>
@@ -1928,69 +1925,69 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.nav-tab');
-    const contents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(function(tab) {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            contents.forEach(function(c) { c.style.display = 'none'; });
-            tabs.forEach(function(t) { t.classList.remove('nav-tab-active'); });
-            
-            const id = this.getAttribute('href').substring(1);
-            document.getElementById(id).style.display = 'block';
-            this.classList.add('nav-tab-active');
-        });
-    });
-    
-    // Slider pour la qualité des images
-    const imageQualitySlider = document.getElementById('image_quality');
-    const imageQualityValue = document.getElementById('image_quality_value');
-    
-    if (imageQualitySlider && imageQualityValue) {
-        imageQualitySlider.addEventListener('input', function() {
-            imageQualityValue.textContent = this.value + '%';
-        });
-    }
-    
-    // Gestion des rôles
-    const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
-    const selectAllBtn = document.getElementById('select-all-roles');
-    const selectCommonBtn = document.getElementById('select-common-roles');
-    const selectedCountSpan = document.getElementById('selected-count');
-    
-    function updateCount() {
-        if (rolesSelect && selectedCountSpan) {
-            const selected = Array.from(rolesSelect.options).filter(opt => opt.selected).length;
-            selectedCountSpan.textContent = selected;
-        }
-    }
-    
-    if (selectAllBtn && rolesSelect) {
-        selectAllBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            Array.from(rolesSelect.options).forEach(opt => opt.selected = true);
-            updateCount();
-        });
-    }
-    
-    if (selectCommonBtn && rolesSelect) {
-        selectCommonBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const commonRoles = ['administrator', 'editor', 'shop_manager'];
-            Array.from(rolesSelect.options).forEach(opt => {
-                opt.selected = commonRoles.includes(opt.value);
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.nav-tab');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(function(tab) {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                contents.forEach(function(c) { c.style.display = 'none'; });
+                tabs.forEach(function(t) { t.classList.remove('nav-tab-active'); });
+                
+                const id = this.getAttribute('href').substring(1);
+                document.getElementById(id).style.display = 'block';
+                this.classList.add('nav-tab-active');
             });
-            updateCount();
         });
-    }
-    
-    if (rolesSelect) {
-        rolesSelect.addEventListener('change', updateCount);
-    }
-});
+        
+        // Slider pour la qualité des images
+        const imageQualitySlider = document.getElementById('image_quality');
+        const imageQualityValue = document.getElementById('image_quality_value');
+        
+        if (imageQualitySlider && imageQualityValue) {
+            imageQualitySlider.addEventListener('input', function() {
+                imageQualityValue.textContent = this.value + '%';
+            });
+        }
+        
+        // Gestion des rôles
+        const rolesSelect = document.getElementById('pdf_builder_allowed_roles');
+        const selectAllBtn = document.getElementById('select-all-roles');
+        const selectCommonBtn = document.getElementById('select-common-roles');
+        const selectedCountSpan = document.getElementById('selected-count');
+        
+        function updateCount() {
+            if (rolesSelect && selectedCountSpan) {
+                const selected = Array.from(rolesSelect.options).filter(opt => opt.selected).length;
+                selectedCountSpan.textContent = selected;
+            }
+        }
+        
+        if (selectAllBtn && rolesSelect) {
+            selectAllBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                Array.from(rolesSelect.options).forEach(opt => opt.selected = true);
+                updateCount();
+            });
+        }
+        
+        if (selectCommonBtn && rolesSelect) {
+            selectCommonBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const commonRoles = ['administrator', 'editor', 'shop_manager'];
+                Array.from(rolesSelect.options).forEach(opt => {
+                    opt.selected = commonRoles.includes(opt.value);
+                });
+                updateCount();
+            });
+        }
+        
+        if (rolesSelect) {
+            rolesSelect.addEventListener('change', updateCount);
+        }
+    });
 </script>
 
 <?php /*wp_footer();*/ ?>
