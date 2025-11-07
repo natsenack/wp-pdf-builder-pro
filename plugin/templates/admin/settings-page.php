@@ -1435,7 +1435,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <form method="post">
                 <?php 
                 $current_nonce = wp_create_nonce('pdf_builder_notifications');
-                echo '<input type="hidden" name="pdf_builder_notifications_nonce" value="' . $current_nonce . '" />';
+                echo '<input type="hidden" id="pdf_builder_notifications_nonce" name="pdf_builder_notifications_nonce" value="' . $current_nonce . '" />';
                 error_log('Generated nonce for notifications: ' . $current_nonce);
                 ?>
                 
