@@ -30,6 +30,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
     error_log('DEBUG: FULL POST data received: ' . print_r($_POST, true));
+    error_log('DEBUG: POST keys: ' . implode(', ', array_keys($_POST)));
 } else {
     error_log('DEBUG: No POST data received (normal page load)');
 }
@@ -257,7 +258,7 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
 }
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Developer tab submission detected - submit_developpeur found');
+    error_log('DEBUG: Developer tab submission detected - submit_developpeur found in POST');
     error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
     error_log('DEBUG: POST data: ' . print_r($_POST, true));
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -2541,29 +2542,28 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
         submitButtons.forEach(function(button) {
             button.addEventListener('click', function(e) {
-                const buttonName = this.getAttribute('name') || 'unnamed';
-                const buttonValue = this.value || 'no-value';
-                const form = this.closest('form');
-                let formDataObject = {};
-                
-                if (form) {
-                    const formData = new FormData(form);
-                    for (let [key, value] of formData.entries()) {
-                        formDataObject[key] = value;
-                    }
-                }
-
                 console.log('🔥 PDF Builder - Button clicked:', {
-                    buttonName: buttonName,
-                    buttonValue: buttonValue,
-                    formAction: form ? form.action : 'no-form',
-                    formMethod: form ? form.method : 'no-form',
-                    formData: formDataObject,
+                    buttonName: this.getAttribute('name') || 'unnamed',
+                    buttonValue: this.value || 'no-value',
+                    formAction: this.closest('form') ? this.closest('form').action : 'no-form',
+                    formMethod: this.closest('form') ? this.closest('form').method : 'no-form',
+                    formData: (() => {
+                        const form = this.closest('form');
+                        if (form) {
+                            const formData = new FormData(form);
+                            let data = {};
+                            for (let [key, value] of formData.entries()) {
+                                data[key] = value;
+                            }
+                            return data;
+                        }
+                        return {};
+                    })(),
                     timestamp: new Date().toISOString()
                 });
 
                 // Logs détaillés pour l'onglet développeur
-                if (buttonName === 'submit_developpeur') {
+                if (this.getAttribute('name') === 'submit_developpeur') {
                     console.log('🔧 Developer tab form data:', {
                         developer_enabled: document.getElementById('developer_enabled')?.checked || false,
                         developer_password: document.getElementById('developer_password')?.value || '',
@@ -2580,6 +2580,24 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         force_https: document.getElementById('force_https')?.checked || false,
                         nonce: document.querySelector('input[name="pdf_builder_settings_nonce"]')?.value || 'no-nonce'
                     });
+
+                    // Vérifier si le formulaire va être soumis
+                    const form = this.closest('form');
+                    if (form) {
+                        console.log('📤 About to submit developer form:', {
+                            action: form.action,
+                            method: form.method,
+                            enctype: form.enctype,
+                            willSubmit: true
+                        });
+
+                        // Ajouter un listener pour voir si la soumission réussit
+                        form.addEventListener('submit', function(e) {
+                            console.log('📤 Form submit event fired for developer tab');
+                        }, { once: true });
+                    } else {
+                        console.error('❌ No form found for developer submit button!');
+                    }
                 }
 
                 // Trouver l'onglet actif
