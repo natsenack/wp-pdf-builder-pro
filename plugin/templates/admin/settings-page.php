@@ -365,7 +365,9 @@ window.addEventListener('load', function() {
 });
 </script>
 
-    <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+<div class="wrap">
+
+    <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <script type="text/javascript">
     // Définir les variables globales nécessaires
@@ -565,12 +567,7 @@ window.addEventListener('load', function() {
     }
     ?>
 
-    <h1><?php _e('⚙️ Paramètres - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-
-    <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
-        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-
-        <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
+    <div id="pdf-builder-settings-tabs" class="pdf-builder-settings">
 
             <style>
             /* Styles pour la page des paramètres PDF Builder Pro */
@@ -2765,6 +2762,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         var message = newState ?
                             '<?php _e('Mode debug principal activé ! Les logs détaillés seront maintenant enregistrés.', 'pdf-builder-pro'); ?>' :
+                            '<?php _e('Mode debug principal désactivé ! Les logs détaillés sont maintenant masqués.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(message, 'success');
+                    } else {
                             '<?php _e('Mode debug principal désactivé ! Les logs détaillés sont maintenant masqués.', 'pdf-builder-pro'); ?>';
                         showMaintenanceStatus(message, 'success');
                     } else {
