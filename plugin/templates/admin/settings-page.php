@@ -120,9 +120,7 @@ if (isset($_POST['clear_cache']) && isset($_POST['pdf_builder_clear_cache_nonce'
 ?>
 
 <div class="wrap">
-    <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
-    
-    <?php foreach ($notices as $notice) echo $notice; ?>
+
     
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
