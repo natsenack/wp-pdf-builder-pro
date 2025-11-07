@@ -3386,7 +3386,16 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     if (data.success) {
                         alert('✅ Test des notifications réussi ! Vérifiez vos emails.');
                     } else {
-                        const errorMessage = data.data?.message || data.data || 'Erreur inconnue';
+                        let errorMessage = data.data?.message || data.data || 'Erreur inconnue';
+                        
+                        // Ajouter les informations de débogage si disponibles
+                        if (data.data?.debug_info) {
+                            errorMessage += '\n\n🔍 Informations de débogage:\n' + data.data.debug_info;
+                        }
+                        if (data.data?.smtp_enabled !== undefined) {
+                            errorMessage += '\n\n📧 SMTP activé: ' + data.data.smtp_enabled;
+                        }
+                        
                         alert('❌ Erreur lors du test : ' + errorMessage);
                     }
                 })

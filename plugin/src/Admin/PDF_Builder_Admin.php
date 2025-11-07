@@ -4756,8 +4756,23 @@ class PDF_Builder_Admin {
                         'message' => __('Email de test envoyé avec succès', 'pdf-builder-pro')
                     ]);
                 } else {
+                    // Récupérer les dernières erreurs PHP pour les retourner
+                    $last_error = error_get_last();
+                    $error_details = '';
+
+                    if ($last_error) {
+                        $error_details = sprintf(
+                            "Dernière erreur PHP: %s dans %s ligne %d",
+                            $last_error['message'],
+                            $last_error['file'],
+                            $last_error['line']
+                        );
+                    }
+
                     wp_send_json_error([
-                        'message' => __('Échec de l\'envoi de l\'email de test', 'pdf-builder-pro')
+                        'message' => __('Échec de l\'envoi de l\'email de test', 'pdf-builder-pro'),
+                        'debug_info' => $error_details,
+                        'smtp_enabled' => get_option('pdf_builder_smtp_enabled', false) ? 'oui' : 'non'
                     ]);
                 }
             } else {
