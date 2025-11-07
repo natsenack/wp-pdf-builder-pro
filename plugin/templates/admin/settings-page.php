@@ -196,7 +196,9 @@ if (isset($_POST['clear_cache']) &&
     </form>
 
     <script>
+    console.log('DEBUG SCRIPT LOADED');
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DEBUG DOMContentLoaded fired');
         document.getElementById('debug-btn').addEventListener('click', function() {
             console.log('=== FORM DEBUG START ===');
             const form = document.getElementById('settings-form');
