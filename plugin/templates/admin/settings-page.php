@@ -1944,6 +1944,10 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             </p>
         </div>
         
+        <div id="templates" class="tab-content" style="display: none;">
+            <style>
+                #templates #global-save-btn { display: none !important; }
+            </style>
             <h2>Assignation des Templates</h2>
             
             <p style="margin-bottom: 20px;">Assignez automatiquement des templates aux différents statuts de commande WooCommerce.</p>
@@ -2894,8 +2898,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 'performance': 'submit_performance',
                 'maintenance': 'submit_maintenance',
                 'developpeur': 'submit_developpeur',
-                'notifications': 'submit_notifications',
-                'templates': 'submit_templates'
+                'notifications': 'submit_notifications'
             };
             
             const buttonName = tabButtonMap[activeTabId] || 'submit';
@@ -2973,10 +2976,18 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                 // Collecter les données du formulaire
                 const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
                 
-                // Exclure l'onglet roles du système AJAX (il utilise POST normal)
+                // Exclure l'onglet roles et templates du système AJAX (ils utilisent POST normal)
                 if (currentTab === 'roles') {
                     console.log('🚫 Roles tab uses POST normal, not AJAX. Use the specific save button.');
                     alert('⚠️ L\'onglet Rôles utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Rôles" dans l\'onglet.');
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.innerHTML = '💾 Enregistrer';
+                    return;
+                }
+                if (currentTab === 'templates') {
+                    console.log('🚫 Templates tab uses POST normal, not AJAX. Use the specific save button.');
+                    alert('⚠️ L\'onglet Templates utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Assignations" dans l\'onglet.');
                     // Réactiver le bouton
                     this.disabled = false;
                     this.innerHTML = '💾 Enregistrer';
