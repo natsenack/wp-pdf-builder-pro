@@ -4810,7 +4810,7 @@ class PDF_Builder_Admin {
                 return;
             }
 
-            // Tester la connexion SMTP avec une connexion socket basique
+            // Tester la connexion SMTP avec les commandes SMTP basiques
             $connection = @fsockopen(
                 ($smtp_encryption === 'ssl' ? 'ssl://' : '') . $smtp_host,
                 $smtp_port,
@@ -4820,20 +4820,75 @@ class PDF_Builder_Admin {
             );
 
             if ($connection) {
-                // Lire la réponse du serveur
+                // Activer le chiffrement TLS si nécessaire
+                if ($smtp_encryption === 'tls') {
+                    stream_socket_enable_crypto($connection, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+                }
+
+                // Lire la réponse initiale
                 $response = fgets($connection, 1024);
+                if (strpos($response, '220') !== 0) {
+                    fclose($connection);
+                    wp_send_json_error([
+                        'message' => __('Serveur SMTP ne répond pas correctement', 'pdf-builder-pro')
+                    ]);
+                    return;
+                }
+
+                // Envoyer EHLO
+                fwrite($connection, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
+                $response = '';
+                while (($line = fgets($connection, 1024)) !== false) {
+                    $response .= $line;
+                    if (substr($line, 3, 1) === ' ') break; // Fin de la réponse multi-ligne
+                }
+
+                // Tester l'authentification si nécessaire
+                if (!empty($smtp_username) && !empty($smtp_password)) {
+                    // Envoyer AUTH LOGIN
+                    fwrite($connection, "AUTH LOGIN\r\n");
+                    $response = fgets($connection, 1024);
+
+                    if (strpos($response, '334') !== 0) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Authentification SMTP non supportée par le serveur', 'pdf-builder-pro')
+                        ]);
+                        return;
+                    }
+
+                    // Envoyer le nom d'utilisateur encodé en base64
+                    fwrite($connection, base64_encode($smtp_username) . "\r\n");
+                    $response = fgets($connection, 1024);
+
+                    if (strpos($response, '334') !== 0) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Nom d\'utilisateur SMTP invalide', 'pdf-builder-pro')
+                        ]);
+                        return;
+                    }
+
+                    // Envoyer le mot de passe encodé en base64
+                    fwrite($connection, base64_encode($smtp_password) . "\r\n");
+                    $response = fgets($connection, 1024);
+
+                    if (strpos($response, '235') !== 0) {
+                        fclose($connection);
+                        wp_send_json_error([
+                            'message' => __('Mot de passe SMTP invalide', 'pdf-builder-pro')
+                        ]);
+                        return;
+                    }
+                }
+
+                // Fermer proprement la connexion
+                fwrite($connection, "QUIT\r\n");
                 fclose($connection);
 
-                // Vérifier si la réponse contient "220" (réponse SMTP standard)
-                if (strpos($response, '220') === 0) {
-                    wp_send_json_success([
-                        'message' => __('Connexion SMTP réussie', 'pdf-builder-pro')
-                    ]);
-                } else {
-                    wp_send_json_error([
-                        'message' => __('Serveur SMTP répond mais avec une réponse inattendue', 'pdf-builder-pro')
-                    ]);
-                }
+                wp_send_json_success([
+                    'message' => __('Connexion et authentification SMTP réussies', 'pdf-builder-pro')
+                ]);
             } else {
                 wp_send_json_error([
                     'message' => __('Impossible de se connecter au serveur SMTP : ', 'pdf-builder-pro') . $errstr
