@@ -25,6 +25,11 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('DEBUG: Settings page loaded, POST data keys: ' . implode(', ', array_keys($_POST)));
 }
 
+// Log ALL POST data at the beginning
+if (!empty($_POST)) {
+    error_log('DEBUG: FULL POST data received: ' . print_r($_POST, true));
+}
+
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres" (General) clicked');
@@ -172,8 +177,9 @@ if (isset($_POST['clear_cache']) &&
 
 // Handle individual tab submissions
 if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres PDF" clicked');
+    error_log('DEBUG: PDF tab submission detected');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        error_log('DEBUG: PDF tab nonce verified');
         $pdf_settings = [
             'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
             'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
@@ -247,6 +253,7 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
 }
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('DEBUG: Developer tab submission detected - submit_developpeur found');
     error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
     error_log('DEBUG: POST data: ' . print_r($_POST, true));
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
