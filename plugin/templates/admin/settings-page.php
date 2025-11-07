@@ -1007,46 +1007,107 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             <form method="post">
                 <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
                 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="pdf_builder_allowed_roles">Rôles avec Accès</label></th>
-                        <td>
-                            <!-- Boutons de sélection rapide -->
-                            <div style="margin-bottom: 15px;">
-                                <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
-                                    Sélectionner Tout
-                                </button>
-                                <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
-                                    Rôles Courants
-                                </button>
-                                <span class="description" style="margin-left: 10px;">
-                                    Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
-                                </span>
-                            </div>
-                            
-                            <select name="pdf_builder_allowed_roles[]" id="pdf_builder_allowed_roles" multiple="multiple" 
-                                    style="height: 250px; width: 100%; max-width: 500px;">
-                                <?php foreach ($all_roles as $role_key => $role):
-                                    $role_name = translate_user_role($role['name']);
-                                    $is_selected = in_array($role_key, $allowed_roles);
-                                    $description = $role_descriptions[$role_key] ?? 'Rôle personnalisé';
-                                ?>
-                                    <option value="<?php echo esc_attr($role_key); ?>" 
-                                            <?php selected($is_selected); ?>
-                                            title="<?php echo esc_attr($description); ?>">
-                                        <?php echo esc_html($role_name); ?> 
-                                        <em style="color: #666;">(<?php echo esc_html($role_key); ?>)</em>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            
-                            <p class="description">
-                                💡 Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs rôles<br>
-                                📝 Survolez les rôles pour voir leur description
-                            </p>
-                        </td>
-                    </tr>
-                </table>
+                <!-- Boutons de sélection rapide -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
+                        Sélectionner Tout
+                    </button>
+                    <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
+                        Rôles Courants
+                    </button>
+                    <button type="button" id="select-none-roles" class="button button-secondary" style="margin-right: 5px;">
+                        Désélectionner Tout
+                    </button>
+                    <span class="description" style="margin-left: 10px;">
+                        Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
+                    </span>
+                </div>
+                
+                <!-- Boutons toggle pour les rôles -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                    <?php foreach ($all_roles as $role_key => $role):
+                        $role_name = translate_user_role($role['name']);
+                        $is_selected = in_array($role_key, $allowed_roles);
+                        $description = $role_descriptions[$role_key] ?? 'Rôle personnalisé';
+                        $is_admin = $role_key === 'administrator';
+                    ?>
+                        <label class="role-toggle <?php echo $is_selected ? 'active' : ''; ?> <?php echo $is_admin ? 'admin-role' : ''; ?>" 
+                               title="<?php echo esc_attr($description); ?>">
+                            <input type="checkbox" 
+                                   name="pdf_builder_allowed_roles[]" 
+                                   value="<?php echo esc_attr($role_key); ?>" 
+                                   <?php checked($is_selected); ?>
+                                   <?php echo $is_admin ? 'disabled' : ''; ?> />
+                            <span class="role-name">
+                                <?php echo esc_html($role_name); ?>
+                                <?php if ($is_admin): ?>
+                                    <em style="color: #d63384;">(toujours actif)</em>
+                                <?php endif; ?>
+                            </span>
+                            <span class="role-key"><?php echo esc_html($role_key); ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                
+                <style>
+                    .role-toggle {
+                        display: flex;
+                        align-items: center;
+                        padding: 12px 15px;
+                        border: 2px solid #ddd;
+                        border-radius: 8px;
+                        background: white;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        position: relative;
+                        font-size: 14px;
+                    }
+                    .role-toggle:hover {
+                        border-color: #2271b1;
+                        background: #f0f8ff;
+                    }
+                    .role-toggle.active {
+                        border-color: #2271b1;
+                        background: #e6f3ff;
+                    }
+                    .role-toggle.admin-role {
+                        border-color: #d63384;
+                        background: #fce4ec;
+                    }
+                    .role-toggle input[type="checkbox"] {
+                        position: absolute;
+                        opacity: 0;
+                        cursor: pointer;
+                    }
+                    .role-toggle .role-name {
+                        flex: 1;
+                        font-weight: 500;
+                        color: #333;
+                    }
+                    .role-toggle .role-key {
+                        font-size: 12px;
+                        color: #666;
+                        font-style: italic;
+                    }
+                    .role-toggle.active .role-key {
+                        color: #2271b1;
+                    }
+                    .role-toggle::before {
+                        content: '☐';
+                        font-size: 18px;
+                        margin-right: 10px;
+                        color: #999;
+                        transition: all 0.2s ease;
+                    }
+                    .role-toggle.active::before {
+                        content: '☑';
+                        color: #2271b1;
+                    }
+                    .role-toggle.admin-role::before {
+                        content: '🔒';
+                        color: #d63384;
+                    }
+                </style>
                 
                 <p class="submit">
                     <button type="submit" name="submit_roles" class="button button-primary">
@@ -1054,6 +1115,99 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     </button>
                 </p>
             </form>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Empêcher l'interférence AJAX avec le formulaire des rôles
+                    const rolesForm = document.querySelector('#roles form');
+                    if (rolesForm) {
+                        rolesForm.addEventListener('submit', function(e) {
+                            // Laisser le formulaire se soumettre normalement (POST)
+                            console.log('📝 Roles form submitted via POST');
+                        });
+                    }
+                    
+                    const roleToggles = document.querySelectorAll('.role-toggle input[type="checkbox"]');
+                    const selectedCount = document.getElementById('selected-count');
+                    const selectAllBtn = document.getElementById('select-all-roles');
+                    const selectCommonBtn = document.getElementById('select-common-roles');
+                    const selectNoneBtn = document.getElementById('select-none-roles');
+                    
+                    // Fonction pour mettre à jour le compteur
+                    function updateSelectedCount() {
+                        const checkedBoxes = document.querySelectorAll('.role-toggle input[type="checkbox"]:checked');
+                        if (selectedCount) {
+                            selectedCount.textContent = checkedBoxes.length;
+                        }
+                    }
+                    
+                    // Gestionnaire pour les boutons toggle
+                    roleToggles.forEach(function(checkbox) {
+                        const toggle = checkbox.closest('.role-toggle');
+                        
+                        // Clic sur le label
+                        toggle.addEventListener('click', function(e) {
+                            if (checkbox.disabled) return; // Ne pas changer les rôles admin
+                            
+                            checkbox.checked = !checkbox.checked;
+                            toggle.classList.toggle('active', checkbox.checked);
+                            updateSelectedCount();
+                        });
+                        
+                        // Clic direct sur checkbox (éviter double déclenchement)
+                        checkbox.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const toggle = this.closest('.role-toggle');
+                            toggle.classList.toggle('active', this.checked);
+                            updateSelectedCount();
+                        });
+                    });
+                    
+                    // Bouton Sélectionner Tout
+                    if (selectAllBtn) {
+                        selectAllBtn.addEventListener('click', function() {
+                            roleToggles.forEach(function(checkbox) {
+                                if (!checkbox.disabled) {
+                                    checkbox.checked = true;
+                                    checkbox.closest('.role-toggle').classList.add('active');
+                                }
+                            });
+                            updateSelectedCount();
+                        });
+                    }
+                    
+                    // Bouton Rôles Courants
+                    if (selectCommonBtn) {
+                        selectCommonBtn.addEventListener('click', function() {
+                            const commonRoles = ['administrator', 'editor', 'shop_manager'];
+                            roleToggles.forEach(function(checkbox) {
+                                const isCommon = commonRoles.includes(checkbox.value);
+                                if (!checkbox.disabled) {
+                                    checkbox.checked = isCommon;
+                                    checkbox.closest('.role-toggle').classList.toggle('active', isCommon);
+                                }
+                            });
+                            updateSelectedCount();
+                        });
+                    }
+                    
+                    // Bouton Désélectionner Tout
+                    if (selectNoneBtn) {
+                        selectNoneBtn.addEventListener('click', function() {
+                            roleToggles.forEach(function(checkbox) {
+                                if (!checkbox.disabled) {
+                                    checkbox.checked = false;
+                                    checkbox.closest('.role-toggle').classList.remove('active');
+                                }
+                            });
+                            updateSelectedCount();
+                        });
+                    }
+                    
+                    // Initialiser le compteur
+                    updateSelectedCount();
+                });
+            </script>
             
             <!-- Permissions incluses -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
