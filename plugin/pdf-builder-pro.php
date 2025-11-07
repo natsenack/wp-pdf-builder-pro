@@ -230,15 +230,15 @@ function pdf_builder_ajax_save_settings() {
     switch ($current_tab) {
         case 'general':
             $general_settings = [
-                'cache_enabled' => isset($_POST['cache_enabled']),
+                'cache_enabled' => !empty($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1',
                 'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-                'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+                'auto_save_enabled' => !empty($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1',
                 'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-                'compress_images' => isset($_POST['compress_images']),
+                'compress_images' => !empty($_POST['compress_images']) && $_POST['compress_images'] === '1',
                 'image_quality' => intval($_POST['image_quality'] ?? 85),
-                'optimize_for_web' => isset($_POST['optimize_for_web']),
-                'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
-                'limit_fps' => isset($_POST['limit_fps']),
+                'optimize_for_web' => !empty($_POST['optimize_for_web']) && $_POST['optimize_for_web'] === '1',
+                'enable_hardware_acceleration' => !empty($_POST['enable_hardware_acceleration']) && $_POST['enable_hardware_acceleration'] === '1',
+                'limit_fps' => !empty($_POST['limit_fps']) && $_POST['limit_fps'] === '1',
                 'max_fps' => intval($_POST['max_fps'] ?? 60),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $general_settings));
@@ -284,6 +284,104 @@ function pdf_builder_ajax_save_settings() {
             error_log('DEBUG AJAX: debug_php_errors value: ' . (isset($verify_settings['debug_php_errors']) ? ($verify_settings['debug_php_errors'] ? 'true' : 'false') : 'NOT SET'));
             
             $notices[] = 'Paramètres développeur enregistrés avec succès';
+            break;
+
+        case 'licence':
+            $licence_settings = [
+                'license_key' => sanitize_text_field($_POST['license_key'] ?? ''),
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $licence_settings));
+            $notices[] = 'Paramètres de licence enregistrés avec succès';
+            break;
+
+        case 'performance':
+            $performance_settings = [
+                'memory_limit' => intval($_POST['memory_limit'] ?? 256),
+                'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+                'enable_opcache' => !empty($_POST['enable_opcache']) && $_POST['enable_opcache'] === '1',
+                'enable_compression' => !empty($_POST['enable_compression']) && $_POST['enable_compression'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
+            $notices[] = 'Paramètres de performance enregistrés avec succès';
+            break;
+
+        case 'pdf':
+            $pdf_settings = [
+                'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+                'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+                'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+                'embed_fonts' => !empty($_POST['embed_fonts']) && $_POST['embed_fonts'] === '1',
+                'compress_pdf' => !empty($_POST['compress_pdf']) && $_POST['compress_pdf'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
+            $notices[] = 'Paramètres PDF enregistrés avec succès';
+            break;
+
+        case 'securite':
+            $securite_settings = [
+                'enable_cors' => !empty($_POST['enable_cors']) && $_POST['enable_cors'] === '1',
+                'allowed_origins' => sanitize_text_field($_POST['allowed_origins'] ?? ''),
+                'enable_csrf_protection' => !empty($_POST['enable_csrf_protection']) && $_POST['enable_csrf_protection'] === '1',
+                'session_timeout' => intval($_POST['session_timeout'] ?? 3600),
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $securite_settings));
+            $notices[] = 'Paramètres de sécurité enregistrés avec succès';
+            break;
+
+        case 'roles':
+            $roles_settings = [
+                'admin_role_access' => !empty($_POST['admin_role_access']) && $_POST['admin_role_access'] === '1',
+                'editor_role_access' => !empty($_POST['editor_role_access']) && $_POST['editor_role_access'] === '1',
+                'author_role_access' => !empty($_POST['author_role_access']) && $_POST['author_role_access'] === '1',
+                'contributor_role_access' => !empty($_POST['contributor_role_access']) && $_POST['contributor_role_access'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $roles_settings));
+            $notices[] = 'Paramètres des rôles enregistrés avec succès';
+            break;
+
+        case 'notifications':
+            $notifications_settings = [
+                'enable_email_notifications' => !empty($_POST['enable_email_notifications']) && $_POST['enable_email_notifications'] === '1',
+                'notification_email' => sanitize_email($_POST['notification_email'] ?? ''),
+                'notify_on_errors' => !empty($_POST['notify_on_errors']) && $_POST['notify_on_errors'] === '1',
+                'notify_on_success' => !empty($_POST['notify_on_success']) && $_POST['notify_on_success'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $notifications_settings));
+            $notices[] = 'Paramètres de notifications enregistrés avec succès';
+            break;
+
+        case 'canvas':
+            $canvas_settings = [
+                'canvas_width' => intval($_POST['canvas_width'] ?? 800),
+                'canvas_height' => intval($_POST['canvas_height'] ?? 600),
+                'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
+                'enable_grid' => !empty($_POST['enable_grid']) && $_POST['enable_grid'] === '1',
+                'grid_size' => intval($_POST['grid_size'] ?? 20),
+                'snap_to_grid' => !empty($_POST['snap_to_grid']) && $_POST['snap_to_grid'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $canvas_settings));
+            $notices[] = 'Paramètres Canvas enregistrés avec succès';
+            break;
+
+        case 'templates':
+            $templates_settings = [
+                'default_template' => sanitize_text_field($_POST['default_template'] ?? ''),
+                'enable_template_cache' => !empty($_POST['enable_template_cache']) && $_POST['enable_template_cache'] === '1',
+                'template_cache_ttl' => intval($_POST['template_cache_ttl'] ?? 3600),
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $templates_settings));
+            $notices[] = 'Paramètres des templates enregistrés avec succès';
+            break;
+
+        case 'maintenance':
+            $maintenance_settings = [
+                'enable_maintenance_mode' => !empty($_POST['enable_maintenance_mode']) && $_POST['enable_maintenance_mode'] === '1',
+                'maintenance_message' => sanitize_text_field($_POST['maintenance_message'] ?? ''),
+                'maintenance_end_date' => sanitize_text_field($_POST['maintenance_end_date'] ?? ''),
+                'allow_admin_access' => !empty($_POST['allow_admin_access']) && $_POST['allow_admin_access'] === '1',
+            ];
+            update_option('pdf_builder_settings', array_merge($settings, $maintenance_settings));
+            $notices[] = 'Paramètres de maintenance enregistrés avec succès';
             break;
 
         default:
