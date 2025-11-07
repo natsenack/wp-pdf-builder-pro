@@ -573,6 +573,9 @@ window.addEventListener('load', function() {
                 width: 100%;
                 margin-top: 20px;
                 clear: both;
+                position: relative;
+                z-index: 10;
+                padding-bottom: 100px;
             }
 
             .pdf-builder-settings .nav-tab-wrapper {
