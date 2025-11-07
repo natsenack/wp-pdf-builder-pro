@@ -60,38 +60,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
             // Performance settings moved to Performance tab only
             // PDF settings moved to PDF tab only
-            // Canvas
-            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
-            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
-            'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
-            'container_background_color' => sanitize_text_field($_POST['container_background_color'] ?? '#f8f9fa'),
-            'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => intval($_POST['margin_top'] ?? 28),
-            'margin_right' => intval($_POST['margin_right'] ?? 28),
-            'margin_bottom' => intval($_POST['margin_bottom'] ?? 28),
-            'margin_left' => intval($_POST['margin_left'] ?? 10),
-            'show_grid' => isset($_POST['show_grid']),
-            'grid_size' => intval($_POST['grid_size'] ?? 10),
-            'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
-            'snap_to_grid' => isset($_POST['snap_to_grid']),
-            'snap_to_elements' => isset($_POST['snap_to_elements']),
-            'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
-            'show_guides' => isset($_POST['show_guides']),
-            'default_zoom' => intval($_POST['default_zoom'] ?? 100),
-            'zoom_step' => intval($_POST['zoom_step'] ?? 25),
-            'min_zoom' => intval($_POST['min_zoom'] ?? 10),
-            'max_zoom' => intval($_POST['max_zoom'] ?? 500),
-            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
-            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
-            'show_resize_handles' => isset($_POST['show_resize_handles']),
-            'handle_size' => intval($_POST['handle_size'] ?? 8),
-            'enable_rotation' => isset($_POST['enable_rotation']),
-            'rotation_step' => intval($_POST['rotation_step'] ?? 15),
-            'multi_select' => isset($_POST['multi_select']),
-            'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
-            'undo_levels' => intval($_POST['undo_levels'] ?? 50),
-            'redo_levels' => intval($_POST['redo_levels'] ?? 50),
-            'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
+            // Canvas settings moved to Canvas tab only
             // Développeur
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -201,42 +170,14 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce
 if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres Canvas" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        $canvas_settings = [
-            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
-            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
-            'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
-            'container_background_color' => sanitize_text_field($_POST['container_background_color'] ?? '#f8f9fa'),
-            'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => intval($_POST['margin_top'] ?? 28),
-            'margin_right' => intval($_POST['margin_right'] ?? 28),
-            'margin_bottom' => intval($_POST['margin_bottom'] ?? 28),
-            'margin_left' => intval($_POST['margin_left'] ?? 10),
-            'show_grid' => isset($_POST['show_grid']),
-            'grid_size' => intval($_POST['grid_size'] ?? 10),
-            'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
-            'snap_to_grid' => isset($_POST['snap_to_grid']),
-            'snap_to_elements' => isset($_POST['snap_to_elements']),
-            'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
-            'show_guides' => isset($_POST['show_guides']),
-            'default_zoom' => intval($_POST['default_zoom'] ?? 100),
-            'zoom_step' => intval($_POST['zoom_step'] ?? 25),
-            'min_zoom' => intval($_POST['min_zoom'] ?? 10),
-            'max_zoom' => intval($_POST['max_zoom'] ?? 500),
-            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
-            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
-            'show_resize_handles' => isset($_POST['show_resize_handles']),
-            'handle_size' => intval($_POST['handle_size'] ?? 8),
-            'enable_rotation' => isset($_POST['enable_rotation']),
-            'rotation_step' => intval($_POST['rotation_step'] ?? 15),
-            'multi_select' => isset($_POST['multi_select']),
-            'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
-            'undo_levels' => intval($_POST['undo_levels'] ?? 50),
-            'redo_levels' => intval($_POST['redo_levels'] ?? 50),
-            'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
-        ];
-        update_option('pdf_builder_settings', array_merge($settings, $canvas_settings));
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
-        $settings = get_option('pdf_builder_settings', []);
+        // Utiliser le Canvas Manager pour sauvegarder les paramètres
+        if (class_exists('PDF_Builder_Canvas_Manager')) {
+            $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
+            $canvas_manager->save_canvas_settings($_POST);
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur: Canvas Manager non disponible.</p></div>';
+        }
     }
 }
 
@@ -1719,13 +1660,22 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         <div id="canvas" class="tab-content" style="display: none;">
             <h2>Paramètres Canvas</h2>
             
+            <?php
+            // Récupérer les paramètres canvas via le manager
+            $canvas_settings = [];
+            if (class_exists('PDF_Builder_Canvas_Manager')) {
+                $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
+                $canvas_settings = $canvas_manager->get_canvas_settings();
+            }
+            ?>
+            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Dimensions par Défaut</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="default_canvas_width">Largeur</label></th>
                     <td>
                         <input type="number" id="default_canvas_width" name="default_canvas_width" 
-                               value="<?php echo intval($settings['default_canvas_width'] ?? 794); ?>" 
+                               value="<?php echo intval($canvas_settings['default_canvas_width'] ?? 794); ?>" 
                                min="50" max="2000" />
                         <span>px</span>
                         <p class="description">Largeur par défaut du canvas (794px = A4)</p>
@@ -1735,7 +1685,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="default_canvas_height">Hauteur</label></th>
                     <td>
                         <input type="number" id="default_canvas_height" name="default_canvas_height" 
-                               value="<?php echo intval($settings['default_canvas_height'] ?? 1123); ?>" 
+                               value="<?php echo intval($canvas_settings['default_canvas_height'] ?? 1123); ?>" 
                                min="50" max="2000" />
                         <span>px</span>
                         <p class="description">Hauteur par défaut du canvas (1123px = A4)</p>
@@ -1749,7 +1699,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="canvas_background_color">Couleur Fond Canvas</label></th>
                     <td>
                         <input type="color" id="canvas_background_color" name="canvas_background_color" 
-                               value="<?php echo esc_attr($settings['canvas_background_color'] ?? '#ffffff'); ?>" />
+                               value="<?php echo esc_attr($canvas_settings['canvas_background_color'] ?? '#ffffff'); ?>" />
                         <p class="description">Couleur de fond du canvas</p>
                     </td>
                 </tr>
@@ -1757,7 +1707,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="container_background_color">Couleur Fond Conteneur</label></th>
                     <td>
                         <input type="color" id="container_background_color" name="container_background_color" 
-                               value="<?php echo esc_attr($settings['container_background_color'] ?? '#f8f9fa'); ?>" />
+                               value="<?php echo esc_attr($canvas_settings['container_background_color'] ?? '#f8f9fa'); ?>" />
                         <p class="description">Couleur de fond autour du canvas</p>
                     </td>
                 </tr>
@@ -1771,7 +1721,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_margins" name="show_margins" value="1" 
-                                       <?php checked($settings['show_margins'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_margins'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Marges visibles</span>
@@ -1786,22 +1736,22 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                             <div>
                                 <label for="margin_top">Haut :</label>
                                 <input type="number" id="margin_top" name="margin_top" 
-                                       value="<?php echo intval($settings['margin_top'] ?? 28); ?>" min="0" />
+                                       value="<?php echo intval($canvas_settings['margin_top'] ?? 28); ?>" min="0" />
                             </div>
                             <div>
                                 <label for="margin_right">Droite :</label>
                                 <input type="number" id="margin_right" name="margin_right" 
-                                       value="<?php echo intval($settings['margin_right'] ?? 28); ?>" min="0" />
+                                       value="<?php echo intval($canvas_settings['margin_right'] ?? 28); ?>" min="0" />
                             </div>
                             <div>
                                 <label for="margin_bottom">Bas :</label>
                                 <input type="number" id="margin_bottom" name="margin_bottom" 
-                                       value="<?php echo intval($settings['margin_bottom'] ?? 28); ?>" min="0" />
+                                       value="<?php echo intval($canvas_settings['margin_bottom'] ?? 28); ?>" min="0" />
                             </div>
                             <div>
                                 <label for="margin_left">Gauche :</label>
                                 <input type="number" id="margin_left" name="margin_left" 
-                                       value="<?php echo intval($settings['margin_left'] ?? 10); ?>" min="0" />
+                                       value="<?php echo intval($canvas_settings['margin_left'] ?? 10); ?>" min="0" />
                             </div>
                         </div>
                     </td>
@@ -1816,7 +1766,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_grid" name="show_grid" value="1" 
-                                       <?php checked($settings['show_grid'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_grid'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Grille visible</span>
@@ -1828,14 +1778,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="grid_size">Taille Grille (px)</label></th>
                     <td>
                         <input type="number" id="grid_size" name="grid_size" 
-                               value="<?php echo intval($settings['grid_size'] ?? 10); ?>" min="5" max="100" />
+                               value="<?php echo intval($canvas_settings['grid_size'] ?? 10); ?>" min="5" max="100" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="grid_color">Couleur Grille</label></th>
                     <td>
                         <input type="color" id="grid_color" name="grid_color" 
-                               value="<?php echo esc_attr($settings['grid_color'] ?? '#e0e0e0'); ?>" />
+                               value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>" />
                     </td>
                 </tr>
                 <tr>
@@ -1844,7 +1794,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
-                                       <?php checked($settings['snap_to_grid'] ?? false); ?> />
+                                       <?php checked($canvas_settings['snap_to_grid'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer magnétisme</span>
@@ -1858,7 +1808,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
-                                       <?php checked($settings['snap_to_elements'] ?? false); ?> />
+                                       <?php checked($canvas_settings['snap_to_elements'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer magnétisme</span>
@@ -1870,7 +1820,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="snap_tolerance">Tolérance Aimantation (px)</label></th>
                     <td>
                         <input type="number" id="snap_tolerance" name="snap_tolerance" 
-                               value="<?php echo intval($settings['snap_tolerance'] ?? 5); ?>" min="1" max="50" />
+                               value="<?php echo intval($canvas_settings['snap_tolerance'] ?? 5); ?>" min="1" max="50" />
                         <p class="description">Distance avant accrochage magnétique</p>
                     </td>
                 </tr>
@@ -1880,7 +1830,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_guides" name="show_guides" value="1" 
-                                       <?php checked($settings['show_guides'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_guides'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Guides visibles</span>
@@ -1896,14 +1846,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="default_zoom">Zoom par Défaut (%)</label></th>
                     <td>
                         <input type="number" id="default_zoom" name="default_zoom" 
-                               value="<?php echo intval($settings['default_zoom'] ?? 100); ?>" min="10" max="500" />
+                               value="<?php echo intval($canvas_settings['default_zoom'] ?? 100); ?>" min="10" max="500" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="zoom_step">Pas du Zoom (%)</label></th>
                     <td>
                         <input type="number" id="zoom_step" name="zoom_step" 
-                               value="<?php echo intval($settings['zoom_step'] ?? 25); ?>" min="5" max="100" />
+                               value="<?php echo intval($canvas_settings['zoom_step'] ?? 25); ?>" min="5" max="100" />
                         <p class="description">Incrément lors du zoom avant/arrière</p>
                     </td>
                 </tr>
@@ -1911,14 +1861,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="min_zoom">Zoom Minimum (%)</label></th>
                     <td>
                         <input type="number" id="min_zoom" name="min_zoom" 
-                               value="<?php echo intval($settings['min_zoom'] ?? 10); ?>" min="1" max="100" />
+                               value="<?php echo intval($canvas_settings['min_zoom'] ?? 10); ?>" min="1" max="100" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="max_zoom">Zoom Maximum (%)</label></th>
                     <td>
                         <input type="number" id="max_zoom" name="max_zoom" 
-                               value="<?php echo intval($settings['max_zoom'] ?? 500); ?>" min="100" max="2000" />
+                               value="<?php echo intval($canvas_settings['max_zoom'] ?? 500); ?>" min="100" max="2000" />
                     </td>
                 </tr>
                 <tr>
@@ -1927,7 +1877,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
-                                       <?php checked($settings['zoom_with_wheel'] ?? false); ?> />
+                                       <?php checked($canvas_settings['zoom_with_wheel'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Zoom molette</span>
@@ -1941,7 +1891,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
-                                       <?php checked($settings['pan_with_mouse'] ?? false); ?> />
+                                       <?php checked($canvas_settings['pan_with_mouse'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Panoramique souris</span>
@@ -1959,7 +1909,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
-                                       <?php checked($settings['show_resize_handles'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_resize_handles'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Poignées visibles</span>
@@ -1971,7 +1921,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="handle_size">Taille Poignée (px)</label></th>
                     <td>
                         <input type="number" id="handle_size" name="handle_size" 
-                               value="<?php echo intval($settings['handle_size'] ?? 8); ?>" min="4" max="20" />
+                               value="<?php echo intval($canvas_settings['handle_size'] ?? 8); ?>" min="4" max="20" />
                     </td>
                 </tr>
                 <tr>
@@ -1980,7 +1930,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
-                                       <?php checked($settings['enable_rotation'] ?? false); ?> />
+                                       <?php checked($canvas_settings['enable_rotation'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Rotation activée</span>
@@ -1992,7 +1942,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="rotation_step">Pas Rotation (degrés)</label></th>
                     <td>
                         <input type="number" id="rotation_step" name="rotation_step" 
-                               value="<?php echo intval($settings['rotation_step'] ?? 15); ?>" min="1" max="90" />
+                               value="<?php echo intval($canvas_settings['rotation_step'] ?? 15); ?>" min="1" max="90" />
                     </td>
                 </tr>
                 <tr>
@@ -2001,7 +1951,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="multi_select" name="multi_select" value="1" 
-                                       <?php checked($settings['multi_select'] ?? false); ?> />
+                                       <?php checked($canvas_settings['multi_select'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Multi-sélection</span>
@@ -2015,7 +1965,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1" 
-                                       <?php checked($settings['copy_paste_enabled'] ?? false); ?> />
+                                       <?php checked($canvas_settings['copy_paste_enabled'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Copier/coller</span>
@@ -2031,7 +1981,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="undo_levels">Niveaux Undo</label></th>
                     <td>
                         <input type="number" id="undo_levels" name="undo_levels" 
-                               value="<?php echo intval($settings['undo_levels'] ?? 50); ?>" min="1" max="500" />
+                               value="<?php echo intval($canvas_settings['undo_levels'] ?? 50); ?>" min="1" max="500" />
                         <p class="description">Nombre d'actions à mémoriser pour annuler</p>
                     </td>
                 </tr>
@@ -2039,14 +1989,14 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
                     <th scope="row"><label for="redo_levels">Niveaux Redo</label></th>
                     <td>
                         <input type="number" id="redo_levels" name="redo_levels" 
-                               value="<?php echo intval($settings['redo_levels'] ?? 50); ?>" min="1" max="500" />
+                               value="<?php echo intval($canvas_settings['redo_levels'] ?? 50); ?>" min="1" max="500" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="auto_save_versions">Versions Auto-save</label></th>
                     <td>
                         <input type="number" id="auto_save_versions" name="auto_save_versions" 
-                               value="<?php echo intval($settings['auto_save_versions'] ?? 10); ?>" min="1" max="100" />
+                               value="<?php echo intval($canvas_settings['auto_save_versions'] ?? 10); ?>" min="1" max="100" />
                         <p class="description">Nombre de versions à conserver</p>
                     </td>
                 </tr>

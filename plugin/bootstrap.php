@@ -48,6 +48,7 @@ function pdf_builder_load_core() {
     // Charger les managers essentiels depuis src/Managers/ AVANT PDF_Builder_Admin
     $managers = array(
         'PDF_Builder_Cache_Manager.php',
+        'PDF_Builder_Canvas_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
         'PDF_Builder_Feature_Manager.php',
         'PDF_Builder_License_Manager.php',
