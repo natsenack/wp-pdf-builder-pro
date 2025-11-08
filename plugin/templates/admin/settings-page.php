@@ -2581,10 +2581,6 @@ if ($is_ajax) {
         <div id="maintenance" class="tab-content hidden-tab">
             <h2>Actions de Maintenance</h2>
             
-            <form method="post" id="maintenance-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_maintenance_nonce'); ?>
-                <input type="hidden" name="submit_maintenance" value="1">
-            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
             <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
             
@@ -2775,11 +2771,6 @@ if ($is_ajax) {
                     <li>Maintenez WordPress à jour</li>
                 </ul>
             </div>
-            
-            <p class="submit">
-                <button type="submit" name="submit_maintenance" class="button button-primary">Enregistrer les paramètres de maintenance</button>
-            </p>
-            </form>
         </div>
         
         <div id="developpeur" class="tab-content hidden-tab">
@@ -3620,8 +3611,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             console.log('🎨 CANVAS FORM FOUND:', form);
                         } else if (activeTab.id === 'templates') {
                             form = document.getElementById('templates-form');
-                        } else if (activeTab.id === 'maintenance') {
-                            form = document.getElementById('maintenance-form');
                         } else if (activeTab.id === 'developpeur') {
                             form = document.getElementById('developpeur-form');
                         } else {
