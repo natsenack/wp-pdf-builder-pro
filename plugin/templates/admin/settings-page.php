@@ -357,7 +357,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <div class="save-status" id="save-status"></div>
         </div>
         
-        <div id="general" class="tab-content" style="display: block;">
+        <div id="general" class="tab-content">
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
             
@@ -425,7 +425,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </p>
         </div>
         
-        <div id="licence" class="tab-content" style="display: none;">
+        <div id="licence" class="tab-content hidden-tab">
             <h2>Gestion de la Licence</h2>
             
             <?php
@@ -614,7 +614,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </div>
         </div>
         
-        <div id="performance" class="tab-content" style="display: none;">
+        <div id="performance" class="tab-content hidden-tab">
             <form method="post" action="">
                 <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
                 <input type="hidden" name="current_tab" value="performance">
@@ -742,7 +742,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </form>
         </div>
         
-        <div id="pdf" class="tab-content" style="display: none;">
+        <div id="pdf" class="tab-content hidden-tab">
             <form method="post" action="">
                 <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
                 <input type="hidden" name="current_tab" value="pdf">
@@ -863,7 +863,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </form>
         </div>
         
-        <div id="securite" class="tab-content" style="display: none;">
+        <div id="securite" class="tab-content hidden-tab">
             <h2>Paramètres de Sécurité</h2>
             <p style="color: #666;">Configurations de sécurité et limites système. Pour le debug et logging, voir l'onglet Développeur.</p>
             
@@ -949,7 +949,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </p>
         </div>
         
-        <div id="roles" class="tab-content" style="display: none;">
+        <div id="roles" class="tab-content hidden-tab">
             <h2>Gestion des Rôles et Permissions</h2>
             
             <!-- Message de confirmation que l'onglet est chargé -->
@@ -1388,7 +1388,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </div>
         </div>
         
-        <div id="notifications" class="tab-content" style="display: none;">
+        <div id="notifications" class="tab-content hidden-tab">
             <h2>Paramètres de Notifications</h2>
             
             <?php
@@ -1696,7 +1696,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </div>
         </div>
         
-        <div id="canvas" class="tab-content" style="display: none;">
+        <div id="canvas" class="tab-content hidden-tab">
             <h2>Paramètres Canvas</h2>
             
             <?php
@@ -2061,7 +2061,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </p>
         </div>
         
-        <div id="templates" class="tab-content" style="display: none;">
+        <div id="templates" class="tab-content hidden-tab">
             <style>
                 #templates #global-save-btn { display: none !important; }
             </style>
@@ -2217,7 +2217,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </div>
         </div>
         
-        <div id="maintenance" class="tab-content" style="display: none;">
+        <div id="maintenance" class="tab-content hidden-tab">
             <h2>Actions de Maintenance</h2>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
@@ -2416,7 +2416,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </p>
         </div>
         
-        <div id="developpeur" class="tab-content" style="display: none;">
+        <div id="developpeur" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
             
@@ -2944,6 +2944,11 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     #templates #global-save-btn {
         display: none !important;
     }
+
+    /* Classe pour masquer les onglets non actifs */
+    .hidden-tab {
+        display: none;
+    }
 </style>
 
 <?php
@@ -3017,7 +3022,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         function switchTab(targetId, clickedTab) {
             // Masquer tous les contenus
             contents.forEach(function(content) {
-                content.style.display = 'none';
+                content.classList.add('hidden-tab');
                 content.setAttribute('aria-hidden', 'true');
             });
             
@@ -3030,7 +3035,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             // Afficher l'onglet cible
             const targetContent = document.getElementById(targetId);
             if (targetContent) {
-                targetContent.style.display = 'block';
+                targetContent.classList.remove('hidden-tab');
                 targetContent.setAttribute('aria-hidden', 'false');
             }
             
