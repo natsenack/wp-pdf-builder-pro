@@ -3209,8 +3209,36 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 this.disabled = true;
                 this.innerHTML = '⏳ Soumission...';
 
-                // Soumettre le formulaire normalement (POST)
-                form.submit();
+                // Soumettre le formulaire de manière sécurisée
+                try {
+                    if (typeof form.requestSubmit === 'function') {
+                        // Utiliser requestSubmit si disponible (plus moderne)
+                        form.requestSubmit();
+                    } else {
+                        // Fallback pour les navigateurs plus anciens
+                        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.click();
+                        } else {
+                            // Créer un bouton submit temporaire si aucun n'existe
+                            const tempBtn = document.createElement('button');
+                            tempBtn.type = 'submit';
+                            tempBtn.style.display = 'none';
+                            form.appendChild(tempBtn);
+                            tempBtn.click();
+                            form.removeChild(tempBtn);
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur lors de la soumission:', error);
+                    // Réactiver le bouton en cas d'erreur
+                    this.disabled = false;
+                    this.innerHTML = '💾 Sauvegarder';
+                    if (saveStatus) {
+                        saveStatus.textContent = '❌ Erreur de soumission';
+                        saveStatus.className = 'save-status show error';
+                    }
+                }
             });
         }
         
