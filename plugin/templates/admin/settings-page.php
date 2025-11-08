@@ -4372,5 +4372,86 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 });
             });
         });
+
+        // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
+        jQuery(document).ready(function($) {
+            console.log("🔧 Notification test buttons ready");
+
+            // Test SMTP Connection
+            const $testSmtpBtn = $("#test-smtp-connection");
+            if ($testSmtpBtn.length) {
+                $testSmtpBtn.on("click", function(e) {
+                    e.preventDefault();
+                    console.log("🖱️ Test SMTP button clicked");
+
+                    const originalText = $testSmtpBtn.html();
+                    $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            action: "pdf_builder_test_smtp_connection",
+                            nonce: "<?php echo wp_create_nonce('pdf_builder_settings'); ?>"
+                        },
+                        timeout: 15000,
+                        success: function(response) {
+                            console.log("✅ SMTP Test response:", response);
+                            $testSmtpBtn.prop("disabled", false).html(originalText);
+
+                            if (response.success) {
+                                alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."));
+                            } else {
+                                alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se connecter au serveur SMTP."));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("❌ SMTP Test AJAX error:", status, error);
+                            $testSmtpBtn.prop("disabled", false).html(originalText);
+                            alert("⚠️ Erreur lors du test SMTP\n\nErreur: " + error);
+                        }
+                    });
+                });
+            }
+
+            // Test Notifications
+            const $testNotifBtn = $("#test-notifications");
+            if ($testNotifBtn.length) {
+                $testNotifBtn.on("click", function(e) {
+                    e.preventDefault();
+                    console.log("🖱️ Test Notifications button clicked");
+
+                    const originalText = $testNotifBtn.html();
+                    $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            action: "pdf_builder_test_notifications",
+                            nonce: "<?php echo wp_create_nonce('pdf_builder_settings'); ?>"
+                        },
+                        timeout: 15000,
+                        success: function(response) {
+                            console.log("✅ Notification Test response:", response);
+                            $testNotifBtn.prop("disabled", false).html(originalText);
+
+                            if (response.success) {
+                                alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."));
+                            } else {
+                                alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer l'email de test."));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("❌ Notification Test AJAX error:", status, error);
+                            $testNotifBtn.prop("disabled", false).html(originalText);
+                            alert("⚠️ Erreur lors du test de notification\n\nErreur: " + error);
+                        }
+                    });
+                });
+            }
+        });
 </script>
 
