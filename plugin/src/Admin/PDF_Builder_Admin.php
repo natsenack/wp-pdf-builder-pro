@@ -3290,15 +3290,17 @@ class PDF_Builder_Admin {
         $current_tab = $_POST['current_tab'] ?? 'general';
 
         $nonce_field = 'pdf_builder_settings_nonce'; // Tous les onglets utilisent le même champ nonce
-        $nonce_name = 'pdf_builder_settings_nonce';
+        $nonce_action = 'pdf_builder_settings'; // Action nonce standard pour tous les onglets
+        
+        // Actions nonce spéciales pour certains onglets
         if ($current_tab === 'notifications') {
-            $nonce_name = 'pdf_builder_notifications';
+            $nonce_action = 'pdf_builder_settings'; // Utilise le même nonce que les autres
         }
 
-        if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_name)) {
-            error_log("PDF Builder: Nonce verification failed for tab $current_tab. Expected nonce: $nonce_name, Field: $nonce_field, Value: " . ($_POST[$nonce_field] ?? 'NOT_SET'));
+        if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_action)) {
+            error_log("PDF Builder: Nonce verification failed for tab $current_tab. Expected nonce: $nonce_action, Field: $nonce_field, Value: " . ($_POST[$nonce_field] ?? 'NOT_SET'));
             error_log("PDF Builder: Available POST keys: " . implode(', ', array_keys($_POST)));
-            wp_send_json_error('Nonce invalide pour onglet ' . $current_tab . ' - Debug: ' . $nonce_name . ' / ' . ($_POST[$nonce_field] ?? 'NOT_SET'));
+            wp_send_json_error('Nonce invalide pour onglet ' . $current_tab . ' - Debug: ' . $nonce_action . ' / ' . ($_POST[$nonce_field] ?? 'NOT_SET'));
             return;
         }
 

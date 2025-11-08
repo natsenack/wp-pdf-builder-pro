@@ -41,7 +41,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     if (defined('WP_DEBUG') && WP_DEBUG) {
         error_log('DEBUG: Form submission detected');
     }
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('DEBUG: Nonce verified successfully');
         }
@@ -135,7 +135,7 @@ if (isset($_POST['clear_cache']) &&
 // Handle individual tab submissions
 if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: PDF tab submission detected');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         error_log('DEBUG: PDF tab nonce verified');
         $pdf_settings = [
             'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
@@ -155,7 +155,7 @@ if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) 
 
 if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres de sécurité" clicked');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $security_settings = [
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
@@ -169,7 +169,7 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce
 
 if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres Canvas" clicked');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         // Utiliser le Canvas Manager pour sauvegarder les paramètres
         if (class_exists('PDF_Builder_Canvas_Manager')) {
             $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
@@ -185,7 +185,7 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
     error_log('DEBUG: Developer tab submission detected - submit_developpeur found in POST');
     error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
     error_log('DEBUG: POST data: ' . print_r($_POST, true));
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         error_log('DEBUG: Nonce verified successfully');
         $dev_settings = [
             'developer_enabled' => isset($_POST['developer_enabled']),
@@ -235,7 +235,7 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
 
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('DEBUG: Button "Enregistrer les paramètres de maintenance" clicked');
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings_nonce')) {
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $maintenance_settings = [
             // Les paramètres de maintenance sont principalement des actions, pas des sauvegardes de config
             // Mais on peut sauvegarder des préférences de maintenance si nécessaire
@@ -363,7 +363,7 @@ console.log("✅ Canvas settings script completed");
     </div>
     
     <form method="post" class="settings-form" id="settings-form">
-        <?php wp_nonce_field('pdf_builder_settings_nonce', 'pdf_builder_settings_nonce'); ?>
+        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         
         <!-- Bouton de sauvegarde flottant -->
         <div id="floating-save-button" class="floating-save-container">
@@ -1410,9 +1410,9 @@ console.log("✅ Canvas settings script completed");
             
             <?php
             // Traitement de la sauvegarde des notifications
-            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
+            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_settings_nonce'])) {
                 error_log('DEBUG: Button "Enregistrer les notifications" clicked');
-                if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_notifications')) {
+                if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
                     $notification_settings = [
                         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
                         'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
@@ -1438,11 +1438,7 @@ console.log("✅ Canvas settings script completed");
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Notifications par Email</h3>
             
             <form method="post">
-                <?php 
-                $current_nonce = wp_create_nonce('pdf_builder_notifications');
-                echo '<input type="hidden" id="pdf_builder_notifications_nonce" name="pdf_builder_notifications_nonce" value="' . $current_nonce . '" />';
-                error_log('Generated nonce for notifications: ' . $current_nonce);
-                ?>
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
                 
                 <table class="form-table">
                     <tr>
@@ -3203,9 +3199,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 
                 // Ajouter le nonce selon l'onglet
                 let nonceName = 'pdf_builder_settings_nonce';
-                if (currentTab === 'notifications') {
-                    nonceName = 'pdf_builder_notifications_nonce';
-                }
                 
                 const nonceField = document.querySelector(`input[name="${nonceName}"]`);
                 if (nonceField) {
