@@ -62,7 +62,7 @@ class PDF_Builder_Canvas_Manager {
             'show_margins' => false,
             'margin_top' => 28,
             'margin_right' => 28,
-            'margin_bottom' => 28,
+            'margin_bottom' => 10,
             'margin_left' => 10,
 
             // Grille
@@ -85,6 +85,7 @@ class PDF_Builder_Canvas_Manager {
             // Manipulation
             'show_resize_handles' => false,
             'handle_size' => 8,
+            'handle_color' => '#007cba',
             'enable_rotation' => false,
             'rotation_step' => 15,
             'multi_select' => false,
@@ -151,20 +152,11 @@ class PDF_Builder_Canvas_Manager {
             'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse',
             
             // Manipulation
-            'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step',
+            'show_resize_handles', 'handle_size', 'handle_color', 'enable_rotation', 'rotation_step',
             'multi_select', 'copy_paste_enabled',
             
             // Undo/Redo
-            'undo_levels', 'redo_levels', 'auto_save_versions',
-            
-            // Export
-            'export_quality', 'export_format', 'compress_images', 'image_quality',
-            
-            // Performance
-            'enable_hardware_acceleration', 'auto_save_enabled', 'auto_save_interval',
-            
-            // Raccourcis
-            'enable_keyboard_shortcuts'
+            'undo_levels', 'redo_levels', 'auto_save_versions'
         ];
         
         $filtered = [];
@@ -173,8 +165,7 @@ class PDF_Builder_Canvas_Manager {
                 // Convertir les valeurs des checkboxes
                 if (in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
                                      'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
-                                     'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images',
-                                     'enable_hardware_acceleration', 'auto_save_enabled', 'enable_keyboard_shortcuts'])) {
+                                     'enable_rotation', 'multi_select', 'copy_paste_enabled'])) {
                     $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
                 } else {
                     // Pour les autres champs, utiliser la valeur telle quelle
