@@ -3108,6 +3108,72 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
+        // Fonction pour logger tous les éléments de formulaire sur la page
+        function logAllFormElements() {
+            console.log('=== LOG DE TOUS LES ÉLÉMENTS DE FORMULAIRE ===');
+            
+            // Logger tous les inputs
+            const allInputs = document.querySelectorAll('input');
+            console.log(`Total inputs: ${allInputs.length}`);
+            allInputs.forEach((input, index) => {
+                console.log(`INPUT ${index}: [name="${input.name}"][id="${input.id}"][type="${input.type}"] = "${input.value}"`);
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    console.log(`  - Checked: ${input.checked}`);
+                }
+            });
+            
+            // Logger tous les selects
+            const allSelects = document.querySelectorAll('select');
+            console.log(`Total selects: ${allSelects.length}`);
+            allSelects.forEach((select, index) => {
+                console.log(`SELECT ${index}: [name="${select.name}"][id="${select.id}"] = "${select.value}"`);
+                // Logger les options disponibles
+                const options = Array.from(select.options).map(opt => `${opt.value} (${opt.selected ? 'SELECTED' : 'not selected'})`);
+                console.log(`  - Options: [${options.join(', ')}]`);
+            });
+            
+            // Logger tous les textareas
+            const allTextareas = document.querySelectorAll('textarea');
+            console.log(`Total textareas: ${allTextareas.length}`);
+            allTextareas.forEach((textarea, index) => {
+                console.log(`TEXTAREA ${index}: [name="${textarea.name}"][id="${textarea.id}"] = "${textarea.value.substring(0, 100)}${textarea.value.length > 100 ? '...' : ''}"`);
+            });
+            
+            // Logger tous les boutons
+            const allButtons = document.querySelectorAll('button');
+            console.log(`Total buttons: ${allButtons.length}`);
+            allButtons.forEach((button, index) => {
+                console.log(`BUTTON ${index}: [name="${button.name}"][id="${button.id}"][type="${button.type}"] = "${button.textContent.trim()}"`);
+            });
+            
+            console.log('=== FIN LOG ÉLÉMENTS DE FORMULAIRE ===');
+        }
+        
+        // Logger tous les éléments au chargement de la page
+        logAllFormElements();
+        
+        // Ajouter des logs pour les changements en temps réel
+        function addChangeListeners() {
+            const allFormElements = document.querySelectorAll('input, select, textarea');
+            allFormElements.forEach((element, index) => {
+                element.addEventListener('change', function() {
+                    console.log(`CHANGEMENT: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                    if (element.type === 'checkbox' || element.type === 'radio') {
+                        console.log(`  - Checked: ${element.checked}`);
+                    }
+                });
+                
+                element.addEventListener('input', function() {
+                    if (element.type === 'text' || element.type === 'textarea' || element.type === 'password' || element.type === 'email' || element.type === 'number') {
+                        console.log(`INPUT EN TEMPS RÉEL: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                    }
+                });
+            });
+        }
+        
+        // Ajouter les listeners de changement
+        addChangeListeners();
+        
         // Logs removed for clarity
         
         // Vérifier les éléments critiques
@@ -3176,6 +3242,12 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             } else {
                 window.location.hash = '#' + targetId;
             }
+            
+            // Logger les éléments du nouvel onglet actif
+            setTimeout(() => {
+                console.log(`=== CHANGEMENT D'ONGLET VERS: ${targetId} ===`);
+                logAllFormElements();
+            }, 100);
         }
         
         // Fonction pour mettre à jour le bouton flottant selon l'onglet actif
@@ -3257,6 +3329,46 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Fonction commune pour soumettre un formulaire via AJAX
         function submitFormAjax(form, submitButton) {
+            console.log('=== GENERAL FORM AJAX START ===');
+            console.log('Form:', form);
+            console.log('Submit button:', submitButton);
+            console.log('Form ID:', form.id);
+            console.log('Form action:', form.action);
+            console.log('Form method:', form.method);
+            
+            // Logger tous les éléments du formulaire avec plus de détails
+            console.log('=== GENERAL FORM ELEMENTS DÉTAILLÉS ===');
+            const allInputs = form.querySelectorAll('input, select, textarea, button');
+            allInputs.forEach((element, index) => {
+                const details = {
+                    index: index,
+                    tagName: element.tagName,
+                    name: element.name,
+                    id: element.id,
+                    type: element.type,
+                    value: element.value,
+                    disabled: element.disabled,
+                    required: element.required,
+                    className: element.className
+                };
+                
+                console.log(`Element ${index}:`, details);
+                
+                if (element.type === 'checkbox' || element.type === 'radio') {
+                    console.log(`  - Checked: ${element.checked}`);
+                }
+                
+                if (element.tagName === 'SELECT') {
+                    const options = Array.from(element.options).map(opt => ({
+                        value: opt.value,
+                        text: opt.text,
+                        selected: opt.selected
+                    }));
+                    console.log(`  - Options:`, options);
+                }
+            });
+            console.log('=== END GENERAL FORM ELEMENTS DÉTAILLÉS ===');
+            
             // Afficher le statut de sauvegarde
             if (saveStatus) {
                 saveStatus.textContent = '⏳ Soumission en cours...';
@@ -3269,10 +3381,16 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 submitButton.innerHTML = submitButton === globalSaveBtn ? '⏳' : '⏳ Soumission...';
             }
 
-            // Soumettre le formulaire via AJAX (sans rechargement de page)
+            // Créer FormData et logger toutes les données
             const formData = new FormData(form);
             formData.append('action', 'pdf_builder_save_general_settings');
-            formData.append('nonce', document.querySelector('input[name="pdf_builder_general_nonce"]').value);
+            formData.append('nonce', form.querySelector('input[name="pdf_builder_general_nonce"]').value);
+            
+            console.log('=== GENERAL FORM DATA LOG ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+            console.log('=== END GENERAL FORM DATA LOG ===');
 
             fetch(ajaxurl, {
                 method: 'POST',
@@ -3391,6 +3509,38 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 const form = document.getElementById('performance-form');
                 console.log('Performance form found:', form);
                 if (form) {
+                    console.log('=== PERFORMANCE FORM ELEMENTS DÉTAILLÉS ===');
+                    const allInputs = form.querySelectorAll('input, select, textarea, button');
+                    allInputs.forEach((element, index) => {
+                        const details = {
+                            index: index,
+                            tagName: element.tagName,
+                            name: element.name,
+                            id: element.id,
+                            type: element.type,
+                            value: element.value,
+                            disabled: element.disabled,
+                            required: element.required,
+                            className: element.className
+                        };
+                        
+                        console.log(`Element ${index}:`, details);
+                        
+                        if (element.type === 'checkbox' || element.type === 'radio') {
+                            console.log(`  - Checked: ${element.checked}`);
+                        }
+                        
+                        if (element.tagName === 'SELECT') {
+                            const options = Array.from(element.options).map(opt => ({
+                                value: opt.value,
+                                text: opt.text,
+                                selected: opt.selected
+                            }));
+                            console.log(`  - Options:`, options);
+                        }
+                    });
+                    console.log('=== END PERFORMANCE FORM ELEMENTS DÉTAILLÉS ===');
+                    
                     const nonceInput = form.querySelector('input[name="pdf_builder_performance_nonce"]');
                     console.log('Performance nonce input:', nonceInput);
                     console.log('Performance nonce value:', nonceInput ? nonceInput.value : 'NOT FOUND');
@@ -3403,6 +3553,12 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     const originalFormData = new FormData(form);
                     originalFormData.append('action', 'pdf_builder_save_performance_settings');
                     originalFormData.append('nonce', form.querySelector('input[name="pdf_builder_performance_nonce"]').value);
+                    
+                    console.log('=== PERFORMANCE FORM DATA LOG ===');
+                    for (let [key, value] of originalFormData.entries()) {
+                        console.log(`${key}:`, value);
+                    }
+                    console.log('=== END PERFORMANCE FORM DATA LOG ===');
 
                     fetch(ajaxurl, {
                         method: 'POST',
