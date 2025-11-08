@@ -973,7 +973,7 @@ class PDF_Builder_Admin {
         // Inclure le timestamp exact du serveur (actualisé à chaque page)
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
         
-        wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true);
+        // wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true); // Script non disponible
 
 
         // Charger les scripts de l'API Preview 1.4
@@ -1006,7 +1006,7 @@ class PDF_Builder_Admin {
             $canvas_settings_js = get_option('pdf_builder_settings', []);
         }
         
-        wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderCanvasSettings', [
+        wp_localize_script('jquery', 'pdfBuilderCanvasSettings', [
             // Paramètres généraux du canvas
             'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
             'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
