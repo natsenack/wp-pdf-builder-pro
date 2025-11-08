@@ -448,8 +448,8 @@ if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_non
         $template_mappings = [];
         
         // Récupérer tous les mappings statut -> template
-        if (isset($_POST['template_mapping']) && is_array($_POST['template_mapping'])) {
-            foreach ($_POST['template_mapping'] as $status => $template_id) {
+        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+            foreach ($_POST['order_status_templates'] as $status => $template_id) {
                 if (!empty($template_id)) {
                     $template_mappings[$status] = intval($template_id);
                 }
