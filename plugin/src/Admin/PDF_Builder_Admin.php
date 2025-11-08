@@ -354,6 +354,7 @@ class PDF_Builder_Admin {
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
+        add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajax_save_general_settings']);
         // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
         add_action('wp_ajax_pdf_builder_migrate_templates_to_posts', [$this, 'ajax_migrate_templates_to_posts']);
@@ -3652,6 +3653,42 @@ class PDF_Builder_Admin {
         }
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
+    }
+
+    /**
+     * AJAX handler for saving general settings only
+     */
+    public function ajax_save_general_settings()
+    {
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérification des permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        // Récupération des paramètres généraux seulement
+        $general_settings = [
+            'cache_enabled' => isset($_POST['cache_enabled']),
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+        ];
+
+        // Sauvegarde des paramètres généraux
+        $settings = get_option('pdf_builder_settings', []);
+        foreach ($general_settings as $key => $value) {
+            $settings[$key] = $value;
+        }
+        update_option('pdf_builder_settings', $settings);
+
+        wp_send_json_success(['message' => 'Paramètres généraux sauvegardés avec succès !']);
     }
 
     /**

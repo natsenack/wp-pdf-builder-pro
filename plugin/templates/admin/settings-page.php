@@ -3271,7 +3271,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
             // Soumettre le formulaire via AJAX (sans rechargement de page)
             const formData = new FormData(form);
-            formData.append('action', 'pdf_builder_save_settings_page');
+            formData.append('action', 'pdf_builder_save_general_settings');
             formData.append('nonce', document.querySelector('input[name="pdf_builder_general_nonce"]').value);
 
             fetch(ajaxurl, {
