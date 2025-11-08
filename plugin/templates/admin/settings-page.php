@@ -195,7 +195,11 @@ if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) 
             'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres PDF enregistrés avec succès.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(true, 'Paramètres PDF enregistrés avec succès.');
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres PDF enregistrés avec succès.</p></div>';
+        }
         $settings = get_option('pdf_builder_settings', []);
     }
 }
@@ -208,7 +212,11 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $security_settings));
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sécurité enregistrés avec succès.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(true, 'Paramètres de sécurité enregistrés avec succès.');
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sécurité enregistrés avec succès.</p></div>';
+        }
         $settings = get_option('pdf_builder_settings', []);
     }
 }
@@ -271,7 +279,11 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
             'max_fps' => intval($_POST['max_fps'] ?? 60),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de performance enregistrés avec succès.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(true, 'Paramètres de performance enregistrés avec succès.');
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de performance enregistrés avec succès.</p></div>';
+        }
         $settings = get_option('pdf_builder_settings', []);
     }
 }
