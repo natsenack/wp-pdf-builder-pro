@@ -5577,7 +5577,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                     pageProcessing: navigation.loadEventStart - navigation.responseEnd
                                 });
                             }
-                        }, 1000);
+                        });
                     });
                 }
                 
