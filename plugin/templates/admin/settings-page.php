@@ -719,6 +719,10 @@ if ($is_ajax) {
             $test_key = get_option('pdf_builder_license_test_key', '');
             $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
             
+            // Email notifications
+            $notification_email = get_option('pdf_builder_license_notification_email', get_option('admin_email'));
+            $enable_expiration_notifications = get_option('pdf_builder_license_enable_notifications', true);
+            
             // is_premium si vraie licence OU si clé de test existe
             $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
             
@@ -768,6 +772,23 @@ if ($is_ajax) {
                     $license_activated_at = '';
                     $test_key = '';
                     $test_mode_enabled = false;
+                }
+            }
+            
+            // Traitement des paramètres de notification
+            if (isset($_POST['pdf_builder_save_notifications']) && isset($_POST['pdf_builder_license_nonce'])) {
+                if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
+                    $email = sanitize_email($_POST['notification_email'] ?? get_option('admin_email'));
+                    $enable_notifications = isset($_POST['enable_expiration_notifications']) ? 1 : 0;
+                    
+                    update_option('pdf_builder_license_notification_email', $email);
+                    update_option('pdf_builder_license_enable_notifications', $enable_notifications);
+                    
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notification sauvegardés.</p></div>';
+                    
+                    // Recharger les valeurs
+                    $notification_email = $email;
+                    $enable_expiration_notifications = $enable_notifications;
                 }
             }
             ?>
@@ -1195,6 +1216,54 @@ if ($is_ajax) {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Section Notifications par Email -->
+            <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-top: 30px; box-shadow: 0 3px 8px rgba(0,102,204,0.2);">
+                <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; border-bottom: 2px solid #0066cc; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    📧 Notifications par Email
+                </h3>
+                
+                <p style="color: #003d7a; margin: 15px 0; line-height: 1.6;">
+                    Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
+                </p>
+                
+                <form method="post" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                    <input type="hidden" name="pdf_builder_save_notifications" value="1">
+                    
+                    <!-- Toggle Notifications -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 600; color: #333;">
+                            <input type="checkbox" name="enable_expiration_notifications" value="1" <?php checked($enable_expiration_notifications, 1); ?> style="width: 20px; height: 20px; cursor: pointer;">
+                            <span>Activer les notifications d'expiration de licence</span>
+                        </label>
+                        <p style="margin: 8px 0 0 32px; font-size: 12px; color: #666;">
+                            ✓ Vous recevrez un email 30 jours avant l'expiration<br>
+                            ✓ Un rappel supplémentaire 7 jours avant<br>
+                            ✓ Aucun email de spam, juste les informations importantes
+                        </p>
+                    </div>
+                    
+                    <!-- Email Input -->
+                    <div style="margin-bottom: 20px;">
+                        <label for="notification_email" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">
+                            Adresse email pour les notifications :
+                        </label>
+                        <input type="email" name="notification_email" id="notification_email" value="<?php echo esc_attr($notification_email); ?>" 
+                               style="width: 100%; max-width: 400px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                        <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
+                            Par défaut : adresse email administrateur du site
+                        </p>
+                    </div>
+                    
+                    <!-- Save Button -->
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="button button-primary" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: bold; padding: 10px 30px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                            Enregistrer les paramètres
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
         
