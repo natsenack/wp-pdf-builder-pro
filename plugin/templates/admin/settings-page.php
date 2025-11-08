@@ -3676,6 +3676,738 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             }, 10000); // Toutes les 10 secondes
         }
         
+        // Logs pour les événements réseau globaux
+        function addNetworkEventListeners() {
+            // Événements de connexion réseau
+            window.addEventListener('online', function() {
+                console.log('🌐 NETWORK: Connection restored');
+                logAllFormElements('NETWORK_ONLINE');
+            });
+            
+            window.addEventListener('offline', function() {
+                console.log('🚫 NETWORK: Connection lost');
+            });
+            
+            // Événements de chargement de ressources
+            window.addEventListener('error', function(e) {
+                if (e.target !== window) {
+                    console.error('💥 RESOURCE LOAD ERROR:', {
+                        target: e.target.tagName,
+                        src: e.target.src || e.target.href,
+                        type: e.type
+                    });
+                }
+            });
+            
+            // Événements de performance de navigation
+            if (window.performance && window.performance.timing) {
+                window.addEventListener('load', function() {
+                    setTimeout(() => {
+                        const timing = window.performance.timing;
+                        console.log('⏱️ PAGE LOAD PERFORMANCE:', {
+                            domContentLoaded: timing.domContentLoadedEventEnd - timing.navigationStart,
+                            loadComplete: timing.loadEventEnd - timing.navigationStart,
+                            totalTime: timing.loadEventEnd - timing.navigationStart
+                        });
+                    }, 0);
+                });
+            }
+            
+            // Logs pour les erreurs de console (si disponible)
+            if (window.console && !window.originalConsoleError) {
+                window.originalConsoleError = window.console.error;
+                window.console.error = function(...args) {
+                    window.originalConsoleError.apply(console, ['🔴 CONSOLE ERROR:'].concat(args));
+                    window.originalConsoleError.apply(console, args);
+                };
+            }
+            
+            // Logs pour les avertissements de console
+            if (window.console && !window.originalConsoleWarn) {
+                window.originalConsoleWarn = window.console.warn;
+                window.console.warn = function(...args) {
+                    window.originalConsoleWarn.apply(console, ['🟡 CONSOLE WARNING:'].concat(args));
+                    window.originalConsoleWarn.apply(console, args);
+                };
+            }
+            
+            // Logs pour les événements de visibilité des éléments
+            if (window.IntersectionObserver) {
+                const visibilityObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.target.id || entry.target.name) {
+                            const visibilityPercent = Math.round(entry.intersectionRatio * 100);
+                            console.log(`👁️ VISIBILITY: ${entry.target.tagName}[${entry.target.name || entry.target.id}] - ${entry.isIntersecting ? 'VISIBLE' : 'HIDDEN'} (${visibilityPercent}%)`);
+                        }
+                    });
+                }, { threshold: [0, 0.1, 0.5, 1] });
+                
+                // Observer tous les éléments de formulaire
+                document.querySelectorAll('input, select, textarea, button').forEach(el => {
+                    visibilityObserver.observe(el);
+                });
+            }
+            
+            // Logs pour les changements d'attributs importants
+            if (window.MutationObserver) {
+                const attributeObserver = new MutationObserver((mutations) => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'attributes' && ['disabled', 'hidden', 'required', 'checked', 'selected', 'readonly'].includes(mutation.attributeName)) {
+                            const newValue = mutation.target.getAttribute(mutation.attributeName);
+                            console.log(`🔄 ATTRIBUTE: ${mutation.target.tagName}[${mutation.target.name || mutation.target.id}] - ${mutation.attributeName} = "${newValue}"`);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('input, select, textarea, button').forEach(el => {
+                    attributeObserver.observe(el, { 
+                        attributes: true, 
+                        attributeFilter: ['disabled', 'hidden', 'required', 'checked', 'selected', 'readonly', 'value'] 
+                    });
+                });
+            }
+            
+            // Logs pour les éléments disabled/hidden au chargement
+            setTimeout(() => {
+                const disabledElements = document.querySelectorAll('input:disabled, select:disabled, textarea:disabled, button:disabled');
+                const hiddenElements = document.querySelectorAll('input[type="hidden"], select:hidden, textarea:hidden, button:hidden');
+                
+                if (disabledElements.length > 0) {
+                    console.log(`🚫 DISABLED ELEMENTS (${disabledElements.length}):`);
+                    disabledElements.forEach(el => {
+                        console.log(`   - ${el.tagName}[${el.name || el.id}]`);
+                    });
+                }
+                
+                if (hiddenElements.length > 0) {
+                    console.log(`🙈 HIDDEN ELEMENTS (${hiddenElements.length}):`);
+                    hiddenElements.forEach(el => {
+                        console.log(`   - ${el.tagName}[${el.name || el.id}]`);
+                    });
+                }
+                
+                // Logs pour les événements de stockage
+                window.addEventListener('storage', function(e) {
+                    console.log('💾 STORAGE EVENT:', {
+                        key: e.key,
+                        oldValue: e.oldValue,
+                        newValue: e.newValue,
+                        storageArea: e.storageArea === localStorage ? 'localStorage' : 'sessionStorage'
+                    });
+                });
+                
+                // Logs pour les changements de hash URL
+                window.addEventListener('hashchange', function(e) {
+                    console.log('🔗 HASH CHANGE:', {
+                        oldURL: e.oldURL,
+                        newURL: e.newURL,
+                        newHash: location.hash
+                    });
+                });
+                
+                // Logs pour les événements de redimensionnement
+                let resizeTimeout;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        console.log('📐 WINDOW RESIZED:', {
+                            width: window.innerWidth,
+                            height: window.innerHeight,
+                            devicePixelRatio: window.devicePixelRatio
+                        });
+                    }, 250);
+                });
+                
+                // Logs pour les événements de scroll
+                let scrollTimeout;
+                window.addEventListener('scroll', function() {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        console.log('📜 WINDOW SCROLLED:', {
+                            scrollX: window.scrollX,
+                            scrollY: window.scrollY,
+                            maxScroll: Math.max(
+                                document.body.scrollHeight - window.innerHeight,
+                                document.documentElement.scrollHeight - window.innerHeight
+                            )
+                        });
+                    }, 100);
+                });
+                
+            }, 1000);
+            
+            // Logs pour les APIs modernes et avancées
+            setTimeout(() => {
+                // Battery API
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        console.log('🔋 BATTERY STATUS:', {
+                            charging: battery.charging,
+                            chargingTime: battery.chargingTime,
+                            dischargingTime: battery.dischargingTime,
+                            level: Math.round(battery.level * 100) + '%'
+                        });
+                        
+                        battery.addEventListener('chargingchange', () => {
+                            console.log('🔋 BATTERY CHARGING CHANGED:', battery.charging);
+                        });
+                        
+                        battery.addEventListener('levelchange', () => {
+                            console.log('🔋 BATTERY LEVEL CHANGED:', Math.round(battery.level * 100) + '%');
+                        });
+                    });
+                }
+                
+                // Network Information API
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (connection) {
+                        console.log('🌐 NETWORK INFO:', {
+                            effectiveType: connection.effectiveType,
+                            downlink: connection.downlink,
+                            rtt: connection.rtt,
+                            saveData: connection.saveData
+                        });
+                        
+                        connection.addEventListener('change', () => {
+                            console.log('🌐 NETWORK CHANGED:', {
+                                effectiveType: connection.effectiveType,
+                                downlink: connection.downlink,
+                                rtt: connection.rtt
+                            });
+                        });
+                    }
+                }
+                
+                // Geolocation API (si déjà autorisée)
+                if ('geolocation' in navigator) {
+                    console.log('📍 GEOLOCATION: Available (permission status unknown)');
+                }
+                
+                // Pointer Events support
+                const pointerSupport = {
+                    pointerdown: 'onpointerdown' in window,
+                    pointerup: 'onpointerup' in window,
+                    pointermove: 'onpointermove' in window,
+                    pointerenter: 'onpointerenter' in window,
+                    pointerleave: 'onpointerleave' in window
+                };
+                console.log('👆 POINTER EVENTS SUPPORT:', pointerSupport);
+                
+                // Touch Events support
+                const touchSupport = {
+                    touchstart: 'ontouchstart' in window,
+                    touchend: 'ontouchend' in window,
+                    touchmove: 'ontouchmove' in window,
+                    touchcancel: 'ontouchcancel' in window
+                };
+                console.log('👋 TOUCH EVENTS SUPPORT:', touchSupport);
+                
+                // Gamepad API
+                if ('getGamepads' in navigator) {
+                    console.log('🎮 GAMEPAD API: Available');
+                    window.addEventListener('gamepadconnected', e => {
+                        console.log('🎮 GAMEPAD CONNECTED:', {
+                            id: e.gamepad.id,
+                            index: e.gamepad.index,
+                            mapping: e.gamepad.mapping,
+                            buttons: e.gamepad.buttons.length,
+                            axes: e.gamepad.axes.length
+                        });
+                    });
+                    
+                    window.addEventListener('gamepaddisconnected', e => {
+                        console.log('🎮 GAMEPAD DISCONNECTED:', e.gamepad.id);
+                    });
+                }
+                
+                // WebGL support
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    console.log('🎨 WEBGL SUPPORT:', {
+                        vendor: debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Unknown',
+                        renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown',
+                        version: gl.getParameter(gl.VERSION),
+                        shadingLanguageVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION)
+                    });
+                }
+                
+                // WebRTC support
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    console.log('📹 WEBRTC: Available (getUserMedia supported)');
+                }
+                
+                // Service Worker status
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        console.log('⚙️ SERVICE WORKERS:', registrations.length, 'registered');
+                        registrations.forEach(reg => {
+                            console.log('   - SW:', reg.scope, reg.active ? 'ACTIVE' : 'INACTIVE');
+                        });
+                    });
+                }
+                
+                // Clipboard API advanced
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    console.log('📋 CLIPBOARD API: Full support (read/write)');
+                } else if (navigator.clipboard) {
+                    console.log('📋 CLIPBOARD API: Basic support (write only)');
+                }
+                
+                // Vibration API
+                if ('vibrate' in navigator) {
+                    console.log('📳 VIBRATION API: Supported');
+                }
+                
+                // Ambient Light Sensor (si disponible)
+                if ('AmbientLightSensor' in window) {
+                    console.log('💡 AMBIENT LIGHT SENSOR: Available');
+                }
+                
+                // Device Orientation
+                if (window.DeviceOrientationEvent) {
+                    console.log('📐 DEVICE ORIENTATION: Supported');
+                }
+                
+                // Speech Recognition
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    console.log('🎤 SPEECH RECOGNITION: Supported');
+                }
+                
+                // Web Audio API
+                if ('AudioContext' in window || 'webkitAudioContext' in window) {
+                    console.log('🔊 WEB AUDIO API: Supported');
+                }
+                
+                // WebSocket API
+                if ('WebSocket' in window) {
+                    console.log('🔌 WEBSOCKET API: Supported');
+                }
+                
+                // Server-Sent Events (EventSource)
+                if ('EventSource' in window) {
+                    console.log('📡 SERVER-SENT EVENTS: Supported');
+                }
+                
+                // PerformanceObserver API
+                if ('PerformanceObserver' in window) {
+                    console.log('📊 PERFORMANCE OBSERVER: Supported');
+                    try {
+                        const perfObserver = new PerformanceObserver((list) => {
+                            const entries = list.getEntries();
+                            entries.forEach(entry => {
+                                console.log('📈 PERFORMANCE ENTRY:', {
+                                    name: entry.name,
+                                    entryType: entry.entryType,
+                                    startTime: entry.startTime,
+                                    duration: entry.duration
+                                });
+                            });
+                        });
+                        perfObserver.observe({ entryTypes: ['measure', 'navigation', 'resource', 'paint'] });
+                        console.log('📊 PERFORMANCE OBSERVER: Active (monitoring measures, navigation, resources, paint)');
+                    } catch (e) {
+                        console.log('📊 PERFORMANCE OBSERVER: Supported but failed to initialize:', e.message);
+                    }
+                }
+                
+                // WebGPU API (expérimental)
+                if ('gpu' in navigator) {
+                    console.log('🎮 WEBGPU API: Supported (experimental)');
+                }
+                
+                // Speech Synthesis API
+                if ('speechSynthesis' in window) {
+                    console.log('🗣️ SPEECH SYNTHESIS: Supported');
+                    console.log('   - Voices available:', speechSynthesis.getVoices().length);
+                }
+                
+                // AbortController/AbortSignal API
+                if ('AbortController' in window && 'AbortSignal' in window) {
+                    console.log('🛑 ABORT CONTROLLER: Supported');
+                }
+                
+                // Événements de sécurité
+                document.addEventListener('securitypolicyviolation', function(e) {
+                    console.error('🚨 CSP VIOLATION:', {
+                        violatedDirective: e.violatedDirective,
+                        blockedURI: e.blockedURI,
+                        sourceFile: e.sourceFile,
+                        lineNumber: e.lineNumber,
+                        columnNumber: e.columnNumber
+                    });
+                });
+                
+                // Événements de sécurité supplémentaires
+                window.addEventListener('beforeunload', function(e) {
+                    console.log('🚪 WINDOW BEFORE UNLOAD - Checking for unsaved changes');
+                    const modifiedElements = document.querySelectorAll('[modified="true"]');
+                    if (modifiedElements.length > 0) {
+                        console.log('⚠️ UNSAVED CHANGES DETECTED:', modifiedElements.length, 'elements');
+                        modifiedElements.forEach(el => {
+                            console.log(`   - ${el.tagName}[${el.name || el.id}]: "${el.value}"`);
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de focus/blur au niveau fenêtre
+                window.addEventListener('focus', () => {
+                    console.log('🎯 WINDOW FOCUSED');
+                });
+                
+                window.addEventListener('blur', () => {
+                    console.log('👁️ WINDOW BLURRED');
+                });
+                
+                // Logs pour les événements de contexte (clic droit)
+                document.addEventListener('contextmenu', function(e) {
+                    console.log('📋 CONTEXT MENU:', {
+                        target: e.target.tagName,
+                        x: e.clientX,
+                        y: e.clientY,
+                        ctrlKey: e.ctrlKey,
+                        shiftKey: e.shiftKey
+                    });
+                });
+                
+                // Logs pour les événements de sélection de texte
+                document.addEventListener('selectionchange', function() {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        console.log('📝 TEXT SELECTION:', {
+                            text: selection.toString(),
+                            startContainer: range.startContainer.nodeName,
+                            endContainer: range.endContainer.nodeName,
+                            collapsed: selection.isCollapsed
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de mutation DOM avancés
+                if (window.MutationObserver) {
+                    const advancedObserver = new MutationObserver((mutations) => {
+                        mutations.forEach(mutation => {
+                            if (mutation.type === 'childList') {
+                                console.log('🔄 DOM CHILD LIST MUTATION:', {
+                                    added: mutation.addedNodes.length,
+                                    removed: mutation.removedNodes.length,
+                                    target: mutation.target.tagName,
+                                    nextSibling: mutation.nextSibling ? mutation.nextSibling.tagName : null
+                                });
+                            } else if (mutation.type === 'attributes' && !['modified', 'modified-at'].includes(mutation.attributeName)) {
+                                console.log('🔄 DOM ATTRIBUTE MUTATION:', {
+                                    attribute: mutation.attributeName,
+                                    oldValue: mutation.oldValue,
+                                    newValue: mutation.target.getAttribute(mutation.attributeName),
+                                    target: mutation.target.tagName + (mutation.target.id ? '#' + mutation.target.id : '')
+                                });
+                            }
+                        });
+                    });
+                    
+                    advancedObserver.observe(document.body, {
+                        childList: true,
+                        attributes: true,
+                        subtree: true,
+                        attributeFilter: ['class', 'style', 'id', 'name', 'value', 'checked', 'selected', 'disabled', 'hidden']
+                    });
+                // Logs pour les événements de visibilité de page
+                document.addEventListener('visibilitychange', function() {
+                    console.log(`👁️ PAGE VISIBILITY: ${document.hidden ? 'HIDDEN' : 'VISIBLE'} (${document.visibilityState})`);
+                });
+                
+                window.addEventListener('pagehide', function(e) {
+                    console.log('📄 PAGE HIDE:', {
+                        persisted: e.persisted,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                window.addEventListener('pageshow', function(e) {
+                    console.log('📄 PAGE SHOW:', {
+                        persisted: e.persisted,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de performance mémoire (si disponible)
+                if ('memory' in performance) {
+                    console.log('🧠 MEMORY INFO:', {
+                        usedJSHeapSize: performance.memory.usedJSHeapSize,
+                        totalJSHeapSize: performance.memory.totalJSHeapSize,
+                        jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+                    });
+                    
+                    // Monitor memory usage periodically
+                    setInterval(() => {
+                        console.log('🧠 MEMORY UPDATE:', {
+                            usedJSHeapSize: performance.memory.usedJSHeapSize,
+                            totalJSHeapSize: performance.memory.totalJSHeapSize,
+                            timestamp: new Date().toISOString()
+                        });
+                    }, 30000); // Every 30 seconds
+                }
+                
+                // Logs pour les événements de connexion/déconnexion plus détaillés
+                window.addEventListener('online', function() {
+                    console.log('🌐 NETWORK: Online - Connection restored');
+                    // Log network info when coming back online
+                    if ('connection' in navigator) {
+                        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                        if (connection) {
+                            setTimeout(() => {
+                                console.log('🌐 NETWORK INFO (post-online):', {
+                                    effectiveType: connection.effectiveType,
+                                    downlink: connection.downlink,
+                                    rtt: connection.rtt
+                                });
+                            }, 1000);
+                        }
+                    }
+                });
+                
+                window.addEventListener('offline', function() {
+                    console.log('🚫 NETWORK: Offline - Connection lost');
+                });
+                
+                // Logs pour les événements de batterie plus détaillés
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        // Log initial battery state
+                        console.log('🔋 INITIAL BATTERY STATE:', {
+                            charging: battery.charging,
+                            chargingTime: battery.chargingTime,
+                            dischargingTime: battery.dischargingTime,
+                            level: Math.round(battery.level * 100) + '%'
+                        });
+                        
+                        // Events already added above, but adding discharge time monitoring
+                        battery.addEventListener('chargingtimechange', () => {
+                            console.log('🔋 CHARGING TIME CHANGED:', battery.chargingTime);
+                        });
+                        
+                        battery.addEventListener('dischargingtimechange', () => {
+                            console.log('🔋 DISCHARGING TIME CHANGED:', battery.dischargingTime);
+                        });
+                    });
+                }
+                
+                // Logs pour les événements de capteurs (si disponibles)
+                if ('DeviceMotionEvent' in window) {
+                    window.addEventListener('devicemotion', function(e) {
+                        // Log only significant motion (throttle to avoid spam)
+                        if (Math.abs(e.acceleration.x) > 1 || Math.abs(e.acceleration.y) > 1 || Math.abs(e.acceleration.z) > 1) {
+                            console.log('📳 DEVICE MOTION:', {
+                                acceleration: {
+                                    x: e.acceleration.x,
+                                    y: e.acceleration.y,
+                                    z: e.acceleration.z
+                                },
+                                rotationRate: e.rotationRate,
+                                interval: e.interval
+                            });
+                        }
+                    });
+                }
+                
+                // Logs pour les événements de géolocalisation (tentatives)
+                if ('geolocation' in navigator) {
+                    // Monitor geolocation permission changes
+                    navigator.permissions.query({name:'geolocation'}).then(permission => {
+                        console.log('📍 GEOLOCATION PERMISSION:', permission.state);
+                        permission.addEventListener('change', () => {
+                            console.log('📍 GEOLOCATION PERMISSION CHANGED:', permission.state);
+                        });
+                    }).catch(err => {
+                        console.log('📍 GEOLOCATION PERMISSION QUERY FAILED:', err.message);
+                    });
+                }
+                
+                // Logs pour les événements de stockage plus détaillés
+                window.addEventListener('storage', function(e) {
+                    console.log('💾 STORAGE EVENT:', {
+                        key: e.key,
+                        oldValue: e.oldValue ? e.oldValue.substring(0, 50) + (e.oldValue.length > 50 ? '...' : '') : null,
+                        newValue: e.newValue ? e.newValue.substring(0, 50) + (e.newValue.length > 50 ? '...' : '') : null,
+                        storageArea: e.storageArea === localStorage ? 'localStorage' : 'sessionStorage',
+                        url: e.url
+                    });
+                });
+                
+                // Logs pour les événements de performance de navigation détaillés
+                if (window.performance && window.performance.timing) {
+                    window.addEventListener('load', function() {
+                        setTimeout(() => {
+                            const timing = window.performance.timing;
+                            const navigation = window.performance.navigation;
+                            
+                            console.log('⏱️ DETAILED PAGE LOAD PERFORMANCE:', {
+                                navigationStart: timing.navigationStart,
+                                unloadEventStart: timing.unloadEventStart,
+                                unloadEventEnd: timing.unloadEventEnd,
+                                redirectStart: timing.redirectStart,
+                                redirectEnd: timing.redirectEnd,
+                                fetchStart: timing.fetchStart,
+                                domainLookupStart: timing.domainLookupStart,
+                                domainLookupEnd: timing.domainLookupEnd,
+                                connectStart: timing.connectStart,
+                                connectEnd: timing.connectEnd,
+                                secureConnectionStart: timing.secureConnectionStart,
+                                requestStart: timing.requestStart,
+                                responseStart: timing.responseStart,
+                                responseEnd: timing.responseEnd,
+                                domLoading: timing.domLoading,
+                                domInteractive: timing.domInteractive,
+                                domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                                domComplete: timing.domComplete,
+                                loadEventStart: timing.loadEventStart,
+                                loadEventEnd: timing.loadEventEnd,
+                                navigationType: navigation.type === 0 ? 'NAVIGATE' : navigation.type === 1 ? 'RELOAD' : 'BACK_FORWARD',
+                                redirectCount: navigation.redirectCount
+                            });
+                        }, 0);
+                    });
+                }
+                
+                // Logs pour les événements de sécurité supplémentaires
+                document.addEventListener('securitypolicyviolation', function(e) {
+                    console.error('🚨 CSP VIOLATION:', {
+                        violatedDirective: e.violatedDirective,
+                        blockedURI: e.blockedURI,
+                        sourceFile: e.sourceFile,
+                        lineNumber: e.lineNumber,
+                        columnNumber: e.columnNumber,
+                        originalPolicy: e.originalPolicy,
+                        violatedDirective: e.violatedDirective,
+                        effectiveDirective: e.effectiveDirective,
+                        statusCode: e.statusCode
+                    });
+                });
+                
+                // Logs pour les événements de console redéfinis (améliorés)
+                const originalWarn = console.warn;
+                const originalError = console.error;
+                
+                console.warn = function(...args) {
+                    originalWarn.apply(console, ['🟡 ENHANCED WARNING:'].concat(args));
+                    // Also log to our custom system if needed
+                    originalWarn.apply(console, args);
+                };
+                
+                console.error = function(...args) {
+                    originalError.apply(console, ['🔴 ENHANCED ERROR:'].concat(args));
+                    // Also log to our custom system if needed
+                    originalError.apply(console, args);
+                };
+                
+                // Logs pour les événements de mutation DOM avancés (complément)
+                if (window.MutationObserver) {
+                    const securityObserver = new MutationObserver((mutations) => {
+                        mutations.forEach(mutation => {
+                            // Monitor for potentially suspicious DOM changes
+                            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                                const suspiciousNodes = Array.from(mutation.addedNodes).filter(node => {
+                                    return node.nodeType === Node.ELEMENT_NODE && 
+                                           (node.tagName === 'SCRIPT' || node.tagName === 'IFRAME' || 
+                                            node.tagName === 'OBJECT' || node.tagName === 'EMBED');
+                                });
+                                
+                                if (suspiciousNodes.length > 0) {
+                                    console.warn('🚨 SUSPICIOUS DOM ADDITION:', suspiciousNodes.map(node => ({
+                                        tagName: node.tagName,
+                                        src: node.src || node.data,
+                                        innerHTML: node.innerHTML ? node.innerHTML.substring(0, 100) : null
+                                    })));
+                                }
+                            }
+                        });
+                    });
+                    
+                    securityObserver.observe(document.head, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    securityObserver.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+                
+            }, 2000); // Attendre 2 secondes pour que tout soit chargé
+        }
+        
+        // Logs pour toutes les soumissions de formulaire (y compris celles non-AJAX)
+        function addFormSubmissionListeners() {
+            const allForms = document.querySelectorAll('form');
+            console.log(`📝 Setting up submission listeners for ${allForms.length} forms`);
+            
+            allForms.forEach((form, index) => {
+                form.addEventListener('submit', function(e) {
+                    console.log(`🚀 FORM SUBMISSION INTERCEPTED: ${form.id || 'unnamed-form-' + index}`);
+                    console.log(`   - Action: ${form.action}`);
+                    console.log(`   - Method: ${form.method}`);
+                    console.log(`   - Target: ${form.target}`);
+                    console.log(`   - Elements: ${form.elements.length}`);
+                    
+                    // Logger tous les éléments du formulaire soumis
+                    const formData = new FormData(form);
+                    console.log('📋 FORM DATA TO BE SUBMITTED:');
+                    let dataCount = 0;
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`   ${key}: ${value}`);
+                        dataCount++;
+                    }
+                    console.log(`   - Total data entries: ${dataCount}`);
+                    
+                    // Vérifier si c'est une soumission AJAX ou normale
+                    if (e.defaultPrevented) {
+                        console.log('   ✅ Submission prevented (probably AJAX)');
+                    } else {
+                        console.log('   ⚠️ Normal form submission (page will reload)');
+                        
+                        // Identifier l'onglet basé sur l'ID du formulaire
+                        let tabName = 'unknown';
+                        if (form.id.includes('pdf')) tabName = 'PDF';
+                        else if (form.id.includes('security') || form.id.includes('securite')) tabName = 'Security';
+                        else if (form.id.includes('canvas')) tabName = 'Canvas';
+                        else if (form.id.includes('templates')) tabName = 'Templates';
+                        else if (form.id.includes('maintenance')) tabName = 'Maintenance';
+                        else if (form.id.includes('developpeur')) tabName = 'Developer';
+                        else if (form.id.includes('notifications')) tabName = 'Notifications';
+                        else if (form.id.includes('roles')) tabName = 'Roles';
+                        else if (form.id.includes('licence')) tabName = 'License';
+                        
+                        console.log(`   📑 Tab identified: ${tabName}`);
+                        console.log('   🔄 Consider implementing AJAX for this form to avoid page reload');
+                        
+                        // Log détaillé pour les onglets sans AJAX
+                        if (['PDF', 'Security', 'Canvas', 'Templates', 'Maintenance', 'Developer', 'Notifications', 'Roles', 'License'].includes(tabName)) {
+                            console.log(`   📝 SUBMISSION DETAILS for ${tabName} tab:`);
+                            console.log(`      - Form ID: ${form.id}`);
+                            console.log(`      - Will cause page reload`);
+                            console.log(`      - User experience impact: HIGH`);
+                        }
+                    }
+                    
+                    // Log des éléments avec des valeurs non-vides
+                    const nonEmptyElements = Array.from(form.elements).filter(el => el.value && el.value.trim() !== '');
+                    console.log(`   📊 Non-empty elements: ${nonEmptyElements.length}`);
+                    nonEmptyElements.forEach(el => {
+                        console.log(`     - ${el.name || el.id}: "${el.value}"`);
+                    });
+                    
+                }, true); // Use capture phase to catch before other handlers
+            });
+        }
+        
+        // Ajouter les listeners de soumission de formulaire
+        addFormSubmissionListeners();
+        
         // Logs pour les événements de formulaire globaux
         function addGlobalFormEventListeners() {
             const allForms = document.querySelectorAll('form');
@@ -3985,21 +4717,69 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 }
             })
             .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers.get('content-type'));
+                console.log('📡 AJAX Response received');
+                console.log('📊 Response status:', response.status, response.statusText);
+                console.log('📄 Response headers:', Object.fromEntries(response.headers.entries()));
+                console.log('🌐 Response URL:', response.url);
+                console.log('✅ Response OK:', response.ok);
+                console.log('📏 Response type:', response.type);
+                
+                // Vérifier le content-type
+                const contentType = response.headers.get('content-type');
+                console.log('📋 Content-Type:', contentType);
+                
+                if (!response.ok) {
+                    console.error('❌ HTTP Error Response:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers.entries())
+                    });
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.warn('⚠️ Unexpected content-type, expected JSON:', contentType);
+                }
+                
                 return response.json();
             })
             .then(data => {
-                console.log('Parsed JSON data:', data);
-                console.log('Success:', data.success);
-                if (data.data && data.data.message) {
-                    console.log('Error message:', data.data.message);
+                console.log('📦 JSON Response parsed successfully');
+                console.log('📋 Parsed data:', data);
+                console.log('✅ Success flag:', data.success);
+                
+                if (data.success) {
+                    console.log('🎉 AJAX request successful');
+                    if (data.data && data.data.message) {
+                        console.log('💬 Success message:', data.data.message);
+                    }
+                } else {
+                    console.warn('⚠️ AJAX request completed but marked as unsuccessful');
+                    if (data.data && data.data.message) {
+                        console.error('❌ Error message:', data.data.message);
+                    }
                 }
-                        // Réactiver le bouton
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
-                        }                if (data && data.success) {
+                
+                // Log des métriques de performance
+                if (performance.mark && performance.measure) {
+                    try {
+                        const endTime = performance.now();
+                        console.log('⏱️ AJAX Performance:', {
+                            responseSize: JSON.stringify(data).length,
+                            parsingTime: 'measured via performance API'
+                        });
+                    } catch (e) {
+                        console.log('⏱️ Performance measurement not available');
+                    }
+                }
+                
+                // Réactiver le bouton
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                }
+                
+                if (data && data.success) {
                     // Afficher le succès
                     if (saveStatus) {
                         saveStatus.textContent = '✅ ' + (data.data && data.data.message || data.message || 'Sauvegardé avec succès !');
@@ -4024,12 +4804,40 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     }
                 }
             })
-                    .catch(error => {
-                        console.error('Erreur AJAX:', error);
-                        console.error('Error type:', typeof error);
-                        console.error('Error message:', error.message);
-                        // Réactiver le bouton en cas d'erreur
-                        if (submitButton) {
+            .catch(error => {
+                console.error('💥 AJAX REQUEST FAILED');
+                console.error('❌ Error type:', error.constructor.name);
+                console.error('❌ Error message:', error.message);
+                console.error('❌ Error stack:', error.stack);
+                
+                // Déterminer le type d'erreur
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    console.error('🌐 NETWORK ERROR: Unable to connect to server');
+                } else if (error.name === 'SyntaxError') {
+                    console.error('📄 JSON PARSING ERROR: Server returned invalid JSON');
+                } else if (error instanceof Response) {
+                    console.error('📡 HTTP ERROR:', error.status, error.statusText);
+                } else {
+                    console.error('❓ UNKNOWN ERROR:', error);
+                }
+                
+                // Réactiver le bouton en cas d'erreur
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                }
+                
+                // Afficher l'erreur
+                if (saveStatus) {
+                    const errorMessage = error.message || 'Erreur de connexion';
+                    saveStatus.textContent = '❌ ' + errorMessage;
+                    saveStatus.className = 'save-status show error';
+                    
+                    setTimeout(() => {
+                        saveStatus.className = 'save-status';
+                    }, 5000);
+                }
+            });
                             submitButton.disabled = false;
                             submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
                         }                if (saveStatus) {
@@ -4047,14 +4855,20 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         if (globalSaveBtn) {
             globalSaveBtn.addEventListener('click', function(e) {
                 e.preventDefault(); // Empêcher la soumission normale du formulaire
-
+                console.log('🔘 GLOBAL SAVE BUTTON clicked');
+                
                 // Trouver le formulaire de l'onglet actif
                 const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
+                console.log('📑 Current active tab:', currentTab);
+                
                 let formId = currentTab + '-form'; // Ex: 'general-form', 'pdf-form', etc.
+                console.log('📄 Looking for form with ID:', formId);
+                
                 const form = document.getElementById(formId);
 
                 if (!form) {
                     console.error('❌ Form not found for tab:', currentTab, 'with ID:', formId);
+                    console.log('📋 Available forms:', Array.from(document.querySelectorAll('form')).map(f => f.id));
                     return;
                 }
 
@@ -4063,6 +4877,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     console.error('❌ Element found is not a form:', form, 'for tab:', currentTab);
                     return;
                 }
+                
+                console.log('✅ Form found and validated:', form.id, 'for tab:', currentTab);
                 
                 // Exclure certains onglets qui ont leurs propres boutons
                 if (currentTab === 'roles' || currentTab === 'templates' || currentTab === 'developpeur') {
