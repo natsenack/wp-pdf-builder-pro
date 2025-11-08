@@ -3186,6 +3186,12 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     console.error('❌ Form not found for tab:', currentTab, 'with ID:', formId);
                     return;
                 }
+
+                // Vérifier que c'est bien un élément de formulaire
+                if (!(form instanceof HTMLFormElement)) {
+                    console.error('❌ Element found is not a form:', form, 'for tab:', currentTab);
+                    return;
+                }
                 
                 // Exclure certains onglets qui ont leurs propres boutons
                 if (currentTab === 'roles' || currentTab === 'templates' || currentTab === 'developpeur') {
