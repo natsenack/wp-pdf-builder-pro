@@ -10,14 +10,19 @@ if (!defined('ABSPATH')) {
 
 // Function to send AJAX response
 function send_ajax_response($success, $message = '', $data = []) {
+    error_log('AJAX: send_ajax_response called with success=' . ($success ? 'true' : 'false') . ', message=' . $message);
     if (!headers_sent()) {
         header('Content-Type: application/json');
         header('Cache-Control: no-cache, must-revalidate');
+        error_log('AJAX: Headers sent successfully');
+    } else {
+        error_log('AJAX: Headers already sent!');
     }
     echo json_encode(array_merge([
         'success' => $success,
         'message' => $message
     ], $data));
+    error_log('AJAX: JSON echoed, about to exit');
     exit;
 }
 
@@ -189,6 +194,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         if ($is_ajax) {
             error_log('AJAX: About to send success response for general settings');
             send_ajax_response(true, 'Paramètres généraux enregistrés avec succès.');
+            error_log('AJAX: This should never be reached - send_ajax_response should exit');
         } else {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
         }
