@@ -715,9 +715,11 @@ if ($is_ajax) {
             $license_key = get_option('pdf_builder_license_key', '');
             $license_expires = get_option('pdf_builder_license_expires', '');
             $license_activated_at = get_option('pdf_builder_license_activated_at', '');
-            $is_premium = $license_status !== 'free' && $license_status !== 'expired';
             $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
             $test_key = get_option('pdf_builder_license_test_key', '');
+            
+            // is_premium si vraie licence OU si clé de test existe
+            $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
             
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
