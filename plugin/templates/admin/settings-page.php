@@ -3357,8 +3357,25 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         // Synchroniser l'apparence des toggles après la sauvegarde
                         setTimeout(() => {
                             console.log('🔄 Synchronizing toggle appearances after save...');
+                            console.log('🔄 Response data.data:', data.data);
                             const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
                             toggleSwitches.forEach(function(toggle) {
+                                const fieldName = toggle.name || toggle.id;
+                                console.log('🔄 Processing toggle:', fieldName, 'current checked:', toggle.checked);
+                                
+                                // Vérifier si ce champ est dans les données sauvegardées
+                                if (data.data && typeof data.data[fieldName] !== 'undefined') {
+                                    const savedValue = data.data[fieldName];
+                                    const shouldBeChecked = savedValue === true || savedValue === '1' || savedValue === 1;
+                                    console.log('🔄 Field', fieldName, 'saved value:', savedValue, 'should be checked:', shouldBeChecked);
+                                    
+                                    // Synchroniser l'état de la checkbox
+                                    if (toggle.checked !== shouldBeChecked) {
+                                        console.log('🔄 Updating toggle', fieldName, 'from', toggle.checked, 'to', shouldBeChecked);
+                                        toggle.checked = shouldBeChecked;
+                                    }
+                                }
+                                
                                 // Forcer la mise à jour de l'apparence visuelle
                                 const label = toggle.parentElement.nextElementSibling;
                                 if (label && label.classList.contains('toggle-label')) {

@@ -3341,6 +3341,7 @@ class PDF_Builder_Admin {
 
                 $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
                 error_log('PDF BUILDER: Canvas save result: ' . ($saved_settings ? 'SUCCESS' : 'FAILED'));
+                error_log('PDF BUILDER: Saved settings returned: ' . print_r($saved_settings, true));
 
                 if ($saved_settings) {
                     // Retourner les paramètres sauvegardés pour synchronisation JavaScript
