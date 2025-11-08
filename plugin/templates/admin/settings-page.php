@@ -3587,26 +3587,15 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         }
 
         // Gestion du test du système de cache - DÉSACTIVÉ TEMPORAIREMENT
-        // Gestion du test du système de cache - VERSION VANILLA JS
+        // Gestion du test du système de cache
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Cache test script loaded (vanilla)');
-
             const testCacheBtn = document.getElementById('test-cache-btn');
             const cacheTestResults = document.getElementById('cache-test-results');
             const cacheTestOutput = document.getElementById('cache-test-output');
 
-            console.log('🔍 Elements found:', {
-                button: !!testCacheBtn,
-                results: !!cacheTestResults,
-                output: !!cacheTestOutput
-            });
-
             if (testCacheBtn && cacheTestResults && cacheTestOutput) {
-                console.log('✅ Cache test button event listener attached');
-
                 testCacheBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🖱️ Cache test button clicked');
 
                     // Désactiver le bouton pendant le test
                     testCacheBtn.disabled = true;
@@ -3614,7 +3603,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     cacheTestResults.innerHTML = '<span style="color: #007cba;">Test en cours...</span>';
                     cacheTestOutput.style.display = 'none';
 
-                    // Faire la requête AJAX avec XMLHttpRequest
+                    // Faire la requête AJAX
                     const xhr = new XMLHttpRequest();
                     xhr.open('POST', ajaxurl, true);
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -3628,8 +3617,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             if (xhr.status === 200) {
                                 try {
                                     const response = JSON.parse(xhr.responseText);
-                                    console.log('✅ AJAX success:', response);
-
                                     if (response.success) {
                                         cacheTestResults.innerHTML = '<span style="color: #28a745;">✓ Test réussi</span>';
                                         cacheTestOutput.innerHTML = response.data;
@@ -3640,13 +3627,11 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                                         cacheTestOutput.style.display = 'block';
                                     }
                                 } catch (error) {
-                                    console.error('❌ JSON parse error:', error);
                                     cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur de réponse</span>';
                                     cacheTestOutput.innerHTML = '<p>Erreur de parsing JSON: ' + error.message + '</p>';
                                     cacheTestOutput.style.display = 'block';
                                 }
                             } else {
-                                console.error('❌ HTTP error:', xhr.status, xhr.statusText);
                                 cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>';
                                 cacheTestOutput.innerHTML = '<p>Erreur HTTP: ' + xhr.statusText + '</p>';
                                 cacheTestOutput.style.display = 'block';
@@ -3655,7 +3640,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     };
 
                     xhr.onerror = function() {
-                        console.error('❌ Network error');
                         testCacheBtn.disabled = false;
                         testCacheBtn.innerHTML = '🧪 Tester l\'intégration du cache';
                         cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur de connexion</span>';
@@ -3664,7 +3648,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     };
 
                     xhr.ontimeout = function() {
-                        console.error('❌ Timeout');
                         testCacheBtn.disabled = false;
                         testCacheBtn.innerHTML = '🧪 Tester l\'intégration du cache';
                         cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Timeout</span>';
@@ -3673,11 +3656,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     };
 
                     const params = 'action=pdf_builder_cache_test&nonce=<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>';
-                    console.log('📤 Sending AJAX request with params:', params);
                     xhr.send(params);
                 });
-            } else {
-                console.error('❌ Cache test elements not found');
             }
         });
             console.log('🔧 Cache test script loaded');
