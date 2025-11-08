@@ -132,6 +132,10 @@ class PDF_Builder_Canvas_Manager {
                 if (in_array($key, $boolean_fields) && ($value === '' || $value === null)) {
                     $value = false;
                 }
+                // Convertir les chaînes "1"/"0" en boolean pour les champs boolean
+                elseif (in_array($key, $boolean_fields)) {
+                    $value = $value === '1' || $value === 1 || $value === true;
+                }
                 $canvas_settings[$key] = $value;
             }
         }
