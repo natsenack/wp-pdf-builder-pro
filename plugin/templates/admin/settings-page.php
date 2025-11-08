@@ -171,8 +171,8 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
     }
 }
 
-if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
         $dev_settings = [
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -2421,7 +2421,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
             
             <form method="post" id="developpeur-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
                 
@@ -2444,7 +2444,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <input type="password" id="developer_password" name="developer_password" 
-                                   placeholder="Laisser vide pour aucun mot de passe" 
+                                   placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
                                    value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
                             <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
