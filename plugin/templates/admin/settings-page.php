@@ -50,7 +50,6 @@ $settings = get_option('pdf_builder_settings', []);
 if (!empty($_POST)) {
     error_log('ALL POST data received: ' . print_r($_POST, true));
     error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
-    error_log('Headers already sent at POST processing start: ' . (headers_sent() ? 'YES' : 'NO'));
 }
 if (!empty($_POST)) {
     // Logs removed for clarity
@@ -187,8 +186,6 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         
         update_option('pdf_builder_settings', $settings);
         if ($is_ajax) {
-            error_log('AJAX: About to send success response for general settings');
-            error_log('AJAX: Headers already sent at response time: ' . (headers_sent() ? 'YES' : 'NO'));
             $response = json_encode(['success' => true, 'message' => 'Paramètres généraux enregistrés avec succès.']);
             wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
         } else {
@@ -3294,35 +3291,20 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
                 // Soumettre le formulaire via AJAX (sans rechargement de page)
                 const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_settings_page');
+                formData.append('nonce', document.querySelector('input[name="pdf_builder_general_nonce"]').value);
 
-                fetch(window.location.href, {
+                fetch(ajaxurl, {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
                 .then(response => {
                     console.log('Response status:', response.status);
                     console.log('Response headers:', response.headers.get('content-type'));
-                    console.log('Response ok:', response.ok);
-                    // Vérifier si la réponse est JSON
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        console.log('Response is JSON, parsing...');
-                        return response.json();
-                    } else {
-                        // Si ce n'est pas JSON, traiter comme HTML (rechargement de page)
-                        console.log('Response is not JSON, content-type:', contentType);
-                        if (response.ok) {
-                            console.log('Response ok, reloading page...');
-                            window.location.reload();
-                        } else {
-                            console.log('Response not ok, throwing error...');
-                            throw new Error('Erreur serveur');
-                        }
-                    }
+                    return response.json();
                 })
                 .then(data => {
                     console.log('Parsed JSON data:', data);
