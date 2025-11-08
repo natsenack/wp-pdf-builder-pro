@@ -457,7 +457,7 @@ if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_non
         }
         
         // Sauvegarder les mappings dans une option dédiée
-        update_option('pdf_builder_template_mappings', $template_mappings);
+        update_option('pdf_builder_order_status_templates', $template_mappings);
         
         if ($is_ajax) {
             $response = json_encode(['success' => true, 'message' => 'Assignations de templates enregistrées avec succès.']);
