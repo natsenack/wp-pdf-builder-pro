@@ -1104,6 +1104,59 @@ class PDF_Builder_Admin {
             'default_background_color' => $canvas_settings_js['default_background_color'] ?? '#ffffff',
             'default_font_size' => $canvas_settings_js['default_font_size'] ?? 14
         ]);
+        
+        // Ajouter directement la variable globale pour s'assurer qu'elle est disponible
+        wp_add_inline_script('jquery', '
+            window.pdfBuilderCanvasSettings = ' . wp_json_encode([
+                'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
+                'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
+                'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
+                'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
+                'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
+                'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
+                'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
+                'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
+                'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
+                'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
+                'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
+                'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
+                'show_margins' => $canvas_settings_js['show_margins'] ?? true,
+                'show_grid' => $canvas_settings_js['show_grid'] ?? true,
+                'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
+                'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
+                'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? true,
+                'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? true,
+                'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
+                'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
+                'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? true,
+                'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
+                'multi_select' => $canvas_settings_js['multi_select'] ?? true,
+                'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? true,
+                'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
+                'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
+                'compress_images' => $canvas_settings_js['compress_images'] ?? true,
+                'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
+                'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
+                'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
+                'pdf_author' => $canvas_settings_js['pdf_author'] ?? get_bloginfo('name'),
+                'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
+                'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
+                'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
+                'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
+                'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
+                'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
+                'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
+                'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? true,
+                'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
+                'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
+                'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
+                'redo_levels' => $canvas_settings_js['redo_levels'] ?? 50,
+                'enable_keyboard_shortcuts' => $canvas_settings_js['enable_keyboard_shortcuts'] ?? true,
+                'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
+                'show_fps' => $canvas_settings_js['show_fps'] ?? false
+            ]) . ';
+            console.log("📋 pdfBuilderCanvasSettings set globally:", window.pdfBuilderCanvasSettings);
+        ');
 // Styles pour l'éditeur canvas
         if ($hook === 'pdf-builder_page_pdf-builder-editor') {
             // Styles pour l'éditeur Vanilla JS
