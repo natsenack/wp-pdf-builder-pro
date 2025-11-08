@@ -3344,5 +3344,5 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Démarrer la gestion du bouton global
         setupGlobalSaveButton();
+    });
 </script>
-                    opacity: computedStyle.opacity,
