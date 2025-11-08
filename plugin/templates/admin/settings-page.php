@@ -4691,7 +4691,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     });
                 });
                 
-                window.addEventListener('pageshow', function(e) {
+                
+                // REMAINING SECTIONS - COMMENTED OUT FOR DEBUG
+                // REMAINING SECTIONS - COMMENTED OUT FOR DEBUG
+                /*                /*window.addEventListener('pageshow', function(e) {
                     console.log('📄 PAGE SHOW:', {
                         persisted: e.persisted,
                         timestamp: new Date().toISOString()
