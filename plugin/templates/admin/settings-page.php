@@ -3586,7 +3586,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             });
         }
 
-        // Gestion du test du système de cache
+        // Gestion du test du système de cache - DÉSACTIVÉ TEMPORAIREMENT
+        /*
         jQuery(document).ready(function($) {
             console.log('🔧 Cache test script loaded');
 
@@ -3651,4 +3652,5 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 console.error('❌ Cache test elements not found');
             }
         });
+        */
 </script>
