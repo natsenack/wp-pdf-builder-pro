@@ -29,11 +29,17 @@ class PDF_Builder_Cache_Manager
     private $cache_expiration = 3600; // 1 heure
 
     /**
+     * Cache activé ou désactivé
+     */
+    private $cache_enabled = true;
+
+    /**
      * Constructeur privé
      */
     private function __construct()
     {
-        $this->cache_expiration = defined('PDF_BUILDER_CACHE_EXPIRATION') ? PDF_BUILDER_CACHE_EXPIRATION : $this->cache_expiration;
+        // Utiliser les paramètres de configuration du plugin
+        $this->loadCacheSettings();
 
         // Nettoyer le cache automatiquement
         add_action('wp_scheduled_delete', array($this, 'cleanup_expired_cache'));
@@ -63,6 +69,11 @@ class PDF_Builder_Cache_Manager
      */
     public function set($key, $value, $expiration = null)
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
         if (null === $expiration) {
             $expiration = $this->cache_expiration;
         }
@@ -70,10 +81,14 @@ class PDF_Builder_Cache_Manager
         $cache_key = $this->generate_key($key);
 
         // Utiliser le cache WordPress transient
-        set_transient($cache_key, $value, $expiration);
+        $result = set_transient($cache_key, $value, $expiration);
 
-        // Logger l'action
-        pdf_builder_log("Cache set: $key", 3, array('expiration' => $expiration));
+        // Logger l'action (si la fonction existe)
+        if (function_exists('pdf_builder_log')) {
+            pdf_builder_log("Cache set: $key", 3, array('expiration' => $expiration));
+        }
+
+        return $result;
     }
 
     /**
@@ -81,6 +96,11 @@ class PDF_Builder_Cache_Manager
      */
     public function get($key, $default = null)
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return $default;
+        }
+
         $cache_key = $this->generate_key($key);
         $value = get_transient($cache_key);
 
@@ -96,6 +116,11 @@ class PDF_Builder_Cache_Manager
      */
     public function exists($key)
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
         $cache_key = $this->generate_key($key);
         return false !== get_transient($cache_key);
     }
@@ -113,10 +138,15 @@ class PDF_Builder_Cache_Manager
      */
     public function delete($key)
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
         $cache_key = $this->generate_key($key);
         $deleted = delete_transient($cache_key);
 
-        if ($deleted) {
+        if ($deleted && function_exists('pdf_builder_log')) {
             pdf_builder_log("Cache deleted: $key", 2);
         }
 
@@ -128,6 +158,11 @@ class PDF_Builder_Cache_Manager
      */
     public function flush()
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return 0;
+        }
+
         global $wpdb;
 
         $pattern = $this->cache_prefix . '%';
@@ -138,7 +173,9 @@ class PDF_Builder_Cache_Manager
             )
         );
 
-        pdf_builder_log("Cache flushed: $deleted entries deleted", 1);
+        if (function_exists('pdf_builder_log')) {
+            pdf_builder_log("Cache flushed: $deleted entries deleted", 1);
+        }
 
         return $deleted;
     }
@@ -148,9 +185,16 @@ class PDF_Builder_Cache_Manager
      */
     public function cleanup_expired_cache()
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         // WordPress gère automatiquement la suppression des transients expirés
         // Cette méthode peut être utilisée pour un nettoyage manuel si nécessaire
-        pdf_builder_log("Expired cache cleanup completed", 2);
+        if (function_exists('pdf_builder_log')) {
+            pdf_builder_log("Expired cache cleanup completed", 2);
+        }
     }
 
     /**
@@ -180,13 +224,42 @@ class PDF_Builder_Cache_Manager
      */
     public function preload($keys)
     {
+        // Vérifier si le cache est activé
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         foreach ($keys as $key) {
             if (!$this->exists($key)) {
                 // Ici, vous pouvez implémenter la logique pour charger les données
                 // Par exemple, charger des templates, des configurations, etc.
-                pdf_builder_log("Preloading cache for: $key", 3);
+                if (function_exists('pdf_builder_log')) {
+                    pdf_builder_log("Preloading cache for: $key", 3);
+                }
             }
         }
+    }
+
+    /**
+     * Charger les paramètres de cache depuis la configuration du plugin
+     */
+    private function loadCacheSettings()
+    {
+        $settings = get_option('pdf_builder_settings', []);
+        
+        // Vérifier si le cache est activé
+        $this->cache_enabled = !empty($settings['cache_enabled']);
+        
+        // Utiliser la TTL configurée ou la valeur par défaut
+        $this->cache_expiration = intval($settings['cache_ttl'] ?? $this->cache_expiration);
+    }
+
+    /**
+     * Vérifier si le cache est activé
+     */
+    public function isEnabled()
+    {
+        return $this->cache_enabled;
     }
 }
 

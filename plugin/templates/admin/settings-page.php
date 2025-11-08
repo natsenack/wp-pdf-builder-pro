@@ -679,6 +679,15 @@ if ($is_ajax) {
                 </tr>
             </table>
             
+            <h4>Test du système de cache</h4>
+            <p>
+                <button type="button" id="test-cache-btn" class="button button-secondary">
+                    🧪 Tester l'intégration du cache
+                </button>
+                <span id="cache-test-results" style="margin-left: 10px;"></span>
+            </p>
+            <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;"></div>
+            
             <p class="submit">
                 <button type="submit" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
@@ -3574,6 +3583,51 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     this.innerHTML = '👁️ Afficher';
                     console.log('🔐 Password field hidden');
                 }
+            });
+        }
+
+        // Gestion du test du système de cache
+        const testCacheBtn = document.getElementById('test-cache-btn');
+        const cacheTestResults = document.getElementById('cache-test-results');
+        const cacheTestOutput = document.getElementById('cache-test-output');
+
+        if (testCacheBtn) {
+            testCacheBtn.addEventListener('click', function() {
+                // Désactiver le bouton pendant le test
+                testCacheBtn.disabled = true;
+                testCacheBtn.innerHTML = '🔄 Test en cours...';
+                cacheTestResults.innerHTML = '<span style="color: #007cba;">Test en cours...</span>';
+
+                // Faire la requête AJAX
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_cache_test',
+                        nonce: '<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            cacheTestResults.innerHTML = '<span style="color: #28a745;">✓ Test réussi</span>';
+                            cacheTestOutput.innerHTML = response.data;
+                            cacheTestOutput.style.display = 'block';
+                        } else {
+                            cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Test échoué</span>';
+                            cacheTestOutput.innerHTML = '<p>Erreur: ' + response.data + '</p>';
+                            cacheTestOutput.style.display = 'block';
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur AJAX</span>';
+                        cacheTestOutput.innerHTML = '<p>Erreur AJAX: ' + error + '</p>';
+                        cacheTestOutput.style.display = 'block';
+                    },
+                    complete: function() {
+                        // Réactiver le bouton
+                        testCacheBtn.disabled = false;
+                        testCacheBtn.innerHTML = '🧪 Tester l\'intégration du cache';
+                    }
+                });
             });
         }
 </script>

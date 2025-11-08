@@ -46,6 +46,41 @@ class WooCommerceCache {
     ];
 
     /**
+     * Récupère les paramètres de cache depuis la configuration
+     *
+     * @return array Paramètres de cache
+     */
+    private static function getCacheSettings(): array {
+        static $settings = null;
+        
+        if ($settings === null) {
+            $settings = get_option('pdf_builder_settings', []);
+        }
+        
+        return $settings;
+    }
+
+    /**
+     * Vérifie si le cache est activé
+     *
+     * @return bool True si le cache est activé
+     */
+    private static function isCacheEnabled(): bool {
+        $settings = self::getCacheSettings();
+        return !empty($settings['cache_enabled']);
+    }
+
+    /**
+     * Récupère la durée de vie du cache depuis la configuration
+     *
+     * @return int TTL en secondes
+     */
+    private static function getCacheTTL(): int {
+        $settings = self::getCacheSettings();
+        return intval($settings['cache_ttl'] ?? self::CACHE_TTL);
+    }
+
+    /**
      * Génère une clé de cache unique
      *
      * @param string $type Type de données (order, customer, company, etc.)
@@ -73,6 +108,11 @@ class WooCommerceCache {
      * @return array|null Données de commande ou null si non trouvées
      */
     public static function getOrderData(int $orderId, array $fields = []): ?array {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return null;
+        }
+
         $key = self::generateKey('order', $orderId, ['fields' => $fields]);
         $cached = get_transient($key);
 
@@ -94,8 +134,13 @@ class WooCommerceCache {
      * @return bool Succès du stockage
      */
     public static function setOrderData(int $orderId, array $data, array $fields = []): bool {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return false;
+        }
+
         $key = self::generateKey('order', $orderId, ['fields' => $fields]);
-        $result = set_transient($key, $data, self::CACHE_TTL);
+        $result = set_transient($key, $data, self::getCacheTTL());
         self::$metrics['sets']++;
         return $result;
     }
@@ -107,6 +152,11 @@ class WooCommerceCache {
      * @return array|null Données client ou null si non trouvées
      */
     public static function getCustomerData(int $userId): ?array {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return null;
+        }
+
         $key = self::generateKey('customer', $userId);
         $cached = get_transient($key);
 
@@ -127,8 +177,13 @@ class WooCommerceCache {
      * @return bool Succès du stockage
      */
     public static function setCustomerData(int $userId, array $data): bool {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return false;
+        }
+
         $key = self::generateKey('customer', $userId);
-        $result = set_transient($key, $data, self::CACHE_TTL);
+        $result = set_transient($key, $data, self::getCacheTTL());
         self::$metrics['sets']++;
         return $result;
     }
@@ -140,6 +195,11 @@ class WooCommerceCache {
      * @return array|null Données entreprise ou null si non trouvées
      */
     public static function getCompanyData(string $context = 'default'): ?array {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return null;
+        }
+
         $key = self::generateKey('company', $context);
         $cached = get_transient($key);
 
@@ -160,8 +220,12 @@ class WooCommerceCache {
      * @return bool Succès du stockage
      */
     public static function setCompanyData(array $data, string $context = 'default'): bool {
+        if (!self::isCacheEnabled()) {
+            return false;
+        }
+
         $key = self::generateKey('company', $context);
-        $result = set_transient($key, $data, self::CACHE_TTL_STATIC); // Plus long pour les données statiques
+        $result = set_transient($key, $data, self::getCacheTTL()); // Utilise la TTL configurée
         self::$metrics['sets']++;
         return $result;
     }
@@ -173,6 +237,11 @@ class WooCommerceCache {
      * @return array|null Données des produits ou null si non trouvées
      */
     public static function getProductsData(array $productIds): ?array {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return null;
+        }
+
         sort($productIds); // Pour cohérence de la clé
         $key = self::generateKey('products', md5(serialize($productIds)), ['count' => count($productIds)]);
         $cached = get_transient($key);
@@ -194,9 +263,14 @@ class WooCommerceCache {
      * @return bool Succès du stockage
      */
     public static function setProductsData(array $productIds, array $data): bool {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return false;
+        }
+
         sort($productIds);
         $key = self::generateKey('products', md5(serialize($productIds)), ['count' => count($productIds)]);
-        $result = set_transient($key, $data, self::CACHE_TTL);
+        $result = set_transient($key, $data, self::getCacheTTL());
         self::$metrics['sets']++;
         return $result;
     }

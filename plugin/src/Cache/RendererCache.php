@@ -40,12 +40,52 @@ class RendererCache {
     ];
 
     /**
+     * Récupère les paramètres de cache depuis la configuration
+     *
+     * @return array Paramètres de cache
+     */
+    private static function getCacheSettings(): array {
+        static $settings = null;
+        
+        if ($settings === null) {
+            $settings = get_option('pdf_builder_settings', []);
+        }
+        
+        return $settings;
+    }
+
+    /**
+     * Vérifie si le cache est activé
+     *
+     * @return bool True si le cache est activé
+     */
+    private static function isCacheEnabled(): bool {
+        $settings = self::getCacheSettings();
+        return !empty($settings['cache_enabled']);
+    }
+
+    /**
+     * Récupère la durée de vie du cache depuis la configuration
+     *
+     * @return int TTL en secondes
+     */
+    private static function getCacheTTL(): int {
+        $settings = self::getCacheSettings();
+        return intval($settings['cache_ttl'] ?? self::CACHE_TTL);
+    }
+
+    /**
      * Récupère une valeur du cache
      *
      * @param string $key Clé du cache
      * @return mixed Valeur ou null si expirée/absente
      */
     public static function get(string $key) {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return null;
+        }
+
         if (!isset(self::$cache[$key])) {
             self::$metrics['misses']++;
             return null;
@@ -72,7 +112,12 @@ class RendererCache {
      * @param int $ttl Durée de vie en secondes (optionnel)
      */
     public static function set(string $key, $value, int $ttl = null): void {
-        $ttl = $ttl ?? self::CACHE_TTL;
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return;
+        }
+
+        $ttl = $ttl ?? self::getCacheTTL();
 
         self::$cache[$key] = [
             'value' => $value,
@@ -90,6 +135,11 @@ class RendererCache {
      * @return bool True si la clé existe et n'est pas expirée
      */
     public static function has(string $key): bool {
+        // Vérifier si le cache est activé
+        if (!self::isCacheEnabled()) {
+            return false;
+        }
+
         if (!isset(self::$cache[$key])) {
             return false;
         }

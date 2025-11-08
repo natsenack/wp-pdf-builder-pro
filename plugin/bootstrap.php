@@ -246,6 +246,11 @@ function pdf_builder_load_bootstrap() {
     // CHARGER LES NOUVELLES CLASSES WP_PDF_Builder_Pro
     pdf_builder_load_new_classes();
 
+    // CHARGER LE TEST D'INTÉGRATION DU CACHE
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
