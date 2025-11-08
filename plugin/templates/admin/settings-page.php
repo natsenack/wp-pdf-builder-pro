@@ -516,7 +516,7 @@ if ($is_ajax) {
             </table>
             
             <p class="submit">
-                <button type="button" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
+                <button type="submit" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
             </form>
@@ -835,7 +835,7 @@ if ($is_ajax) {
             </div>
             
             <p class="submit">
-                <button type="button" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
+                <button type="submit" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
             </p>
             </form>
         </div>
