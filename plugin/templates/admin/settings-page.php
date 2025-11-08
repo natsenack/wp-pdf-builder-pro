@@ -40,6 +40,7 @@ if ($is_ajax && !empty($_POST)) {
 if ($is_ajax && !empty($_POST)) {
     // Process the request and exit - the processing code below will handle it
     // This ensures no HTML is output for AJAX requests
+    return; // Exit early for AJAX POST requests to prevent HTML output
 }
 
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
