@@ -2926,6 +2926,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         // Vérifier les valeurs des checkboxes au chargement
         setTimeout(() => {
+            console.log('🔍 Checking pdfBuilderCanvasSettings:', typeof pdfBuilderCanvasSettings, pdfBuilderCanvasSettings);
+            
             const debugJsCheckbox = document.getElementById('debug_javascript');
             const debugPhpCheckbox = document.getElementById('debug_php_errors');
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
