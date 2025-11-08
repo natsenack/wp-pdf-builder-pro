@@ -638,7 +638,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         </div>
         
         <div id="performance" class="tab-content hidden-tab">
-            <form method="post" action="">
+            <form method="post" id="performance-form" action="">
                 <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
                 <input type="hidden" name="current_tab" value="performance">
                 <h2>Paramètres de Performance</h2>
@@ -766,7 +766,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         </div>
         
         <div id="pdf" class="tab-content hidden-tab">
-            <form method="post" action="">
+            <form method="post" id="pdf-form" action="">
                 <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
                 <input type="hidden" name="current_tab" value="pdf">
                 <h2>Paramètres PDF</h2>
