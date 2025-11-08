@@ -876,16 +876,18 @@ function pdf_builder_register_fallback_hooks() {
     // Actions AJAX fallback
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
-    add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-    add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
-    add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+    // Fallback handlers are now handled by PDF_Builder_Admin class
+    // add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    // add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+    // add_action('wp_ajax_nopriv_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
     add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
     add_action('wp_ajax_nopriv_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
     add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
     add_action('wp_ajax_nopriv_pdf_builder_get_template', 'pdf_builder_ajax_get_template');
-    add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
-    add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    // Duplicate registration removed (was registered twice before)
+    // add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+    // add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
 }
 
 // Enregistrer les hooks seulement si WordPress est disponible
