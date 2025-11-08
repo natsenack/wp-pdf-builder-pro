@@ -2985,8 +2985,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Vérifier les éléments critiques
         
-        });
-        
         // Log des paramètres actuels au chargement
         
         // Récupérer les paramètres PHP et les logger
