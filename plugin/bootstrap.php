@@ -272,6 +272,11 @@ function pdf_builder_load_bootstrap() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php';
     }
 
+    // CHARGER LE GESTIONNAIRE DES RÔLES ET PERMISSIONS
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php';
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
@@ -496,7 +501,7 @@ function pdf_builder_ensure_admin_menu() {
         add_menu_page(
             'PDF Builder Pro',
             'PDF Builder',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-main',
             'pdf_builder_main_page_callback',
             'dashicons-pdf',
@@ -507,7 +512,7 @@ function pdf_builder_ensure_admin_menu() {
             'pdf-builder-main',
             'Templates',
             'Templates',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-templates',
             'pdf_builder_templates_page_callback'
         );
@@ -516,7 +521,7 @@ function pdf_builder_ensure_admin_menu() {
             'pdf-builder-main',
             'Documents',
             'Documents',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-documents',
             'pdf_builder_documents_page_callback'
         );
@@ -525,7 +530,7 @@ function pdf_builder_ensure_admin_menu() {
             'pdf-builder-main',
             'Settings',
             'Settings',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-settings',
             'pdf_builder_settings_page_callback'
         );
@@ -534,7 +539,7 @@ function pdf_builder_ensure_admin_menu() {
             'pdf-builder-main',
             '📝 Modèles Prédéfinis',
             '📝 Modèles Prédéfinis',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-predefined-templates',
             'pdf_builder_predefined_templates_page_callback'
         );
@@ -543,7 +548,7 @@ function pdf_builder_ensure_admin_menu() {
             'pdf-builder-main',
             'React Editor',
             'React Editor',
-            'read',  // Changé pour permettre à tous les utilisateurs connectés
+            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-react-editor',
             'pdf_builder_react_editor_page_callback'
         );
