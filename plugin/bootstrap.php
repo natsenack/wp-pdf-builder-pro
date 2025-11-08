@@ -251,6 +251,11 @@ function pdf_builder_load_bootstrap() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
     }
 
+    // CHARGER LE HANDLER DE TEST DE LICENCE
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();

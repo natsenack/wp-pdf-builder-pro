@@ -47,6 +47,11 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
 $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+// Charger la clé de test de licence si elle existe
+$license_test_key = get_option('pdf_builder_license_test_key', '');
+$license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
+$settings['license_test_mode'] = $license_test_mode;
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
     error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -98,6 +103,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'debug_database' => isset($_POST['debug_database']),
             'log_file_size' => intval($_POST['log_file_size'] ?? 10),
             'log_retention' => intval($_POST['log_retention'] ?? 30),
+            'license_test_mode' => isset($_POST['license_test_mode']),
             'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
@@ -289,9 +295,14 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
             'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
+            'license_test_mode' => isset($_POST['license_test_mode']),
         ];
         // Logs removed for clarity
         $result = update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
+        
+        // Sauvegarder aussi l'état du mode test dans une option séparée pour le handler de licence
+        update_option('pdf_builder_license_test_mode_enabled', isset($_POST['license_test_mode']));
+        
         // Logs removed for clarity
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         $settings = get_option('pdf_builder_settings', []);
@@ -2799,7 +2810,43 @@ if ($is_ajax) {
                 </tr>
             </table>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔍 Paramètres de Debug</h3>
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">� Test de Licence</h3>
+            
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                🎚️ Basculer Mode Test
+                            </button>
+                            <span id="license_test_mode_status" style="font-weight: bold; padding: 8px 12px; border-radius: 4px; <?php echo $license_test_mode ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;'; ?>">
+                                <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
+                            </span>
+                        </div>
+                        <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
+                        <input type="checkbox" id="license_test_mode" name="license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Clé de Test</label></th>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="text" id="license_test_key" readonly style="width: 350px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
+                            <button type="button" id="generate_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                🔑 Générer
+                            </button>
+                            <button type="button" id="copy_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                📋 Copier
+                            </button>
+                        </div>
+                        <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
+                        <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">�🔍 Paramètres de Debug</h3>
             
             <table class="form-table">
                 <tr>
@@ -3584,6 +3631,134 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     this.innerHTML = '👁️ Afficher';
                     console.log('🔐 Password field hidden');
                 }
+            });
+        }
+
+        // Gestion du générateur de clé de licence
+        const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
+        const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
+        const licenseTestKeyInput = document.getElementById('license_test_key');
+        const licenseKeyStatus = document.getElementById('license_key_status');
+
+        if (generateLicenseKeyBtn) {
+            generateLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔑 Generating license test key...');
+                
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Génération...');
+                
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_generate_test_license_key',
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ License key generated:', response);
+                        if (response.success && response.data.key) {
+                            licenseTestKeyInput.value = response.data.key;
+                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès !</span>';
+                            $btn.html('🔑 Régénérer');
+                            $btn.prop('disabled', false);
+                        } else {
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur: ' + (response.data.message || 'Impossible de générer la clé') + '</span>';
+                            $btn.html('🔑 Générer');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur AJAX: ' + error + '</span>';
+                        $btn.html('🔑 Générer');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        }
+
+        if (copyLicenseKeyBtn) {
+            copyLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (licenseTestKeyInput.value) {
+                    navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
+                        console.log('📋 License key copied to clipboard');
+                        licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
+                        setTimeout(function() {
+                            licenseKeyStatus.innerHTML = '';
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('❌ Copy failed:', err);
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Impossible de copier</span>';
+                    });
+                } else {
+                    licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Aucune clé à copier</span>';
+                }
+            });
+        }
+
+        // Gestion du basculement du mode test de licence
+        const toggleTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
+        const testModeStatus = document.getElementById('license_test_mode_status');
+        const testModeCheckbox = document.getElementById('license_test_mode');
+
+        if (toggleTestModeBtn) {
+            toggleTestModeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🎚️ Toggling license test mode...');
+                
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Basculement...');
+                
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_toggle_test_mode',
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ Test mode toggled:', response);
+                        if (response.success) {
+                            const enabled = response.data.enabled;
+                            
+                            // Mettre à jour le statut
+                            if (enabled) {
+                                testModeStatus.innerHTML = '✅ MODE TEST ACTIF';
+                                testModeStatus.style.background = '#d4edda';
+                                testModeStatus.style.color = '#155724';
+                            } else {
+                                testModeStatus.innerHTML = '❌ Mode test inactif';
+                                testModeStatus.style.background = '#f8d7da';
+                                testModeStatus.style.color = '#721c24';
+                            }
+                            
+                            // Mettre à jour le checkbox caché
+                            if (testModeCheckbox) {
+                                testModeCheckbox.checked = enabled;
+                            }
+                            
+                            $btn.html('🎚️ Basculer Mode Test');
+                            $btn.prop('disabled', false);
+                            
+                            console.log(response.data.message);
+                        } else {
+                            console.error('❌ Toggle failed:', response.data.message);
+                            $btn.html('🎚️ Basculer Mode Test');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        $btn.html('🎚️ Basculer Mode Test');
+                        $btn.prop('disabled', false);
+                    }
+                });
             });
         }
 
