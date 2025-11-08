@@ -3276,8 +3276,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
                     console.log('✅ AJAX response received:', data);
-                    
+
                     if (data.success) {
+                        console.log('✅ AJAX SAVE SUCCESS for tab:', currentTab);
+                        console.log('📦 data.data exists:', !!data.data);
+                        if (data.data) {
+                            console.log('📦 data.data keys:', Object.keys(data.data));
+                            console.log('📦 data.data sample values:', data.data);
+                        }
+
                         // Succès
                         if (saveStatus) {
                             saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé !');
@@ -3326,9 +3333,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
                             // Mettre à jour window.pdfBuilderCanvasSettings pour l'onglet canvas
                             if (currentTab === 'canvas' && data.data) {
-                                console.log('🔄 Updating window.pdfBuilderCanvasSettings with new values...');
+                                console.log('🔄 BEFORE: window.pdfBuilderCanvasSettings sample:', {
+                                    default_canvas_width: window.pdfBuilderCanvasSettings?.default_canvas_width,
+                                    show_grid: window.pdfBuilderCanvasSettings?.show_grid
+                                });
                                 window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
-                                console.log('✅ window.pdfBuilderCanvasSettings updated:', window.pdfBuilderCanvasSettings);
+                                console.log('✅ AFTER: window.pdfBuilderCanvasSettings updated:', {
+                                    default_canvas_width: window.pdfBuilderCanvasSettings?.default_canvas_width,
+                                    show_grid: window.pdfBuilderCanvasSettings?.show_grid
+                                });
                             }
                             
                             console.log('✅ Field values synchronized');
