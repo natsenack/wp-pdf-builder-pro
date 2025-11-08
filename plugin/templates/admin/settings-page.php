@@ -3325,8 +3325,20 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                     document.getElementById('general');
                     
                     if (activeTab) {
-                        // Trouver le formulaire principal dans l'onglet actif (celui avec l'id qui correspond à l'onglet)
-                        const form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
+                        console.log('📍 ACTIVE TAB FOUND:', activeTab.id);
+                        
+                        // Trouver le formulaire principal dans l'onglet actif
+                        let form = null;
+                        if (activeTab.id === 'performance') {
+                            form = document.getElementById('performance-form');
+                        } else if (activeTab.id === 'general') {
+                            form = document.getElementById('general-form');
+                        } else {
+                            form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
+                        }
+                        
+                        console.log('🎯 FINAL FORM SELECTED:', form ? form.id : 'NONE');
+                        
                         if (form) {
                             console.log('🚀 SUBMITTING FORM:', form.id || 'unnamed form');
                             
