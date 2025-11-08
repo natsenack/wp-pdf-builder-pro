@@ -3491,7 +3491,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     },
                     body: new URLSearchParams({
                         action: 'pdf_builder_test_notifications',
-                        nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
+                        nonce: document.querySelector('#pdf_builder_settings_nonce')?.value || ''
                     })
                 })
                 .then(response => response.json())
@@ -3537,7 +3537,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     },
                     body: new URLSearchParams({
                         action: 'pdf_builder_test_smtp_connection',
-                        nonce: document.querySelector('#pdf_builder_notifications_nonce')?.value || ''
+                        nonce: document.querySelector('#pdf_builder_settings_nonce')?.value || ''
                     })
                 })
                 .then(response => response.json())
