@@ -5718,8 +5718,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             });
         }
         
-        }, 1000);
-        
         // Ajouter les listeners globaux
         addGlobalFormEventListeners();
         
@@ -5756,6 +5754,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             
             // Logs removed for clarity
         }, 100);
+        
+        }, 1000);
         
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
