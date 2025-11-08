@@ -5718,6 +5718,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             });
         }
         
+        }, 1000);
+        
         // Ajouter les listeners globaux
         addGlobalFormEventListeners();
         

@@ -1,5 +1,7 @@
 # Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
+#commande possible - a lire absolument
 # Usage: .\deploy-simple.ps1
+#.\build\deploy-simple.ps1
 
 param(
     [Parameter(Mandatory=$false)]
