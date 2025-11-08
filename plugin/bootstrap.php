@@ -262,6 +262,16 @@ function pdf_builder_load_bootstrap() {
         \PDFBuilderPro\License\License_Expiration_Handler::init();
     }
 
+    // CHARGER LE GESTIONNAIRE DES LIMITES DE SÉCURITÉ
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Security_Limits_Handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Security_Limits_Handler.php';
+    }
+
+    // CHARGER LE GESTIONNAIRE DE RATE LIMITING
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php';
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
