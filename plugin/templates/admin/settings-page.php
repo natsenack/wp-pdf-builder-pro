@@ -3319,8 +3319,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 globalSaveBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Trouver l'onglet actif
-                    const activeTab = document.querySelector('.tab-content:not([style*="display: none"]):not([style*="display:none"])') || 
+                    // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
+                    const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
                                     document.querySelector('.tab-content.active') ||
                                     document.getElementById('general');
                     
