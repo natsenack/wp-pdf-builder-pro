@@ -893,19 +893,35 @@ if ($is_ajax) {
             </div>
             <?php else: ?>
             <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h3>Gestion de la Licence</h3>
-                <p>Votre licence premium est active. Vous pouvez la désactiver pour la transférer vers un autre site.</p>
+                <h3>🔐 Gestion de la Licence Premium</h3>
+                <p>Votre licence premium est active et valide. Vous pouvez gérer votre licence ci-dessous.</p>
+                
+                <!-- Avertissements et informations -->
+                <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 15px;">
+                    <strong>ℹ️ À savoir :</strong>
+                    <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                        <li>Votre licence reste <strong>active pendant un an</strong> à partir de son activation</li>
+                        <li>Même après désactivation, la licence reste valide jusqu'à son expiration</li>
+                        <li><strong>Désactivez</strong> pour utiliser la même clé sur un autre site WordPress</li>
+                        <li>Une clé ne peut être active que sur <strong>un seul site à la fois</strong></li>
+                    </ul>
+                </div>
                 
                 <form method="post">
                     <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                    <p class="submit">
+                    <p class="submit" style="margin-top: 20px;">
                         <button type="submit" name="deactivate_license" class="button button-secondary"
-                                onclick="return confirm('Êtes-vous sûr de vouloir désactiver cette licence ?');">
-                            Désactiver la licence
+                                onclick="return confirm('⚠️ Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver ou l\'utiliser sur un autre site.');">
+                            🔓 Désactiver la Licence
                         </button>
                     </p>
                 </form>
+                
+                <div style="background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 4px; padding: 12px; margin-top: 15px;">
+                    <strong>💡 Conseil :</strong> La désactivation permet de réutiliser votre clé sur un autre site, mais ne supprime pas votre accès ici jusqu'à l'expiration de la licence.
+                </div>
             </div>
+            
             <?php endif; ?>
             
             <!-- Informations utiles -->
@@ -3774,14 +3790,19 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             $btn.html('🔑 Régénérer');
                             $btn.prop('disabled', false);
                         } else {
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur: ' + (response.data.message || 'Impossible de générer la clé') + '</span>';
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de générer la clé';
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🔑 Générer');
                             $btn.prop('disabled', false);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('❌ AJAX error:', error);
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur AJAX: ' + error + '</span>';
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                         $btn.html('🔑 Générer');
                         $btn.prop('disabled', false);
                     }
@@ -3838,7 +3859,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         console.log('✅ License key deleted:', response);
                         if (response.success) {
                             licenseTestKeyInput.value = '';
-                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé supprimée avec succès !</span>';
+                            licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
                             
                             // Masquer le bouton de suppression
                             $btn.hide();
@@ -3847,15 +3868,20 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                                 licenseKeyStatus.innerHTML = '';
                             }, 3000);
                         } else {
-                            console.error('❌ Delete failed:', response.data.message);
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur: ' + (response.data.message || 'Impossible de supprimer') + '</span>';
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de supprimer la clé';
+                            console.error('❌ Delete failed:', errorMsg);
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🗑️ Supprimer');
                             $btn.prop('disabled', false);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('❌ AJAX error:', error);
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur AJAX: ' + error + '</span>';
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                         $btn.html('🗑️ Supprimer');
                         $btn.prop('disabled', false);
                     }
@@ -3911,13 +3937,20 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             
                             console.log(response.data.message);
                         } else {
-                            console.error('❌ Toggle failed:', response.data.message);
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
+                            console.error('❌ Toggle failed:', errorMsg);
+                            alert('⚠️ Erreur: ' + errorMsg);
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        alert('⚠️ Erreur AJAX: ' + errorMsg);
                         $btn.html('🎚️ Basculer Mode Test');
                         $btn.prop('disabled', false);
                     }
