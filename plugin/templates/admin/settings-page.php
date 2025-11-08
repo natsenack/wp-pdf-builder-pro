@@ -3144,6 +3144,55 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             });
         }
         
+        // Ajouter des event listeners pour les interactions utilisateur
+        function addFormEventListeners() {
+            // Event listeners pour tous les inputs
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach((input, index) => {
+                input.addEventListener('change', function() {
+                    console.log(`🔄 INPUT CHANGED: ${input.name || input.id || 'input-' + index} = "${input.value}"`);
+                });
+                
+                input.addEventListener('focus', function() {
+                    console.log(`🎯 INPUT FOCUS: ${input.name || input.id || 'input-' + index}`);
+                });
+                
+                input.addEventListener('blur', function() {
+                    console.log(`👁️ INPUT BLUR: ${input.name || input.id || 'input-' + index}`);
+                });
+            });
+            
+            // Event listeners pour tous les selects
+            const allSelects = document.querySelectorAll('select');
+            allSelects.forEach((select, index) => {
+                select.addEventListener('change', function() {
+                    const selectedOption = select.options[select.selectedIndex];
+                    console.log(`📋 SELECT CHANGED: ${select.name || select.id || 'select-' + index} = "${selectedOption ? selectedOption.text : select.value}"`);
+                });
+            });
+            
+            // Event listeners pour tous les boutons
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    console.log(`🔘 BUTTON CLICKED: ${button.name || button.id || 'button-' + index} = "${button.textContent.trim()}"`);
+                });
+            });
+            
+            // Event listeners pour les formulaires
+            const allForms = document.querySelectorAll('form');
+            allForms.forEach((form, index) => {
+                form.addEventListener('submit', function(e) {
+                    console.log(`🚀 FORM SUBMIT: ${form.id || form.name || 'form-' + index}`);
+                    console.log(`   - Action: ${form.action}`);
+                    console.log(`   - Method: ${form.method}`);
+                });
+            });
+        }
+        
+        // Ajouter les event listeners
+        addFormEventListeners();
+        
         // Appel initial de logging
         logAllFormElements('PAGE_LOAD');
         
