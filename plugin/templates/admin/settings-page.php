@@ -5734,13 +5734,13 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Récupérer les paramètres PHP et les logger
         const currentSettings = {
-            developer_enabled: <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'true' : 'false'; ?>,
-            debug_javascript: <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>,
-            debug_php_errors: <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'true' : 'false'; ?>,
-            debug_ajax: <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'true' : 'false'; ?>,
-            debug_performance: <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'true' : 'false'; ?>,
-            debug_database: <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'true' : 'false'; ?>,
-            log_level: "<?php echo esc_js(esc_html($settings['log_level'] ?? 'info')); ?>",
+            developer_enabled: false,
+            debug_javascript: false,
+            debug_php_errors: false,
+            debug_ajax: false,
+            debug_performance: false,
+            debug_database: false,
+            log_level: "info",
             timestamp: new Date().toISOString()
         };
         
