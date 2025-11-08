@@ -1783,7 +1783,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_margins" name="show_margins" value="1" 
-                                       <?php checked($canvas_settings['show_margins'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_margins'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Marges visibles</span>
@@ -1828,7 +1828,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_grid" name="show_grid" value="1" 
-                                       <?php checked($canvas_settings['show_grid'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_grid'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Grille visible</span>
@@ -1856,7 +1856,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
-                                       <?php checked($canvas_settings['snap_to_grid'] ?? false); ?> />
+                                       <?php checked($canvas_settings['snap_to_grid'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer magnétisme</span>
@@ -1870,7 +1870,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
-                                       <?php checked($canvas_settings['snap_to_elements'] ?? false); ?> />
+                                       <?php checked($canvas_settings['snap_to_elements'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer magnétisme</span>
@@ -1892,7 +1892,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_guides" name="show_guides" value="1" 
-                                       <?php checked($canvas_settings['show_guides'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_guides'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Guides visibles</span>
@@ -1939,7 +1939,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
-                                       <?php checked($canvas_settings['zoom_with_wheel'] ?? false); ?> />
+                                       <?php checked($canvas_settings['zoom_with_wheel'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Zoom molette</span>
@@ -1953,7 +1953,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
-                                       <?php checked($canvas_settings['pan_with_mouse'] ?? false); ?> />
+                                       <?php checked($canvas_settings['pan_with_mouse'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Panoramique souris</span>
@@ -1971,7 +1971,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
-                                       <?php checked($canvas_settings['show_resize_handles'] ?? false); ?> />
+                                       <?php checked($canvas_settings['show_resize_handles'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Poignées visibles</span>
@@ -1992,7 +1992,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
-                                       <?php checked($canvas_settings['enable_rotation'] ?? false); ?> />
+                                       <?php checked($canvas_settings['enable_rotation'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Rotation activée</span>
@@ -2013,7 +2013,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="multi_select" name="multi_select" value="1" 
-                                       <?php checked($canvas_settings['multi_select'] ?? false); ?> />
+                                       <?php checked($canvas_settings['multi_select'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Multi-sélection</span>
@@ -2027,7 +2027,7 @@ console.log("✅ Canvas settings script completed");
                         <div class="toggle-container">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1" 
-                                       <?php checked($canvas_settings['copy_paste_enabled'] ?? false); ?> />
+                                       <?php checked($canvas_settings['copy_paste_enabled'], true); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Copier/coller</span>
