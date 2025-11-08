@@ -996,58 +996,66 @@ class PDF_Builder_Admin {
         ]);
 
         // Paramètres du canvas pour le JavaScript
-        // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
-        $canvas_settings = get_option('pdf_builder_settings', []);
+        // Récupérer les paramètres canvas depuis le Canvas Manager
+        $canvas_settings_js = [];
+        if (class_exists('PDF_Builder_Canvas_Manager')) {
+            $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
+            $canvas_settings_js = $canvas_manager->get_canvas_settings();
+        } else {
+            // Fallback vers l'ancien système
+            $canvas_settings_js = get_option('pdf_builder_settings', []);
+        }
+        
         wp_localize_script('pdf-builder-vanilla-bundle', 'pdfBuilderCanvasSettings', [
             // Paramètres généraux du canvas
-            'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 794,
-            'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 1123,
-            'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'px',
-            'default_orientation' => $canvas_settings['default_orientation'] ?? 'portrait',
-            'canvas_background_color' => $canvas_settings['canvas_background_color'] ?? '#ffffff',
-            'canvas_show_transparency' => $canvas_settings['canvas_show_transparency'] ?? false,
-            'container_background_color' => $canvas_settings['container_background_color'] ?? '#f8f9fa',
-            'container_show_transparency' => $canvas_settings['container_show_transparency'] ?? false,
+            'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
+            'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
+            'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
+            'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
+            'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
+            'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
+            'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
+            'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
 
             // Marges de sécurité
-            'margin_top' => $canvas_settings['margin_top'] ?? 28,
-            'margin_right' => $canvas_settings['margin_right'] ?? 28,
-            'margin_bottom' => $canvas_settings['margin_bottom'] ?? 10,
-            'margin_left' => $canvas_settings['margin_left'] ?? 10,
-            'show_margins' => $canvas_settings['show_margins'] ?? true,
+            'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
+            'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
+            'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
+            'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
+            'show_margins' => $canvas_settings_js['show_margins'] ?? true,
 
             // Paramètres de grille
-            'show_grid' => $canvas_settings['show_grid'] ?? true,
-            'grid_size' => $canvas_settings['grid_size'] ?? 10,
-            'grid_color' => $canvas_settings['grid_color'] ?? '#e0e0e0',
-            'grid_opacity' => $canvas_settings['grid_opacity'] ?? 30,
+            'show_grid' => $canvas_settings_js['show_grid'] ?? true,
+            'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
+            'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
+            'grid_opacity' => $canvas_settings_js['grid_opacity'] ?? 30,
 
             // Aimantation
-            'snap_to_grid' => $canvas_settings['snap_to_grid'] ?? true,
-            'snap_to_elements' => $canvas_settings['snap_to_elements'] ?? true,
-            'snap_to_margins' => $canvas_settings['snap_to_margins'] ?? true,
-            'snap_tolerance' => $canvas_settings['snap_tolerance'] ?? 5,
+            'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? true,
+            'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? true,
+            'snap_to_margins' => $canvas_settings_js['snap_to_margins'] ?? true,
+            'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
 
             // Lignes guides
-            'show_guides' => $canvas_settings['show_guides'] ?? true,
-            'lock_guides' => $canvas_settings['lock_guides'] ?? false,
+            'show_guides' => $canvas_settings_js['show_guides'] ?? true,
+            'lock_guides' => $canvas_settings_js['lock_guides'] ?? false,
 
             // Paramètres de zoom et navigation
-            'default_zoom' => $canvas_settings['default_zoom'] ?? '100',
-            'min_zoom' => $canvas_settings['min_zoom'] ?? 10,
-            'max_zoom' => $canvas_settings['max_zoom'] ?? 500,
-            'zoom_step' => $canvas_settings['zoom_step'] ?? 25,
-            'pan_with_mouse' => $canvas_settings['pan_with_mouse'] ?? true,
-            'smooth_zoom' => $canvas_settings['smooth_zoom'] ?? true,
-            'show_zoom_indicator' => $canvas_settings['show_zoom_indicator'] ?? true,
-            'zoom_with_wheel' => $canvas_settings['zoom_with_wheel'] ?? true,
-            'zoom_to_selection' => $canvas_settings['zoom_to_selection'] ?? true,
+            'default_zoom' => $canvas_settings_js['default_zoom'] ?? '100',
+            'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
+            'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
+            'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
+            'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? true,
+            'smooth_zoom' => $canvas_settings_js['smooth_zoom'] ?? true,
+            'show_zoom_indicator' => $canvas_settings_js['show_zoom_indicator'] ?? true,
+            'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? true,
+            'zoom_to_selection' => $canvas_settings_js['zoom_to_selection'] ?? true,
 
             // Paramètres de sélection et manipulation
-            'show_resize_handles' => $canvas_settings['show_resize_handles'] ?? true,
-            'handle_size' => $canvas_settings['handle_size'] ?? 8,
-            'handle_color' => $canvas_settings['handle_color'] ?? '#007cba',
-            'enable_rotation' => $canvas_settings['enable_rotation'] ?? true,
+            'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? true,
+            'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
+            'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
+            'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? true,
             'rotation_step' => $canvas_settings['rotation_step'] ?? 15,
             'rotation_snap' => $canvas_settings['rotation_snap'] ?? true,
             'multi_select' => $canvas_settings['multi_select'] ?? true,
@@ -3325,6 +3333,8 @@ class PDF_Builder_Admin {
             $nonce_name = 'pdf_builder_performance';
         } elseif ($current_tab === 'notifications') {
             $nonce_name = 'pdf_builder_notifications';
+        } elseif ($current_tab === 'canvas') {
+            $nonce_name = 'pdf_builder_settings'; // Canvas utilise le nonce général
         }
 
         $nonce_field = 'nonce';
@@ -3360,6 +3370,18 @@ class PDF_Builder_Admin {
             }
 
             wp_send_json_success('Paramètres de notifications sauvegardés avec succès');
+            return;
+        }
+
+        if ($current_tab === 'canvas') {
+            // Sauvegarde des paramètres canvas via le Canvas Manager
+            if (class_exists('PDF_Builder_Canvas_Manager')) {
+                $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
+                $canvas_manager->save_canvas_settings($_POST);
+                wp_send_json_success('Paramètres Canvas enregistrés avec succès');
+            } else {
+                wp_send_json_error('Erreur: Canvas Manager non disponible');
+            }
             return;
         }
 
