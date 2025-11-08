@@ -653,7 +653,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                     <div class="form-row">
                         <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
                         <input type="password" id="developer-password" name="password" required
-                               placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" />
+                               placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" />
                     </div>
 
                     <button type="submit" class="button button-primary">

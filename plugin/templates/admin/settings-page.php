@@ -1447,7 +1447,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         <th scope="row"><label for="admin_email">Email Administrateur</label></th>
                         <td>
                             <input type="email" id="admin_email" name="admin_email" value="<?php echo esc_attr($admin_email); ?>" 
-                                   class="regular-text" />
+                                   class="regular-text" autocomplete="email" />
                             <p class="description">Adresse email pour recevoir les notifications système</p>
                         </td>
                     </tr>
@@ -1577,7 +1577,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         <td>
                             <input type="text" id="smtp_username" name="smtp_username" 
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_username')); ?>" 
-                                   class="regular-text" placeholder="votre-email@gmail.com" />
+                                   class="regular-text" placeholder="votre-email@gmail.com" autocomplete="username" />
                             <p class="description">Nom d'utilisateur pour l'authentification SMTP</p>
                         </td>
                     </tr>
@@ -1586,7 +1586,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         <td>
                             <input type="password" id="smtp_password" name="smtp_password" 
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_password')); ?>" 
-                                   class="regular-text" placeholder="••••••••" />
+                                   class="regular-text" placeholder="••••••••" autocomplete="current-password" />
                             <p class="description">Mot de passe pour l'authentification SMTP</p>
                         </td>
                     </tr>
@@ -1595,7 +1595,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         <td>
                             <input type="email" id="smtp_from_email" name="smtp_from_email" 
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_email', get_option('admin_email'))); ?>" 
-                                   class="regular-text" />
+                                   class="regular-text" autocomplete="email" />
                             <p class="description">Adresse email utilisée comme expéditeur (From)</p>
                         </td>
                     </tr>
@@ -1604,7 +1604,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         <td>
                             <input type="text" id="smtp_from_name" name="smtp_from_name" 
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_name', get_bloginfo('name'))); ?>" 
-                                   class="regular-text" />
+                                   class="regular-text" autocomplete="name" />
                             <p class="description">Nom affiché comme expéditeur</p>
                         </td>
                     </tr>
