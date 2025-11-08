@@ -3178,262 +3178,33 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             globalSaveBtn.addEventListener('click', function(e) {
                 e.preventDefault(); // Empêcher la soumission normale du formulaire
                 
-                // Logs removed for clarity
-                
-                const form = document.getElementById('settings-form');
+                // Trouver le formulaire de l'onglet actif
+                const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
+                let formId = currentTab + '-form'; // Ex: 'general-form', 'pdf-form', etc.
+                const form = document.getElementById(formId);
                 if (!form) {
-                    console.error('❌ Settings form not found!');
+                    console.error('❌ Form not found for tab:', currentTab, 'with ID:', formId);
                     return;
                 }
                 
+                // Exclure certains onglets qui ont leurs propres boutons
+                if (currentTab === 'roles' || currentTab === 'templates' || currentTab === 'developpeur') {
+                    alert('⚠️ Cet onglet utilise un système de sauvegarde séparé. Utilisez le bouton dans l\'onglet.');
+                    return;
+                }
+
                 // Afficher le statut de sauvegarde
                 if (saveStatus) {
-                    saveStatus.textContent = '⏳ Sauvegarde en cours...';
+                    saveStatus.textContent = '⏳ Soumission en cours...';
                     saveStatus.className = 'save-status show';
                 }
-                
-                // Désactiver le bouton pendant la sauvegarde
+
+                // Désactiver le bouton pendant la soumission
                 this.disabled = true;
-                this.innerHTML = '⏳ Sauvegarde...';
-                
-                // Collecter les données du formulaire
-                const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
-                
-                // Exclure certains onglets du système AJAX (ils utilisent POST normal)
-                if (currentTab === 'roles') {
-                    // Logs removed for clarity
-                    alert('⚠️ L\'onglet Rôles utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Rôles" dans l\'onglet.');
-                    // Réactiver le bouton
-                    this.disabled = false;
-                    this.innerHTML = '💾 Enregistrer';
-                    return;
-                }
-                if (currentTab === 'templates') {
-                    // Logs removed for clarity
-                    alert('⚠️ L\'onglet Templates utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Assignations" dans l\'onglet.');
-                    // Réactiver le bouton
-                    this.disabled = false;
-                    this.innerHTML = '💾 Enregistrer';
-                    return;
-                }
-                if (currentTab === 'developpeur') {
-                    // Logs removed for clarity
-                    alert('⚠️ L\'onglet Développeur utilise un système de sauvegarde séparé. Utilisez le bouton "Enregistrer les paramètres développeur" dans l\'onglet.');
-                    // Réactiver le bouton
-                    this.disabled = false;
-                    this.innerHTML = '💾 Enregistrer';
-                    return;
-                }
-                
-                let formData = new FormData();
-                
-                // Ajouter l'action et l'onglet
-                formData.append('action', 'pdf_builder_save_settings');
-                formData.append('current_tab', currentTab);
-                
-                // Ajouter le nonce selon l'onglet
-                let nonceName = 'pdf_builder_settings_nonce';
-                
-                const nonceField = document.querySelector(`input[name="${nonceName}"]`);
-                if (nonceField) {
-                    formData.append(nonceName, nonceField.value);
-                    // Logs removed for clarity
-                } else {
-                    // Logs removed for clarity
-                }
-                
-                // Collecter les données selon l'onglet actif
-                const tabElement = document.getElementById(currentTab);
-                // Logs removed for clarity
-                
-                if (tabElement) {
-                    // Collecter les checkboxes (éviter les doublons)
-                    const checkboxes = {};
-                    const checkboxElements = tabElement.querySelectorAll('input[type="checkbox"]');
-                    // Logs removed for clarity
-                    
-                    checkboxElements.forEach(checkbox => {
-                        const key = checkbox.name;
-                        if (key && !checkboxes[key]) {
-                            checkboxes[key] = true;
-                            formData.append(key, checkbox.checked ? '1' : '0');
-                            // Logs removed for clarity
-                        } else if (key) {
-                            // Logs removed for clarity
-                        }
-                    });
-                    
-                    // Collecter les inputs texte, password, email, number
-                    const inputs = {};
-                    const inputElements = tabElement.querySelectorAll('input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="range"], select, textarea');
-                    // Logs removed for clarity
-                    
-                    inputElements.forEach(input => {
-                        const key = input.name;
-                        if (key && !inputs[key]) {
-                            inputs[key] = true;
-                            formData.append(key, input.value);
-                            // Logs removed for clarity
-                        } else if (key) {
-                            // Logs removed for clarity
-                        }
-                    });
-                } else {
-                    // Logs removed for clarity
-                }
-                
-                // Debug: vérifier que ajax_save est bien ajouté
-                // Logs removed for clarity
-                
-                // Log spécifique selon l'onglet
-                if (currentTab === 'developpeur') {
-                    // Logs removed for clarity
-                }
-                
-                // Envoyer en AJAX via l'API WordPress
-                // Logs removed for clarity
-                
-                fetch(ajaxurl, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json()) // Attendre du JSON au lieu de text
-                .then(data => {
-                    // Logs removed for clarity
+                this.innerHTML = '⏳ Soumission...';
 
-                    if (data.success) {
-                        // Logs removed for clarity
-
-                        // Succès
-                        if (saveStatus) {
-                            saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé !');
-                            saveStatus.className = 'save-status show success';
-                        }
-                        this.innerHTML = '✅ Sauvegardé !';
-                        
-                        // Log des valeurs après sauvegarde
-                        // Logs removed for clarity
-                        setTimeout(() => {
-                            if (currentTab === 'developpeur') {
-                                const debugJsCheckbox = document.getElementById('debug_javascript');
-                                const debugPhpCheckbox = document.getElementById('debug_php_errors');
-                                const developerEnabledCheckbox = document.getElementById('developer_enabled');
-                                
-                                // Logs removed for clarity
-                            }
-                        }, 100);
-                        
-                        // Synchroniser les valeurs des champs après la sauvegarde
-                        setTimeout(() => {
-                            // Logs removed for clarity
-                            
-                            // Mettre à jour les checkboxes avec les nouvelles valeurs
-                            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                            checkboxes.forEach(checkbox => {
-                                const fieldName = checkbox.name;
-                                if (fieldName && data.data && data.data[fieldName] !== undefined) {
-                                    checkbox.checked = data.data[fieldName] === '1' || data.data[fieldName] === true;
-                                    // Logs removed for clarity
-                                }
-                            });
-                            
-                            // Mettre à jour les inputs texte, email, password, number
-                            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="range"], select, textarea');
-                            inputs.forEach(input => {
-                                const fieldName = input.name;
-                                if (fieldName && data.data && data.data[fieldName] !== undefined) {
-                                    input.value = data.data[fieldName];
-                                    // Logs removed for clarity
-                                }
-                            });
-
-                            // Mettre à jour window.pdfBuilderCanvasSettings pour l'onglet canvas
-                            if (currentTab === 'canvas' && data.data) {
-                                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
-                            }
-                            
-                            // Logs removed for clarity
-                        }, 300);
-                        
-                        // Synchroniser l'apparence des toggles après la sauvegarde
-                        setTimeout(() => {
-                            const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-                            toggleSwitches.forEach(function(toggle) {
-                                const fieldName = toggle.name || toggle.id;
-                                
-                                // Vérifier si ce champ est dans les données sauvegardées
-                                if (data.data && typeof data.data[fieldName] !== 'undefined') {
-                                    const savedValue = data.data[fieldName];
-                                    const shouldBeChecked = !!savedValue;
-                                    
-                                    // Synchroniser l'état de la checkbox
-                                    if (toggle.checked !== shouldBeChecked) {
-                                        toggle.checked = shouldBeChecked;
-                                    }
-                                }
-                                
-                                // Forcer la mise à jour de l'apparence visuelle
-                                const label = toggle.parentElement.nextElementSibling;
-                                if (label && label.classList.contains('toggle-label')) {
-                                    if (toggle.checked) {
-                                        label.style.fontWeight = 'bold';
-                                        label.style.color = '#2196F3';
-                                    } else {
-                                        label.style.fontWeight = 'normal';
-                                        label.style.color = '#333';
-                                    }
-                                }
-                            });
-                        }, 200);
-                        
-                        // Remettre à l'état normal après 2 secondes
-                        setTimeout(() => {
-                            this.disabled = false;
-                            updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
-                            if (saveStatus) {
-                                saveStatus.className = 'save-status';
-                            }
-                        }, 2000);
-                        
-                    } else {
-                        // Erreur
-                        console.error('❌ Save failed:', data.message);
-                        if (saveStatus) {
-                            saveStatus.textContent = '❌ ' + (data.message || 'Erreur de sauvegarde');
-                            saveStatus.className = 'save-status show error';
-                        }
-                        this.innerHTML = '❌ Erreur';
-                        this.disabled = false;
-                        
-                        // Remettre à l'état normal après 3 secondes
-                        setTimeout(() => {
-                            updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
-                            if (saveStatus) {
-                                saveStatus.className = 'save-status';
-                            }
-                        }, 3000);
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ AJAX error:', error);
-                    if (saveStatus) {
-                        saveStatus.textContent = '❌ Erreur réseau';
-                        saveStatus.className = 'save-status show error';
-                    }
-                    this.innerHTML = '❌ Erreur';
-                    this.disabled = false;
-                    
-                    // Remettre à l'état normal après 3 secondes
-                    setTimeout(() => {
-                        updateFloatingButton(document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general');
-                        if (saveStatus) {
-                            saveStatus.className = 'save-status';
-                        }
-                    }, 3000);
-                });
+                // Soumettre le formulaire normalement (POST)
+                form.submit();
             });
         }
         
