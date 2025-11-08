@@ -2974,9 +2974,13 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
     try {
         $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
         $canvas_settings_js = $canvas_manager->get_canvas_settings();
+        error_log('DEBUG: Canvas Manager loaded, canvas_settings_js: ' . print_r($canvas_settings_js, true));
     } catch (Exception $e) {
         $canvas_settings_js = [];
+        error_log('DEBUG: Exception loading Canvas Manager: ' . $e->getMessage());
     }
+} else {
+    error_log('DEBUG: PDF_Builder_Canvas_Manager class does not exist');
 }
 ?>
 <script>
