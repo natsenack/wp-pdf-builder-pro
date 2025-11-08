@@ -256,6 +256,12 @@ function pdf_builder_load_bootstrap() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
     }
 
+    // CHARGER LE HANDLER D'EXPIRATION DE LICENCE
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-expiration-handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-expiration-handler.php';
+        \PDFBuilderPro\License\License_Expiration_Handler::init();
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();

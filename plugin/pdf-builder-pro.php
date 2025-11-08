@@ -57,6 +57,11 @@ function pdf_builder_activate() {
  */
 function pdf_builder_deactivate() {
     delete_option('pdf_builder_activated');
+    
+    // Clear scheduled expiration check
+    if (class_exists('\PDFBuilderPro\License\License_Expiration_Handler')) {
+        \PDFBuilderPro\License\License_Expiration_Handler::clear_scheduled_expiration_check();
+    }
 }
 
 // Charger le plugin de manière standard

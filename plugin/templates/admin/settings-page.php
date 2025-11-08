@@ -824,17 +824,43 @@ if ($is_ajax) {
                     <?php endif; ?>
                 </div>
                 
+                <?php 
+                // Bannière d'alerte si expiration dans moins de 30 jours
+                if ($is_premium && !empty($license_expires)) {
+                    $now = new DateTime();
+                    $expires = new DateTime($license_expires);
+                    $diff = $now->diff($expires);
+                    
+                    if (!$diff->invert && $diff->days <= 30 && $diff->days > 0) {
+                        ?>
+                        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 32px; flex-shrink: 0;">⏰</div>
+                                <div>
+                                    <strong style="font-size: 16px; color: #856404; display: block; margin-bottom: 4px;">Votre licence expire bientôt</strong>
+                                    <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5;">
+                                        Votre licence Premium expire dans <strong><?php echo $diff->days; ?> jour<?php echo $diff->days > 1 ? 's' : ''; ?></strong> (le <?php echo date('d/m/Y', strtotime($license_expires)); ?>).
+                                        Renouvelez dès maintenant pour continuer à bénéficier de toutes les fonctionnalités premium.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+                
                 <!-- Détails de la clé -->
                 <?php if ($is_premium || !empty($test_key)): ?>
                 <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; border-radius: 8px; padding: 20px; margin-top: 25px; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
                         <?php if ($is_premium): ?>
-                        <form method="post" style="display: inline;">
+                        <form method="post" style="display: inline;" id="deactivate_form">
                             <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                            <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
-                                    onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ?');">
-                                🗑️ Désactiver
+                            <button type="button" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
+                                    onclick="showDeactivateModal()">
+                                Désactiver
                             </button>
                         </form>
                         <?php endif; ?>
@@ -1034,6 +1060,51 @@ if ($is_ajax) {
             </div>
             
             <?php endif; ?>
+            
+            <!-- Modal de confirmation pour désactivation -->
+            <div id="deactivate_modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+                <div style="background: white; border-radius: 12px; padding: 40px; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                    <h2 style="margin: 0 0 15px 0; color: #333; font-size: 24px;">Désactiver la Licence</h2>
+                    <p style="margin: 0 0 20px 0; color: #666; line-height: 1.6;">Êtes-vous sûr de vouloir désactiver cette licence ?</p>
+                    <ul style="text-align: left; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; list-style: none;">
+                        <li style="margin: 8px 0;">✓ Vous pouvez la réactiver plus tard</li>
+                        <li style="margin: 8px 0;">✓ Vous pourrez l'utiliser sur un autre site</li>
+                        <li style="margin: 8px 0;">✓ La licence restera valide jusqu'à son expiration</li>
+                    </ul>
+                    <div style="display: flex; gap: 12px; margin-top: 30px;">
+                        <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                            Annuler
+                        </button>
+                        <button type="button" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="submitDeactivateForm()">
+                            Désactiver
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+            function showDeactivateModal() {
+                document.getElementById('deactivate_modal').style.display = 'flex';
+                return false;
+            }
+            
+            function closeDeactivateModal() {
+                document.getElementById('deactivate_modal').style.display = 'none';
+            }
+            
+            function submitDeactivateForm() {
+                document.getElementById('deactivate_form').submit();
+            }
+            
+            // Fermer la modale si on clique en dehors
+            document.addEventListener('click', function(event) {
+                var modal = document.getElementById('deactivate_modal');
+                if (event.target === modal) {
+                    closeDeactivateModal();
+                }
+            });
+            </script>
             
             <!-- Informations utiles -->
             <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
