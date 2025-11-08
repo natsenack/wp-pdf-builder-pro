@@ -125,6 +125,28 @@ if (isset($_POST['clear_cache']) &&
 }
 
 // Handle individual tab submissions
+if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_general_nonce'], 'pdf_builder_settings')) {
+        $general_settings = [
+            'cache_enabled' => isset($_POST['cache_enabled']),
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+        ];
+        
+        // Update individual settings
+        foreach ($general_settings as $key => $value) {
+            $settings[$key] = $value;
+        }
+        
+        update_option('pdf_builder_settings', $settings);
+        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
+    } else {
+        $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+    }
+}
+
 if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $pdf_settings = [
