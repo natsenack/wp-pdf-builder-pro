@@ -1951,307 +1951,312 @@ class PDF_Builder_Admin {
         add_meta_box('pdf-builder-order-actions', __('PDF Builder Pro', 'pdf-builder-pro'), [$this, 'render_woocommerce_order_meta_box'], $screen->id, 'side', 'high');
     }
 
-    /**
-     * Rend la meta box dans les commandes WooCommerce
-     */
+/**
+ * Rend la meta box dans les commandes WooCommerce
+ */
+    /*
     public function render_woocommerce_order_meta_box($post_or_order)
     {
+        // Temporairement désactivé pour résoudre l'erreur de syntaxe
+        echo '<p>Meta box temporairement désactivée</p>';
+        return;
+    }
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-// Handle both legacy (WP_Post) and HPOS (WC_Order) cases
-        if (is_a($post_or_order, 'WC_Order')) {
-            $order = $post_or_order;
-            $order_id = $order->get_id();
-        } elseif (is_a($post_or_order, 'WP_Post')) {
-            $order_id = $post_or_order->ID;
-            $order = wc_get_order($order_id);
-        } else {
-        // Try to get order ID from URL for HPOS
-            $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
-            $order = wc_get_order($order_id);
-        }
+        // Handle both legacy (WP_Post) and HPOS (WC_Order) cases
+            if (is_a($post_or_order, 'WC_Order')) {
+                $order = $post_or_order;
+                $order_id = $order->get_id();
+            } elseif (is_a($post_or_order, 'WP_Post')) {
+                $order_id = $post_or_order->ID;
+                $order = wc_get_order($order_id);
+            } else {
+            // Try to get order ID from URL for HPOS
+                $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+                $order = wc_get_order($order_id);
+            }
 
-        if (!$order) {
-            echo '<p>' . __('Commande invalide', 'pdf-builder-pro') . '</p>';
-            return;
-        }
+            if (!$order) {
+                echo '<p>' . __('Commande invalide', 'pdf-builder-pro') . '</p>';
+                return;
+            }
 
         // Détecter automatiquement le type de document basé sur le statut de la commande
-        $order_status = $order->get_status();
-        $document_type = $this->detect_document_type($order_status);
-        $document_type_label = $this->get_document_type_label($document_type);
-// Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
-        $status_templates = get_option('pdf_builder_order_status_templates', []);
-        $status_key = 'wc-' . $order_status;
-        $mapped_template = null;
-        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            $order_status = $order->get_status();
+            $document_type = $this->detect_document_type($order_status);
+            $document_type_label = $this->get_document_type_label($document_type);
+        // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
+            $status_templates = get_option('pdf_builder_order_status_templates', []);
+            $status_key = 'wc-' . $order_status;
+            $mapped_template = null;
+            if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
         // Il y a un mapping spécifique pour ce statut
-            $mapped_template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]), ARRAY_A);
-        }
+                $mapped_template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]), ARRAY_A);
+            }
 
         // Si pas de mapping spécifique, utiliser la logique de détection automatique
-        $default_template = $mapped_template;
-        if (!$default_template) {
-            $keywords = $this->get_document_keywords($document_type);
-            if (!empty($keywords)) {
-        // D'abord chercher un template par défaut dont le nom contient un mot-clé du type
-                $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
-                $sql = $wpdb->prepare("SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
-                    implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
-                    ") LIMIT 1", array_map(function ($keyword) {
-
-                            return '%' . $keyword . '%';
-                    }, $keywords));
-                $default_template = $wpdb->get_row($sql, ARRAY_A);
-            }
-
-            // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+            $default_template = $mapped_template;
             if (!$default_template) {
-                $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+                $keywords = $this->get_document_keywords($document_type);
+                if (!empty($keywords)) {
+        // D'abord chercher un template par défaut dont le nom contient un mot-clé du type
+                    $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
+                    $sql = $wpdb->prepare("SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
+                        implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
+                        ") LIMIT 1", array_map(function ($keyword) {
+
+                                return '%' . $keyword . '%';
+                        }, $keywords));
+                    $default_template = $wpdb->get_row($sql, ARRAY_A);
+                }
+
+                // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+                if (!$default_template) {
+                    $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+                }
             }
-        }
 
-        wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
-        ?>
-        <style>
-        #pdf-builder-order-meta-box {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        #pdf-builder-order-meta-box .order-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px;
-            margin: -12px -12px 12px -12px;
-            border-radius: 8px 8px 0 0;
-        }
-        #pdf-builder-order-meta-box .order-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        #pdf-builder-order-meta-box .order-info p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        #pdf-builder-order-meta-box .template-info {
-            margin-bottom: 15px;
-        }
-        #pdf-builder-order-meta-box .template-info label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #23282d;
-            font-size: 13px;
-        }
-        #pdf-builder-order-meta-box .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        #pdf-builder-order-meta-box .action-buttons button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            min-height: 40px;
-        }
-        #pdf-builder-order-meta-box .action-buttons button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        #pdf-builder-order-meta-box .action-buttons button:active {
-            transform: translateY(0);
-        }
-        #pdf-builder-order-meta-box .action-buttons button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        #pdf-builder-order-meta-box .btn-generate {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-        }
-        #pdf-builder-order-meta-box .btn-generate:hover {
-            background: linear-gradient(135deg, #218838 0%, #1aa085 100%);
-        }
-        #pdf-builder-order-meta-box .btn-download {
-            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-            color: #212529;
-        }
-        #pdf-builder-order-meta-box .btn-download:hover {
-            background: linear-gradient(135deg, #e0a800 0%, #e8590c 100%);
-        }
-        #pdf-builder-order-meta-box .action-buttons button.loading {
-            position: relative;
-            color: transparent !important;
-        }
-        #pdf-builder-order-meta-box .action-buttons button.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 16px;
-            height: 16px;
-            margin: -8px 0 0 -8px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+            wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
+            ?>
+            <style>
+            #pdf-builder-order-meta-box {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            #pdf-builder-order-meta-box .order-info {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 12px;
+                margin: -12px -12px 12px -12px;
+                border-radius: 8px 8px 0 0;
+            }
+            #pdf-builder-order-meta-box .order-info h4 {
+                margin: 0 0 4px 0;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            #pdf-builder-order-meta-box .order-info p {
+                margin: 0;
+                font-size: 12px;
+                opacity: 0.9;
+            }
+            #pdf-builder-order-meta-box .template-info {
+                margin-bottom: 15px;
+            }
+            #pdf-builder-order-meta-box .template-info label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 500;
+                color: #23282d;
+                font-size: 13px;
+            }
+            #pdf-builder-order-meta-box .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            #pdf-builder-order-meta-box .action-buttons button {
+                padding: 10px 16px;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                text-decoration: none;
+                min-height: 40px;
+            }
+            #pdf-builder-order-meta-box .action-buttons button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            #pdf-builder-order-meta-box .action-buttons button:active {
+                transform: translateY(0);
+            }
+            #pdf-builder-order-meta-box .action-buttons button:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+            #pdf-builder-order-meta-box .btn-generate {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+            }
+            #pdf-builder-order-meta-box .btn-generate:hover {
+                background: linear-gradient(135deg, #218838 0%, #1aa085 100%);
+            }
+            #pdf-builder-order-meta-box .btn-download {
+                background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+                color: #212529;
+            }
+            #pdf-builder-order-meta-box .btn-download:hover {
+                background: linear-gradient(135deg, #e0a800 0%, #e8590c 100%);
+            }
+            #pdf-builder-order-meta-box .action-buttons button.loading {
+                position: relative;
+                color: transparent !important;
+            }
+            #pdf-builder-order-meta-box .action-buttons button.loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 16px;
+                height: 16px;
+                margin: -8px 0 0 -8px;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-top: 2px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
 
-        #pdf-builder-order-meta-box .status-message {
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            text-align: center;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        #pdf-builder-order-meta-box .status-message.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        #pdf-builder-order-meta-box .status-loading {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            color: #1976d2;
-            border: 1px solid #90caf9;
-            animation: pulse 2s infinite;
-        }
-        #pdf-builder-order-meta-box .status-success {
-            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
-            color: #2e7d32;
-            border: 1px solid #81c784;
-        }
-        #pdf-builder-order-meta-box .status-error {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            color: #c62828;
-            border: 1px solid #e57373;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        #pdf-builder-order-meta-box .spinner {
-            animation: spin 1s linear infinite;
-        }
-        #pdf-builder-order-meta-box .quick-stats {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        #pdf-builder-order-meta-box .quick-stats .stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-            font-size: 12px;
-        }
-        #pdf-builder-order-meta-box .quick-stats .stat-item:last-child {
-            margin-bottom: 0;
-        }
-        #pdf-builder-order-meta-box .quick-stats .stat-label {
-            color: #6c757d;
-            font-weight: 500;
-        }
-        #pdf-builder-order-meta-box .quick-stats .stat-value {
-            color: #495057;
-            font-weight: 600;
-        }
-        </style>
+            #pdf-builder-order-meta-box .status-message {
+                margin-top: 12px;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                text-align: center;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            #pdf-builder-order-meta-box .status-message.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            #pdf-builder-order-meta-box .status-loading {
+                background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                color: #1976d2;
+                border: 1px solid #90caf9;
+                animation: pulse 2s infinite;
+            }
+            #pdf-builder-order-meta-box .status-success {
+                background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+                color: #2e7d32;
+                border: 1px solid #81c784;
+            }
+            #pdf-builder-order-meta-box .status-error {
+                background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+                color: #c62828;
+                border: 1px solid #e57373;
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            #pdf-builder-order-meta-box .spinner {
+                animation: spin 1s linear infinite;
+            }
+            #pdf-builder-order-meta-box .quick-stats {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            #pdf-builder-order-meta-box .quick-stats .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 4px;
+                font-size: 12px;
+            }
+            #pdf-builder-order-meta-box .quick-stats .stat-item:last-child {
+                margin-bottom: 0;
+            }
+            #pdf-builder-order-meta-box .quick-stats .stat-label {
+                color: #6c757d;
+                font-weight: 500;
+            }
+            #pdf-builder-order-meta-box .quick-stats .stat-value {
+                color: #495057;
+                font-weight: 600;
+            }
+            </style>
 
-        <div id="pdf-builder-order-meta-box" style="margin: -6px -12px -12px -12px;">
-            <!-- Informations de la commande -->
-            <div class="order-info">
-                <h4><?php printf(__('Commande #%s', 'pdf-builder-pro'), $order->get_order_number()); ?></h4>
-                <p><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?> • <?php echo esc_html($order->get_date_created()->format('d/m/Y H:i')); ?></p>
-            </div>
-
-            <div style="padding: 12px;">
-                <!-- Statut du document détecté -->
-                <div class="document-type-indicator" style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span style="font-size: 16px;">📄</span>
-                        <strong style="color: #495057;"><?php _e('Type de document détecté:', 'pdf-builder-pro'); ?></strong>
-                    </div>
-                    <div style="font-size: 14px; color: #007cba; font-weight: 600;">
-                        <?php echo esc_html($document_type_label); ?>
-                        <small style="color: #6c757d; font-weight: normal;">
-                            (<?php printf(__('Statut: %s', 'pdf-builder-pro'), esc_html(wc_get_order_status_name($order->get_status()))); ?>)
-                        </small>
-                    </div>
+            <div id="pdf-builder-order-meta-box" style="margin: -6px -12px -12px -12px;">
+                <!-- Informations de la commande -->
+                <div class="order-info">
+                    <h4><?php printf(__('Commande #%s', 'pdf-builder-pro'), $order->get_order_number()); ?></h4>
+                    <p><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?> • <?php echo esc_html($order->get_date_created()->format('d/m/Y H:i')); ?></p>
                 </div>
 
-                <!-- Template sélectionné automatiquement -->
-                <div class="template-info" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
-                        🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
-                    </label>
-                    <div style="padding: 10px; background: <?php echo $mapped_template ? '#e8f0ff' : '#e8f5e8'; ?>; border: 1px solid <?php echo $mapped_template ? '#b3d4ff' : '#c3e6c3'; ?>; border-radius: 6px; font-size: 14px; color: <?php echo $mapped_template ? '#0d47a1' : '#155724'; ?>;">
-                        <?php if ($default_template) :
-                            ?>
-                            <strong><?php echo esc_html($default_template['name']); ?></strong>
-                            <small style="color: #6c757d; display: block; margin-top: 4px;">
-                                <?php if ($mapped_template) :
-                                    ?>
-                                    <?php _e('Template assigné spécifiquement pour le statut "', 'pdf-builder-pro'); ?><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?><?php _e('"', 'pdf-builder-pro'); ?>
-                                    <?php
-                                else :
-                                    ?>
-                                    <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
-                                    <?php
-                                endif; ?>
+                <div style="padding: 12px;">
+                    <!-- Statut du document détecté -->
+                    <div class="document-type-indicator" style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 16px;">📄</span>
+                            <strong style="color: #495057;"><?php _e('Type de document détecté:', 'pdf-builder-pro'); ?></strong>
+                        </div>
+                        <div style="font-size: 14px; color: #007cba; font-weight: 600;">
+                            <?php echo esc_html($document_type_label); ?>
+                            <small style="color: #6c757d; font-weight: normal;">
+                                (<?php printf(__('Statut: %s', 'pdf-builder-pro'), esc_html(wc_get_order_status_name($order->get_status()))); ?>)
                             </small>
-                            <?php
-                        else :
-                            ?>
-                            <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
-                            <?php
-                        endif; ?>
+                        </div>
                     </div>
+
+                    <!-- Template sélectionné automatiquement -->
+                    <div class="template-info" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
+                            🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
+                        </label>
+                        <div style="padding: 10px; background: <?php echo $mapped_template ? '#e8f0ff' : '#e8f5e8'; ?>; border: 1px solid <?php echo $mapped_template ? '#b3d4ff' : '#c3e6c3'; ?>; border-radius: 6px; font-size: 14px; color: <?php echo $mapped_template ? '#0d47a1' : '#155724'; ?>;">
+                            <?php if ($default_template) :
+                                ?>
+                                <strong><?php echo esc_html($default_template['name']); ?></strong>
+                                <small style="color: #6c757d; display: block; margin-top: 4px;">
+                                    <?php if ($mapped_template) :
+                                        ?>
+                                        <?php _e('Template assigné spécifiquement pour le statut "', 'pdf-builder-pro'); ?><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?><?php _e('"', 'pdf-builder-pro'); ?>
+                                        <?php
+                                    else :
+                                        ?>
+                                        <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
+                                        <?php
+                                    endif; ?>
+                                </small>
+                                <?php
+                            else :
+                                ?>
+                                <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
+                                <?php
+                            endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button"
+                                id="pdf-builder-generate-btn"
+                                class="btn-generate"
+                                data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                                title="<?php echo esc_attr(__('Générer le PDF définitif', 'pdf-builder-pro')); ?>">
+                            ⚡ <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
+                        </button>
+
+                        <button type="button"
+                                id="pdf-builder-download-btn"
+                                class="btn-download"
+                                style="display: none;"
+                                data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                                title="<?php echo esc_attr(__('Télécharger le PDF généré', 'pdf-builder-pro')); ?>">
+                            ⬇️ <?php _e('Télécharger PDF', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
+
+                    <div id="pdf-builder-status" class="status-message" style="display: none;"></div>
                 </div>
-
-                <div class="action-buttons">
-                    <button type="button"
-                            id="pdf-builder-generate-btn"
-                            class="btn-generate"
-                            data-order-id="<?php echo esc_attr($order->get_id()); ?>"
-                            title="<?php echo esc_attr(__('Générer le PDF définitif', 'pdf-builder-pro')); ?>">
-                        ⚡ <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
-                    </button>
-
-                    <button type="button"
-                            id="pdf-builder-download-btn"
-                            class="btn-download"
-                            style="display: none;"
-                            data-order-id="<?php echo esc_attr($order->get_id()); ?>"
-                            title="<?php echo esc_attr(__('Télécharger le PDF généré', 'pdf-builder-pro')); ?>">
-                        ⬇️ <?php _e('Télécharger PDF', 'pdf-builder-pro'); ?>
-                    </button>
-                </div>
-
-                <div id="pdf-builder-status" class="status-message" style="display: none;"></div>
             </div>
-        </div>
-        </script>
-        <?php
+            </script>
+            <?php
     }
 
     /**
