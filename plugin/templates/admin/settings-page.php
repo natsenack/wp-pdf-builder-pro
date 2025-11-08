@@ -188,6 +188,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         update_option('pdf_builder_settings', $settings);
         if ($is_ajax) {
             error_log('AJAX: About to send success response for general settings');
+            error_log('AJAX: Headers already sent at response time: ' . (headers_sent() ? 'YES' : 'NO'));
             $response = json_encode(['success' => true, 'message' => 'Paramètres généraux enregistrés avec succès.']);
             wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
         } else {
@@ -3305,21 +3306,26 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 .then(response => {
                     console.log('Response status:', response.status);
                     console.log('Response headers:', response.headers.get('content-type'));
+                    console.log('Response ok:', response.ok);
                     // Vérifier si la réponse est JSON
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
+                        console.log('Response is JSON, parsing...');
                         return response.json();
                     } else {
                         // Si ce n'est pas JSON, traiter comme HTML (rechargement de page)
                         console.log('Response is not JSON, content-type:', contentType);
                         if (response.ok) {
+                            console.log('Response ok, reloading page...');
                             window.location.reload();
                         } else {
+                            console.log('Response not ok, throwing error...');
                             throw new Error('Erreur serveur');
                         }
                     }
                 })
                 .then(data => {
+                    console.log('Parsed JSON data:', data);
                     // Réactiver le bouton
                     this.disabled = false;
                     this.innerHTML = '💾 Sauvegarder';
@@ -3350,6 +3356,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 })
                 .catch(error => {
                     console.error('Erreur AJAX:', error);
+                    console.error('Error type:', typeof error);
+                    console.error('Error message:', error.message);
                     // Réactiver le bouton en cas d'erreur
                     this.disabled = false;
                     this.innerHTML = '💾 Sauvegarder';
