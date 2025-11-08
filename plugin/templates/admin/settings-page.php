@@ -2979,6 +2979,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         // Also log the raw database option
         $raw_settings = get_option('pdf_builder_settings', []);
         error_log('DEBUG: Raw pdf_builder_settings from database: ' . print_r($raw_settings, true));
+        
+        // Test direct access to see if show_margins is saved
+        $test_show_margins = isset($raw_settings['show_margins']) ? $raw_settings['show_margins'] : 'NOT_SET';
+        error_log('DEBUG: Direct test - show_margins in database: ' . $test_show_margins);
     } catch (Exception $e) {
         $canvas_settings_js = [];
         error_log('DEBUG: Exception loading Canvas Manager: ' . $e->getMessage());
