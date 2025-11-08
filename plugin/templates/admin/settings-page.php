@@ -937,7 +937,7 @@ if ($is_ajax) {
                 <form method="post">
                     <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
                     <p class="submit" style="margin-top: 20px;">
-                        <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545; border-color: #dc3545; color: white; font-weight: bold; padding: 10px 20px;"
+                        <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;"
                                 onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ? Vous pourrez la reactiver ou l\'utiliser sur un autre site.');">
                             Desactiver la Licence
                         </button>
