@@ -2943,6 +2943,11 @@ if ($is_ajax) {
                             <button type="button" id="copy_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
                                 📋 Copier
                             </button>
+                            <?php if ($license_test_key): ?>
+                            <button type="button" id="delete_license_key_btn" class="button button-link-delete" style="padding: 8px 12px; height: auto;">
+                                🗑️ Supprimer
+                            </button>
+                            <?php endif; ?>
                         </div>
                         <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
                         <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
@@ -3801,6 +3806,60 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 } else {
                     licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Aucune clé à copier</span>';
                 }
+            });
+        }
+
+        // Gestion de la suppression de la clé de test
+        const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
+
+        if (deleteLicenseKeyBtn) {
+            deleteLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
+                    return;
+                }
+                
+                console.log('🗑️ Deleting license test key...');
+                
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Suppression...');
+                
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_delete_test_license_key',
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ License key deleted:', response);
+                        if (response.success) {
+                            licenseTestKeyInput.value = '';
+                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé supprimée avec succès !</span>';
+                            
+                            // Masquer le bouton de suppression
+                            $btn.hide();
+                            
+                            setTimeout(function() {
+                                licenseKeyStatus.innerHTML = '';
+                            }, 3000);
+                        } else {
+                            console.error('❌ Delete failed:', response.data.message);
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur: ' + (response.data.message || 'Impossible de supprimer') + '</span>';
+                            $btn.html('🗑️ Supprimer');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Erreur AJAX: ' + error + '</span>';
+                        $btn.html('🗑️ Supprimer');
+                        $btn.prop('disabled', false);
+                    }
+                });
             });
         }
 

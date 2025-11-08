@@ -57,6 +57,10 @@ class License_Test_Handler {
         // AJAX handler pour basculer le mode test
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
         add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
+        
+        // AJAX handler pour supprimer la clé de test
+        add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
+        add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
     }
     
     /**
@@ -249,6 +253,39 @@ class License_Test_Handler {
             wp_send_json_success([
                 'enabled' => $new_state,
                 'message' => $new_state ? '✅ Mode test ACTIVÉ' : '❌ Mode test DÉSACTIVÉ'
+            ]);
+        } catch (\Exception $e) {
+            wp_send_json_error([
+                'message' => 'Erreur: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Handler AJAX pour supprimer la clé de test
+     */
+    public function handle_delete_test_key() {
+        // Vérifier la nonce
+        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_delete_test_license_key')) {
+            wp_send_json_error([
+                'message' => 'Erreur de sécurité: nonce invalide'
+            ], 403);
+        }
+        
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error([
+                'message' => 'Permissions insuffisantes'
+            ], 403);
+        }
+        
+        try {
+            // Supprimer la clé de test
+            delete_option('pdf_builder_license_test_key');
+            
+            // Retourner la confirmation
+            wp_send_json_success([
+                'message' => '✅ Clé de test supprimée'
             ]);
         } catch (\Exception $e) {
             wp_send_json_error([
