@@ -155,6 +155,20 @@ class PDFGenerator extends BaseGenerator {
         $options->set('defaultPaperSize', $this->config['format'] ?? 'A4');
         $options->set('defaultPaperOrientation', $this->config['orientation'] ?? 'portrait');
 
+        // Configuration optimisation pour le web (depuis settings Performance)
+        if (!empty($this->config['optimize_for_web'])) {
+            $options->set('isRemoteEnabled', false); // Réduire connexions externes
+            $options->set('isFontSubsettingEnabled', true); // Réduire taille polices
+            $this->logInfo("PDF optimized for web delivery");
+        }
+
+        // Configuration compression d'images (depuis settings Performance)
+        // Nota: La vraie compression se fait dans convertPDFToImage()
+        if (isset($this->config['compress_images'])) {
+            $this->config['should_compress_images'] = $this->config['compress_images'];
+            $this->logInfo("Image compression enabled: " . ($this->config['compress_images'] ? 'yes' : 'no'));
+        }
+
         $this->dompdf = new Dompdf($options);
     }
 
@@ -502,7 +516,22 @@ class PDFGenerator extends BaseGenerator {
             if ($format === 'jpg') {
                 $this->logInfo("Configuring JPEG compression");
                 $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-                $imagick->setImageCompressionQuality($this->config['quality'] ?? 90);
+                // Utiliser image_quality depuis settings Performance (30-100), ou 90 par défaut
+                $quality = isset($this->config['image_quality']) ? intval($this->config['image_quality']) : 90;
+                $quality = max(30, min(100, $quality)); // Clamp entre 30 et 100
+                $imagick->setImageCompressionQuality($quality);
+                $this->logInfo("JPEG compression quality set to: {$quality}%");
+            } elseif ($format === 'png') {
+                $this->logInfo("Configuring PNG compression");
+                $imagick->setImageCompression(\Imagick::COMPRESSION_ZIP);
+                // Pour PNG, appliquer compression_level (0-9, où 9 = max compression)
+                if (!empty($this->config['compress_images'])) {
+                    $imagick->setImageCompressionQuality(90); // Max compression
+                    $this->logInfo("PNG compression enabled (maximum)");
+                } else {
+                    $imagick->setImageCompressionQuality(50); // Compression modérée
+                    $this->logInfo("PNG compression disabled (moderate compression)");
+                }
             }
 
             // Redimensionnement si nécessaire

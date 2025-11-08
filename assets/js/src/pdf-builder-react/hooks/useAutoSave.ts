@@ -29,6 +29,20 @@ export function useAutoSave(): UseAutoSaveReturn {
     (window as any).pdfBuilderReactData?.nonce ||
     '';
 
+  // Récupérer l'intervalle de sauvegarde auto depuis les settings
+  // Par défaut: 30 secondes si paramètre non défini
+  const autoSaveIntervalSetting = (window as any).pdfBuilderCanvasSettings?.auto_save_interval ||
+    (window as any).pdfBuilderData?.auto_save_interval ||
+    (window as any).pdfBuilderReactData?.auto_save_interval ||
+    30; // 30 secondes par défaut
+  
+  const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s
+
+  // Vérifier si l'auto-save est activé dans les settings
+  const autoSaveEnabled = (window as any).pdfBuilderCanvasSettings?.auto_save_enabled !== false &&
+    (window as any).pdfBuilderData?.auto_save_enabled !== false &&
+    (window as any).pdfBuilderReactData?.auto_save_enabled !== false;
+
   // Utiliser useSaveStateV2
   const {
     state: saveState,
@@ -43,9 +57,9 @@ export function useAutoSave(): UseAutoSaveReturn {
     templateId: state.template.id as number | undefined,
     elements: state.elements,
     nonce,
-    autoSaveInterval: 5000,
+    autoSaveInterval: autoSaveEnabled ? autoSaveInterval : 0, // 0 désactive l'auto-save
     onSaveStart: () => {
-      debugLog('[AUTO SAVE] Sauvegarde commencée');
+      debugLog('[AUTO SAVE] Sauvegarde commencée (intervalle: ' + autoSaveInterval + 'ms)');
     },
     onSaveSuccess: (savedAt: string) => {
       debugLog(`[AUTO SAVE] Succès le ${savedAt}`);
