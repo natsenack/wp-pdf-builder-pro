@@ -4361,6 +4361,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 }
                 */
                 
+                // Battery API and related sections - COMMENTED OUT FOR DEBUG
+                /*
                 // Battery API detailed monitoring
                 if ('getBattery' in navigator) {
                     navigator.getBattery().then(battery => {
@@ -4460,6 +4462,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
                     console.log('🔄 BACKGROUND SYNC: Supported');
                 }
+                */
                 
                 // Web Periodic Background Sync
                 if ('serviceWorker' in navigator && 'periodicSync' in window.ServiceWorkerRegistration.prototype) {
