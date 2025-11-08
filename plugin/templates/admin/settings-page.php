@@ -714,7 +714,10 @@ if ($is_ajax) {
             $license_status = get_option('pdf_builder_license_status', 'free');
             $license_key = get_option('pdf_builder_license_key', '');
             $license_expires = get_option('pdf_builder_license_expires', '');
+            $license_activated_at = get_option('pdf_builder_license_activated_at', '');
             $is_premium = $license_status !== 'free' && $license_status !== 'expired';
+            $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
+            $test_key = get_option('pdf_builder_license_test_key', '');
             
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
@@ -725,10 +728,12 @@ if ($is_ajax) {
                         update_option('pdf_builder_license_key', $new_key);
                         update_option('pdf_builder_license_status', 'active');
                         update_option('pdf_builder_license_expires', date('Y-m-d', strtotime('+1 year')));
+                        update_option('pdf_builder_license_activated_at', date('Y-m-d H:i:s'));
                         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence activée avec succès !</p></div>';
                         $is_premium = true;
                         $license_key = $new_key;
                         $license_status = 'active';
+                        $license_activated_at = date('Y-m-d H:i:s');
                     }
                 }
             }
@@ -739,40 +744,125 @@ if ($is_ajax) {
                 if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                     delete_option('pdf_builder_license_key');
                     delete_option('pdf_builder_license_expires');
+                    delete_option('pdf_builder_license_activated_at');
                     update_option('pdf_builder_license_status', 'free');
                     $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée.</p></div>';
                     $is_premium = false;
                     $license_key = '';
                     $license_status = 'free';
+                    $license_activated_at = '';
                 }
             }
             ?>
             
             <!-- Statut de la licence -->
             <div style="background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0;">Statut de la Licence</h3>
+                <h3 style="margin-top: 0;">📊 Statut de la Licence</h3>
                 
-                <div style="display: inline-block; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-bottom: 15px; color: white;
-                            background: <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>;">
-                    <?php echo $is_premium ? '✓ Premium Activé' : '○ Gratuit'; ?>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <!-- Carte Statut Principal -->
+                    <div style="border: 2px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; border-radius: 8px; padding: 15px; background: <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?>;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Statut</div>
+                        <div style="font-size: 20px; font-weight: bold; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>;">
+                            <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte Mode Test (si applicable) -->
+                    <?php if ($test_mode_enabled): ?>
+                    <div style="border: 2px solid #ffc107; border-radius: 8px; padding: 15px; background: #fff3cd;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Mode</div>
+                        <div style="font-size: 20px; font-weight: bold; color: #856404;">
+                            🧪 TEST (Dev)
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Carte Date d'expiration -->
+                    <?php if ($is_premium && $license_expires): ?>
+                    <div style="border: 2px solid #17a2b8; border-radius: 8px; padding: 15px; background: #d1ecf1;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Expire le</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #0c5460;">
+                            <?php echo date('d/m/Y', strtotime($license_expires)); ?>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                            <?php 
+                            $now = new DateTime();
+                            $expires = new DateTime($license_expires);
+                            $diff = $now->diff($expires);
+                            if ($diff->invert) {
+                                echo '❌ Expiré il y a ' . $diff->days . ' jours';
+                            } else {
+                                echo '✓ Valide pendant ' . $diff->days . ' jours';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 
-                <?php if ($is_premium): ?>
-                    <div style="margin-bottom: 15px;">
-                        <p><strong>Clé de licence :</strong> <?php echo substr($license_key, 0, 4) . '****' . substr($license_key, -4); ?></p>
-                        <?php if ($license_expires): ?>
-                            <p><strong>Expire le :</strong> <?php echo esc_html($license_expires); ?></p>
+                <!-- Détails de la clé -->
+                <?php if ($is_premium || $test_mode_enabled): ?>
+                <div style="background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px; padding: 15px; margin-top: 15px;">
+                    <h4 style="margin: 0 0 12px 0;">🔐 Détails de la Clé</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <?php if ($is_premium && $license_key): ?>
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé Premium :</td>
+                            <td style="padding: 8px 0; font-family: monospace;">
+                                <code style="background: #fff; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd;">
+                                    <?php 
+                                    $key = $license_key;
+                                    $visible_start = substr($key, 0, 6);
+                                    $visible_end = substr($key, -6);
+                                    echo $visible_start . '••••••••••••••••' . $visible_end;
+                                    ?>
+                                </code>
+                                <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); alert('✅ Clé copiée !'); ">� Copier</span>
+                            </td>
+                        </tr>
                         <?php endif; ?>
-                    </div>
-                <?php else: ?>
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <h4 style="margin: 0 0 10px 0; color: white;">🔓 Passez à la version Premium</h4>
-                        <p style="margin: 0 0 15px 0;">Débloquez toutes les fonctionnalités avancées et créez des PDFs professionnels sans limites !</p>
-                        <a href="https://pdfbuilderpro.com/pricing" class="button button-primary" target="_blank" 
-                           style="background: white; color: #667eea; border: none; font-weight: bold;">
-                            Voir les tarifs →
-                        </a>
-                    </div>
+                        
+                        <?php if ($test_mode_enabled && $test_key): ?>
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé de Test :</td>
+                            <td style="padding: 8px 0; font-family: monospace;">
+                                <code style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; border: 1px solid #ffc107;">
+                                    <?php 
+                                    $test = $test_key;
+                                    echo substr($test, 0, 6) . '••••••••••••••••' . substr($test, -6);
+                                    ?>
+                                </code>
+                                <span style="margin-left: 10px; color: #666; font-size: 12px;"> (Mode Développement)</span>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                        
+                        <?php if ($is_premium && $license_activated_at): ?>
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500;">Activée le :</td>
+                            <td style="padding: 8px 0;">
+                                <?php echo date('d/m/Y à H:i', strtotime($license_activated_at)); ?>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                        
+                        <tr>
+                            <td style="padding: 8px 0; font-weight: 500;">Statut :</td>
+                            <td style="padding: 8px 0;">
+                                <?php 
+                                if ($test_mode_enabled) {
+                                    echo '<span style="background: #ffc107; color: #000; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">🧪 MODE TEST</span>';
+                                } elseif ($is_premium) {
+                                    echo '<span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">✅ ACTIVE</span>';
+                                } else {
+                                    echo '<span style="background: #6c757d; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">○ GRATUIT</span>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
                 <?php endif; ?>
             </div>
             
@@ -817,6 +907,20 @@ if ($is_ajax) {
                 </form>
             </div>
             <?php endif; ?>
+            
+            <!-- Informations utiles -->
+            <div style="background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: #004080;">ℹ️ Informations Utiles</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Site actuel :</strong> <?php echo esc_html(home_url()); ?></li>
+                    <li><strong>Plan actif :</strong> <?php echo $test_mode_enabled ? '🧪 Mode Test' : ($is_premium ? '✅ Premium' : '○ Gratuit'); ?></li>
+                    <?php if ($is_premium): ?>
+                    <li><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank">Contact Support Premium</a></li>
+                    <li><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank">Lire la Documentation</a></li>
+                    <?php endif; ?>
+                    <li><strong>Version du plugin :</strong> <?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></li>
+                </ul>
+            </div>
             
             <!-- Comparaison des fonctionnalités -->
             <div style="margin-top: 30px;">
