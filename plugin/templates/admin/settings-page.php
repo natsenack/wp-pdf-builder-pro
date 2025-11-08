@@ -5740,7 +5740,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             debug_ajax: <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'true' : 'false'; ?>,
             debug_performance: <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'true' : 'false'; ?>,
             debug_database: <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'true' : 'false'; ?>,
-            log_level: "<?php echo esc_js($settings['log_level'] ?? 'info'); ?>",
+            log_level: "<?php echo esc_js(esc_html($settings['log_level'] ?? 'info')); ?>",
             timestamp: new Date().toISOString()
         };
         
