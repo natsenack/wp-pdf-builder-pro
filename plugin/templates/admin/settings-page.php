@@ -3672,7 +3672,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         cacheTestOutput.style.display = 'block';
                     };
 
-                    const params = 'action=pdf_builder_simple_test';
+                    const params = 'action=pdf_builder_test_bootstrap';
                     console.log('📤 Sending AJAX request with params:', params);
                     xhr.send(params);
                 });

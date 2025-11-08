@@ -251,6 +251,12 @@ function pdf_builder_load_bootstrap() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
     }
 
+    // TEST AJAX SIMPLE DIRECTEMENT DANS BOOTSTRAP
+    function pdf_builder_test_bootstrap_ajax() {
+        wp_send_json_success('<p>Test AJAX bootstrap réussi !</p>');
+    }
+    add_action('wp_ajax_pdf_builder_test_bootstrap', 'pdf_builder_test_bootstrap_ajax');
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
