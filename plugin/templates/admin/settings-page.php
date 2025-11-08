@@ -3256,7 +3256,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const saveStatus = document.getElementById('save-status');
         
         // Fonction commune pour soumettre un formulaire via AJAX
-        function submitFormAjax(form) {
+        function submitFormAjax(form, submitButton) {
             // Afficher le statut de sauvegarde
             if (saveStatus) {
                 saveStatus.textContent = '⏳ Soumission en cours...';
@@ -3264,10 +3264,9 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             }
 
             // Désactiver le bouton pendant la soumission
-            const submitBtn = form.querySelector('button[type="button"]') || globalSaveBtn;
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '⏳ Soumission...';
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = submitButton === globalSaveBtn ? '⏳' : '⏳ Soumission...';
             }
 
             // Soumettre le formulaire via AJAX (sans rechargement de page)
@@ -3293,13 +3292,11 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if (data.data && data.data.message) {
                     console.log('Error message:', data.data.message);
                 }
-                // Réactiver le bouton
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = submitBtn === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
-                }
-
-                if (data && data.success) {
+                        // Réactiver le bouton
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                        }                if (data && data.success) {
                     // Afficher le succès
                     if (saveStatus) {
                         saveStatus.textContent = '✅ ' + (data.data && data.data.message || data.message || 'Sauvegardé avec succès !');
@@ -3324,17 +3321,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     }
                 }
             })
-            .catch(error => {
-                console.error('Erreur AJAX:', error);
-                console.error('Error type:', typeof error);
-                console.error('Error message:', error.message);
-                // Réactiver le bouton en cas d'erreur
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = submitBtn === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
-                }
-
-                if (saveStatus) {
+                    .catch(error => {
+                        console.error('Erreur AJAX:', error);
+                        console.error('Error type:', typeof error);
+                        console.error('Error message:', error.message);
+                        // Réactiver le bouton en cas d'erreur
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = submitButton === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                        }                if (saveStatus) {
                     saveStatus.textContent = '❌ Erreur de connexion';
                     saveStatus.className = 'save-status show error';
 
@@ -3372,7 +3367,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     return;
                 }
 
-                submitFormAjax(form);
+                submitFormAjax(form, globalSaveBtn);
             });
         }
 
@@ -3382,7 +3377,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 
                 const form = document.getElementById('general-form');
                 if (form) {
-                    submitFormAjax(form);
+                    submitFormAjax(form, generalSubmitBtn);
                 }
             });
         }
@@ -3399,6 +3394,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     const nonceInput = form.querySelector('input[name="pdf_builder_performance_nonce"]');
                     console.log('Performance nonce input:', nonceInput);
                     console.log('Performance nonce value:', nonceInput ? nonceInput.value : 'NOT FOUND');
+                    
+                    // Désactiver le bouton pendant la soumission
+                    performanceSubmitBtn.disabled = true;
+                    performanceSubmitBtn.innerHTML = '⏳ Soumission...';
                     
                     // Modifier temporairement l'action pour utiliser la fonction AJAX de performance
                     const originalFormData = new FormData(form);
@@ -3470,6 +3469,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             }, 5000);
                         }
                     });
+                } else {
+                    console.error('Performance form not found');
                 }
             });
         }
