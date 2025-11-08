@@ -3359,6 +3359,70 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
             
+            if (globalSaveBtn) {
+                globalSaveBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
+                    const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
+                                    document.querySelector('.tab-content.active') ||
+                                    document.getElementById('general');
+                    
+                    if (activeTab) {
+                        // Trouver le formulaire principal dans l'onglet actif
+                        let form = null;
+                        if (activeTab.id === 'performance') {
+                            form = document.getElementById('performance-form');
+                        } else if (activeTab.id === 'general') {
+                            form = document.getElementById('general-form');
+                        } else if (activeTab.id === 'pdf') {
+                            form = document.getElementById('pdf-form');
+                        } else if (activeTab.id === 'securite') {
+                            form = document.getElementById('securite-form');
+                        } else if (activeTab.id === 'canvas') {
+                            form = document.getElementById('canvas-form');
+                        } else if (activeTab.id === 'templates') {
+                            form = document.getElementById('templates-form');
+                        } else if (activeTab.id === 'developpeur') {
+                            form = document.getElementById('developpeur-form');
+                        } else {
+                            form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
+                        }
+                        
+                        if (form) {
+                            // Afficher le statut de sauvegarde
+                            if (saveStatus) {
+                                saveStatus.textContent = '💾 Sauvegarde en cours...';
+                                saveStatus.style.color = '#007cba';
+                            }
+                            
+                            // Soumettre le formulaire de manière sécurisée
+                            if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                            } else {
+                                // Fallback pour les navigateurs plus anciens
+                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                                if (form.dispatchEvent(submitEvent)) {
+                                    form.submit();
+                                }
+                            }
+                        } else {
+                            console.error('❌ No form found in active tab:', activeTab.id);
+                            if (saveStatus) {
+                                saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
+                                saveStatus.style.color = '#dc3232';
+                            }
+                        }
+                    } else {
+                        console.error('❌ No active tab found');
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
+                            saveStatus.style.color = '#dc3232';
+                        }
+                    }
+                });
+            }
+            
             // Gestion du bouton Vider le Cache
             const clearCacheBtn = document.getElementById('clear-cache-btn');
             if (clearCacheBtn) {
