@@ -3177,40 +3177,28 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         if (globalSaveBtn) {
             globalSaveBtn.addEventListener('click', function(e) {
                 e.preventDefault(); // Empêcher la soumission normale du formulaire
-                console.log('🔍 [GLOBAL SAVE] Démarrage de la sauvegarde globale');
 
                 // Trouver le formulaire de l'onglet actif
                 const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
-                console.log('📋 [GLOBAL SAVE] Onglet actif détecté:', currentTab);
-
                 let formId = currentTab + '-form'; // Ex: 'general-form', 'pdf-form', etc.
-                console.log('🆔 [GLOBAL SAVE] ID de formulaire recherché:', formId);
-
                 const form = document.getElementById(formId);
-                console.log('📄 [GLOBAL SAVE] Élément trouvé:', form);
 
                 if (!form) {
                     console.error('❌ Form not found for tab:', currentTab, 'with ID:', formId);
                     return;
                 }
 
-                console.log('✅ [GLOBAL SAVE] Formulaire trouvé avec succès');
-
                 // Vérifier que c'est bien un élément de formulaire
                 if (!(form instanceof HTMLFormElement)) {
                     console.error('❌ Element found is not a form:', form, 'for tab:', currentTab);
                     return;
                 }
-
-                console.log('✅ [GLOBAL SAVE] Élément est bien un HTMLFormElement');
                 
                 // Exclure certains onglets qui ont leurs propres boutons
                 if (currentTab === 'roles' || currentTab === 'templates' || currentTab === 'developpeur') {
                     alert('⚠️ Cet onglet utilise un système de sauvegarde séparé. Utilisez le bouton dans l\'onglet.');
                     return;
                 }
-
-                console.log('🚀 [GLOBAL SAVE] Préparation de la soumission pour l\'onglet:', currentTab);
 
                 // Afficher le statut de sauvegarde
                 if (saveStatus) {
@@ -3223,21 +3211,16 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 this.innerHTML = '⏳ Soumission...';
 
                 // Soumettre le formulaire de manière sécurisée
-                console.log('📤 [GLOBAL SAVE] Début de la soumission du formulaire');
                 try {
                     if (typeof form.requestSubmit === 'function') {
-                        console.log('🎯 [GLOBAL SAVE] Utilisation de requestSubmit()');
                         // Utiliser requestSubmit si disponible (plus moderne)
                         form.requestSubmit();
                     } else {
-                        console.log('🔄 [GLOBAL SAVE] Fallback: recherche d\'un bouton submit existant');
                         // Fallback pour les navigateurs plus anciens
                         const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
                         if (submitBtn) {
-                            console.log('✅ [GLOBAL SAVE] Bouton submit trouvé:', submitBtn);
                             submitBtn.click();
                         } else {
-                            console.log('⚠️ [GLOBAL SAVE] Aucun bouton submit trouvé, création temporaire');
                             // Créer un bouton submit temporaire si aucun n'existe
                             const tempBtn = document.createElement('button');
                             tempBtn.type = 'submit';
@@ -3245,10 +3228,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             form.appendChild(tempBtn);
                             tempBtn.click();
                             form.removeChild(tempBtn);
-                            console.log('✅ [GLOBAL SAVE] Bouton temporaire créé et cliqué');
                         }
                     }
-                    console.log('✅ [GLOBAL SAVE] Soumission lancée avec succès');
                 } catch (error) {
                     console.error('❌ Erreur lors de la soumission:', error);
                     // Réactiver le bouton en cas d'erreur
