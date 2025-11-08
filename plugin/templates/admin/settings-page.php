@@ -2969,6 +2969,16 @@ if ($is_ajax) {
                         <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row"><label>Nettoyage Complet</label></th>
+                    <td>
+                        <button type="button" id="cleanup_license_btn" class="button button-link-delete" style="padding: 10px 15px; height: auto; font-weight: bold;">
+                            🧹 Nettoyer complètement la licence
+                        </button>
+                        <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
+                        <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                    </td>
+                </tr>
             </table>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">�🔍 Paramètres de Debug</h3>
@@ -3952,6 +3962,66 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         }
                         alert('⚠️ Erreur AJAX: ' + errorMsg);
                         $btn.html('🎚️ Basculer Mode Test');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        }
+
+        // Gestion du nettoyage complet de la licence
+        const cleanupBtn = document.getElementById('cleanup_license_btn');
+        if (cleanupBtn) {
+            cleanupBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Confirmation avant de nettoyer
+                if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
+                    return;
+                }
+                
+                console.log('🧹 Cleaning up license...');
+                
+                const $btn = jQuery(this);
+                const cleanupStatus = document.getElementById('cleanup_status');
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Nettoyage...');
+                cleanupStatus.innerHTML = '';
+                
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_cleanup_license',
+                        nonce: jQuery('input[name="_wpnonce"]').val() || jQuery('input[name="pdf_builder_developpeur_nonce"]').val()
+                    },
+                    success: function(response) {
+                        console.log('✅ Cleanup successful:', response);
+                        $btn.html('🧹 Nettoyer complètement la licence');
+                        $btn.prop('disabled', false);
+                        
+                        if (response.success) {
+                            cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
+                            
+                            // Recharger la page après 2 secondes pour voir les changements
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
+                            console.error('❌ Cleanup failed:', errorMsg);
+                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        alert('⚠️ Erreur AJAX: ' + errorMsg);
+                        cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        $btn.html('🧹 Nettoyer complètement la licence');
                         $btn.prop('disabled', false);
                     }
                 });

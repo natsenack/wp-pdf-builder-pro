@@ -61,6 +61,10 @@ class License_Test_Handler {
         // AJAX handler pour supprimer la clé de test
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
         add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
+        
+        // AJAX handler pour nettoyer complètement la licence
+        add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
+        add_action('wp_ajax_nopriv_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
     }
     
     /**
@@ -290,6 +294,52 @@ class License_Test_Handler {
         } catch (\Exception $e) {
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Nettoie complètement la licence (supprime tous les paramètres)
+     * AJAX handler
+     */
+    public function handle_cleanup_license() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+        
+        // Vérifier le nonce
+        $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+        if (!wp_verify_nonce($nonce, 'pdf_builder_cleanup_license')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+        
+        try {
+            // Options à supprimer
+            $options = [
+                'pdf_builder_license_status',
+                'pdf_builder_license_key',
+                'pdf_builder_license_expires',
+                'pdf_builder_license_activated_at',
+                'pdf_builder_license_test_mode_enabled',
+                'pdf_builder_license_test_key'
+            ];
+            
+            foreach ($options as $option) {
+                delete_option($option);
+            }
+            
+            // Définir l'état clean
+            update_option('pdf_builder_license_status', 'free');
+            
+            wp_send_json_success([
+                'message' => '✨ Licence complètement nettoyée et réinitialisée'
+            ]);
+        } catch (\Exception $e) {
+            wp_send_json_error([
+                'message' => 'Erreur lors du nettoyage: ' . $e->getMessage()
             ]);
         }
     }
