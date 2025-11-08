@@ -3588,13 +3588,24 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 
         // Gestion du test du système de cache
         jQuery(document).ready(function($) {
+            console.log('🔧 Cache test script loaded');
+
             const testCacheBtn = $('#test-cache-btn');
             const cacheTestResults = $('#cache-test-results');
             const cacheTestOutput = $('#cache-test-output');
 
+            console.log('🔍 Elements found:', {
+                button: testCacheBtn.length,
+                results: cacheTestResults.length,
+                output: cacheTestOutput.length
+            });
+
             if (testCacheBtn.length && cacheTestResults.length && cacheTestOutput.length) {
+                console.log('✅ Cache test button event listener attached');
+
                 testCacheBtn.on('click', function(e) {
                     e.preventDefault();
+                    console.log('🖱️ Cache test button clicked');
 
                     // Désactiver le bouton pendant le test
                     testCacheBtn.prop('disabled', true).html('🔄 Test en cours...');
@@ -3611,6 +3622,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         },
                         timeout: 30000,
                         success: function(response) {
+                            console.log('✅ AJAX success:', response);
                             testCacheBtn.prop('disabled', false).html('🧪 Tester l\'intégration du cache');
 
                             if (response.success) {
@@ -3622,6 +3634,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             }
                         },
                         error: function(xhr, status, error) {
+                            console.error('❌ AJAX error:', {xhr, status, error});
                             testCacheBtn.prop('disabled', false).html('🧪 Tester l\'intégration du cache');
 
                             if (status === 'timeout') {
@@ -3634,6 +3647,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         }
                     });
                 });
+            } else {
+                console.error('❌ Cache test elements not found');
             }
         });
 </script>
