@@ -3586,7 +3586,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             });
         }
 
-        // Gestion du test du système de cache
+        // Gestion du test du système de cache - TEMPORAIREMENT DÉSACTIVÉ
+        /*
         jQuery(document).ready(function($) {
             const testCacheBtn = $('#test-cache-btn');
             const cacheTestResults = $('#cache-test-results');
@@ -3627,4 +3628,5 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 });
             }
         });
+        */
 </script>
