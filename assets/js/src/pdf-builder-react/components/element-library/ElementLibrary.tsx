@@ -393,7 +393,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
     e.dataTransfer.effectAllowed = 'copy';
   };
 
-  const handleDragEnd = (e: React.DragEvent) => {
+  const handleDragEnd = (_e: React.DragEvent) => {
     // Drag terminé
   };
 

@@ -38,7 +38,15 @@ export default [
         URL: 'readonly',
         Blob: 'readonly',
         ArrayBuffer: 'readonly',
-        Uint8Array: 'readonly'
+        Uint8Array: 'readonly',
+        URLSearchParams: 'readonly',
+        EventListener: 'readonly',
+        AbortController: 'readonly',
+        alert: 'readonly',
+        navigator: 'readonly',
+        process: 'readonly',
+        queueMicrotask: 'readonly',
+        NodeJS: 'readonly'
       }
     },
     plugins: {

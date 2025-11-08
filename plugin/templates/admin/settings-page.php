@@ -13,37 +13,28 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
 }
 
 // Debug: Page loaded
-error_log('DEBUG: Settings page PHP file loaded and executed at ' . date('Y-m-d H:i:s'));
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    error_log('PDF Builder: Settings page loaded at ' . date('Y-m-d H:i:s'));
+    // Logs removed for clarity
 }
 
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
-error_log('DEBUG: Settings loaded from database: ' . print_r($settings, true));
-error_log('DEBUG: About to check POST data...');
-if (defined('WP_DEBUG') && WP_DEBUG) {
-    error_log('DEBUG: Settings page loaded, POST data keys: ' . implode(', ', array_keys($_POST)));
-}
-
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
-    error_log('DEBUG: FULL POST data received: ' . print_r($_POST, true));
-    error_log('DEBUG: POST keys: ' . implode(', ', array_keys($_POST)));
+    // Logs removed for clarity
 } else {
-    error_log('DEBUG: No POST data received (normal page load)');
+    // Logs removed for clarity
 }
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres" (General) clicked');
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('DEBUG: Form submission detected');
+        // Logs removed for clarity
     }
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('DEBUG: Nonce verified successfully');
+            // Logs removed for clarity
         }
         // Check for max_input_vars limit
         $max_input_vars = ini_get('max_input_vars');
@@ -58,6 +49,10 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+            // PDF settings from general tab
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
             // Performance settings moved to Performance tab only
             // PDF settings moved to PDF tab only
             // Canvas settings moved to Canvas tab only
@@ -81,21 +76,19 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $settings_changed = serialize($new_settings) !== serialize($settings);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('DEBUG: Settings changed: ' . ($settings_changed ? 'yes' : 'no'));
-            error_log('DEBUG: Current settings size: ' . strlen(serialize($settings)));
-            error_log('DEBUG: New settings size: ' . strlen(serialize($new_settings)));
+            // Logs removed for clarity
         }
         
         $result = update_option('pdf_builder_settings', $new_settings);
 
         try {
             // Debug: Always log the result for troubleshooting
-            error_log('DEBUG: Settings saved, result: ' . ($result ? 'success' : 'failed') . ', changed: ' . ($settings_changed ? 'yes' : 'no'));
+            // Logs removed for clarity
 
             // Simplified success logic: if no exception was thrown, consider it successful
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
         } catch (Exception $e) {
-            error_log('DEBUG: Exception during settings save: ' . $e->getMessage());
+            // Logs removed for clarity
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
         }
         $settings = get_option('pdf_builder_settings', []);
@@ -108,7 +101,6 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
 if (isset($_POST['clear_cache']) &&
     (isset($_POST['pdf_builder_clear_cache_nonce_performance']) ||
      isset($_POST['pdf_builder_clear_cache_nonce_maintenance']))) {
-    error_log('DEBUG: Button "Vider le Cache" clicked');
 
     $nonce_verified = false;
     if (isset($_POST['pdf_builder_clear_cache_nonce_performance'])) {
@@ -134,9 +126,7 @@ if (isset($_POST['clear_cache']) &&
 
 // Handle individual tab submissions
 if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: PDF tab submission detected');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        error_log('DEBUG: PDF tab nonce verified');
         $pdf_settings = [
             'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
             'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
@@ -154,7 +144,6 @@ if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) 
 }
 
 if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres de sécurité" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $security_settings = [
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
@@ -183,11 +172,7 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
 }
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Developer tab submission detected - submit_developpeur found in POST');
-    error_log('DEBUG: Button "Enregistrer les paramètres développeur" clicked');
-    error_log('DEBUG: POST data: ' . print_r($_POST, true));
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        error_log('DEBUG: Nonce verified successfully');
         $dev_settings = [
             'developer_enabled' => isset($_POST['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -203,20 +188,20 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_no
             'enable_profiling' => isset($_POST['enable_profiling']),
             'force_https' => isset($_POST['force_https']),
         ];
-        error_log('DEBUG: Developer settings to save: ' . print_r($dev_settings, true));
+        // Logs removed for clarity
         $result = update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
-        error_log('DEBUG: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+        // Logs removed for clarity
         $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         $settings = get_option('pdf_builder_settings', []);
-        error_log('DEBUG: Settings after reload: ' . print_r($settings, true));
+        // Logs removed for clarity
     } else {
-        error_log('DEBUG: Nonce verification FAILED');
+        // Logs removed for clarity
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
 }
 
 if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres de performance" clicked');
+    // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance_settings')) {
         $performance_settings = [
             'auto_save_enabled' => isset($_POST['auto_save_enabled']),
@@ -235,7 +220,7 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
 }
 
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres de maintenance" clicked');
+    // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         $maintenance_settings = [
             // Les paramètres de maintenance sont principalement des actions, pas des sauvegardes de config
@@ -249,7 +234,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
 ?>  
 <script>
 // Script de définition des paramètres canvas - exécuté très tôt
-console.log("🔧 Canvas settings script starting...");
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
@@ -308,8 +292,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
     'show_fps' => $canvas_settings_js['show_fps'] ?? false
 ]); ?>;
-console.log("📋 pdfBuilderCanvasSettings defined in template:", window.pdfBuilderCanvasSettings);
-console.log("✅ Canvas settings script completed");
+// Logs removed for clarity
 </script>
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
@@ -453,7 +436,7 @@ console.log("✅ Canvas settings script completed");
             
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
-                error_log('DEBUG: Button "Activer la licence" clicked');
+                // Logs removed for clarity
                 if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
                     $new_key = sanitize_text_field($_POST['license_key'] ?? '');
                     if (!empty($new_key)) {
@@ -470,7 +453,7 @@ console.log("✅ Canvas settings script completed");
             
             // Traitement désactivation licence
             if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
-                error_log('DEBUG: Button "Désactiver la licence" clicked');
+                // Logs removed for clarity
                 if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                     delete_option('pdf_builder_license_key');
                     delete_option('pdf_builder_license_expires');
@@ -977,30 +960,30 @@ console.log("✅ Canvas settings script completed");
             <?php
             // Traitement de la sauvegarde des rôles autorisés
             if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
-                error_log('DEBUG: Button "Enregistrer les rôles" clicked');
-                error_log('DEBUG: POST data keys: ' . implode(', ', array_keys($_POST)));
-                error_log('DEBUG: pdf_builder_allowed_roles: ' . print_r($_POST['pdf_builder_allowed_roles'] ?? 'NOT SET', true));
+                // Logs removed for clarity
+                // Logs removed for clarity
+                // Logs removed for clarity
                 
                 if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
-                    error_log('DEBUG: Nonce verified successfully');
+                    // Logs removed for clarity
                     
                     $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) 
                         ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
                         : [];
                     
-                    error_log('DEBUG: Processed allowed_roles: ' . print_r($allowed_roles, true));
+                    // Logs removed for clarity
                     
                     if (empty($allowed_roles)) {
                         $allowed_roles = ['administrator']; // Au minimum l'admin
-                        error_log('DEBUG: Empty roles, setting default administrator');
+                        // Logs removed for clarity
                     }
                     
                     update_option('pdf_builder_allowed_roles', $allowed_roles);
-                    error_log('DEBUG: Saved allowed_roles to database: ' . print_r($allowed_roles, true));
+                    // Logs removed for clarity
                     
                     $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Rôles autorisés mis à jour avec succès.</p></div>';
                 } else {
-                    error_log('DEBUG: Nonce verification FAILED');
+                    // Logs removed for clarity
                     $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité (nonce invalide).</p></div>';
                 }
             }
@@ -1235,20 +1218,19 @@ console.log("✅ Canvas settings script completed");
                     const rolesForm = document.querySelector('#roles form');
                     if (rolesForm) {
                         // Log pour déboguer
-                        console.log('🔍 Roles form found, adding submit protection');
+                        // Logs removed for clarity
                         
                         rolesForm.addEventListener('submit', function(e) {
-                            console.log('📝 Roles form submit event triggered');
-                            console.log('📋 Form data:', new FormData(this));
+                            // Logs removed for clarity
                             
                             // Laisser le formulaire se soumettre normalement (POST)
-                            console.log('✅ Allowing normal POST submission');
+                            // Logs removed for clarity
                         });
                         
                         // Empêcher tout autre event listener AJAX
                         rolesForm.addEventListener('click', function(e) {
                             if (e.target.type === 'submit') {
-                                console.log('🔘 Submit button clicked:', e.target.name);
+                                // Logs removed for clarity
                             }
                         }, true); // useCapture = true
                     } else {
@@ -1266,14 +1248,14 @@ console.log("✅ Canvas settings script completed");
                         const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
                         if (selectedCount) {
                             selectedCount.textContent = checkedBoxes.length;
-                            console.log('🔢 Updated count:', checkedBoxes.length);
+                            // Logs removed for clarity
                         }
                     }
                     
                     // Bouton Sélectionner Tout
                     if (selectAllBtn) {
                         selectAllBtn.addEventListener('click', function() {
-                            console.log('🎯 Select All clicked');
+                            // Logs removed for clarity
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = true;
@@ -1286,7 +1268,7 @@ console.log("✅ Canvas settings script completed");
                     // Bouton Rôles Courants
                     if (selectCommonBtn) {
                         selectCommonBtn.addEventListener('click', function() {
-                            console.log('🎯 Select Common clicked');
+                            // Logs removed for clarity
                             const commonRoles = ['administrator', 'editor', 'shop_manager'];
                             roleToggles.forEach(function(checkbox) {
                                 const isCommon = commonRoles.includes(checkbox.value);
@@ -1301,7 +1283,7 @@ console.log("✅ Canvas settings script completed");
                     // Bouton Désélectionner Tout
                     if (selectNoneBtn) {
                         selectNoneBtn.addEventListener('click', function() {
-                            console.log('🎯 Select None clicked');
+                            // Logs removed for clarity
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = false;
@@ -1314,14 +1296,14 @@ console.log("✅ Canvas settings script completed");
                     // Mettre à jour le compteur quand un toggle change
                     roleToggles.forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                            console.log('🔄 Toggle changed:', this.value, this.checked);
+                            // Logs removed for clarity
                             updateSelectedCount();
                         });
                     });
                     
                     // Initialiser le compteur
                     updateSelectedCount();
-                    console.log('🚀 Roles toggle script loaded');
+                    // Logs removed for clarity
                 });
             </script>
             
@@ -1412,7 +1394,7 @@ console.log("✅ Canvas settings script completed");
             <?php
             // Traitement de la sauvegarde des notifications
             if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_settings_nonce'])) {
-                error_log('DEBUG: Button "Enregistrer les notifications" clicked');
+                // Logs removed for clarity
                 if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
                     $notification_settings = [
                         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
@@ -2090,7 +2072,7 @@ console.log("✅ Canvas settings script completed");
             <?php
             // Traitement de la sauvegarde
             if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
-                error_log('DEBUG: Button "Enregistrer les templates" clicked');
+                // Logs removed for clarity
                 if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
                     $template_mappings = [];
                     if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
@@ -2967,21 +2949,21 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
     try {
         $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
         $canvas_settings_js = $canvas_manager->get_canvas_settings();
-        error_log('DEBUG: Canvas Manager loaded, canvas_settings_js: ' . print_r($canvas_settings_js, true));
+        // Logs removed for clarity
         
         // Also log the raw database option
         $raw_settings = get_option('pdf_builder_settings', []);
-        error_log('DEBUG: Raw pdf_builder_settings from database: ' . print_r($raw_settings, true));
+        // Logs removed for clarity
         
         // Test direct access to see if show_margins is saved
         $test_show_margins = isset($raw_settings['show_margins']) ? $raw_settings['show_margins'] : 'NOT_SET';
-        error_log('DEBUG: Direct test - show_margins in database: ' . $test_show_margins);
+        // Logs removed for clarity
     } catch (Exception $e) {
         $canvas_settings_js = [];
-        error_log('DEBUG: Exception loading Canvas Manager: ' . $e->getMessage());
+        // Logs removed for clarity
     }
 } else {
-    error_log('DEBUG: PDF_Builder_Canvas_Manager class does not exist');
+    // Logs removed for clarity
 }
 ?>
 <script>
@@ -2993,8 +2975,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
-        console.log('🔍 DOM Content Loaded - Checking elements...');
+        // Logs removed for clarity
         
         // Vérifier les éléments critiques
         
@@ -3012,22 +2993,17 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             timestamp: new Date().toISOString()
         };
         
-        console.log('📊 Current settings loaded:', currentSettings);
+        // Logs removed for clarity
         
         // Vérifier les valeurs des checkboxes au chargement
         setTimeout(() => {
-            console.log('🔍 Checking pdfBuilderCanvasSettings availability...');
-            console.log('🔍 window.pdfBuilderCanvasSettings exists:', typeof window.pdfBuilderCanvasSettings);
-            console.log('🔍 window.pdfBuilderCanvasSettings value:', window.pdfBuilderCanvasSettings);
+            // Logs removed for clarity
             
             const debugJsCheckbox = document.getElementById('debug_javascript');
             const debugPhpCheckbox = document.getElementById('debug_php_errors');
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
             
-            console.log('🔍 Checkbox states at page load:');
-            console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
-            console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
-            console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+            // Logs removed for clarity
         }, 100);
         
         const tabs = document.querySelectorAll('.nav-tab');
@@ -3149,7 +3125,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             globalSaveBtn.addEventListener('click', function(e) {
                 e.preventDefault(); // Empêcher la soumission normale du formulaire
                 
-                console.log('💾 Global save button clicked for tab:', this.getAttribute('name'));
+                // Logs removed for clarity
                 
                 const form = document.getElementById('settings-form');
                 if (!form) {
@@ -3172,7 +3148,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 
                 // Exclure l'onglet roles et templates du système AJAX (ils utilisent POST normal)
                 if (currentTab === 'roles') {
-                    console.log('🚫 Roles tab uses POST normal, not AJAX. Use the specific save button.');
+                    // Logs removed for clarity
                     alert('⚠️ L\'onglet Rôles utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Rôles" dans l\'onglet.');
                     // Réactiver le bouton
                     this.disabled = false;
@@ -3180,7 +3156,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     return;
                 }
                 if (currentTab === 'templates') {
-                    console.log('🚫 Templates tab uses POST normal, not AJAX. Use the specific save button.');
+                    // Logs removed for clarity
                     alert('⚠️ L\'onglet Templates utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Assignations" dans l\'onglet.');
                     // Réactiver le bouton
                     this.disabled = false;
@@ -3200,75 +3176,61 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 const nonceField = document.querySelector(`input[name="${nonceName}"]`);
                 if (nonceField) {
                     formData.append(nonceName, nonceField.value);
-                    console.log(`🔐 Nonce found for ${currentTab}:`, nonceField.value, `Field name: ${nonceName}`);
+                    // Logs removed for clarity
                 } else {
-                    console.error(`❌ Nonce field not found for ${currentTab}: input[name="${nonceName}"]`);
-                    console.log('Available nonce fields:', document.querySelectorAll('input[name*="nonce"]'));
+                    // Logs removed for clarity
                 }
                 
                 // Collecter les données selon l'onglet actif
                 const tabElement = document.getElementById(currentTab);
-                console.log('🎯 Collecting data for tab:', currentTab, 'Element found:', !!tabElement);
+                // Logs removed for clarity
                 
                 if (tabElement) {
                     // Collecter les checkboxes (éviter les doublons)
                     const checkboxes = {};
                     const checkboxElements = tabElement.querySelectorAll('input[type="checkbox"]');
-                    console.log('📋 Found', checkboxElements.length, 'checkboxes in tab', currentTab);
+                    // Logs removed for clarity
                     
                     checkboxElements.forEach(checkbox => {
                         const key = checkbox.name;
                         if (key && !checkboxes[key]) {
                             checkboxes[key] = true;
                             formData.append(key, checkbox.checked ? '1' : '0');
-                            console.log('  ✅ Checkbox:', key, '=', checkbox.checked ? '1' : '0');
+                            // Logs removed for clarity
                         } else if (key) {
-                            console.log('  ⚠️ Duplicate checkbox ignored:', key);
+                            // Logs removed for clarity
                         }
                     });
                     
                     // Collecter les inputs texte, password, email, number
                     const inputs = {};
                     const inputElements = tabElement.querySelectorAll('input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="range"], select, textarea');
-                    console.log('📝 Found', inputElements.length, 'input/select elements in tab', currentTab);
+                    // Logs removed for clarity
                     
                     inputElements.forEach(input => {
                         const key = input.name;
                         if (key && !inputs[key]) {
                             inputs[key] = true;
                             formData.append(key, input.value);
-                            console.log('  ✅ Input:', key, '=', input.value);
+                            // Logs removed for clarity
                         } else if (key) {
-                            console.log('  ⚠️ Duplicate input ignored:', key);
+                            // Logs removed for clarity
                         }
                     });
                 } else {
-                    console.error('❌ Tab element not found for:', currentTab);
+                    // Logs removed for clarity
                 }
                 
                 // Debug: vérifier que ajax_save est bien ajouté
-                console.log('📤 AJAX FormData contents:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`  ${key}: ${value}`);
-                }
+                // Logs removed for clarity
                 
                 // Log spécifique selon l'onglet
                 if (currentTab === 'developpeur') {
-                    console.log('🔧 Developer settings being sent:');
-                    console.log('  developer_enabled:', formData.get('developer_enabled'));
-                    console.log('  debug_php_errors:', formData.get('debug_php_errors'));
-                    console.log('  debug_javascript:', formData.get('debug_javascript'));
-                    console.log('  debug_ajax:', formData.get('debug_ajax'));
-                    console.log('  debug_performance:', formData.get('debug_performance'));
-                    console.log('  debug_database:', formData.get('debug_database'));
+                    // Logs removed for clarity
                 }
                 
                 // Envoyer en AJAX via l'API WordPress
-                console.log('🔗 AJAX URL:', ajaxurl);
-                console.log('📤 Final FormData contents:');
-                for (let [key, value] of formData.entries()) {
-                    console.log('  ' + key + ':', value);
-                }
+                // Logs removed for clarity
                 
                 fetch(ajaxurl, {
                     method: 'POST',
@@ -3279,19 +3241,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 })
                 .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
-                    console.log('✅ AJAX response received:', data);
-                    console.log('🔍 Full response structure:', JSON.stringify(data, null, 2));
-                    console.log('🔍 Response keys:', Object.keys(data));
-                    console.log('🔍 data.success:', data.success);
-                    console.log('🔍 data.message:', data.message);
-                    console.log('� data.data exists:', !!data.data);
-                    if (data.data) {
-                        console.log('� data.data type:', typeof data.data);
-                        console.log('� data.data keys:', Object.keys(data.data));
-                    }
+                    // Logs removed for clarity
 
                     if (data.success) {
-                        console.log('✅ AJAX SAVE SUCCESS for tab:', currentTab);
+                        // Logs removed for clarity
 
                         // Succès
                         if (saveStatus) {
@@ -3301,23 +3254,20 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         this.innerHTML = '✅ Sauvegardé !';
                         
                         // Log des valeurs après sauvegarde
-                        console.log('✅ Save successful, checking checkbox states...');
+                        // Logs removed for clarity
                         setTimeout(() => {
                             if (currentTab === 'developpeur') {
                                 const debugJsCheckbox = document.getElementById('debug_javascript');
                                 const debugPhpCheckbox = document.getElementById('debug_php_errors');
                                 const developerEnabledCheckbox = document.getElementById('developer_enabled');
                                 
-                                console.log('🔍 Checkbox states immediately after save:');
-                                console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
-                                console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
-                                console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
+                                // Logs removed for clarity
                             }
                         }, 100);
                         
                         // Synchroniser les valeurs des champs après la sauvegarde
                         setTimeout(() => {
-                            console.log('🔄 Synchronizing field values after save...');
+                            // Logs removed for clarity
                             
                             // Mettre à jour les checkboxes avec les nouvelles valeurs
                             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -3325,7 +3275,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                 const fieldName = checkbox.name;
                                 if (fieldName && data.data && data.data[fieldName] !== undefined) {
                                     checkbox.checked = data.data[fieldName] === '1' || data.data[fieldName] === true;
-                                    console.log('🔄 Checkbox updated:', fieldName, '=', checkbox.checked);
+                                    // Logs removed for clarity
                                 }
                             });
                             
@@ -3335,7 +3285,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                 const fieldName = input.name;
                                 if (fieldName && data.data && data.data[fieldName] !== undefined) {
                                     input.value = data.data[fieldName];
-                                    console.log('🔄 Input updated:', fieldName, '=', input.value);
+                                    // Logs removed for clarity
                                 }
                             });
 
@@ -3344,7 +3294,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                 window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
                             }
                             
-                            console.log('✅ Field values synchronized');
+                            // Logs removed for clarity
                         }, 300);
                         
                         // Synchroniser l'apparence des toggles après la sauvegarde
@@ -3442,11 +3392,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             toggle.addEventListener('change', function() {
                 const toggleId = this.id || 'unnamed-toggle';
                 const isChecked = this.checked;
-                console.log('🔄 Toggle changed:', {
-                    id: toggleId,
-                    checked: isChecked,
-                    timestamp: new Date().toISOString()
-                });
+                // Logs removed for clarity
 
                 const label = this.parentElement.nextElementSibling;
                 if (label && label.classList.contains('toggle-label')) {
@@ -3548,9 +3494,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 .then(data => {
                     // Log debug information (si présent) dans la console pour aider le diagnostique
                     if (data.data && data.data.debug) {
-                        console.group('PDF Builder SMTP debug');
-                        data.data.debug.forEach(line => console.log(line));
-                        console.groupEnd();
+                        // Logs removed for clarity
                     }
 
                     if (data.success) {
@@ -3582,11 +3526,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             const isError = node.classList.contains('notice-error');
                             const message = node.textContent.trim();
 
-                            console.log('📢 WordPress Notice:', {
-                                type: isSuccess ? 'success' : (isError ? 'error' : 'info'),
-                                message: message,
-                                timestamp: new Date().toISOString()
-                            });
+                            // Logs removed for clarity
                         }
                     });
                 }
@@ -3606,23 +3546,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             const isError = notice.classList.contains('notice-error');
             const message = notice.textContent.trim();
 
-            console.log('📢 Existing Notice:', {
-                type: isSuccess ? 'success' : (isError ? 'error' : 'info'),
-                message: message,
-                timestamp: new Date().toISOString()
-            });
+            // Logs removed for clarity
         });
 
-        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
-
-        // Log des paramètres actuels chargés
-        console.log('📊 Current settings loaded:', {
-            developer_enabled: document.getElementById('developer_enabled')?.checked || false,
-            debug_javascript: document.getElementById('debug_javascript')?.checked || false,
-            debug_php_errors: document.getElementById('debug_php_errors')?.checked || false,
-            log_level: document.getElementById('log_level')?.value || 'info',
-            timestamp: new Date().toISOString()
-        });
+        // Logs removed for clarity
 
         // ============================================
         // OUTILS DE DÉVELOPPEMENT - Onglet Développeur
@@ -3632,13 +3559,13 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const reloadCacheBtn = document.getElementById('reload_cache_btn');
         if (reloadCacheBtn) {
             reloadCacheBtn.addEventListener('click', function() {
-                console.log('🔄 Reload Cache button clicked');
+                // Logs removed for clarity
                 this.disabled = true;
                 this.textContent = '🔄 Rechargement...';
 
                 // Simuler un rechargement du cache
                 setTimeout(() => {
-                    console.log('✅ Cache rechargé avec succès');
+                    // Logs removed for clarity
                     alert('✅ Cache rechargé avec succès !\n\nLes modifications de code ont été prises en compte.');
                     this.disabled = false;
                     this.textContent = '🔄 Recharger Cache';
@@ -3650,12 +3577,12 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const clearTempBtn = document.getElementById('clear_temp_btn');
         if (clearTempBtn) {
             clearTempBtn.addEventListener('click', function() {
-                console.log('🗑️ Clear Temp button clicked');
+                // Logs removed for clarity
                 this.disabled = true;
                 this.textContent = '🗑️ Vidage...';
 
                 setTimeout(() => {
-                    console.log('✅ Données temporaires vidées');
+                    // Logs removed for clarity
                     alert('✅ Données temporaires vidées avec succès !\n\n' + Math.floor(Math.random() * 50 + 10) + ' fichiers supprimés.');
                     this.disabled = false;
                     this.textContent = '🗑️ Vider Temp';
@@ -3667,7 +3594,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const testRoutesBtn = document.getElementById('test_routes_btn');
         if (testRoutesBtn) {
             testRoutesBtn.addEventListener('click', function() {
-                console.log('🛣️ Test Routes button clicked');
+                // Logs removed for clarity
                 this.disabled = true;
                 this.textContent = '🛣️ Test en cours...';
 
@@ -3679,7 +3606,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     setTimeout(() => {
                         const success = Math.random() > 0.2; // 80% de succès
                         results.push(`${success ? '✅' : '❌'} ${route}`);
-                        console.log(`${success ? '✅' : '❌'} Route test: ${route}`);
+                        // Logs removed for clarity
 
                         if (index === routes.length - 1) {
                             alert('🛣️ Test des routes terminé :\n\n' + results.join('\n'));
@@ -3695,7 +3622,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const exportDiagnosticBtn = document.getElementById('export_diagnostic_btn');
         if (exportDiagnosticBtn) {
             exportDiagnosticBtn.addEventListener('click', function() {
-                console.log('💾 Export Diagnostic button clicked');
+                // Logs removed for clarity
 
                 const diagnostic = {
                     timestamp: new Date().toISOString(),
@@ -3720,7 +3647,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 link.click();
                 document.body.removeChild(link);
 
-                console.log('✅ Diagnostic exporté:', diagnostic);
+                // Logs removed for clarity
                 alert('✅ Diagnostic exporté avec succès !\n\nFichier: pdf-builder-diagnostic-' + Date.now() + '.json');
             });
         }
@@ -3729,7 +3656,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const viewLogsBtn = document.getElementById('view_logs_btn');
         if (viewLogsBtn) {
             viewLogsBtn.addEventListener('click', function() {
-                console.log('📋 View Logs button clicked');
+                // Logs removed for clarity
                 alert('📋 Fonctionnalité "Voir Logs" - À implémenter\n\nCette fonctionnalité permettra de visualiser les logs du serveur en temps réel.');
             });
         }
@@ -3738,7 +3665,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         const systemInfoBtn = document.getElementById('system_info_btn');
         if (systemInfoBtn) {
             systemInfoBtn.addEventListener('click', function() {
-                console.log('ℹ️ System Info button clicked');
+                // Logs removed for clarity
 
                 const systemInfo = `
                     ℹ️ INFORMATION SYSTÈME
@@ -3755,7 +3682,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé' : 'Désactivé'}
                 `.trim();
 
-                console.log('ℹ️ System Info:', systemInfo);
+                // Logs removed for clarity
                 alert(systemInfo);
             });
         }
@@ -3768,14 +3695,14 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         if (executeCodeBtn) {
             executeCodeBtn.addEventListener('click', function() {
                 const code = document.getElementById('test_code').value;
-                console.log('▶️ Execute Code button clicked, code:', code);
+                // Logs removed for clarity
 
                 try {
                     // Exécuter le code JavaScript
                     const result = eval(code);
                     const resultStr = result !== undefined ? String(result) : 'undefined';
 
-                    console.log('✅ Code executed successfully:', result);
+                    // Logs removed for clarity
                     if (codeResult) {
                         codeResult.textContent = '✅ Exécuté: ' + resultStr;
                         codeResult.style.color = '#28a745';
@@ -3796,7 +3723,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if (codeResult) {
                     codeResult.textContent = '';
                 }
-                console.log('🗑️ Console cleared');
+                // Logs removed for clarity
             });
         }
 
@@ -3808,7 +3735,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
         if (refreshLogsBtn) {
             refreshLogsBtn.addEventListener('click', function() {
-                console.log('🔄 Refresh Logs button clicked');
+                // Logs removed for clarity
                 this.disabled = true;
                 this.textContent = '🔄 Actualisation...';
 
@@ -3816,7 +3743,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 setTimeout(() => {
                     const mockLogs = generateMockLogs();
                     logsContent.innerHTML = mockLogs;
-                    console.log('✅ Logs refreshed');
+                    // Logs removed for clarity
                     this.disabled = false;
                     this.textContent = '🔄 Actualiser Logs';
                 }, 1000);
@@ -3825,14 +3752,14 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
         if (clearLogsBtn) {
             clearLogsBtn.addEventListener('click', function() {
-                console.log('🗑️ Clear Logs button clicked');
+                // Logs removed for clarity
                 logsContent.innerHTML = '<em style="color: #666;">Logs vidés. Cliquez sur "Actualiser Logs" pour recharger.</em>';
             });
         }
 
         if (logFilter) {
             logFilter.addEventListener('change', function() {
-                console.log('🔍 Log filter changed:', this.value);
+                // Logs removed for clarity
                 // TODO: Implement filtering logic
                 alert('🔍 Filtrage des logs - Fonctionnalité à implémenter');
             });
@@ -3887,7 +3814,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if (debugJsCheckbox) {
                     debugJsCheckbox.checked = !debugJsCheckbox.checked;
                     debugJsCheckbox.dispatchEvent(new Event('change'));
-                    console.log('⌨️ Keyboard shortcut: Debug JS toggled to', debugJsCheckbox.checked);
+                    // Logs removed for clarity
                     alert('🔍 Mode debug JavaScript ' + (debugJsCheckbox.checked ? 'activé' : 'désactivé'));
                 }
             }
@@ -3895,19 +3822,19 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             // Ctrl + Shift + L : Ouvrir console
             if (e.ctrlKey && e.shiftKey && e.key === 'L' && !isInput) {
                 e.preventDefault();
-                console.log('⌨️ Keyboard shortcut: Opening console');
+                // Logs removed for clarity
                 alert('💻 Pour ouvrir la console développeur :\n\n• Chrome/Edge: F12 ou Ctrl+Shift+I\n• Firefox: F12 ou Ctrl+Shift+K\n• Safari: Cmd+Option+C');
             }
 
             // Ctrl + Shift + R : Hard refresh (en plus du refresh normal)
             if (e.ctrlKey && e.shiftKey && e.key === 'R' && !isInput) {
                 e.preventDefault();
-                console.log('⌨️ Keyboard shortcut: Hard refresh');
+                // Logs removed for clarity
                 window.location.reload(true);
             }
         });
 
-        console.log('⌨️ Developer keyboard shortcuts loaded');
+        // Logs removed for clarity
 
         // ============================================
         // PEUPLEMENT DES CHAMPS CANVAS
@@ -3915,211 +3842,210 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
         // Fonction pour peupler les champs canvas avec les paramètres sauvegardés
         function populateCanvasFields() {
-            console.log('🎨 Populating canvas fields...');
+            // Logs removed for clarity
 
             // Vérifier si pdfBuilderCanvasSettings est disponible
             if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-                console.warn('⚠️ pdfBuilderCanvasSettings is not defined. Canvas fields will not be populated.');
+                // Logs removed for clarity
                 return;
             }
 
-            console.log('📋 pdfBuilderCanvasSettings found:', window.pdfBuilderCanvasSettings);
+            // Logs removed for clarity
 
             // Dimensions par défaut
             const defaultCanvasWidth = document.getElementById('default_canvas_width');
             if (defaultCanvasWidth) {
                 defaultCanvasWidth.value = window.pdfBuilderCanvasSettings.default_canvas_width || 794;
-                console.log('✅ default_canvas_width set to:', defaultCanvasWidth.value);
+                // Logs removed for clarity
             }
 
             const defaultCanvasHeight = document.getElementById('default_canvas_height');
             if (defaultCanvasHeight) {
                 defaultCanvasHeight.value = window.pdfBuilderCanvasSettings.default_canvas_height || 1123;
-                console.log('✅ default_canvas_height set to:', defaultCanvasHeight.value);
+                // Logs removed for clarity
             }
 
             // Fond & couleurs
             const canvasBackgroundColor = document.getElementById('canvas_background_color');
             if (canvasBackgroundColor) {
                 canvasBackgroundColor.value = window.pdfBuilderCanvasSettings.canvas_background_color || '#ffffff';
-                console.log('✅ canvas_background_color set to:', canvasBackgroundColor.value);
+                // Logs removed for clarity
             }
 
             const containerBackgroundColor = document.getElementById('container_background_color');
             if (containerBackgroundColor) {
                 containerBackgroundColor.value = window.pdfBuilderCanvasSettings.container_background_color || '#f8f9fa';
-                console.log('✅ container_background_color set to:', containerBackgroundColor.value);
+                // Logs removed for clarity
             }
 
-            // Marges de sécurité
             const marginTop = document.getElementById('margin_top');
             if (marginTop) {
                 marginTop.value = window.pdfBuilderCanvasSettings.margin_top || 28;
-                console.log('✅ margin_top set to:', marginTop.value);
+                // Logs removed for clarity
             }
 
             const marginRight = document.getElementById('margin_right');
             if (marginRight) {
                 marginRight.value = window.pdfBuilderCanvasSettings.margin_right || 28;
-                console.log('✅ margin_right set to:', marginRight.value);
+                // Logs removed for clarity
             }
 
             const marginBottom = document.getElementById('margin_bottom');
             if (marginBottom) {
                 marginBottom.value = window.pdfBuilderCanvasSettings.margin_bottom || 10;
-                console.log('✅ margin_bottom set to:', marginBottom.value);
+                // Logs removed for clarity
             }
 
             const marginLeft = document.getElementById('margin_left');
             if (marginLeft) {
                 marginLeft.value = window.pdfBuilderCanvasSettings.margin_left || 10;
-                console.log('✅ margin_left set to:', marginLeft.value);
+                // Logs removed for clarity
             }
 
             // Checkbox show_margins
             const showMargins = document.getElementById('show_margins');
             if (showMargins) {
                 showMargins.checked = window.pdfBuilderCanvasSettings.show_margins !== false;
-                console.log('✅ show_margins set to:', showMargins.checked);
+                // Logs removed for clarity
             }
 
             // Paramètres de grille
             const showGrid = document.getElementById('show_grid');
             if (showGrid) {
                 showGrid.checked = window.pdfBuilderCanvasSettings.show_grid !== false;
-                console.log('✅ show_grid set to:', showGrid.checked);
+                // Logs removed for clarity
             }
 
             const gridSize = document.getElementById('grid_size');
             if (gridSize) {
                 gridSize.value = window.pdfBuilderCanvasSettings.grid_size || 10;
-                console.log('✅ grid_size set to:', gridSize.value);
+                // Logs removed for clarity
             }
 
             const gridColor = document.getElementById('grid_color');
             if (gridColor) {
                 gridColor.value = window.pdfBuilderCanvasSettings.grid_color || '#e0e0e0';
-                console.log('✅ grid_color set to:', gridColor.value);
+                // Logs removed for clarity
             }
 
             // Aimantation
             const snapToGrid = document.getElementById('snap_to_grid');
             if (snapToGrid) {
                 snapToGrid.checked = window.pdfBuilderCanvasSettings.snap_to_grid !== false;
-                console.log('✅ snap_to_grid set to:', snapToGrid.checked);
+                // Logs removed for clarity
             }
 
             const snapToElements = document.getElementById('snap_to_elements');
             if (snapToElements) {
                 snapToElements.checked = window.pdfBuilderCanvasSettings.snap_to_elements !== false;
-                console.log('✅ snap_to_elements set to:', snapToElements.checked);
+                // Logs removed for clarity
             }
 
             const snapTolerance = document.getElementById('snap_tolerance');
             if (snapTolerance) {
                 snapTolerance.value = window.pdfBuilderCanvasSettings.snap_tolerance || 5;
-                console.log('✅ snap_tolerance set to:', snapTolerance.value);
+                // Logs removed for clarity
             }
 
             const showGuides = document.getElementById('show_guides');
             if (showGuides) {
                 showGuides.checked = window.pdfBuilderCanvasSettings.show_guides !== false;
-                console.log('✅ show_guides set to:', showGuides.checked);
+                // Logs removed for clarity
             }
 
             // Paramètres de zoom et navigation
             const defaultZoom = document.getElementById('default_zoom');
             if (defaultZoom) {
                 defaultZoom.value = window.pdfBuilderCanvasSettings.default_zoom || '100';
-                console.log('✅ default_zoom set to:', defaultZoom.value);
+                // Logs removed for clarity
             }
 
             const zoomStep = document.getElementById('zoom_step');
             if (zoomStep) {
                 zoomStep.value = window.pdfBuilderCanvasSettings.zoom_step || 25;
-                console.log('✅ zoom_step set to:', zoomStep.value);
+                // Logs removed for clarity
             }
 
             const minZoom = document.getElementById('min_zoom');
             if (minZoom) {
                 minZoom.value = window.pdfBuilderCanvasSettings.min_zoom || 10;
-                console.log('✅ min_zoom set to:', minZoom.value);
+                // Logs removed for clarity
             }
 
             const maxZoom = document.getElementById('max_zoom');
             if (maxZoom) {
                 maxZoom.value = window.pdfBuilderCanvasSettings.max_zoom || 500;
-                console.log('✅ max_zoom set to:', maxZoom.value);
+                // Logs removed for clarity
             }
 
             const zoomWithWheel = document.getElementById('zoom_with_wheel');
             if (zoomWithWheel) {
                 zoomWithWheel.checked = window.pdfBuilderCanvasSettings.zoom_with_wheel !== false;
-                console.log('✅ zoom_with_wheel set to:', zoomWithWheel.checked);
+                // Logs removed for clarity
             }
 
             const panWithMouse = document.getElementById('pan_with_mouse');
             if (panWithMouse) {
                 panWithMouse.checked = window.pdfBuilderCanvasSettings.pan_with_mouse !== false;
-                console.log('✅ pan_with_mouse set to:', panWithMouse.checked);
+                // Logs removed for clarity
             }
 
             // Paramètres de sélection et manipulation
             const showResizeHandles = document.getElementById('show_resize_handles');
             if (showResizeHandles) {
                 showResizeHandles.checked = window.pdfBuilderCanvasSettings.show_resize_handles !== false;
-                console.log('✅ show_resize_handles set to:', showResizeHandles.checked);
+                // Logs removed for clarity
             }
 
             const handleSize = document.getElementById('handle_size');
             if (handleSize) {
                 handleSize.value = window.pdfBuilderCanvasSettings.handle_size || 8;
-                console.log('✅ handle_size set to:', handleSize.value);
+                // Logs removed for clarity
             }
 
             const enableRotation = document.getElementById('enable_rotation');
             if (enableRotation) {
                 enableRotation.checked = window.pdfBuilderCanvasSettings.enable_rotation !== false;
-                console.log('✅ enable_rotation set to:', enableRotation.checked);
+                // Logs removed for clarity
             }
 
             const rotationStep = document.getElementById('rotation_step');
             if (rotationStep) {
                 rotationStep.value = window.pdfBuilderCanvasSettings.rotation_step || 15;
-                console.log('✅ rotation_step set to:', rotationStep.value);
+                // Logs removed for clarity
             }
 
             const multiSelect = document.getElementById('multi_select');
             if (multiSelect) {
                 multiSelect.checked = window.pdfBuilderCanvasSettings.multi_select !== false;
-                console.log('✅ multi_select set to:', multiSelect.checked);
+                // Logs removed for clarity
             }
 
             const copyPasteEnabled = document.getElementById('copy_paste_enabled');
             if (copyPasteEnabled) {
                 copyPasteEnabled.checked = window.pdfBuilderCanvasSettings.copy_paste_enabled !== false;
-                console.log('✅ copy_paste_enabled set to:', copyPasteEnabled.checked);
+                // Logs removed for clarity
             }
 
             const undoLevels = document.getElementById('undo_levels');
             if (undoLevels) {
                 undoLevels.value = window.pdfBuilderCanvasSettings.undo_levels || 50;
-                console.log('✅ undo_levels set to:', undoLevels.value);
+                // Logs removed for clarity
             }
 
             const redoLevels = document.getElementById('redo_levels');
             if (redoLevels) {
                 redoLevels.value = window.pdfBuilderCanvasSettings.redo_levels || 50;
-                console.log('✅ redo_levels set to:', redoLevels.value);
+                // Logs removed for clarity
             }
 
             const autoSaveVersions = document.getElementById('auto_save_versions');
             if (autoSaveVersions) {
                 autoSaveVersions.value = window.pdfBuilderCanvasSettings.auto_save_versions || 10;
-                console.log('✅ auto_save_versions set to:', autoSaveVersions.value);
+                // Logs removed for clarity
             }
 
-            console.log('🎨 Canvas fields populated successfully!');
+            // Logs removed for clarity
         }
 
         // Appeler la fonction de peuplement des champs canvas au chargement de la page

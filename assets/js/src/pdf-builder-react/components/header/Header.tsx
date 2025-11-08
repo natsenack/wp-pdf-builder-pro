@@ -49,7 +49,7 @@ export const Header = memo(function Header({
   isSaving,
   isEditingExistingTemplate,
   onSave,
-  onPreview,
+  onPreview: _onPreview,
   onNewTemplate,
   onUpdateTemplateSettings
 }: HeaderProps) {

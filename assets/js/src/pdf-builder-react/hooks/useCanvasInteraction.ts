@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 
 interface UseCanvasInteractionProps {
@@ -15,6 +15,31 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const selectedElementRef = useRef<string | null>(null);
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
+
+  // Fonction utilitaire pour détecter les poignées de redimensionnement
+  const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: any[]) => {
+    const handleSize = 8;
+    const selectedElements = elements.filter(el => selectedIds.includes(el.id));
+
+    for (const element of selectedElements) {
+      // Calculer les positions des poignées
+      const handles = [
+        { name: 'nw', x: element.x - handleSize/2, y: element.y - handleSize/2 },
+        { name: 'ne', x: element.x + element.width - handleSize/2, y: element.y - handleSize/2 },
+        { name: 'sw', x: element.x - handleSize/2, y: element.y + element.height - handleSize/2 },
+        { name: 'se', x: element.x + element.width - handleSize/2, y: element.y + element.height - handleSize/2 }
+      ];
+
+      for (const handle of handles) {
+        if (x >= handle.x && x <= handle.x + handleSize &&
+            y >= handle.y && y <= handle.y + handleSize) {
+          return { elementId: element.id, handle: handle.name };
+        }
+      }
+    }
+
+    return null;
+  };
 
   // Fonction pour créer un élément selon le mode à une position donnée
   const createElementAtPosition = useCallback((x: number, y: number, mode: string) => {
@@ -204,6 +229,20 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     selectedElementRef.current = null;
   }, []);
 
+  // Fonction pour obtenir le curseur de redimensionnement selon la poignée
+  const getResizeCursor = (handle: string | null): string => {
+    switch (handle) {
+      case 'nw':
+      case 'se':
+        return 'nw-resize';
+      case 'ne':
+      case 'sw':
+        return 'ne-resize';
+      default:
+        return 'default';
+    }
+  };
+
   // Fonction pour déterminer le curseur approprié selon la position
   const getCursorAtPosition = useCallback((x: number, y: number): string => {
     // Si on est en train de draguer ou redimensionner, garder le curseur approprié
@@ -237,20 +276,6 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     return 'default';
   }, [state.selection.selectedElements, state.elements]);
 
-  // Fonction pour obtenir le curseur de redimensionnement selon la poignée
-  const getResizeCursor = (handle: string | null): string => {
-    switch (handle) {
-      case 'nw':
-      case 'se':
-        return 'nw-resize';
-      case 'ne':
-      case 'sw':
-        return 'ne-resize';
-      default:
-        return 'default';
-    }
-  };
-
   // Fonction pour mettre à jour le curseur du canvas
   const updateCursor = useCallback((cursor: string) => {
     const canvas = canvasRef.current;
@@ -260,33 +285,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     }
   }, [canvasRef]);
 
-  // Fonction utilitaire pour détecter les poignées de redimensionnement
-  const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: any[]) => {
-    const handleSize = 8;
-    const selectedElements = elements.filter(el => selectedIds.includes(el.id));
-
-    for (const element of selectedElements) {
-      // Calculer les positions des poignées
-      const handles = [
-        { name: 'nw', x: element.x - handleSize/2, y: element.y - handleSize/2 },
-        { name: 'ne', x: element.x + element.width - handleSize/2, y: element.y - handleSize/2 },
-        { name: 'sw', x: element.x - handleSize/2, y: element.y + element.height - handleSize/2 },
-        { name: 'se', x: element.x + element.width - handleSize/2, y: element.y + element.height - handleSize/2 }
-      ];
-
-      for (const handle of handles) {
-        if (x >= handle.x && x <= handle.x + handleSize &&
-            y >= handle.y && y <= handle.y + handleSize) {
-          return { elementId: element.id, handle: handle.name };
-        }
-      }
-    }
-
-    return null;
-  };
-
   // Fonction utilitaire pour calculer le redimensionnement
-  const calculateResize = (element: any, handle: string, currentX: number, currentY: number, startPos: { x: number, y: number }) => {
+  const calculateResize = (element: any, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
     const updates: any = {};
 
     switch (handle) {

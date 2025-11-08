@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import './ContextMenu.css';
 
@@ -87,7 +87,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   }, []);
 
   // Calculer la position du sous-menu quand il s'ouvre
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (openSubmenu && menuRef.current) {
       const menuElement = menuRef.current as HTMLElement;
       const parentItem = menuElement.querySelector(`[data-item-id="${openSubmenu}"]`) as HTMLElement;
