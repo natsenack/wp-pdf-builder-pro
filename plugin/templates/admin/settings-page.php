@@ -3109,70 +3109,645 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
     document.addEventListener('DOMContentLoaded', function() {
         
         // Fonction pour logger tous les éléments de formulaire sur la page
-        function logAllFormElements() {
-            console.log('=== LOG DE TOUS LES ÉLÉMENTS DE FORMULAIRE ===');
+        function logAllFormElements(context = 'PAGE_LOAD') {
+            console.log(`=== LOG ULTRA-DÉTAILLÉ DE TOUS LES ÉLÉMENTS [${context}] ===`);
+            console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
+            console.log(`📍 URL: ${window.location.href}`);
+            console.log(`🖥️ UserAgent: ${navigator.userAgent}`);
             
-            // Logger tous les inputs
+            // Logger tous les inputs avec TOUS les détails possibles
             const allInputs = document.querySelectorAll('input');
-            console.log(`Total inputs: ${allInputs.length}`);
+            console.log(`📝 Total inputs: ${allInputs.length}`);
             allInputs.forEach((input, index) => {
-                console.log(`INPUT ${index}: [name="${input.name}"][id="${input.id}"][type="${input.type}"] = "${input.value}"`);
+                const rect = input.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(input);
+                
+                const ultraDetails = {
+                    // Informations de base
+                    index: index,
+                    tagName: input.tagName,
+                    name: input.name,
+                    id: input.id,
+                    type: input.type,
+                    value: input.value,
+                    
+                    // Attributs HTML
+                    placeholder: input.placeholder,
+                    disabled: input.disabled,
+                    required: input.required,
+                    readonly: input.readOnly,
+                    hidden: input.hidden,
+                    tabindex: input.tabIndex,
+                    autofocus: input.autofocus,
+                    autocomplete: input.autocomplete,
+                    spellcheck: input.spellcheck,
+                    translate: input.translate,
+                    
+                    // Attributs spécifiques par type
+                    accept: input.accept,
+                    alt: input.alt,
+                    checked: input.checked,
+                    defaultChecked: input.defaultChecked,
+                    defaultValue: input.defaultValue,
+                    files: input.files ? Array.from(input.files).map(f => ({name: f.name, size: f.size, type: f.type})) : null,
+                    formAction: input.formAction,
+                    formEnctype: input.formEnctype,
+                    formMethod: input.formMethod,
+                    formNoValidate: input.formNoValidate,
+                    formTarget: input.formTarget,
+                    height: input.height,
+                    width: input.width,
+                    list: input.list ? input.list.id : null,
+                    max: input.max,
+                    maxLength: input.maxLength,
+                    min: input.min,
+                    minLength: input.minLength,
+                    multiple: input.multiple,
+                    pattern: input.pattern,
+                    size: input.size,
+                    src: input.src,
+                    step: input.step,
+                    title: input.title,
+                    useMap: input.useMap,
+                    
+                    // Propriétés DOM
+                    className: input.className,
+                    classList: Array.from(input.classList),
+                    style: input.style.cssText,
+                    dataset: Object.assign({}, input.dataset),
+                    
+                    // Géométrie et position
+                    offsetTop: input.offsetTop,
+                    offsetLeft: input.offsetLeft,
+                    offsetWidth: input.offsetWidth,
+                    offsetHeight: input.offsetHeight,
+                    clientWidth: input.clientWidth,
+                    clientHeight: input.clientHeight,
+                    scrollWidth: input.scrollWidth,
+                    scrollHeight: input.scrollHeight,
+                    boundingRect: {
+                        top: rect.top,
+                        left: rect.left,
+                        bottom: rect.bottom,
+                        right: rect.right,
+                        width: rect.width,
+                        height: rect.height
+                    },
+                    
+                    // État de visibilité
+                    offsetParent: input.offsetParent ? input.offsetParent.tagName : null,
+                    visibility: computedStyle.visibility,
+                    display: computedStyle.display,
+                    opacity: computedStyle.opacity,
+                    
+                    // Relations DOM
+                    parentElement: input.parentElement ? input.parentElement.tagName + (input.parentElement.id ? '#' + input.parentElement.id : '') : null,
+                    nextElementSibling: input.nextElementSibling ? input.nextElementSibling.tagName : null,
+                    previousElementSibling: input.previousElementSibling ? input.previousElementSibling.tagName : null,
+                    children: input.children.length,
+                    
+                    // État de validation
+                    willValidate: input.willValidate,
+                    validity: input.validity ? {
+                        valid: input.validity.valid,
+                        valueMissing: input.validity.valueMissing,
+                        typeMismatch: input.validity.typeMismatch,
+                        patternMismatch: input.validity.patternMismatch,
+                        tooLong: input.validity.tooLong,
+                        tooShort: input.validity.tooShort,
+                        rangeUnderflow: input.validity.rangeUnderflow,
+                        rangeOverflow: input.validity.rangeOverflow,
+                        stepMismatch: input.validity.stepMismatch,
+                        badInput: input.validity.badInput,
+                        customError: input.validity.customError
+                    } : null,
+                    
+                    // État de formulaire
+                    form: input.form ? input.form.id : null,
+                    labels: input.labels ? Array.from(input.labels).map(label => label.textContent.trim()) : null,
+                    
+                    // État de modification
+                    modified: input.hasAttribute('modified'),
+                    modifiedAt: input.getAttribute('modified-at'),
+                    
+                    // Événements attachés (estimation)
+                    eventListeners: 'Non détectable directement'
+                };
+                
+                console.log(`INPUT ${index}:`, ultraDetails);
+                
+                // Logs supplémentaires pour les types spéciaux
                 if (input.type === 'checkbox' || input.type === 'radio') {
-                    console.log(`  - Checked: ${input.checked}`);
+                    console.log(`  ✅ État: ${input.checked ? 'COCHÉ' : 'DÉCOCHÉ'}`);
+                    console.log(`  🔗 Groupe: ${input.name}`);
+                    if (input.type === 'radio') {
+                        const group = document.querySelectorAll(`input[type="radio"][name="${input.name}"]`);
+                        const checkedInGroup = Array.from(group).filter(r => r.checked);
+                        console.log(`  👥 Groupe (${group.length} éléments, ${checkedInGroup.length} coché(s))`);
+                    }
+                }
+                
+                if (input.type === 'file') {
+                    console.log(`  📎 Fichiers sélectionnés: ${input.files ? input.files.length : 0}`);
+                    if (input.files && input.files.length > 0) {
+                        Array.from(input.files).forEach((file, fidx) => {
+                            console.log(`    📄 Fichier ${fidx}: ${file.name} (${file.size} bytes, ${file.type})`);
+                        });
+                    }
+                }
+                
+                if (input.list) {
+                    const options = Array.from(input.list.options);
+                    console.log(`  📋 Liste de suggestions (${options.length} options):`, options.map(opt => opt.value));
+                }
+                
+                // Logs de validation détaillés
+                if (input.validity && !input.validity.valid) {
+                    console.log(`  ⚠️ ERREURS DE VALIDATION:`, Object.entries(input.validity).filter(([key, value]) => key !== 'valid' && value === true));
+                }
+                
+                // Logs des styles calculés importants
+                console.log(`  🎨 Styles clés:`, {
+                    backgroundColor: computedStyle.backgroundColor,
+                    border: computedStyle.border,
+                    color: computedStyle.color,
+                    fontSize: computedStyle.fontSize,
+                    fontFamily: computedStyle.fontFamily,
+                    padding: computedStyle.padding,
+                    margin: computedStyle.margin,
+                    position: computedStyle.position,
+                    zIndex: computedStyle.zIndex
+                });
+            });
+                    console.log(`  🔍 Validity:`, {
+                        valid: input.validity.valid,
+                        valueMissing: input.validity.valueMissing,
+                        typeMismatch: input.validity.typeMismatch,
+                        patternMismatch: input.validity.patternMismatch,
+                        tooLong: input.validity.tooLong,
+                        tooShort: input.validity.tooShort,
+                        rangeUnderflow: input.validity.rangeUnderflow,
+                        rangeOverflow: input.validity.rangeOverflow,
+                        stepMismatch: input.validity.stepMismatch,
+                        badInput: input.validity.badInput,
+                        customError: input.validity.customError
+                    });
                 }
             });
             
-            // Logger tous les selects
+            // Logger tous les selects avec détails complets
             const allSelects = document.querySelectorAll('select');
-            console.log(`Total selects: ${allSelects.length}`);
+            console.log(`📋 Total selects: ${allSelects.length}`);
             allSelects.forEach((select, index) => {
                 console.log(`SELECT ${index}: [name="${select.name}"][id="${select.id}"] = "${select.value}"`);
-                // Logger les options disponibles
-                const options = Array.from(select.options).map(opt => `${opt.value} (${opt.selected ? 'SELECTED' : 'not selected'})`);
-                console.log(`  - Options: [${options.join(', ')}]`);
+                console.log(`  - Selected Index: ${select.selectedIndex}`);
+                console.log(`  - Multiple: ${select.multiple}`);
+                console.log(`  - Size: ${select.size}`);
+                console.log(`  - Disabled: ${select.disabled}`);
+                console.log(`  - Required: ${select.required}`);
+                
+                // Logger les options disponibles avec détails
+                const options = Array.from(select.options).map((opt, optIndex) => ({
+                    index: optIndex,
+                    value: opt.value,
+                    text: opt.text,
+                    selected: opt.selected,
+                    disabled: opt.disabled,
+                    hidden: opt.hidden
+                }));
+                console.log(`  - Options (${options.length}):`, options);
             });
             
-            // Logger tous les textareas
+            // Logger tous les textareas avec détails complets
             const allTextareas = document.querySelectorAll('textarea');
-            console.log(`Total textareas: ${allTextareas.length}`);
+            console.log(`📄 Total textareas: ${allTextareas.length}`);
             allTextareas.forEach((textarea, index) => {
-                console.log(`TEXTAREA ${index}: [name="${textarea.name}"][id="${textarea.id}"] = "${textarea.value.substring(0, 100)}${textarea.value.length > 100 ? '...' : ''}"`);
+                const details = {
+                    index: index,
+                    name: textarea.name,
+                    id: textarea.id,
+                    value: textarea.value,
+                    placeholder: textarea.placeholder,
+                    disabled: textarea.disabled,
+                    required: textarea.required,
+                    readonly: textarea.readOnly,
+                    rows: textarea.rows,
+                    cols: textarea.cols,
+                    maxlength: textarea.maxLength,
+                    minlength: textarea.minLength,
+                    wrap: textarea.wrap,
+                    className: textarea.className,
+                    style: textarea.style.cssText
+                };
+                console.log(`TEXTAREA ${index}:`, details);
+                console.log(`  - Content length: ${textarea.value.length} characters`);
+                console.log(`  - Content preview: "${textarea.value.substring(0, 200)}${textarea.value.length > 200 ? '...' : ''}"`);
             });
             
-            // Logger tous les boutons
+            // Logger tous les boutons avec détails complets
             const allButtons = document.querySelectorAll('button');
-            console.log(`Total buttons: ${allButtons.length}`);
+            console.log(`🔘 Total buttons: ${allButtons.length}`);
             allButtons.forEach((button, index) => {
-                console.log(`BUTTON ${index}: [name="${button.name}"][id="${button.id}"][type="${button.type}"] = "${button.textContent.trim()}"`);
+                const details = {
+                    index: index,
+                    name: button.name,
+                    id: button.id,
+                    type: button.type,
+                    textContent: button.textContent.trim(),
+                    innerHTML: button.innerHTML,
+                    disabled: button.disabled,
+                    className: button.className,
+                    style: button.style.cssText,
+                    form: button.form ? button.form.id : null,
+                    dataset: button.dataset
+                };
+                console.log(`BUTTON ${index}:`, details);
             });
             
-            console.log('=== FIN LOG ÉLÉMENTS DE FORMULAIRE ===');
+            // Logger les éléments fieldset et legend
+            const allFieldsets = document.querySelectorAll('fieldset');
+            if (allFieldsets.length > 0) {
+                console.log(`📦 Total fieldsets: ${allFieldsets.length}`);
+                allFieldsets.forEach((fieldset, index) => {
+                    console.log(`FIELDSET ${index}: [id="${fieldset.id}"] disabled=${fieldset.disabled}`);
+                    const legend = fieldset.querySelector('legend');
+                    if (legend) {
+                        console.log(`  - Legend: "${legend.textContent.trim()}"`);
+                    }
+                });
+            }
+            
+            // Logger les éléments label
+            const allLabels = document.querySelectorAll('label');
+            if (allLabels.length > 0) {
+                console.log(`🏷️ Total labels: ${allLabels.length}`);
+                allLabels.forEach((label, index) => {
+                    console.log(`LABEL ${index}: [for="${label.htmlFor}"][id="${label.id}"] = "${label.textContent.trim()}"`);
+                });
+            }
+            
+            console.log(`=== FIN LOG ÉLÉMENTS DE FORMULAIRE [${context}] ===\n`);
         }
         
         // Logger tous les éléments au chargement de la page
-        logAllFormElements();
+        logAllFormElements('PAGE_LOAD');
         
-        // Ajouter des logs pour les changements en temps réel
-        function addChangeListeners() {
-            const allFormElements = document.querySelectorAll('input, select, textarea');
+        // Ajouter des logs pour les changements en temps réel avec plus de détails
+        function addComprehensiveEventListeners() {
+            const allFormElements = document.querySelectorAll('input, select, textarea, button');
             allFormElements.forEach((element, index) => {
-                element.addEventListener('change', function() {
-                    console.log(`CHANGEMENT: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                
+                // Événement focus
+                element.addEventListener('focus', function() {
+                    console.log(`🎯 FOCUS: ${element.tagName}[name="${element.name}"][id="${element.id}"]`);
+                    console.log(`   - Current value: "${element.value}"`);
                     if (element.type === 'checkbox' || element.type === 'radio') {
-                        console.log(`  - Checked: ${element.checked}`);
+                        console.log(`   - Checked: ${element.checked}`);
                     }
                 });
                 
-                element.addEventListener('input', function() {
-                    if (element.type === 'text' || element.type === 'textarea' || element.type === 'password' || element.type === 'email' || element.type === 'number') {
-                        console.log(`INPUT EN TEMPS RÉEL: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                // Événement blur
+                element.addEventListener('blur', function() {
+                    console.log(`👁️ BLUR: ${element.tagName}[name="${element.name}"][id="${element.id}"]`);
+                    console.log(`   - Final value: "${element.value}"`);
+                    if (element.type === 'checkbox' || element.type === 'radio') {
+                        console.log(`   - Checked: ${element.checked}`);
                     }
                 });
+                
+                // Événement change (pour tous les éléments)
+                element.addEventListener('change', function() {
+                    console.log(`🔄 CHANGE: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                    if (element.type === 'checkbox' || element.type === 'radio') {
+                        console.log(`   - Checked: ${element.checked}`);
+                    }
+                    if (element.tagName === 'SELECT') {
+                        console.log(`   - Selected option: ${element.options[element.selectedIndex].text} (${element.value})`);
+                    }
+                    if (element.validity && !element.validity.valid) {
+                        console.log(`   ⚠️ VALIDATION ERROR:`, element.validity);
+                    }
+                    
+                    // Marquer l'élément comme modifié
+                    element.setAttribute('modified', 'true');
+                    element.setAttribute('modified-at', new Date().toISOString());
+                    console.log(`   ✅ Élément marqué comme modifié`);
+                });
+                
+                // Événement input (pour les champs texte)
+                if (element.type === 'text' || element.type === 'textarea' || element.type === 'password' || element.type === 'email' || element.type === 'number' || element.type === 'search' || element.type === 'url' || element.type === 'tel') {
+                    element.addEventListener('input', function() {
+                        console.log(`⌨️ INPUT: ${element.tagName}[name="${element.name}"][id="${element.id}"] = "${element.value}"`);
+                        console.log(`   - Length: ${element.value.length} characters`);
+                        if (element.maxLength) {
+                            console.log(`   - Remaining: ${element.maxLength - element.value.length} characters`);
+                        }
+                    });
+                    
+                    // Événements clavier détaillés
+                    element.addEventListener('keydown', function(e) {
+                        console.log(`⬇️ KEYDOWN: ${element.tagName}[name="${element.name}"] - Key: ${e.key} (code: ${e.code})`);
+                        if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) {
+                            console.log(`   - Modifiers: ${e.ctrlKey ? 'Ctrl ' : ''}${e.altKey ? 'Alt ' : ''}${e.shiftKey ? 'Shift ' : ''}${e.metaKey ? 'Meta ' : ''}`);
+                        }
+                    });
+                    
+                    element.addEventListener('keyup', function(e) {
+                        console.log(`⬆️ KEYUP: ${element.tagName}[name="${element.name}"] - Key: ${e.key}`);
+                    });
+                }
+                
+                // Événements spécifiques aux checkboxes et radio
+                if (element.type === 'checkbox' || element.type === 'radio') {
+                    element.addEventListener('click', function() {
+                        console.log(`🖱️ CLICK: ${element.type.toUpperCase()}[name="${element.name}"][value="${element.value}"] - Checked: ${element.checked}`);
+                    });
+                }
+                
+                // Événements pour les selects
+                if (element.tagName === 'SELECT') {
+                    element.addEventListener('click', function() {
+                        console.log(`🖱️ SELECT CLICK: ${element.tagName}[name="${element.name}"] - Current: "${element.value}"`);
+                    });
+                }
+                
+                // Événements pour les boutons
+                if (element.tagName === 'BUTTON') {
+                    element.addEventListener('click', function(e) {
+                        console.log(`🔘 BUTTON CLICK: ${element.tagName}[name="${element.name}"][id="${element.id}"] - "${element.textContent.trim()}"`);
+                        console.log(`   - Type: ${element.type}`);
+                        console.log(`   - Form: ${element.form ? element.form.id : 'no form'}`);
+                        console.log(`   - Event details:`, {
+                            button: e.button,
+                            ctrlKey: e.ctrlKey,
+                            altKey: e.altKey,
+                            shiftKey: e.shiftKey,
+                            clientX: e.clientX,
+                            clientY: e.clientY
+                        });
+                    });
+                    
+                    element.addEventListener('mousedown', function(e) {
+                        console.log(`👇 MOUSEDOWN: ${element.tagName}[id="${element.id}"] - Button: ${e.button}`);
+                    });
+                    
+                    element.addEventListener('mouseup', function(e) {
+                        console.log(`👆 MOUSEUP: ${element.tagName}[id="${element.id}"] - Button: ${e.button}`);
+                    });
+                }
+                
+                // Événements de validation
+                element.addEventListener('invalid', function() {
+                    console.log(`❌ INVALID: ${element.tagName}[name="${element.name}"] - Validation failed`);
+                    if (element.validity) {
+                        console.log(`   - Validity details:`, element.validity);
+                    }
+                });
+                
+                // Événements de formulaire
+                if (element.form) {
+                    element.addEventListener('formdata', function(e) {
+                        console.log(`📋 FORMDATA: ${element.tagName}[name="${element.name}"] included in form submission`);
+                    });
+                }
+            });
+            
+            // Logs périodiques pour surveiller les changements
+            setInterval(() => {
+                console.log('⏰ PÉRIODIQUE - État des éléments critiques:');
+                const criticalElements = document.querySelectorAll('#debug_mode, #debug_javascript, #debug_php_errors, #debug_ajax');
+                criticalElements.forEach(el => {
+                    if (el.type === 'checkbox') {
+                        console.log(`   ${el.id}: ${el.checked}`);
+                    }
+                });
+            }, 30000); // Toutes les 30 secondes
+        }
+        
+        // Ajouter les listeners d'événements complets
+        addComprehensiveEventListeners();
+        
+        // Logs pour événements avancés (souris, clavier, clipboard, etc.)
+        function addAdvancedEventListeners() {
+            const allFormElements = document.querySelectorAll('input, select, textarea, button');
+            
+            allFormElements.forEach((element, index) => {
+                // Événements de souris détaillés
+                element.addEventListener('mouseenter', function(e) {
+                    console.log(`🐭 MOUSEENTER: ${element.tagName}[${element.name || element.id}] at (${e.clientX}, ${e.clientY})`);
+                });
+                
+                element.addEventListener('mouseleave', function(e) {
+                    console.log(`🐭 MOUSELEAVE: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('contextmenu', function(e) {
+                    console.log(`📋 CONTEXT MENU: ${element.tagName}[${element.name || element.id}] at (${e.clientX}, ${e.clientY})`);
+                });
+                
+                element.addEventListener('wheel', function(e) {
+                    console.log(`🖱️ WHEEL: ${element.tagName}[${element.name || element.id}] deltaY: ${e.deltaY}`);
+                });
+                
+                // Événements de clipboard
+                element.addEventListener('cut', function(e) {
+                    console.log(`✂️ CUT: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('copy', function(e) {
+                    console.log(`📋 COPY: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('paste', function(e) {
+                    console.log(`📄 PASTE: ${element.tagName}[${element.name || element.id}]`);
+                    console.log(`   - Clipboard data types:`, Array.from(e.clipboardData.types));
+                });
+                
+                // Événements de drag & drop
+                element.addEventListener('dragstart', function(e) {
+                    console.log(`🎯 DRAG START: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('dragend', function(e) {
+                    console.log(`🎯 DRAG END: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('drop', function(e) {
+                    console.log(`🎯 DROP: ${element.tagName}[${element.name || element.id}]`);
+                    if (e.dataTransfer) {
+                        console.log(`   - Data types:`, Array.from(e.dataTransfer.types));
+                        console.log(`   - Files: ${e.dataTransfer.files.length}`);
+                    }
+                });
+                
+                // Événements de sélection
+                element.addEventListener('select', function(e) {
+                    console.log(`📝 SELECT: ${element.tagName}[${element.name || element.id}]`);
+                });
+                
+                element.addEventListener('selectionchange', function(e) {
+                    if (document.activeElement === element) {
+                        const selection = window.getSelection();
+                        console.log(`📝 SELECTION CHANGE: ${element.tagName}[${element.name || element.id}] - "${selection.toString()}"`);
+                    }
+                });
+                
+                // Événements de scroll
+                element.addEventListener('scroll', function(e) {
+                    console.log(`📜 SCROLL: ${element.tagName}[${element.name || element.id}] - scrollTop: ${element.scrollTop}, scrollLeft: ${element.scrollLeft}`);
+                });
+                
+                // Événements de redimensionnement (pour textareas)
+                if (element.tagName === 'TEXTAREA') {
+                    // Créer un ResizeObserver pour les textareas
+                    if (window.ResizeObserver) {
+                        const resizeObserver = new ResizeObserver(entries => {
+                            entries.forEach(entry => {
+                                console.log(`📏 RESIZE: TEXTAREA[${element.name || element.id}] - ${entry.contentRect.width}x${entry.contentRect.height}`);
+                            });
+                        });
+                        resizeObserver.observe(element);
+                    }
+                }
+            });
+            
+            // Événements globaux de la page
+            document.addEventListener('visibilitychange', function() {
+                console.log(`👁️ VISIBILITY CHANGE: ${document.hidden ? 'HIDDEN' : 'VISIBLE'}`);
+            });
+            
+            window.addEventListener('resize', function() {
+                console.log(`📐 WINDOW RESIZE: ${window.innerWidth}x${window.innerHeight}`);
+            });
+            
+            window.addEventListener('scroll', function() {
+                console.log(`📜 WINDOW SCROLL: scrollY: ${window.scrollY}, scrollX: ${window.scrollX}`);
+            });
+            
+            // Événements de mutation DOM (changements structurels)
+            if (window.MutationObserver) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') {
+                            console.log(`🔄 DOM MUTATION: ${mutation.addedNodes.length} ajouté(s), ${mutation.removedNodes.length} supprimé(s)`);
+                        } else if (mutation.type === 'attributes') {
+                            console.log(`🔄 ATTRIBUTE MUTATION: ${mutation.attributeName} changé sur ${mutation.target.tagName}`);
+                        }
+                    });
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true,
+                    attributeFilter: ['value', 'checked', 'selected', 'disabled', 'class']
+                });
+            }
+            
+            // Logs périodiques ultra-détaillés
+            setInterval(() => {
+                console.log('⏰ RAPPORT PÉRIODIQUE ULTRA-DÉTAILLÉ:');
+                
+                // État des éléments critiques
+                const criticalElements = document.querySelectorAll('#debug_mode, #debug_javascript, #debug_php_errors, #debug_ajax, #cache_enabled');
+                console.log('🔧 ÉLÉMENTS CRITIQUES:');
+                criticalElements.forEach(el => {
+                    if (el.type === 'checkbox') {
+                        console.log(`   ${el.id}: ${el.checked}`);
+                    } else if (el.type === 'text' || el.type === 'number') {
+                        console.log(`   ${el.id}: "${el.value}"`);
+                    }
+                });
+                
+                // Statistiques générales
+                const totalElements = document.querySelectorAll('input, select, textarea, button').length;
+                const modifiedElements = document.querySelectorAll('[modified="true"]').length;
+                const visibleElements = Array.from(document.querySelectorAll('input, select, textarea, button')).filter(el => {
+                    const rect = el.getBoundingClientRect();
+                    return rect.width > 0 && rect.height > 0 && window.getComputedStyle(el).display !== 'none';
+                }).length;
+                
+                console.log('📊 STATISTIQUES:');
+                console.log(`   - Total éléments: ${totalElements}`);
+                console.log(`   - Éléments modifiés: ${modifiedElements}`);
+                console.log(`   - Éléments visibles: ${visibleElements}`);
+                console.log(`   - Mémoire utilisée: ${performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) + ' MB' : 'N/A'}`);
+                
+            }, 10000); // Toutes les 10 secondes
+        }
+        
+        // Logs pour les événements de formulaire globaux
+        function addGlobalFormEventListeners() {
+            const allForms = document.querySelectorAll('form');
+            console.log(`📄 FORMS DÉTECTÉS: ${allForms.length}`);
+            allForms.forEach((form, index) => {
+                console.log(`FORM ${index}: [id="${form.id}"][action="${form.action}"][method="${form.method}"]`);
+                
+                form.addEventListener('submit', function(e) {
+                    console.log(`🚀 FORM SUBMIT: ${form.id || 'unnamed form'}`);
+                    console.log(`   - Action: ${form.action}`);
+                    console.log(`   - Method: ${form.method}`);
+                    console.log(`   - Elements: ${form.elements.length}`);
+                    
+                    // Logger tous les éléments du formulaire soumis
+                    const formData = new FormData(form);
+                    console.log('📋 FORM DATA:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`   ${key}: ${value}`);
+                    }
+                    
+                    // Vérifier si c'est une soumission AJAX ou normale
+                    if (e.defaultPrevented) {
+                        console.log('   - Prevented: OUI (probablement AJAX)');
+                    } else {
+                        console.log('   - Prevented: NON (soumission normale)');
+                    }
+                });
+                
+                form.addEventListener('reset', function() {
+                    console.log(`🔄 FORM RESET: ${form.id || 'unnamed form'}`);
+                });
+                
+                form.addEventListener('formdata', function(e) {
+                    console.log(`📊 FORM DATA EVENT: ${form.id || 'unnamed form'}`);
+                    console.log(`   - FormData entries: ${[...e.formData.entries()].length}`);
+                });
+            });
+            
+            // Logs pour les événements de fenêtre
+            window.addEventListener('beforeunload', function(e) {
+                console.log('🚪 WINDOW BEFOREUNLOAD - Vérification des changements non sauvegardés');
+                const modifiedElements = document.querySelectorAll('input[modified], select[modified], textarea[modified]');
+                if (modifiedElements.length > 0) {
+                    console.log(`⚠️ ÉLÉMENTS MODIFIÉS NON SAUVEGARDÉS: ${modifiedElements.length}`);
+                    modifiedElements.forEach(el => {
+                        console.log(`   - ${el.tagName}[${el.name}]`);
+                    });
+                }
+            });
+            
+            // Logs pour les erreurs JavaScript
+            window.addEventListener('error', function(e) {
+                console.error('💥 JAVASCRIPT ERROR:', {
+                    message: e.message,
+                    filename: e.filename,
+                    lineno: e.lineno,
+                    colno: e.colno,
+                    error: e.error
+                });
+            });
+            
+            // Logs pour les erreurs non capturées
+            window.addEventListener('unhandledrejection', function(e) {
+                console.error('💥 UNHANDLED PROMISE REJECTION:', e.reason);
             });
         }
         
-        // Ajouter les listeners de changement
-        addChangeListeners();
+        // Ajouter les listeners globaux
+        addGlobalFormEventListeners();
+        
+        // Ajouter les listeners avancés
+        addAdvancedEventListeners();
         
         // Logs removed for clarity
         
@@ -3246,7 +3821,17 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             // Logger les éléments du nouvel onglet actif
             setTimeout(() => {
                 console.log(`=== CHANGEMENT D'ONGLET VERS: ${targetId} ===`);
-                logAllFormElements();
+                logAllFormElements(`TAB_SWITCH_${targetId.toUpperCase()}`);
+                
+                // Logger spécifiquement les éléments du tab actif
+                const activeTabContent = document.getElementById(targetId);
+                if (activeTabContent) {
+                    const tabInputs = activeTabContent.querySelectorAll('input, select, textarea, button');
+                    console.log(`📊 ÉLÉMENTS DANS L'ONGLET ${targetId.toUpperCase()}: ${tabInputs.length}`);
+                    tabInputs.forEach((el, idx) => {
+                        console.log(`   ${idx}: ${el.tagName}[${el.name || el.id}] = "${el.value}"`);
+                    });
+                }
             }, 100);
         }
         
