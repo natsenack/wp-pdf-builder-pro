@@ -3286,6 +3286,9 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         console.log('� data.data keys:', Object.keys(data.data));
                     }
 
+                    if (data.success) {
+                        console.log('✅ AJAX SAVE SUCCESS for tab:', currentTab);
+
                         // Succès
                         if (saveStatus) {
                             saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé !');
