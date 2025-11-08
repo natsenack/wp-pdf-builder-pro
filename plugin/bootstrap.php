@@ -277,6 +277,11 @@ function pdf_builder_load_bootstrap() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php';
     }
 
+    // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
+    if (class_exists('PDF_Builder_Notification_Manager')) {
+        PDF_Builder_Notification_Manager::get_instance();
+    }
+
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
     if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
