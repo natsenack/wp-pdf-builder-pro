@@ -5724,6 +5724,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         // Ajouter les listeners avancés
         addAdvancedEventListeners();
         
+        }, 1000);
+        
         // Logs removed for clarity
         
         // Vérifier les éléments critiques
@@ -5754,8 +5756,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             
             // Logs removed for clarity
         }, 100);
-        
-        }, 1000);
         
         const tabs = document.querySelectorAll('.nav-tab');
         const contents = document.querySelectorAll('.tab-content');
