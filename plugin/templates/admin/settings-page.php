@@ -3462,6 +3462,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             allButtons.forEach((button, index) => {
                 button.addEventListener('click', function() {
                     console.log(`🔘 BUTTON CLICKED: ${button.name || button.id || 'button-' + index} = "${button.textContent.trim()}"`);
+                    console.log(`🔘 BUTTON TYPE: ${button.type}, FORM: ${button.form ? button.form.id : 'no form'}`);
                 });
             });
             
@@ -3472,6 +3473,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     console.log(`🚀 FORM SUBMIT: ${form.id || form.name || 'form-' + index}`);
                     console.log(`   - Action: ${form.action}`);
                     console.log(`   - Method: ${form.method}`);
+                    console.log(`   - Data:`, new FormData(form));
                 });
             });
         }
