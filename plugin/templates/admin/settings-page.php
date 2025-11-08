@@ -469,36 +469,6 @@ if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_non
     }
 }
 
-if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
-    // Logs removed for clarity
-    if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
-        $developer_settings = [
-            'developer_enabled' => isset($_POST['developer_enabled']),
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['debug_php_errors']),
-            'debug_javascript' => isset($_POST['debug_javascript']),
-            'debug_ajax' => isset($_POST['debug_ajax']),
-            'debug_performance' => isset($_POST['debug_performance']),
-            'debug_database' => isset($_POST['debug_database']),
-            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['log_retention'] ?? 30),
-            'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
-        ];
-        
-        // Sauvegarder les paramètres développeur
-        update_option('pdf_builder_developer_settings', $developer_settings);
-        
-        if ($is_ajax) {
-            $response = json_encode(['success' => true, 'message' => 'Paramètres développeur enregistrés avec succès.']);
-            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
-        } else {
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
-        }
-        $settings = get_option('pdf_builder_settings', []);
-    }
-}
-
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
