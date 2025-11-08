@@ -1437,10 +1437,7 @@ console.log("✅ Canvas settings script completed");
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Notifications par Email</h3>
             
-            <form method="post">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-                
-                <table class="form-table">
+            <table class="form-table">
                     <tr>
                         <th scope="row"><label for="email_notifications_enabled">Notifications Email</label></th>
                         <td>
@@ -1630,7 +1627,6 @@ console.log("✅ Canvas settings script completed");
                         🧪 Tester les Notifications
                     </button>
                 </p>
-            </form>
             
             <!-- Informations sur les notifications -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
