@@ -2579,6 +2579,9 @@ if ($is_ajax) {
         </div>
         
         <div id="maintenance" class="tab-content hidden-tab">
+            <style>
+                #maintenance #global-save-btn { display: none !important; }
+            </style>
             <h2>Actions de Maintenance</h2>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
