@@ -3222,6 +3222,63 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Filter canvas parameters from POST data
+     */
+    private function filter_canvas_parameters($post_data) {
+        $canvas_fields = [
+            // Dimensions
+            'default_canvas_width', 'default_canvas_height',
+            
+            // Couleurs
+            'canvas_background_color', 'container_background_color',
+            
+            // Marges
+            'show_margins', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
+            
+            // Grille
+            'show_grid', 'grid_size', 'grid_color', 'snap_to_grid', 'snap_to_elements', 
+            'snap_tolerance', 'show_guides',
+            
+            // Zoom
+            'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse',
+            
+            // Manipulation
+            'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step',
+            'multi_select', 'copy_paste_enabled',
+            
+            // Undo/Redo
+            'undo_levels', 'redo_levels', 'auto_save_versions',
+            
+            // Export
+            'export_quality', 'export_format', 'compress_images', 'image_quality',
+            
+            // Performance
+            'enable_hardware_acceleration', 'auto_save_enabled', 'auto_save_interval',
+            
+            // Raccourcis
+            'enable_keyboard_shortcuts'
+        ];
+        
+        $filtered = [];
+        foreach ($canvas_fields as $field) {
+            if (isset($post_data[$field])) {
+                // Convertir les valeurs des checkboxes
+                if (in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
+                                     'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
+                                     'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images',
+                                     'enable_hardware_acceleration', 'auto_save_enabled', 'enable_keyboard_shortcuts'])) {
+                    $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
+                } else {
+                    // Pour les autres champs, utiliser la valeur telle quelle
+                    $filtered[$field] = $post_data[$field];
+                }
+            }
+        }
+        
+        return $filtered;
+    }
+
+    /**
      * Gère la sauvegarde AJAX des paramètres
      */
     public function ajax_save_settings()
@@ -3282,8 +3339,16 @@ class PDF_Builder_Admin {
             // Sauvegarde des paramètres canvas via le Canvas Manager
             if (class_exists('PDF_Builder_Canvas_Manager')) {
                 $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-                $canvas_manager->save_canvas_settings($_POST);
-                wp_send_json_success('Paramètres Canvas enregistrés avec succès');
+                
+                // Filtrer uniquement les paramètres canvas
+                $canvas_params = $this->filter_canvas_parameters($_POST);
+                
+                $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
+                if ($saved_settings) {
+                    wp_send_json_success('Paramètres Canvas enregistrés avec succès');
+                } else {
+                    wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
+                }
             } else {
                 wp_send_json_error('Erreur: Canvas Manager non disponible');
             }
@@ -5560,228 +5625,6 @@ class PDF_Builder_Admin {
         }
         </style>
         <?php
-    }
-
-    /**
-     * AJAX handler for saving settings
-     */
-    public function ajax_save_settings() {
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['pdf_builder_settings_nonce']) || 
-                !wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
-                return;
-            }
-
-            // Déterminer l'onglet à sauvegarder
-            $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
-
-            error_log('PDF Builder: AJAX save settings for tab: ' . $current_tab);
-
-            switch ($current_tab) {
-                case 'canvas':
-                    $this->ajax_save_canvas_settings();
-                    break;
-                case 'general':
-                case 'performance':
-                case 'security':
-                case 'developer':
-                case 'email':
-                case 'roles':
-                default:
-                    // Pour les autres onglets, utiliser la logique générale
-                    $this->ajax_save_general_settings($current_tab);
-                    break;
-            }
-
-        } catch (Exception $e) {
-            error_log('PDF Builder: AJAX save settings error: ' . $e->getMessage());
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * AJAX handler for saving canvas settings
-     */
-    private function ajax_save_canvas_settings() {
-        try {
-            // Utiliser le Canvas Manager pour sauvegarder les paramètres
-            if (class_exists('PDF_Builder_Canvas_Manager')) {
-                $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-                
-                // Filtrer uniquement les paramètres canvas de $_POST
-                $canvas_params = $this->filter_canvas_parameters($_POST);
-                
-                $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
-                
-                if ($saved_settings) {
-                    error_log('PDF Builder: Canvas settings saved successfully via AJAX - ' . count($saved_settings) . ' parameters');
-                    wp_send_json_success([
-                        'message' => 'Paramètres Canvas enregistrés avec succès',
-                        'notices' => []
-                    ]);
-                } else {
-                    wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
-                }
-            } else {
-                error_log('PDF Builder: Canvas Manager class not found');
-                wp_send_json_error('Erreur: Gestionnaire Canvas non disponible');
-            }
-            
-        } catch (Exception $e) {
-            error_log('PDF Builder: Canvas AJAX save error: ' . $e->getMessage());
-            wp_send_json_error('Erreur lors de la sauvegarde Canvas: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Filter canvas parameters from POST data
-     */
-    private function filter_canvas_parameters($post_data) {
-        $canvas_fields = [
-            // Dimensions
-            'default_canvas_width', 'default_canvas_height',
-            
-            // Couleurs
-            'canvas_background_color', 'container_background_color',
-            
-            // Marges
-            'show_margins', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
-            
-            // Grille
-            'show_grid', 'grid_size', 'grid_color', 'snap_to_grid', 'snap_to_elements', 
-            'snap_tolerance', 'show_guides',
-            
-            // Zoom
-            'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse',
-            
-            // Manipulation
-            'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step',
-            'multi_select', 'copy_paste_enabled',
-            
-            // Undo/Redo
-            'undo_levels', 'redo_levels', 'auto_save_versions',
-            
-            // Export
-            'export_quality', 'export_format', 'compress_images', 'image_quality',
-            
-            // Performance
-            'enable_hardware_acceleration', 'auto_save_enabled', 'auto_save_interval',
-            
-            // Raccourcis
-            'enable_keyboard_shortcuts'
-        ];
-        
-        $filtered = [];
-        foreach ($canvas_fields as $field) {
-            if (isset($post_data[$field])) {
-                // Convertir les valeurs des checkboxes
-                if (in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
-                                     'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
-                                     'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images',
-                                     'enable_hardware_acceleration', 'auto_save_enabled', 'enable_keyboard_shortcuts'])) {
-                    $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
-                } else {
-                    // Pour les autres champs, utiliser la valeur telle quelle
-                    $filtered[$field] = $post_data[$field];
-                }
-            }
-        }
-        
-        return $filtered;
-    }
-
-    /**
-     * AJAX handler for saving general settings
-     */
-    private function ajax_save_general_settings($tab) {
-        try {
-            $settings_to_save = [];
-            
-            switch ($tab) {
-                case 'general':
-                    $settings_to_save = [
-                        'debug_mode' => isset($_POST['debug_mode']),
-                        'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-                        'cache_enabled' => isset($_POST['cache_enabled']),
-                        'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-                        'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-                        'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-                        'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-                    ];
-                    break;
-                    
-                case 'developer':
-                    $settings_to_save = [
-                        'developer_enabled' => isset($_POST['developer_enabled']),
-                        'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-                        'debug_php_errors' => isset($_POST['debug_php_errors']),
-                        'debug_javascript' => isset($_POST['debug_javascript']),
-                        'debug_ajax' => isset($_POST['debug_ajax']),
-                        'debug_performance' => isset($_POST['debug_performance']),
-                        'debug_database' => isset($_POST['debug_database']),
-                        'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-                        'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-                        'log_retention' => intval($_POST['log_retention'] ?? 30),
-                    ];
-                    break;
-                    
-                case 'performance':
-                    $settings_to_save = [
-                        'cache_enabled' => isset($_POST['cache_enabled']),
-                        'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-                        'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-                        'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-                    ];
-                    break;
-                    
-                case 'security':
-                    $settings_to_save = [
-                        'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-                        'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-                        'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-                    ];
-                    break;
-                    
-                default:
-                    wp_send_json_error('Onglet non reconnu: ' . $tab);
-                    return;
-            }
-            
-            // Sauvegarder les paramètres
-            $current_settings = get_option('pdf_builder_settings', []);
-            $new_settings = array_merge($current_settings, $settings_to_save);
-            
-            $result = update_option('pdf_builder_settings', $new_settings);
-            
-            if ($result) {
-                $tab_names = [
-                    'general' => 'Général',
-                    'developer' => 'Développeur', 
-                    'performance' => 'Performance',
-                    'security' => 'Sécurité'
-                ];
-                $tab_name = $tab_names[$tab] ?? $tab;
-                
-                wp_send_json_success([
-                    'message' => 'Paramètres ' . $tab_name . ' enregistrés avec succès',
-                    'notices' => []
-                ]);
-            } else {
-                wp_send_json_error('Erreur lors de la sauvegarde des paramètres');
-            }
-            
-        } catch (Exception $e) {
-            error_log('PDF Builder: General AJAX save error: ' . $e->getMessage());
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
     }
 
 
