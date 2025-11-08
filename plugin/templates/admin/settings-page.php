@@ -299,7 +299,8 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
         ];
         update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
         if ($is_ajax) {
-            send_ajax_response(true, 'Paramètres de performance enregistrés avec succès.');
+            $response = json_encode(['success' => true, 'message' => 'Paramètres de performance enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
         } else {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de performance enregistrés avec succès.</p></div>';
         }
@@ -834,7 +835,7 @@ if ($is_ajax) {
             </div>
             
             <p class="submit">
-                <button type="submit" name="submit_performance" class="button button-primary">Enregistrer les paramètres de performance</button>
+                <button type="button" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
             </p>
             </form>
         </div>
@@ -3382,6 +3383,87 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 const form = document.getElementById('general-form');
                 if (form) {
                     submitFormAjax(form);
+                }
+            });
+        }
+
+        const performanceSubmitBtn = document.getElementById('performance-submit-btn');
+        if (performanceSubmitBtn) {
+            performanceSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Empêcher la soumission normale du formulaire
+                
+                const form = document.getElementById('performance-form');
+                if (form) {
+                    // Modifier temporairement l'action pour utiliser la fonction AJAX de performance
+                    const originalFormData = new FormData(form);
+                    originalFormData.append('action', 'pdf_builder_save_performance_settings');
+                    originalFormData.append('nonce', document.querySelector('input[name="pdf_builder_performance_nonce"]').value);
+
+                    fetch(ajaxurl, {
+                        method: 'POST',
+                        body: originalFormData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Performance Response status:', response.status);
+                        console.log('Performance Response headers:', response.headers.get('content-type'));
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Performance Parsed JSON data:', data);
+                        console.log('Performance Success:', data.success);
+                        if (data.data && data.data.message) {
+                            console.log('Performance Error message:', data.data.message);
+                        }
+                        // Réactiver le bouton
+                        performanceSubmitBtn.disabled = false;
+                        performanceSubmitBtn.innerHTML = 'Enregistrer les paramètres de performance';
+
+                        if (data && data.success) {
+                            // Afficher le succès
+                            if (saveStatus) {
+                                saveStatus.textContent = '✅ ' + (data.data && data.data.message || data.message || 'Paramètres de performance sauvegardés avec succès !');
+                                saveStatus.className = 'save-status show success';
+
+                                // Masquer le message après 3 secondes
+                                setTimeout(() => {
+                                    saveStatus.className = 'save-status';
+                                }, 3000);
+                            }
+                        } else {
+                            // Afficher l'erreur
+                            if (saveStatus) {
+                                const errorMessage = (data.data && data.data.message) || data.message || 'Erreur lors de la sauvegarde';
+                                saveStatus.textContent = '❌ ' + errorMessage;
+                                saveStatus.className = 'save-status show error';
+
+                                // Masquer le message d'erreur après 5 secondes
+                                setTimeout(() => {
+                                    saveStatus.className = 'save-status';
+                                }, 5000);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Performance AJAX Error:', error);
+                        console.error('Performance Error type:', typeof error);
+                        console.error('Performance Error message:', error.message);
+                        // Réactiver le bouton en cas d'erreur
+                        performanceSubmitBtn.disabled = false;
+                        performanceSubmitBtn.innerHTML = 'Enregistrer les paramètres de performance';
+
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ Erreur de connexion';
+                            saveStatus.className = 'save-status show error';
+
+                            // Masquer le message d'erreur après 5 secondes
+                            setTimeout(() => {
+                                saveStatus.className = 'save-status';
+                            }, 5000);
+                        }
+                    });
                 }
             });
         }
