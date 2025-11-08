@@ -198,36 +198,36 @@ class PDF_Builder_Canvas_Manager {
         $validated['container_background_color'] = $this->validate_color($settings['container_background_color'] ?? null, $this->default_settings['container_background_color']);
 
         // Marges
-        $validated['show_margins'] = isset($settings['show_margins']) && $settings['show_margins'] === '1';
+        $validated['show_margins'] = (isset($settings['show_margins']) && ($settings['show_margins'] === '1' || $settings['show_margins'] === true));
         $validated['margin_top'] = $this->validate_numeric($settings['margin_top'] ?? null, 0, 200, $this->default_settings['margin_top']);
         $validated['margin_right'] = $this->validate_numeric($settings['margin_right'] ?? null, 0, 200, $this->default_settings['margin_right']);
         $validated['margin_bottom'] = $this->validate_numeric($settings['margin_bottom'] ?? null, 0, 200, $this->default_settings['margin_bottom']);
         $validated['margin_left'] = $this->validate_numeric($settings['margin_left'] ?? null, 0, 200, $this->default_settings['margin_left']);
 
         // Grille
-        $validated['show_grid'] = isset($settings['show_grid']) && $settings['show_grid'] === '1';
+        $validated['show_grid'] = (isset($settings['show_grid']) && ($settings['show_grid'] === '1' || $settings['show_grid'] === true));
         $validated['grid_size'] = $this->validate_numeric($settings['grid_size'] ?? null, 5, 100, $this->default_settings['grid_size']);
         $validated['grid_color'] = $this->validate_color($settings['grid_color'] ?? null, $this->default_settings['grid_color']);
-        $validated['snap_to_grid'] = isset($settings['snap_to_grid']) && $settings['snap_to_grid'] === '1';
-        $validated['snap_to_elements'] = isset($settings['snap_to_elements']) && $settings['snap_to_elements'] === '1';
+        $validated['snap_to_grid'] = (isset($settings['snap_to_grid']) && ($settings['snap_to_grid'] === '1' || $settings['snap_to_grid'] === true));
+        $validated['snap_to_elements'] = (isset($settings['snap_to_elements']) && ($settings['snap_to_elements'] === '1' || $settings['snap_to_elements'] === true));
         $validated['snap_tolerance'] = $this->validate_numeric($settings['snap_tolerance'] ?? null, 1, 50, $this->default_settings['snap_tolerance']);
-        $validated['show_guides'] = isset($settings['show_guides']) && $settings['show_guides'] === '1';
+        $validated['show_guides'] = (isset($settings['show_guides']) && ($settings['show_guides'] === '1' || $settings['show_guides'] === true));
 
         // Zoom
         $validated['default_zoom'] = $this->validate_numeric($settings['default_zoom'] ?? null, 10, 500, $this->default_settings['default_zoom']);
         $validated['zoom_step'] = $this->validate_numeric($settings['zoom_step'] ?? null, 5, 100, $this->default_settings['zoom_step']);
         $validated['min_zoom'] = $this->validate_numeric($settings['min_zoom'] ?? null, 1, 100, $this->default_settings['min_zoom']);
         $validated['max_zoom'] = $this->validate_numeric($settings['max_zoom'] ?? null, 100, 2000, $this->default_settings['max_zoom']);
-        $validated['zoom_with_wheel'] = isset($settings['zoom_with_wheel']) && $settings['zoom_with_wheel'] === '1';
-        $validated['pan_with_mouse'] = isset($settings['pan_with_mouse']) && $settings['pan_with_mouse'] === '1';
+        $validated['zoom_with_wheel'] = (isset($settings['zoom_with_wheel']) && ($settings['zoom_with_wheel'] === '1' || $settings['zoom_with_wheel'] === true));
+        $validated['pan_with_mouse'] = (isset($settings['pan_with_mouse']) && ($settings['pan_with_mouse'] === '1' || $settings['pan_with_mouse'] === true));
 
         // Manipulation
-        $validated['show_resize_handles'] = isset($settings['show_resize_handles']) && $settings['show_resize_handles'] === '1';
+        $validated['show_resize_handles'] = (isset($settings['show_resize_handles']) && ($settings['show_resize_handles'] === '1' || $settings['show_resize_handles'] === true));
         $validated['handle_size'] = $this->validate_numeric($settings['handle_size'] ?? null, 4, 20, $this->default_settings['handle_size']);
-        $validated['enable_rotation'] = isset($settings['enable_rotation']) && $settings['enable_rotation'] === '1';
+        $validated['enable_rotation'] = (isset($settings['enable_rotation']) && ($settings['enable_rotation'] === '1' || $settings['enable_rotation'] === true));
         $validated['rotation_step'] = $this->validate_numeric($settings['rotation_step'] ?? null, 1, 90, $this->default_settings['rotation_step']);
-        $validated['multi_select'] = isset($settings['multi_select']) && $settings['multi_select'] === '1';
-        $validated['copy_paste_enabled'] = isset($settings['copy_paste_enabled']) && $settings['copy_paste_enabled'] === '1';
+        $validated['multi_select'] = (isset($settings['multi_select']) && ($settings['multi_select'] === '1' || $settings['multi_select'] === true));
+        $validated['copy_paste_enabled'] = (isset($settings['copy_paste_enabled']) && ($settings['copy_paste_enabled'] === '1' || $settings['copy_paste_enabled'] === true));
 
         // Undo/Redo
         $validated['undo_levels'] = $this->validate_numeric($settings['undo_levels'] ?? null, 1, 500, $this->default_settings['undo_levels']);
