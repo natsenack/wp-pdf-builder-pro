@@ -2007,16 +2007,8 @@ if ($is_ajax) {
                 <input type="hidden" name="submit_canvas" value="1">
             
             <?php
-            // Récupérer les paramètres canvas via le manager
-            $canvas_settings = [];
-            if (class_exists('PDF_Builder_Canvas_Manager')) {
-                try {
-                    $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-                    $canvas_settings = $canvas_manager->get_canvas_settings();
-                } catch (Exception $e) {
-                    $canvas_settings = [];
-                }
-            }
+            // Récupérer les paramètres canvas depuis les options WordPress
+            $canvas_settings = get_option('pdf_builder_canvas_settings', []);
             ?>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Dimensions par Défaut</h3>
@@ -3493,14 +3485,20 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             const globalSaveBtn = document.getElementById('global-save-btn');
             const saveStatus = document.getElementById('save-status');
             
+            console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
+            
             if (globalSaveBtn) {
                 globalSaveBtn.addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('🔘 GLOBAL SAVE BUTTON CLICKED');
                     
                     // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
                     const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
                                     document.querySelector('.tab-content.active') ||
                                     document.getElementById('general');
+                    
+                    console.log('📍 ACTIVE TAB FOUND:', activeTab ? activeTab.id : 'NONE');
+                    console.log('📍 All tabs:', Array.from(document.querySelectorAll('.tab-content')).map(tab => ({id: tab.id, hidden: tab.classList.contains('hidden-tab')})));
                     
                     if (activeTab) {
                         console.log('📍 ACTIVE TAB FOUND:', activeTab.id);
@@ -3517,6 +3515,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             form = document.getElementById('securite-form');
                         } else if (activeTab.id === 'canvas') {
                             form = document.getElementById('canvas-form');
+                            console.log('🎨 CANVAS FORM FOUND:', form);
                         } else if (activeTab.id === 'templates') {
                             form = document.getElementById('templates-form');
                         } else if (activeTab.id === 'maintenance') {
