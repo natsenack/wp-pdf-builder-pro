@@ -382,6 +382,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             <form method="post" id="general-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
+                <input type="hidden" name="submit" value="1">
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
@@ -641,6 +642,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <form method="post" id="performance-form" action="">
                 <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
                 <input type="hidden" name="current_tab" value="performance">
+                <input type="hidden" name="submit_performance" value="1">
                 <h2>Paramètres de Performance</h2>
             <table class="form-table">
                 <tr>
@@ -769,6 +771,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <form method="post" id="pdf-form" action="">
                 <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
                 <input type="hidden" name="current_tab" value="pdf">
+                <input type="hidden" name="submit_pdf" value="1">
                 <h2>Paramètres PDF</h2>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
@@ -892,6 +895,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             <form method="post" id="securite-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_securite_nonce'); ?>
+                <input type="hidden" name="submit_security" value="1">
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚙️ Limites & Protections Système</h3>
             <table class="form-table">
@@ -1420,6 +1424,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             <form method="post" id="notifications-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_notifications_nonce'); ?>
+                <input type="hidden" name="submit_notifications" value="1">
             
             <?php
             // Traitement de la sauvegarde des notifications
@@ -1736,6 +1741,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             <form method="post" id="canvas-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_canvas_nonce'); ?>
+                <input type="hidden" name="submit_canvas" value="1">
             
             <?php
             // Récupérer les paramètres canvas via le manager
@@ -2261,6 +2267,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             
             <form method="post" id="maintenance-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_maintenance_nonce'); ?>
+                <input type="hidden" name="submit_maintenance" value="1">
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
             <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
