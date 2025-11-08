@@ -3225,57 +3225,14 @@ class PDF_Builder_Admin {
      * Filter canvas parameters from POST data
      */
     private function filter_canvas_parameters($post_data) {
-        $canvas_fields = [
-            // Dimensions
-            'default_canvas_width', 'default_canvas_height',
-            
-            // Couleurs
-            'canvas_background_color', 'container_background_color',
-            
-            // Marges
-            'show_margins', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
-            
-            // Grille
-            'show_grid', 'grid_size', 'grid_color', 'snap_to_grid', 'snap_to_elements', 
-            'snap_tolerance', 'show_guides',
-            
-            // Zoom
-            'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse',
-            
-            // Manipulation
-            'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step',
-            'multi_select', 'copy_paste_enabled',
-            
-            // Undo/Redo
-            'undo_levels', 'redo_levels', 'auto_save_versions',
-            
-            // Export
-            'export_quality', 'export_format', 'compress_images', 'image_quality',
-            
-            // Performance
-            'enable_hardware_acceleration', 'auto_save_enabled', 'auto_save_interval',
-            
-            // Raccourcis
-            'enable_keyboard_shortcuts'
-        ];
-        
-        $filtered = [];
-        foreach ($canvas_fields as $field) {
-            if (isset($post_data[$field])) {
-                // Convertir les valeurs des checkboxes
-                if (in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
-                                     'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
-                                     'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images',
-                                     'enable_hardware_acceleration', 'auto_save_enabled', 'enable_keyboard_shortcuts'])) {
-                    $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
-                } else {
-                    // Pour les autres champs, utiliser la valeur telle quelle
-                    $filtered[$field] = $post_data[$field];
-                }
-            }
+        // Utiliser la méthode du Canvas Manager pour la cohérence
+        if (class_exists('PDF_Builder_Canvas_Manager')) {
+            $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
+            return $canvas_manager->filter_canvas_parameters($post_data);
         }
         
-        return $filtered;
+        // Fallback si le manager n'est pas disponible
+        return $post_data;
     }
 
     /**
@@ -3332,28 +3289,20 @@ class PDF_Builder_Admin {
                 $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
                 error_log('PDF BUILDER: Canvas Manager instance obtained');
 
-                // Log des données reçues
-                error_log('PDF BUILDER: Raw POST data for canvas: ' . print_r($_POST, true));
-
                 // Filtrer uniquement les paramètres canvas
                 $canvas_params = $this->filter_canvas_parameters($_POST);
-                error_log('PDF BUILDER: Filtered canvas params: ' . print_r($canvas_params, true));
 
                 $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
                 error_log('PDF BUILDER: Canvas save result: ' . ($saved_settings ? 'SUCCESS' : 'FAILED'));
-                error_log('PDF BUILDER: Saved settings returned: ' . print_r($saved_settings, true));
 
                 if ($saved_settings) {
                     // Retourner les paramètres sauvegardés pour synchronisation JavaScript
                     $response = [
                         'message' => 'Paramètres Canvas enregistrés avec succès',
-                        'data' => $canvas_params // Retourner les valeurs pour synchronisation
+                        'data' => $canvas_params
                     ];
-                    error_log('PDF BUILDER: Canvas response data: ' . print_r($response, true));
                     wp_send_json_success($response);
-                    error_log('PDF BUILDER: Canvas response sent successfully');
                 } else {
-                    error_log('PDF BUILDER: Canvas save failed, sending error response');
                     wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
                 }
             } else {

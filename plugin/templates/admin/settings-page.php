@@ -168,7 +168,6 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce
 }
 
 if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('DEBUG: Button "Enregistrer les paramètres Canvas" clicked');
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
         // Utiliser le Canvas Manager pour sauvegarder les paramètres
         if (class_exists('PDF_Builder_Canvas_Manager')) {
@@ -3342,15 +3341,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
                             // Mettre à jour window.pdfBuilderCanvasSettings pour l'onglet canvas
                             if (currentTab === 'canvas' && data.data) {
-                                console.log('🔄 BEFORE: window.pdfBuilderCanvasSettings sample:', {
-                                    default_canvas_width: window.pdfBuilderCanvasSettings?.default_canvas_width,
-                                    show_grid: window.pdfBuilderCanvasSettings?.show_grid
-                                });
                                 window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
-                                console.log('✅ AFTER: window.pdfBuilderCanvasSettings updated:', {
-                                    default_canvas_width: window.pdfBuilderCanvasSettings?.default_canvas_width,
-                                    show_grid: window.pdfBuilderCanvasSettings?.show_grid
-                                });
                             }
                             
                             console.log('✅ Field values synchronized');
@@ -3358,22 +3349,17 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         
                         // Synchroniser l'apparence des toggles après la sauvegarde
                         setTimeout(() => {
-                            console.log('🔄 Synchronizing toggle appearances after save...');
-                            console.log('🔄 Response data.data:', data.data);
                             const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
                             toggleSwitches.forEach(function(toggle) {
                                 const fieldName = toggle.name || toggle.id;
-                                console.log('🔄 Processing toggle:', fieldName, 'current checked:', toggle.checked);
                                 
                                 // Vérifier si ce champ est dans les données sauvegardées
                                 if (data.data && typeof data.data[fieldName] !== 'undefined') {
                                     const savedValue = data.data[fieldName];
                                     const shouldBeChecked = !!savedValue;
-                                    console.log('🔄 Field', fieldName, 'saved value:', savedValue, 'should be checked:', shouldBeChecked);
                                     
                                     // Synchroniser l'état de la checkbox
                                     if (toggle.checked !== shouldBeChecked) {
-                                        console.log('🔄 Updating toggle', fieldName, 'from', toggle.checked, 'to', shouldBeChecked);
                                         toggle.checked = shouldBeChecked;
                                     }
                                 }
@@ -3389,7 +3375,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                         label.style.color = '#333';
                                     }
                                 }
-                                console.log('🔄 Toggle synchronized:', toggle.id, 'checked:', toggle.checked);
                             });
                         }, 200);
                         

@@ -208,9 +208,6 @@ class PDF_Builder_Canvas_Manager {
         // Sauvegarder
         $result = update_option('pdf_builder_settings', $updated_settings);
 
-        // Logger
-        error_log('PDF Builder: Canvas settings saved - ' . count($validated_settings) . ' parameters');
-
         return $validated_settings;
     }
 
