@@ -3587,47 +3587,44 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         }
 
         // Gestion du test du système de cache
-        const testCacheBtn = document.getElementById('test-cache-btn');
-        const cacheTestResults = document.getElementById('cache-test-results');
-        const cacheTestOutput = document.getElementById('cache-test-output');
+        jQuery(document).ready(function($) {
+            const testCacheBtn = $('#test-cache-btn');
+            const cacheTestResults = $('#cache-test-results');
+            const cacheTestOutput = $('#cache-test-output');
 
-        if (testCacheBtn) {
-            testCacheBtn.addEventListener('click', function() {
-                // Désactiver le bouton pendant le test
-                testCacheBtn.disabled = true;
-                testCacheBtn.innerHTML = '🔄 Test en cours...';
-                cacheTestResults.innerHTML = '<span style="color: #007cba;">Test en cours...</span>';
+            if (testCacheBtn.length) {
+                testCacheBtn.on('click', function() {
+                    // Désactiver le bouton pendant le test
+                    testCacheBtn.prop('disabled', true).html('🔄 Test en cours...');
+                    cacheTestResults.html('<span style="color: #007cba;">Test en cours...</span>');
 
-                // Faire la requête AJAX
-                jQuery.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_cache_test',
-                        nonce: '<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            cacheTestResults.innerHTML = '<span style="color: #28a745;">✓ Test réussi</span>';
-                            cacheTestOutput.innerHTML = response.data;
-                            cacheTestOutput.style.display = 'block';
-                        } else {
-                            cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Test échoué</span>';
-                            cacheTestOutput.innerHTML = '<p>Erreur: ' + response.data + '</p>';
-                            cacheTestOutput.style.display = 'block';
+                    // Faire la requête AJAX
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_cache_test',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                cacheTestResults.html('<span style="color: #28a745;">✓ Test réussi</span>');
+                                cacheTestOutput.html(response.data).show();
+                            } else {
+                                cacheTestResults.html('<span style="color: #dc3545;">✗ Test échoué</span>');
+                                cacheTestOutput.html('<p>Erreur: ' + response.data + '</p>').show();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            cacheTestResults.html('<span style="color: #dc3545;">✗ Erreur AJAX</span>');
+                            cacheTestOutput.html('<p>Erreur AJAX: ' + error + '</p>').show();
+                        },
+                        complete: function() {
+                            // Réactiver le bouton
+                            testCacheBtn.prop('disabled', false).html('🧪 Tester l\'intégration du cache');
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur AJAX</span>';
-                        cacheTestOutput.innerHTML = '<p>Erreur AJAX: ' + error + '</p>';
-                        cacheTestOutput.style.display = 'block';
-                    },
-                    complete: function() {
-                        // Réactiver le bouton
-                        testCacheBtn.disabled = false;
-                        testCacheBtn.innerHTML = '🧪 Tester l\'intégration du cache';
-                    }
+                    });
                 });
-            });
-        }
+            }
+        });
 </script>
