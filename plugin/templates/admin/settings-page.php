@@ -6970,3 +6970,4 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
     });
     */
+</script>
