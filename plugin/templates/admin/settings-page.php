@@ -721,6 +721,9 @@ if ($is_ajax) {
             // is_premium si vraie licence OU si clé de test existe
             $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
             
+            // is_test_mode si clé de test existe
+            $is_test_mode = !empty($test_key);
+            
             // DEBUG: Afficher les valeurs pour verifier
             if (current_user_can('manage_options')) {
                 echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
@@ -896,8 +899,9 @@ if ($is_ajax) {
                 <?php endif; ?>
             </div>
             
-            <!-- Activation/Désactivation - Mode DEMO -->
+            <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
             <?php if (!$is_premium): ?>
+            <!-- Mode DÉMO : Pas de licence -->
             <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                     <div style="font-size: 50px;">🧪</div>
@@ -921,7 +925,23 @@ if ($is_ajax) {
                     <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
                 </div>
             </div>
+            <?php elseif ($is_test_mode): ?>
+            <!-- Mode TEST : Gestion de la clé de test -->
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                    <div style="font-size: 50px;">🧪</div>
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Gestion de la Clé de Test</h3>
+                        <p style="margin: 0; color: #856404;">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
+                    <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
+                </div>
+            </div>
             <?php else: ?>
+            <!-- Mode PREMIUM : Gestion de la licence premium -->
             <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                     <div style="font-size: 50px;">🔐</div>
