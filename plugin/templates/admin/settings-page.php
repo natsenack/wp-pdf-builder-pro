@@ -1130,15 +1130,39 @@ if ($is_ajax) {
             <!-- Informations utiles -->
             <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
                 <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
-                <ul style="margin: 0; padding-left: 20px; color: #fff; list-style-type: none;">
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Site actuel :</strong> <code style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 3px; font-family: monospace; color: #fff;"><?php echo esc_html(home_url()); ?></code></li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo !empty($test_key) ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <!-- Site actuel -->
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Site actuel</div>
+                        <code style="background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; font-family: monospace; color: #fff; display: block; word-break: break-all; font-size: 12px;"><?php echo esc_html(home_url()); ?></code>
+                    </div>
+                    
+                    <!-- Plan actif -->
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Plan actif</div>
+                        <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block;"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
+                    </div>
+                    
+                    <!-- Version du plugin -->
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Version du plugin</div>
+                        <div style="font-size: 14px; font-weight: bold;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></div>
+                    </div>
+                    
                     <?php if ($is_premium): ?>
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline;">Contact Support Premium</a></li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline;">Lire la Documentation</a></li>
+                    <!-- Support Premium -->
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Support</div>
+                        <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Contact Support Premium →</a>
+                    </div>
+                    
+                    <!-- Documentation -->
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                        <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Documentation</div>
+                        <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Lire la Documentation →</a>
+                    </div>
                     <?php endif; ?>
-                    <li style="padding: 10px 0;"><strong>Version du plugin :</strong> <?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></li>
-                </ul>
+                </div>
             </div>
             
             <!-- Comparaison des fonctionnalités -->
@@ -1219,48 +1243,54 @@ if ($is_ajax) {
             </div>
             
             <!-- Section Notifications par Email -->
-            <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-top: 30px; box-shadow: 0 3px 8px rgba(0,102,204,0.2);">
-                <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; border-bottom: 2px solid #0066cc; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+            <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
+                <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                     📧 Notifications par Email
                 </h3>
                 
-                <p style="color: #003d7a; margin: 15px 0; line-height: 1.6;">
+                <p style="color: #003d7a; margin: 0 0 25px 0; line-height: 1.6; font-size: 14px;">
                     Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
                 </p>
                 
-                <form method="post" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
                     <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
                     <input type="hidden" name="pdf_builder_save_notifications" value="1">
                     
                     <!-- Toggle Notifications -->
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 600; color: #333;">
-                            <input type="checkbox" name="enable_expiration_notifications" value="1" <?php checked($enable_expiration_notifications, 1); ?> style="width: 20px; height: 20px; cursor: pointer;">
-                            <span>Activer les notifications d'expiration de licence</span>
+                    <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
+                        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; color: #003d7a;">
+                            <input type="checkbox" name="enable_expiration_notifications" value="1" <?php checked($enable_expiration_notifications, 1); ?> style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px; accent-color: #0066cc; flex-shrink: 0;">
+                            <span style="line-height: 1.4;">
+                                Activer les notifications d'expiration<br>
+                                <span style="font-weight: 400; color: #666; font-size: 12px; display: block; margin-top: 6px;">
+                                    ✓ 30 jours avant l'expiration<br>
+                                    ✓ 7 jours avant l'expiration
+                                </span>
+                            </span>
                         </label>
-                        <p style="margin: 8px 0 0 32px; font-size: 12px; color: #666;">
-                            ✓ Vous recevrez un email 30 jours avant l'expiration<br>
-                            ✓ Un rappel supplémentaire 7 jours avant<br>
-                            ✓ Aucun email de spam, juste les informations importantes
-                        </p>
                     </div>
                     
                     <!-- Email Input -->
-                    <div style="margin-bottom: 20px;">
-                        <label for="notification_email" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">
-                            Adresse email pour les notifications :
+                    <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
+                        <label for="notification_email" style="display: block; font-weight: 600; color: #003d7a; margin-bottom: 10px; font-size: 14px;">
+                            Email pour les notifications :
                         </label>
                         <input type="email" name="notification_email" id="notification_email" value="<?php echo esc_attr($notification_email); ?>" 
-                               style="width: 100%; max-width: 400px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                               placeholder="admin@example.com"
+                               style="width: 100%; padding: 10px 12px; border: 2px solid #0066cc; border-radius: 6px; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" 
+                               onfocus="this.style.borderColor='#003d7a'; this.style.boxShadow='0 0 0 3px rgba(0,102,204,0.1)';" 
+                               onblur="this.style.borderColor='#0066cc'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
                         <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
-                            Par défaut : adresse email administrateur du site
+                            Défaut : adresse administrateur du site
                         </p>
                     </div>
                     
                     <!-- Save Button -->
-                    <div style="margin-top: 20px;">
-                        <button type="submit" class="button button-primary" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: bold; padding: 10px 30px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                            Enregistrer les paramètres
+                    <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc; display: flex; align-items: flex-end;">
+                        <button type="submit" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: 700; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 100%; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,102,204,0.3);"
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0,102,204,0.4)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 8px rgba(0,102,204,0.3)';">
+                            💾 Enregistrer
                         </button>
                     </div>
                 </form>
