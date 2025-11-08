@@ -3740,18 +3740,18 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 console.log('ℹ️ System Info button clicked');
 
                 const systemInfo = `
-ℹ️ INFORMATION SYSTÈME
+                    ℹ️ INFORMATION SYSTÈME
 
-Navigateur: ${navigator.userAgent.split(' ').pop()}
-Résolution: ${screen.width}x${screen.height}
-URL: ${window.location.href}
-Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
-Langue: ${navigator.language}
-Cookies: ${document.cookie ? 'Activés' : 'Désactivés'}
-LocalStorage: ${typeof Storage !== 'undefined' ? 'Activé' : 'Désactivé'}
+                    Navigateur: ${navigator.userAgent.split(' ').pop()}
+                    Résolution: ${screen.width}x${screen.height}
+                    URL: ${window.location.href}
+                    Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+                    Langue: ${navigator.language}
+                    Cookies: ${document.cookie ? 'Activés' : 'Désactivés'}
+                    LocalStorage: ${typeof Storage !== 'undefined' ? 'Activé' : 'Désactivé'}
 
-Plugin PDF Builder: ${typeof pdf_builder !== 'undefined' ? 'Chargé' : 'Non chargé'}
-Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé' : 'Désactivé'}
+                    Plugin PDF Builder: ${typeof pdf_builder !== 'undefined' ? 'Chargé' : 'Non chargé'}
+                    Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé' : 'Désactivé'}
                 `.trim();
 
                 console.log('ℹ️ System Info:', systemInfo);

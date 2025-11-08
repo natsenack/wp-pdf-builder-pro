@@ -112,10 +112,20 @@ class PDF_Builder_Canvas_Manager {
      * Obtenir tous les paramètres canvas
      */
     public function get_canvas_settings() {
-        $settings = get_option('pdf_builder_canvas_settings', []);
+        // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
+        $all_settings = get_option('pdf_builder_settings', []);
+        
+        // Extraire seulement les paramètres canvas
+        $canvas_settings = [];
+        $canvas_keys = array_keys($this->default_settings);
+        foreach ($canvas_keys as $key) {
+            if (isset($all_settings[$key])) {
+                $canvas_settings[$key] = $all_settings[$key];
+            }
+        }
 
         // Fusionner avec les paramètres par défaut
-        return array_merge($this->default_settings, $settings);
+        return array_merge($this->default_settings, $canvas_settings);
     }
 
     /**
@@ -125,8 +135,14 @@ class PDF_Builder_Canvas_Manager {
         // Valider les paramètres
         $validated_settings = $this->validate_settings($settings);
 
+        // Récupérer tous les paramètres existants
+        $all_settings = get_option('pdf_builder_settings', []);
+        
+        // Mettre à jour seulement les paramètres canvas
+        $updated_settings = array_merge($all_settings, $validated_settings);
+        
         // Sauvegarder
-        update_option('pdf_builder_canvas_settings', $validated_settings);
+        update_option('pdf_builder_settings', $updated_settings);
 
         // Logger
         error_log('PDF Builder: Canvas settings saved - ' . count($validated_settings) . ' parameters');
