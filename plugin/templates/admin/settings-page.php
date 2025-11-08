@@ -346,20 +346,20 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         </a>
     </div>
     
-    <form method="post" class="settings-form" id="settings-form">
-        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-        
-        <!-- Bouton de sauvegarde flottant -->
-        <div id="floating-save-button" class="floating-save-container">
-            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn"  style="padding:5px;">
-                💾 Enregistrer
-            </button>
-            <div class="save-status" id="save-status"></div>
-        </div>
+    <!-- Bouton de sauvegarde flottant -->
+    <div id="floating-save-button" class="floating-save-container">
+        <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn"  style="padding:5px;">
+            💾 Enregistrer
+        </button>
+        <div class="save-status" id="save-status"></div>
+    </div>
         
         <div id="general" class="tab-content">
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
+            
+            <form method="post" id="general-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
@@ -423,6 +423,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
+            </form>
         </div>
         
         <div id="licence" class="tab-content hidden-tab">
@@ -867,6 +868,9 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <h2>Paramètres de Sécurité</h2>
             <p style="color: #666;">Configurations de sécurité et limites système. Pour le debug et logging, voir l'onglet Développeur.</p>
             
+            <form method="post" id="securite-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_securite_nonce'); ?>
+            
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚙️ Limites & Protections Système</h3>
             <table class="form-table">
                 <tr>
@@ -947,6 +951,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <p class="submit">
                 <button type="submit" name="submit_security" class="button button-primary">Enregistrer les paramètres de sécurité</button>
             </p>
+            </form>
         </div>
         
         <div id="roles" class="tab-content hidden-tab">
@@ -1391,6 +1396,9 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         <div id="notifications" class="tab-content hidden-tab">
             <h2>Paramètres de Notifications</h2>
             
+            <form method="post" id="notifications-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_notifications_nonce'); ?>
+            
             <?php
             // Traitement de la sauvegarde des notifications
             if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_settings_nonce'])) {
@@ -1694,10 +1702,18 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     </tbody>
                 </table>
             </div>
+            
+            <p class="submit">
+                <button type="submit" name="submit_notifications" class="button button-primary">Enregistrer les paramètres de notifications</button>
+            </p>
+            </form>
         </div>
         
         <div id="canvas" class="tab-content hidden-tab">
             <h2>Paramètres Canvas</h2>
+            
+            <form method="post" id="canvas-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_canvas_nonce'); ?>
             
             <?php
             // Récupérer les paramètres canvas via le manager
@@ -2059,6 +2075,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <p class="submit">
                 <button type="submit" name="submit_canvas" class="button button-primary">Enregistrer les paramètres Canvas</button>
             </p>
+            </form>
         </div>
         
         <div id="templates" class="tab-content hidden-tab">
@@ -2219,6 +2236,9 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         
         <div id="maintenance" class="tab-content hidden-tab">
             <h2>Actions de Maintenance</h2>
+            
+            <form method="post" id="maintenance-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_maintenance_nonce'); ?>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
             <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
@@ -2414,6 +2434,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <p class="submit">
                 <button type="submit" name="submit_maintenance" class="button button-primary">Enregistrer les paramètres de maintenance</button>
             </p>
+            </form>
         </div>
         
         <div id="developpeur" class="tab-content hidden-tab">
@@ -2775,7 +2796,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             </p>
             </form>
         </div>
-    </form>
 
 <style>
     .toggle-switch {
