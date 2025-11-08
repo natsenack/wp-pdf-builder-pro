@@ -930,6 +930,7 @@ class PDF_Builder_Admin {
      */
     private function load_admin_scripts($hook = null)
     {
+        error_log('PDF Builder: load_admin_scripts called with hook: ' . $hook);
 
         // DEBUG: Vérifier que les constantes sont définies
 
