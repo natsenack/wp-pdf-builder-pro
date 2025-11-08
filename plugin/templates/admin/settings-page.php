@@ -3108,6 +3108,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
+        // COMMENTED OUT FOR DEBUG - ENTIRE DOMContentLoaded HANDLER
+        /*
         // Fonction pour logger tous les éléments de formulaire sur la page
         function logAllFormElements(context = 'PAGE_LOAD') {
             console.log(`=== LOG ULTRA-DÉTAILLÉ DE TOUS LES ÉLÉMENTS [${context}] ===`);
@@ -6967,4 +6969,4 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         populateCanvasFields();
 
     });
-</script>
+    */
