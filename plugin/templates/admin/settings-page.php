@@ -3350,7 +3350,53 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             }
         }
         
-        // Démarrer la gestion du bouton global
-        setupGlobalSaveButton();
-    });
-</script>
+        // Gestion de la navigation des onglets
+        function setupTabNavigation() {
+            const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetTab = this.getAttribute('data-tab');
+                    console.log('📑 SWITCHING TO TAB:', targetTab);
+                    
+                    // Masquer tous les onglets
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.add('hidden-tab');
+                    });
+                    
+                    // Désactiver tous les liens d'onglets
+                    document.querySelectorAll('.nav-tab').forEach(tabLink => {
+                        tabLink.classList.remove('nav-tab-active');
+                    });
+                    
+                    // Afficher l'onglet cible
+                    const targetTabContent = document.getElementById(targetTab);
+                    if (targetTabContent) {
+                        targetTabContent.classList.remove('hidden-tab');
+                        console.log('✅ TAB ACTIVATED:', targetTab);
+                    } else {
+                        console.error('❌ TAB NOT FOUND:', targetTab);
+                    }
+                    
+                    // Activer le lien d'onglet
+                    this.classList.add('nav-tab-active');
+                    
+                    // Sauvegarder l'onglet actif dans localStorage
+                    localStorage.setItem('pdf_builder_active_tab', targetTab);
+                });
+            });
+            
+            // Restaurer l'onglet actif depuis localStorage
+            const savedTab = localStorage.getItem('pdf_builder_active_tab');
+            if (savedTab) {
+                const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
+                if (savedTabLink) {
+                    savedTabLink.click();
+                }
+            }
+        }
+        
+        // Démarrer la navigation des onglets
+        setupTabNavigation();
