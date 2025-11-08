@@ -3482,9 +3482,6 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         
         // Démarrer la gestion du bouton global
         setupGlobalSaveButton();
-        
-        // Démarrer la navigation des onglets
-        setupTabNavigation();
     });
 </script>
 
