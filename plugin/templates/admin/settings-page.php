@@ -46,6 +46,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
+$canvas_settings = get_option('pdf_builder_canvas_settings', []);
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
     error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -367,6 +368,136 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_securite_nonce
     }
 }
 
+if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce'])) {
+    // Logs removed for clarity
+    if (wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_settings')) {
+        $canvas_settings_to_save = [
+            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
+            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
+            'default_canvas_unit' => sanitize_text_field($_POST['default_canvas_unit'] ?? 'px'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
+            'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
+            'container_background_color' => sanitize_text_field($_POST['container_background_color'] ?? '#f8f9fa'),
+            'container_show_transparency' => isset($_POST['container_show_transparency']),
+            'margin_top' => intval($_POST['margin_top'] ?? 28),
+            'margin_right' => intval($_POST['margin_right'] ?? 28),
+            'margin_bottom' => intval($_POST['margin_bottom'] ?? 10),
+            'margin_left' => intval($_POST['margin_left'] ?? 10),
+            'show_margins' => isset($_POST['show_margins']),
+            'show_grid' => isset($_POST['show_grid']),
+            'grid_size' => intval($_POST['grid_size'] ?? 10),
+            'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
+            'snap_to_elements' => isset($_POST['snap_to_elements']),
+            'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
+            'show_guides' => isset($_POST['show_guides']),
+            'default_zoom' => intval($_POST['default_zoom'] ?? 100),
+            'zoom_step' => intval($_POST['zoom_step'] ?? 25),
+            'min_zoom' => intval($_POST['min_zoom'] ?? 10),
+            'max_zoom' => intval($_POST['max_zoom'] ?? 500),
+            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
+            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
+            'show_resize_handles' => isset($_POST['show_resize_handles']),
+            'handle_size' => intval($_POST['handle_size'] ?? 8),
+            'handle_color' => sanitize_text_field($_POST['handle_color'] ?? '#007cba'),
+            'enable_rotation' => isset($_POST['enable_rotation']),
+            'rotation_step' => intval($_POST['rotation_step'] ?? 15),
+            'multi_select' => isset($_POST['multi_select']),
+            'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
+            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+            'compress_images' => isset($_POST['compress_images']),
+            'image_quality' => intval($_POST['image_quality'] ?? 85),
+            'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
+            'include_metadata' => isset($_POST['include_metadata']),
+            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? 'PDF Builder Pro'),
+            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
+            'auto_crop' => isset($_POST['auto_crop']),
+            'embed_fonts' => isset($_POST['embed_fonts']),
+            'optimize_for_web' => isset($_POST['optimize_for_web']),
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+            'limit_fps' => isset($_POST['limit_fps']),
+            'max_fps' => intval($_POST['max_fps'] ?? 60),
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
+            'undo_levels' => intval($_POST['undo_levels'] ?? 50),
+            'redo_levels' => intval($_POST['redo_levels'] ?? 50),
+            'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']),
+            'debug_mode' => isset($_POST['debug_mode']),
+            'show_fps' => isset($_POST['show_fps']),
+        ];
+        
+        // Sauvegarder dans les options WordPress
+        update_option('pdf_builder_canvas_settings', $canvas_settings_to_save);
+        
+        if ($is_ajax) {
+            $response = json_encode(['success' => true, 'message' => 'Paramètres Canvas enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
+        }
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
+    // Logs removed for clarity
+    if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_settings')) {
+        $template_mappings = [];
+        
+        // Récupérer tous les mappings statut -> template
+        if (isset($_POST['template_mapping']) && is_array($_POST['template_mapping'])) {
+            foreach ($_POST['template_mapping'] as $status => $template_id) {
+                if (!empty($template_id)) {
+                    $template_mappings[$status] = intval($template_id);
+                }
+            }
+        }
+        
+        // Sauvegarder les mappings dans une option dédiée
+        update_option('pdf_builder_template_mappings', $template_mappings);
+        
+        if ($is_ajax) {
+            $response = json_encode(['success' => true, 'message' => 'Assignations de templates enregistrées avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Assignations de templates enregistrées avec succès.</p></div>';
+        }
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
+if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
+    // Logs removed for clarity
+    if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
+        $developer_settings = [
+            'developer_enabled' => isset($_POST['developer_enabled']),
+            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+            'debug_php_errors' => isset($_POST['debug_php_errors']),
+            'debug_javascript' => isset($_POST['debug_javascript']),
+            'debug_ajax' => isset($_POST['debug_ajax']),
+            'debug_performance' => isset($_POST['debug_performance']),
+            'debug_database' => isset($_POST['debug_database']),
+            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['log_retention'] ?? 30),
+            'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
+        ];
+        
+        // Sauvegarder les paramètres développeur
+        update_option('pdf_builder_developer_settings', $developer_settings);
+        
+        if ($is_ajax) {
+            $response = json_encode(['success' => true, 'message' => 'Paramètres développeur enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
+        }
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -382,6 +513,9 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
 ?>  
 <script>
 // Script de définition des paramètres canvas - exécuté très tôt
+
+// Récupérer les paramètres canvas depuis les options WordPress
+<?php $canvas_settings_js = get_option('pdf_builder_canvas_settings', []); ?>
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
@@ -2292,8 +2426,9 @@ if ($is_ajax) {
             ]);
             ?>
             
-            <form method="post">
-                <?php wp_nonce_field('pdf_builder_templates', 'pdf_builder_templates_nonce'); ?>
+            <form method="post" id="templates-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_templates_nonce'); ?>
+                <input type="hidden" name="submit_templates" value="1">
                 
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Mappage des Statuts aux Templates</h3>
                 
@@ -2601,6 +2736,7 @@ if ($is_ajax) {
             
             <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
+                <input type="hidden" name="submit_developpeur" value="1">
                 
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
                 
@@ -3379,6 +3515,14 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             form = document.getElementById('pdf-form');
                         } else if (activeTab.id === 'securite') {
                             form = document.getElementById('securite-form');
+                        } else if (activeTab.id === 'canvas') {
+                            form = document.getElementById('canvas-form');
+                        } else if (activeTab.id === 'templates') {
+                            form = document.getElementById('templates-form');
+                        } else if (activeTab.id === 'maintenance') {
+                            form = document.getElementById('maintenance-form');
+                        } else if (activeTab.id === 'developpeur') {
+                            form = document.getElementById('developpeur-form');
                         } else {
                             form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
                         }
