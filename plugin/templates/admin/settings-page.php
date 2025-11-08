@@ -4029,6 +4029,560 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     console.log('🛑 ABORT CONTROLLER: Supported');
                 }
                 
+                // Wake Lock API
+                if ('wakeLock' in navigator) {
+                    console.log('☀️ WAKE LOCK API: Supported');
+                    // Test wake lock request
+                    navigator.wakeLock.request('screen').then(lock => {
+                        console.log('☀️ WAKE LOCK: Screen wake lock acquired');
+                        lock.addEventListener('release', () => {
+                            console.log('☀️ WAKE LOCK: Screen wake lock released');
+                        });
+                        // Release immediately for testing
+                        lock.release();
+                    }).catch(err => {
+                        console.log('☀️ WAKE LOCK: Request failed:', err.message);
+                    });
+                }
+                
+                // Presentation API
+                if ('presentation' in navigator) {
+                    console.log('📺 PRESENTATION API: Supported');
+                    console.log('   - Default presentation URL:', navigator.presentation.defaultRequest ? navigator.presentation.defaultRequest.url : 'none');
+                }
+                
+                // Web Share API
+                if ('share' in navigator) {
+                    console.log('📤 WEB SHARE API: Supported');
+                }
+                
+                // Web Authentication API (WebAuthn)
+                if ('credentials' in navigator && 'publicKey' in navigator.credentials) {
+                    console.log('🔐 WEB AUTHENTICATION API: Supported');
+                }
+                
+                // Web MIDI API
+                if ('requestMIDIAccess' in navigator) {
+                    console.log('🎹 WEB MIDI API: Supported');
+                }
+                
+                // Web USB API
+                if ('usb' in navigator) {
+                    console.log('🔌 WEB USB API: Supported');
+                }
+                
+                // Web Bluetooth API
+                if ('bluetooth' in navigator) {
+                    console.log('📡 WEB BLUETOOTH API: Supported');
+                }
+                
+                // Web Serial API
+                if ('serial' in navigator) {
+                    console.log('🔌 WEB SERIAL API: Supported');
+                }
+                
+                // Web HID API
+                if ('hid' in navigator) {
+                    console.log('🎮 WEB HID API: Supported');
+                }
+                
+                // Payment Request API
+                if ('PaymentRequest' in window) {
+                    console.log('💳 PAYMENT REQUEST API: Supported');
+                }
+                
+                // Credential Management API
+                if ('credentials' in navigator) {
+                    console.log('🔑 CREDENTIAL MANAGEMENT API: Supported');
+                }
+                
+                // Cross-Origin Embedder Policy (COEP) support
+                if ('crossOriginIsolated' in window) {
+                    console.log('🔒 CROSS-ORIGIN ISOLATION: Enabled (crossOriginIsolated = true)');
+                } else {
+                    console.log('🔓 CROSS-ORIGIN ISOLATION: Not enabled');
+                }
+                
+                // Screen Wake Lock API (alternative check)
+                if ('request' in navigator.wakeLock || 'wakeLock' in navigator) {
+                    console.log('🌙 SCREEN WAKE LOCK: Available');
+                }
+                
+                // WebCodecs API
+                if ('VideoEncoder' in window && 'VideoDecoder' in window) {
+                    console.log('🎬 WEBCODECS API: Supported (Video encoding/decoding)');
+                } else if ('AudioEncoder' in window && 'AudioDecoder' in window) {
+                    console.log('🎵 WEBCODECS API: Supported (Audio encoding/decoding)');
+                }
+                
+                // WebTransport API (experimental)
+                if ('WebTransport' in window) {
+                    console.log('🚀 WEBTRANSPORT API: Supported (experimental)');
+                }
+                
+                // Background Fetch API
+                if ('serviceWorker' in navigator && 'BackgroundFetchManager' in window) {
+                    console.log('📥 BACKGROUND FETCH API: Supported');
+                }
+                
+                // Content Index API
+                if ('serviceWorker' in navigator && 'ContentIndex' in window) {
+                    console.log('📄 CONTENT INDEX API: Supported');
+                }
+                
+                // WebOTP API
+                if ('OTPCredential' in window) {
+                    console.log('📱 WEBOTP API: Supported');
+                }
+                
+                // WebNFC API
+                if ('NDEFReader' in window) {
+                    console.log('📡 WEBNFC API: Supported');
+                }
+                
+                // WebXR API (VR/AR)
+                if ('xr' in navigator) {
+                    console.log('🥽 WEBXR API: Supported (VR/AR)');
+                }
+                
+                // EyeDropper API
+                if ('EyeDropper' in window) {
+                    console.log('👁️ EYEDROPPER API: Supported');
+                }
+                
+                // File System Access API
+                if ('showOpenFilePicker' in window) {
+                    console.log('📁 FILE SYSTEM ACCESS API: Supported');
+                }
+                
+                // WebAssembly support
+                if ('WebAssembly' in window) {
+                    console.log('⚙️ WEBASSEMBLY: Supported');
+                    console.log('   - WebAssembly global object available');
+                }
+                
+                // SharedArrayBuffer support (requires COEP/COOP)
+                if ('SharedArrayBuffer' in window) {
+                    console.log('🔄 SHAREDARRAYBUFFER: Supported (COEP/COOP enabled)');
+                } else {
+                    console.log('🔄 SHAREDARRAYBUFFER: Not supported (COEP/COOP required)');
+                }
+                
+                // Atomics API (for SharedArrayBuffer)
+                if ('Atomics' in window) {
+                    console.log('⚛️ ATOMICS API: Supported');
+                }
+                
+                // BigInt support
+                if (typeof BigInt !== 'undefined') {
+                    console.log('🔢 BIGINT: Supported');
+                }
+                
+                // Nullish coalescing and optional chaining support
+                try {
+                    const test = null ?? 'default';
+                    const chain = {}.?.prop;
+                    console.log('🔗 MODERN JS FEATURES: Nullish coalescing and optional chaining supported');
+                } catch (e) {
+                    console.log('🔗 MODERN JS FEATURES: Some modern syntax not supported');
+                }
+                
+                // Dynamic imports support
+                if ('import' in window) {
+                    console.log('📦 DYNAMIC IMPORTS: Supported');
+                }
+                
+                // Module scripts support
+                const script = document.createElement('script');
+                if ('noModule' in script) {
+                    console.log('📜 MODULE SCRIPTS: Supported');
+                }
+                
+                // CSS containment support
+                const testEl = document.createElement('div');
+                testEl.style.contain = 'layout';
+                if (testEl.style.contain === 'layout') {
+                    console.log('🎨 CSS CONTAINMENT: Supported');
+                }
+                
+                // CSS custom properties support
+                if (window.CSS && CSS.supports('color', 'var(--test)')) {
+                    console.log('🎨 CSS CUSTOM PROPERTIES: Supported');
+                }
+                
+                // ResizeObserver support
+                if ('ResizeObserver' in window) {
+                    console.log('📏 RESIZE OBSERVER: Supported');
+                }
+                
+                // IntersectionObserver support
+                if ('IntersectionObserver' in window) {
+                    console.log('👁️ INTERSECTION OBSERVER: Supported');
+                }
+                
+                // RequestIdleCallback support
+                if ('requestIdleCallback' in window) {
+                    console.log('⏰ REQUEST IDLE CALLBACK: Supported');
+                }
+                
+                // Page Visibility API
+                if ('visibilityState' in document) {
+                    console.log('👁️ PAGE VISIBILITY API: Supported');
+                    console.log('   - Current state:', document.visibilityState);
+                }
+                
+                // Gamepad API detailed
+                if ('getGamepads' in navigator) {
+                    console.log('🎮 GAMEPAD API: Supported');
+                    // Check for connected gamepads
+                    const gamepads = navigator.getGamepads();
+                    const connectedGamepads = gamepads.filter(gp => gp !== null);
+                    if (connectedGamepads.length > 0) {
+                        console.log('   - Connected gamepads:', connectedGamepads.length);
+                        connectedGamepads.forEach(gp => {
+                            console.log(`     • ${gp.id} (${gp.buttons.length} buttons, ${gp.axes.length} axes)`);
+                        });
+                    } else {
+                        console.log('   - No gamepads currently connected');
+                    }
+                }
+                
+                // WebRTC detailed support
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    console.log('📹 WEBRTC: Supported');
+                    // Check for additional WebRTC features
+                    if (navigator.mediaDevices.getDisplayMedia) {
+                        console.log('   - Screen sharing: Supported');
+                    }
+                    if (window.RTCPeerConnection) {
+                        console.log('   - Peer connections: Supported');
+                        // Check for data channels
+                        try {
+                            const pc = new RTCPeerConnection();
+                            if (pc.createDataChannel) {
+                                console.log('   - Data channels: Supported');
+                            }
+                            pc.close();
+                        } catch (e) {
+                            console.log('   - Data channels: Error checking support');
+                        }
+                    }
+                }
+                
+                // Web Audio API detailed
+                if ('AudioContext' in window || 'webkitAudioContext' in window) {
+                    console.log('🔊 WEB AUDIO API: Supported');
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        const audioContext = new AudioContext();
+                        console.log('   - Audio context state:', audioContext.state);
+                        console.log('   - Sample rate:', audioContext.sampleRate);
+                        audioContext.close();
+                    } catch (e) {
+                        console.log('   - Audio context creation failed');
+                    }
+                }
+                
+                // WebGL detailed support
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    console.log('🎨 WEBGL SUPPORT:', {
+                        vendor: debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Unknown',
+                        renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown',
+                        version: gl.getParameter(gl.VERSION),
+                        shadingLanguageVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+                        maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+                        extensions: gl.getSupportedExtensions().length
+                    });
+                }
+                
+                // WebGL2 support
+                const gl2 = canvas.getContext('webgl2');
+                if (gl2) {
+                    console.log('🎨 WEBGL2: Supported');
+                }
+                
+                // WebGPU support (experimental)
+                if ('gpu' in navigator) {
+                    console.log('🎮 WEBGPU: Supported (experimental)');
+                    // Try to request adapter
+                    navigator.gpu.requestAdapter().then(adapter => {
+                        if (adapter) {
+                            console.log('   - GPU adapter available');
+                            console.log('   - Adapter info:', adapter.name || 'Unknown');
+                        } else {
+                            console.log('   - No GPU adapter available');
+                        }
+                    }).catch(err => {
+                        console.log('   - GPU adapter request failed:', err.message);
+                    });
+                }
+                
+                // Performance API advanced features
+                if ('performance' in window) {
+                    console.log('📊 PERFORMANCE API: Available');
+                    
+                    // Performance Navigation Timing
+                    if (performance.timing) {
+                        console.log('   - Navigation timing: Available');
+                    }
+                    
+                    // Performance Resource Timing
+                    if (performance.getEntriesByType) {
+                        const resources = performance.getEntriesByType('resource');
+                        console.log('   - Resource timing: Available (' + resources.length + ' resources tracked)');
+                    }
+                    
+                    // Performance Memory (Chrome only)
+                    if (performance.memory) {
+                        console.log('   - Memory info: Available');
+                        console.log('     • Used JS heap:', Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) + ' MB');
+                        console.log('     • Total JS heap:', Math.round(performance.memory.totalJSHeapSize / 1024 / 1024) + ' MB');
+                        console.log('     • Heap limit:', Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024) + ' MB');
+                    }
+                    
+                    // Performance Observer
+                    if ('PerformanceObserver' in window) {
+                        console.log('   - Performance Observer: Available');
+                    }
+                    
+                    // User Timing API
+                    if (performance.mark && performance.measure) {
+                        console.log('   - User Timing API: Available');
+                    }
+                    
+                    // Navigation Timing Level 2
+                    if (performance.getEntriesByType('navigation').length > 0) {
+                        console.log('   - Navigation Timing Level 2: Available');
+                    }
+                }
+                
+                // Battery API detailed monitoring
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        console.log('🔋 BATTERY API: Detailed monitoring active');
+                        
+                        // Log current state
+                        console.log('   - Current state:', {
+                            level: Math.round(battery.level * 100) + '%',
+                            charging: battery.charging,
+                            chargingTime: battery.chargingTime,
+                            dischargingTime: battery.dischargingTime
+                        });
+                        
+                        // Enhanced event listeners
+                        battery.addEventListener('levelchange', () => {
+                            console.log('🔋 BATTERY LEVEL CHANGED:', {
+                                newLevel: Math.round(battery.level * 100) + '%',
+                                charging: battery.charging,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                        
+                        battery.addEventListener('chargingchange', () => {
+                            console.log('🔋 CHARGING STATUS CHANGED:', {
+                                charging: battery.charging,
+                                level: Math.round(battery.level * 100) + '%',
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                        
+                        battery.addEventListener('chargingtimechange', () => {
+                            console.log('🔋 CHARGING TIME CHANGED:', {
+                                chargingTime: battery.chargingTime,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                        
+                        battery.addEventListener('dischargingtimechange', () => {
+                            console.log('🔋 DISCHARGING TIME CHANGED:', {
+                                dischargingTime: battery.dischargingTime,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    });
+                }
+                
+                // Network Information API detailed
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (connection) {
+                        console.log('🌐 NETWORK INFORMATION API: Detailed monitoring active');
+                        console.log('   - Current connection:', {
+                            effectiveType: connection.effectiveType,
+                            downlink: connection.downlink,
+                            rtt: connection.rtt,
+                            saveData: connection.saveData,
+                            type: connection.type
+                        });
+                        
+                        // Listen for changes
+                        connection.addEventListener('change', () => {
+                            console.log('🌐 NETWORK CHANGED:', {
+                                effectiveType: connection.effectiveType,
+                                downlink: connection.downlink,
+                                rtt: connection.rtt,
+                                saveData: connection.saveData,
+                                type: connection.type,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    }
+                }
+                
+                // Device Memory API
+                if ('deviceMemory' in navigator) {
+                    console.log('🧠 DEVICE MEMORY API: Available');
+                    console.log('   - Device memory:', navigator.deviceMemory + ' GB');
+                }
+                
+                // Hardware Concurrency
+                if ('hardwareConcurrency' in navigator) {
+                    console.log('⚡ HARDWARE CONCURRENCY: Available');
+                    console.log('   - Logical processors:', navigator.hardwareConcurrency);
+                }
+                
+                // Cookie Store API (experimental)
+                if ('cookieStore' in window) {
+                    console.log('🍪 COOKIE STORE API: Supported (experimental)');
+                }
+                
+                // Web Locks API
+                if ('locks' in navigator) {
+                    console.log('🔒 WEB LOCKS API: Supported');
+                }
+                
+                // Web Background Sync
+                if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                    console.log('🔄 BACKGROUND SYNC: Supported');
+                }
+                
+                // Web Periodic Background Sync
+                if ('serviceWorker' in navigator && 'periodicSync' in window.ServiceWorkerRegistration.prototype) {
+                    console.log('🔄 PERIODIC BACKGROUND SYNC: Supported');
+                }
+                
+                // Web Push API
+                if ('serviceWorker' in navigator && 'PushManager' in window) {
+                    console.log('📢 WEB PUSH API: Supported');
+                }
+                
+                // Notification API
+                if ('Notification' in window) {
+                    console.log('🔔 NOTIFICATION API: Supported');
+                    console.log('   - Permission:', Notification.permission);
+                }
+                
+                // Vibration API
+                if ('vibrate' in navigator) {
+                    console.log('📳 VIBRATION API: Supported');
+                }
+                
+                // Ambient Light Sensor
+                if ('AmbientLightSensor' in window) {
+                    console.log('💡 AMBIENT LIGHT SENSOR: Supported');
+                }
+                
+                // Proximity Sensor
+                if ('ProximitySensor' in window) {
+                    console.log('📏 PROXIMITY SENSOR: Supported');
+                }
+                
+                // Magnetometer
+                if ('Magnetometer' in window) {
+                    console.log('🧲 MAGNETOMETER: Supported');
+                }
+                
+                // Gyroscope
+                if ('Gyroscope' in window) {
+                    console.log('🔄 GYROSCOPE: Supported');
+                }
+                
+                // Accelerometer
+                if ('Accelerometer' in window) {
+                    console.log('📈 ACCELEROMETER: Supported');
+                }
+                
+                // Absolute Orientation Sensor
+                if ('AbsoluteOrientationSensor' in window) {
+                    console.log('🧭 ABSOLUTE ORIENTATION SENSOR: Supported');
+                }
+                
+                // Relative Orientation Sensor
+                if ('RelativeOrientationSensor' in window) {
+                    console.log('📐 RELATIVE ORIENTATION SENSOR: Supported');
+                }
+                
+                // Geolocation Sensor (alternative to Geolocation API)
+                if ('GeolocationSensor' in window) {
+                    console.log('📍 GEOLOCATION SENSOR: Supported');
+                }
+                
+                // Web Serial API detailed
+                if ('serial' in navigator) {
+                    console.log('🔌 WEB SERIAL API: Supported');
+                    // Try to get ports (will fail without user permission)
+                    navigator.serial.getPorts().then(ports => {
+                        console.log('   - Available ports:', ports.length);
+                    }).catch(err => {
+                        console.log('   - Port enumeration requires user permission');
+                    });
+                }
+                
+                // WebHID API detailed
+                if ('hid' in navigator) {
+                    console.log('🎮 WEBHID API: Supported');
+                    // Try to get devices (will fail without user permission)
+                    navigator.hid.getDevices().then(devices => {
+                        console.log('   - Connected HID devices:', devices.length);
+                    }).catch(err => {
+                        console.log('   - Device enumeration requires user permission');
+                    });
+                }
+                
+                // WebUSB API detailed
+                if ('usb' in navigator) {
+                    console.log('🔌 WEBUSB API: Supported');
+                    // Try to get devices (will fail without user permission)
+                    navigator.usb.getDevices().then(devices => {
+                        console.log('   - Connected USB devices:', devices.length);
+                    }).catch(err => {
+                        console.log('   - Device enumeration requires user permission');
+                    });
+                }
+                
+                // Web Bluetooth API detailed
+                if ('bluetooth' in navigator) {
+                    console.log('📡 WEB BLUETOOTH API: Supported');
+                }
+                
+                // Web MIDI API detailed
+                if ('requestMIDIAccess' in navigator) {
+                    console.log('🎹 WEB MIDI API: Supported');
+                }
+                
+                // WebRTC Insertable Streams
+                if (window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype) {
+                    console.log('📹 WEBRTC INSERTABLE STREAMS: Supported');
+                }
+                
+                // WebRTC SCTP Data Channels
+                if (window.RTCPeerConnection) {
+                    try {
+                        const pc = new RTCPeerConnection();
+                        const dc = pc.createDataChannel('test');
+                        if (dc) {
+                            console.log('📡 WEBRTC SCTP DATA CHANNELS: Supported');
+                            dc.close();
+                        }
+                        pc.close();
+                    } catch (e) {
+                        console.log('📡 WEBRTC SCTP DATA CHANNELS: Not supported');
+                    }
+                }
+                
                 // Événements de sécurité
                 document.addEventListener('securitypolicyviolation', function(e) {
                     console.error('🚨 CSP VIOLATION:', {
@@ -4335,6 +4889,695 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     securityObserver.observe(document.body, {
                         childList: true,
                         subtree: true
+                    });
+                // Logs pour les événements de navigation
+                window.addEventListener('popstate', function(e) {
+                    console.log('🧭 POPSTATE:', {
+                        state: e.state,
+                        url: window.location.href,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements d'orientation
+                window.addEventListener('orientationchange', function() {
+                    console.log('📱 ORIENTATION CHANGE:', {
+                        angle: screen.orientation ? screen.orientation.angle : window.orientation,
+                        type: screen.orientation ? screen.orientation.type : 'unknown',
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de plein écran
+                document.addEventListener('fullscreenchange', function() {
+                    console.log('🖥️ FULLSCREEN CHANGE:', {
+                        isFullscreen: !!document.fullscreenElement,
+                        element: document.fullscreenElement ? document.fullscreenElement.tagName : null,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                document.addEventListener('fullscreenerror', function(e) {
+                    console.error('🖥️ FULLSCREEN ERROR:', {
+                        error: e,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de pointeur verrouillé
+                document.addEventListener('pointerlockchange', function() {
+                    console.log('🔒 POINTER LOCK CHANGE:', {
+                        isLocked: !!document.pointerLockElement,
+                        element: document.pointerLockElement ? document.pointerLockElement.tagName : null,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                document.addEventListener('pointerlockerror', function(e) {
+                    console.error('🔒 POINTER LOCK ERROR:', {
+                        error: e,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements WebGL (si canvas WebGL existe)
+                const canvases = document.querySelectorAll('canvas');
+                canvases.forEach((canvas, index) => {
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (gl) {
+                        canvas.addEventListener('webglcontextlost', function(e) {
+                            console.error('🎨 WEBGL CONTEXT LOST:', {
+                                canvasIndex: index,
+                                canvasId: canvas.id || 'unnamed',
+                                event: e,
+                                timestamp: new Date().toISOString()
+                            });
+                            e.preventDefault(); // Permettre la restauration
+                        });
+                        
+                        canvas.addEventListener('webglcontextrestored', function(e) {
+                            console.log('🎨 WEBGL CONTEXT RESTORED:', {
+                                canvasIndex: index,
+                                canvasId: canvas.id || 'unnamed',
+                                event: e,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de performance détaillés (si PerformanceObserver supporté)
+                if ('PerformanceObserver' in window) {
+                    try {
+                        // Observer les métriques de performance longues
+                        const longtaskObserver = new PerformanceObserver((list) => {
+                            const entries = list.getEntries();
+                            entries.forEach(entry => {
+                                if (entry.duration > 50) { // Seulement les tâches longues (>50ms)
+                                    console.warn('⏱️ LONG TASK DETECTED:', {
+                                        name: entry.name,
+                                        duration: entry.duration,
+                                        startTime: entry.startTime,
+                                        timestamp: new Date().toISOString()
+                                    });
+                                }
+                            });
+                        });
+                        longtaskObserver.observe({ entryTypes: ['longtask'] });
+                        console.log('⏱️ LONG TASK OBSERVER: Active (monitoring tasks >50ms)');
+                    } catch (e) {
+                        console.log('⏱️ LONG TASK OBSERVER: Not supported or failed to initialize');
+                    }
+                }
+                
+                // Logs pour les événements de réseau avancés (si disponible)
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (connection && 'addEventListener' in connection) {
+                        connection.addEventListener('change', () => {
+                            console.log('🌐 NETWORK INFO CHANGED:', {
+                                effectiveType: connection.effectiveType,
+                                downlink: connection.downlink,
+                                rtt: connection.rtt,
+                                saveData: connection.saveData,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    }
+                }
+                
+                // Logs pour les événements de batterie avancés
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        // Événements de changement de niveau détaillés
+                        let lastLevel = battery.level;
+                        battery.addEventListener('levelchange', () => {
+                            const currentLevel = battery.level;
+                            const change = currentLevel - lastLevel;
+                            console.log('🔋 BATTERY LEVEL CHANGE:', {
+                                previousLevel: Math.round(lastLevel * 100) + '%',
+                                currentLevel: Math.round(currentLevel * 100) + '%',
+                                change: Math.round(change * 100) + '%',
+                                charging: battery.charging,
+                                timestamp: new Date().toISOString()
+                            });
+                            lastLevel = currentLevel;
+                        });
+                    });
+                }
+                
+                // Logs pour les événements de stockage avec plus de détails
+                window.addEventListener('storage', function(e) {
+                    const valuePreview = e.newValue ? 
+                        (e.newValue.length > 100 ? e.newValue.substring(0, 100) + '...' : e.newValue) : 
+                        null;
+                    const oldValuePreview = e.oldValue ? 
+                        (e.oldValue.length > 100 ? e.oldValue.substring(0, 100) + '...' : e.oldValue) : 
+                        null;
+                    
+                    console.log('💾 STORAGE CHANGE:', {
+                        key: e.key,
+                        oldValue: oldValuePreview,
+                        newValue: valuePreview,
+                        storageArea: e.storageArea === localStorage ? 'localStorage' : 'sessionStorage',
+                        url: e.url,
+                        valueLength: e.newValue ? e.newValue.length : 0,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de performance de navigation détaillés
+                if (window.performance && window.performance.getEntriesByType) {
+                    window.addEventListener('load', function() {
+                        setTimeout(() => {
+                            // Logs pour les ressources chargées
+                            const resources = window.performance.getEntriesByType('resource');
+                            const slowResources = resources.filter(r => r.duration > 1000); // >1s
+                            
+                            if (slowResources.length > 0) {
+                                console.warn('🐌 SLOW RESOURCES DETECTED:', slowResources.map(r => ({
+                                    name: r.name,
+                                    duration: Math.round(r.duration),
+                                    size: r.transferSize || 'unknown',
+                                    type: r.initiatorType
+                                })));
+                            }
+                            
+                            // Logs pour les métriques de performance globales
+                            const navigation = window.performance.getEntriesByType('navigation')[0];
+                            if (navigation) {
+                                console.log('📊 NAVIGATION PERFORMANCE:', {
+                                    domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+                                    loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
+                                    totalTime: navigation.loadEventEnd - navigation.fetchStart,
+                                    dnsLookup: navigation.domainLookupEnd - navigation.domainLookupStart,
+                                    tcpConnect: navigation.connectEnd - navigation.connectStart,
+                                    serverResponse: navigation.responseEnd - navigation.requestStart,
+                                    pageProcessing: navigation.loadEventStart - navigation.responseEnd
+                                });
+                            }
+                        }, 1000);
+                    });
+                }
+                
+                // Événements de sécurité
+                document.addEventListener('securitypolicyviolation', function(e) {
+                    console.error('🚨 CSP VIOLATION:', {
+                        violatedDirective: e.violatedDirective,
+                        blockedURI: e.blockedURI,
+                        sourceFile: e.sourceFile,
+                        lineNumber: e.lineNumber,
+                        columnNumber: e.columnNumber,
+                        originalPolicy: e.originalPolicy,
+                        violatedDirective: e.violatedDirective,
+                        effectiveDirective: e.effectiveDirective,
+                        statusCode: e.statusCode
+                    });
+                });
+                
+                // Événements de sécurité supplémentaires
+                window.addEventListener('beforeunload', function(e) {
+                    console.log('🚪 WINDOW BEFORE UNLOAD - Checking for unsaved changes');
+                    const modifiedElements = document.querySelectorAll('[modified="true"]');
+                    if (modifiedElements.length > 0) {
+                        console.log('⚠️ UNSAVED CHANGES DETECTED:', modifiedElements.length, 'elements');
+                        modifiedElements.forEach(el => {
+                            console.log(`   - ${el.tagName}[${el.name || el.id}]: "${el.value}"`);
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de focus/blur au niveau fenêtre
+                window.addEventListener('focus', () => {
+                    console.log('🎯 WINDOW FOCUSED');
+                });
+                
+                window.addEventListener('blur', () => {
+                    console.log('👁️ WINDOW BLURRED');
+                });
+                
+                // Logs pour les événements de contexte (clic droit)
+                document.addEventListener('contextmenu', function(e) {
+                    console.log('📋 CONTEXT MENU:', {
+                        target: e.target.tagName,
+                        x: e.clientX,
+                        y: e.clientY,
+                        ctrlKey: e.ctrlKey,
+                        shiftKey: e.shiftKey
+                    });
+                });
+                
+                // Logs pour les événements de sélection de texte
+                document.addEventListener('selectionchange', function() {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        console.log('📝 TEXT SELECTION:', {
+                            text: selection.toString(),
+                            startContainer: range.startContainer.nodeName,
+                            endContainer: range.endContainer.nodeName,
+                            collapsed: selection.isCollapsed
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de mutation DOM avancés
+                if (window.MutationObserver) {
+                    const advancedObserver = new MutationObserver((mutations) => {
+                        mutations.forEach(mutation => {
+                            if (mutation.type === 'childList') {
+                                console.log('🔄 DOM CHILD LIST MUTATION:', {
+                                    added: mutation.addedNodes.length,
+                                    removed: mutation.removedNodes.length,
+                                    target: mutation.target.tagName,
+                                    nextSibling: mutation.nextSibling ? mutation.nextSibling.tagName : null
+                                });
+                            } else if (mutation.type === 'attributes' && !['modified', 'modified-at'].includes(mutation.attributeName)) {
+                                console.log('🔄 DOM ATTRIBUTE MUTATION:', {
+                                    attribute: mutation.attributeName,
+                                    oldValue: mutation.oldValue,
+                                    newValue: mutation.target.getAttribute(mutation.attributeName),
+                                    target: mutation.target.tagName + (mutation.target.id ? '#' + mutation.target.id : '')
+                                });
+                            }
+                        });
+                    });
+                    
+                    advancedObserver.observe(document.body, {
+                        childList: true,
+                        attributes: true,
+                        subtree: true,
+                        attributeFilter: ['class', 'style', 'id', 'name', 'value', 'checked', 'selected', 'disabled', 'hidden']
+                    });
+                // Logs pour les événements de visibilité de page
+                document.addEventListener('visibilitychange', function() {
+                    console.log(`👁️ PAGE VISIBILITY: ${document.hidden ? 'HIDDEN' : 'VISIBLE'} (${document.visibilityState})`);
+                });
+                
+                window.addEventListener('pagehide', function(e) {
+                    console.log('📄 PAGE HIDE:', {
+                        persisted: e.persisted,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                window.addEventListener('pageshow', function(e) {
+                    console.log('📄 PAGE SHOW:', {
+                        persisted: e.persisted,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de performance mémoire (si disponible)
+                if ('memory' in performance) {
+                    console.log('🧠 MEMORY INFO:', {
+                        usedJSHeapSize: performance.memory.usedJSHeapSize,
+                        totalJSHeapSize: performance.memory.totalJSHeapSize,
+                        jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+                    });
+                    
+                    // Monitor memory usage periodically
+                    setInterval(() => {
+                        console.log('🧠 MEMORY UPDATE:', {
+                            usedJSHeapSize: performance.memory.usedJSHeapSize,
+                            totalJSHeapSize: performance.memory.totalJSHeapSize,
+                            timestamp: new Date().toISOString()
+                        });
+                    }, 30000); // Every 30 seconds
+                }
+                
+                // Logs pour les événements de connexion/déconnexion plus détaillés
+                window.addEventListener('online', function() {
+                    console.log('🌐 NETWORK: Online - Connection restored');
+                    // Log network info when coming back online
+                    if ('connection' in navigator) {
+                        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                        if (connection) {
+                            setTimeout(() => {
+                                console.log('🌐 NETWORK INFO (post-online):', {
+                                    effectiveType: connection.effectiveType,
+                                    downlink: connection.downlink,
+                                    rtt: connection.rtt
+                                });
+                            }, 1000);
+                        }
+                    }
+                });
+                
+                window.addEventListener('offline', function() {
+                    console.log('🚫 NETWORK: Offline - Connection lost');
+                });
+                
+                // Logs pour les événements de batterie plus détaillés
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        // Log initial battery state
+                        console.log('🔋 INITIAL BATTERY STATE:', {
+                            charging: battery.charging,
+                            chargingTime: battery.chargingTime,
+                            dischargingTime: battery.dischargingTime,
+                            level: Math.round(battery.level * 100) + '%'
+                        });
+                        
+                        // Events already added above, but adding discharge time monitoring
+                        battery.addEventListener('chargingtimechange', () => {
+                            console.log('🔋 CHARGING TIME CHANGED:', battery.chargingTime);
+                        });
+                        
+                        battery.addEventListener('dischargingtimechange', () => {
+                            console.log('🔋 DISCHARGING TIME CHANGED:', battery.dischargingTime);
+                        });
+                    });
+                }
+                
+                // Logs pour les événements de capteurs (si disponibles)
+                if ('DeviceMotionEvent' in window) {
+                    window.addEventListener('devicemotion', function(e) {
+                        // Log only significant motion (throttle to avoid spam)
+                        if (Math.abs(e.acceleration.x) > 1 || Math.abs(e.acceleration.y) > 1 || Math.abs(e.acceleration.z) > 1) {
+                            console.log('📳 DEVICE MOTION:', {
+                                acceleration: {
+                                    x: e.acceleration.x,
+                                    y: e.acceleration.y,
+                                    z: e.acceleration.z
+                                },
+                                rotationRate: e.rotationRate,
+                                interval: e.interval
+                            });
+                        }
+                    });
+                }
+                
+                // Logs pour les événements de géolocalisation (tentatives)
+                if ('geolocation' in navigator) {
+                    // Monitor geolocation permission changes
+                    navigator.permissions.query({name:'geolocation'}).then(permission => {
+                        console.log('📍 GEOLOCATION PERMISSION:', permission.state);
+                        permission.addEventListener('change', () => {
+                            console.log('📍 GEOLOCATION PERMISSION CHANGED:', permission.state);
+                        });
+                    }).catch(err => {
+                        console.log('📍 GEOLOCATION PERMISSION QUERY FAILED:', err.message);
+                    });
+                }
+                
+                // Logs pour les événements de stockage plus détaillés
+                window.addEventListener('storage', function(e) {
+                    console.log('💾 STORAGE EVENT:', {
+                        key: e.key,
+                        oldValue: e.oldValue ? e.oldValue.substring(0, 50) + (e.oldValue.length > 50 ? '...' : '') : null,
+                        newValue: e.newValue ? e.newValue.substring(0, 50) + (e.newValue.length > 50 ? '...' : '') : null,
+                        storageArea: e.storageArea === localStorage ? 'localStorage' : 'sessionStorage',
+                        url: e.url
+                    });
+                });
+                
+                // Logs pour les événements de performance de navigation détaillés
+                if (window.performance && window.performance.timing) {
+                    window.addEventListener('load', function() {
+                        setTimeout(() => {
+                            const timing = window.performance.timing;
+                            const navigation = window.performance.navigation;
+                            
+                            console.log('⏱️ DETAILED PAGE LOAD PERFORMANCE:', {
+                                navigationStart: timing.navigationStart,
+                                unloadEventStart: timing.unloadEventStart,
+                                unloadEventEnd: timing.unloadEventEnd,
+                                redirectStart: timing.redirectStart,
+                                redirectEnd: timing.redirectEnd,
+                                fetchStart: timing.fetchStart,
+                                domainLookupStart: timing.domainLookupStart,
+                                domainLookupEnd: timing.domainLookupEnd,
+                                connectStart: timing.connectStart,
+                                connectEnd: timing.connectEnd,
+                                secureConnectionStart: timing.secureConnectionStart,
+                                requestStart: timing.requestStart,
+                                responseStart: timing.responseStart,
+                                responseEnd: timing.responseEnd,
+                                domLoading: timing.domLoading,
+                                domInteractive: timing.domInteractive,
+                                domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                                domComplete: timing.domComplete,
+                                loadEventStart: timing.loadEventStart,
+                                loadEventEnd: timing.loadEventEnd,
+                                navigationType: navigation.type === 0 ? 'NAVIGATE' : navigation.type === 1 ? 'RELOAD' : 'BACK_FORWARD',
+                                redirectCount: navigation.redirectCount
+                            });
+                        }, 0);
+                    });
+                }
+                
+                // Logs pour les événements de sécurité supplémentaires
+                document.addEventListener('securitypolicyviolation', function(e) {
+                    console.error('🚨 CSP VIOLATION:', {
+                        violatedDirective: e.violatedDirective,
+                        blockedURI: e.blockedURI,
+                        sourceFile: e.sourceFile,
+                        lineNumber: e.lineNumber,
+                        columnNumber: e.columnNumber,
+                        originalPolicy: e.originalPolicy,
+                        violatedDirective: e.violatedDirective,
+                        effectiveDirective: e.effectiveDirective,
+                        statusCode: e.statusCode
+                    });
+                });
+                
+                // Logs pour les événements de console redéfinis (améliorés)
+                const originalWarn = console.warn;
+                const originalError = console.error;
+                
+                console.warn = function(...args) {
+                    originalWarn.apply(console, ['🟡 ENHANCED WARNING:'].concat(args));
+                    // Also log to our custom system if needed
+                    originalWarn.apply(console, args);
+                };
+                
+                console.error = function(...args) {
+                    originalError.apply(console, ['🔴 ENHANCED ERROR:'].concat(args));
+                    // Also log to our custom system if needed
+                    originalError.apply(console, args);
+                };
+                
+                // Logs pour les événements de mutation DOM avancés (complément)
+                if (window.MutationObserver) {
+                    const securityObserver = new MutationObserver((mutations) => {
+                        mutations.forEach(mutation => {
+                            // Monitor for potentially suspicious DOM changes
+                            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                                const suspiciousNodes = Array.from(mutation.addedNodes).filter(node => {
+                                    return node.nodeType === Node.ELEMENT_NODE && 
+                                           (node.tagName === 'SCRIPT' || node.tagName === 'IFRAME' || 
+                                            node.tagName === 'OBJECT' || node.tagName === 'EMBED');
+                                });
+                                
+                                if (suspiciousNodes.length > 0) {
+                                    console.warn('🚨 SUSPICIOUS DOM ADDITION:', suspiciousNodes.map(node => ({
+                                        tagName: node.tagName,
+                                        src: node.src || node.data,
+                                        innerHTML: node.innerHTML ? node.innerHTML.substring(0, 100) : null
+                                    })));
+                                }
+                            }
+                        });
+                    });
+                    
+                    securityObserver.observe(document.head, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    securityObserver.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                // Logs pour les événements de navigation
+                window.addEventListener('popstate', function(e) {
+                    console.log('🧭 POPSTATE:', {
+                        state: e.state,
+                        url: window.location.href,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements d'orientation
+                window.addEventListener('orientationchange', function() {
+                    console.log('📱 ORIENTATION CHANGE:', {
+                        angle: screen.orientation ? screen.orientation.angle : window.orientation,
+                        type: screen.orientation ? screen.orientation.type : 'unknown',
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de plein écran
+                document.addEventListener('fullscreenchange', function() {
+                    console.log('🖥️ FULLSCREEN CHANGE:', {
+                        isFullscreen: !!document.fullscreenElement,
+                        element: document.fullscreenElement ? document.fullscreenElement.tagName : null,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                document.addEventListener('fullscreenerror', function(e) {
+                    console.error('🖥️ FULLSCREEN ERROR:', {
+                        error: e,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de pointeur verrouillé
+                document.addEventListener('pointerlockchange', function() {
+                    console.log('🔒 POINTER LOCK CHANGE:', {
+                        isLocked: !!document.pointerLockElement,
+                        element: document.pointerLockElement ? document.pointerLockElement.tagName : null,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                document.addEventListener('pointerlockerror', function(e) {
+                    console.error('🔒 POINTER LOCK ERROR:', {
+                        error: e,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements WebGL (si canvas WebGL existe)
+                const canvases = document.querySelectorAll('canvas');
+                canvases.forEach((canvas, index) => {
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (gl) {
+                        canvas.addEventListener('webglcontextlost', function(e) {
+                            console.error('🎨 WEBGL CONTEXT LOST:', {
+                                canvasIndex: index,
+                                canvasId: canvas.id || 'unnamed',
+                                event: e,
+                                timestamp: new Date().toISOString()
+                            });
+                            e.preventDefault(); // Permettre la restauration
+                        });
+                        
+                        canvas.addEventListener('webglcontextrestored', function(e) {
+                            console.log('🎨 WEBGL CONTEXT RESTORED:', {
+                                canvasIndex: index,
+                                canvasId: canvas.id || 'unnamed',
+                                event: e,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    }
+                });
+                
+                // Logs pour les événements de performance détaillés (si PerformanceObserver supporté)
+                if ('PerformanceObserver' in window) {
+                    try {
+                        // Observer les métriques de performance longues
+                        const longtaskObserver = new PerformanceObserver((list) => {
+                            const entries = list.getEntries();
+                            entries.forEach(entry => {
+                                if (entry.duration > 50) { // Seulement les tâches longues (>50ms)
+                                    console.warn('⏱️ LONG TASK DETECTED:', {
+                                        name: entry.name,
+                                        duration: entry.duration,
+                                        startTime: entry.startTime,
+                                        timestamp: new Date().toISOString()
+                                    });
+                                }
+                            });
+                        });
+                        longtaskObserver.observe({ entryTypes: ['longtask'] });
+                        console.log('⏱️ LONG TASK OBSERVER: Active (monitoring tasks >50ms)');
+                    } catch (e) {
+                        console.log('⏱️ LONG TASK OBSERVER: Not supported or failed to initialize');
+                    }
+                }
+                
+                // Logs pour les événements de réseau avancés (si disponible)
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (connection && 'addEventListener' in connection) {
+                        connection.addEventListener('change', () => {
+                            console.log('🌐 NETWORK INFO CHANGED:', {
+                                effectiveType: connection.effectiveType,
+                                downlink: connection.downlink,
+                                rtt: connection.rtt,
+                                saveData: connection.saveData,
+                                timestamp: new Date().toISOString()
+                            });
+                        });
+                    }
+                }
+                
+                // Logs pour les événements de batterie avancés
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        // Événements de changement de niveau détaillés
+                        let lastLevel = battery.level;
+                        battery.addEventListener('levelchange', () => {
+                            const currentLevel = battery.level;
+                            const change = currentLevel - lastLevel;
+                            console.log('🔋 BATTERY LEVEL CHANGE:', {
+                                previousLevel: Math.round(lastLevel * 100) + '%',
+                                currentLevel: Math.round(currentLevel * 100) + '%',
+                                change: Math.round(change * 100) + '%',
+                                charging: battery.charging,
+                                timestamp: new Date().toISOString()
+                            });
+                            lastLevel = currentLevel;
+                        });
+                    });
+                }
+                
+                // Logs pour les événements de stockage avec plus de détails
+                window.addEventListener('storage', function(e) {
+                    const valuePreview = e.newValue ? 
+                        (e.newValue.length > 100 ? e.newValue.substring(0, 100) + '...' : e.newValue) : 
+                        null;
+                    const oldValuePreview = e.oldValue ? 
+                        (e.oldValue.length > 100 ? e.oldValue.substring(0, 100) + '...' : e.oldValue) : 
+                        null;
+                    
+                    console.log('💾 STORAGE CHANGE:', {
+                        key: e.key,
+                        oldValue: oldValuePreview,
+                        newValue: valuePreview,
+                        storageArea: e.storageArea === localStorage ? 'localStorage' : 'sessionStorage',
+                        url: e.url,
+                        valueLength: e.newValue ? e.newValue.length : 0,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                
+                // Logs pour les événements de performance de navigation détaillés
+                if (window.performance && window.performance.getEntriesByType) {
+                    window.addEventListener('load', function() {
+                        setTimeout(() => {
+                            // Logs pour les ressources chargées
+                            const resources = window.performance.getEntriesByType('resource');
+                            const slowResources = resources.filter(r => r.duration > 1000); // >1s
+                            
+                            if (slowResources.length > 0) {
+                                console.warn('🐌 SLOW RESOURCES DETECTED:', slowResources.map(r => ({
+                                    name: r.name,
+                                    duration: Math.round(r.duration),
+                                    size: r.transferSize || 'unknown',
+                                    type: r.initiatorType
+                                })));
+                            }
+                            
+                            // Logs pour les métriques de performance globales
+                            const navigation = window.performance.getEntriesByType('navigation')[0];
+                            if (navigation) {
+                                console.log('📊 NAVIGATION PERFORMANCE:', {
+                                    domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+                                    loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
+                                    totalTime: navigation.loadEventEnd - navigation.fetchStart,
+                                    dnsLookup: navigation.domainLookupEnd - navigation.domainLookupStart,
+                                    tcpConnect: navigation.connectEnd - navigation.connectStart,
+                                    serverResponse: navigation.responseEnd - navigation.requestStart,
+                                    pageProcessing: navigation.loadEventStart - navigation.responseEnd
+                                });
+                            }
+                        }, 1000);
                     });
                 }
                 
