@@ -3775,4 +3775,22 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         
         // Démarrer la navigation des onglets
         setupTabNavigation();
+        
+        // Gestion du bouton toggle password
+        const togglePasswordBtn = document.getElementById('toggle_password');
+        const passwordInput = document.getElementById('developer_password');
+        
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.innerHTML = '🙈 Masquer';
+                    console.log('🔐 Password field shown');
+                } else {
+                    passwordInput.type = 'password';
+                    this.innerHTML = '👁️ Afficher';
+                    console.log('🔐 Password field hidden');
+                }
+            });
+        }
 </script>
