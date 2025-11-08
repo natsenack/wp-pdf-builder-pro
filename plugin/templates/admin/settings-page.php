@@ -3292,6 +3292,53 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             }
                         }, 100);
                         
+                        // Synchroniser les valeurs des champs après la sauvegarde
+                        setTimeout(() => {
+                            console.log('🔄 Synchronizing field values after save...');
+                            
+                            // Mettre à jour les checkboxes avec les nouvelles valeurs
+                            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                            checkboxes.forEach(checkbox => {
+                                const fieldName = checkbox.name;
+                                if (fieldName && data.data && data.data[fieldName] !== undefined) {
+                                    checkbox.checked = data.data[fieldName] === '1' || data.data[fieldName] === true;
+                                    console.log('🔄 Checkbox updated:', fieldName, '=', checkbox.checked);
+                                }
+                            });
+                            
+                            // Mettre à jour les inputs texte, email, password, number
+                            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="range"], select, textarea');
+                            inputs.forEach(input => {
+                                const fieldName = input.name;
+                                if (fieldName && data.data && data.data[fieldName] !== undefined) {
+                                    input.value = data.data[fieldName];
+                                    console.log('🔄 Input updated:', fieldName, '=', input.value);
+                                }
+                            });
+                            
+                            console.log('✅ Field values synchronized');
+                        }, 300);
+                        
+                        // Synchroniser l'apparence des toggles après la sauvegarde
+                        setTimeout(() => {
+                            console.log('🔄 Synchronizing toggle appearances after save...');
+                            const toggleSwitches = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                            toggleSwitches.forEach(function(toggle) {
+                                // Forcer la mise à jour de l'apparence visuelle
+                                const label = toggle.parentElement.nextElementSibling;
+                                if (label && label.classList.contains('toggle-label')) {
+                                    if (toggle.checked) {
+                                        label.style.fontWeight = 'bold';
+                                        label.style.color = '#2196F3';
+                                    } else {
+                                        label.style.fontWeight = 'normal';
+                                        label.style.color = '#333';
+                                    }
+                                }
+                                console.log('🔄 Toggle synchronized:', toggle.id, 'checked:', toggle.checked);
+                            });
+                        }, 200);
+                        
                         // Remettre à l'état normal après 2 secondes
                         setTimeout(() => {
                             this.disabled = false;
