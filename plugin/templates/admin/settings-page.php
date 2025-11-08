@@ -3322,8 +3322,16 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                 saveStatus.style.color = '#007cba';
                             }
                             
-                            // Soumettre le formulaire
-                            form.submit();
+                            // Soumettre le formulaire de manière sécurisée
+                            if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                            } else {
+                                // Fallback pour les navigateurs plus anciens
+                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                                if (form.dispatchEvent(submitEvent)) {
+                                    form.submit();
+                                }
+                            }
                         } else {
                             console.error('❌ No form found in active tab:', activeTab.id);
                             if (saveStatus) {
