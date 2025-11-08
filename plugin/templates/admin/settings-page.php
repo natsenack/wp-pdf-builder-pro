@@ -11,21 +11,12 @@ if (!defined('ABSPATH')) {
 // Function to send AJAX response
 function send_ajax_response($success, $message = '', $data = []) {
     error_log('AJAX: send_ajax_response called with success=' . ($success ? 'true' : 'false') . ', message=' . $message);
-    if (!headers_sent()) {
-        header('Content-Type: application/json');
-        header('Cache-Control: no-cache, must-revalidate');
-        error_log('AJAX: Headers sent successfully');
-    } else {
-        error_log('AJAX: Headers already sent!');
-    }
     $response = json_encode(array_merge([
         'success' => $success,
         'message' => $message
     ], $data));
     error_log('AJAX: JSON response: ' . $response);
-    echo $response;
-    error_log('AJAX: JSON echoed, about to die');
-    wp_die('', '', array('response' => 200));
+    wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
 }
 
 // Check if this is an AJAX request
