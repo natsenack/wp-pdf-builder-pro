@@ -874,52 +874,56 @@ if ($is_ajax) {
             
             <!-- Activation/Désactivation -->
             <?php if (!$is_premium): ?>
-            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e9ecef; border-radius: 8px; padding: 30px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-                    <div style="font-size: 40px;">🔓</div>
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #007cba; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(0,123,255,0.2);">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                    <div style="font-size: 50px; animation: pulse 2s infinite;">🔓</div>
                     <div>
-                        <h3 style="margin: 0 0 5px 0; color: #007cba;">Activer une Licence Premium</h3>
-                        <p style="margin: 0; color: #666;">Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.</p>
+                        <h3 style="margin: 0 0 8px 0; color: #004085; font-size: 26px; font-weight: 700;">Activer une Licence Premium</h3>
+                        <p style="margin: 0; color: #004085; font-size: 15px; line-height: 1.5;">Entrez votre cle de licence pour deverrouiller toutes les fonctionnalites premium et acces exclusifs.</p>
                     </div>
+                </div>
+                
+                <div style="background: rgba(0,123,255,0.1); border-left: 4px solid #007cba; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #004085; font-size: 14px;">
+                    Vous n'avez pas de licence ? <strong>Contactez-nous ou consultez nos plans tarifaires.</strong>
                 </div>
                 
                 <form method="post">
                     <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                    <table class="form-table">
+                    <table class="form-table" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                         <tr>
-                            <th scope="row"><label for="license_key">Clé de licence</label></th>
+                            <th scope="row"><label for="license_key" style="color: #004085; font-weight: 700;">Cle de licence</label></th>
                             <td>
                                 <input type="text" id="license_key" name="license_key" class="regular-text" 
-                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px; border: 2px solid #e9ecef; padding: 10px;">
-                                <p class="description">Vous pouvez trouver votre clé dans votre compte client.</p>
+                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px; border: 2px solid #007cba; padding: 12px; border-radius: 6px; font-size: 15px; background: white;">
+                                <p class="description" style="color: #666; margin-top: 8px;">Vous pouvez trouver votre cle dans votre compte client.</p>
                             </td>
                         </tr>
                     </table>
-                    <p class="submit">
-                        <button type="submit" name="activate_license" class="button button-primary" style="background-color: #007cba; border-color: #007cba; font-weight: bold; padding: 10px 20px;">
-                            ✅ Activer la licence
+                    <p class="submit" style="margin-top: 20px;">
+                        <button type="submit" name="activate_license" class="button button-primary" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); border: none; color: white; font-weight: bold; padding: 12px 30px; border-radius: 6px; font-size: 16px; box-shadow: 0 3px 6px rgba(0,123,255,0.3); cursor: pointer;">
+                            Activer la licence
                         </button>
                     </p>
                 </form>
             </div>
             <?php else: ?>
-            <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 8px; padding: 30px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(40,167,69,0.15);">
-                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-                    <div style="font-size: 40px;">🔐</div>
+            <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                    <div style="font-size: 50px;">🔐</div>
                     <div>
-                        <h3 style="margin: 0 0 5px 0; color: #155724;">Gestion de la Licence Premium</h3>
-                        <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gérer votre licence ci-dessous.</p>
+                        <h3 style="margin: 0 0 8px 0; color: #155724; font-size: 26px; font-weight: 700;">Gestion de la Licence Premium</h3>
+                        <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gerer votre licence ci-dessous.</p>
                     </div>
                 </div>
                 
                 <!-- Avertissements et informations -->
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 15px; margin-bottom: 15px; color: #856404;">
-                    <strong style="font-size: 16px;">⚠️ À savoir :</strong>
-                    <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #856404;">
-                        <li>Votre licence reste <strong>active pendant un an</strong> à partir de son activation</li>
-                        <li>Même après désactivation, la licence reste valide jusqu'à son expiration</li>
-                        <li><strong>Désactivez</strong> pour utiliser la même clé sur un autre site WordPress</li>
-                        <li>Une clé ne peut être active que sur <strong>un seul site à la fois</strong></li>
+                <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
+                    <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Savoir :</strong>
+                    <ul style="margin: 12px 0 0 0; padding-left: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                        <li style="margin: 6px 0;">Votre licence reste <strong>active pendant un an</strong> a partir de son activation</li>
+                        <li style="margin: 6px 0;">Meme apres desactivation, la licence reste valide jusqu'a son expiration</li>
+                        <li style="margin: 6px 0;"><strong>Desactivez</strong> pour utiliser la meme cle sur un autre site WordPress</li>
+                        <li style="margin: 6px 0;">Une cle ne peut etre active que sur <strong>un seul site a la fois</strong></li>
                     </ul>
                 </div>
                 
@@ -933,25 +937,25 @@ if ($is_ajax) {
                     </p>
                 </form>
                 
-                <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); border-left: 5px solid #17a2b8; border-radius: 6px; padding: 20px; margin-top: 20px; color: #0c5460; box-shadow: 0 2px 4px rgba(23,162,184,0.1);">
-                    <strong style="font-size: 16px; display: flex; align-items: center; gap: 8px;">Conseil :</strong>
-                    <p style="margin: 12px 0 0 0; line-height: 1.6;">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
+                <div style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
+                    <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
+                    <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
                 </div>
             </div>
             
             <?php endif; ?>
             
             <!-- Informations utiles -->
-            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%), url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2317a2b8%22 opacity=%220.05%22/></svg>'); border-left: 5px solid #17a2b8; border-radius: 8px; padding: 25px; margin-bottom: 25px; color: #0c5460; box-shadow: 0 3px 6px rgba(23,162,184,0.15);">
-                <h4 style="margin: 0 0 15px 0; color: #0c5460; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
-                <ul style="margin: 0; padding-left: 20px; color: #0c5460; list-style-type: none;">
-                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(12,84,96,0.1); line-height: 1.6;"><strong>Site actuel :</strong> <code style="background: rgba(0,123,255,0.1); padding: 2px 6px; border-radius: 3px; font-family: monospace;"><?php echo esc_html(home_url()); ?></code></li>
-                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(12,84,96,0.1); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: <?php echo $test_mode_enabled ? 'linear-gradient(135deg, #ffc107 0%, #ffb700 100%)' : ($is_premium ? 'linear-gradient(135deg, #28a745 0%, #1e8449 100%)' : 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)'); ?>; color: #fff; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo $test_mode_enabled ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
+            <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
+                <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #fff; list-style-type: none;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Site actuel :</strong> <code style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 3px; font-family: monospace; color: #fff;"><?php echo esc_html(home_url()); ?></code></li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo $test_mode_enabled ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
                     <?php if ($is_premium): ?>
-                    <li><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank">Contact Support Premium</a></li>
-                    <li><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank">Lire la Documentation</a></li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline;">Contact Support Premium</a></li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline;">Lire la Documentation</a></li>
                     <?php endif; ?>
-                    <li><strong>Version du plugin :</strong> <?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></li>
+                    <li style="padding: 10px 0;"><strong>Version du plugin :</strong> <?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></li>
                 </ul>
             </div>
             
@@ -3315,6 +3319,17 @@ if ($is_ajax) {
         </div>
 
 <style>
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+    }
+    
     .toggle-switch {
         position: relative;
         display: inline-block;
