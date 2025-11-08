@@ -4320,7 +4320,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     });
                 }
                 
-                // Performance API advanced features
+                // Performance API advanced features - COMMENTED OUT FOR DEBUG
+                /*
                 if ('performance' in window) {
                     // console.log('📊 PERFORMANCE API: Available');
                     
@@ -4358,6 +4359,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         console.log('   - Navigation Timing Level 2: Available');
                     }
                 }
+                */
                 
                 // Battery API detailed monitoring
                 if ('getBattery' in navigator) {
