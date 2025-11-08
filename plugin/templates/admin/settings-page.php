@@ -1344,7 +1344,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="image_quality">Qualité des Images (%)</label></th>
                     <td>
                         <input type="range" id="image_quality" name="image_quality" value="<?php echo intval($settings['image_quality'] ?? 85); ?>" 
-                               min="30" max="100" step="5" style="width: 300px;" />
+                               min="30" max="100" step="5" style="width: 300px;" oninput="document.getElementById('image_quality_value').textContent = this.value + '%';" />
                         <span id="image_quality_value" style="margin-left: 10px; font-weight: bold;">
                             <?php echo intval($settings['image_quality'] ?? 85); ?>%
                         </span>
