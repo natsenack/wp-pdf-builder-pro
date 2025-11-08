@@ -3276,14 +3276,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 .then(response => response.json()) // Attendre du JSON au lieu de text
                 .then(data => {
                     console.log('✅ AJAX response received:', data);
-
-                    if (data.success) {
-                        console.log('✅ AJAX SAVE SUCCESS for tab:', currentTab);
-                        console.log('📦 data.data exists:', !!data.data);
-                        if (data.data) {
-                            console.log('📦 data.data keys:', Object.keys(data.data));
-                            console.log('📦 data.data sample values:', data.data);
-                        }
+                    console.log('🔍 Full response structure:', JSON.stringify(data, null, 2));
+                    console.log('🔍 Response keys:', Object.keys(data));
+                    console.log('🔍 data.success:', data.success);
+                    console.log('🔍 data.message:', data.message);
+                    console.log('� data.data exists:', !!data.data);
+                    if (data.data) {
+                        console.log('� data.data type:', typeof data.data);
+                        console.log('� data.data keys:', Object.keys(data.data));
+                    }
 
                         // Succès
                         if (saveStatus) {
