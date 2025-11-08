@@ -130,6 +130,63 @@ class PDF_Builder_Canvas_Manager {
     }
 
     /**
+     * Filtrer les paramètres canvas depuis les données POST
+     */
+    public function filter_canvas_parameters($post_data) {
+        $canvas_fields = [
+            // Dimensions
+            'default_canvas_width', 'default_canvas_height',
+            
+            // Couleurs
+            'canvas_background_color', 'container_background_color',
+            
+            // Marges
+            'show_margins', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
+            
+            // Grille
+            'show_grid', 'grid_size', 'grid_color', 'snap_to_grid', 'snap_to_elements', 
+            'snap_tolerance', 'show_guides',
+            
+            // Zoom
+            'default_zoom', 'zoom_step', 'min_zoom', 'max_zoom', 'zoom_with_wheel', 'pan_with_mouse',
+            
+            // Manipulation
+            'show_resize_handles', 'handle_size', 'enable_rotation', 'rotation_step',
+            'multi_select', 'copy_paste_enabled',
+            
+            // Undo/Redo
+            'undo_levels', 'redo_levels', 'auto_save_versions',
+            
+            // Export
+            'export_quality', 'export_format', 'compress_images', 'image_quality',
+            
+            // Performance
+            'enable_hardware_acceleration', 'auto_save_enabled', 'auto_save_interval',
+            
+            // Raccourcis
+            'enable_keyboard_shortcuts'
+        ];
+        
+        $filtered = [];
+        foreach ($canvas_fields as $field) {
+            if (isset($post_data[$field])) {
+                // Convertir les valeurs des checkboxes
+                if (in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
+                                     'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
+                                     'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images',
+                                     'enable_hardware_acceleration', 'auto_save_enabled', 'enable_keyboard_shortcuts'])) {
+                    $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
+                } else {
+                    // Pour les autres champs, utiliser la valeur telle quelle
+                    $filtered[$field] = $post_data[$field];
+                }
+            }
+        }
+        
+        return $filtered;
+    }
+
+    /**
      * Sauvegarder les paramètres canvas
      */
     public function save_canvas_settings($settings) {

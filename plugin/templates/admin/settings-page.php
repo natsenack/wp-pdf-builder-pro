@@ -173,7 +173,9 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce']
         // Utiliser le Canvas Manager pour sauvegarder les paramètres
         if (class_exists('PDF_Builder_Canvas_Manager')) {
             $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-            $canvas_manager->save_canvas_settings($_POST);
+            // Filtrer les paramètres canvas avant sauvegarde
+            $canvas_params = $canvas_manager->filter_canvas_parameters($_POST);
+            $canvas_manager->save_canvas_settings($canvas_params);
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur: Canvas Manager non disponible.</p></div>';
