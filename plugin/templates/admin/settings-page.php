@@ -3148,7 +3148,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         logAllFormElements('PAGE_LOAD');
         
         // Appeler la fonction de peuplement des champs canvas au chargement de la page
-        populateCanvasFields();
+        // populateCanvasFields(); // Commenté temporairement - fonction non définie
     });
 </script>
                     opacity: computedStyle.opacity,
