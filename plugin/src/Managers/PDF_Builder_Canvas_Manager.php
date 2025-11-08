@@ -119,9 +119,20 @@ class PDF_Builder_Canvas_Manager {
         // Extraire seulement les paramètres canvas
         $canvas_settings = [];
         $canvas_keys = array_keys($this->default_settings);
+        
+        // Liste des champs boolean
+        $boolean_fields = ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 
+                          'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
+                          'enable_rotation', 'multi_select', 'copy_paste_enabled'];
+        
         foreach ($canvas_keys as $key) {
             if (isset($all_settings[$key])) {
-                $canvas_settings[$key] = $all_settings[$key];
+                $value = $all_settings[$key];
+                // Convertir les valeurs vides en false pour les champs boolean
+                if (in_array($key, $boolean_fields) && ($value === '' || $value === null)) {
+                    $value = false;
+                }
+                $canvas_settings[$key] = $value;
             }
         }
 
