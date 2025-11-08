@@ -3362,17 +3362,21 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         // Gestion de la navigation des onglets
         function setupTabNavigation() {
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+            console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
             
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     
                     const targetTab = this.getAttribute('data-tab');
-                    console.log('📑 SWITCHING TO TAB:', targetTab);
+                    console.log('📑 CLICKED TAB:', targetTab);
                     
                     // Masquer tous les onglets
-                    document.querySelectorAll('.tab-content').forEach(tab => {
+                    const allTabs = document.querySelectorAll('.tab-content');
+                    console.log('📑 HIDING ALL TABS:', allTabs.length);
+                    allTabs.forEach(tab => {
                         tab.classList.add('hidden-tab');
+                        console.log('📑 HIDING TAB:', tab.id);
                     });
                     
                     // Désactiver tous les liens d'onglets
@@ -3382,11 +3386,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     
                     // Afficher l'onglet cible
                     const targetTabContent = document.getElementById(targetTab);
+                    console.log('📑 TARGET TAB ELEMENT:', targetTabContent);
                     if (targetTabContent) {
                         targetTabContent.classList.remove('hidden-tab');
                         console.log('✅ TAB ACTIVATED:', targetTab);
                     } else {
                         console.error('❌ TAB NOT FOUND:', targetTab);
+                        // Lister tous les éléments avec class tab-content
+                        const allTabContents = document.querySelectorAll('.tab-content');
+                        console.log('❌ AVAILABLE TABS:', Array.from(allTabContents).map(tab => tab.id));
                     }
                     
                     // Activer le lien d'onglet
@@ -3402,6 +3410,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             if (savedTab) {
                 const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
                 if (savedTabLink) {
+                    console.log('📑 RESTORING SAVED TAB:', savedTab);
                     savedTabLink.click();
                 }
             }
