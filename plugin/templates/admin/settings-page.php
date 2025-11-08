@@ -2442,6 +2442,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 <tr>
                     <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
                     <td>
+                        <!-- Champ username caché pour l'accessibilité -->
+                        <input type="text" autocomplete="username" style="display: none;" />
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <input type="password" id="developer_password" name="developer_password" 
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
