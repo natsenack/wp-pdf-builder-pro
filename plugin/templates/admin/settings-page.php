@@ -49,6 +49,10 @@ $notices = [];
 $settings = get_option('pdf_builder_settings', []);
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
+    error_log('ALL POST data received: ' . print_r($_POST, true));
+    error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
+}
+if (!empty($_POST)) {
     // Logs removed for clarity
 } else {
     // Logs removed for clarity
@@ -183,6 +187,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         
         update_option('pdf_builder_settings', $settings);
         if ($is_ajax) {
+            error_log('AJAX: About to send success response for general settings');
             send_ajax_response(true, 'Paramètres généraux enregistrés avec succès.');
         } else {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
