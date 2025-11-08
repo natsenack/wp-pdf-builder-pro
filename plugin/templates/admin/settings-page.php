@@ -2420,9 +2420,12 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
-            
-            <table class="form-table">
+            <form method="post" id="developpeur-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
+                
+                <table class="form-table">
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
                     <td>
@@ -2768,6 +2771,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             <p class="submit">
                 <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
             </p>
+            </form>
         </div>
     </form>
 
@@ -3146,7 +3150,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 // Collecter les données du formulaire
                 const currentTab = document.querySelector('.nav-tab-active')?.getAttribute('data-tab') || 'general';
                 
-                // Exclure l'onglet roles et templates du système AJAX (ils utilisent POST normal)
+                // Exclure certains onglets du système AJAX (ils utilisent POST normal)
                 if (currentTab === 'roles') {
                     // Logs removed for clarity
                     alert('⚠️ L\'onglet Rôles utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Rôles" dans l\'onglet.');
@@ -3158,6 +3162,14 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if (currentTab === 'templates') {
                     // Logs removed for clarity
                     alert('⚠️ L\'onglet Templates utilise un système de sauvegarde séparé. Utilisez le bouton "Sauvegarder les Assignations" dans l\'onglet.');
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.innerHTML = '💾 Enregistrer';
+                    return;
+                }
+                if (currentTab === 'developpeur') {
+                    // Logs removed for clarity
+                    alert('⚠️ L\'onglet Développeur utilise un système de sauvegarde séparé. Utilisez le bouton "Enregistrer les paramètres développeur" dans l\'onglet.');
                     // Réactiver le bouton
                     this.disabled = false;
                     this.innerHTML = '💾 Enregistrer';
