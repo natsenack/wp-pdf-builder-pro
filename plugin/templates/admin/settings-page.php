@@ -24,6 +24,11 @@ function send_ajax_response($success, $message = '', $data = []) {
 // Check if this is an AJAX request
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
+// Debug: Log POST data for AJAX requests
+if ($is_ajax && !empty($_POST)) {
+    error_log('AJAX POST data: ' . print_r($_POST, true));
+}
+
 // For AJAX requests, only process POST data and exit - don't show HTML
 if ($is_ajax && !empty($_POST)) {
     // Process the request and exit - the processing code below will handle it
@@ -51,6 +56,7 @@ if (!empty($_POST)) {
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    if ($is_ajax) error_log('AJAX: Matched condition 1 - submit + pdf_builder_settings_nonce');
     if (defined('WP_DEBUG') && WP_DEBUG) {
         // Logs removed for clarity
     }
@@ -160,6 +166,7 @@ if (isset($_POST['clear_cache']) &&
 
 // Handle individual tab submissions
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
+    if ($is_ajax) error_log('AJAX: Matched condition 2 - submit + pdf_builder_general_nonce');
     if (wp_verify_nonce($_POST['pdf_builder_general_nonce'], 'pdf_builder_settings')) {
         $general_settings = [
             'cache_enabled' => isset($_POST['cache_enabled']),
