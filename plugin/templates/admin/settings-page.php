@@ -3586,61 +3586,17 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             });
         }
 
-        // Gestion du test du système de cache - TEMPORAIREMENT SUPPRIMÉ POUR DIAGNOSTIC
-        /*
+        // Gestion du test du système de cache - VERSION SIMPLIFIÉE
         document.addEventListener('DOMContentLoaded', function() {
             const testCacheBtn = document.getElementById('test-cache-btn');
             const cacheTestResults = document.getElementById('cache-test-results');
             const cacheTestOutput = document.getElementById('cache-test-output');
 
-            if (testCacheBtn && cacheTestResults && cacheTestOutput) {
+            if (testCacheBtn) {
                 testCacheBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-
-                    // Désactiver le bouton pendant le test
-                    testCacheBtn.disabled = true;
-                    testCacheBtn.innerHTML = '🔄 Test en cours...';
-                    cacheTestResults.innerHTML = '<span style="color: #007cba;">Test en cours...</span>';
-
-                    // Faire la requête AJAX
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', ajaxurl, true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4) {
-                            testCacheBtn.disabled = false;
-                            testCacheBtn.innerHTML = '🧪 Tester l\'intégration du cache';
-
-                            if (xhr.status === 200) {
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-                                    if (response.success) {
-                                        cacheTestResults.innerHTML = '<span style="color: #28a745;">✓ Test réussi</span>';
-                                        cacheTestOutput.innerHTML = response.data;
-                                        cacheTestOutput.style.display = 'block';
-                                    } else {
-                                        cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Test échoué</span>';
-                                        cacheTestOutput.innerHTML = '<p>Erreur: ' + response.data + '</p>';
-                                        cacheTestOutput.style.display = 'block';
-                                    }
-                                } catch (error) {
-                                    cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur de parsing</span>';
-                                    cacheTestOutput.innerHTML = '<p>Erreur: ' + error.message + '</p>';
-                                    cacheTestOutput.style.display = 'block';
-                                }
-                            } else {
-                                cacheTestResults.innerHTML = '<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>';
-                                cacheTestOutput.innerHTML = '<p>Erreur HTTP: ' + xhr.statusText + '</p>';
-                                cacheTestOutput.style.display = 'block';
-                            }
-                        }
-                    };
-
-                    const params = 'action=pdf_builder_cache_test&nonce=<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>';
-                    xhr.send(params);
+                    alert('Fonctionnalité de test du cache - Bientôt disponible!');
                 });
             }
         });
-        */
 </script>
