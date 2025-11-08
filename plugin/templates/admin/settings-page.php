@@ -3311,12 +3311,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     }
                 })
                 .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers.get('content-type'));
                     // Vérifier si la réponse est JSON
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
                         return response.json();
                     } else {
                         // Si ce n'est pas JSON, traiter comme HTML (rechargement de page)
+                        console.log('Response is not JSON, content-type:', contentType);
                         if (response.ok) {
                             window.location.reload();
                         } else {
