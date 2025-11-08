@@ -18,12 +18,14 @@ function send_ajax_response($success, $message = '', $data = []) {
     } else {
         error_log('AJAX: Headers already sent!');
     }
-    echo json_encode(array_merge([
+    $response = json_encode(array_merge([
         'success' => $success,
         'message' => $message
     ], $data));
-    error_log('AJAX: JSON echoed, about to exit');
-    exit;
+    error_log('AJAX: JSON response: ' . $response);
+    echo $response;
+    error_log('AJAX: JSON echoed, about to die');
+    wp_die('', '', array('response' => 200));
 }
 
 // Check if this is an AJAX request
@@ -56,6 +58,7 @@ $settings = get_option('pdf_builder_settings', []);
 if (!empty($_POST)) {
     error_log('ALL POST data received: ' . print_r($_POST, true));
     error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
+    error_log('Headers already sent at POST processing start: ' . (headers_sent() ? 'YES' : 'NO'));
 }
 if (!empty($_POST)) {
     // Logs removed for clarity
