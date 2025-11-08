@@ -264,18 +264,26 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
     'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
     'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
-    'show_margins' => $canvas_settings_js['show_margins'] ?? true,
-    'show_grid' => $canvas_settings_js['show_grid'] ?? true,
+    'show_margins' => $canvas_settings_js['show_margins'] ?? false,
+    'show_grid' => $canvas_settings_js['show_grid'] ?? false,
     'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
     'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
-    'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? true,
-    'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? true,
+    'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? false,
+    'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
+    'show_guides' => $canvas_settings_js['show_guides'] ?? false,
+    'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
+    'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
+    'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
+    'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
+    'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? false,
+    'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? false,
+    'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? false,
     'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
     'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
-    'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? true,
+    'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? false,
     'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
-    'multi_select' => $canvas_settings_js['multi_select'] ?? true,
-    'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? true,
+    'multi_select' => $canvas_settings_js['multi_select'] ?? false,
+    'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
     'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
     'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
     'compress_images' => $canvas_settings_js['compress_images'] ?? true,
@@ -3315,6 +3323,13 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                     console.log('🔄 Input updated:', fieldName, '=', input.value);
                                 }
                             });
+
+                            // Mettre à jour window.pdfBuilderCanvasSettings pour l'onglet canvas
+                            if (currentTab === 'canvas' && data.data) {
+                                console.log('🔄 Updating window.pdfBuilderCanvasSettings with new values...');
+                                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
+                                console.log('✅ window.pdfBuilderCanvasSettings updated:', window.pdfBuilderCanvasSettings);
+                            }
                             
                             console.log('✅ Field values synchronized');
                         }, 300);
