@@ -3352,278 +3352,12 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        
-        // Fonction pour logger tous les éléments de formulaire sur la page
-        function logAllFormElements(context = 'PAGE_LOAD') {
-            console.log(`=== LOG ULTRA-DÉTAILLÉ DE TOUS LES ÉLÉMENTS [${context}] ===`);
-            console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-            console.log(`📍 URL: ${window.location.href}`);
-            console.log(`🖥️ UserAgent: ${navigator.userAgent}`);
-            
-            // Logger tous les inputs avec détails de base
-            const allInputs = document.querySelectorAll('input');
-            console.log(`📝 Total inputs: ${allInputs.length}`);
-            allInputs.forEach((input, index) => {
-                console.log(`INPUT ${index}: ${input.name || input.id || 'unnamed'} (${input.type}) = "${input.value}"`);
-            });
-            
-            // Logger tous les selects
-            const allSelects = document.querySelectorAll('select');
-            console.log(`📋 Total selects: ${allSelects.length}`);
-            allSelects.forEach((select, index) => {
-                console.log(`SELECT ${index}: ${select.name || select.id || 'unnamed'} = "${select.value}"`);
-            });
-            
-            // Logger tous les textareas
-            const allTextareas = document.querySelectorAll('textarea');
-            console.log(`📄 Total textareas: ${allTextareas.length}`);
-            allTextareas.forEach((textarea, index) => {
-                console.log(`TEXTAREA ${index}: ${textarea.name || textarea.id || 'unnamed'} = "${textarea.value.substring(0, 50)}${textarea.value.length > 50 ? '...' : ''}"`);
-            });
-            
-            // Logger tous les boutons
-            const allButtons = document.querySelectorAll('button');
-            console.log(`🔘 Total buttons: ${allButtons.length}`);
-            allButtons.forEach((button, index) => {
-                console.log(`BUTTON ${index}: ${button.name || button.id || 'unnamed'} = "${button.textContent.trim()}"`);
-            });
-        }
-        
-        // Ajouter des event listeners pour les interactions utilisateur
-        function addFormEventListeners() {
-            // Event listeners pour tous les inputs
-            const allInputs = document.querySelectorAll('input');
-            allInputs.forEach((input, index) => {
-                input.addEventListener('change', function() {
-                    console.log(`🔄 INPUT CHANGED: ${input.name || input.id || 'input-' + index} = "${input.value}"`);
-                });
-                
-                input.addEventListener('focus', function() {
-                    console.log(`🎯 INPUT FOCUS: ${input.name || input.id || 'input-' + index}`);
-                });
-                
-                input.addEventListener('blur', function() {
-                    console.log(`👁️ INPUT BLUR: ${input.name || input.id || 'input-' + index}`);
-                });
-            });
-            
-            // Event listeners pour tous les selects
-            const allSelects = document.querySelectorAll('select');
-            allSelects.forEach((select, index) => {
-                select.addEventListener('change', function() {
-                    const selectedOption = select.options[select.selectedIndex];
-                    console.log(`📋 SELECT CHANGED: ${select.name || select.id || 'select-' + index} = "${selectedOption ? selectedOption.text : select.value}"`);
-                });
-            });
-            
-            // Event listeners pour tous les boutons
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach((button, index) => {
-                button.addEventListener('click', function() {
-                    console.log(`🔘 BUTTON CLICKED: ${button.name || button.id || 'button-' + index} = "${button.textContent.trim()}"`);
-                    console.log(`🔘 BUTTON TYPE: ${button.type}, FORM: ${button.form ? button.form.id : 'no form'}`);
-                });
-            });
-            
-            // Event listeners pour les formulaires
-            const allForms = document.querySelectorAll('form');
-            allForms.forEach((form, index) => {
-                form.addEventListener('submit', function(e) {
-                    console.log(`🚀 FORM SUBMIT: ${form.id || form.name || 'form-' + index}`);
-                    console.log(`   - Action: ${form.action}`);
-                    console.log(`   - Method: ${form.method}`);
-                    console.log(`   - Data:`, new FormData(form));
-                });
-            });
-        }
-        
-        // Ajouter les event listeners
-        addFormEventListeners();
-        
-        // Logs de performance et monitoring
-        function addPerformanceMonitoring() {
-            // Performance de chargement de page
-            if (window.performance && window.performance.timing) {
-                window.addEventListener('load', function() {
-                    setTimeout(() => {
-                        const timing = window.performance.timing;
-                        const loadTime = timing.loadEventEnd - timing.navigationStart;
-                        const domReady = timing.domContentLoadedEventEnd - timing.navigationStart;
-                        console.log('⏱️ PAGE LOAD PERFORMANCE:', {
-                            totalLoadTime: loadTime + 'ms',
-                            domContentLoaded: domReady + 'ms',
-                            navigationStart: new Date(timing.navigationStart).toISOString()
-                        });
-                    }, 0);
-                });
-            }
-            
-            // Memory usage si disponible
-            if (window.performance && window.performance.memory) {
-                setTimeout(() => {
-                    const mem = window.performance.memory;
-                    console.log('🧠 MEMORY USAGE:', {
-                        usedJSHeapSize: Math.round(mem.usedJSHeapSize / 1024 / 1024) + ' MB',
-                        totalJSHeapSize: Math.round(mem.totalJSHeapSize / 1024 / 1024) + ' MB',
-                        jsHeapSizeLimit: Math.round(mem.jsHeapSizeLimit / 1024 / 1024) + ' MB'
-                    });
-                }, 1000);
-            }
-            
-            // Network Information API
-            if ('connection' in navigator) {
-                console.log('📡 NETWORK INFO:', {
-                    effectiveType: navigator.connection.effectiveType,
-                    downlink: navigator.connection.downlink + ' Mbps',
-                    rtt: navigator.connection.rtt + ' ms',
-                    saveData: navigator.connection.saveData
-                });
-            }
-            
-            // Battery API
-            if ('getBattery' in navigator) {
-                navigator.getBattery().then(battery => {
-                    console.log('🔋 BATTERY STATUS:', {
-                        charging: battery.charging,
-                        level: Math.round(battery.level * 100) + '%',
-                        chargingTime: battery.chargingTime,
-                        dischargingTime: battery.dischargingTime
-                    });
-                    
-                    // Événements de batterie
-                    battery.addEventListener('chargingchange', () => {
-                        console.log('🔋 BATTERY CHARGING CHANGED:', battery.charging);
-                    });
-                    
-                    battery.addEventListener('levelchange', () => {
-                        console.log('🔋 BATTERY LEVEL CHANGED:', Math.round(battery.level * 100) + '%');
-                    });
-                });
-            }
-            
-            // Geolocation (si permissions accordées)
-            if ('geolocation' in navigator) {
-                console.log('📍 GEOLOCATION AVAILABLE');
-                // Note: Ne pas demander automatiquement la position pour éviter les prompts
-            }
-            
-            // Device orientation (si supporté)
-            if (window.DeviceOrientationEvent) {
-                window.addEventListener('deviceorientation', function(event) {
-                    // Log seulement occasionnellement pour éviter le spam
-                    if (Math.random() < 0.01) { // 1% des événements
-                        console.log('📱 DEVICE ORIENTATION:', {
-                            alpha: Math.round(event.alpha),
-                            beta: Math.round(event.beta),
-                            gamma: Math.round(event.gamma)
-                        });
-                    }
-                });
-                console.log('📱 DEVICE ORIENTATION SUPPORTED');
-            }
-            
-            // Visibility API
-            document.addEventListener('visibilitychange', function() {
-                console.log('👁️ PAGE VISIBILITY CHANGED:', {
-                    hidden: document.hidden,
-                    visibilityState: document.visibilityState,
-                    timestamp: new Date().toISOString()
-                });
-            });
-            
-            // Online/Offline events
-            window.addEventListener('online', function() {
-                console.log('🌐 CONNECTION RESTORED - ONLINE');
-            });
-            
-            window.addEventListener('offline', function() {
-                console.log('🚫 CONNECTION LOST - OFFLINE');
-            });
-            
-            console.log('📊 CURRENT CONNECTION STATUS:', navigator.onLine ? 'ONLINE' : 'OFFLINE');
-        }
-        
         // Gestion du bouton de sauvegarde global
         function setupGlobalSaveButton() {
             const globalSaveBtn = document.getElementById('global-save-btn');
             const saveStatus = document.getElementById('save-status');
             
             console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
-            
-            if (globalSaveBtn) {
-                globalSaveBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🔘 GLOBAL SAVE BUTTON CLICKED');
-                    
-                    // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
-                    const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
-                                    document.querySelector('.tab-content.active') ||
-                                    document.getElementById('general');
-                    
-                    console.log('📍 ACTIVE TAB FOUND:', activeTab ? activeTab.id : 'NONE');
-                    console.log('📍 All tabs:', Array.from(document.querySelectorAll('.tab-content')).map(tab => ({id: tab.id, hidden: tab.classList.contains('hidden-tab')})));
-                    
-                    if (activeTab) {
-                        console.log('📍 ACTIVE TAB FOUND:', activeTab.id);
-                        
-                        // Trouver le formulaire principal dans l'onglet actif
-                        let form = null;
-                        if (activeTab.id === 'performance') {
-                            form = document.getElementById('performance-form');
-                        } else if (activeTab.id === 'general') {
-                            form = document.getElementById('general-form');
-                        } else if (activeTab.id === 'pdf') {
-                            form = document.getElementById('pdf-form');
-                        } else if (activeTab.id === 'securite') {
-                            form = document.getElementById('securite-form');
-                        } else if (activeTab.id === 'canvas') {
-                            form = document.getElementById('canvas-form');
-                            console.log('🎨 CANVAS FORM FOUND:', form);
-                        } else if (activeTab.id === 'templates') {
-                            form = document.getElementById('templates-form');
-                        } else if (activeTab.id === 'developpeur') {
-                            form = document.getElementById('developpeur-form');
-                        } else {
-                            form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
-                        }
-                        
-                        console.log('🎯 FINAL FORM SELECTED:', form ? form.id : 'NONE');
-                        
-                        if (form) {
-                            console.log('🚀 SUBMITTING FORM:', form.id || 'unnamed form');
-                            
-                            // Afficher le statut de sauvegarde
-                            if (saveStatus) {
-                                saveStatus.textContent = '💾 Sauvegarde en cours...';
-                                saveStatus.style.color = '#007cba';
-                            }
-                            
-                            // Soumettre le formulaire de manière sécurisée
-                            if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                            } else {
-                                // Fallback pour les navigateurs plus anciens
-                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                                if (form.dispatchEvent(submitEvent)) {
-                                    form.submit();
-                                }
-                            }
-                        } else {
-                            console.error('❌ No form found in active tab:', activeTab.id);
-                            if (saveStatus) {
-                                saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
-                                saveStatus.style.color = '#dc3232';
-                            }
-                        }
-                    } else {
-                        console.error('❌ No active tab found');
-                        if (saveStatus) {
-                            saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
-                            saveStatus.style.color = '#dc3232';
-                        }
-                    }
-                });
-            }
             
             // Gestion du bouton Vider le Cache
             const clearCacheBtn = document.getElementById('clear-cache-btn');
@@ -3699,10 +3433,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             if (globalSaveBtn && initialActiveTab) {
                 if (initialActiveTab.id === 'maintenance') {
                     globalSaveBtn.style.display = 'none';
-                    console.log('🔘 INITIALIZING: HIDING GLOBAL SAVE BUTTON for maintenance tab');
                 } else {
                     globalSaveBtn.style.display = '';
-                    console.log('🔘 INITIALIZING: SHOWING GLOBAL SAVE BUTTON for tab:', initialActiveTab.id);
                 }
             }
             
@@ -3714,14 +3446,11 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     e.preventDefault();
                     
                     const targetTab = this.getAttribute('data-tab');
-                    console.log('📑 CLICKED TAB:', targetTab);
                     
                     // Masquer tous les onglets
                     const allTabs = document.querySelectorAll('.tab-content');
-                    console.log('📑 HIDING ALL TABS:', allTabs.length);
                     allTabs.forEach(tab => {
                         tab.classList.add('hidden-tab');
-                        console.log('📑 HIDING TAB:', tab.id);
                     });
                     
                     // Désactiver tous les liens d'onglets
@@ -3731,15 +3460,10 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     
                     // Afficher l'onglet cible
                     const targetTabContent = document.getElementById(targetTab);
-                    console.log('📑 TARGET TAB ELEMENT:', targetTabContent);
                     if (targetTabContent) {
                         targetTabContent.classList.remove('hidden-tab');
-                        console.log('✅ TAB ACTIVATED:', targetTab);
                     } else {
                         console.error('❌ TAB NOT FOUND:', targetTab);
-                        // Lister tous les éléments avec class tab-content
-                        const allTabContents = document.querySelectorAll('.tab-content');
-                        console.log('❌ AVAILABLE TABS:', Array.from(allTabContents).map(tab => tab.id));
                     }
                     
                     // Activer le lien d'onglet
@@ -3750,10 +3474,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     if (globalSaveBtn) {
                         if (targetTab === 'maintenance') {
                             globalSaveBtn.style.display = 'none';
-                            console.log('🔘 HIDING GLOBAL SAVE BUTTON for maintenance tab');
                         } else {
                             globalSaveBtn.style.display = '';
-                            console.log('🔘 SHOWING GLOBAL SAVE BUTTON for tab:', targetTab);
                         }
                     }
                     
