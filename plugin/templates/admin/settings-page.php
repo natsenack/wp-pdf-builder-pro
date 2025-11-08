@@ -927,26 +927,26 @@ if ($is_ajax) {
                     <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
                     <p class="submit" style="margin-top: 20px;">
                         <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545; border-color: #dc3545; color: white; font-weight: bold; padding: 10px 20px;"
-                                onclick="return confirm('⚠️ Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver ou l\'utiliser sur un autre site.');">
-                            🔓 Désactiver la Licence
+                                onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ? Vous pourrez la reactiver ou l\'utiliser sur un autre site.');">
+                            Desactiver la Licence
                         </button>
                     </p>
                 </form>
                 
-                <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; border-radius: 4px; padding: 15px; margin-top: 15px; color: #0c5460;">
-                    <strong style="font-size: 16px;">💡 Conseil :</strong>
-                    <p style="margin: 8px 0 0 0;">La désactivation permet de réutiliser votre clé sur un autre site, mais ne supprime pas votre accès ici jusqu'à l'expiration de la licence.</p>
+                <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); border-left: 5px solid #17a2b8; border-radius: 6px; padding: 20px; margin-top: 20px; color: #0c5460; box-shadow: 0 2px 4px rgba(23,162,184,0.1);">
+                    <strong style="font-size: 16px; display: flex; align-items: center; gap: 8px;">Conseil :</strong>
+                    <p style="margin: 12px 0 0 0; line-height: 1.6;">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
                 </div>
             </div>
             
             <?php endif; ?>
             
             <!-- Informations utiles -->
-            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e7f3ff 100%); border-left: 4px solid #17a2b8; border-radius: 4px; padding: 20px; margin-bottom: 20px; color: #0c5460;">
-                <h4 style="margin: 0 0 10px 0; color: #0c5460; font-size: 16px;">ℹ️ Informations Utiles</h4>
-                <ul style="margin: 0; padding-left: 20px; color: #0c5460;">
-                    <li><strong>Site actuel :</strong> <?php echo esc_html(home_url()); ?></li>
-                    <li><strong>Plan actif :</strong> <?php echo $test_mode_enabled ? '🧪 Mode Test' : ($is_premium ? '✅ Premium' : '○ Gratuit'); ?></li>
+            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%), url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2317a2b8%22 opacity=%220.05%22/></svg>'); border-left: 5px solid #17a2b8; border-radius: 8px; padding: 25px; margin-bottom: 25px; color: #0c5460; box-shadow: 0 3px 6px rgba(23,162,184,0.15);">
+                <h4 style="margin: 0 0 15px 0; color: #0c5460; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #0c5460; list-style-type: none;">
+                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(12,84,96,0.1); line-height: 1.6;"><strong>Site actuel :</strong> <code style="background: rgba(0,123,255,0.1); padding: 2px 6px; border-radius: 3px; font-family: monospace;"><?php echo esc_html(home_url()); ?></code></li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(12,84,96,0.1); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: <?php echo $test_mode_enabled ? 'linear-gradient(135deg, #ffc107 0%, #ffb700 100%)' : ($is_premium ? 'linear-gradient(135deg, #28a745 0%, #1e8449 100%)' : 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)'); ?>; color: #fff; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo $test_mode_enabled ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
                     <?php if ($is_premium): ?>
                     <li><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank">Contact Support Premium</a></li>
                     <li><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank">Lire la Documentation</a></li>
@@ -956,15 +956,15 @@ if ($is_ajax) {
             </div>
             
             <!-- Comparaison des fonctionnalités -->
-            <div style="margin-top: 30px;">
-                <h3>Comparaison des Fonctionnalités</h3>
-                <table class="wp-list-table widefat fixed striped" style="margin-top: 15px;">
-                    <thead>
+            <div style="margin-top: 40px;">
+                <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalites</h3>
+                <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
                         <tr>
-                            <th style="width: 40%;">Fonctionnalité</th>
-                            <th style="width: 15%; text-align: center;">Gratuit</th>
-                            <th style="width: 15%; text-align: center;">Premium</th>
-                            <th style="width: 30%;">Description</th>
+                            <th style="width: 40%; padding: 15px; font-weight: 700; text-align: left; border: none;">Fonctionnalite</th>
+                            <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Gratuit</th>
+                            <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Premium</th>
+                            <th style="width: 30%; padding: 15px; font-weight: 700; text-align: left; border: none;">Description</th>
                         </tr>
                     </thead>
                     <tbody>
