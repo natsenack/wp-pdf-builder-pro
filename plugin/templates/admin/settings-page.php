@@ -2977,6 +2977,7 @@ if ($is_ajax) {
                         </button>
                         <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
                         <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                        <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_cleanup_license'); ?>" />
                     </td>
                 </tr>
             </table>
@@ -3983,6 +3984,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 
                 const $btn = jQuery(this);
                 const cleanupStatus = document.getElementById('cleanup_status');
+                const cleanupNonce = document.getElementById('cleanup_license_nonce');
                 $btn.prop('disabled', true);
                 $btn.html('⏳ Nettoyage...');
                 cleanupStatus.innerHTML = '';
@@ -3993,7 +3995,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     dataType: 'json',
                     data: {
                         action: 'pdf_builder_cleanup_license',
-                        nonce: jQuery('input[name="_wpnonce"]').val() || jQuery('input[name="pdf_builder_developpeur_nonce"]').val()
+                        nonce: cleanupNonce ? cleanupNonce.value : ''
                     },
                     success: function(response) {
                         console.log('✅ Cleanup successful:', response);
