@@ -367,7 +367,7 @@ console.log("✅ Canvas settings script completed");
         
         <!-- Bouton de sauvegarde flottant -->
         <div id="floating-save-button" class="floating-save-container">
-            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn">
+            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn"  style="padding:5px;">
                 💾 Enregistrer
             </button>
             <div class="save-status" id="save-status"></div>
@@ -2873,7 +2873,7 @@ console.log("✅ Canvas settings script completed");
     /* Bouton de sauvegarde flottant */
     .floating-save-container {
         position: fixed;
-        top: 20px;
+        top: 40px;
         right: 20px;
         z-index: 1000;
         display: flex;

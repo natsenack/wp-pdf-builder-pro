@@ -410,16 +410,65 @@ function pdf_builder_ajax_save_settings() {
             break;
 
         case 'canvas':
-            $canvas_settings = [
-                'canvas_width' => intval($_POST['canvas_width'] ?? 800),
-                'canvas_height' => intval($_POST['canvas_height'] ?? 600),
-                'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
-                'enable_grid' => !empty($_POST['enable_grid']) && $_POST['enable_grid'] === '1',
-                'grid_size' => intval($_POST['grid_size'] ?? 20),
-                'snap_to_grid' => !empty($_POST['snap_to_grid']) && $_POST['snap_to_grid'] === '1',
-            ];
+            // Collecte de tous les paramètres canvas envoyés par le JavaScript
+            $canvas_settings = [];
+            
+            // Paramètres généraux
+            $canvas_settings['default_canvas_width'] = intval($_POST['default_canvas_width'] ?? 794);
+            $canvas_settings['default_canvas_height'] = intval($_POST['default_canvas_height'] ?? 1123);
+            $canvas_settings['default_canvas_unit'] = sanitize_text_field($_POST['default_canvas_unit'] ?? 'px');
+            $canvas_settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
+            $canvas_settings['canvas_background_color'] = sanitize_hex_color($_POST['canvas_background_color'] ?? '#ffffff');
+            $canvas_settings['container_background_color'] = sanitize_hex_color($_POST['container_background_color'] ?? '#f8f9fa');
+            
+            // Marges
+            $canvas_settings['margin_top'] = intval($_POST['margin_top'] ?? 28);
+            $canvas_settings['margin_right'] = intval($_POST['margin_right'] ?? 28);
+            $canvas_settings['margin_bottom'] = intval($_POST['margin_bottom'] ?? 10);
+            $canvas_settings['margin_left'] = intval($_POST['margin_left'] ?? 10);
+            $canvas_settings['show_margins'] = !empty($_POST['show_margins']) && $_POST['show_margins'] === '1';
+            
+            // Grille
+            $canvas_settings['show_grid'] = !empty($_POST['show_grid']) && $_POST['show_grid'] === '1';
+            $canvas_settings['grid_size'] = intval($_POST['grid_size'] ?? 10);
+            $canvas_settings['grid_color'] = sanitize_hex_color($_POST['grid_color'] ?? '#e0e0e0');
+            $canvas_settings['snap_to_grid'] = !empty($_POST['snap_to_grid']) && $_POST['snap_to_grid'] === '1';
+            $canvas_settings['snap_to_elements'] = !empty($_POST['snap_to_elements']) && $_POST['snap_to_elements'] === '1';
+            $canvas_settings['snap_tolerance'] = intval($_POST['snap_tolerance'] ?? 5);
+            $canvas_settings['show_guides'] = !empty($_POST['show_guides']) && $_POST['show_guides'] === '1';
+            
+            // Zoom et navigation
+            $canvas_settings['default_zoom'] = intval($_POST['default_zoom'] ?? 100);
+            $canvas_settings['zoom_step'] = intval($_POST['zoom_step'] ?? 25);
+            $canvas_settings['min_zoom'] = intval($_POST['min_zoom'] ?? 10);
+            $canvas_settings['max_zoom'] = intval($_POST['max_zoom'] ?? 500);
+            $canvas_settings['zoom_with_wheel'] = !empty($_POST['zoom_with_wheel']) && $_POST['zoom_with_wheel'] === '1';
+            $canvas_settings['pan_with_mouse'] = !empty($_POST['pan_with_mouse']) && $_POST['pan_with_mouse'] === '1';
+            
+            // Manipulation
+            $canvas_settings['show_resize_handles'] = !empty($_POST['show_resize_handles']) && $_POST['show_resize_handles'] === '1';
+            $canvas_settings['handle_size'] = intval($_POST['handle_size'] ?? 8);
+            $canvas_settings['enable_rotation'] = !empty($_POST['enable_rotation']) && $_POST['enable_rotation'] === '1';
+            $canvas_settings['rotation_step'] = intval($_POST['rotation_step'] ?? 15);
+            $canvas_settings['multi_select'] = !empty($_POST['multi_select']) && $_POST['multi_select'] === '1';
+            $canvas_settings['copy_paste_enabled'] = !empty($_POST['copy_paste_enabled']) && $_POST['copy_paste_enabled'] === '1';
+            
+            // Historique
+            $canvas_settings['undo_levels'] = intval($_POST['undo_levels'] ?? 50);
+            $canvas_settings['redo_levels'] = intval($_POST['redo_levels'] ?? 50);
+            $canvas_settings['auto_save_versions'] = intval($_POST['auto_save_versions'] ?? 10);
+            
+            // Paramètres anciens pour compatibilité
+            $canvas_settings['canvas_width'] = intval($_POST['canvas_width'] ?? 800);
+            $canvas_settings['canvas_height'] = intval($_POST['canvas_height'] ?? 600);
+            $canvas_settings['enable_grid'] = !empty($_POST['enable_grid']) && $_POST['enable_grid'] === '1';
+            $canvas_settings['snap_to_grid'] = !empty($_POST['snap_to_grid']) && $_POST['snap_to_grid'] === '1';
+            
             update_option('pdf_builder_settings', array_merge($settings, $canvas_settings));
             $notices[] = 'Paramètres Canvas enregistrés avec succès';
+            
+            // Retourner les données pour synchronisation JavaScript
+            $response_data = $canvas_settings;
             break;
 
         case 'templates':
@@ -451,6 +500,7 @@ function pdf_builder_ajax_save_settings() {
     wp_die(json_encode([
         'success' => !empty($notices),
         'message' => !empty($notices) ? implode(', ', $notices) : 'Aucune modification sauvegardée',
-        'notices' => $notices
+        'notices' => $notices,
+        'data' => $response_data ?? null
     ]));
 }
