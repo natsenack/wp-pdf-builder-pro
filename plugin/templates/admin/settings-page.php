@@ -721,6 +721,11 @@ if ($is_ajax) {
             // is_premium si vraie licence OU si clé de test existe
             $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
             
+            // DEBUG: Afficher les valeurs pour verifier
+            if (current_user_can('manage_options')) {
+                echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
+            }
+            
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
                 // Logs removed for clarity
