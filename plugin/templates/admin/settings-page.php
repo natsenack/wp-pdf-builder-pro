@@ -3586,7 +3586,8 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             });
         }
 
-        // Gestion du test du système de cache
+        // Gestion du test du système de cache - TEMPORAIREMENT SUPPRIMÉ POUR DIAGNOSTIC
+        /*
         document.addEventListener('DOMContentLoaded', function() {
             const testCacheBtn = document.getElementById('test-cache-btn');
             const cacheTestResults = document.getElementById('cache-test-results');
@@ -3641,4 +3642,5 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 });
             }
         });
+        */
 </script>
