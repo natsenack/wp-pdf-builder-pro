@@ -3296,7 +3296,6 @@ if ($is_ajax) {
     
     /* Exception pour les onglets qui utilisent des formulaires POST séparés */
     #roles .submit,
-    #templates .submit,
     #notifications .submit {
         display: block;
     }
@@ -3308,8 +3307,7 @@ if ($is_ajax) {
     }
     
     /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
-    #roles #global-save-btn,
-    #templates #global-save-btn {
+    #roles #global-save-btn {
         display: none !important;
     }
 
