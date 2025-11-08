@@ -325,6 +325,29 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
     }
 }
 
+if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_pdf_nonce'])) {
+    // Logs removed for clarity
+    if (wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf_settings')) {
+        $pdf_settings = [
+            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name')),
+            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
+            'include_metadata' => isset($_POST['include_metadata']),
+            'embed_fonts' => isset($_POST['embed_fonts']),
+            'auto_crop' => isset($_POST['auto_crop']),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
+        if ($is_ajax) {
+            $response = json_encode(['success' => true, 'message' => 'Paramètres PDF enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres PDF enregistrés avec succès.</p></div>';
+        }
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -3333,6 +3356,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             form = document.getElementById('performance-form');
                         } else if (activeTab.id === 'general') {
                             form = document.getElementById('general-form');
+                        } else if (activeTab.id === 'pdf') {
+                            form = document.getElementById('pdf-form');
                         } else {
                             form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
                         }
