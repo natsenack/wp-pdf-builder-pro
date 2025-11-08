@@ -2926,6 +2926,11 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         // Vérifier les valeurs des checkboxes au chargement
         setTimeout(() => {
+            console.log('🔍 [DEBUG] Checking global variables at page load:');
+            console.log('  - pdfBuilderCanvasSettings exists:', typeof pdfBuilderCanvasSettings);
+            console.log('  - pdfBuilderCanvasSettings value:', pdfBuilderCanvasSettings);
+            console.log('  - window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+            
             const debugJsCheckbox = document.getElementById('debug_javascript');
             const debugPhpCheckbox = document.getElementById('debug_php_errors');
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
@@ -2936,6 +2941,7 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
             
             // Charger les paramètres canvas depuis pdfBuilderCanvasSettings
+            console.log('🔍 Checking for pdfBuilderCanvasSettings:', typeof pdfBuilderCanvasSettings, pdfBuilderCanvasSettings);
             if (typeof pdfBuilderCanvasSettings !== 'undefined') {
                 console.log('🎨 Loading canvas settings from pdfBuilderCanvasSettings:', pdfBuilderCanvasSettings);
                 
