@@ -1007,7 +1007,7 @@ class PDF_Builder_Admin {
             $canvas_settings_js = get_option('pdf_builder_settings', []);
         }
         
-        wp_localize_script('jquery', 'pdfBuilderCanvasSettings', [
+        wp_localize_script('pdf-preview-integration', 'pdfBuilderCanvasSettings', [
             // Paramètres généraux du canvas
             'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
             'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
@@ -1106,7 +1106,7 @@ class PDF_Builder_Admin {
         ]);
         
         // Ajouter directement la variable globale pour s'assurer qu'elle est disponible
-        wp_add_inline_script('jquery', '
+        wp_add_inline_script('pdf-preview-integration', '
             window.pdfBuilderCanvasSettings = ' . wp_json_encode([
                 'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
                 'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
