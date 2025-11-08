@@ -8,6 +8,28 @@ if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
 }
 
+// Function to send AJAX response
+function send_ajax_response($success, $message = '', $data = []) {
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+        header('Cache-Control: no-cache, must-revalidate');
+    }
+    echo json_encode(array_merge([
+        'success' => $success,
+        'message' => $message
+    ], $data));
+    exit;
+}
+
+// Check if this is an AJAX request
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+// For AJAX requests, only process POST data and exit - don't show HTML
+if ($is_ajax && !empty($_POST)) {
+    // Process the request and exit - the processing code below will handle it
+    // This ensures no HTML is output for AJAX requests
+}
+
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
     wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
 }
@@ -26,21 +48,6 @@ if (!empty($_POST)) {
 } else {
     // Logs removed for clarity
 }
-
-// Function to send AJAX response
-function send_ajax_response($success, $message = '', $data = []) {
-    if (!headers_sent()) {
-        header('Content-Type: application/json');
-    }
-    echo json_encode(array_merge([
-        'success' => $success,
-        'message' => $message
-    ], $data));
-    exit;
-}
-
-// Check if this is an AJAX request
-$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
@@ -363,6 +370,12 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 ]); ?>;
 // Logs removed for clarity
 </script>
+<?php
+// If this is an AJAX request that wasn't handled above, return error
+if ($is_ajax) {
+    send_ajax_response(false, 'Requête AJAX non reconnue ou invalide.');
+}
+?>
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
     
