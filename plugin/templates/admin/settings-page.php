@@ -2975,6 +2975,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
         $canvas_settings_js = $canvas_manager->get_canvas_settings();
         error_log('DEBUG: Canvas Manager loaded, canvas_settings_js: ' . print_r($canvas_settings_js, true));
+        
+        // Also log the raw database option
+        $raw_settings = get_option('pdf_builder_settings', []);
+        error_log('DEBUG: Raw pdf_builder_settings from database: ' . print_r($raw_settings, true));
     } catch (Exception $e) {
         $canvas_settings_js = [];
         error_log('DEBUG: Exception loading Canvas Manager: ' . $e->getMessage());
