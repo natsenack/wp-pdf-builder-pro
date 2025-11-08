@@ -4464,6 +4464,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 }
                 */
                 
+                // SENSORS AND APIs - COMMENTED OUT FOR DEBUG
+                /*
                 // Web Periodic Background Sync
                 if ('serviceWorker' in navigator && 'periodicSync' in window.ServiceWorkerRegistration.prototype) {
                     console.log('🔄 PERIODIC BACKGROUND SYNC: Supported');
@@ -4519,7 +4521,10 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 if ('RelativeOrientationSensor' in window) {
                     console.log('📐 RELATIVE ORIENTATION SENSOR: Supported');
                 }
+                */
                 
+                // MORE APIs AND EVENTS - COMMENTED OUT FOR DEBUG
+                /*
                 // Geolocation Sensor (alternative to Geolocation API)
                 if ('GeolocationSensor' in window) {
                     console.log('📍 GEOLOCATION SENSOR: Supported');
@@ -4644,6 +4649,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                         });
                     }
                 });
+                */
                 
                 // Logs pour les événements de mutation DOM avancés
                 if (window.MutationObserver) {
