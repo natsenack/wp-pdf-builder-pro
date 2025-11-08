@@ -348,6 +348,25 @@ if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_pdf_nonce'])) {
     }
 }
 
+if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_securite_nonce'])) {
+    // Logs removed for clarity
+    if (wp_verify_nonce($_POST['pdf_builder_securite_nonce'], 'pdf_builder_settings')) {
+        $security_settings = [
+            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+        ];
+        update_option('pdf_builder_settings', array_merge($settings, $security_settings));
+        if ($is_ajax) {
+            $response = json_encode(['success' => true, 'message' => 'Paramètres de sécurité enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sécurité enregistrés avec succès.</p></div>';
+        }
+        $settings = get_option('pdf_builder_settings', []);
+    }
+}
+
 if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -3358,6 +3377,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             form = document.getElementById('general-form');
                         } else if (activeTab.id === 'pdf') {
                             form = document.getElementById('pdf-form');
+                        } else if (activeTab.id === 'securite') {
+                            form = document.getElementById('securite-form');
                         } else {
                             form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
                         }
