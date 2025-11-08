@@ -515,7 +515,7 @@ if ($is_ajax) {
             </table>
             
             <p class="submit">
-                <button type="submit" name="submit" class="button button-primary">Enregistrer les paramètres</button>
+                <button type="button" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
             </form>
@@ -3251,7 +3251,99 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
 
         const globalSaveBtn = document.getElementById('global-save-btn');
+        const generalSubmitBtn = document.getElementById('general-submit-btn');
         const saveStatus = document.getElementById('save-status');
+        
+        // Fonction commune pour soumettre un formulaire via AJAX
+        function submitFormAjax(form) {
+            // Afficher le statut de sauvegarde
+            if (saveStatus) {
+                saveStatus.textContent = '⏳ Soumission en cours...';
+                saveStatus.className = 'save-status show';
+            }
+
+            // Désactiver le bouton pendant la soumission
+            const submitBtn = form.querySelector('button[type="button"]') || globalSaveBtn;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '⏳ Soumission...';
+            }
+
+            // Soumettre le formulaire via AJAX (sans rechargement de page)
+            const formData = new FormData(form);
+            formData.append('action', 'pdf_builder_save_settings_page');
+            formData.append('nonce', document.querySelector('input[name="pdf_builder_general_nonce"]').value);
+
+            fetch(ajaxurl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers.get('content-type'));
+                return response.json();
+            })
+            .then(data => {
+                console.log('Parsed JSON data:', data);
+                console.log('Success:', data.success);
+                if (data.data && data.data.message) {
+                    console.log('Error message:', data.data.message);
+                }
+                // Réactiver le bouton
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = submitBtn === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                }
+
+                if (data && data.success) {
+                    // Afficher le succès
+                    if (saveStatus) {
+                        saveStatus.textContent = '✅ ' + (data.data && data.data.message || data.message || 'Sauvegardé avec succès !');
+                        saveStatus.className = 'save-status show success';
+
+                        // Masquer le message après 3 secondes
+                        setTimeout(() => {
+                            saveStatus.className = 'save-status';
+                        }, 3000);
+                    }
+                } else {
+                    // Afficher l'erreur
+                    if (saveStatus) {
+                        const errorMessage = (data.data && data.data.message) || data.message || 'Erreur lors de la sauvegarde';
+                        saveStatus.textContent = '❌ ' + errorMessage;
+                        saveStatus.className = 'save-status show error';
+
+                        // Masquer le message d'erreur après 5 secondes
+                        setTimeout(() => {
+                            saveStatus.className = 'save-status';
+                        }, 5000);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                console.error('Error type:', typeof error);
+                console.error('Error message:', error.message);
+                // Réactiver le bouton en cas d'erreur
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = submitBtn === globalSaveBtn ? '💾' : 'Enregistrer les paramètres';
+                }
+
+                if (saveStatus) {
+                    saveStatus.textContent = '❌ Erreur de connexion';
+                    saveStatus.className = 'save-status show error';
+
+                    // Masquer le message d'erreur après 5 secondes
+                    setTimeout(() => {
+                        saveStatus.className = 'save-status';
+                    }, 5000);
+                }
+            });
+        }
         
         if (globalSaveBtn) {
             globalSaveBtn.addEventListener('click', function(e) {
@@ -3279,81 +3371,18 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     return;
                 }
 
-                // Afficher le statut de sauvegarde
-                if (saveStatus) {
-                    saveStatus.textContent = '⏳ Soumission en cours...';
-                    saveStatus.className = 'save-status show';
+                submitFormAjax(form);
+            });
+        }
+
+        if (generalSubmitBtn) {
+            generalSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Empêcher la soumission normale du formulaire
+                
+                const form = document.getElementById('general-form');
+                if (form) {
+                    submitFormAjax(form);
                 }
-
-                // Désactiver le bouton pendant la soumission
-                this.disabled = true;
-                this.innerHTML = '⏳ Soumission...';
-
-                // Soumettre le formulaire via AJAX (sans rechargement de page)
-                const formData = new FormData(form);
-                formData.append('action', 'pdf_builder_save_settings_page');
-                formData.append('nonce', document.querySelector('input[name="pdf_builder_general_nonce"]').value);
-
-                fetch(ajaxurl, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    console.log('Response headers:', response.headers.get('content-type'));
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Parsed JSON data:', data);
-                    // Réactiver le bouton
-                    this.disabled = false;
-                    this.innerHTML = '💾 Sauvegarder';
-
-                    if (data && data.success) {
-                        // Afficher le succès
-                        if (saveStatus) {
-                            saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé avec succès !');
-                            saveStatus.className = 'save-status show success';
-
-                            // Masquer le message après 3 secondes
-                            setTimeout(() => {
-                                saveStatus.className = 'save-status';
-                            }, 3000);
-                        }
-                    } else {
-                        // Afficher l'erreur
-                        if (saveStatus) {
-                            saveStatus.textContent = '❌ ' + (data.message || 'Erreur lors de la sauvegarde');
-                            saveStatus.className = 'save-status show error';
-
-                            // Masquer le message d'erreur après 5 secondes
-                            setTimeout(() => {
-                                saveStatus.className = 'save-status';
-                            }, 5000);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur AJAX:', error);
-                    console.error('Error type:', typeof error);
-                    console.error('Error message:', error.message);
-                    // Réactiver le bouton en cas d'erreur
-                    this.disabled = false;
-                    this.innerHTML = '💾 Sauvegarder';
-
-                    if (saveStatus) {
-                        saveStatus.textContent = '❌ Erreur de connexion';
-                        saveStatus.className = 'save-status show error';
-
-                        // Masquer le message d'erreur après 5 secondes
-                        setTimeout(() => {
-                            saveStatus.className = 'save-status';
-                        }, 5000);
-                    }
-                });
             });
         }
         
