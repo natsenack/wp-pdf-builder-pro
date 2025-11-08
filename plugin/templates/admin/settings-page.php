@@ -657,16 +657,16 @@ if ($is_ajax) {
                 <tr>
                     <th scope="row">Test du système</th>
                     <td>
-                        <button type="button" id="test-cache-btn" class="button button-secondary">
+                        <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
                             🧪 Tester l'intégration du cache
                         </button>
                         <span id="cache-test-results" style="margin-left: 10px;"></span>
-                        <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;"></div>
+                        <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; border-radius: 4px; color: #155724;"></div>
                     </td>
                 </tr>
             </table>
             
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📄 Paramètres PDF</h3>
+            <h3 style="margin-top: 30px; border-bottom: 2px solid #007cba; padding-bottom: 10px; color: #007cba;">📄 Paramètres PDF</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
@@ -708,7 +708,7 @@ if ($is_ajax) {
         </div>
         
         <div id="licence" class="tab-content hidden-tab">
-            <h2>Gestion de la Licence</h2>
+            <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
             
             <?php
             $license_status = get_option('pdf_builder_license_status', 'free');
@@ -868,9 +868,14 @@ if ($is_ajax) {
             
             <!-- Activation/Désactivation -->
             <?php if (!$is_premium): ?>
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h3>Activer une Licence Premium</h3>
-                <p>Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.</p>
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e9ecef; border-radius: 8px; padding: 30px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <div style="font-size: 40px;">🔓</div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #007cba;">Activer une Licence Premium</h3>
+                        <p style="margin: 0; color: #666;">Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.</p>
+                    </div>
+                </div>
                 
                 <form method="post">
                     <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
@@ -879,27 +884,32 @@ if ($is_ajax) {
                             <th scope="row"><label for="license_key">Clé de licence</label></th>
                             <td>
                                 <input type="text" id="license_key" name="license_key" class="regular-text" 
-                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px;">
+                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px; border: 2px solid #e9ecef; padding: 10px;">
                                 <p class="description">Vous pouvez trouver votre clé dans votre compte client.</p>
                             </td>
                         </tr>
                     </table>
                     <p class="submit">
-                        <button type="submit" name="activate_license" class="button button-primary">
-                            Activer la licence
+                        <button type="submit" name="activate_license" class="button button-primary" style="background-color: #007cba; border-color: #007cba; font-weight: bold; padding: 10px 20px;">
+                            ✅ Activer la licence
                         </button>
                     </p>
                 </form>
             </div>
             <?php else: ?>
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h3>🔐 Gestion de la Licence Premium</h3>
-                <p>Votre licence premium est active et valide. Vous pouvez gérer votre licence ci-dessous.</p>
+            <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 8px; padding: 30px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(40,167,69,0.15);">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <div style="font-size: 40px;">🔐</div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #155724;">Gestion de la Licence Premium</h3>
+                        <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gérer votre licence ci-dessous.</p>
+                    </div>
+                </div>
                 
                 <!-- Avertissements et informations -->
-                <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 15px;">
-                    <strong>ℹ️ À savoir :</strong>
-                    <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 15px; margin-bottom: 15px; color: #856404;">
+                    <strong style="font-size: 16px;">⚠️ À savoir :</strong>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #856404;">
                         <li>Votre licence reste <strong>active pendant un an</strong> à partir de son activation</li>
                         <li>Même après désactivation, la licence reste valide jusqu'à son expiration</li>
                         <li><strong>Désactivez</strong> pour utiliser la même clé sur un autre site WordPress</li>
@@ -910,24 +920,25 @@ if ($is_ajax) {
                 <form method="post">
                     <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
                     <p class="submit" style="margin-top: 20px;">
-                        <button type="submit" name="deactivate_license" class="button button-secondary"
+                        <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545; border-color: #dc3545; color: white; font-weight: bold; padding: 10px 20px;"
                                 onclick="return confirm('⚠️ Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver ou l\'utiliser sur un autre site.');">
                             🔓 Désactiver la Licence
                         </button>
                     </p>
                 </form>
                 
-                <div style="background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 4px; padding: 12px; margin-top: 15px;">
-                    <strong>💡 Conseil :</strong> La désactivation permet de réutiliser votre clé sur un autre site, mais ne supprime pas votre accès ici jusqu'à l'expiration de la licence.
+                <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; border-radius: 4px; padding: 15px; margin-top: 15px; color: #0c5460;">
+                    <strong style="font-size: 16px;">💡 Conseil :</strong>
+                    <p style="margin: 8px 0 0 0;">La désactivation permet de réutiliser votre clé sur un autre site, mais ne supprime pas votre accès ici jusqu'à l'expiration de la licence.</p>
                 </div>
             </div>
             
             <?php endif; ?>
             
             <!-- Informations utiles -->
-            <div style="background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
-                <h4 style="margin: 0 0 10px 0; color: #004080;">ℹ️ Informations Utiles</h4>
-                <ul style="margin: 0; padding-left: 20px;">
+            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e7f3ff 100%); border-left: 4px solid #17a2b8; border-radius: 4px; padding: 20px; margin-bottom: 20px; color: #0c5460;">
+                <h4 style="margin: 0 0 10px 0; color: #0c5460; font-size: 16px;">ℹ️ Informations Utiles</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #0c5460;">
                     <li><strong>Site actuel :</strong> <?php echo esc_html(home_url()); ?></li>
                     <li><strong>Plan actif :</strong> <?php echo $test_mode_enabled ? '🧪 Mode Test' : ($is_premium ? '✅ Premium' : '○ Gratuit'); ?></li>
                     <?php if ($is_premium): ?>
