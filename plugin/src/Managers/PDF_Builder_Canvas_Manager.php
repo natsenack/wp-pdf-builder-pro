@@ -114,7 +114,6 @@ class PDF_Builder_Canvas_Manager {
     public function get_canvas_settings() {
         // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
         $all_settings = get_option('pdf_builder_settings', []);
-        error_log('CANVAS MANAGER: get_canvas_settings - Raw DB settings: ' . print_r($all_settings, true));
         
         // Extraire seulement les paramètres canvas
         $canvas_settings = [];
@@ -122,15 +121,11 @@ class PDF_Builder_Canvas_Manager {
         foreach ($canvas_keys as $key) {
             if (isset($all_settings[$key])) {
                 $canvas_settings[$key] = $all_settings[$key];
-                error_log("CANVAS MANAGER: Found $key = " . var_export($all_settings[$key], true));
-            } else {
-                error_log("CANVAS MANAGER: $key not found in DB, using default");
             }
         }
 
         // Fusionner avec les paramètres par défaut
         $result = array_merge($this->default_settings, $canvas_settings);
-        error_log('CANVAS MANAGER: Final result show_margins = ' . var_export($result['show_margins'], true));
         return $result;
     }
 
@@ -143,15 +138,12 @@ class PDF_Builder_Canvas_Manager {
 
         // Récupérer tous les paramètres existants
         $all_settings = get_option('pdf_builder_settings', []);
-        error_log('CANVAS MANAGER: Existing settings from DB: ' . print_r($all_settings, true));
         
         // Mettre à jour seulement les paramètres canvas
         $updated_settings = array_merge($all_settings, $validated_settings);
-        error_log('CANVAS MANAGER: Updated settings to save: ' . print_r($updated_settings, true));
         
         // Sauvegarder
         $result = update_option('pdf_builder_settings', $updated_settings);
-        error_log('CANVAS MANAGER: update_option result: ' . ($result ? 'SUCCESS' : 'FAILED'));
 
         // Logger
         error_log('PDF Builder: Canvas settings saved - ' . count($validated_settings) . ' parameters');
