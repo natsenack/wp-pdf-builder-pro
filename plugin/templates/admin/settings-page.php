@@ -4322,7 +4322,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 
                 // Performance API advanced features
                 if ('performance' in window) {
-                    console.log('📊 PERFORMANCE API: Available');
+                    // console.log('📊 PERFORMANCE API: Available');
                     
                     // Performance Navigation Timing
                     if (performance.timing) {
