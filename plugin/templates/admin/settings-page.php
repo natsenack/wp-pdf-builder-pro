@@ -167,7 +167,24 @@ if (isset($_POST['clear_cache']) &&
     }
 }
 
-// Handle individual tab submissions
+// Handle AJAX clear cache request
+if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
+    if (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance')) {
+        // Clear transients and cache
+        delete_transient('pdf_builder_cache');
+        delete_transient('pdf_builder_templates');
+        delete_transient('pdf_builder_elements');
+        
+        // Clear WP object cache if available
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+        
+        send_ajax_response(true, 'Cache vidé avec succès.');
+    } else {
+        send_ajax_response(false, 'Erreur de sécurité.');
+    }
+}
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
     if ($is_ajax) error_log('AJAX: Matched condition 2 - submit + pdf_builder_general_nonce');
     if (wp_verify_nonce($_POST['pdf_builder_general_nonce'], 'pdf_builder_settings')) {
@@ -822,12 +839,9 @@ if ($is_ajax) {
                 <h3>Nettoyage & Maintenance</h3>
                 <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
                 
-                <form method="post" style="display: inline;">
-                    <?php wp_nonce_field('pdf_builder_clear_cache_performance', 'pdf_builder_clear_cache_nonce_performance'); ?>
-                    <button type="submit" name="clear_cache" class="button button-secondary">
-                        🗑️ Vider le Cache
-                    </button>
-                </form>
+                <button type="button" id="clear-cache-btn" class="button button-secondary">
+                    🗑️ Vider le Cache
+                </button>
                 
                 <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px;">
                     <p style="margin: 0;"><strong>💡 Conseil :</strong> Videz le cache si vous rencontrez des problèmes de génération PDF ou si les changements n'apparaissent pas.</p>
@@ -3311,8 +3325,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                     document.getElementById('general');
                     
                     if (activeTab) {
-                        // Trouver le formulaire dans l'onglet actif
-                        const form = activeTab.querySelector('form');
+                        // Trouver le formulaire principal dans l'onglet actif (celui avec l'id qui correspond à l'onglet)
+                        const form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
                         if (form) {
                             console.log('🚀 SUBMITTING FORM:', form.id || 'unnamed form');
                             
@@ -3345,6 +3359,62 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                             saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
                             saveStatus.style.color = '#dc3232';
                         }
+                    }
+                });
+            }
+            
+            // Gestion du bouton Vider le Cache
+            const clearCacheBtn = document.getElementById('clear-cache-btn');
+            if (clearCacheBtn) {
+                clearCacheBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
+                        // Afficher le statut
+                        if (saveStatus) {
+                            saveStatus.textContent = '🗑️ Vidage du cache...';
+                            saveStatus.style.color = '#007cba';
+                        }
+                        
+                        // Faire une requête AJAX pour vider le cache
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_clear_cache');
+                        formData.append('security', '<?php echo wp_create_nonce("pdf_builder_clear_cache_performance"); ?>');
+                        
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                if (saveStatus) {
+                                    saveStatus.textContent = '✅ Cache vidé avec succès';
+                                    saveStatus.style.color = '#46b450';
+                                }
+                                setTimeout(() => {
+                                    if (saveStatus) saveStatus.classList.add('show');
+                                }, 100);
+                                setTimeout(() => {
+                                    if (saveStatus) {
+                                        saveStatus.classList.remove('show');
+                                        saveStatus.textContent = '';
+                                    }
+                                }, 3000);
+                            } else {
+                                if (saveStatus) {
+                                    saveStatus.textContent = '❌ Erreur lors du vidage du cache';
+                                    saveStatus.style.color = '#dc3232';
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX:', error);
+                            if (saveStatus) {
+                                saveStatus.textContent = '❌ Erreur de connexion';
+                                saveStatus.style.color = '#dc3232';
+                            }
+                        });
                     }
                 });
             }
