@@ -2579,9 +2579,6 @@ if ($is_ajax) {
         </div>
         
         <div id="maintenance" class="tab-content hidden-tab">
-            <style>
-                #maintenance #global-save-btn { display: none !important; }
-            </style>
             <h2>Actions de Maintenance</h2>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
@@ -3726,6 +3723,19 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 <script>
         // Gestion de la navigation des onglets
         function setupTabNavigation() {
+            // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
+            const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
+            const globalSaveBtn = document.getElementById('global-save-btn');
+            if (globalSaveBtn && initialActiveTab) {
+                if (initialActiveTab.id === 'maintenance') {
+                    globalSaveBtn.style.display = 'none';
+                    console.log('🔘 INITIALIZING: HIDING GLOBAL SAVE BUTTON for maintenance tab');
+                } else {
+                    globalSaveBtn.style.display = '';
+                    console.log('🔘 INITIALIZING: SHOWING GLOBAL SAVE BUTTON for tab:', initialActiveTab.id);
+                }
+            }
+            
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
             console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
             
@@ -3764,6 +3774,18 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     
                     // Activer le lien d'onglet
                     this.classList.add('nav-tab-active');
+                    
+                    // Gérer la visibilité du bouton de sauvegarde global
+                    const globalSaveBtn = document.getElementById('global-save-btn');
+                    if (globalSaveBtn) {
+                        if (targetTab === 'maintenance') {
+                            globalSaveBtn.style.display = 'none';
+                            console.log('🔘 HIDING GLOBAL SAVE BUTTON for maintenance tab');
+                        } else {
+                            globalSaveBtn.style.display = '';
+                            console.log('🔘 SHOWING GLOBAL SAVE BUTTON for tab:', targetTab);
+                        }
+                    }
                     
                     // Sauvegarder l'onglet actif dans localStorage
                     localStorage.setItem('pdf_builder_active_tab', targetTab);
