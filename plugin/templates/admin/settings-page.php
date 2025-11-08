@@ -1557,9 +1557,9 @@ if ($is_ajax) {
             
             <?php
             // Traitement de la sauvegarde des notifications
-            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_settings_nonce'])) {
+            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
                 // Logs removed for clarity
-                if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+                if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_settings')) {
                     $notification_settings = [
                         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
                         'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
