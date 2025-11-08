@@ -3266,6 +3266,12 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 }
                 
                 // Envoyer en AJAX via l'API WordPress
+                console.log('🔗 AJAX URL:', ajaxurl);
+                console.log('📤 Final FormData contents:');
+                for (let [key, value] of formData.entries()) {
+                    console.log('  ' + key + ':', value);
+                }
+                
                 fetch(ajaxurl, {
                     method: 'POST',
                     body: formData,
