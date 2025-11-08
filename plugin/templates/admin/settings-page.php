@@ -752,12 +752,16 @@ if ($is_ajax) {
                     delete_option('pdf_builder_license_key');
                     delete_option('pdf_builder_license_expires');
                     delete_option('pdf_builder_license_activated_at');
+                    delete_option('pdf_builder_license_test_key');
+                    delete_option('pdf_builder_license_test_mode_enabled');
                     update_option('pdf_builder_license_status', 'free');
-                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée.</p></div>';
+                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
                     $is_premium = false;
                     $license_key = '';
                     $license_status = 'free';
                     $license_activated_at = '';
+                    $test_key = '';
+                    $test_mode_enabled = false;
                 }
             }
             ?>
@@ -779,7 +783,7 @@ if ($is_ajax) {
                     </div>
                     
                     <!-- Carte Mode Test (si applicable) -->
-                    <?php if ($test_mode_enabled): ?>
+                    <?php if (!empty($test_key)): ?>
                     <div style="border: 3px solid #ffc107; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); box-shadow: 0 4px 6px rgba(255,193,7,0.2); transition: transform 0.2s;">
                         <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
                         <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
@@ -815,7 +819,7 @@ if ($is_ajax) {
                 </div>
                 
                 <!-- Détails de la clé -->
-                <?php if ($is_premium || $test_mode_enabled): ?>
+                <?php if ($is_premium || !empty($test_key)): ?>
                 <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; border-radius: 8px; padding: 20px; margin-top: 25px; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
@@ -847,7 +851,7 @@ if ($is_ajax) {
                         </tr>
                         <?php endif; ?>
                         
-                        <?php if ($test_mode_enabled && $test_key): ?>
+                        <?php if (!empty($test_key)): ?>
                         <tr style="border-bottom: 1px solid #e5e5e5;">
                             <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé de Test :</td>
                             <td style="padding: 8px 0; font-family: monospace;">
@@ -875,7 +879,7 @@ if ($is_ajax) {
                             <td style="padding: 8px 0; font-weight: 500;">Statut :</td>
                             <td style="padding: 8px 0;">
                                 <?php 
-                                if ($test_mode_enabled) {
+                                if (!empty($test_key)) {
                                     echo '<span style="background: #ffc107; color: #000; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">🧪 MODE TEST</span>';
                                 } elseif ($is_premium) {
                                     echo '<span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">✅ ACTIVE</span>';
@@ -968,7 +972,7 @@ if ($is_ajax) {
                 <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
                 <ul style="margin: 0; padding-left: 20px; color: #fff; list-style-type: none;">
                     <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Site actuel :</strong> <code style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 3px; font-family: monospace; color: #fff;"><?php echo esc_html(home_url()); ?></code></li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo $test_mode_enabled ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); line-height: 1.6;"><strong>Plan actif :</strong> <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;"><?php echo !empty($test_key) ? 'Mode Test' : ($is_premium ? 'Premium' : 'Gratuit'); ?></span></li>
                     <?php if ($is_premium): ?>
                     <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Support :</strong> <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline;">Contact Support Premium</a></li>
                     <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);"><strong>Documentation :</strong> <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline;">Lire la Documentation</a></li>
