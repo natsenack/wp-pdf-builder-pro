@@ -3350,6 +3350,15 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             }
         }
         
+        // Démarrer la gestion du bouton global
+        setupGlobalSaveButton();
+        
+        // Démarrer la navigation des onglets
+        setupTabNavigation();
+    });
+</script>
+        }
+        
         // Gestion de la navigation des onglets
         function setupTabNavigation() {
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
