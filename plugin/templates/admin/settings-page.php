@@ -3357,8 +3357,8 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         setupTabNavigation();
     });
 </script>
-        }
-        
+
+<script>
         // Gestion de la navigation des onglets
         function setupTabNavigation() {
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
@@ -3409,3 +3409,4 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Démarrer la navigation des onglets
         setupTabNavigation();
+</script>
