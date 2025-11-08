@@ -2975,10 +2975,23 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 // Définir ajaxurl si pas déjà défini
     if (typeof ajaxurl === 'undefined') {
         ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-    }    document.addEventListener('DOMContentLoaded', function() {
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
+        console.log('🔍 DOM Content Loaded - Checking elements...');
+        
+        // Vérifier les éléments critiques
+        
+        console.log('� Elements found:', {
+            tabs: tabs.length,
+            contents: contents.length,
+            globalSaveBtn: !!globalSaveBtn
+        });
         
         // Log des paramètres actuels au chargement
-        console.log('🚀 PDF Builder Settings Page loaded - JavaScript logs enabled');
         
         // Récupérer les paramètres PHP et les logger
         const currentSettings = {
