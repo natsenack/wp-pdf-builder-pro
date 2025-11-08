@@ -3391,13 +3391,19 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         if (performanceSubmitBtn) {
             performanceSubmitBtn.addEventListener('click', function(e) {
                 e.preventDefault(); // Empêcher la soumission normale du formulaire
+                console.log('Performance button clicked');
                 
                 const form = document.getElementById('performance-form');
+                console.log('Performance form found:', form);
                 if (form) {
+                    const nonceInput = form.querySelector('input[name="pdf_builder_performance_nonce"]');
+                    console.log('Performance nonce input:', nonceInput);
+                    console.log('Performance nonce value:', nonceInput ? nonceInput.value : 'NOT FOUND');
+                    
                     // Modifier temporairement l'action pour utiliser la fonction AJAX de performance
                     const originalFormData = new FormData(form);
                     originalFormData.append('action', 'pdf_builder_save_performance_settings');
-                    originalFormData.append('nonce', document.querySelector('input[name="pdf_builder_performance_nonce"]').value);
+                    originalFormData.append('nonce', form.querySelector('input[name="pdf_builder_performance_nonce"]').value);
 
                     fetch(ajaxurl, {
                         method: 'POST',
