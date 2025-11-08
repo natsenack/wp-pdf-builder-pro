@@ -3193,6 +3193,112 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         // Ajouter les event listeners
         addFormEventListeners();
         
+        // Logs de performance et monitoring
+        function addPerformanceMonitoring() {
+            // Performance de chargement de page
+            if (window.performance && window.performance.timing) {
+                window.addEventListener('load', function() {
+                    setTimeout(() => {
+                        const timing = window.performance.timing;
+                        const loadTime = timing.loadEventEnd - timing.navigationStart;
+                        const domReady = timing.domContentLoadedEventEnd - timing.navigationStart;
+                        console.log('⏱️ PAGE LOAD PERFORMANCE:', {
+                            totalLoadTime: loadTime + 'ms',
+                            domContentLoaded: domReady + 'ms',
+                            navigationStart: new Date(timing.navigationStart).toISOString()
+                        });
+                    }, 0);
+                });
+            }
+            
+            // Memory usage si disponible
+            if (window.performance && window.performance.memory) {
+                setTimeout(() => {
+                    const mem = window.performance.memory;
+                    console.log('🧠 MEMORY USAGE:', {
+                        usedJSHeapSize: Math.round(mem.usedJSHeapSize / 1024 / 1024) + ' MB',
+                        totalJSHeapSize: Math.round(mem.totalJSHeapSize / 1024 / 1024) + ' MB',
+                        jsHeapSizeLimit: Math.round(mem.jsHeapSizeLimit / 1024 / 1024) + ' MB'
+                    });
+                }, 1000);
+            }
+            
+            // Network Information API
+            if ('connection' in navigator) {
+                console.log('📡 NETWORK INFO:', {
+                    effectiveType: navigator.connection.effectiveType,
+                    downlink: navigator.connection.downlink + ' Mbps',
+                    rtt: navigator.connection.rtt + ' ms',
+                    saveData: navigator.connection.saveData
+                });
+            }
+            
+            // Battery API
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    console.log('🔋 BATTERY STATUS:', {
+                        charging: battery.charging,
+                        level: Math.round(battery.level * 100) + '%',
+                        chargingTime: battery.chargingTime,
+                        dischargingTime: battery.dischargingTime
+                    });
+                    
+                    // Événements de batterie
+                    battery.addEventListener('chargingchange', () => {
+                        console.log('🔋 BATTERY CHARGING CHANGED:', battery.charging);
+                    });
+                    
+                    battery.addEventListener('levelchange', () => {
+                        console.log('🔋 BATTERY LEVEL CHANGED:', Math.round(battery.level * 100) + '%');
+                    });
+                });
+            }
+            
+            // Geolocation (si permissions accordées)
+            if ('geolocation' in navigator) {
+                console.log('📍 GEOLOCATION AVAILABLE');
+                // Note: Ne pas demander automatiquement la position pour éviter les prompts
+            }
+            
+            // Device orientation (si supporté)
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', function(event) {
+                    // Log seulement occasionnellement pour éviter le spam
+                    if (Math.random() < 0.01) { // 1% des événements
+                        console.log('📱 DEVICE ORIENTATION:', {
+                            alpha: Math.round(event.alpha),
+                            beta: Math.round(event.beta),
+                            gamma: Math.round(event.gamma)
+                        });
+                    }
+                });
+                console.log('📱 DEVICE ORIENTATION SUPPORTED');
+            }
+            
+            // Visibility API
+            document.addEventListener('visibilitychange', function() {
+                console.log('👁️ PAGE VISIBILITY CHANGED:', {
+                    hidden: document.hidden,
+                    visibilityState: document.visibilityState,
+                    timestamp: new Date().toISOString()
+                });
+            });
+            
+            // Online/Offline events
+            window.addEventListener('online', function() {
+                console.log('🌐 CONNECTION RESTORED - ONLINE');
+            });
+            
+            window.addEventListener('offline', function() {
+                console.log('🚫 CONNECTION LOST - OFFLINE');
+            });
+            
+            console.log('📊 CURRENT CONNECTION STATUS:', navigator.onLine ? 'ONLINE' : 'OFFLINE');
+        }
+        
+        // Démarrer le monitoring de performance
+        addPerformanceMonitoring();
+        
         // Appel initial de logging
         logAllFormElements('PAGE_LOAD');
         
