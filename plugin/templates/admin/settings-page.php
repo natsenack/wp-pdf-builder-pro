@@ -643,6 +643,16 @@ if ($is_ajax) {
                         <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row">Test du système</th>
+                    <td>
+                        <button type="button" id="test-cache-btn" class="button button-secondary">
+                            🧪 Tester l'intégration du cache
+                        </button>
+                        <span id="cache-test-results" style="margin-left: 10px;"></span>
+                        <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;"></div>
+                    </td>
+                </tr>
             </table>
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📄 Paramètres PDF</h3>
@@ -678,15 +688,6 @@ if ($is_ajax) {
                     </td>
                 </tr>
             </table>
-            
-            <h4>Test du système de cache</h4>
-            <p>
-                <button type="button" id="test-cache-btn" class="button button-secondary">
-                    🧪 Tester l'intégration du cache
-                </button>
-                <span id="cache-test-results" style="margin-left: 10px;"></span>
-            </p>
-            <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;"></div>
             
             <p class="submit">
                 <button type="submit" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
