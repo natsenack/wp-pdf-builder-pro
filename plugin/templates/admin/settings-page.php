@@ -188,14 +188,15 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         update_option('pdf_builder_settings', $settings);
         if ($is_ajax) {
             error_log('AJAX: About to send success response for general settings');
-            send_ajax_response(true, 'Paramètres généraux enregistrés avec succès.');
-            error_log('AJAX: This should never be reached - send_ajax_response should exit');
+            $response = json_encode(['success' => true, 'message' => 'Paramètres généraux enregistrés avec succès.']);
+            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
         } else {
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
         }
     } else {
         if ($is_ajax) {
-            send_ajax_response(false, 'Erreur de sécurité. Veuillez réessayer.');
+            $response = json_encode(['success' => false, 'message' => 'Erreur de sécurité. Veuillez réessayer.']);
+            wp_die($response, '', array('response' => 403, 'content_type' => 'application/json'));
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
         }
