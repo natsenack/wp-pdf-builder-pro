@@ -3337,23 +3337,33 @@ class PDF_Builder_Admin {
 
         if ($current_tab === 'canvas') {
             // Sauvegarde des paramètres canvas via le Canvas Manager
+            error_log('PDF BUILDER: Processing canvas tab save');
             if (class_exists('PDF_Builder_Canvas_Manager')) {
                 $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-                
+
+                // Log des données reçues
+                error_log('PDF BUILDER: Raw POST data for canvas: ' . print_r($_POST, true));
+
                 // Filtrer uniquement les paramètres canvas
                 $canvas_params = $this->filter_canvas_parameters($_POST);
-                
+                error_log('PDF BUILDER: Filtered canvas params: ' . print_r($canvas_params, true));
+
                 $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
+                error_log('PDF BUILDER: Canvas save result: ' . ($saved_settings ? 'SUCCESS' : 'FAILED'));
+
                 if ($saved_settings) {
                     // Retourner les paramètres sauvegardés pour synchronisation JavaScript
-                    wp_send_json_success([
+                    $response = [
                         'message' => 'Paramètres Canvas enregistrés avec succès',
                         'data' => $canvas_params // Retourner les valeurs pour synchronisation
-                    ]);
+                    ];
+                    error_log('PDF BUILDER: Canvas response data: ' . print_r($response, true));
+                    wp_send_json_success($response);
                 } else {
                     wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
                 }
             } else {
+                error_log('PDF BUILDER: Canvas Manager class not found');
                 wp_send_json_error('Erreur: Canvas Manager non disponible');
             }
             return;
