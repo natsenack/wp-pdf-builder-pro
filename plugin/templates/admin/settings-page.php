@@ -3296,14 +3296,53 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
             console.log('📊 CURRENT CONNECTION STATUS:', navigator.onLine ? 'ONLINE' : 'OFFLINE');
         }
         
-        // Démarrer le monitoring de performance
-        addPerformanceMonitoring();
+        // Gestion du bouton de sauvegarde global
+        function setupGlobalSaveButton() {
+            const globalSaveBtn = document.getElementById('global-save-btn');
+            const saveStatus = document.getElementById('save-status');
+            
+            if (globalSaveBtn) {
+                globalSaveBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Trouver l'onglet actif
+                    const activeTab = document.querySelector('.tab-content:not([style*="display: none"]):not([style*="display:none"])') || 
+                                    document.querySelector('.tab-content.active') ||
+                                    document.getElementById('general');
+                    
+                    if (activeTab) {
+                        // Trouver le formulaire dans l'onglet actif
+                        const form = activeTab.querySelector('form');
+                        if (form) {
+                            console.log('🚀 SUBMITTING FORM:', form.id || 'unnamed form');
+                            
+                            // Afficher le statut de sauvegarde
+                            if (saveStatus) {
+                                saveStatus.textContent = '💾 Sauvegarde en cours...';
+                                saveStatus.style.color = '#007cba';
+                            }
+                            
+                            // Soumettre le formulaire
+                            form.submit();
+                        } else {
+                            console.error('❌ No form found in active tab:', activeTab.id);
+                            if (saveStatus) {
+                                saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
+                                saveStatus.style.color = '#dc3232';
+                            }
+                        }
+                    } else {
+                        console.error('❌ No active tab found');
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
+                            saveStatus.style.color = '#dc3232';
+                        }
+                    }
+                });
+            }
+        }
         
-        // Appel initial de logging
-        logAllFormElements('PAGE_LOAD');
-        
-        // Appeler la fonction de peuplement des champs canvas au chargement de la page
-        // populateCanvasFields(); // Commenté temporairement - fonction non définie
-    });
+        // Démarrer la gestion du bouton global
+        setupGlobalSaveButton();
 </script>
                     opacity: computedStyle.opacity,
