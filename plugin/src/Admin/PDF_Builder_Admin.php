@@ -3356,7 +3356,7 @@ class PDF_Builder_Admin {
                 error_log('PDF BUILDER: Canvas Manager class not found');
                 wp_send_json_error('Erreur: Canvas Manager non disponible');
             }
-            return;
+            return; // Important: arrêter l'exécution pour éviter la réponse générale
         }
 
         // Pour les autres onglets, traitement normal
