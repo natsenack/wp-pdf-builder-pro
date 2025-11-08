@@ -3368,7 +3368,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                                 // Vérifier si ce champ est dans les données sauvegardées
                                 if (data.data && typeof data.data[fieldName] !== 'undefined') {
                                     const savedValue = data.data[fieldName];
-                                    const shouldBeChecked = savedValue === true || savedValue === '1' || savedValue === 1;
+                                    const shouldBeChecked = savedValue && savedValue !== '' && savedValue !== '0' && savedValue !== 0 && savedValue !== false;
                                     console.log('🔄 Field', fieldName, 'saved value:', savedValue, 'should be checked:', shouldBeChecked);
                                     
                                     // Synchroniser l'état de la checkbox
