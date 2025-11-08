@@ -1,1 +1,0 @@
-<?php define('ABSPATH', __DIR__ . '/'); require_once 'plugin/bootstrap.php'; if (has_action('wp_ajax_pdf_builder_generate_template_preview')) { echo '✅ Action AJAX enregistrée'; } else { echo '❌ Action AJAX non trouvée'; } ?>

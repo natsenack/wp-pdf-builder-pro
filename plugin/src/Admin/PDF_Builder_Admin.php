@@ -3287,8 +3287,7 @@ class PDF_Builder_Admin {
         // Déterminer l'onglet actuel
         $current_tab = $_POST['current_tab'] ?? 'general';
 
-        // Vérification de sécurité selon l'onglet
-        $nonce_name = 'pdf_builder_settings';
+        $nonce_field = 'pdf_builder_settings_nonce'; // Tous les onglets utilisent le même champ nonce
         if ($current_tab === 'pdf') {
             $nonce_name = 'pdf_builder_pdf';
         } elseif ($current_tab === 'performance') {
@@ -3297,15 +3296,6 @@ class PDF_Builder_Admin {
             $nonce_name = 'pdf_builder_notifications';
         } elseif ($current_tab === 'canvas') {
             $nonce_name = 'pdf_builder_settings'; // Canvas utilise le nonce général
-        }
-
-        $nonce_field = 'nonce';
-        if ($current_tab === 'pdf') {
-            $nonce_field = 'pdf_builder_pdf_nonce';
-        } elseif ($current_tab === 'performance') {
-            $nonce_field = 'pdf_builder_performance_nonce';
-        } elseif ($current_tab === 'notifications') {
-            $nonce_field = 'pdf_builder_notifications_nonce';
         }
 
         if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_name)) {
