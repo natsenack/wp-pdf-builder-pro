@@ -728,21 +728,23 @@ if ($is_ajax) {
             
             // Traitement activation licence
             if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
-                // Logs removed for clarity
-                if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
-                    $new_key = sanitize_text_field($_POST['license_key'] ?? '');
-                    if (!empty($new_key)) {
-                        update_option('pdf_builder_license_key', $new_key);
-                        update_option('pdf_builder_license_status', 'active');
-                        update_option('pdf_builder_license_expires', date('Y-m-d', strtotime('+1 year')));
-                        update_option('pdf_builder_license_activated_at', date('Y-m-d H:i:s'));
-                        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence activée avec succès !</p></div>';
-                        $is_premium = true;
-                        $license_key = $new_key;
-                        $license_status = 'active';
-                        $license_activated_at = date('Y-m-d H:i:s');
-                    }
-                }
+                // Mode DÉMO : Activation de clés réelles désactivée
+                // Les clés premium réelles seront validées une fois le système de licence en production
+                wp_die(
+                    '<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
+                        <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
+                        <p><strong>La validation des clés premium n\'est pas encore active.</strong></p>
+                        <p>Pour tester les fonctionnalités premium, veuillez :</p>
+                        <ol>
+                            <li>Allez à l\'onglet <strong>Développeur</strong></li>
+                            <li>Cliquez sur <strong>Générer une clé de test</strong></li>
+                            <li>La clé TEST s\'activera automatiquement</li>
+                        </ol>
+                        <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
+                    </div>',
+                    'Activation désactivée',
+                    ['response' => 403]
+                );
             }
             
             // Traitement désactivation licence
@@ -894,39 +896,30 @@ if ($is_ajax) {
                 <?php endif; ?>
             </div>
             
-            <!-- Activation/Désactivation -->
+            <!-- Activation/Désactivation - Mode DEMO -->
             <?php if (!$is_premium): ?>
-            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #007cba; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(0,123,255,0.2);">
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                    <div style="font-size: 50px; animation: pulse 2s infinite;">🔓</div>
+                    <div style="font-size: 50px;">🧪</div>
                     <div>
-                        <h3 style="margin: 0 0 8px 0; color: #004085; font-size: 26px; font-weight: 700;">Activer une Licence Premium</h3>
-                        <p style="margin: 0; color: #004085; font-size: 15px; line-height: 1.5;">Entrez votre cle de licence pour deverrouiller toutes les fonctionnalites premium et acces exclusifs.</p>
+                        <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Mode DÉMO - Clés de Test Uniquement</h3>
+                        <p style="margin: 0; color: #856404; font-size: 15px; line-height: 1.5;">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
                     </div>
                 </div>
                 
-                <div style="background: rgba(0,123,255,0.1); border-left: 4px solid #007cba; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #004085; font-size: 14px;">
-                    Vous n'avez pas de licence ? <strong>Contactez-nous ou consultez nos plans tarifaires.</strong>
+                <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
+                    <strong>✓ Comment tester :</strong>
+                    <ol style="margin: 10px 0 0 0; padding-left: 20px;">
+                        <li>Allez à l'onglet <strong>Développeur</strong></li>
+                        <li>Cliquez sur <strong>🔑 Générer une clé de test</strong></li>
+                        <li>La clé TEST s'activera automatiquement</li>
+                        <li>Toutes les fonctionnalités premium seront disponibles</li>
+                    </ol>
                 </div>
                 
-                <form method="post">
-                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                    <table class="form-table" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                        <tr>
-                            <th scope="row"><label for="license_key" style="color: #004085; font-weight: 700;">Cle de licence</label></th>
-                            <td>
-                                <input type="text" id="license_key" name="license_key" class="regular-text" 
-                                       placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px; border: 2px solid #007cba; padding: 12px; border-radius: 6px; font-size: 15px; background: white;">
-                                <p class="description" style="color: #666; margin-top: 8px;">Vous pouvez trouver votre cle dans votre compte client.</p>
-                            </td>
-                        </tr>
-                    </table>
-                    <p class="submit" style="margin-top: 20px;">
-                        <button type="submit" name="activate_license" class="button button-primary" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); border: none; color: white; font-weight: bold; padding: 12px 30px; border-radius: 6px; font-size: 16px; box-shadow: 0 3px 6px rgba(0,123,255,0.3); cursor: pointer;">
-                            Activer la licence
-                        </button>
-                    </p>
-                </form>
+                <div style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
+                    <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
+                </div>
             </div>
             <?php else: ?>
             <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
