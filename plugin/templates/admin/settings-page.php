@@ -27,6 +27,21 @@ if (!empty($_POST)) {
     // Logs removed for clarity
 }
 
+// Function to send AJAX response
+function send_ajax_response($success, $message = '', $data = []) {
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+    }
+    echo json_encode(array_merge([
+        'success' => $success,
+        'message' => $message
+    ], $data));
+    exit;
+}
+
+// Check if this is an AJAX request
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
 // Process form
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -86,10 +101,18 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             // Logs removed for clarity
 
             // Simplified success logic: if no exception was thrown, consider it successful
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
+            if ($is_ajax) {
+                send_ajax_response(true, 'Paramètres enregistrés avec succès.');
+            } else {
+                $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
+            }
         } catch (Exception $e) {
             // Logs removed for clarity
-            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
+            if ($is_ajax) {
+                send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres: ' . $e->getMessage());
+            } else {
+                $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
+            }
         }
         $settings = get_option('pdf_builder_settings', []);
     } else {
@@ -120,7 +143,11 @@ if (isset($_POST['clear_cache']) &&
             wp_cache_flush();
         }
         
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(true, 'Cache vidé avec succès.');
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès.</p></div>';
+        }
     }
 }
 
@@ -141,9 +168,17 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         }
         
         update_option('pdf_builder_settings', $settings);
-        $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(true, 'Paramètres généraux enregistrés avec succès.');
+        } else {
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres généraux enregistrés avec succès.</p></div>';
+        }
     } else {
-        $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        if ($is_ajax) {
+            send_ajax_response(false, 'Erreur de sécurité. Veuillez réessayer.');
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        }
     }
 }
 
@@ -3224,28 +3259,52 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
                 })
-                .then(response => response.text())
+                .then(response => {
+                    // Vérifier si la réponse est JSON
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        // Si ce n'est pas JSON, traiter comme HTML (rechargement de page)
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            throw new Error('Erreur serveur');
+                        }
+                    }
+                })
                 .then(data => {
                     // Réactiver le bouton
                     this.disabled = false;
                     this.innerHTML = '💾 Sauvegarder';
 
-                    // Afficher le succès
-                    if (saveStatus) {
-                        saveStatus.textContent = '✅ Sauvegardé avec succès !';
-                        saveStatus.className = 'save-status show success';
+                    if (data && data.success) {
+                        // Afficher le succès
+                        if (saveStatus) {
+                            saveStatus.textContent = '✅ ' + (data.message || 'Sauvegardé avec succès !');
+                            saveStatus.className = 'save-status show success';
 
-                        // Masquer le message après 3 secondes
-                        setTimeout(() => {
-                            saveStatus.className = 'save-status';
-                        }, 3000);
+                            // Masquer le message après 3 secondes
+                            setTimeout(() => {
+                                saveStatus.className = 'save-status';
+                            }, 3000);
+                        }
+                    } else {
+                        // Afficher l'erreur
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ ' + (data.message || 'Erreur lors de la sauvegarde');
+                            saveStatus.className = 'save-status show error';
+
+                            // Masquer le message d'erreur après 5 secondes
+                            setTimeout(() => {
+                                saveStatus.className = 'save-status';
+                            }, 5000);
+                        }
                     }
-
-                    // Recharger seulement le contenu des onglets si nécessaire
-                    // Pour l'instant, on garde simple et on affiche juste le succès
                 })
                 .catch(error => {
                     console.error('Erreur AJAX:', error);
@@ -3254,7 +3313,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     this.innerHTML = '💾 Sauvegarder';
 
                     if (saveStatus) {
-                        saveStatus.textContent = '❌ Erreur lors de la sauvegarde';
+                        saveStatus.textContent = '❌ Erreur de connexion';
                         saveStatus.className = 'save-status show error';
 
                         // Masquer le message d'erreur après 5 secondes
