@@ -3210,36 +3210,52 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 this.disabled = true;
                 this.innerHTML = '⏳ Soumission...';
 
-                // Soumettre le formulaire de manière sécurisée
-                try {
-                    if (typeof form.requestSubmit === 'function') {
-                        // Utiliser requestSubmit si disponible (plus moderne)
-                        form.requestSubmit();
-                    } else {
-                        // Fallback pour les navigateurs plus anciens
-                        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-                        if (submitBtn) {
-                            submitBtn.click();
-                        } else {
-                            // Créer un bouton submit temporaire si aucun n'existe
-                            const tempBtn = document.createElement('button');
-                            tempBtn.type = 'submit';
-                            tempBtn.style.display = 'none';
-                            form.appendChild(tempBtn);
-                            tempBtn.click();
-                            form.removeChild(tempBtn);
-                        }
+                // Soumettre le formulaire via AJAX (sans rechargement de page)
+                const formData = new FormData(form);
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
-                } catch (error) {
-                    console.error('❌ Erreur lors de la soumission:', error);
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Réactiver le bouton
+                    this.disabled = false;
+                    this.innerHTML = '💾 Sauvegarder';
+
+                    // Afficher le succès
+                    if (saveStatus) {
+                        saveStatus.textContent = '✅ Sauvegardé avec succès !';
+                        saveStatus.className = 'save-status show success';
+
+                        // Masquer le message après 3 secondes
+                        setTimeout(() => {
+                            saveStatus.className = 'save-status';
+                        }, 3000);
+                    }
+
+                    // Recharger seulement le contenu des onglets si nécessaire
+                    // Pour l'instant, on garde simple et on affiche juste le succès
+                })
+                .catch(error => {
+                    console.error('Erreur AJAX:', error);
                     // Réactiver le bouton en cas d'erreur
                     this.disabled = false;
                     this.innerHTML = '💾 Sauvegarder';
+
                     if (saveStatus) {
-                        saveStatus.textContent = '❌ Erreur de soumission';
+                        saveStatus.textContent = '❌ Erreur lors de la sauvegarde';
                         saveStatus.className = 'save-status show error';
+
+                        // Masquer le message d'erreur après 5 secondes
+                        setTimeout(() => {
+                            saveStatus.className = 'save-status';
+                        }, 5000);
                     }
-                }
+                });
             });
         }
         
