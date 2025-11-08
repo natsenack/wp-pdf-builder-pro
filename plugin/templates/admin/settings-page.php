@@ -3027,7 +3027,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 [SETTINGS PAGE] JavaScript chargé et DOM prêt');
         
         // Logs removed for clarity
         
@@ -3191,25 +3190,22 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                 console.log('📄 [GLOBAL SAVE] Élément trouvé:', form);
 
                 if (!form) {
-                    console.error('❌ [GLOBAL SAVE] Form not found for tab:', currentTab, 'with ID:', formId);
+                    console.error('❌ Form not found for tab:', currentTab, 'with ID:', formId);
                     return;
                 }
 
                 console.log('✅ [GLOBAL SAVE] Formulaire trouvé avec succès');
 
                 // Vérifier que c'est bien un élément de formulaire
-                console.log('🔍 [GLOBAL SAVE] Vérification HTMLFormElement...');
                 if (!(form instanceof HTMLFormElement)) {
-                    console.error('❌ [GLOBAL SAVE] Element found is not a form:', form, 'for tab:', currentTab);
-                    console.log('❌ [GLOBAL SAVE] Type de l\'élément:', typeof form, 'Instance:', form.constructor.name);
+                    console.error('❌ Element found is not a form:', form, 'for tab:', currentTab);
                     return;
                 }
 
                 console.log('✅ [GLOBAL SAVE] Élément est bien un HTMLFormElement');
-
+                
                 // Exclure certains onglets qui ont leurs propres boutons
                 if (currentTab === 'roles' || currentTab === 'templates' || currentTab === 'developpeur') {
-                    console.log('⚠️ [GLOBAL SAVE] Onglet exclu du système global:', currentTab);
                     alert('⚠️ Cet onglet utilise un système de sauvegarde séparé. Utilisez le bouton dans l\'onglet.');
                     return;
                 }
@@ -3254,7 +3250,7 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
                     }
                     console.log('✅ [GLOBAL SAVE] Soumission lancée avec succès');
                 } catch (error) {
-                    console.error('❌ [GLOBAL SAVE] Erreur lors de la soumission:', error);
+                    console.error('❌ Erreur lors de la soumission:', error);
                     // Réactiver le bouton en cas d'erreur
                     this.disabled = false;
                     this.innerHTML = '💾 Sauvegarder';
