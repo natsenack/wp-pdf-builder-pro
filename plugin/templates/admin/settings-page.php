@@ -817,7 +817,18 @@ if ($is_ajax) {
                 <!-- Détails de la clé -->
                 <?php if ($is_premium || $test_mode_enabled): ?>
                 <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; border-radius: 8px; padding: 20px; margin-top: 25px; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                    <h4 style="margin: 0 0 15px 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
+                        <?php if ($is_premium): ?>
+                        <form method="post" style="display: inline;">
+                            <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                            <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
+                                    onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ?');">
+                                🗑️ Désactiver
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                    </div>
                     <table style="width: 100%; border-collapse: collapse;">
                         <?php if ($is_premium && $license_key): ?>
                         <tr style="border-bottom: 2px solid #cce5ff;">
