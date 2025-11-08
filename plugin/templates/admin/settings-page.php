@@ -3588,9 +3588,47 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 
                 // Gestion du test du système de cache
         jQuery(document).ready(function($) {
-            console.log("Cache test button ready");
-            $("#test-cache-btn").on("click", function() {
-                alert("Test cache - Feature coming soon");
+            console.log("🔧 Cache test button ready");
+            const $btn = $("#test-cache-btn");
+            const $results = $("#cache-test-results");
+            const $output = $("#cache-test-output");
+            
+            $btn.on("click", function(e) {
+                e.preventDefault();
+                console.log("🖱️ Cache test button clicked");
+                
+                $btn.prop("disabled", true).html("🔄 Test en cours...");
+                if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
+                if ($output.length) $output.hide();
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        action: "pdf_builder_simple_test"
+                    },
+                    timeout: 30000,
+                    success: function(response) {
+                        console.log("✅ AJAX success:", response);
+                        $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
+                        
+                        if (response.success) {
+                            if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
+                            if ($output.length) $output.html(response.data).show();
+                        } else {
+                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test échoué</span>');
+                            if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("❌ AJAX error:", status, error);
+                        $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
+                        
+                        if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
+                        if ($output.length) $output.html('<p>Erreur: ' + error + '</p>').show();
+                    }
+                });
             });
         });
 </script>
