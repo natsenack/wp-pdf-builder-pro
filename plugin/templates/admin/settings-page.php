@@ -6967,7 +6967,5 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
 
         // Appeler la fonction de peuplement des champs canvas au chargement de la page
         populateCanvasFields();
-
     });
-    */
 </script>
