@@ -2926,11 +2926,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
         
         // Vérifier les valeurs des checkboxes au chargement
         setTimeout(() => {
-            console.log('🔍 [DEBUG] Checking global variables at page load:');
-            console.log('  - pdfBuilderCanvasSettings exists:', typeof pdfBuilderCanvasSettings);
-            console.log('  - pdfBuilderCanvasSettings value:', pdfBuilderCanvasSettings);
-            console.log('  - window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-            
             const debugJsCheckbox = document.getElementById('debug_javascript');
             const debugPhpCheckbox = document.getElementById('debug_php_errors');
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
@@ -2939,115 +2934,6 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
             console.log('  debug_javascript checked:', debugJsCheckbox ? debugJsCheckbox.checked : 'NOT FOUND');
             console.log('  debug_php_errors checked:', debugPhpCheckbox ? debugPhpCheckbox.checked : 'NOT FOUND');
             console.log('  developer_enabled checked:', developerEnabledCheckbox ? developerEnabledCheckbox.checked : 'NOT FOUND');
-            
-            // Charger les paramètres canvas depuis pdfBuilderCanvasSettings
-            console.log('🔍 Checking for pdfBuilderCanvasSettings:', typeof pdfBuilderCanvasSettings, pdfBuilderCanvasSettings);
-            if (typeof pdfBuilderCanvasSettings !== 'undefined') {
-                console.log('🎨 Loading canvas settings from pdfBuilderCanvasSettings:', pdfBuilderCanvasSettings);
-                
-                // Appliquer les paramètres aux champs du formulaire canvas
-                const canvasFields = {
-                    'default_canvas_width': pdfBuilderCanvasSettings.default_canvas_width,
-                    'default_canvas_height': pdfBuilderCanvasSettings.default_canvas_height,
-                    'default_canvas_unit': pdfBuilderCanvasSettings.default_canvas_unit,
-                    'default_orientation': pdfBuilderCanvasSettings.default_orientation,
-                    'canvas_background_color': pdfBuilderCanvasSettings.canvas_background_color,
-                    'container_background_color': pdfBuilderCanvasSettings.container_background_color,
-                    'margin_top': pdfBuilderCanvasSettings.margin_top,
-                    'margin_right': pdfBuilderCanvasSettings.margin_right,
-                    'margin_bottom': pdfBuilderCanvasSettings.margin_bottom,
-                    'margin_left': pdfBuilderCanvasSettings.margin_left,
-                    'grid_size': pdfBuilderCanvasSettings.grid_size,
-                    'grid_color': pdfBuilderCanvasSettings.grid_color,
-                    'handle_size': pdfBuilderCanvasSettings.handle_size,
-                    'handle_color': pdfBuilderCanvasSettings.handle_color,
-                    'rotation_step': pdfBuilderCanvasSettings.rotation_step,
-                    'max_fps': pdfBuilderCanvasSettings.max_fps,
-                    'auto_save_interval': pdfBuilderCanvasSettings.auto_save_interval,
-                    'auto_save_versions': pdfBuilderCanvasSettings.auto_save_versions,
-                    'undo_levels': pdfBuilderCanvasSettings.undo_levels,
-                    'redo_levels': pdfBuilderCanvasSettings.redo_levels
-                };
-                
-                // Appliquer les valeurs aux inputs
-                Object.keys(canvasFields).forEach(fieldId => {
-                    const element = document.getElementById(fieldId);
-                    if (element && canvasFields[fieldId] !== undefined) {
-                        element.value = canvasFields[fieldId];
-                        console.log(`📝 Set ${fieldId} to ${canvasFields[fieldId]}`);
-                    }
-                });
-                
-                // Appliquer les checkboxes
-                const canvasCheckboxes = {
-                    'canvas_show_transparency': pdfBuilderCanvasSettings.canvas_show_transparency,
-                    'container_show_transparency': pdfBuilderCanvasSettings.container_show_transparency,
-                    'show_margins': pdfBuilderCanvasSettings.show_margins,
-                    'show_grid': pdfBuilderCanvasSettings.show_grid,
-                    'snap_to_grid': pdfBuilderCanvasSettings.snap_to_grid,
-                    'snap_to_elements': pdfBuilderCanvasSettings.snap_to_elements,
-                    'show_guides': pdfBuilderCanvasSettings.show_guides,
-                    'lock_guides': pdfBuilderCanvasSettings.lock_guides,
-                    'pan_with_mouse': pdfBuilderCanvasSettings.pan_with_mouse,
-                    'smooth_zoom': pdfBuilderCanvasSettings.smooth_zoom,
-                    'show_zoom_indicator': pdfBuilderCanvasSettings.show_zoom_indicator,
-                    'zoom_with_wheel': pdfBuilderCanvasSettings.zoom_with_wheel,
-                    'zoom_to_selection': pdfBuilderCanvasSettings.zoom_to_selection,
-                    'show_resize_handles': pdfBuilderCanvasSettings.show_resize_handles,
-                    'enable_rotation': pdfBuilderCanvasSettings.enable_rotation,
-                    'rotation_snap': pdfBuilderCanvasSettings.rotation_snap,
-                    'multi_select': pdfBuilderCanvasSettings.multi_select,
-                    'select_all_shortcut': pdfBuilderCanvasSettings.select_all_shortcut,
-                    'show_selection_bounds': pdfBuilderCanvasSettings.show_selection_bounds,
-                    'copy_paste_enabled': pdfBuilderCanvasSettings.copy_paste_enabled,
-                    'duplicate_on_drag': pdfBuilderCanvasSettings.duplicate_on_drag,
-                    'compress_images': pdfBuilderCanvasSettings.compress_images,
-                    'include_metadata': pdfBuilderCanvasSettings.include_metadata,
-                    'auto_crop': pdfBuilderCanvasSettings.auto_crop,
-                    'embed_fonts': pdfBuilderCanvasSettings.embed_fonts,
-                    'optimize_for_web': pdfBuilderCanvasSettings.optimize_for_web,
-                    'enable_hardware_acceleration': pdfBuilderCanvasSettings.enable_hardware_acceleration,
-                    'limit_fps': pdfBuilderCanvasSettings.limit_fps,
-                    'auto_save_enabled': pdfBuilderCanvasSettings.auto_save_enabled,
-                    'enable_keyboard_shortcuts': pdfBuilderCanvasSettings.enable_keyboard_shortcuts,
-                    'debug_mode': pdfBuilderCanvasSettings.debug_mode,
-                    'show_fps': pdfBuilderCanvasSettings.show_fps
-                };
-                
-                Object.keys(canvasCheckboxes).forEach(fieldId => {
-                    const element = document.getElementById(fieldId);
-                    if (element) {
-                        element.checked = !!canvasCheckboxes[fieldId];
-                        console.log(`☑️ Set ${fieldId} checked to ${!!canvasCheckboxes[fieldId]}`);
-                    }
-                });
-                
-                // Appliquer les selects
-                const canvasSelects = {
-                    'export_quality': pdfBuilderCanvasSettings.export_quality,
-                    'export_format': pdfBuilderCanvasSettings.export_format,
-                    'default_zoom': pdfBuilderCanvasSettings.default_zoom,
-                    'min_zoom': pdfBuilderCanvasSettings.min_zoom,
-                    'max_zoom': pdfBuilderCanvasSettings.max_zoom,
-                    'zoom_step': pdfBuilderCanvasSettings.zoom_step,
-                    'image_quality': pdfBuilderCanvasSettings.image_quality,
-                    'max_image_size': pdfBuilderCanvasSettings.max_image_size,
-                    'pdf_author': pdfBuilderCanvasSettings.pdf_author,
-                    'pdf_subject': pdfBuilderCanvasSettings.pdf_subject
-                };
-                
-                Object.keys(canvasSelects).forEach(fieldId => {
-                    const element = document.getElementById(fieldId);
-                    if (element && canvasSelects[fieldId] !== undefined) {
-                        element.value = canvasSelects[fieldId];
-                        console.log(`📋 Set ${fieldId} to ${canvasSelects[fieldId]}`);
-                    }
-                });
-                
-                console.log('✅ Canvas settings applied to form fields');
-            } else {
-                console.warn('⚠️ pdfBuilderCanvasSettings not found - canvas settings will not be loaded');
-            }
         }, 100);
         
         const tabs = document.querySelectorAll('.nav-tab');
