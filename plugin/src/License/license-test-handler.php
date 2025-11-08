@@ -149,10 +149,15 @@ class License_Test_Handler {
                 ]);
             }
             
+            // Sauvegarder la date d'expiration (30 jours)
+            $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+            update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
+            
             // Retourner la clé générée
             wp_send_json_success([
                 'key' => $new_key,
-                'message' => 'Clé de test générée avec succès'
+                'expires' => $expires_in_30_days,
+                'message' => 'Clé de test générée avec succès (expire dans 30 jours)'
             ]);
         } catch (\Exception $e) {
             wp_send_json_error([

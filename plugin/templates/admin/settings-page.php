@@ -717,6 +717,7 @@ if ($is_ajax) {
             $license_activated_at = get_option('pdf_builder_license_activated_at', '');
             $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
             $test_key = get_option('pdf_builder_license_test_key', '');
+            $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
             
             // is_premium si vraie licence OU si clé de test existe
             $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
@@ -839,6 +840,15 @@ if ($is_ajax) {
                         <?php endif; ?>
                     </div>
                     <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500; width: 150px;">Site actuel :</td>
+                            <td style="padding: 8px 0;">
+                                <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd; color: #007bff;">
+                                    <?php echo esc_html(home_url()); ?>
+                                </code>
+                            </td>
+                        </tr>
+                        
                         <?php if ($is_premium && $license_key): ?>
                         <tr style="border-bottom: 2px solid #cce5ff;">
                             <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé Premium :</td>
@@ -869,6 +879,28 @@ if ($is_ajax) {
                                 <span style="margin-left: 10px; color: #666; font-size: 12px;"> (Mode Développement)</span>
                             </td>
                         </tr>
+                        <?php if (!empty($test_key_expires)): ?>
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500; width: 150px;">Expire le :</td>
+                            <td style="padding: 8px 0;">
+                                <div style="margin-bottom: 4px;">
+                                    <strong><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></strong>
+                                </div>
+                                <div style="font-size: 12px; color: #666;">
+                                    <?php 
+                                    $now = new DateTime();
+                                    $expires = new DateTime($test_key_expires);
+                                    $diff = $now->diff($expires);
+                                    if ($diff->invert) {
+                                        echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    } else {
+                                        echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    }
+                                    ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
                         <?php endif; ?>
                         
                         <?php if ($is_premium && $license_activated_at): ?>
@@ -894,6 +926,29 @@ if ($is_ajax) {
                                 ?>
                             </td>
                         </tr>
+                        
+                        <?php if ($is_premium && !empty($license_expires)): ?>
+                        <tr style="border-bottom: 1px solid #e5e5e5;">
+                            <td style="padding: 8px 0; font-weight: 500;">Expire le :</td>
+                            <td style="padding: 8px 0;">
+                                <div style="margin-bottom: 4px;">
+                                    <strong><?php echo date('d/m/Y', strtotime($license_expires)); ?></strong>
+                                </div>
+                                <div style="font-size: 12px; color: #666;">
+                                    <?php 
+                                    $now = new DateTime();
+                                    $expires = new DateTime($license_expires);
+                                    $diff = $now->diff($expires);
+                                    if ($diff->invert) {
+                                        echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    } else {
+                                        echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    }
+                                    ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
                     </table>
                 </div>
                 <?php endif; ?>
