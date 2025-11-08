@@ -141,7 +141,8 @@ add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_aj
 add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
 // Actions AJAX pour la sauvegarde des paramètres
-add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings');
+// Temporarily disabled to ensure PDF_Builder_Admin handler is used
+// add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings');
 
 /**
  * Charger le plugin pour les requêtes AJAX
