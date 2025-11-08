@@ -3345,7 +3345,11 @@ class PDF_Builder_Admin {
                 
                 $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
                 if ($saved_settings) {
-                    wp_send_json_success('Paramètres Canvas enregistrés avec succès');
+                    // Retourner les paramètres sauvegardés pour synchronisation JavaScript
+                    wp_send_json_success([
+                        'message' => 'Paramètres Canvas enregistrés avec succès',
+                        'data' => $canvas_params // Retourner les valeurs pour synchronisation
+                    ]);
                 } else {
                     wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
                 }

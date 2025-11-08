@@ -3906,6 +3906,12 @@ Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé
                 console.log('✅ canvas_background_color set to:', canvasBackgroundColor.value);
             }
 
+            const containerBackgroundColor = document.getElementById('container_background_color');
+            if (containerBackgroundColor) {
+                containerBackgroundColor.value = window.pdfBuilderCanvasSettings.container_background_color || '#f8f9fa';
+                console.log('✅ container_background_color set to:', containerBackgroundColor.value);
+            }
+
             // Marges de sécurité
             const marginTop = document.getElementById('margin_top');
             if (marginTop) {
@@ -3951,6 +3957,12 @@ Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé
                 console.log('✅ grid_size set to:', gridSize.value);
             }
 
+            const gridColor = document.getElementById('grid_color');
+            if (gridColor) {
+                gridColor.value = window.pdfBuilderCanvasSettings.grid_color || '#e0e0e0';
+                console.log('✅ grid_color set to:', gridColor.value);
+            }
+
             // Aimantation
             const snapToGrid = document.getElementById('snap_to_grid');
             if (snapToGrid) {
@@ -3958,11 +3970,59 @@ Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé
                 console.log('✅ snap_to_grid set to:', snapToGrid.checked);
             }
 
+            const snapToElements = document.getElementById('snap_to_elements');
+            if (snapToElements) {
+                snapToElements.checked = window.pdfBuilderCanvasSettings.snap_to_elements !== false;
+                console.log('✅ snap_to_elements set to:', snapToElements.checked);
+            }
+
+            const snapTolerance = document.getElementById('snap_tolerance');
+            if (snapTolerance) {
+                snapTolerance.value = window.pdfBuilderCanvasSettings.snap_tolerance || 5;
+                console.log('✅ snap_tolerance set to:', snapTolerance.value);
+            }
+
+            const showGuides = document.getElementById('show_guides');
+            if (showGuides) {
+                showGuides.checked = window.pdfBuilderCanvasSettings.show_guides !== false;
+                console.log('✅ show_guides set to:', showGuides.checked);
+            }
+
             // Paramètres de zoom et navigation
             const defaultZoom = document.getElementById('default_zoom');
             if (defaultZoom) {
                 defaultZoom.value = window.pdfBuilderCanvasSettings.default_zoom || '100';
                 console.log('✅ default_zoom set to:', defaultZoom.value);
+            }
+
+            const zoomStep = document.getElementById('zoom_step');
+            if (zoomStep) {
+                zoomStep.value = window.pdfBuilderCanvasSettings.zoom_step || 25;
+                console.log('✅ zoom_step set to:', zoomStep.value);
+            }
+
+            const minZoom = document.getElementById('min_zoom');
+            if (minZoom) {
+                minZoom.value = window.pdfBuilderCanvasSettings.min_zoom || 10;
+                console.log('✅ min_zoom set to:', minZoom.value);
+            }
+
+            const maxZoom = document.getElementById('max_zoom');
+            if (maxZoom) {
+                maxZoom.value = window.pdfBuilderCanvasSettings.max_zoom || 500;
+                console.log('✅ max_zoom set to:', maxZoom.value);
+            }
+
+            const zoomWithWheel = document.getElementById('zoom_with_wheel');
+            if (zoomWithWheel) {
+                zoomWithWheel.checked = window.pdfBuilderCanvasSettings.zoom_with_wheel !== false;
+                console.log('✅ zoom_with_wheel set to:', zoomWithWheel.checked);
+            }
+
+            const panWithMouse = document.getElementById('pan_with_mouse');
+            if (panWithMouse) {
+                panWithMouse.checked = window.pdfBuilderCanvasSettings.pan_with_mouse !== false;
+                console.log('✅ pan_with_mouse set to:', panWithMouse.checked);
             }
 
             // Paramètres de sélection et manipulation
@@ -3984,6 +4044,12 @@ Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé
                 console.log('✅ enable_rotation set to:', enableRotation.checked);
             }
 
+            const rotationStep = document.getElementById('rotation_step');
+            if (rotationStep) {
+                rotationStep.value = window.pdfBuilderCanvasSettings.rotation_step || 15;
+                console.log('✅ rotation_step set to:', rotationStep.value);
+            }
+
             const multiSelect = document.getElementById('multi_select');
             if (multiSelect) {
                 multiSelect.checked = window.pdfBuilderCanvasSettings.multi_select !== false;
@@ -3996,60 +4062,22 @@ Mode Debug JS: ${document.querySelector('#debug_javascript')?.checked ? 'Activé
                 console.log('✅ copy_paste_enabled set to:', copyPasteEnabled.checked);
             }
 
-            // Paramètres d'export et qualité
-            const exportQuality = document.getElementById('export_quality');
-            if (exportQuality) {
-                exportQuality.value = window.pdfBuilderCanvasSettings.export_quality || 'print';
-                console.log('✅ export_quality set to:', exportQuality.value);
-            }
-
-            const exportFormat = document.getElementById('export_format');
-            if (exportFormat) {
-                exportFormat.value = window.pdfBuilderCanvasSettings.export_format || 'pdf';
-                console.log('✅ export_format set to:', exportFormat.value);
-            }
-
-            const compressImages = document.getElementById('compress_images');
-            if (compressImages) {
-                compressImages.checked = window.pdfBuilderCanvasSettings.compress_images !== false;
-                console.log('✅ compress_images set to:', compressImages.checked);
-            }
-
-            const imageQuality = document.getElementById('image_quality');
-            if (imageQuality) {
-                imageQuality.value = window.pdfBuilderCanvasSettings.image_quality || 85;
-                console.log('✅ image_quality set to:', imageQuality.value);
-            }
-
-            // Paramètres avancés
-            const enableHardwareAcceleration = document.getElementById('enable_hardware_acceleration');
-            if (enableHardwareAcceleration) {
-                enableHardwareAcceleration.checked = window.pdfBuilderCanvasSettings.enable_hardware_acceleration !== false;
-                console.log('✅ enable_hardware_acceleration set to:', enableHardwareAcceleration.checked);
-            }
-
-            const autoSaveEnabled = document.getElementById('auto_save_enabled');
-            if (autoSaveEnabled) {
-                autoSaveEnabled.checked = window.pdfBuilderCanvasSettings.auto_save_enabled !== false;
-                console.log('✅ auto_save_enabled set to:', autoSaveEnabled.checked);
-            }
-
-            const autoSaveInterval = document.getElementById('auto_save_interval');
-            if (autoSaveInterval) {
-                autoSaveInterval.value = window.pdfBuilderCanvasSettings.auto_save_interval || 30;
-                console.log('✅ auto_save_interval set to:', autoSaveInterval.value);
-            }
-
             const undoLevels = document.getElementById('undo_levels');
             if (undoLevels) {
                 undoLevels.value = window.pdfBuilderCanvasSettings.undo_levels || 50;
                 console.log('✅ undo_levels set to:', undoLevels.value);
             }
 
-            const enableKeyboardShortcuts = document.getElementById('enable_keyboard_shortcuts');
-            if (enableKeyboardShortcuts) {
-                enableKeyboardShortcuts.checked = window.pdfBuilderCanvasSettings.enable_keyboard_shortcuts !== false;
-                console.log('✅ enable_keyboard_shortcuts set to:', enableKeyboardShortcuts.checked);
+            const redoLevels = document.getElementById('redo_levels');
+            if (redoLevels) {
+                redoLevels.value = window.pdfBuilderCanvasSettings.redo_levels || 50;
+                console.log('✅ redo_levels set to:', redoLevels.value);
+            }
+
+            const autoSaveVersions = document.getElementById('auto_save_versions');
+            if (autoSaveVersions) {
+                autoSaveVersions.value = window.pdfBuilderCanvasSettings.auto_save_versions || 10;
+                console.log('✅ auto_save_versions set to:', autoSaveVersions.value);
             }
 
             console.log('🎨 Canvas fields populated successfully!');
