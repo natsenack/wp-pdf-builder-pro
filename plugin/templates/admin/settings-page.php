@@ -3586,16 +3586,53 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             });
         }
 
-        // Gestion du test du système de cache - VERSION SIMPLIFIÉE
-        document.addEventListener('DOMContentLoaded', function() {
-            const testCacheBtn = document.getElementById('test-cache-btn');
-            const cacheTestResults = document.getElementById('cache-test-results');
-            const cacheTestOutput = document.getElementById('cache-test-output');
+        // Gestion du test du système de cache
+        jQuery(document).ready(function($) {
+            const testCacheBtn = $('#test-cache-btn');
+            const cacheTestResults = $('#cache-test-results');
+            const cacheTestOutput = $('#cache-test-output');
 
-            if (testCacheBtn) {
-                testCacheBtn.addEventListener('click', function(e) {
+            if (testCacheBtn.length && cacheTestResults.length && cacheTestOutput.length) {
+                testCacheBtn.on('click', function(e) {
                     e.preventDefault();
-                    alert('Fonctionnalité de test du cache - Bientôt disponible!');
+
+                    // Désactiver le bouton pendant le test
+                    testCacheBtn.prop('disabled', true).html('🔄 Test en cours...');
+                    cacheTestResults.html('<span style="color: #007cba;">Test en cours...</span>');
+                    cacheTestOutput.hide();
+
+                    // Faire la requête AJAX avec jQuery
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_cache_test',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_cache_test"); ?>'
+                        },
+                        timeout: 30000,
+                        success: function(response) {
+                            testCacheBtn.prop('disabled', false).html('🧪 Tester l\'intégration du cache');
+
+                            if (response.success) {
+                                cacheTestResults.html('<span style="color: #28a745;">✓ Test réussi</span>');
+                                cacheTestOutput.html(response.data).show();
+                            } else {
+                                cacheTestResults.html('<span style="color: #dc3545;">✗ Test échoué</span>');
+                                cacheTestOutput.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            testCacheBtn.prop('disabled', false).html('🧪 Tester l\'intégration du cache');
+
+                            if (status === 'timeout') {
+                                cacheTestResults.html('<span style="color: #dc3545;">✗ Timeout</span>');
+                                cacheTestOutput.html('<p>La requête a expiré (30s)</p>').show();
+                            } else {
+                                cacheTestResults.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
+                                cacheTestOutput.html('<p>Erreur: ' + error + '</p>').show();
+                            }
+                        }
+                    });
                 });
             }
         });
