@@ -2985,10 +2985,6 @@ if (class_exists('PDF_Builder_Canvas_Manager')) {
         
         // Vérifier les éléments critiques
         
-        console.log('� Elements found:', {
-            tabs: tabs.length,
-            contents: contents.length,
-            globalSaveBtn: !!globalSaveBtn
         });
         
         // Log des paramètres actuels au chargement
