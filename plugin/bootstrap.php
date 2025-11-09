@@ -1171,14 +1171,27 @@ function pdf_builder_ajax_save_template() {
     // Récupérer les données
     $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
     $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
-    $elements = isset($_POST['elements']) ? $_POST['elements'] : [];
-    $canvas = isset($_POST['canvas']) ? $_POST['canvas'] : [];
+    
+    // Les données elements et canvas arrivent comme JSON strings depuis React
+    $elements_raw = isset($_POST['elements']) ? wp_unslash($_POST['elements']) : '[]';
+    $canvas_raw = isset($_POST['canvas']) ? wp_unslash($_POST['canvas']) : '{}';
+    
+    // Décoder les JSON strings
+    $elements = json_decode($elements_raw, true);
+    if ($elements === null) {
+        $elements = [];
+    }
+    
+    $canvas = json_decode($canvas_raw, true);
+    if ($canvas === null) {
+        $canvas = [];
+    }
 
     // DEBUG: Log what React sent
     error_log('DEBUG SAVE: Receiving from React:');
-    error_log('DEBUG SAVE: Elements raw: ' . print_r($elements, true));
-    if (is_string($elements)) {
-        error_log('DEBUG SAVE: Elements is string, first 500 chars: ' . substr($elements, 0, 500));
+    error_log('DEBUG SAVE: Elements decoded - Count: ' . count($elements));
+    if (!empty($elements)) {
+        error_log('DEBUG SAVE: First element: ' . print_r($elements[0], true));
     }
 
     if (empty($template_name)) {
@@ -1194,10 +1207,10 @@ function pdf_builder_ajax_save_template() {
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-    // Préparer les données du template
+    // Préparer les données du template à stocker
     $template_data = [
-        'elements' => $elements,
-        'canvas' => $canvas
+        'elements' => $elements,  // Array décodé
+        'canvas' => $canvas       // Array décodé
     ];
 
     $json_data = wp_json_encode($template_data);
@@ -1207,6 +1220,8 @@ function pdf_builder_ajax_save_template() {
     }
 
     // Debug: log what we're storing
+    error_log('DEBUG SAVE: Storing template data with ' . count($elements) . ' elements');
+    error_log('DEBUG SAVE: JSON length: ' . strlen($json_data) . ' characters');
 
 
     if ($template_id > 0) {
