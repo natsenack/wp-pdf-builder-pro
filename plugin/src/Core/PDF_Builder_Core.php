@@ -739,6 +739,13 @@ class PDF_Builder_Core
 
         ?>
         <div class="wrap">
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
+                <h1 style="margin: 0; color: #856404;">🔧 Éditeur React - Version Core</h1>
+                <p style="margin: 4px 0 0 0; font-size: 14px; color: #666;">
+                    Éditeur alternatif accessible via les modèles prédéfinis
+                </p>
+            </div>
+
             <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
             <?php if ($template_id): ?>
                 <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
