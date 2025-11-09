@@ -230,59 +230,10 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
     }
 }
 
-if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        $pdf_settings = [
-            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
-            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
-            'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name')),
-            'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
-            'include_metadata' => isset($_POST['include_metadata']),
-            'embed_fonts' => isset($_POST['embed_fonts']),
-            'auto_crop' => isset($_POST['auto_crop']),
-            'max_image_size' => intval($_POST['max_image_size'] ?? 2048),
-        ];
-        update_option('pdf_builder_settings', array_merge($settings, $pdf_settings));
-        if ($is_ajax) {
-            send_ajax_response(true, 'Paramètres PDF enregistrés avec succès.');
-        } else {
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres PDF enregistrés avec succès.</p></div>';
-        }
-        $settings = get_option('pdf_builder_settings', []);
-    }
-}
-
-if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        $security_settings = [
-            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-        ];
-        update_option('pdf_builder_settings', array_merge($settings, $security_settings));
-        if ($is_ajax) {
-            send_ajax_response(true, 'Paramètres de sécurité enregistrés avec succès.');
-        } else {
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sécurité enregistrés avec succès.</p></div>';
-        }
-        $settings = get_option('pdf_builder_settings', []);
-    }
-}
-
-if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        // Utiliser le Canvas Manager pour sauvegarder les paramètres
-        if (class_exists('PDF_Builder_Canvas_Manager')) {
-            $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-            // Filtrer les paramètres canvas avant sauvegarde
-            $canvas_params = $canvas_manager->filter_canvas_parameters($_POST);
-            $canvas_manager->save_canvas_settings($canvas_params);
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres Canvas enregistrés avec succès.</p></div>';
-        } else {
-            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur: Canvas Manager non disponible.</p></div>';
-        }
-    }
-}
+// NOTE: Old duplicates removed - only using specific nonces below
+// - submit_pdf now uses pdf_builder_pdf_nonce
+// - submit_security now uses pdf_builder_securite_nonce  
+// - submit_canvas now uses pdf_builder_canvas_nonce
 
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
     if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
@@ -322,8 +273,6 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance_settings')) {
         $performance_settings = [
-            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
             'compress_images' => isset($_POST['compress_images']),
             'image_quality' => intval($_POST['image_quality'] ?? 85),
             'optimize_for_web' => isset($_POST['optimize_for_web']),
@@ -332,6 +281,13 @@ if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance
             'max_fps' => intval($_POST['max_fps'] ?? 60),
         ];
         update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
+        
+        // Save auto_save settings to canvas_settings (not general settings)
+        $canvas_settings_to_update = $canvas_settings;
+        $canvas_settings_to_update['auto_save_enabled'] = isset($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1';
+        $canvas_settings_to_update['auto_save_interval'] = intval($_POST['auto_save_interval'] ?? 30);
+        update_option('pdf_builder_canvas_settings', $canvas_settings_to_update);
+        $canvas_settings = $canvas_settings_to_update;
         if ($is_ajax) {
             $response = json_encode(['success' => true, 'message' => 'Paramètres de performance enregistrés avec succès.']);
             wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
@@ -460,27 +416,8 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']))
 if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_settings')) {
-        $template_mappings = [];
-        
-        // Récupérer tous les mappings statut -> template
-        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
-            foreach ($_POST['order_status_templates'] as $status => $template_id) {
-                if (!empty($template_id)) {
-                    $template_mappings[$status] = intval($template_id);
-                }
-            }
-        }
-        
-        // Sauvegarder les mappings dans une option dédiée
-        update_option('pdf_builder_order_status_templates', $template_mappings);
-        
-        if ($is_ajax) {
-            $response = json_encode(['success' => true, 'message' => 'Assignations de templates enregistrées avec succès.']);
-            wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
-        } else {
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Assignations de templates enregistrées avec succès.</p></div>';
-        }
-        $settings = get_option('pdf_builder_settings', []);
+        // NOTE: This section is now handled in the Templates tab form below (line 2846)
+        // Keeping this comment to avoid confusion - code is handled in the proper form section
     }
 }
 
@@ -1366,7 +1303,7 @@ if ($is_ajax) {
                 <tr>
                     <th scope="row"><label for="auto_save_interval">Intervalle Auto-save (secondes)</label></th>
                     <td>
-                        <input type="number" id="auto_save_interval" name="auto_save_interval" value="<?php echo intval($settings['auto_save_interval'] ?? 30); ?>" 
+                        <input type="number" id="auto_save_interval" name="auto_save_interval" value="<?php echo intval($canvas_settings['auto_save_interval'] ?? 30); ?>" 
                                min="10" max="300" step="10" />
                         <p class="description">Intervalle entre chaque sauvegarde automatique</p>
                     </td>
@@ -3899,41 +3836,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
     'show_fps' => $canvas_settings_js['show_fps'] ?? false
 ]); ?>;
-// Fonction pour convertir le format et l'orientation en dimensions pixels
-window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
-    const formatDimensions = {
-        'A6': { width: 349, height: 496 },
-        'A5': { width: 496, height: 701 },
-        'A4': { width: 794, height: 1123 },
-        'A3': { width: 1123, height: 1587 },
-        'A2': { width: 1587, height: 2245 },
-        'A1': { width: 2245, height: 3175 },
-        'A0': { width: 3175, height: 4494 },
-        'Letter': { width: 816, height: 1056 },
-        'Legal': { width: 816, height: 1344 },
-        'Tabloid': { width: 1056, height: 1632 }
-    };
-
-    const dims = formatDimensions[format] || formatDimensions['A4'];
-
-    // Inverser les dimensions si orientation paysage
-    if (orientation === 'landscape') {
-        return { width: dims.height, height: dims.width };
-    }
-
-    return dims;
-};
-
-// Ajouter les dimensions calculées aux paramètres
-window.pdfBuilderCanvasSettings.default_canvas_width = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
-    window.pdfBuilderCanvasSettings.default_canvas_format,
-    window.pdfBuilderCanvasSettings.default_canvas_orientation
-).width;
-
-window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
-    window.pdfBuilderCanvasSettings.default_canvas_format,
-    window.pdfBuilderCanvasSettings.default_canvas_orientation
-).height;
+// NOTE: getDimensionsFromFormat function already defined above (line ~503), no need to duplicate it here
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
