@@ -2029,11 +2029,18 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Redessiner quand l'état change
   useEffect(() => {
-    const elementsKey = JSON.stringify(state.elements.map(e => e.id));
+    // ✅ Track FULL element state (id + position + size), not just IDs
+    const elementsKey = JSON.stringify(state.elements.map(e => ({ 
+      id: e.id, 
+      x: e.x, 
+      y: e.y, 
+      width: e.width, 
+      height: e.height 
+    })));
     
-    // ✅ Skip si on vient déjà de render les mêmes éléments
+    // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
     if (lastRenderedElementsRef.current === elementsKey) {
-      console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments que dernière fois');
+      console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments & positions que dernière fois');
       return;
     }
     
