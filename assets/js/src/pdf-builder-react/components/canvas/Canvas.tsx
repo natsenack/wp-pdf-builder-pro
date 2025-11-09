@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
@@ -956,6 +957,7 @@ interface CanvasProps {
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
+  const canvasSettings = useCanvasSettings();
 
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
@@ -985,9 +987,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     canvasRef
   });
 
-  // Fonction pour dessiner la grille
-  const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, size: number) => {
-    ctx.strokeStyle = '#e0e0e0';
+  // Fonction pour dessiner la grille avec les paramètres Canvas Settings
+  const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, size: number, color: string) => {
+    ctx.strokeStyle = color;
     ctx.lineWidth = 1;
 
     for (let x = 0; x <= w; x += size) {
@@ -1862,9 +1864,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     ctx.scale(state.canvas.zoom, state.canvas.zoom);
 
-    // Dessiner la grille si activée
-    if (state.canvas.showGrid) {
-      drawGrid(ctx, width, height, state.canvas.gridSize);
+    // Dessiner la grille si activée (utiliser les paramètres Canvas Settings)
+    if (canvasSettings.gridShow) {
+      drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
     }
 
     // Dessiner les éléments
@@ -1878,7 +1880,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     ctx.restore();
-  }, [width, height, state.canvas.gridSize, state.canvas.pan.x, state.canvas.pan.y, state.canvas.showGrid, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement]);
+  }, [width, height, canvasSettings.gridSize, canvasSettings.gridColor, canvasSettings.gridShow, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement]);
 
   // Redessiner quand l'état change
   useEffect(() => {

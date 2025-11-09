@@ -4453,5 +4453,18 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 });
             }
         });
+
+        // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.querySelector('[name="submit_canvas"]')) {
+                // Ajouter un délai pour permettre à WordPress de traiter la soumission
+                setTimeout(function() {
+                    // Déclencher l'événement personnalisé pour notifier React
+                    window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
+                    console.log('Canvas settings updated event dispatched');
+                }, 500);
+            }
+        });
 </script>
+
 
