@@ -850,6 +850,12 @@ function pdf_builder_ajax_get_template() {
         ARRAY_A
     );
 
+    // 🔍 DEBUG: Log what we got from DB
+    error_log('🔍 [GET TEMPLATE] Template from DB: ID=' . $template_id . ', Data size: ' . (isset($template['template_data']) ? strlen($template['template_data']) : 'NULL'));
+    if ($template && isset($template['template_data'])) {
+        error_log('🔍 [GET TEMPLATE] First 200 chars: ' . substr($template['template_data'], 0, 200));
+    }
+
     // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
     if (!$template) {
 
@@ -1045,6 +1051,12 @@ function pdf_builder_ajax_get_template() {
     }
 
     $elements = $transformed_elements;
+
+    // 🔍 DEBUG: Log what we're returning
+    error_log('✅ [GET TEMPLATE] Returning: elements=' . count($elements) . ', canvas=' . (isset($canvas) ? 'YES' : 'NO'));
+    if (count($elements) > 0) {
+        error_log('✅ [GET TEMPLATE] First element: ' . json_encode($elements[0]));
+    }
 
     // ✅ ÉTAPE 3: Cache DISABLED for now - always fresh from DB
     // Uncomment below once flash issue is fully resolved
