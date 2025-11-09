@@ -5503,6 +5503,14 @@ class PDF_Builder_Admin {
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
         $template_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'custom';
 
+        // Si template_id est fourni mais pas type, déterminer automatiquement le type
+        if ($template_id > 0 && !isset($_GET['type'])) {
+            // Pour la compatibilité avec les anciens liens, déterminer le type selon template_id
+            // template_id = 0 signifie nouveau template (custom)
+            // template_id > 0 signifie édition d'un template existant (predefined ou custom)
+            $template_type = 'predefined'; // Par défaut, considérer comme prédéfini
+        }
+
         // Validate template type
         $valid_types = ['custom', 'predefined', 'system'];
         if (!in_array($template_type, $valid_types)) {
@@ -5511,13 +5519,6 @@ class PDF_Builder_Admin {
 
         // Déterminer le titre et la description selon le type
         $editor_info = $this->get_editor_info($template_type);
-
-        // Get template ID and type from URL parameters
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        $template_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'custom';
-
-        // Validate template type
-        $valid_types = ['custom', 'predefined', 'system'];
         if (!in_array($template_type, $valid_types)) {
             $template_type = 'custom';
         }
