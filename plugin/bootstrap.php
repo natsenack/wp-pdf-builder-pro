@@ -15,7 +15,7 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 
 add_action('wp_ajax_pdf_builder_regenerate_positions', function() {
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_regenerate')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
@@ -104,7 +104,7 @@ add_action('wp_ajax_pdf_builder_regenerate_positions', function() {
 
 add_action('wp_ajax_pdf_builder_preview_positions', function() {
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_regenerate')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
