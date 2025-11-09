@@ -203,24 +203,30 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
     console.log('🖱️ [INTERACTION] handleMouseDown - x:', x, 'y:', y, 'selectedElements:', state.selection.selectedElements);
 
-    // Vérifier si on clique sur un élément sélectionné pour le drag
-    if (state.selection.selectedElements.length > 0) {
-      const selectedElement = state.elements.find(el =>
-        state.selection.selectedElements.includes(el.id) &&
-        isPointInElement(x, y, el)
-      );
+    // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
+    const clickedElement = state.elements.find(el => isPointInElement(x, y, el));
 
-      if (selectedElement) {
-        isDraggingRef.current = true;
-        // Store the OFFSET from element's top-left corner to mouse click point
-        const offsetX = x - selectedElement.x;
-        const offsetY = y - selectedElement.y;
-        dragStartRef.current = { x: offsetX, y: offsetY };
-        selectedElementRef.current = selectedElement.id;
-        console.log('🖱️ [DRAG START] element:', selectedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', selectedElement.x, 'elementY:', selectedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
+    // Si on a cliqué sur un élément
+    if (clickedElement) {
+      // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
+      if (!state.selection.selectedElements.includes(clickedElement.id)) {
+        console.log('🖱️ [INTERACTION] Sélection du nouvel élément:', clickedElement.id);
+        dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
+        // Ne pas draguer au premier clic - juste sélectionner
         event.preventDefault();
         return;
       }
+
+      // ✅ L'élément est déjà sélectionné - préparer le drag
+      isDraggingRef.current = true;
+      // Store the OFFSET from element's top-left corner to mouse click point
+      const offsetX = x - clickedElement.x;
+      const offsetY = y - clickedElement.y;
+      dragStartRef.current = { x: offsetX, y: offsetY };
+      selectedElementRef.current = clickedElement.id;
+      console.log('🖱️ [DRAG START] element:', clickedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', clickedElement.x, 'elementY:', clickedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
+      event.preventDefault();
+      return;
     }
 
     // Vérifier si on clique sur une poignée de redimensionnement
@@ -234,9 +240,12 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       return;
     }
 
-    // Sinon, gérer comme un clic normal
-    handleCanvasClick(event);
-  }, [state, canvasRef, handleCanvasClick]);
+    // ✅ Sinon on a cliqué sur le vide - désélectionner
+    if (state.selection.selectedElements.length > 0) {
+      dispatch({ type: 'CLEAR_SELECTION' });
+      selectedElementRef.current = null;
+    }
+  }, [state, canvasRef, dispatch]);
 
   // Gestionnaire de mouse up pour terminer le drag ou resize
   const handleMouseUp = useCallback(() => {
