@@ -3960,14 +3960,22 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
                     
                     // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
                     const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
-                                    document.querySelector('.tab-content.active') ||
-                                    document.getElementById('general');
+                                    document.querySelector('.tab-content.active');
                     
                     if (activeTab) {
-                        // Utiliser le formulaire global pour tous les onglets
-                        const form = document.getElementById('global-settings-form');
+                        console.log('📑 Active tab ID:', activeTab.id);
+                        
+                        // Trouver le formulaire dans l'onglet actif
+                        let form = activeTab.querySelector('form');
+                        
+                        // Si pas de formulaire direct, utiliser le formulaire global (fallback)
+                        if (!form) {
+                            form = document.getElementById('global-settings-form');
+                        }
                         
                         if (form) {
+                            console.log('✅ Form found, submitting:', form.id || 'unnamed form');
+                            
                             // Afficher le statut de sauvegarde
                             if (saveStatus) {
                                 saveStatus.textContent = '💾 Sauvegarde en cours...';
