@@ -159,9 +159,26 @@ add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_aj
 add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
 /**
- * Gestionnaire AJAX pour les aperçus PDF
- * Cette fonction DOIT être un callback AJAX véritable qui produit une réponse
+ * Charger le plugin pour les requêtes AJAX
  */
+function pdf_builder_load_for_ajax() {
+    // Vérifier que WordPress est prêt
+    if (!function_exists('get_option') || !defined('ABSPATH')) {
+        return;
+    }
+
+    // Charger le bootstrap pour les requêtes AJAX
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+    if (file_exists($bootstrap_path)) {
+        require_once $bootstrap_path;
+
+        // Pour les requêtes AJAX, nous chargeons juste le bootstrap
+        // sans initialiser complètement le plugin
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
+        }
+    }
+}
 function pdf_builder_handle_preview_ajax() {
     // Charger le bootstrap
     pdf_builder_load_for_ajax();
