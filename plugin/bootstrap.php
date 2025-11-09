@@ -1032,7 +1032,7 @@ function pdf_builder_ajax_get_template() {
         }
 
         // Copier d'autres propriétés utiles si présentes
-        $copy_properties = ['visible', 'locked', 'zIndex', 'name'];
+        $copy_properties = ['visible', 'locked', 'zIndex', 'name', 'src', 'logoUrl', 'defaultSrc', 'alignment', 'borderRadius'];
         foreach ($copy_properties as $prop) {
             if (isset($element[$prop])) {
                 $transformed_element[$prop] = $element[$prop];
