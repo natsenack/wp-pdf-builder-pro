@@ -51,10 +51,10 @@ if (!defined('ABSPATH')) {
             </p>
 
             <?php
-            // Récupérer seulement le template ID 1
+            // Récupérer tous les templates pour debug
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates WHERE id = 1 ORDER BY id", ARRAY_A);
+            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates ORDER BY id", ARRAY_A);
             
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
