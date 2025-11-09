@@ -87,6 +87,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
+    // Charger le handler AJAX pour les paramètres Canvas
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
+    }
+
     // Charger le gestionnaire de modèles prédéfinis
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php';
@@ -275,6 +280,17 @@ function pdf_builder_load_bootstrap() {
     // CHARGER LE GESTIONNAIRE DES RÔLES ET PERMISSIONS
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php';
+    }
+
+    // CHARGER ET INITIALISER LE GESTIONNAIRE DE CANVAS
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php';
+        \WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
+    }
+
+    // ENREGISTRER LES HANDLERS AJAX POUR LE CANVAS
+    if (class_exists('WP_PDF_Builder_Pro\\Admin\\Canvas_AJAX_Handler')) {
+        \WP_PDF_Builder_Pro\Admin\Canvas_AJAX_Handler::register_hooks();
     }
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
