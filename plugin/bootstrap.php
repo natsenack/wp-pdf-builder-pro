@@ -797,6 +797,12 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
+    // DEBUG: Log la structure brute des éléments
+    error_log('DEBUG: Elements avant transformation - Count: ' . count($elements));
+    if (!empty($elements)) {
+        error_log('DEBUG: Premier élément: ' . json_encode($elements[0]));
+    }
+
     // Transformer les éléments dans le format attendu par React
     $transformed_elements = [];
     foreach ($elements as $element) {
@@ -887,6 +893,13 @@ function pdf_builder_ajax_get_template() {
     }
 
     $elements = $transformed_elements;
+
+    // DEBUG: Log les éléments transformés
+    error_log('DEBUG: Elements après transformation - Count: ' . count($elements));
+    if (!empty($elements)) {
+        error_log('DEBUG: Premier élément transformé: ' . json_encode($elements[0]));
+        error_log('DEBUG: Tous les éléments: ' . json_encode($elements));
+    }
 
     wp_send_json_success(array(
         'id' => $template['id'],
