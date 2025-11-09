@@ -1053,14 +1053,22 @@ function pdf_builder_ajax_get_template() {
     $elements = $transformed_elements;
 
     // 🏷️ Enrichir les logos company_logo avec src si absent
+    error_log('🔍 [GET TEMPLATE] Starting logo enrichment for ' . count($elements) . ' elements');
     foreach ($elements as &$el) {
         if (isset($el['type']) && $el['type'] === 'company_logo') {
+            error_log('🔍 [GET TEMPLATE] Found company_logo element: src=' . (isset($el['src']) ? $el['src'] : 'NULL') . ', logoUrl=' . (isset($el['logoUrl']) ? $el['logoUrl'] : 'NULL'));
+            
             // Si src est vide ou absent, chercher le logo WordPress
             if (empty($el['src']) && empty($el['logoUrl'])) {
+                error_log('🔍 [GET TEMPLATE] Logo is empty, trying to enrich...');
+                
                 // Essayer d'obtenir le logo du site WordPress
                 $custom_logo_id = get_theme_mod('custom_logo');
+                error_log('🔍 [GET TEMPLATE] custom_logo theme_mod = ' . ($custom_logo_id ? $custom_logo_id : 'NULL'));
+                
                 if ($custom_logo_id) {
                     $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    error_log('🔍 [GET TEMPLATE] wp_get_attachment_image_url returned: ' . ($logo_url ? $logo_url : 'NULL'));
                     if ($logo_url) {
                         $el['src'] = $logo_url;
                         error_log('✅ [GET TEMPLATE] Logo enrichi avec WordPress site logo: ' . $logo_url);
@@ -1068,14 +1076,21 @@ function pdf_builder_ajax_get_template() {
                 } else {
                     // Sinon chercher le logo dans les options WordPress
                     $site_logo_id = get_option('site_logo');
+                    error_log('🔍 [GET TEMPLATE] site_logo option = ' . ($site_logo_id ? $site_logo_id : 'NULL'));
+                    
                     if ($site_logo_id) {
                         $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                        error_log('🔍 [GET TEMPLATE] wp_get_attachment_image_url returned: ' . ($logo_url ? $logo_url : 'NULL'));
                         if ($logo_url) {
                             $el['src'] = $logo_url;
                             error_log('✅ [GET TEMPLATE] Logo enrichi avec site_logo: ' . $logo_url);
                         }
+                    } else {
+                        error_log('⚠️ [GET TEMPLATE] No site_logo found in WordPress options');
                     }
                 }
+            } else {
+                error_log('ℹ️ [GET TEMPLATE] Logo already has src/logoUrl, skipping enrichment');
             }
         }
     }
