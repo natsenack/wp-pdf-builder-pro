@@ -30,8 +30,8 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
       const scaleX = _canvasWidth / rect.width;
       const scaleY = _canvasHeight / rect.height;
       
-      const x = (e.clientX - rect.left) * scaleX;
-      const y = (e.clientY - rect.top) * scaleY;
+      const x = Math.max(0, (e.clientX - rect.left) * scaleX - (elementData.defaultProps?.width ? elementData.defaultProps.width / 2 : 50));
+      const y = Math.max(0, (e.clientY - rect.top) * scaleY - (elementData.defaultProps?.height ? elementData.defaultProps.height / 2 : 25));
 
       console.log('Drop position:', { x, y, clientX: e.clientX, clientY: e.clientY, rect, scaleX, scaleY });
 
@@ -42,8 +42,8 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
         // D'abord : les defaultProps complètes (largeur, hauteur, styles, etc.)
         ...elementData.defaultProps,
         // Ensuite : les positions calculées dynamiquement (x, y uniquement, peuvent overrider les defaultProps)
-        x: x - (elementData.defaultProps?.width ? elementData.defaultProps.width / 2 : 50), // Centrer sur le curseur
-        y: y - (elementData.defaultProps?.height ? elementData.defaultProps.height / 2 : 25),
+        x: x,
+        y: y,
         // Propriétés requises par BaseElement
         visible: true,
         locked: false,
