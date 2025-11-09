@@ -807,30 +807,75 @@ function pdf_builder_ajax_get_template() {
         if (isset($element['type'])) $transformed_element['type'] = $element['type'];
         if (isset($element['content'])) $transformed_element['content'] = $element['content'];
 
-        // Transformer position -> x, y
-        if (isset($element['position']['x'])) $transformed_element['x'] = (int)$element['position']['x'];
-        if (isset($element['position']['y'])) $transformed_element['y'] = (int)$element['position']['y'];
+        // Gérer les positions - deux formats possibles
+        // Format imbriqué: position.x ou format plat: x
+        if (isset($element['position']['x'])) {
+            $transformed_element['x'] = (int)$element['position']['x'];
+        } elseif (isset($element['x'])) {
+            $transformed_element['x'] = (int)$element['x'];
+        }
+        
+        if (isset($element['position']['y'])) {
+            $transformed_element['y'] = (int)$element['position']['y'];
+        } elseif (isset($element['y'])) {
+            $transformed_element['y'] = (int)$element['y'];
+        }
 
-        // Transformer size -> width, height
-        if (isset($element['size']['width'])) $transformed_element['width'] = (int)$element['size']['width'];
-        if (isset($element['size']['height'])) $transformed_element['height'] = (int)$element['size']['height'];
+        // Gérer les dimensions - deux formats possibles
+        // Format imbriqué: size.width ou format plat: width
+        if (isset($element['size']['width'])) {
+            $transformed_element['width'] = (int)$element['size']['width'];
+        } elseif (isset($element['width'])) {
+            $transformed_element['width'] = (int)$element['width'];
+        }
+        
+        if (isset($element['size']['height'])) {
+            $transformed_element['height'] = (int)$element['size']['height'];
+        } elseif (isset($element['height'])) {
+            $transformed_element['height'] = (int)$element['height'];
+        }
 
-        // Transformer style -> propriétés à plat
-        if (isset($element['style'])) {
-            if (isset($element['style']['fontSize'])) $transformed_element['fontSize'] = (int)$element['style']['fontSize'];
-            if (isset($element['style']['fontWeight'])) $transformed_element['fontWeight'] = $element['style']['fontWeight'];
-            if (isset($element['style']['color'])) $transformed_element['color'] = $element['style']['color'];
-            if (isset($element['style']['textAlign'])) $transformed_element['textAlign'] = $element['style']['textAlign'];
-            if (isset($element['style']['verticalAlign'])) $transformed_element['verticalAlign'] = $element['style']['verticalAlign'];
-            if (isset($element['style']['backgroundColor'])) $transformed_element['backgroundColor'] = $element['style']['backgroundColor'];
+        // Copier les autres propriétés de style directement
+        $style_properties = ['fontSize', 'fontWeight', 'color', 'textAlign', 'verticalAlign', 'backgroundColor', 'borderColor', 'borderWidth', 'borderStyle', 'rotation', 'opacity'];
+        
+        // Format imbriqué: style.fontSize ou format plat: fontSize
+        if (isset($element['style']) && is_array($element['style'])) {
+            foreach ($style_properties as $prop) {
+                if (isset($element['style'][$prop])) {
+                    if (in_array($prop, ['fontSize', 'borderWidth', 'rotation', 'opacity'])) {
+                        $transformed_element[$prop] = is_numeric($element['style'][$prop]) ? (int)$element['style'][$prop] : $element['style'][$prop];
+                    } else {
+                        $transformed_element[$prop] = $element['style'][$prop];
+                    }
+                }
+            }
+        } else {
+            // Format plat
+            foreach ($style_properties as $prop) {
+                if (isset($element[$prop])) {
+                    if (in_array($prop, ['fontSize', 'borderWidth', 'rotation', 'opacity'])) {
+                        $transformed_element[$prop] = is_numeric($element[$prop]) ? (int)$element[$prop] : $element[$prop];
+                    } else {
+                        $transformed_element[$prop] = $element[$prop];
+                    }
+                }
+            }
         }
 
         // Pour les éléments text, utiliser content comme text
-        if ($element['type'] === 'text' && isset($element['content'])) {
+        if (isset($element['type']) && $element['type'] === 'text' && isset($element['content'])) {
             $transformed_element['text'] = $element['content'];
         }
 
-        // Propriétés par défaut pour tous les éléments
+        // Copier d'autres propriétés utiles si présentes
+        $copy_properties = ['visible', 'locked', 'zIndex', 'name'];
+        foreach ($copy_properties as $prop) {
+            if (isset($element[$prop])) {
+                $transformed_element[$prop] = $element[$prop];
+            }
+        }
+
+        // Propriétés par défaut pour tous les éléments (seulement si non défini)
         if (!isset($transformed_element['x'])) $transformed_element['x'] = 0;
         if (!isset($transformed_element['y'])) $transformed_element['y'] = 0;
         if (!isset($transformed_element['width'])) $transformed_element['width'] = 100;
