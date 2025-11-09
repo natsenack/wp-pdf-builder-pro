@@ -201,6 +201,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const zoomScale = state.canvas.zoom / 100;
     const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
     const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
+    console.log('🖱️ [INTERACTION] handleMouseDown - x:', x, 'y:', y, 'selectedElements:', state.selection.selectedElements);
 
     // Vérifier si on clique sur un élément sélectionné pour le drag
     if (state.selection.selectedElements.length > 0) {
@@ -342,12 +343,17 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     updateCursor(cursor);
 
     if (isDraggingRef.current && selectedElementRef.current) {
+      console.log('🎯 [DRAG] isDragging=true, element:', selectedElementRef.current, 'x:', x, 'y:', y);
       // Déplacer l'élément
       const element = state.elements.find(el => el.id === selectedElementRef.current);
-      if (!element) return;
+      if (!element) {
+        console.warn('❌ [DRAG] Element not found:', selectedElementRef.current);
+        return;
+      }
 
       const deltaX = x - dragStartRef.current.x;
       const deltaY = y - dragStartRef.current.y;
+      console.log('🎯 [DRAG] deltaX:', deltaX, 'deltaY:', deltaY);
 
       // Calculer la nouvelle position
       let newX = deltaX;
@@ -367,6 +373,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       if (newY < 0) newY = 0;
       if (newY + minVisibleHeight > canvasHeight) newY = canvasHeight - minVisibleHeight;
 
+      console.log('🎯 [DRAG] Dispatch UPDATE_ELEMENT - newX:', newX, 'newY:', newY);
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
@@ -375,11 +382,13 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
+      console.log('📏 [RESIZE] isResizing=true, element:', selectedElementRef.current);
       // Redimensionner l'élément
       const element = state.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
       const updates = calculateResize(element, resizeHandleRef.current, x, y, dragStartRef.current);
+      console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', updates);
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
