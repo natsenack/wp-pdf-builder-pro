@@ -1885,7 +1885,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Redessiner quand l'état change
   useEffect(() => {
     renderCanvas();
-  }, [renderCanvas, forceUpdate]);
+  }, [renderCanvas, forceUpdate, state.elements]);
 
   return (
     <>
