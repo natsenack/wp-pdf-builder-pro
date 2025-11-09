@@ -16,10 +16,24 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
 
     try {
       const elementData = JSON.parse(e.dataTransfer.getData('application/json'));
+      console.log('Drop detected:', elementData);
 
       // Calculer la position relative au canvas
       const canvas = canvasRef.current;
-      if (!canvas) return;
+      if (!canvas) {
+        console.error('Canvas ref not available');
+        return;
+      }
+
+      // Calculer la position relative au canvas
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = _canvasWidth / rect.width;
+      const scaleY = _canvasHeight / rect.height;
+      
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
+
+      console.log('Drop position:', { x, y, clientX: e.clientX, clientY: e.clientY, rect, scaleX, scaleY });
 
       // Créer un nouvel élément avec l'ordre correct de fusion
       const newElement = {
@@ -28,9 +42,8 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
         // D'abord : les defaultProps complètes (largeur, hauteur, styles, etc.)
         ...elementData.defaultProps,
         // Ensuite : les positions calculées dynamiquement (x, y uniquement, peuvent overrider les defaultProps)
-        // Les autres propriétés calculées (width, height) sont ignorées si déjà dans defaultProps
-        x: elementData.defaultProps?.x ?? 50,
-        y: elementData.defaultProps?.y ?? 50,
+        x: x - (elementData.defaultProps?.width ? elementData.defaultProps.width / 2 : 50), // Centrer sur le curseur
+        y: y - (elementData.defaultProps?.height ? elementData.defaultProps.height / 2 : 25),
         // Propriétés requises par BaseElement
         visible: true,
         locked: false,
@@ -38,13 +51,16 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth: _canvasWidth, canvasHeig
         updatedAt: new Date()
       };
 
+      console.log('New element created:', newElement);
+
       // Ajouter l'élément au state
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
+      console.log('Element added to state');
 
-    } catch {
-      // Erreur silencieuse lors du drop
+    } catch (error) {
+      console.error('Drop error:', error);
     }
-  }, [canvasRef, dispatch]);
+  }, [canvasRef, _canvasWidth, _canvasHeight, dispatch]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
