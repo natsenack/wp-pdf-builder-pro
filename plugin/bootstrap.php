@@ -9,6 +9,174 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
+// ============================================================================
+// ENDPOINTS AJAX POUR RÉGÉNÉRATION DES POSITIONS
+// ============================================================================
+
+add_action('wp_ajax_pdf_builder_regenerate_positions', function() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_regenerate')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+    $default_positions = [
+        'customer_info' => ['x' => 20, 'y' => 20, 'width' => 250, 'height' => 40],
+        'company_logo' => ['x' => 550, 'y' => 20, 'width' => 40, 'height' => 40],
+        'company_info' => ['x' => 600, 'y' => 20, 'width' => 150, 'height' => 40],
+        'document_type' => ['x' => 20, 'y' => 70, 'width' => 150, 'height' => 30],
+        'order_number' => ['x' => 200, 'y' => 70, 'width' => 200, 'height' => 30],
+        'product_table' => ['x' => 20, 'y' => 120, 'width' => 730, 'height' => 200],
+        'line' => ['x' => 20, 'y' => 330, 'width' => 730, 'height' => 1],
+        'dynamic-text' => ['x' => 20, 'y' => 350, 'width' => 300, 'height' => 50],
+        'mentions' => ['x' => 20, 'y' => 420, 'width' => 730, 'height' => 50],
+    ];
+
+    // Récupérer tous les templates
+    $templates = $wpdb->get_results("SELECT id, template_data FROM $table_templates", ARRAY_A);
+
+    $fixed_count = 0;
+    $elements_fixed = 0;
+
+    foreach ($templates as $template) {
+        $template_data = json_decode($template['template_data'], true);
+        
+        if (is_array($template_data)) {
+            $elements = $template_data['elements'] ?? [];
+            
+            if (!empty($elements)) {
+                $updated_elements = [];
+                $position_count = [];
+
+                foreach ($elements as $element) {
+                    $type = $element['type'] ?? 'text';
+                    $count = $position_count[$type] ?? 0;
+                    $position_count[$type] = $count + 1;
+
+                    if (isset($default_positions[$type])) {
+                        $pos = $default_positions[$type];
+                        $element['x'] = $pos['x'];
+                        $element['y'] = $pos['y'] + ($count * 50);
+                        $element['width'] = $pos['width'];
+                        $element['height'] = $pos['height'];
+                    } else {
+                        $element['x'] = 20 + ($count * 20);
+                        $element['y'] = 20 + ($count * 30);
+                        $element['width'] = 200;
+                        $element['height'] = 40;
+                    }
+
+                    $updated_elements[] = $element;
+                    $elements_fixed++;
+                }
+
+                $template_data['elements'] = $updated_elements;
+                $json_data = wp_json_encode($template_data);
+                
+                $wpdb->update(
+                    $table_templates,
+                    ['template_data' => $json_data],
+                    ['id' => $template['id']],
+                    ['%s'],
+                    ['%d']
+                );
+                
+                $fixed_count++;
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'message' => "Positions régénérées avec succès",
+        'count' => $fixed_count,
+        'elements_fixed' => $elements_fixed
+    ]);
+});
+
+add_action('wp_ajax_pdf_builder_preview_positions', function() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_regenerate')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+    $default_positions = [
+        'customer_info' => ['x' => 20, 'y' => 20, 'width' => 250, 'height' => 40],
+        'company_logo' => ['x' => 550, 'y' => 20, 'width' => 40, 'height' => 40],
+        'company_info' => ['x' => 600, 'y' => 20, 'width' => 150, 'height' => 40],
+        'document_type' => ['x' => 20, 'y' => 70, 'width' => 150, 'height' => 30],
+        'order_number' => ['x' => 200, 'y' => 70, 'width' => 200, 'height' => 30],
+        'product_table' => ['x' => 20, 'y' => 120, 'width' => 730, 'height' => 200],
+        'line' => ['x' => 20, 'y' => 330, 'width' => 730, 'height' => 1],
+        'dynamic-text' => ['x' => 20, 'y' => 350, 'width' => 300, 'height' => 50],
+        'mentions' => ['x' => 20, 'y' => 420, 'width' => 730, 'height' => 50],
+    ];
+
+    // Récupérer tous les templates
+    $templates = $wpdb->get_results("SELECT id, name, template_data FROM $table_templates", ARRAY_A);
+
+    $preview_data = [];
+    foreach ($templates as $template) {
+        $template_data = json_decode($template['template_data'], true);
+        
+        if (is_array($template_data)) {
+            $elements = $template_data['elements'] ?? [];
+            
+            if (!empty($elements)) {
+                $updated_elements = [];
+                $position_count = [];
+
+                foreach ($elements as $element) {
+                    $type = $element['type'] ?? 'text';
+                    $count = $position_count[$type] ?? 0;
+                    $position_count[$type] = $count + 1;
+
+                    if (isset($default_positions[$type])) {
+                        $pos = $default_positions[$type];
+                        $element['x'] = $pos['x'];
+                        $element['y'] = $pos['y'] + ($count * 50);
+                        $element['width'] = $pos['width'];
+                        $element['height'] = $pos['height'];
+                    } else {
+                        $element['x'] = 20 + ($count * 20);
+                        $element['y'] = 20 + ($count * 30);
+                        $element['width'] = 200;
+                        $element['height'] = 40;
+                    }
+
+                    $updated_elements[] = $element;
+                }
+
+                $preview_data[] = [
+                    'id' => $template['id'],
+                    'name' => $template['name'],
+                    'elements' => $updated_elements
+                ];
+            }
+        }
+    }
+
+    wp_send_json_success(['templates' => $preview_data]);
+});
+
 // Initialiser les variables $_SERVER manquantes pour éviter les Undefined array key errors
 // Cela corrige les erreurs strict PHP 8.1+ quand wp-config.php accède à des clés HTTP_* inexistantes
 if (!isset($_SERVER['HTTP_B701CD7'])) {
