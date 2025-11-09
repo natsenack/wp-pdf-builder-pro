@@ -17,6 +17,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
 
+  // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
+  const lastKnownStateRef = useRef(state);
+  
   // ✅ CORRECTION 3: Throttling pour handleMouseMove
   const lastMouseMoveTimeRef = useRef<number>(0);
   const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS (1000/60 ≈ 16ms)
@@ -156,7 +159,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   // ✅ Syncer la ref avec l'état Redux (fallback au cas où dispatch arrive avant)
   useEffect(() => {
     selectedElementsRef.current = state.selection.selectedElements;
-  }, [state.selection.selectedElements]);
+    // ✅ CORRECTION 5: Garder un snapshot du state courant
+    lastKnownStateRef.current = state;
+  }, [state.selection.selectedElements, state]);
 
   // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
   const validateCanvasRect = (rect: any): boolean => {
@@ -431,8 +436,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     if (isDraggingRef.current && selectedElementRef.current) {
       console.log('🎯 [DRAG] isDragging=true, element:', selectedElementRef.current, 'currentMouseX:', x, 'currentMouseY:', y);
-      // Déplacer l'élément
-      const element = state.elements.find(el => el.id === selectedElementRef.current);
+      
+      // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour éviter closure stale
+      const lastState = lastKnownStateRef.current;
+      const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) {
         console.warn('❌ [DRAG] Element not found:', selectedElementRef.current);
         return;
@@ -459,19 +466,20 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       if (newY + minVisibleHeight > canvasHeight) newY = canvasHeight - minVisibleHeight;
 
       console.log('🎯 [DRAG] Dispatch UPDATE_ELEMENT - newX:', newX, 'newY:', newY);
-      // ⚠️ IMPORTANT: Préserver TOUTES les propriétés de l'élément, pas juste x et y
-      // Sinon les props comme 'src' du logo disparaissent au drag
-      const completeUpdates = {
-        x: newX,
-        y: newY,
-        // Préserver les propriétés additionnelles
-        ...Object.keys(element).reduce((acc, key) => {
-          if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
-            (acc as Record<string, unknown>)[key] = (element as Record<string, unknown>)[key];
-          }
-          return acc;
-        }, {} as Record<string, unknown>)
-      };
+      
+      // ✅ CORRECTION 6: Améliorer la préservation des propriétés
+      // Copier TOUS les champs de l'élément, même s'ils sont undefined
+      const completeUpdates: Record<string, unknown> = { x: newX, y: newY };
+      
+      // Préserver TOUTES les propriétés
+      for (const key in element) {
+        if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
+          completeUpdates[key] = (element as Record<string, unknown>)[key];
+        }
+      }
+      
+      console.log('🎯 [DRAG] Propriétés preservées:', Object.keys(completeUpdates).length, 'avec src:', !!completeUpdates.src);
+      
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
@@ -481,24 +489,24 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
       console.log('📏 [RESIZE] isResizing=true, element:', selectedElementRef.current);
-      // Redimensionner l'élément
-      const element = state.elements.find(el => el.id === selectedElementRef.current);
+      
+      // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour resize aussi
+      const lastState = lastKnownStateRef.current;
+      const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
       const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, dragStartRef.current);
       console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', resizeUpdates);
       
-      // ⚠️ IMPORTANT: Préserver TOUTES les propriétés de l'élément pendant le resize aussi!
-      const completeUpdates = {
-        ...resizeUpdates,
-        // Préserver les propriétés additionnelles
-        ...Object.keys(element).reduce((acc, key) => {
-          if (!(key in resizeUpdates) && key !== 'updatedAt') {
-            (acc as Record<string, unknown>)[key] = (element as Record<string, unknown>)[key];
-          }
-          return acc;
-        }, {} as Record<string, unknown>)
-      };
+      // ✅ CORRECTION 6: Préserver TOUTES les propriétés pendant resize
+      const completeUpdates: Record<string, unknown> = { ...resizeUpdates };
+      
+      // Préserver les propriétés non-resize
+      for (const key in element) {
+        if (!(key in resizeUpdates) && key !== 'updatedAt') {
+          completeUpdates[key] = (element as Record<string, unknown>)[key];
+        }
+      }
       
       dispatch({
         type: 'UPDATE_ELEMENT',

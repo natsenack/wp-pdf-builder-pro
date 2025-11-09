@@ -1060,6 +1060,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
   const imageCacheSizeRef = useRef<number>(0);
+  
+  // ✅ CORRECTION 7: Tracker les URLs rendues pour détecter changements
+  const renderedLogoUrlsRef = useRef<Map<string, string>>(new Map()); // elementId -> logoUrl
 
   // ✅ CORRECTION 2: Fonction pour nettoyer le cache des images
   const cleanupImageCache = useCallback(() => {
@@ -1168,6 +1171,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const alignment = props.alignment || 'left';
 
     console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
+
+    // ✅ CORRECTION 7: Détecter si l'URL a changé
+    const lastRenderedUrl = renderedLogoUrlsRef.current.get(element.id);
+    if (logoUrl !== lastRenderedUrl) {
+      console.log('✅ [LOGO SYNC] URL changée pour', element.id, ':', lastRenderedUrl, '→', logoUrl);
+      renderedLogoUrlsRef.current.set(element.id, logoUrl);
+    }
 
     // Fond transparent
     ctx.fillStyle = 'transparent';
