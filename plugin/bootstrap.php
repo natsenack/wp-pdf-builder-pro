@@ -1046,7 +1046,10 @@ function pdf_builder_ajax_get_template() {
 
     $elements = $transformed_elements;
 
-    // ✅ ÉTAPE 3: Mettre en cache le template pour les prochains accès (1h TTL)
+    // ✅ ÉTAPE 3: Cache DISABLED for now - always fresh from DB
+    // Uncomment below once flash issue is fully resolved
+    // set_transient($cache_key, $cache_data, 3600);
+    
     $cache_data = array(
         'id' => $template['id'],
         'name' => $template['name'],
@@ -1055,7 +1058,6 @@ function pdf_builder_ajax_get_template() {
         'created_at' => $template['created_at'],
         'updated_at' => $template['updated_at']
     );
-    set_transient($cache_key, $cache_data, 3600); // 1 heure
 
     wp_send_json_success($cache_data);
 }

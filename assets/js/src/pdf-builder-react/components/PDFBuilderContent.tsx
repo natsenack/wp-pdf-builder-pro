@@ -216,7 +216,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 </div>
               )}
               
-              <Canvas width={width} height={height} />
+              {/* ✅ ONLY render Canvas when template is loaded OR it's a new template */}
+              {!isLoading && <Canvas width={width} height={height} />}
             </div>
 
             {/* Bouton toggle pour le panneau de propriétés */}
