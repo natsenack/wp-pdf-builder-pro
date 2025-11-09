@@ -197,7 +197,7 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   const showShipping = props.showShipping !== false;
   const showTax = props.showTax !== false;
   const showGlobalDiscount = props.showGlobalDiscount !== false;
-  const textColor = props.textColor || '#000000';
+  const textColor = normalizeColor(props.textColor || '#000000');
   const borderRadius = props.borderRadius || 0;
 
   let products: Array<{
@@ -546,7 +546,7 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
     ctx.strokeRect(0, 0, element.width, element.height);
   }
 
-  ctx.fillStyle = props.textColor || '#000000';
+  ctx.fillStyle = normalizeColor(props.textColor || '#000000');
   ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
   ctx.textAlign = 'left';
 
@@ -554,10 +554,10 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
 
   // En-tête
   if (showHeaders) {
-    ctx.fillStyle = props.headerTextColor || '#111827';
+    ctx.fillStyle = normalizeColor(props.headerTextColor || '#111827');
     ctx.fillText('Informations Client', 10, y);
     y += 20;
-    ctx.fillStyle = props.textColor || '#000000';
+    ctx.fillStyle = normalizeColor(props.textColor || '#000000');
   }
 
   // Informations client fictives ou réelles selon le mode
@@ -700,10 +700,10 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const currentTheme = themes[theme] || themes.corporate;
 
   // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
-  const bgColor = props.backgroundColor || currentTheme.backgroundColor;
-  const borderCol = props.borderColor || currentTheme.borderColor;
-  const txtColor = props.textColor || currentTheme.textColor;
-  const headerTxtColor = props.headerTextColor || currentTheme.headerTextColor;
+  const bgColor = normalizeColor(props.backgroundColor || currentTheme.backgroundColor);
+  const borderCol = normalizeColor(props.borderColor || currentTheme.borderColor);
+  const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
+  const headerTxtColor = normalizeColor(props.headerTextColor || currentTheme.headerTextColor);
 
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, element.width, element.height);
@@ -1304,8 +1304,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     const currentTheme = themes[theme] || themes.legal;
 
     // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
-    const bgColor = props.backgroundColor || currentTheme.backgroundColor;
-    const txtColor = props.textColor || currentTheme.textColor;
+    const bgColor = normalizeColor(props.backgroundColor || currentTheme.backgroundColor);
+    const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
 
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, element.width, element.height);
