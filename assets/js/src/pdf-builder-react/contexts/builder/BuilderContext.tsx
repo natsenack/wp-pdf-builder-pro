@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { useCanvasSettings } from '../CanvasSettingsContext.tsx';
 import {
   BuilderState,
   BuilderAction,
@@ -536,6 +537,20 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   };
 
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
+  const canvasSettings = useCanvasSettings();
+
+  // Appliquer les paramètres de zoom depuis Canvas Settings au démarrage
+  useEffect(() => {
+    // Appliquer le zoom par défaut depuis les paramètres
+    if (canvasSettings.zoomDefault && canvasSettings.zoomDefault !== state.canvas.zoom) {
+      dispatch({ 
+        type: 'SET_CANVAS', 
+        payload: { 
+          zoom: Math.max(canvasSettings.zoomMin, Math.min(canvasSettings.zoomDefault, canvasSettings.zoomMax))
+        } 
+      });
+    }
+  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, state.canvas.zoom]);
 
   // Chargement automatique du template depuis l'URL
   useEffect(() => {
@@ -897,14 +912,15 @@ export function useSelection() {
 // Hook spécialisé pour le canvas
 export function useCanvas() {
   const { state, setCanvas } = useBuilder();
+  const canvasSettings = useCanvasSettings();
 
   return {
     canvas: state.canvas,
     setCanvas,
-    zoomIn: () => setCanvas({ zoom: Math.min(state.canvas.zoom * 1.2, 5) }),
-    zoomOut: () => setCanvas({ zoom: Math.max(state.canvas.zoom / 1.2, 0.1) }),
-    setZoom: (zoom: number) => setCanvas({ zoom: Math.max(0.1, Math.min(zoom, 5)) }),
-    resetZoom: () => setCanvas({ zoom: 1 }),
+    zoomIn: () => setCanvas({ zoom: Math.min(state.canvas.zoom * 1.2, canvasSettings.zoomMax) }),
+    zoomOut: () => setCanvas({ zoom: Math.max(state.canvas.zoom / 1.2, canvasSettings.zoomMin) }),
+    setZoom: (zoom: number) => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(zoom, canvasSettings.zoomMax)) }),
+    resetZoom: () => setCanvas({ zoom: canvasSettings.zoomDefault }),
     toggleGrid: () => setCanvas({ showGrid: !state.canvas.showGrid }),
     setBackgroundColor: (color: string) => setCanvas({ backgroundColor: color })
   };
