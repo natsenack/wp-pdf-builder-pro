@@ -4571,31 +4571,39 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
             }
         });
 
-        // Gestion dynamique des champs marges
-        jQuery('#show_margins').on('change', function() {
-            var isChecked = jQuery(this).is(':checked');
+        // Fonction pour mettre à jour l'état des marges
+        function updateMarginsState() {
+            var isChecked = jQuery('#show_margins').is(':checked');
             var $marginInputs = jQuery('.margin-input');
             var $marginLabels = jQuery('.margin-label');
 
             if (isChecked) {
                 $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
                 $marginLabels.css('color', '');
+                console.log('Marges activées');
             } else {
                 $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
                 $marginLabels.css('color', '#999');
+                console.log('Marges désactivées');
             }
+        }
+
+        // Gestion dynamique des champs marges - event listener
+        jQuery('#show_margins').on('change', function() {
+            console.log('Toggle marges changé:', jQuery(this).is(':checked'));
+            updateMarginsState();
         });
 
         // Initialiser l'état des champs marges au chargement
         jQuery(document).ready(function() {
-            var marginsEnabled = jQuery('#show_margins').is(':checked');
-            var $marginInputs = jQuery('.margin-input');
-            var $marginLabels = jQuery('.margin-label');
+            console.log('Document ready - initialisation des marges');
+            setTimeout(updateMarginsState, 100);
+        });
 
-            if (!marginsEnabled) {
-                $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                $marginLabels.css('color', '#999');
-            }
+        // Également initialiser après un délai pour être sûr que les éléments sont chargés
+        window.addEventListener('load', function() {
+            console.log('Window load - vérification des marges');
+            updateMarginsState();
         });
 
         // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
