@@ -943,8 +943,6 @@ class PDF_Builder_Admin {
      */
     private function load_admin_scripts($hook = null)
     {
-        error_log('PDF Builder: load_admin_scripts called with hook: ' . $hook);
-
         // DEBUG: Vérifier que les constantes sont définies
 
         // Vérifier que les fichiers existent
@@ -3308,9 +3306,6 @@ class PDF_Builder_Admin {
      */
     public function ajax_save_settings()
     {
-        error_log('PDF BUILDER: ajax_save_settings START - Action called successfully');
-        error_log('PDF BUILDER: POST data keys: ' . implode(', ', array_keys($_POST)));
-        error_log('PDF BUILDER: current_tab: ' . ($_POST['current_tab'] ?? 'NOT_SET'));
         // Déterminer l'onglet actuel
         $current_tab = $_POST['current_tab'] ?? 'general';
 
@@ -3323,8 +3318,6 @@ class PDF_Builder_Admin {
         }
 
         if (!wp_verify_nonce($_POST[$nonce_field] ?? '', $nonce_action)) {
-            error_log("PDF Builder: Nonce verification failed for tab $current_tab. Expected nonce: $nonce_action, Field: $nonce_field, Value: " . ($_POST[$nonce_field] ?? 'NOT_SET'));
-            error_log("PDF Builder: Available POST keys: " . implode(', ', array_keys($_POST)));
             wp_send_json_error('Nonce invalide pour onglet ' . $current_tab . ' - Debug: ' . $nonce_action . ' / ' . ($_POST[$nonce_field] ?? 'NOT_SET'));
             return;
         }
@@ -3351,17 +3344,13 @@ class PDF_Builder_Admin {
 
         if ($current_tab === 'canvas') {
             // Sauvegarde des paramètres canvas via le Canvas Manager
-            error_log('PDF BUILDER: Processing canvas tab save - START');
             if (class_exists('PDF_Builder_Canvas_Manager')) {
-                error_log('PDF BUILDER: Canvas Manager class found');
                 $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-                error_log('PDF BUILDER: Canvas Manager instance obtained');
 
                 // Filtrer uniquement les paramètres canvas
                 $canvas_params = $this->filter_canvas_parameters($_POST);
 
                 $saved_settings = $canvas_manager->save_canvas_settings($canvas_params);
-                error_log('PDF BUILDER: Canvas save result: ' . ($saved_settings ? 'SUCCESS' : 'FAILED'));
 
                 if ($saved_settings) {
                     // Retourner les paramètres sauvegardés pour synchronisation JavaScript
@@ -3374,10 +3363,8 @@ class PDF_Builder_Admin {
                     wp_send_json_error('Erreur lors de la sauvegarde des paramètres Canvas');
                 }
             } else {
-                error_log('PDF BUILDER: Canvas Manager class not found');
                 wp_send_json_error('Erreur: Canvas Manager non disponible');
             }
-            error_log('PDF BUILDER: Canvas processing completed, returning');
             return; // Important: arrêter l'exécution pour éviter la réponse générale
         }
 
@@ -3479,12 +3466,6 @@ class PDF_Builder_Admin {
             'developer_enabled' => isset($_POST['pdf_builder_settings']['developer_enabled']),
             'developer_password' => sanitize_text_field($_POST['pdf_builder_settings']['developer_password'] ?? '')
         ];
-        
-        // DEBUG: Log des paramètres développeur reçus
-        error_log('DEBUG - Developer settings received:');
-        error_log('developer_enabled isset: ' . (isset($_POST['pdf_builder_settings']['developer_enabled']) ? 'YES' : 'NO'));
-        error_log('developer_enabled value: ' . ($_POST['pdf_builder_settings']['developer_enabled'] ?? 'NOT SET'));
-        error_log('developer_password: ' . ($_POST['pdf_builder_settings']['developer_password'] ?? 'NOT SET'));
         
 // Sauvegarde des informations entreprise
         if (isset($_POST['company_vat'])) {
@@ -3698,9 +3679,6 @@ class PDF_Builder_Admin {
         if (class_exists('PDF_Builder_Canvas_Manager')) {
             $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
             $canvas_manager->save_canvas_settings($canvas_settings);
-            error_log('PDF Builder: Canvas settings saved via manager in AJAX');
-        } else {
-            error_log('PDF Builder: Canvas Manager not available for saving settings');
         }
 // Sauvegarde individuelle de tous les paramètres non-canvas pour la compatibilité
         foreach ($settings as $key => $value) {

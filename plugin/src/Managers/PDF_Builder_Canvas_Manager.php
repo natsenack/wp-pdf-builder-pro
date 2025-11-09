@@ -115,7 +115,6 @@ class PDF_Builder_Canvas_Manager {
     public function get_canvas_settings() {
         // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
         $all_settings = get_option('pdf_builder_settings', []);
-        error_log('DEBUG: Raw DB settings: ' . print_r($all_settings, true));
         
         // Extraire seulement les paramètres canvas
         $canvas_settings = [];
@@ -143,7 +142,6 @@ class PDF_Builder_Canvas_Manager {
 
         // Fusionner avec les paramètres par défaut
         $result = array_merge($this->default_settings, $canvas_settings);
-        error_log('DEBUG: Final canvas settings: show_margins=' . var_export($result['show_margins'], true) . ', show_grid=' . var_export($result['show_grid'], true));
         return $result;
     }
 

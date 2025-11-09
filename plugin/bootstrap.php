@@ -1156,6 +1156,12 @@ add_action('wp_ajax_pdf_builder_regenerate_positions', 'pdf_builder_ajax_regener
  * AJAX handler pour sauvegarder un template
  */
 function pdf_builder_ajax_save_template() {
+    // Initialiser le logger
+    if (!class_exists('PDF_Builder_Canvas_Save_Logger')) {
+        require_once plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Canvas_Save_Logger.php';
+    }
+    $logger = PDF_Builder_Canvas_Save_Logger::get_instance();
+    
     // Vérifier le nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
@@ -1172,6 +1178,9 @@ function pdf_builder_ajax_save_template() {
     $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
     $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
     
+    // Logger le début
+    $logger->log_save_start($template_id, $template_name);
+    
     // Les données elements et canvas arrivent comme JSON strings depuis React
     $elements_raw = isset($_POST['elements']) ? wp_unslash($_POST['elements']) : '[]';
     $canvas_raw = isset($_POST['canvas']) ? wp_unslash($_POST['canvas']) : '{}';
@@ -1187,14 +1196,20 @@ function pdf_builder_ajax_save_template() {
         $canvas = [];
     }
 
-    // DEBUG: Log what React sent
-    error_log('DEBUG SAVE: Receiving from React:');
-    error_log('DEBUG SAVE: Elements decoded - Count: ' . count($elements));
-    if (!empty($elements)) {
-        error_log('DEBUG SAVE: First element: ' . print_r($elements[0], true));
+    // Logger les données reçues
+    $logger->log_elements_received($elements, count($elements));
+    $logger->log_canvas_properties($canvas);
+
+    // Valider les données
+    $is_valid = $logger->log_validation($elements, $canvas);
+    if (!$is_valid) {
+        $logger->log_save_error('Validation failed');
+        wp_send_json_error(__('Données invalides.', 'pdf-builder-pro'));
+        return;
     }
 
     if (empty($template_name)) {
+        $logger->log_save_error('Template name is empty');
         wp_send_json_error(__('Nom du template requis.', 'pdf-builder-pro'));
         return;
     }
@@ -1215,14 +1230,10 @@ function pdf_builder_ajax_save_template() {
 
     $json_data = wp_json_encode($template_data);
     if ($json_data === false) {
+        $logger->log_save_error('JSON encoding failed');
         wp_send_json_error(__('Erreur lors de l\'encodage des données JSON.', 'pdf-builder-pro'));
         return;
     }
-
-    // Debug: log what we're storing
-    error_log('DEBUG SAVE: Storing template data with ' . count($elements) . ' elements');
-    error_log('DEBUG SAVE: JSON length: ' . strlen($json_data) . ' characters');
-
 
     if ($template_id > 0) {
         // Mettre à jour un template existant
@@ -1239,6 +1250,7 @@ function pdf_builder_ajax_save_template() {
         );
 
         if ($result === false) {
+            $logger->log_save_error('Update failed');
             wp_send_json_error(__('Erreur lors de la mise à jour du template.', 'pdf-builder-pro'));
             return;
         }
@@ -1256,6 +1268,7 @@ function pdf_builder_ajax_save_template() {
         );
 
         if ($result === false) {
+            $logger->log_save_error('Insert failed');
             wp_send_json_error(__('Erreur lors de la création du template.', 'pdf-builder-pro'));
             return;
         }
@@ -1263,6 +1276,9 @@ function pdf_builder_ajax_save_template() {
         $template_id = $wpdb->insert_id;
     }
 
+    // Logger le succès
+    $logger->log_save_success($template_id, count($elements));
+    
     // Retourner le succès
     wp_send_json_success([
         'id' => $template_id,
