@@ -12,9 +12,6 @@ export function Toolbar({ className }: ToolbarProps) {
   const canvasSettings = useCanvasSettings();
   const { state, setMode, undo, redo, reset, toggleGrid } = builder;
 
-  // Debug log
-  console.log('[DEBUG] Toolbar - canvasSettings.gridShow:', canvasSettings.gridShow);
-
   // Vérifications de sécurité
   if (!state) {
     return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>

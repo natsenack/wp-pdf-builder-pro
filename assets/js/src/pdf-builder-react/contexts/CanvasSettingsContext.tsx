@@ -131,7 +131,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     }
 
     console.log('Loading canvas settings from window', windowSettings);
-    console.log('[DEBUG] windowSettings.grid_show:', windowSettings.grid_show, 'type:', typeof windowSettings.grid_show);
 
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
@@ -148,11 +147,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       marginLeft: (windowSettings.margin_left as number) ?? DEFAULT_SETTINGS.marginLeft,
       
       // Grille
-      gridShow: (() => {
-        const gridShowValue = (windowSettings.grid_show as boolean) !== false;
-        console.log('[DEBUG] CanvasSettingsContext - windowSettings.grid_show:', windowSettings.grid_show, 'gridShow computed:', gridShowValue);
-        return gridShowValue;
-      })(),
+      gridShow: (windowSettings.grid_show as boolean) !== false,
       gridSize: (windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize,
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
       gridSnapEnabled: (windowSettings.grid_snap_enabled as boolean) !== false,
