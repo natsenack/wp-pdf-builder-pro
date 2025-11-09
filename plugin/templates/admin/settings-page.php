@@ -2581,23 +2581,23 @@ if ($is_ajax) {
                     <td>
                         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                             <div>
-                                <label for="margin_top">Haut :</label>
-                                <input type="number" id="margin_top" name="margin_top" 
+                                <label for="margin_top" class="margin-label">Haut :</label>
+                                <input type="number" id="margin_top" name="margin_top" class="margin-input"
                                        value="<?php echo intval($canvas_settings['margin_top'] ?? 28); ?>" min="0" />
                             </div>
                             <div>
-                                <label for="margin_right">Droite :</label>
-                                <input type="number" id="margin_right" name="margin_right" 
+                                <label for="margin_right" class="margin-label">Droite :</label>
+                                <input type="number" id="margin_right" name="margin_right" class="margin-input"
                                        value="<?php echo intval($canvas_settings['margin_right'] ?? 28); ?>" min="0" />
                             </div>
                             <div>
-                                <label for="margin_bottom">Bas :</label>
-                                <input type="number" id="margin_bottom" name="margin_bottom" 
+                                <label for="margin_bottom" class="margin-label">Bas :</label>
+                                <input type="number" id="margin_bottom" name="margin_bottom" class="margin-input"
                                        value="<?php echo intval($canvas_settings['margin_bottom'] ?? 10); ?>" min="0" />
                             </div>
                             <div>
-                                <label for="margin_left">Gauche :</label>
-                                <input type="number" id="margin_left" name="margin_left" 
+                                <label for="margin_left" class="margin-label">Gauche :</label>
+                                <input type="number" id="margin_left" name="margin_left" class="margin-input"
                                        value="<?php echo intval($canvas_settings['margin_left'] ?? 10); ?>" min="0" />
                             </div>
                         </div>
@@ -4574,8 +4574,8 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
         // Gestion dynamique des champs marges
         jQuery('#show_margins').on('change', function() {
             var isChecked = jQuery(this).is(':checked');
-            var $marginInputs = jQuery('#margin_top, #margin_right, #margin_bottom, #margin_left');
-            var $marginLabels = jQuery('label[for="margin_top"], label[for="margin_right"], label[for="margin_bottom"], label[for="margin_left"]');
+            var $marginInputs = jQuery('.margin-input');
+            var $marginLabels = jQuery('.margin-label');
 
             if (isChecked) {
                 $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
@@ -4589,8 +4589,8 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
         // Initialiser l'état des champs marges au chargement
         jQuery(document).ready(function() {
             var marginsEnabled = jQuery('#show_margins').is(':checked');
-            var $marginInputs = jQuery('#margin_top, #margin_right, #margin_bottom, #margin_left');
-            var $marginLabels = jQuery('label[for="margin_top"], label[for="margin_right"], label[for="margin_bottom"], label[for="margin_left"]');
+            var $marginInputs = jQuery('.margin-input');
+            var $marginLabels = jQuery('.margin-label');
 
             if (!marginsEnabled) {
                 $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
