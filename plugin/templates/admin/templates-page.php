@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
 
         <div style="margin: 20px 0;">
-            <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="button button-primary">
+            <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id=1'); ?>" class="button button-primary">
                 🎨 <?php _e('Ouvrir l\'Éditeur PDF', 'pdf-builder-pro'); ?>
             </a>
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
@@ -152,7 +152,7 @@ if (!defined('ABSPATH')) {
                     }
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor') . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
