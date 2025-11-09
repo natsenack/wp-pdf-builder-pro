@@ -180,6 +180,14 @@ export function useTemplate() {
       formData.append('canvas', JSON.stringify(state.canvas));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
+      console.log('💾 [SAVE TEMPLATE] Envoi des données:', {
+        templateId,
+        templateName: state.template.name,
+        elementsCount: state.elements.length,
+        canvasData: state.canvas,
+        firstElement: state.elements[0]
+      });
+
       // Faire un appel API pour sauvegarder le template
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
@@ -191,6 +199,7 @@ export function useTemplate() {
       }
 
       const result = await response.json();
+      console.log('✅ [SAVE TEMPLATE] Réponse du serveur:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
@@ -204,6 +213,7 @@ export function useTemplate() {
         }
       });
     } catch (error) {
+      console.error('❌ [SAVE TEMPLATE] Erreur:', error);
       throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
