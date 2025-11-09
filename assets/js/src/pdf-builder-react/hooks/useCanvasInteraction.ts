@@ -154,8 +154,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+    // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
+    const zoomScale = state.canvas.zoom / 100;
+    const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
+    const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
 
     // Trouver l'élément cliqué
     const clickedElement = state.elements.find(el => {
@@ -186,8 +188,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+    // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
+    const zoomScale = state.canvas.zoom / 100;
+    const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
+    const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
 
     // Vérifier si on clique sur un élément sélectionné pour le drag
     if (state.selection.selectedElements.length > 0) {
@@ -321,8 +325,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / state.canvas.zoom;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / state.canvas.zoom;
+    // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
+    const zoomScale = state.canvas.zoom / 100;
+    const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
+    const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
 
     // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
@@ -397,8 +403,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const rawCanvasY = event.clientY - rect.top;
 
     // Transformer en coordonnées monde (inverse des transformations du canvas)
-    const canvasX = (rawCanvasX - state.canvas.pan.x) / state.canvas.zoom;
-    const canvasY = (rawCanvasY - state.canvas.pan.y) / state.canvas.zoom;
+    // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
+    const zoomScale = state.canvas.zoom / 100;
+    const canvasX = (rawCanvasX - state.canvas.pan.x) / zoomScale;
+    const canvasY = (rawCanvasY - state.canvas.pan.y) / zoomScale;
 
     // Trouver l'élément cliqué
     // TODO: Améliorer la détection pour les éléments tournés
