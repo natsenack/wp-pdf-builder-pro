@@ -5564,15 +5564,6 @@ class PDF_Builder_Admin {
             $template_type = 'custom';
         }
 
-        // Déterminer le titre et la description selon le type
-        $editor_info = $this->get_editor_info($template_type);
-        if (!in_array($template_type, $valid_types)) {
-            $template_type = 'custom';
-        }
-
-        // Déterminer le titre et la description selon le type
-        $editor_info = $this->get_editor_info($template_type);
-
         // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
 
         // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
@@ -5685,19 +5676,6 @@ class PDF_Builder_Admin {
 
         ?>
         <div class="wrap">
-            <div style="background: <?php echo esc_attr($editor_info['bg_color']); ?>; border: 1px solid <?php echo esc_attr($editor_info['border_color']); ?>; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
-                <h1 style="margin: 0; color: <?php echo esc_attr($editor_info['text_color']); ?>;"><?php echo esc_html($editor_info['icon']); ?> <?php echo esc_html($editor_info['title']); ?></h1>
-                <p style="margin: 4px 0 0 0; font-size: 14px; color: #666;">
-                    <?php echo esc_html($editor_info['description']); ?>
-                </p>
-                <?php if ($template_type !== 'custom'): ?>
-                <p style="margin: 8px 0 0 0; font-size: 12px; color: #888;">
-                    <strong>Type:</strong> <?php echo esc_html($template_type); ?> |
-                    <strong>ID:</strong> <?php echo $template_id ?: 'Nouveau'; ?>
-                </p>
-                <?php endif; ?>
-            </div>
-
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
                 <div class="spinner is-active"></div>
@@ -5813,40 +5791,7 @@ class PDF_Builder_Admin {
         <?php
     }
 
-    /**
-     * Retourne les informations d'affichage selon le type de template
-     */
-    private function get_editor_info($type)
-    {
-        $infos = [
-            'custom' => [
-                'title' => 'Éditeur Templates Personnalisés',
-                'description' => 'Éditeur principal pour créer et modifier vos propres templates PDF personnalisés',
-                'icon' => '🎨',
-                'bg_color' => '#f0f8ff',
-                'border_color' => '#007acc',
-                'text_color' => '#007acc'
-            ],
-            'predefined' => [
-                'title' => 'Éditeur Modèles Prédéfinis',
-                'description' => 'Éditeur spécialisé pour la création et modification de modèles prédéfinis',
-                'icon' => '📝',
-                'bg_color' => '#fff3cd',
-                'border_color' => '#ffc107',
-                'text_color' => '#856404'
-            ],
-            'system' => [
-                'title' => 'Éditeur Templates Système',
-                'description' => 'Éditeur administrateur pour les templates système (réservé aux administrateurs)',
-                'icon' => '⚙️',
-                'bg_color' => '#f8d7da',
-                'border_color' => '#dc3545',
-                'text_color' => '#721c24'
-            ]
-        ];
 
-        return $infos[$type] ?? $infos['custom'];
-    }
 }
 
 // Empêcher l'accès direct
