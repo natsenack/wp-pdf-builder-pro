@@ -935,6 +935,13 @@ function pdf_builder_ajax_save_template() {
     $elements = isset($_POST['elements']) ? $_POST['elements'] : [];
     $canvas = isset($_POST['canvas']) ? $_POST['canvas'] : [];
 
+    // DEBUG: Log what React sent
+    error_log('DEBUG SAVE: Receiving from React:');
+    error_log('DEBUG SAVE: Elements raw: ' . print_r($elements, true));
+    if (is_string($elements)) {
+        error_log('DEBUG SAVE: Elements is string, first 500 chars: ' . substr($elements, 0, 500));
+    }
+
     if (empty($template_name)) {
         wp_send_json_error(__('Nom du template requis.', 'pdf-builder-pro'));
         return;
