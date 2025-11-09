@@ -1405,69 +1405,87 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
     // Vérifier si l'élément est visible
     if (element.visible === false) {
+      console.log(`  ⊘ [DRAW] ${element.type} caché (visible=false)`);
       return;
     }
 
-    // DEBUG
-    console.log(`Drawing ${element.type} at (${element.x}, ${element.y}) size ${element.width}x${element.height}`);
+    console.log(`  ✏️ [DRAW] ${element.type} (${element.id}) à (${element.x}, ${element.y})`);
 
     ctx.save();
+    console.log(`    📌 [DRAW] save() effectué`);
 
     // Appliquer transformation de l'élément
     ctx.translate(element.x, element.y);
+    console.log(`    📍 [DRAW] translate(${element.x}, ${element.y})`);
+    
     if (element.rotation) {
       ctx.rotate((element.rotation * Math.PI) / 180);
+      console.log(`    🔄 [DRAW] rotate(${element.rotation}°)`);
     }
 
     // Dessiner selon le type d'élément
     switch (element.type) {
       case 'rectangle':
+        console.log(`    🟦 [DRAW] drawRectangle`);
         drawRectangle(ctx, element);
         break;
       case 'circle':
+        console.log(`    🟘 [DRAW] drawCircle`);
         drawCircle(ctx, element);
         break;
       case 'text':
+        console.log(`    📝 [DRAW] drawText`);
         drawText(ctx, element);
         break;
       case 'line':
+        console.log(`    ➖ [DRAW] drawLine`);
         drawLine(ctx, element);
         break;
       case 'product_table':
+        console.log(`    📊 [DRAW] drawProductTable`);
         drawProductTable(ctx, element, state);
         break;
       case 'customer_info':
+        console.log(`    👤 [DRAW] drawCustomerInfo`);
         drawCustomerInfo(ctx, element, state);
         break;
       case 'company_info':
+        console.log(`    🏢 [DRAW] drawCompanyInfo`);
         drawCompanyInfo(ctx, element);
         break;
       case 'company_logo':
+        console.log(`    🏷️ [DRAW] drawCompanyLogo`);
         drawCompanyLogo(ctx, element);
         break;
       case 'order_number':
+        console.log(`    🔢 [DRAW] drawOrderNumber`);
         drawOrderNumber(ctx, element, state);
         break;
       case 'document_type':
+        console.log(`    📄 [DRAW] drawDocumentType`);
         drawDocumentType(ctx, element, state);
         break;
       case 'dynamic-text':
+        console.log(`    ✨ [DRAW] drawDynamicText`);
         drawDynamicText(ctx, element);
         break;
       case 'mentions':
+        console.log(`    💬 [DRAW] drawMentions`);
         drawMentions(ctx, element);
         break;
       case 'image':
+        console.log(`    🖼️ [DRAW] drawImage`);
         drawImage(ctx, element, imageCache);
         break;
       default:
         // Élément générique - dessiner un rectangle simple
-        console.warn(`⚠️ Unknown element type: ${element.type}`);
+        console.warn(`    ⚠️ [DRAW] Élément inconnu: ${element.type}`);
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
     }
 
+    console.log(`    🔙 [DRAW] restore() effectué`);
     ctx.restore();
   }, [state, drawCompanyLogo]);
 
@@ -1931,14 +1949,23 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.warn('❌ [CANVAS] Canvas ref est NULL!');
+      return;
+    }
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.warn('❌ [CANVAS] Context 2D non disponible!');
+      return;
+    }
+
+    console.log(`📐 [CANVAS] Dimensions: ${width}x${height}, Canvas client: ${canvas.clientWidth}x${canvas.clientHeight}`);
 
     // Clear canvas with white background (matching PDF background)
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
+    console.log('✅ [CANVAS] Fond blanc appliqué');
 
     // DEBUG: Grille de référence pour voir les coordonnées
     ctx.strokeStyle = '#f0f0f0';
@@ -1955,19 +1982,25 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.lineTo(width, i);
       ctx.stroke();
     }
+    console.log('✅ [CANVAS] Grille dessinée');
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
       console.warn('⚠️ Canvas has 0 elements!');
     } else {
-      console.log('✅ Rendering', state.elements.length, 'elements');
+      console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
     }
 
     // Appliquer transformation (zoom, pan)
+    console.log(`🔄 [CANVAS] Avant save: pan=${JSON.stringify(state.canvas.pan)}, zoom=${state.canvas.zoom}`);
     ctx.save();
+    console.log('✅ [CANVAS] ctx.save() exécuté');
     
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
+    console.log(`✅ [CANVAS] translate appliqué: (${state.canvas.pan.x}, ${state.canvas.pan.y})`);
+    
     ctx.scale(state.canvas.zoom, state.canvas.zoom);
+    console.log(`✅ [CANVAS] scale appliqué: ${state.canvas.zoom}`);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
@@ -1979,24 +2012,32 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
     if (canvasSettings.gridShow && state.canvas.showGrid) {
+      console.log('🔶 [CANVAS] Dessin de la grille...');
       drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
     }
 
     // Dessiner les éléments
-    state.elements.forEach((element) => {
+    console.log(`🎨 [CANVAS] Début du dessin de ${state.elements.length} éléments...`);
+    state.elements.forEach((element, index) => {
+      console.log(`  [${index}] Appel drawElement pour ${element.type}`);
       drawElement(ctx, element);
     });
+    console.log('✅ [CANVAS] Tous les éléments dessinés');
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
+      console.log(`📦 [CANVAS] Dessin de la sélection: ${state.selection.selectedElements.length} éléments`);
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
+    console.log('🔙 [CANVAS] ctx.restore() appelé');
     ctx.restore();
+    console.log('✅ [CANVAS] Rendu complet terminé');
   }, [width, height, canvasSettings, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement, state.canvas.showGrid]);
 
   // Redessiner quand l'état change
   useEffect(() => {
+    console.log('🔄 [EFFECT] useEffect de rendu déclenché');
     renderCanvas();
   }, [renderCanvas, state.elements]);
 
