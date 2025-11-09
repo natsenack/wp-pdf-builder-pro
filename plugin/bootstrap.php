@@ -1046,14 +1046,18 @@ function pdf_builder_ajax_get_template() {
 
     $elements = $transformed_elements;
 
-    wp_send_json_success(array(
+    // ✅ ÉTAPE 3: Mettre en cache le template pour les prochains accès (1h TTL)
+    $cache_data = array(
         'id' => $template['id'],
         'name' => $template['name'],
         'elements' => $elements,
         'canvas' => $canvas,
         'created_at' => $template['created_at'],
         'updated_at' => $template['updated_at']
-    ));
+    );
+    set_transient($cache_key, $cache_data, 3600); // 1 heure
+
+    wp_send_json_success($cache_data);
 }
 
 

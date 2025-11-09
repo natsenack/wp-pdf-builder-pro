@@ -158,12 +158,14 @@ export function useTemplate() {
   }, [loadExistingTemplate]);
 
   // Effet pour charger automatiquement un template existant au montage
+  // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
     if (templateId) {
       loadExistingTemplate(templateId);
     }
-  }, [loadExistingTemplate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saveTemplate = useCallback(async () => {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
