@@ -201,16 +201,22 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const zoomScale = state.canvas.zoom / 100;
     const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
     const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
-    console.log('🖱️ [INTERACTION] handleMouseDown - x:', x, 'y:', y, 'selectedElements:', state.selection.selectedElements);
+    console.log('🖱️ [MOUSEDOWN] x:', x, 'y:', y, 'zoomScale:', zoomScale, 'pan:', state.canvas.pan, 'mouseEventX:', event.clientX, 'rectLeft:', rect.left);
 
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
-    const clickedElement = state.elements.find(el => isPointInElement(x, y, el));
+    const clickedElement = state.elements.find(el => {
+      const isIn = isPointInElement(x, y, el);
+      console.log('🔍 [HIT TEST]', el.type, el.id, '- x:', el.x, 'y:', el.y, 'w:', el.width, 'h:', el.height, 'clickX:', x.toFixed(2), 'clickY:', y.toFixed(2), 'isHit:', isIn);
+      return isIn;
+    });
+
+    console.log('🖱️ [MOUSEDOWN] Éléments disponibles:', state.elements.length, 'Cliqué:', clickedElement ? clickedElement.id : 'AUCUN', 'Sélection avant:', state.selection.selectedElements);
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
       // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
       if (!state.selection.selectedElements.includes(clickedElement.id)) {
-        console.log('🖱️ [INTERACTION] Sélection du nouvel élément:', clickedElement.id);
+        console.log('✅ [SELECTION] Sélection du nouvel élément:', clickedElement.id, 'type:', clickedElement.type);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
         // Ne pas draguer au premier clic - juste sélectionner
         event.preventDefault();
@@ -224,7 +230,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       const offsetY = y - clickedElement.y;
       dragStartRef.current = { x: offsetX, y: offsetY };
       selectedElementRef.current = clickedElement.id;
-      console.log('🖱️ [DRAG START] element:', clickedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', clickedElement.x, 'elementY:', clickedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
+      console.log('🎯 [DRAG START] element:', clickedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', clickedElement.x, 'elementY:', clickedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
       event.preventDefault();
       return;
     }
@@ -232,6 +238,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     // Vérifier si on clique sur une poignée de redimensionnement
     const resizeHandle = getResizeHandleAtPosition(x, y, state.selection.selectedElements, state.elements);
     if (resizeHandle) {
+      console.log('📏 [RESIZE] Handle détecté:', resizeHandle.handle);
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
@@ -242,8 +249,11 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     // ✅ Sinon on a cliqué sur le vide - désélectionner
     if (state.selection.selectedElements.length > 0) {
+      console.log('❌ [CLEAR] Clic sur le vide - désélection');
       dispatch({ type: 'CLEAR_SELECTION' });
       selectedElementRef.current = null;
+    } else {
+      console.log('❌ [NO ACTION] Clic sur le vide et rien sélectionné');
     }
   }, [state, canvasRef, dispatch]);
 
