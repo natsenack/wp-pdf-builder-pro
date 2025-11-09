@@ -1124,6 +1124,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
+    console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
+
     // Fond transparent
     ctx.fillStyle = 'transparent';
     ctx.fillRect(0, 0, element.width, element.height);
