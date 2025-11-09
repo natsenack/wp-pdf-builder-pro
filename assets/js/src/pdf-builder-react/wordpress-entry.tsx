@@ -15,8 +15,7 @@ import {
   getCurrentTemplate,
   exportTemplate,
   saveTemplate,
-  resetAPI,
-  type GlobalAPI
+  resetAPI
 } from './api/global-api';
 
 // Fonction d'initialisation appelée par WordPress
@@ -65,6 +64,23 @@ export function initPDFBuilderReact() {
       </React.StrictMode>
     );
     debugLog('PDF Builder React: Successfully initialized');
+
+    // Charger les données initiales du template s'il y en a
+    const dataWindow = window as unknown as { pdfBuilderData?: { existingTemplate?: unknown } };
+    const existingTemplate = dataWindow.pdfBuilderData?.existingTemplate;
+    if (existingTemplate) {
+      const tpl = existingTemplate as { id?: string; elements?: unknown[] };
+      debugLog('PDF Builder React: Loading existing template data', {
+        id: tpl.id,
+        elementsCount: Array.isArray(tpl.elements) ? tpl.elements.length : 0
+      });
+      
+      // Charger le template via l'API globale
+      setTimeout(() => {
+        loadTemplate(existingTemplate);
+      }, 100);
+    }
+
     return true;
 
   } catch (error) {
