@@ -1942,18 +1942,17 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Appliquer transformation (zoom, pan)
     ctx.save();
-    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
-    ctx.scale(state.canvas.zoom, state.canvas.zoom);
-
-    // Appliquer les marges si activées
+    
+    // Appliquer les marges si activées (AVANT zoom et pan pour éviter la multiplication)
     const showMargins = (canvasSettings as { show_margins?: boolean }).show_margins;
     if (showMargins && canvasSettings) {
       const marginTopPx = ((canvasSettings as { margin_top?: number }).margin_top || 0) * 3.78; // Convertir mm en px (1mm ≈ 3.78px)
       const marginLeftPx = ((canvasSettings as { margin_left?: number }).margin_left || 0) * 3.78;
-      
-      ctx.save();
       ctx.translate(marginLeftPx, marginTopPx);
     }
+    
+    ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
+    ctx.scale(state.canvas.zoom, state.canvas.zoom);
 
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
     if (canvasSettings.gridShow && state.canvas.showGrid) {
@@ -1968,11 +1967,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
       drawSelection(ctx, state.selection.selectedElements, state.elements);
-    }
-
-    // Restaurer le contexte si les marges étaient appliquées
-    if (showMargins && canvasSettings) {
-      ctx.restore();
     }
 
     ctx.restore();
