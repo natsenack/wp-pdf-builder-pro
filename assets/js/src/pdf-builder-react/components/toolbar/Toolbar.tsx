@@ -65,7 +65,7 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleGrid = () => {
-    if (toggleGrid) {
+    if (toggleGrid && canvasSettings.gridShow) {
       toggleGrid();
     }
   };
