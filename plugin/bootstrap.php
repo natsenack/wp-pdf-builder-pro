@@ -1052,6 +1052,35 @@ function pdf_builder_ajax_get_template() {
 
     $elements = $transformed_elements;
 
+    // 🏷️ Enrichir les logos company_logo avec src si absent
+    foreach ($elements as &$el) {
+        if (isset($el['type']) && $el['type'] === 'company_logo') {
+            // Si src est vide ou absent, chercher le logo WordPress
+            if (empty($el['src']) && empty($el['logoUrl'])) {
+                // Essayer d'obtenir le logo du site WordPress
+                $custom_logo_id = get_theme_mod('custom_logo');
+                if ($custom_logo_id) {
+                    $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    if ($logo_url) {
+                        $el['src'] = $logo_url;
+                        error_log('✅ [GET TEMPLATE] Logo enrichi avec WordPress site logo: ' . $logo_url);
+                    }
+                } else {
+                    // Sinon chercher le logo dans les options WordPress
+                    $site_logo_id = get_option('site_logo');
+                    if ($site_logo_id) {
+                        $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                        if ($logo_url) {
+                            $el['src'] = $logo_url;
+                            error_log('✅ [GET TEMPLATE] Logo enrichi avec site_logo: ' . $logo_url);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    unset($el);
+
     // 🔍 DEBUG: Log what we're returning
     error_log('✅ [GET TEMPLATE] Returning: elements=' . count($elements) . ', canvas=' . (isset($canvas) ? 'YES' : 'NO'));
     if (count($elements) > 0) {
