@@ -428,20 +428,20 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']))
             'include_metadata' => isset($_POST['include_metadata']),
             'pdf_author' => sanitize_text_field($_POST['pdf_author'] ?? 'PDF Builder Pro'),
             'pdf_subject' => sanitize_text_field($_POST['pdf_subject'] ?? ''),
-            'auto_crop' => isset($_POST['auto_crop']),
-            'embed_fonts' => isset($_POST['embed_fonts']),
-            'optimize_for_web' => isset($_POST['optimize_for_web']),
-            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
-            'limit_fps' => isset($_POST['limit_fps']),
+            'auto_crop' => isset($_POST['auto_crop']) && $_POST['auto_crop'] === '1',
+            'embed_fonts' => isset($_POST['embed_fonts']) && $_POST['embed_fonts'] === '1',
+            'optimize_for_web' => isset($_POST['optimize_for_web']) && $_POST['optimize_for_web'] === '1',
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']) && $_POST['enable_hardware_acceleration'] === '1',
+            'limit_fps' => isset($_POST['limit_fps']) && $_POST['limit_fps'] === '1',
             'max_fps' => intval($_POST['max_fps'] ?? 60),
-            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1',
             'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
             'auto_save_versions' => intval($_POST['auto_save_versions'] ?? 10),
             'undo_levels' => intval($_POST['undo_levels'] ?? 50),
             'redo_levels' => intval($_POST['redo_levels'] ?? 50),
-            'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']),
-            'debug_mode' => isset($_POST['debug_mode']),
-            'show_fps' => isset($_POST['show_fps']),
+            'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']) && $_POST['enable_keyboard_shortcuts'] === '1',
+            'debug_mode' => isset($_POST['debug_mode']) && $_POST['debug_mode'] === '1',
+            'show_fps' => isset($_POST['show_fps']) && $_POST['show_fps'] === '1',
         ];
         
         // Sauvegarder dans les options WordPress
@@ -551,7 +551,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
     'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
     'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
-    'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? true,
+    'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
     'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
     'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
     'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
@@ -1352,6 +1352,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="auto_save_enabled" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
                                        <?php checked($settings['auto_save_enabled'] ?? false); ?> />
@@ -3889,7 +3890,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
     'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
     'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
-    'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? true,
+    'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
     'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
     'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
     'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
