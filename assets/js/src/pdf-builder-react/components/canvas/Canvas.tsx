@@ -1940,6 +1940,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
+    // DEBUG: Log elements
+    if (state.elements.length === 0) {
+      console.warn('⚠️ Canvas has 0 elements!');
+    } else {
+      console.log('✅ Rendering', state.elements.length, 'elements');
+    }
+
     // Appliquer transformation (zoom, pan)
     ctx.save();
     
