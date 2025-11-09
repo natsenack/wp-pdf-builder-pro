@@ -20,6 +20,7 @@ export interface CanvasSettingsContextType {
   marginRight: number;
   marginBottom: number;
   marginLeft: number;
+  showMargins: boolean;
   
   // Grille
   gridShow: boolean;
@@ -76,6 +77,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   marginRight: 20,
   marginBottom: 20,
   marginLeft: 20,
+  showMargins: false,
   
   gridShow: true,
   gridSize: 10,
@@ -145,6 +147,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       marginRight: (windowSettings.margin_right as number) ?? DEFAULT_SETTINGS.marginRight,
       marginBottom: (windowSettings.margin_bottom as number) ?? DEFAULT_SETTINGS.marginBottom,
       marginLeft: (windowSettings.margin_left as number) ?? DEFAULT_SETTINGS.marginLeft,
+      showMargins: (windowSettings.show_margins as boolean) === true || (windowSettings.show_margins as string) === '1',
       
       // Grille
       gridShow: (windowSettings.show_grid as boolean) !== false,

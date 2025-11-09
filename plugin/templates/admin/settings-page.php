@@ -400,24 +400,24 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']))
             'margin_right' => intval($_POST['margin_right'] ?? 28),
             'margin_bottom' => intval($_POST['margin_bottom'] ?? 10),
             'margin_left' => intval($_POST['margin_left'] ?? 10),
-            'show_margins' => isset($_POST['show_margins']),
-            'show_grid' => isset($_POST['show_grid']),
+            'show_margins' => $_POST['show_margins'] === '1',
+            'show_grid' => $_POST['show_grid'] === '1',
             'grid_size' => intval($_POST['grid_size'] ?? 10),
             'grid_color' => sanitize_text_field($_POST['grid_color'] ?? '#e0e0e0'),
-            'snap_to_grid' => isset($_POST['snap_to_grid']),
-            'snap_to_elements' => isset($_POST['snap_to_elements']),
+            'snap_to_grid' => $_POST['snap_to_grid'] === '1',
+            'snap_to_elements' => $_POST['snap_to_elements'] === '1',
             'snap_tolerance' => intval($_POST['snap_tolerance'] ?? 5),
-            'show_guides' => isset($_POST['show_guides']),
+            'show_guides' => $_POST['show_guides'] === '1',
             'default_zoom' => intval($_POST['default_zoom'] ?? 100),
             'zoom_step' => intval($_POST['zoom_step'] ?? 25),
             'min_zoom' => intval($_POST['min_zoom'] ?? 10),
             'max_zoom' => intval($_POST['max_zoom'] ?? 500),
-            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
-            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
-            'show_resize_handles' => isset($_POST['show_resize_handles']),
+            'zoom_with_wheel' => $_POST['zoom_with_wheel'] === '1',
+            'pan_with_mouse' => $_POST['pan_with_mouse'] === '1',
+            'show_resize_handles' => $_POST['show_resize_handles'] === '1',
             'handle_size' => intval($_POST['handle_size'] ?? 8),
             'handle_color' => sanitize_text_field($_POST['handle_color'] ?? '#007cba'),
-            'enable_rotation' => isset($_POST['enable_rotation']),
+            'enable_rotation' => $_POST['enable_rotation'] === '1',
             'rotation_step' => intval($_POST['rotation_step'] ?? 15),
             'multi_select' => isset($_POST['multi_select']),
             'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
@@ -2566,6 +2566,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="show_margins">Activer les marges</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="show_margins" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_margins" name="show_margins" value="1" 
                                        <?php checked($canvas_settings['show_margins']); ?> />
@@ -2611,6 +2612,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="show_grid">Activer la grille</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="show_grid" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_grid" name="show_grid" value="1" 
                                        <?php checked($canvas_settings['show_grid']); ?> />
@@ -2641,6 +2643,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="snap_to_grid">Activer magnétisme grille</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="snap_to_grid" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
                                        <?php checked($canvas_settings['snap_to_grid']); ?> />
@@ -2655,6 +2658,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="snap_to_elements">Activer magnétisme éléments</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="snap_to_elements" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
                                        <?php checked($canvas_settings['snap_to_elements']); ?> />
@@ -2677,6 +2681,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="show_guides">Activer les guides</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="show_guides" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_guides" name="show_guides" value="1" 
                                        <?php checked($canvas_settings['show_guides']); ?> />
@@ -2724,6 +2729,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="zoom_with_wheel">Activer zoom molette</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="zoom_with_wheel" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
                                        <?php checked($canvas_settings['zoom_with_wheel']); ?> />
@@ -2738,6 +2744,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="pan_with_mouse">Activer panoramique souris</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="pan_with_mouse" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
                                        <?php checked($canvas_settings['pan_with_mouse']); ?> />
@@ -2756,6 +2763,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="show_resize_handles">Activer les poignées</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="show_resize_handles" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
                                        <?php checked($canvas_settings['show_resize_handles']); ?> />
@@ -2777,6 +2785,7 @@ if ($is_ajax) {
                     <th scope="row"><label for="enable_rotation">Rotation d'Éléments</label></th>
                     <td>
                         <div class="toggle-container">
+                            <input type="hidden" name="enable_rotation" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
                                        <?php checked($canvas_settings['enable_rotation']); ?> />

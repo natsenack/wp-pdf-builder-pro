@@ -1944,10 +1944,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.save();
     
     // Appliquer les marges si activées (AVANT zoom et pan pour éviter la multiplication)
-    const showMargins = (canvasSettings as { show_margins?: boolean }).show_margins;
+    const showMargins = canvasSettings.showMargins;
     if (showMargins && canvasSettings) {
-      const marginTopPx = ((canvasSettings as { margin_top?: number }).margin_top || 0) * 3.78; // Convertir mm en px (1mm ≈ 3.78px)
-      const marginLeftPx = ((canvasSettings as { margin_left?: number }).margin_left || 0) * 3.78;
+      const marginTopPx = (canvasSettings.marginTop || 0) * 3.78; // Convertir mm en px (1mm ≈ 3.78px)
+      const marginLeftPx = (canvasSettings.marginLeft || 0) * 3.78;
       ctx.translate(marginLeftPx, marginTopPx);
     }
     
