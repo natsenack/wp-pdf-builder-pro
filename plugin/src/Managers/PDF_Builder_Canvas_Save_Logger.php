@@ -28,7 +28,7 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Niveaux de log
      */
-    private const LOG_LEVELS = [
+    private $log_levels = [
         'DEBUG' => 0,
         'INFO' => 1,
         'WARNING' => 2,
@@ -56,7 +56,7 @@ class PDF_Builder_Canvas_Save_Logger {
         
         // Déterminer le niveau minimum à partir des options
         $level = get_option('pdf_builder_canvas_log_level', 'DEBUG');
-        if (isset(self::LOG_LEVELS[$level])) {
+        if (isset($this->log_levels[$level])) {
             $this->min_level = $level;
         }
     }
@@ -76,7 +76,7 @@ class PDF_Builder_Canvas_Save_Logger {
      */
     private function log($level, $message, $data = null) {
         // Vérifier si ce niveau doit être enregistré
-        if (self::LOG_LEVELS[$level] < self::LOG_LEVELS[$this->min_level]) {
+        if ($this->log_levels[$level] < $this->log_levels[$this->min_level]) {
             return;
         }
 
