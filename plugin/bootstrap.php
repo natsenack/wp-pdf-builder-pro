@@ -926,15 +926,8 @@ function pdf_builder_ajax_get_template() {
 
     // Vérifier que elements est défini (peut être un array vide pour un nouveau template)
     if (!isset($elements)) {
-
         wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
         return;
-    }
-
-    // DEBUG: Log la structure brute des éléments
-    error_log('DEBUG: Elements avant transformation - Count: ' . count($elements));
-    if (!empty($elements)) {
-        error_log('DEBUG: Premier élément: ' . json_encode($elements[0]));
     }
 
     // Transformer les éléments dans le format attendu par React
@@ -1027,13 +1020,6 @@ function pdf_builder_ajax_get_template() {
     }
 
     $elements = $transformed_elements;
-
-    // DEBUG: Log les éléments transformés
-    error_log('DEBUG: Elements après transformation - Count: ' . count($elements));
-    if (!empty($elements)) {
-        error_log('DEBUG: Premier élément transformé: ' . json_encode($elements[0]));
-        error_log('DEBUG: Tous les éléments: ' . json_encode($elements));
-    }
 
     wp_send_json_success(array(
         'id' => $template['id'],
