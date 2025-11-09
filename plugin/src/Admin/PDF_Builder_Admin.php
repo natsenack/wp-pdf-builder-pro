@@ -396,6 +396,9 @@ class PDF_Builder_Admin {
         // Éditeur Templates système (réservé aux admins)
         add_submenu_page('pdf-builder-pro', __('Éditeur Templates Système', 'pdf-builder-pro'), __('⚙️ Templates Système', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=system', [$this, 'react_editor_page']);
         
+        // Éditeur React (compatibilité avec anciens liens template_id)
+        add_submenu_page('pdf-builder-pro', __('Éditeur React (Compatibilité)', 'pdf-builder-pro'), __('Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
+        
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
         
