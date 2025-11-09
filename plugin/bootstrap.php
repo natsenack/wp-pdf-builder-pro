@@ -914,6 +914,111 @@ function pdf_builder_ajax_get_template() {
 
 
 /**
+ * Fonction utilitaire pour corriger/régénérer les éléments avec des positions correctes
+ */
+function pdf_builder_regenerate_element_positions($elements) {
+    $default_positions = [
+        'customer_info' => ['x' => 20, 'y' => 20, 'width' => 250, 'height' => 40],
+        'company_logo' => ['x' => 550, 'y' => 20, 'width' => 40, 'height' => 40],
+        'company_info' => ['x' => 600, 'y' => 20, 'width' => 150, 'height' => 40],
+        'document_type' => ['x' => 20, 'y' => 70, 'width' => 150, 'height' => 30],
+        'order_number' => ['x' => 200, 'y' => 70, 'width' => 200, 'height' => 30],
+        'product_table' => ['x' => 20, 'y' => 120, 'width' => 730, 'height' => 200],
+        'line' => ['x' => 20, 'y' => 330, 'width' => 730, 'height' => 1],
+        'dynamic-text' => ['x' => 20, 'y' => 350, 'width' => 300, 'height' => 50],
+        'mentions' => ['x' => 20, 'y' => 420, 'width' => 730, 'height' => 50],
+    ];
+
+    $updated = [];
+    $y_offset = 0;
+    $position_count = [];
+
+    foreach ($elements as $element) {
+        $type = $element['type'] ?? 'text';
+        $count = $position_count[$type] ?? 0;
+        $position_count[$type] = $count + 1;
+
+        // Utiliser les positions par défaut si disponibles
+        if (isset($default_positions[$type])) {
+            $pos = $default_positions[$type];
+            $element['x'] = $pos['x'];
+            $element['y'] = $pos['y'] + ($count * 50); // Décalage pour les doublons
+            $element['width'] = $pos['width'];
+            $element['height'] = $pos['height'];
+        } else {
+            // Générer une position par défaut
+            $element['x'] = 20 + ($count * 20);
+            $element['y'] = 20 + ($count * 30);
+            $element['width'] = 200;
+            $element['height'] = 40;
+        }
+
+        $updated[] = $element;
+    }
+
+    return $updated;
+}
+
+/**
+ * AJAX endpoint pour régénérer les positions des éléments (debug/fix)
+ */
+function pdf_builder_ajax_regenerate_positions() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+    // Récupérer tous les templates
+    $templates = $wpdb->get_results("SELECT id, template_data FROM $table_templates", ARRAY_A);
+
+    $fixed_count = 0;
+    foreach ($templates as $template) {
+        $template_data = json_decode($template['template_data'], true);
+        
+        if (is_array($template_data)) {
+            $elements = $template_data['elements'] ?? [];
+            
+            if (!empty($elements)) {
+                // Régénérer les positions
+                $fixed_elements = pdf_builder_regenerate_element_positions($elements);
+                
+                // Mettre à jour
+                $template_data['elements'] = $fixed_elements;
+                $json_data = wp_json_encode($template_data);
+                
+                $wpdb->update(
+                    $table_templates,
+                    ['template_data' => $json_data],
+                    ['id' => $template['id']],
+                    ['%s'],
+                    ['%d']
+                );
+                
+                $fixed_count++;
+                error_log("DEBUG: Fixed template ID {$template['id']}");
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'message' => "Positions régénérées pour $fixed_count templates",
+        'count' => $fixed_count
+    ]);
+}
+
+add_action('wp_ajax_pdf_builder_regenerate_positions', 'pdf_builder_ajax_regenerate_positions');
+
+/**
  * AJAX handler pour sauvegarder un template
  */
 function pdf_builder_ajax_save_template() {
