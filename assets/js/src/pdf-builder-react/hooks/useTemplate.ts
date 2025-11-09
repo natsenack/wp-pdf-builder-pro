@@ -129,10 +129,26 @@ export function useTemplate() {
         return;
       }
 
-      // Pour les templates sauvegardés, utiliser l'API
-      loadExistingTemplate(templateData.id).catch((error: unknown) => {
-        debugError('❌ [useTemplate] Erreur lors du chargement du template:', error);
-      });
+      // Si les éléments sont déjà fournis, les utiliser directement
+      if (templateData.elements && Array.isArray(templateData.elements)) {
+        debugLog('✅ [useTemplate] Éléments fournis directement, chargement sans AJAX');
+        dispatch({
+          type: 'LOAD_TEMPLATE',
+          payload: {
+            id: templateData.id,
+            name: templateData.name || 'Template',
+            elements: templateData.elements,
+            canvas: templateData.canvas || null,
+            lastSaved: templateData.updated_at ? new Date(templateData.updated_at) : new Date()
+          } as LoadTemplatePayload
+        });
+      } else {
+        // Sinon, utiliser l'API AJAX
+        debugLog('🔄 [useTemplate] Éléments non fournis, utilisation de l\'API AJAX');
+        loadExistingTemplate(templateData.id).catch((error: unknown) => {
+          debugError('❌ [useTemplate] Erreur lors du chargement du template:', error);
+        });
+      }
     };
 
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);

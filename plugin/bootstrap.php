@@ -732,23 +732,26 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
-    // Gérer les deux formats de données (ancien et nouveau)
+    // Gérer les différents formats de données
     $elements = [];
     $canvas = null;
 
-    // Vérifier si c'est le nouveau format (objet avec elements/canvas) ou l'ancien format (tableau direct)
-    if (is_array($template_data) && isset($template_data['elements'])) {
-        // Nouveau format : {"elements": [...], "canvas": {...}}
-
-        $elements = $template_data['elements'];
-        $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
-    } elseif (is_array($template_data)) {
-        // Ancien format : directement un tableau d'éléments
-
-        $elements = $template_data;
-        $canvas = null;
+    // Vérifier les différents formats
+    if (is_array($template_data)) {
+        if (isset($template_data['elements'])) {
+            // Nouveau format : {"elements": [...], "canvas": {...}}
+            $elements = $template_data['elements'];
+            $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+        } elseif (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+            // Format avec pages : {"pages": [{"elements": [...]}], "canvas": {...}}
+            $elements = $template_data['pages'][0]['elements'] ?? [];
+            $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+        } else {
+            // Ancien format : directement un tableau d'éléments
+            $elements = $template_data;
+            $canvas = null;
+        }
     } else {
-
         wp_send_json_error(__('Format de données du template invalide.', 'pdf-builder-pro'));
         return;
     }
