@@ -570,7 +570,7 @@ function pdf_builder_ensure_admin_menu() {
             'React Editor',
             'React Editor',
             'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
-            'pdf-builder-react-editor',
+            'pdf-builder-core-editor',
             'pdf_builder_react_editor_page_callback'
         );
     }

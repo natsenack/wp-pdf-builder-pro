@@ -740,9 +740,9 @@ class PDF_Builder_Core
         ?>
         <div class="wrap">
             <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
-                <h1 style="margin: 0; color: #856404;">🔧 Éditeur React - Version Core</h1>
+                <h1 style="margin: 0; color: #856404;">� Éditeur Modèles Prédéfinis</h1>
                 <p style="margin: 4px 0 0 0; font-size: 14px; color: #666;">
-                    Éditeur alternatif accessible via les modèles prédéfinis
+                    Éditeur spécialisé pour la création et modification de modèles prédéfinis
                 </p>
             </div>
 

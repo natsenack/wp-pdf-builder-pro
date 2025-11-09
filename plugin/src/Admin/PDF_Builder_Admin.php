@@ -5605,9 +5605,9 @@ class PDF_Builder_Admin {
         ?>
         <div class="wrap">
             <div style="background: #f0f8ff; border: 1px solid #007acc; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
-                <h1 style="margin: 0; color: #007acc;">⚛️ Éditeur React - Version Admin</h1>
+                <h1 style="margin: 0; color: #007acc;">🎨 Éditeur Templates Personnalisés</h1>
                 <p style="margin: 4px 0 0 0; font-size: 14px; color: #666;">
-                    Éditeur principal intégré au panneau d'administration PDF Builder Pro
+                    Éditeur principal pour créer et modifier vos propres templates PDF personnalisés
                 </p>
             </div>
 
