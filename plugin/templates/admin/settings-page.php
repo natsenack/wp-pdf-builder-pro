@@ -2515,7 +2515,7 @@ if ($is_ajax) {
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Marges</h3>
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="show_margins">Afficher les Marges</label></th>
+                    <th scope="row"><label for="show_margins">Activer les marges</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2523,9 +2523,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['show_margins']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Marges visibles</span>
+                            <span class="toggle-label">Marges activées</span>
                         </div>
-                        <div class="toggle-description">Affiche les lignes de marge sur le canvas</div>
+                        <div class="toggle-description">Active/désactive l'affichage des lignes de marge dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
@@ -2588,7 +2588,7 @@ if ($is_ajax) {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="snap_to_grid">Magnétisme Grille</label></th>
+                    <th scope="row"><label for="snap_to_grid">Activer magnétisme grille</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2596,13 +2596,13 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['snap_to_grid']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Activer magnétisme</span>
+                            <span class="toggle-label">Magnétisme grille activé</span>
                         </div>
-                        <div class="toggle-description">Les éléments s'accrochent à la grille</div>
+                        <div class="toggle-description">Active/désactive l'accrochage automatique des éléments à la grille dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="snap_to_elements">Magnétisme Éléments</label></th>
+                    <th scope="row"><label for="snap_to_elements">Activer magnétisme éléments</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2610,9 +2610,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['snap_to_elements']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Activer magnétisme</span>
+                            <span class="toggle-label">Magnétisme éléments activé</span>
                         </div>
-                        <div class="toggle-description">Les éléments s'accrochent les uns aux autres</div>
+                        <div class="toggle-description">Active/désactive l'accrochage automatique des éléments entre eux dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
@@ -2624,7 +2624,7 @@ if ($is_ajax) {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="show_guides">Afficher Guides</label></th>
+                    <th scope="row"><label for="show_guides">Activer les guides</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2632,9 +2632,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['show_guides']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Guides visibles</span>
+                            <span class="toggle-label">Guides activés</span>
                         </div>
-                        <div class="toggle-description">Affiche les guides de positionnement</div>
+                        <div class="toggle-description">Active/désactive l'affichage des guides de positionnement dans l'éditeur</div>
                     </td>
                 </tr>
             </table>
@@ -2671,7 +2671,7 @@ if ($is_ajax) {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="zoom_with_wheel">Zoom à la Molette</label></th>
+                    <th scope="row"><label for="zoom_with_wheel">Activer zoom molette</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2679,13 +2679,13 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['zoom_with_wheel']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Zoom molette</span>
+                            <span class="toggle-label">Zoom molette activé</span>
                         </div>
-                        <div class="toggle-description">Permet de zoomer avec la molette souris</div>
+                        <div class="toggle-description">Active/désactive le zoom avec la molette de la souris dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="pan_with_mouse">Panoramique à la Souris</label></th>
+                    <th scope="row"><label for="pan_with_mouse">Activer panoramique souris</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2693,9 +2693,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['pan_with_mouse']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Panoramique souris</span>
+                            <span class="toggle-label">Panoramique souris activé</span>
                         </div>
-                        <div class="toggle-description">Permet de déplacer le canvas en glissant</div>
+                        <div class="toggle-description">Active/désactive le déplacement du canvas en glissant avec la souris dans l'éditeur</div>
                     </td>
                 </tr>
             </table>
@@ -2703,7 +2703,7 @@ if ($is_ajax) {
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Sélection & Manipulation</h3>
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="show_resize_handles">Afficher Poignées</label></th>
+                    <th scope="row"><label for="show_resize_handles">Activer les poignées</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2711,9 +2711,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['show_resize_handles']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Poignées visibles</span>
+                            <span class="toggle-label">Poignées activées</span>
                         </div>
-                        <div class="toggle-description">Affiche les poignées de redimensionnement</div>
+                        <div class="toggle-description">Active/désactive l'affichage des poignées de redimensionnement dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
@@ -2745,7 +2745,7 @@ if ($is_ajax) {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="multi_select">Sélection Multiple</label></th>
+                    <th scope="row"><label for="multi_select">Activer sélection multiple</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2753,13 +2753,13 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['multi_select']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Multi-sélection</span>
+                            <span class="toggle-label">Sélection multiple activée</span>
                         </div>
-                        <div class="toggle-description">Permet de sélectionner plusieurs éléments</div>
+                        <div class="toggle-description">Active/désactive la possibilité de sélectionner plusieurs éléments dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="copy_paste_enabled">Copier/Coller</label></th>
+                    <th scope="row"><label for="copy_paste_enabled">Activer copier/coller</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2767,9 +2767,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['copy_paste_enabled']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Copier/coller</span>
+                            <span class="toggle-label">Copier/coller activé</span>
                         </div>
-                        <div class="toggle-description">Active les raccourcis Ctrl+C / Ctrl+V</div>
+                        <div class="toggle-description">Active/désactive les raccourcis Ctrl+C / Ctrl+V dans l'éditeur</div>
                     </td>
                 </tr>
             </table>
