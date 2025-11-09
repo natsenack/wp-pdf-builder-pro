@@ -2593,7 +2593,7 @@ if ($is_ajax) {
                             <div>
                                 <label for="margin_bottom">Bas :</label>
                                 <input type="number" id="margin_bottom" name="margin_bottom" 
-                                       value="<?php echo intval($canvas_settings['margin_bottom'] ?? 28); ?>" min="0" />
+                                       value="<?php echo intval($canvas_settings['margin_bottom'] ?? 10); ?>" min="0" />
                             </div>
                             <div>
                                 <label for="margin_left">Gauche :</label>
@@ -4541,6 +4541,33 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
                 $gridColorInput.prop('disabled', true).css('opacity', '0.6');
                 $gridSizeLabel.css('color', '#999');
                 $gridColorLabel.css('color', '#999');
+            }
+        });
+
+        // Gestion dynamique des champs cache
+        jQuery('#cache_enabled').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var $cacheTtlInput = jQuery('#cache_ttl');
+            var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
+
+            if (isChecked) {
+                $cacheTtlInput.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $cacheTtlLabel.css('color', '');
+            } else {
+                $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $cacheTtlLabel.css('color', '#999');
+            }
+        });
+
+        // Initialiser l'état des champs cache au chargement
+        jQuery(document).ready(function() {
+            var cacheEnabled = jQuery('#cache_enabled').is(':checked');
+            var $cacheTtlInput = jQuery('#cache_ttl');
+            var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
+
+            if (!cacheEnabled) {
+                $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $cacheTtlLabel.css('color', '#999');
             }
         });
 

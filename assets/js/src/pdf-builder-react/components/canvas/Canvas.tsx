@@ -103,6 +103,84 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
   ctx.stroke();
 };
 
+// Fonction pour dessiner une image
+const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: React.MutableRefObject<Map<string, HTMLImageElement>>) => {
+  const props = element as Element & { src?: string; objectFit?: string };
+  const imageUrl = props.src || '';
+
+  if (!imageUrl) {
+    // Pas d'URL, dessiner un placeholder
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, element.width, element.height);
+    ctx.strokeStyle = '#cccccc';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0, 0, element.width, element.height);
+    ctx.fillStyle = '#999999';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Image', element.width / 2, element.height / 2);
+    return;
+  }
+
+  // Vérifier si l'image est en cache
+  let img = imageCache.current.get(imageUrl);
+
+  if (!img) {
+    // Créer une nouvelle image et la mettre en cache
+    img = document.createElement('img');
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+    imageCache.current.set(imageUrl, img);
+  }
+
+  // Si l'image est chargée, la dessiner
+  if (img.complete && img.naturalHeight !== 0) {
+    // Appliquer object-fit
+    const objectFit = props.objectFit || 'cover';
+    let drawX = 0, drawY = 0, drawWidth = element.width, drawHeight = element.height;
+    let sourceX = 0, sourceY = 0, sourceWidth = img.naturalWidth, sourceHeight = img.naturalHeight;
+
+    if (objectFit === 'contain') {
+      const ratio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      drawWidth = img.naturalWidth * ratio;
+      drawHeight = img.naturalHeight * ratio;
+      drawX = (element.width - drawWidth) / 2;
+      drawY = (element.height - drawHeight) / 2;
+    } else if (objectFit === 'cover') {
+      const ratio = Math.max(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      sourceWidth = element.width / ratio;
+      sourceHeight = element.height / ratio;
+      sourceX = (img.naturalWidth - sourceWidth) / 2;
+      sourceY = (img.naturalHeight - sourceHeight) / 2;
+    } else if (objectFit === 'fill') {
+      // Utiliser les dimensions de l'élément directement
+    } else if (objectFit === 'scale-down') {
+      if (img.naturalWidth > element.width || img.naturalHeight > element.height) {
+        const ratio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+        drawWidth = img.naturalWidth * ratio;
+        drawHeight = img.naturalHeight * ratio;
+        drawX = (element.width - drawWidth) / 2;
+        drawY = (element.height - drawHeight) / 2;
+      }
+    }
+
+    ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    // Image en cours de chargement ou erreur, dessiner un placeholder
+    ctx.fillStyle = '#e0e0e0';
+    ctx.fillRect(0, 0, element.width, element.height);
+    ctx.strokeStyle = '#999999';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0, 0, element.width, element.height);
+    ctx.fillStyle = '#666666';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(img.complete ? 'Erreur' : 'Chargement...', element.width / 2, element.height / 2);
+  }
+};
+
 // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
 const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state: BuilderState) => {
   const props = element as ProductTableElementProperties;
@@ -1380,6 +1458,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       case 'mentions':
         drawMentions(ctx, element);
+        break;
+      case 'image':
+        drawImage(ctx, element, imageCache);
         break;
       default:
         // Élément générique - dessiner un rectangle simple
