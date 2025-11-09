@@ -374,6 +374,14 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Compatibilité avec les anciens liens template_id - méthode vide (système supprimé)
+     */
+    public function handle_legacy_template_links()
+    {
+        // Méthode vide - plus de redirection nécessaire car éditeur unique
+    }
+
+    /**
      * Ajoute le menu d'administration
      */
     public function addAdminMenu() {
