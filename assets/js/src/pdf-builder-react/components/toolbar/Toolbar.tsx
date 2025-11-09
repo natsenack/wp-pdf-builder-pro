@@ -1,5 +1,6 @@
 import React from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { BuilderMode } from '../../types/elements';
 
 interface ToolbarProps {
@@ -8,6 +9,7 @@ interface ToolbarProps {
 
 export function Toolbar({ className }: ToolbarProps) {
   const builder = useBuilder();
+  const canvasSettings = useCanvasSettings();
   const { state, setMode, undo, redo, reset, toggleGrid } = builder;
 
   // Vérifications de sécurité
@@ -163,14 +165,16 @@ export function Toolbar({ className }: ToolbarProps) {
           </button>
           <button
             onClick={handleToggleGrid}
+            disabled={!canvasSettings.gridShow}
             style={{
               padding: '6px 12px',
               border: '1px solid #ccc',
               borderRadius: '4px',
-              backgroundColor: state.canvas.showGrid ? '#007acc' : '#ffffff',
-              color: state.canvas.showGrid ? '#ffffff' : '#000000',
-              cursor: 'pointer',
-              fontSize: '12px'
+              backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.showGrid ? '#007acc' : '#ffffff'),
+              color: !canvasSettings.gridShow ? '#999' : (state.canvas.showGrid ? '#ffffff' : '#000000'),
+              cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
+              fontSize: '12px',
+              opacity: !canvasSettings.gridShow ? 0.6 : 1
             }}
           >
             {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
