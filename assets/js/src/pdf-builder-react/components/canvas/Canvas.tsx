@@ -1133,7 +1133,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       let img = imageCache.current.get(logoUrl);
 
       if (!img) {
-        // Créer une nouvelle image et la mettre en cache
+        console.log('🖼️ [LOGO] Creating new image for URL:', logoUrl);
         img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
@@ -1141,13 +1141,23 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
         // Gérer les erreurs de chargement
         img.onerror = () => {
-          // Image failed to load - no action needed
+          console.error('❌ [LOGO] Image failed to load:', logoUrl);
         };
 
-        // Gérer le chargement réussi
+        // Gérer le chargement réussi - force un re-render du canvas
         img.onload = () => {
-          // Image loaded successfully - canvas will re-render from state changes
+          const loadedImg = img; // Capture img in closure
+          console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
+          // Force a canvas re-render by adding/updating a dummy element
+          // This ensures the image appears immediately without waiting for user interaction
+          setTimeout(() => {
+            console.log('🔄 [LOGO] Triggering canvas re-render after image load');
+            // Dispatch une action triviale pour trigger un re-render
+            dispatch({ type: 'SET_MODE', payload: state.mode });
+          }, 0);
         };
+      } else {
+        console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
       }
 
       // Si l'image est chargée, la dessiner
@@ -1185,7 +1195,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas d'URL, dessiner un placeholder
       drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
-  }, [drawLogoPlaceholder]);
+  }, [drawLogoPlaceholder, dispatch, state.mode]);
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as TextElementProperties;
