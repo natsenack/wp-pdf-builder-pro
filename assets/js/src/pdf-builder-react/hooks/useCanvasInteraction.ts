@@ -17,6 +17,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
 
+  // ✅ CORRECTION 3: Throttling pour handleMouseMove
+  const lastMouseMoveTimeRef = useRef<number>(0);
+  const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS (1000/60 ≈ 16ms)
+
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: any[]) => {
     const handleSize = 8;
@@ -154,11 +158,34 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     selectedElementsRef.current = state.selection.selectedElements;
   }, [state.selection.selectedElements]);
 
+  // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
+  const validateCanvasRect = (rect: any): boolean => {
+    // Vérifier que rect a des dimensions positives et que left/top sont raisonnables
+    if (!rect || rect.width <= 0 || rect.height <= 0) {
+      console.warn('❌ [RECT] Invalid canvas rect - zero dimensions:', rect);
+      return false;
+    }
+    
+    // Si rect.left ou rect.top sont très négatifs (canvas hors-écran), c'est OK
+    // Mais si ils sont NaN, c'est un problème
+    if (isNaN(rect.left) || isNaN(rect.top) || isNaN(rect.right) || isNaN(rect.bottom)) {
+      console.warn('❌ [RECT] Canvas rect has NaN values:', rect);
+      return false;
+    }
+    
+    return true;
+  };
+
   // Gestionnaire de clic pour la sélection et création d'éléments
   // Fonction utilitaire pour vérifier si un point est dans la hitbox d'un élément (avec marge pour les lignes)
   const isPointInElement = (x: number, y: number, element: any): boolean => {
-    // Pour les lignes, ajouter une marge de 10px autour pour faciliter la sélection
-    const hitboxMargin = element.type === 'line' ? 10 : 0;
+    // Pour les lignes, ajouter une marge RÉDUITE pour faciliter la sélection sans overlap excessif
+    // Pour les autres éléments, pas de marge
+    let hitboxMargin = 0;
+    if (element.type === 'line') {
+      // Marge très réduite: 1-2px max pour les lignes fines
+      hitboxMargin = Math.max(1, Math.min(2, element.height * 0.5));
+    }
     
     const left = element.x - hitboxMargin;
     const right = element.x + element.width + hitboxMargin;
@@ -203,11 +230,26 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
+    
+    // ✅ CORRECTION 4: Vérifier que rect est valide avant de l'utiliser
+    if (!validateCanvasRect(rect)) {
+      console.error('❌ [MOUSEDOWN] Canvas rect is invalid, skipping event');
+      return;
+    }
+
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
     const zoomScale = state.canvas.zoom / 100;
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
-    console.log('🖱️ [MOUSEDOWN] x:', x, 'y:', y, 'zoomScale:', zoomScale, 'pan:', state.canvas.pan, 'mouseEventX:', event.clientX, 'rectLeft:', rect.left);
+    
+    // Calcul des coordonnées du canvas:
+    // 1. (event.clientX - rect.left) = position relative au canvas en viewport space
+    // 2. - state.canvas.pan.x = appliquer le pan (qui est en canvas space)
+    // 3. / zoomScale = appliquer le zoom
+    const canvasRelativeX = event.clientX - rect.left;
+    const canvasRelativeY = event.clientY - rect.top;
+    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
+    
+    console.log('🖱️ [MOUSEDOWN] screenX:', event.clientX, 'screenY:', event.clientY, 'canvasRect:', {left: rect.left, top: rect.top}, 'canvasRelative:', {x: canvasRelativeX, y: canvasRelativeY}, 'pan:', state.canvas.pan, 'zoomScale:', zoomScale, 'finalCoords:', {x, y});
 
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
     const clickedElement = state.elements.find(el => {
@@ -220,17 +262,15 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
-      // ✅ Utiliser la ref au lieu de state qui peut être stale
-      const isAlreadySelected = selectedElementsRef.current.includes(clickedElement.id);
+      // ✅ Utiliser state.selection directement (plus fiable que ref)
+      const isAlreadySelected = state.selection.selectedElements.includes(clickedElement.id);
       
       // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
       if (!isAlreadySelected) {
         console.log('✅ [SELECTION] Sélection du nouvel élément:', clickedElement.id, 'type:', clickedElement.type);
-        console.log('✅ [SELECTION] AVANT dispatch - refs selection:', selectedElementsRef.current);
-        // ✅ Mettre à jour la ref immédiatement (avant le dispatch!)
-        selectedElementsRef.current = [clickedElement.id];
+        console.log('✅ [SELECTION] State selection AVANT dispatch:', state.selection.selectedElements);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-        console.log('✅ [SELECTION] APRÈS dispatch - ref mis à jour immédiatement à:', selectedElementsRef.current);
+        console.log('✅ [SELECTION] APRÈS dispatch - état sera mis à jour à:', [clickedElement.id]);
         // Ne pas draguer au premier clic - juste sélectionner
         event.preventDefault();
         return;
@@ -365,14 +405,25 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   // Gestionnaire de mouse move pour le drag, resize et curseur
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+    // ✅ CORRECTION 3: Throttling - limiter la fréquence des updates
+    const now = Date.now();
+    if (now - lastMouseMoveTimeRef.current < MOUSEMOVE_THROTTLE_MS) {
+      return; // Skip cet event, trop rapide
+    }
+    lastMouseMoveTimeRef.current = now;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
     const zoomScale = state.canvas.zoom / 100;
-    const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
-    const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
+    
+    // Même calcul que handleMouseDown pour cohérence
+    const canvasRelativeX = event.clientX - rect.left;
+    const canvasRelativeY = event.clientY - rect.top;
+    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
 
     // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
@@ -434,13 +485,26 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       const element = state.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
-      const updates = calculateResize(element, resizeHandleRef.current, x, y, dragStartRef.current);
-      console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', updates);
+      const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, dragStartRef.current);
+      console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', resizeUpdates);
+      
+      // ⚠️ IMPORTANT: Préserver TOUTES les propriétés de l'élément pendant le resize aussi!
+      const completeUpdates = {
+        ...resizeUpdates,
+        // Préserver les propriétés additionnelles
+        ...Object.keys(element).reduce((acc, key) => {
+          if (!(key in resizeUpdates) && key !== 'updatedAt') {
+            (acc as Record<string, unknown>)[key] = (element as Record<string, unknown>)[key];
+          }
+          return acc;
+        }, {} as Record<string, unknown>)
+      };
+      
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates
+          updates: completeUpdates
         }
       });
     }

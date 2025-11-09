@@ -1087,6 +1087,11 @@ function pdf_builder_ajax_get_template() {
                         }
                     } else {
                         error_log('⚠️ [GET TEMPLATE] No site_logo found in WordPress options');
+                        // Fallback: use a data URL image for testing
+                        // This is a 100x50px blue rectangle as base64 PNG
+                        $test_logo_url = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAyCAYAAACsbzlmAAAAQUlEQVR4nO3XMQEAMAgEsNCdw98JXDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwM+NhdAJRq3M4hAXZAAAAAElFTkSuQmCC';
+                        $el['src'] = $test_logo_url;
+                        error_log('⚠️ [GET TEMPLATE] Using fallback test logo: ' . $test_logo_url);
                     }
                 }
             } else {

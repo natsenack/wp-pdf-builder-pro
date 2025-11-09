@@ -1032,6 +1032,10 @@ interface CanvasProps {
   className?: string;
 }
 
+// Constantes pour le cache des images
+const MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB max
+const MAX_CACHE_ITEMS = 100; // Max 100 images
+
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   console.log('🎬 [COMPONENT] Canvas RE-RENDER');
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1055,6 +1059,45 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
+  const imageCacheSizeRef = useRef<number>(0);
+
+  // ✅ CORRECTION 2: Fonction pour nettoyer le cache des images
+  const cleanupImageCache = useCallback(() => {
+    const cache = imageCache.current;
+    
+    if (cache.size > MAX_CACHE_ITEMS || imageCacheSizeRef.current > MAX_CACHE_SIZE) {
+      console.warn(`🧹 [CACHE] Nettoyage du cache - size: ${cache.size} items, ${(imageCacheSizeRef.current / 1024 / 1024).toFixed(2)}MB`);
+      
+      // Supprimer les 10 plus anciennes entrées (FIFO)
+      const entriesToRemove = Math.min(10, Math.ceil(cache.size * 0.1));
+      let removed = 0;
+      
+      for (const [url] of cache) {
+        if (removed >= entriesToRemove) break;
+        
+        const img = cache.get(url);
+        if (img) {
+          // Estimer la taille de l'image
+          imageCacheSizeRef.current -= (img.naturalWidth * img.naturalHeight * 4); // RGBA = 4 bytes par pixel
+        }
+        
+        cache.delete(url);
+        removed++;
+        console.log(`  ✅ Supprimé du cache: ${url}`);
+      }
+      
+      console.log(`✅ [CACHE] Nettoyage terminé - ${removed} images supprimées`);
+    }
+  }, []);
+
+  // ✅ Utiliser le hook pour nettoyer le cache de temps en temps
+  useEffect(() => {
+    const interval = setInterval(() => {
+      cleanupImageCache();
+    }, 30000); // Nettoyage tous les 30 secondes
+    
+    return () => clearInterval(interval);
+  }, [cleanupImageCache]);
 
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver } = useCanvasDrop({
@@ -1150,13 +1193,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         img.onload = () => {
           const loadedImg = img; // Capture img in closure
           console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
-          // Force a canvas re-render by adding/updating a dummy element
-          // This ensures the image appears immediately without waiting for user interaction
-          setTimeout(() => {
-            console.log('🔄 [LOGO] Triggering canvas re-render after image load');
-            // Dispatch une action triviale pour trigger un re-render
-            dispatch({ type: 'SET_MODE', payload: state.mode });
-          }, 0);
+          // Image is now cached and ready - next render will use it
+          // No need to manually trigger re-render, the cache has it
         };
       } else {
         console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
@@ -1197,7 +1235,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas d'URL, dessiner un placeholder
       drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
-  }, [drawLogoPlaceholder, dispatch, state.mode]);
+  }, [drawLogoPlaceholder]);
 
   const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as TextElementProperties;
@@ -2037,7 +2075,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     console.log('🔙 [CANVAS] ctx.restore() appelé');
     ctx.restore();
     console.log('✅ [CANVAS] Rendu complet terminé');
-  }, [width, height, canvasSettings, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement, state.canvas.showGrid]);
+  }, [width, height, canvasSettings, state.canvas, state.elements, state.selection.selectedElements, drawElement]);
 
   // Redessiner quand l'état change
   useEffect(() => {
@@ -2066,6 +2104,19 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }, 0);
     return () => clearTimeout(timer);
   }, [state.elements, renderCanvas]);
+
+  // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
+  useEffect(() => {
+    const handleBeforeUnload = (e: Event) => {
+      if (state.template.isModified) {
+        console.warn('⚠️ [BEFOREUNLOAD] Changements non-sauvegardés!');
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [state.template.isModified]);
 
   return (
     <>
