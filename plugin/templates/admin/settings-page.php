@@ -388,8 +388,8 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']))
     // Logs removed for clarity
     if (wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_settings')) {
         $canvas_settings_to_save = [
-            'default_canvas_width' => intval($_POST['default_canvas_width'] ?? 794),
-            'default_canvas_height' => intval($_POST['default_canvas_height'] ?? 1123),
+            'default_canvas_format' => sanitize_text_field($_POST['default_canvas_format'] ?? 'A4'),
+            'default_canvas_orientation' => sanitize_text_field($_POST['default_canvas_orientation'] ?? 'portrait'),
             'default_canvas_unit' => sanitize_text_field($_POST['default_canvas_unit'] ?? 'px'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
             'canvas_background_color' => sanitize_text_field($_POST['canvas_background_color'] ?? '#ffffff'),
@@ -506,8 +506,8 @@ if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_no
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
-    'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
-    'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
+    'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+    'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
     'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
     'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
     'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
@@ -561,6 +561,43 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
     'show_fps' => $canvas_settings_js['show_fps'] ?? false
 ]); ?>;
+
+// Fonction pour convertir le format et l'orientation en dimensions pixels
+window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
+    const formatDimensions = {
+        'A6': { width: 349, height: 496 },
+        'A5': { width: 496, height: 701 },
+        'A4': { width: 794, height: 1123 },
+        'A3': { width: 1123, height: 1587 },
+        'A2': { width: 1587, height: 2245 },
+        'A1': { width: 2245, height: 3175 },
+        'A0': { width: 3175, height: 4494 },
+        'Letter': { width: 816, height: 1056 },
+        'Legal': { width: 816, height: 1344 },
+        'Tabloid': { width: 1056, height: 1632 }
+    };
+
+    const dims = formatDimensions[format] || formatDimensions['A4'];
+
+    // Inverser les dimensions si orientation paysage
+    if (orientation === 'landscape') {
+        return { width: dims.height, height: dims.width };
+    }
+
+    return dims;
+};
+
+// Ajouter les dimensions calculées aux paramètres
+window.pdfBuilderCanvasSettings.default_canvas_width = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
+    window.pdfBuilderCanvasSettings.default_canvas_format,
+    window.pdfBuilderCanvasSettings.default_canvas_orientation
+).width;
+
+window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
+    window.pdfBuilderCanvasSettings.default_canvas_format,
+    window.pdfBuilderCanvasSettings.default_canvas_orientation
+).height;
+
 // Logs removed for clarity
 </script>
 <?php
@@ -2410,8 +2447,8 @@ if ($is_ajax) {
             
             // Définir les valeurs par défaut pour éviter les erreurs "Undefined array key"
             $canvas_settings = array_merge([
-                'default_canvas_width' => 794,
-                'default_canvas_height' => 1123,
+                'default_canvas_format' => 'A4',
+                'default_canvas_orientation' => 'portrait',
                 'default_canvas_unit' => 'px',
                 'default_orientation' => 'portrait',
                 'canvas_background_color' => '#ffffff',
@@ -2471,23 +2508,31 @@ if ($is_ajax) {
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Dimensions par Défaut</h3>
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="default_canvas_width">Largeur</label></th>
+                    <th scope="row"><label for="default_canvas_format">Format Canvas par défaut</label></th>
                     <td>
-                        <input type="number" id="default_canvas_width" name="default_canvas_width" 
-                               value="<?php echo intval($canvas_settings['default_canvas_width'] ?? 794); ?>" 
-                               min="50" max="2000" />
-                        <span>px</span>
-                        <p class="description">Largeur par défaut du canvas (794px = A4)</p>
+                        <select id="default_canvas_format" name="default_canvas_format">
+                            <option value="A6" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A6'); ?>>A6</option>
+                            <option value="A5" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A5'); ?>>A5</option>
+                            <option value="A4" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A4'); ?>>A4</option>
+                            <option value="A3" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A3'); ?>>A3</option>
+                            <option value="A2" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A2'); ?>>A2</option>
+                            <option value="A1" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A1'); ?>>A1</option>
+                            <option value="A0" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A0'); ?>>A0</option>
+                            <option value="Letter" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
+                            <option value="Legal" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
+                            <option value="Tabloid" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Tabloid'); ?>>Tabloid</option>
+                        </select>
+                        <p class="description">Format par défaut du canvas</p>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="default_canvas_height">Hauteur</label></th>
+                    <th scope="row"><label for="default_canvas_orientation">Orientation Canvas par défaut</label></th>
                     <td>
-                        <input type="number" id="default_canvas_height" name="default_canvas_height" 
-                               value="<?php echo intval($canvas_settings['default_canvas_height'] ?? 1123); ?>" 
-                               min="50" max="2000" />
-                        <span>px</span>
-                        <p class="description">Hauteur par défaut du canvas (1123px = A4)</p>
+                        <select id="default_canvas_orientation" name="default_canvas_orientation">
+                            <option value="portrait" <?php selected($canvas_settings['default_canvas_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
+                            <option value="landscape" <?php selected($canvas_settings['default_canvas_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
+                        </select>
+                        <p class="description">Orientation par défaut du canvas</p>
                     </td>
                 </tr>
             </table>
@@ -2574,17 +2619,19 @@ if ($is_ajax) {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="grid_size">Taille Grille (px)</label></th>
+                    <th scope="row"><label for="grid_size" <?php if (!$canvas_settings['show_grid']) echo 'style="color: #999;"'; ?>>Taille Grille (px)</label></th>
                     <td>
                         <input type="number" id="grid_size" name="grid_size" 
-                               value="<?php echo intval($canvas_settings['grid_size'] ?? 10); ?>" min="5" max="100" />
+                               value="<?php echo intval($canvas_settings['grid_size'] ?? 10); ?>" min="5" max="100"
+                               <?php if (!$canvas_settings['show_grid']) echo 'disabled style="background-color: #f0f0f0; color: #999;"'; ?> />
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="grid_color">Couleur Grille</label></th>
+                    <th scope="row"><label for="grid_color" <?php if (!$canvas_settings['show_grid']) echo 'style="color: #999;"'; ?>>Couleur Grille</label></th>
                     <td>
                         <input type="color" id="grid_color" name="grid_color" 
-                               value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>" />
+                               value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>"
+                               <?php if (!$canvas_settings['show_grid']) echo 'disabled style="opacity: 0.6;"'; ?> />
                     </td>
                 </tr>
                 <tr>
@@ -3783,8 +3830,8 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
-    'default_canvas_width' => $canvas_settings_js['default_canvas_width'] ?? 794,
-    'default_canvas_height' => $canvas_settings_js['default_canvas_height'] ?? 1123,
+    'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+    'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
     'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
     'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
     'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
@@ -3839,6 +3886,41 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
     'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
     'show_fps' => $canvas_settings_js['show_fps'] ?? false
 ]); ?>;
+// Fonction pour convertir le format et l'orientation en dimensions pixels
+window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
+    const formatDimensions = {
+        'A6': { width: 349, height: 496 },
+        'A5': { width: 496, height: 701 },
+        'A4': { width: 794, height: 1123 },
+        'A3': { width: 1123, height: 1587 },
+        'A2': { width: 1587, height: 2245 },
+        'A1': { width: 2245, height: 3175 },
+        'A0': { width: 3175, height: 4494 },
+        'Letter': { width: 816, height: 1056 },
+        'Legal': { width: 816, height: 1344 },
+        'Tabloid': { width: 1056, height: 1632 }
+    };
+
+    const dims = formatDimensions[format] || formatDimensions['A4'];
+
+    // Inverser les dimensions si orientation paysage
+    if (orientation === 'landscape') {
+        return { width: dims.height, height: dims.width };
+    }
+
+    return dims;
+};
+
+// Ajouter les dimensions calculées aux paramètres
+window.pdfBuilderCanvasSettings.default_canvas_width = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
+    window.pdfBuilderCanvasSettings.default_canvas_format,
+    window.pdfBuilderCanvasSettings.default_canvas_orientation
+).width;
+
+window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
+    window.pdfBuilderCanvasSettings.default_canvas_format,
+    window.pdfBuilderCanvasSettings.default_canvas_orientation
+).height;
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -4452,6 +4534,44 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     });
                 });
             }
+        });
+
+        // Gestion dynamique des champs grille
+        $('#show_grid').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            var $gridSizeInput = $('#grid_size');
+            var $gridColorInput = $('#grid_color');
+            var $gridSizeLabel = $('label[for="grid_size"]');
+            var $gridColorLabel = $('label[for="grid_color"]');
+
+            if (isChecked) {
+                $gridSizeInput.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $gridColorInput.prop('disabled', false).css('opacity', '');
+                $gridSizeLabel.css('color', '');
+                $gridColorLabel.css('color', '');
+            } else {
+                $gridSizeInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $gridColorInput.prop('disabled', true).css('opacity', '0.6');
+                $gridSizeLabel.css('color', '#999');
+                $gridColorLabel.css('color', '#999');
+            }
+        });
+
+        // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
+        $('#default_canvas_format, #default_canvas_orientation').on('change', function() {
+            var canvasFormat = $('#default_canvas_format').val();
+            var canvasOrientation = $('#default_canvas_orientation').val();
+
+            // Synchroniser le format PDF avec le format Canvas (seulement si c'est un format standard)
+            var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
+            if (standardFormats.includes(canvasFormat)) {
+                $('#default_format').val(canvasFormat);
+                console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
+            }
+
+            // Synchroniser l'orientation PDF avec l'orientation Canvas
+            $('#default_orientation').val(canvasOrientation);
+            console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
         });
 
         // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
