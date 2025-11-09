@@ -1355,7 +1355,7 @@ if ($is_ajax) {
                             <input type="hidden" name="auto_save_enabled" value="0" />
                             <label class="toggle-switch">
                                 <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
-                                       <?php checked($settings['auto_save_enabled'] ?? false); ?> />
+                                       <?php checked($canvas_settings['auto_save_enabled'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Sauvegarde automatique</span>
