@@ -45,7 +45,28 @@ export function useTemplate() {
       }
 
       const templateData = result.data;
-      debugLog('📊 [LOAD TEMPLATE] Données du template:', templateData);
+      debugLog('📊 [LOAD TEMPLATE] Données du template brutes:', templateData);
+      
+      // 🔍 Tracer les éléments reçus du serveur
+      if (templateData.elements) {
+        try {
+          const elementsForDebug = typeof templateData.elements === 'string' 
+            ? JSON.parse(templateData.elements)
+            : templateData.elements;
+          
+          debugLog('🔍 [LOAD TEMPLATE] Éléments bruts du serveur:', {
+            type: typeof templateData.elements,
+            count: Array.isArray(elementsForDebug) ? elementsForDebug.length : 'N/A',
+            firstElement: Array.isArray(elementsForDebug) ? elementsForDebug[0] : 'N/A',
+            hasCompanyLogo: Array.isArray(elementsForDebug) ? elementsForDebug.some((e: Record<string, unknown>) => e.type === 'company_logo') : false,
+            logoElements: Array.isArray(elementsForDebug) 
+              ? elementsForDebug.filter((e: Record<string, unknown>) => e.type === 'company_logo')
+              : []
+          });
+        } catch (e) {
+          debugLog('🔍 [LOAD TEMPLATE] Could not trace elements:', e);
+        }
+      }
 
       // Parse JSON strings
       let elements = [];
@@ -89,12 +110,33 @@ export function useTemplate() {
         canvas: canvas
       });
 
+      // 🏷️ Enrichir les éléments company_logo avec src si manquant
+      const enrichedElements = elements.map((el: Record<string, unknown>) => {
+        if (el.type === 'company_logo' && (!el.src || !el.logoUrl)) {
+          debugLog('🏷️ [LOAD TEMPLATE] Logo sans src trouvé, recherche de src:', {
+            elementId: el.id,
+            currentSrc: el.src,
+            currentLogoUrl: el.logoUrl,
+            elementKeys: Object.keys(el)
+          });
+          
+          // Essayer d'obtenir le logo depuis les propriétés de l'élément
+          const logoUrl = (el.src as string) || (el.logoUrl as string) || (el.defaultSrc as string) || '';
+          if (logoUrl) {
+            return { ...el, src: logoUrl };
+          }
+        }
+        return el;
+      });
+
+      debugLog('📋 [LOAD TEMPLATE] Premiers éléments après enrichissement:', enrichedElements.slice(0, 2));
+
       dispatch({
         type: 'LOAD_TEMPLATE',
         payload: {
           id: templateId,
           name: templateData.name,
-          elements: elements,
+          elements: enrichedElements,
           canvas: canvas,
           lastSaved: new Date(templateData.updated_at)
         } as LoadTemplatePayload
