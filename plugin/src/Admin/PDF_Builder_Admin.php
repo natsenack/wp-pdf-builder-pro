@@ -368,6 +368,33 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
         // Test SMTP connection handler
         add_action('wp_ajax_pdf_builder_test_smtp_connection', [$this, 'ajax_test_smtp_connection']);
+        
+        // Hook pour la compatibilité avec les anciens liens template_id
+        add_action('admin_init', [$this, 'handle_legacy_template_links']);
+    }
+
+    /**
+     * Compatibilité avec les anciens liens template_id - redirection automatique
+     */
+    public function handle_legacy_template_links()
+    {
+        // Vérifier si on est sur la page pdf-builder-react-editor avec template_id
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor' && isset($_GET['template_id']) && !isset($_GET['type'])) {
+            $template_id = intval($_GET['template_id']);
+            
+            // Déterminer le type selon template_id
+            $target_type = 'predefined'; // Par défaut pour les templates existants
+            
+            // Construire l'URL de redirection
+            $redirect_url = add_query_arg([
+                'page' => 'pdf-builder-react-editor&type=' . $target_type,
+                'template_id' => $template_id
+            ], admin_url('admin.php'));
+            
+            // Rediriger
+            wp_redirect($redirect_url);
+            exit;
+        }
     }
 
     /**
@@ -395,9 +422,6 @@ class PDF_Builder_Admin {
         
         // Éditeur Templates système (réservé aux admins)
         add_submenu_page('pdf-builder-pro', __('Éditeur Templates Système', 'pdf-builder-pro'), __('⚙️ Templates Système', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=system', [$this, 'react_editor_page']);
-        
-        // Éditeur React (compatibilité avec anciens liens template_id)
-        add_submenu_page('pdf-builder-pro', __('Éditeur React (Compatibilité)', 'pdf-builder-pro'), __('Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
         
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
