@@ -658,21 +658,25 @@ if ($is_ajax) {
         </a>
     </div>
     
-    <!-- Bouton de sauvegarde flottant -->
-    <div id="floating-save-button" class="floating-save-container">
-        <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn"  style="padding:5px;">
-            💾 Enregistrer
-        </button>
-        <div class="save-status" id="save-status"></div>
-    </div>
+    <!-- Formulaire global pour tous les onglets -->
+    <form method="post" id="global-settings-form">
+        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+        <input type="hidden" name="submit" value="1">
+        
+        <!-- Bouton de sauvegarde flottant -->
+        <div id="floating-save-button" class="floating-save-container">
+            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary floating-save-btn"  style="padding:5px;">
+                💾 Enregistrer
+            </button>
+            <div class="save-status" id="save-status"></div>
+        </div>
         
         <div id="general" class="tab-content">
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
             
-            <form method="post" id="general-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
-                <input type="hidden" name="submit" value="1">
+            <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
+            <input type="hidden" name="submit" value="1">
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
@@ -746,7 +750,6 @@ if ($is_ajax) {
                 <button type="submit" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer les paramètres</button>
                 <button type="button" id="debug-btn" class="button">Debug Form</button>
             </p>
-            </form>
         </div>
         
         <div id="licence" class="tab-content hidden-tab">
@@ -3629,6 +3632,7 @@ if ($is_ajax) {
             </p>
             </form>
         </div>
+    </form>
 
 <style>
     @keyframes pulse {
@@ -3941,25 +3945,8 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
                                     document.getElementById('general');
                     
                     if (activeTab) {
-                        // Trouver le formulaire principal dans l'onglet actif
-                        let form = null;
-                        if (activeTab.id === 'performance') {
-                            form = document.getElementById('performance-form');
-                        } else if (activeTab.id === 'general') {
-                            form = document.getElementById('general-form');
-                        } else if (activeTab.id === 'pdf') {
-                            form = document.getElementById('pdf-form');
-                        } else if (activeTab.id === 'securite') {
-                            form = document.getElementById('securite-form');
-                        } else if (activeTab.id === 'canvas') {
-                            form = document.getElementById('canvas-form');
-                        } else if (activeTab.id === 'templates') {
-                            form = document.getElementById('templates-form');
-                        } else if (activeTab.id === 'developpeur') {
-                            form = document.getElementById('developpeur-form');
-                        } else {
-                            form = activeTab.querySelector('form[id$="-form"]') || activeTab.querySelector('form');
-                        }
+                        // Utiliser le formulaire global pour tous les onglets
+                        const form = document.getElementById('global-settings-form');
                         
                         if (form) {
                             // Afficher le statut de sauvegarde
