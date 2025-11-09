@@ -21,12 +21,9 @@ if (!defined('ABSPATH')) {
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
 
         <div style="margin: 20px 0;">
-            <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id=0'); ?>" class="button button-primary">
-                ➕ <?php _e('Créer un nouveau template', 'pdf-builder-pro'); ?>
+            <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="button button-primary">
+                🎨 <?php _e('Ouvrir l\'Éditeur PDF', 'pdf-builder-pro'); ?>
             </a>
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
-                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
-            </button>
         </div>
 
         <!-- Section de filtrage -->
@@ -54,10 +51,10 @@ if (!defined('ABSPATH')) {
             </p>
 
             <?php
-            // Récupérer les templates depuis la base de données
+            // Récupérer seulement le template ID 1
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates ORDER BY id", ARRAY_A);
+            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates WHERE id = 1 ORDER BY id", ARRAY_A);
             
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
@@ -152,10 +149,7 @@ if (!defined('ABSPATH')) {
                     }
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor') . '" class="button button-primary" style="flex: 1; text-align: center; font-size: 16px;" title="Ouvrir l\'éditeur">🎨 Ouvrir l\'Éditeur</a>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
@@ -163,7 +157,7 @@ if (!defined('ABSPATH')) {
                 
                 echo '</div>';
             } else {
-                echo '<p>' . __('Aucun template trouvé. Créez votre premier template !', 'pdf-builder-pro') . '</p>';
+                echo '<p>' . __('Template principal introuvable. Veuillez contacter l\'administrateur.', 'pdf-builder-pro') . '</p>';
             }
             ?>
         </div>
@@ -263,7 +257,7 @@ if (!defined('ABSPATH')) {
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
                                         </div>
-                                        <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Utiliser ce modèle</button>
+                                        <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -882,47 +876,31 @@ function selectPredefinedTemplate(templateSlug) {
     button.innerHTML = '⏳ Chargement...';
     button.disabled = true;
 
-    // Demander le nom du nouveau template
-    const templateName = prompt('Entrez le nom du nouveau template personnalisé :', 'Mon ' + templateSlug.replace(/-/g, ' '));
-
-    if (!templateName || templateName.trim() === '') {
-        // Annuler si pas de nom
-        button.innerHTML = originalText;
-        button.disabled = false;
-        return;
-    }
-
-    // Faire l'appel AJAX pour créer le template
+    // Faire l'appel AJAX pour charger le modèle prédéfini dans le template ID 1
     jQuery.post(ajaxurl, {
-        action: 'pdf_builder_create_from_predefined',
+        action: 'pdf_builder_load_predefined_into_editor',
         nonce: pdfBuilderTemplatesNonce,
-        template_slug: templateSlug,
-        template_name: templateName.trim()
+        template_slug: templateSlug
     }, function(response) {
         if (response.success) {
-            // Succès - afficher un message et rediriger
-            showSuccessMessage('Template "' + templateName + '" créé avec succès ! Redirection vers l\'éditeur...');
+            // Succès - afficher un message et rediriger vers l'éditeur
+            showSuccessMessage('Modèle prédéfini chargé dans l\'éditeur ! Redirection...');
 
             // Fermer la modale de la galerie
             closeTemplateGallery();
 
-            // Rediriger vers l'éditeur après un délai
-            setTimeout(() => {
+            // Rediriger vers l'éditeur après un court délai
+            setTimeout(function() {
                 window.location.href = response.data.redirect_url;
-            }, 2000);
+            }, 1500);
         } else {
             // Erreur
-            showErrorMessage((response.data && response.data.message) || 'Erreur lors de la création du template');
-
-            // Remettre le bouton normal
+            showErrorMessage(response.data?.message || 'Erreur lors du chargement du modèle prédéfini');
             button.innerHTML = originalText;
             button.disabled = false;
         }
-    }).fail(function(xhr, status, error) {
-        // Erreur de réseau
-        showErrorMessage('Erreur de connexion: ' + error);
-
-        // Remettre le bouton normal
+    }).fail(function() {
+        showErrorMessage('Erreur de communication avec le serveur');
         button.innerHTML = originalText;
         button.disabled = false;
     });

@@ -44,7 +44,7 @@ function pdf_builder_builtin_editor_page() {
     // Si un template est spécifié, charger son contenu JSON et rediriger vers l'éditeur React
     if (!empty($template_id)) {
         // SYSTÈME BUILTIN SUPPRIMÉ - Redirection directe vers l'éditeur normal
-        $redirect_url = admin_url('admin.php?page=pdf-builder-react-editor&template_id=0');
+        $redirect_url = admin_url('admin.php?page=pdf-builder-react-editor');
         wp_redirect($redirect_url);
         exit;
     }

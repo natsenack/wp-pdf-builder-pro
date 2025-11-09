@@ -37,17 +37,11 @@ class PDF_Builder_Predefined_Templates_Manager {
     }
 
     /**
-     * Ajouter le menu admin
+     * Ajouter le menu admin - DÉSACTIVÉ car l'éditeur unique gère maintenant les modèles prédéfinis
      */
     public function add_admin_menu() {
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Modèles Prédéfinis', 'pdf-builder-pro'),
-            __('📝 Modèles Prédéfinis', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-predefined-templates',
-            [$this, 'render_admin_page']
-        );
+        // DÉSACTIVÉ - Les modèles prédéfinis sont maintenant gérés dans l'éditeur unique
+        return;
     }
 
     /**

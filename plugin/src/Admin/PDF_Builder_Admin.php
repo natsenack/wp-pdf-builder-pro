@@ -374,30 +374,6 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Compatibilité avec les anciens liens template_id - redirection automatique
-     */
-    public function handle_legacy_template_links()
-    {
-        // Vérifier si on est sur la page pdf-builder-react-editor avec template_id
-        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor' && isset($_GET['template_id']) && !isset($_GET['type'])) {
-            $template_id = intval($_GET['template_id']);
-            
-            // Déterminer le type selon template_id
-            $target_type = 'predefined'; // Par défaut pour les templates existants
-            
-            // Construire l'URL de redirection
-            $redirect_url = add_query_arg([
-                'page' => 'pdf-builder-react-editor&type=' . $target_type,
-                'template_id' => $template_id
-            ], admin_url('admin.php'));
-            
-            // Rediriger
-            wp_redirect($redirect_url);
-            exit;
-        }
-    }
-
-    /**
      * Ajoute le menu d'administration
      */
     public function addAdminMenu() {
@@ -414,14 +390,8 @@ class PDF_Builder_Admin {
             [$this, 'adminPage']
         );
         
-        // Éditeur React (nouvelle version) - Templates personnalisés
-        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Personnalisés', 'pdf-builder-pro'), __('🎨 Éditeur Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=custom', [$this, 'react_editor_page']);
-        
-        // Éditeur Modèles prédéfinis
-        add_submenu_page('pdf-builder-pro', __('Éditeur Modèles Prédéfinis', 'pdf-builder-pro'), __('📝 Modèles Prédéfinis', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=predefined', [$this, 'react_editor_page']);
-        
-        // Éditeur Templates système (réservé aux admins)
-        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Système', 'pdf-builder-pro'), __('⚙️ Templates Système', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=system', [$this, 'react_editor_page']);
+        // Éditeur React unique
+        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
         
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
@@ -1043,11 +1013,7 @@ class PDF_Builder_Admin {
         }
         
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
-// Styles pour l'éditeur canvas
-        if ($hook === 'pdf-builder_page_pdf-builder-editor') {
-            // Styles pour l'éditeur Vanilla JS
-            wp_enqueue_style('pdf-builder-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/editor.css', [], PDF_BUILDER_PRO_VERSION);
-        }
+// Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
     }
 
     /**
@@ -5526,17 +5492,9 @@ class PDF_Builder_Admin {
     {
         $this->checkAdminPermissions();
 
-        // Get template ID and type from URL parameters
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-        $template_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'custom';
-
-        // Si template_id est fourni mais pas type, déterminer automatiquement le type
-        if ($template_id > 0 && !isset($_GET['type'])) {
-            // Pour la compatibilité avec les anciens liens, déterminer le type selon template_id
-            // template_id = 0 signifie nouveau template (custom)
-            // template_id > 0 signifie édition d'un template existant (predefined ou custom)
-            $template_type = 'predefined'; // Par défaut, considérer comme prédéfini
-        }
+        // Get template ID and type from URL parameters - Always use template ID 1
+        $template_id = 1;
+        $template_type = 'custom';
 
         // Validate template type
         $valid_types = ['custom', 'predefined', 'system'];
