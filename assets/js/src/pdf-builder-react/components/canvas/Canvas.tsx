@@ -1035,6 +1035,11 @@ interface CanvasProps {
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   console.log('🎬 [COMPONENT] Canvas RE-RENDER');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // ✅ Track derniers éléments rendus pour éviter double rendu
+  const lastRenderedElementsRef = useRef<string>('');
+  const renderCountRef = useRef<number>(0);
+  
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
@@ -2024,7 +2029,18 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Redessiner quand l'état change
   useEffect(() => {
-    console.log('🔄 [EFFECT] useEffect de rendu déclenché, state.elements.length=', state.elements.length);
+    const elementsKey = JSON.stringify(state.elements.map(e => e.id));
+    
+    // ✅ Skip si on vient déjà de render les mêmes éléments
+    if (lastRenderedElementsRef.current === elementsKey) {
+      console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments que dernière fois');
+      return;
+    }
+    
+    lastRenderedElementsRef.current = elementsKey;
+    renderCountRef.current++;
+    
+    console.log(`🔄 [EFFECT] useEffect de rendu déclenché (${renderCountRef.current}), state.elements.length=`, state.elements.length);
     const timer = setTimeout(() => {
       console.log('🔄 [EFFECT] Appel renderCanvas immédiatement');
       renderCanvas();
