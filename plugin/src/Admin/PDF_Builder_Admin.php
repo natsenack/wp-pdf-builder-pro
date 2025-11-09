@@ -5687,35 +5687,13 @@ class PDF_Builder_Admin {
         }
 
         function loadExistingTemplateData() {
-            if (typeof window.pdfBuilderData !== 'undefined' &&
-                window.pdfBuilderData.hasExistingData &&
-                window.pdfBuilderData.existingTemplate &&
-                typeof window.pdfBuilderReact !== 'undefined' &&
-                window.pdfBuilderReact.loadTemplate) {
-
-                try {
-                    // Load the existing template data into the editor
-                    var result = window.pdfBuilderReact.loadTemplate(window.pdfBuilderData.existingTemplate);
-                    
-                    // Handle Promise result
-                    if (result && typeof result.then === 'function') {
-                        // It's a Promise, wait for it to resolve
-                        result.then(function(success) {
-                            if (success === true) {
-                                // Template loaded successfully - silent success
-                            }
-                        }).catch(function(error) {
-                            console.error('❌ Template loading failed:', error);
-                        });
-                        return true; // Promise was created successfully
-                    } else {
-                        // It's a synchronous result
-                        return result === true;
-                    }
-                } catch (e) {
-                    return false;
-                }
-            }
+            // ✅ DISABLED: Template loading is now handled by React useTemplate hook
+            // which reads template_id from URL params and calls AJAX GET
+            // This prevents duplicate/race condition loads
+            // 
+            // Previously: PHP inline code loaded existingTemplate → dispatch event → React loads
+            // Now: React useEffect reads URL → calls AJAX GET → updates state
+            // This ensures single, consistent source of truth (AJAX response)
             
             return false;
         }
