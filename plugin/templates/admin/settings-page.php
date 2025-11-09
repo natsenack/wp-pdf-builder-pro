@@ -2560,7 +2560,7 @@ if ($is_ajax) {
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Grille & Aimants</h3>
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="show_grid">Afficher Grille</label></th>
+                    <th scope="row"><label for="show_grid">Activer la grille</label></th>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
@@ -2568,9 +2568,9 @@ if ($is_ajax) {
                                        <?php checked($canvas_settings['show_grid']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Grille visible</span>
+                            <span class="toggle-label">Grille activée</span>
                         </div>
-                        <div class="toggle-description">Affiche une grille de référence</div>
+                        <div class="toggle-description">Active/désactive l'affichage de la grille dans l'éditeur</div>
                     </td>
                 </tr>
                 <tr>

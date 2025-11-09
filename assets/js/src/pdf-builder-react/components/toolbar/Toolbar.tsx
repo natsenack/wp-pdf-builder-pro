@@ -177,7 +177,7 @@ export function Toolbar({ className }: ToolbarProps) {
               opacity: !canvasSettings.gridShow ? 0.6 : 1
             }}
           >
-            {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
+            {state.canvas.showGrid ? '⬜ Désactiver Grille' : '▦ Activer Grille'}
           </button>
         </div>
       </div>
