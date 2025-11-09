@@ -286,8 +286,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         console.log('✅ [SELECTION] State selection AVANT dispatch:', state.selection.selectedElements);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
         console.log('✅ [SELECTION] APRÈS dispatch - état sera mis à jour à:', [clickedElement.id]);
-        // Ne pas draguer au premier clic - juste sélectionner
-        event.preventDefault();
+        // ✅ CORRECTION: Ne pas preventDefault pour permettre onClick de se déclencher
+        // event.preventDefault();
         return;
       }
 
