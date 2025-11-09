@@ -1413,6 +1413,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       return;
     }
 
+    // DEBUG
+    console.log(`Drawing ${element.type} at (${element.x}, ${element.y}) size ${element.width}x${element.height}`);
+
     ctx.save();
 
     // Appliquer transformation de l'élément
@@ -1464,6 +1467,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       default:
         // Élément générique - dessiner un rectangle simple
+        console.warn(`⚠️ Unknown element type: ${element.type}`);
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
@@ -1950,16 +1954,16 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Appliquer transformation (zoom, pan)
     ctx.save();
     
-    // Appliquer les marges si activées (AVANT zoom et pan pour éviter la multiplication)
-    const showMargins = canvasSettings.showMargins;
-    if (showMargins && canvasSettings) {
-      const marginTopPx = (canvasSettings.marginTop || 0) * 3.78; // Convertir mm en px (1mm ≈ 3.78px)
-      const marginLeftPx = (canvasSettings.marginLeft || 0) * 3.78;
-      ctx.translate(marginLeftPx, marginTopPx);
-    }
-    
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     ctx.scale(state.canvas.zoom, state.canvas.zoom);
+
+    // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
+    // const showMargins = canvasSettings.showMargins;
+    // if (showMargins && canvasSettings) {
+    //   const marginTopPx = (canvasSettings.marginTop || 0) * 3.78;
+    //   const marginLeftPx = (canvasSettings.marginLeft || 0) * 3.78;
+    //   ctx.translate(marginLeftPx, marginTopPx);
+    // }
 
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
     if (canvasSettings.gridShow && state.canvas.showGrid) {
