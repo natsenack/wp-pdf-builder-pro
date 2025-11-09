@@ -39,9 +39,9 @@ export function useAutoSave(): UseAutoSaveReturn {
   const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s
 
   // Vérifier si l'auto-save est activé dans les settings
-  const autoSaveEnabled = (window as any).pdfBuilderCanvasSettings?.auto_save_enabled !== false &&
-    (window as any).pdfBuilderData?.auto_save_enabled !== false &&
-    (window as any).pdfBuilderReactData?.auto_save_enabled !== false;
+  // Doit être explicitement TRUE pour être activé
+  const autoSaveEnabled = 
+    (window as any).pdfBuilderCanvasSettings?.auto_save_enabled === true;
 
   // Utiliser useSaveStateV2
   const {
