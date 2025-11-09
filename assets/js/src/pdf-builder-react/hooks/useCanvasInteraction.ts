@@ -212,10 +212,12 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
       if (selectedElement) {
         isDraggingRef.current = true;
-        // Store mouse position at drag START, not offset
-        dragStartRef.current = { x, y };
+        // Store the OFFSET from element's top-left corner to mouse click point
+        const offsetX = x - selectedElement.x;
+        const offsetY = y - selectedElement.y;
+        dragStartRef.current = { x: offsetX, y: offsetY };
         selectedElementRef.current = selectedElement.id;
-        console.log('🖱️ [DRAG START] element:', selectedElement.id, 'mouseX:', x, 'mouseY:', y, 'elementX:', selectedElement.x, 'elementY:', selectedElement.y);
+        console.log('🖱️ [DRAG START] element:', selectedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', selectedElement.x, 'elementY:', selectedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
         event.preventDefault();
         return;
       }
@@ -345,7 +347,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     updateCursor(cursor);
 
     if (isDraggingRef.current && selectedElementRef.current) {
-      console.log('🎯 [DRAG] isDragging=true, element:', selectedElementRef.current, 'x:', x, 'y:', y);
+      console.log('🎯 [DRAG] isDragging=true, element:', selectedElementRef.current, 'currentMouseX:', x, 'currentMouseY:', y);
       // Déplacer l'élément
       const element = state.elements.find(el => el.id === selectedElementRef.current);
       if (!element) {
@@ -353,14 +355,11 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         return;
       }
 
-      // Calculate delta from drag START (dragStartRef is where mouse was when drag started)
-      const deltaX = x - dragStartRef.current.x;
-      const deltaY = y - dragStartRef.current.y;
-      console.log('🎯 [DRAG] deltaX:', deltaX, 'deltaY:', deltaY, 'element.x:', element.x, 'element.y:', element.y);
-
-      // NEW position = original position + delta
-      let newX = element.x + deltaX;
-      let newY = element.y + deltaY;
+      // dragStartRef now contains the OFFSET (where we clicked on the element)
+      // NEW position = current mouse position - offset
+      let newX = x - dragStartRef.current.x;
+      let newY = y - dragStartRef.current.y;
+      console.log('🎯 [DRAG] currentMouse:', { x, y }, 'offset:', dragStartRef.current, 'newPosition:', { newX, newY }, 'element current pos:', { x: element.x, y: element.y });
 
       // S'assurer que l'élément reste dans les limites du canvas
       const canvasWidth = 794; // Largeur A4 en pixels
