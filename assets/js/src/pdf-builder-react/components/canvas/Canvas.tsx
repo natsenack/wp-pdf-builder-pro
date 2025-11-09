@@ -1993,15 +1993,17 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     // Appliquer transformation (zoom, pan)
-    console.log(`🔄 [CANVAS] Avant save: pan=${JSON.stringify(state.canvas.pan)}, zoom=${state.canvas.zoom}`);
+    // Note: zoom est en pourcentage (100 = 100%), donc diviser par 100
+    console.log(`🔄 [CANVAS] Avant save: pan=${JSON.stringify(state.canvas.pan)}, zoom=${state.canvas.zoom}%`);
     ctx.save();
     console.log('✅ [CANVAS] ctx.save() exécuté');
     
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     console.log(`✅ [CANVAS] translate appliqué: (${state.canvas.pan.x}, ${state.canvas.pan.y})`);
     
-    ctx.scale(state.canvas.zoom, state.canvas.zoom);
-    console.log(`✅ [CANVAS] scale appliqué: ${state.canvas.zoom}`);
+    const zoomScale = state.canvas.zoom / 100;
+    ctx.scale(zoomScale, zoomScale);
+    console.log(`✅ [CANVAS] scale appliqué: ${zoomScale} (${state.canvas.zoom}%)`);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
