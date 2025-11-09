@@ -265,6 +265,10 @@ export function useSaveStateV2({
 
     // Attendre 3 secondes d'inactivité avant de sauvegarder
     autoSaveTimeoutRef.current = setTimeout(() => {
+      // Ne rien faire si l'auto-save est désactivé (autoSaveInterval === 0)
+      if (autoSaveInterval === 0) {
+        return;
+      }
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
       if (timeSinceLastSave >= autoSaveInterval) {
         performSave();
