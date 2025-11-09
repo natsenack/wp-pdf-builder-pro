@@ -1274,7 +1274,7 @@ class PDF_Builder_Admin {
     {
         $manager = $this->get_template_manager();
         if ($manager) {
-            return $manager->ajax_load_template();
+            $manager->ajax_load_template();
         }
     }
 
@@ -1285,7 +1285,7 @@ class PDF_Builder_Admin {
     {
         $manager = $this->get_template_manager();
         if ($manager) {
-            return $manager->ajax_flush_rest_cache();
+            $manager->ajax_flush_rest_cache();
         }
     }
 
