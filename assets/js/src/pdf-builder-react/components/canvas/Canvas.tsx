@@ -1033,6 +1033,7 @@ interface CanvasProps {
 }
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
+  console.log('🎬 [COMPONENT] Canvas RE-RENDER');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
@@ -2037,9 +2038,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Redessiner quand l'état change
   useEffect(() => {
-    console.log('🔄 [EFFECT] useEffect de rendu déclenché');
-    renderCanvas();
-  }, [renderCanvas, state.elements]);
+    console.log('🔄 [EFFECT] useEffect de rendu déclenché, state.elements.length=', state.elements.length);
+    const timer = setTimeout(() => {
+      console.log('🔄 [EFFECT] Appel renderCanvas immédiatement');
+      renderCanvas();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [state.elements, renderCanvas]);
 
   return (
     <>
