@@ -656,18 +656,18 @@ function Test-FtpDirectoryEmpty {
 # Déterminer le chemin local selon le mode
 switch ($Mode) {
     "plugin" {
-        $LocalPath = "D:\wp-pdf-builder-pro\plugin"
+        $LocalPath = "I:\wp-pdf-builder-pro\plugin"
         $Description = "PLUGIN WORDPRESS UNIQUEMENT"
         $Color = "Green"
     }
     "full" {
-        $LocalPath = "D:\wp-pdf-builder-pro"
+        $LocalPath = "I:\wp-pdf-builder-pro"
         $Description = "PROJET COMPLET (DÉVELOPPEMENT)"
         $Color = "Yellow"
         $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro-dev"
     }
     default {
-        $LocalPath = "D:\wp-pdf-builder-pro\plugin"
+        $LocalPath = "I:\wp-pdf-builder-pro\plugin"
         $Description = "TEST DE DÉPLOIEMENT (SIMULATION)"
         $Color = "Cyan"
         $IsTestMode = $true

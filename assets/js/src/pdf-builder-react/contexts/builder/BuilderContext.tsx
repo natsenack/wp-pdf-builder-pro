@@ -442,7 +442,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           id: (action.payload as Record<string, unknown>).id as string,
           name: (action.payload as Record<string, unknown>).name as string,
           isNew: false,
-          isModified: true, // Template chargé est considéré comme modifiable
+          isModified: false, // ✅ Template chargé de la DB n'est PAS modifié
           isSaving: false,
           isLoading: false, // ✅ Template is loaded
           lastSaved: (action.payload as Record<string, unknown>).lastSaved as Date

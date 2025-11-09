@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 
 interface UseCanvasInteractionProps {
@@ -13,6 +13,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const isResizingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const selectedElementRef = useRef<string | null>(null);
+  const selectedElementsRef = useRef<string[]>([]);  // ✅ Track locally instead of relying on stale state
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
 
@@ -148,6 +149,11 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   }, [dispatch]);
 
+  // ✅ Syncer la ref avec l'état Redux (fallback au cas où dispatch arrive avant)
+  useEffect(() => {
+    selectedElementsRef.current = state.selection.selectedElements;
+  }, [state.selection.selectedElements]);
+
   // Gestionnaire de clic pour la sélection et création d'éléments
   // Fonction utilitaire pour vérifier si un point est dans la hitbox d'un élément (avec marge pour les lignes)
   const isPointInElement = (x: number, y: number, element: any): boolean => {
@@ -214,12 +220,17 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
+      // ✅ Utiliser la ref au lieu de state qui peut être stale
+      const isAlreadySelected = selectedElementsRef.current.includes(clickedElement.id);
+      
       // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
-      if (!state.selection.selectedElements.includes(clickedElement.id)) {
+      if (!isAlreadySelected) {
         console.log('✅ [SELECTION] Sélection du nouvel élément:', clickedElement.id, 'type:', clickedElement.type);
-        console.log('✅ [SELECTION] AVANT dispatch - state.selection:', state.selection.selectedElements);
+        console.log('✅ [SELECTION] AVANT dispatch - refs selection:', selectedElementsRef.current);
+        // ✅ Mettre à jour la ref immédiatement (avant le dispatch!)
+        selectedElementsRef.current = [clickedElement.id];
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-        console.log('✅ [SELECTION] APRÈS dispatch - état Redux devrait mettre à jour');
+        console.log('✅ [SELECTION] APRÈS dispatch - ref mis à jour immédiatement à:', selectedElementsRef.current);
         // Ne pas draguer au premier clic - juste sélectionner
         event.preventDefault();
         return;
