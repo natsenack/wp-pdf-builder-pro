@@ -217,7 +217,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
       if (!state.selection.selectedElements.includes(clickedElement.id)) {
         console.log('✅ [SELECTION] Sélection du nouvel élément:', clickedElement.id, 'type:', clickedElement.type);
+        console.log('✅ [SELECTION] AVANT dispatch - state.selection:', state.selection.selectedElements);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
+        console.log('✅ [SELECTION] APRÈS dispatch - état Redux devrait mettre à jour');
         // Ne pas draguer au premier clic - juste sélectionner
         event.preventDefault();
         return;
@@ -395,11 +397,24 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       if (newY + minVisibleHeight > canvasHeight) newY = canvasHeight - minVisibleHeight;
 
       console.log('🎯 [DRAG] Dispatch UPDATE_ELEMENT - newX:', newX, 'newY:', newY);
+      // ⚠️ IMPORTANT: Préserver TOUTES les propriétés de l'élément, pas juste x et y
+      // Sinon les props comme 'src' du logo disparaissent au drag
+      const completeUpdates = {
+        x: newX,
+        y: newY,
+        // Préserver les propriétés additionnelles
+        ...Object.keys(element).reduce((acc, key) => {
+          if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
+            (acc as Record<string, unknown>)[key] = (element as Record<string, unknown>)[key];
+          }
+          return acc;
+        }, {} as Record<string, unknown>)
+      };
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates: { x: newX, y: newY }
+          updates: completeUpdates
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
