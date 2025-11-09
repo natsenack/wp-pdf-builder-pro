@@ -385,11 +385,7 @@ if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_securite_nonce
 }
 
 if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce'])) {
-    // DEBUG: Log les données POST reçues
-    error_log('DEBUG: POST data for canvas settings: ' . print_r($_POST, true));
-    
     if (wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_settings')) {
-        error_log('DEBUG: Nonce verified for canvas settings');
         $canvas_settings_to_save = [
             'default_canvas_format' => sanitize_text_field($_POST['default_canvas_format'] ?? 'A4'),
             'default_canvas_orientation' => sanitize_text_field($_POST['default_canvas_orientation'] ?? 'portrait'),
@@ -448,15 +444,8 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']))
             'show_fps' => isset($_POST['show_fps']),
         ];
         
-        // DEBUG: Log les données à sauvegarder
-        error_log('DEBUG: Saving canvas settings: ' . wp_json_encode($canvas_settings_to_save));
-        
         // Sauvegarder dans les options WordPress
         update_option('pdf_builder_canvas_settings', $canvas_settings_to_save);
-        
-        // DEBUG: Vérifier ce qui a été sauvegardé
-        $saved_settings = get_option('pdf_builder_canvas_settings');
-        error_log('DEBUG: Canvas settings saved. Retrieved: ' . wp_json_encode($saved_settings));
         
         if ($is_ajax) {
             $response = json_encode(['success' => true, 'message' => 'Paramètres Canvas enregistrés avec succès.']);
