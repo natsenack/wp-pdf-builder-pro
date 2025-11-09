@@ -24,6 +24,9 @@ if (!defined('ABSPATH')) {
             <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="button button-primary">
                 🎨 <?php _e('Ouvrir l\'Éditeur PDF', 'pdf-builder-pro'); ?>
             </a>
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+            </button>
         </div>
 
         <!-- Section de filtrage -->
