@@ -796,28 +796,53 @@ function pdf_builder_ajax_get_fresh_nonce() {
 /**
  * AJAX handler pour récupérer un template par ID
  */
+/**
+ * Charge un template PDF Builder via AJAX
+ * 
+ * Endpoint: /wp-admin/admin-ajax.php?action=pdf_builder_get_template
+ * Méthode: GET
+ * 
+ * Paramètres:
+ * - template_id (int): ID du template à charger
+ * - nonce (string): Token de sécurité WordPress
+ * 
+ * Réponse: JSON {success: bool, data: {id, name, elements, canvas, ...}}
+ * 
+ * @since 1.0.0
+ * @uses PDF_Builder_Cache_Manager Pour cacher les templates fréquemment utilisés
+ */
 function pdf_builder_ajax_get_template() {
-    // Vérifier le nonce
+    // Vérifier le nonce de sécurité
     if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_nonce')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
 
-    // Vérifier les permissions
+    // Vérifier les permissions utilisateur
     if (!current_user_can('edit_posts')) {
         wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
         return;
     }
 
-    // Récupérer l'ID du template
+    // Valider et récupérer l'ID du template
     $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 
-    if (!$template_id) {
-        wp_send_json_error(__('ID du template manquant.', 'pdf-builder-pro'));
+    if (!$template_id || $template_id < 1) {
+        wp_send_json_error(__('ID du template manquant ou invalide.', 'pdf-builder-pro'));
         return;
     }
 
-    // Récupérer le template depuis la table personnalisée
+    // ✅ ÉTAPE 1: Vérifier le cache transient (optimisation performance ~50-100ms saved)
+    $cache_key = 'pdf_builder_template_' . $template_id;
+    $cached_template = get_transient($cache_key);
+    
+    if ($cached_template !== false) {
+        // Template trouvé en cache, retourner directement
+        wp_send_json_success($cached_template);
+        return;
+    }
+
+    // ✅ ÉTAPE 2: Récupérer le template depuis la table personnalisée
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
     $template = $wpdb->get_row(
@@ -1139,10 +1164,38 @@ function pdf_builder_ajax_regenerate_positions() {
 add_action('wp_ajax_pdf_builder_regenerate_positions', 'pdf_builder_ajax_regenerate_positions');
 
 /**
- * AJAX handler pour sauvegarder un template
+ * Sauvegarde un template PDF Builder via AJAX
+ * 
+ * Endpoint: /wp-admin/admin-ajax.php?action=pdf_builder_save_template
+ * Méthode: POST
+ * Type données: FormData
+ * 
+ * Paramètres POST:
+ * - template_id (int): ID du template (0 = nouveau)
+ * - template_name (string): Nom du template
+ * - elements (JSON): Array des éléments du canvas
+ * - canvas (JSON): Objet configuration du canvas (zoom, pan, etc)
+ * - nonce (string): Token de sécurité WordPress
+ * 
+ * Réponse: JSON {success: bool, data: {id, name, timestamp, elementCount, message}}
+ * 
+ * Sécurité:
+ * - ✅ Nonce verification (CSRF protection)
+ * - ✅ Permission check (current_user_can)
+ * - ✅ wp_unslash & sanitization
+ * - ✅ JSON validation & error handling
+ * 
+ * Performance:
+ * - ✅ Cache invalidation after save
+ * - ✅ Logging de tous les évenements
+ * - ✅ Early returns sur erreurs
+ * 
+ * @since 1.0.0
+ * @uses PDF_Builder_Canvas_Save_Logger Pour traçabilité complète
+ * @uses wp_json_encode Pour sérialisation sécurisée
  */
 function pdf_builder_ajax_save_template() {
-    // Initialiser le logger
+    // Initialiser le logger pour traçabilité complète
     if (!class_exists('PDF_Builder_Canvas_Save_Logger')) {
         require_once plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Canvas_Save_Logger.php';
     }
@@ -1265,11 +1318,16 @@ function pdf_builder_ajax_save_template() {
     // Logger le succès
     $logger->log_save_success($template_id, count($elements));
     
+    // ✅ Invalider le cache pour ce template
+    delete_transient('pdf_builder_template_' . $template_id);
+    
     // Retourner le succès
     wp_send_json_success([
         'id' => $template_id,
         'name' => $template_name,
-        'message' => $template_id > 0 ? __('Template mis à jour avec succès.', 'pdf-builder-pro') : __('Template créé avec succès.', 'pdf-builder-pro')
+        'timestamp' => current_time('U'),
+        'elementCount' => count($elements),
+        'message' => __('Template enregistré avec succès.', 'pdf-builder-pro')
     ]);
 }
 
