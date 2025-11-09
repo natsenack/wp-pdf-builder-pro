@@ -59,9 +59,9 @@ export function initPDFBuilderReact() {
   try {
     const root = createRoot(container);
     root.render(
-      <React.StrictMode>
-        <PDFBuilder />
-      </React.StrictMode>
+      // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
+      // In development, it can help catch bugs, but production needs single render
+      <PDFBuilder />
     );
     debugLog('PDF Builder React: Successfully initialized');
 

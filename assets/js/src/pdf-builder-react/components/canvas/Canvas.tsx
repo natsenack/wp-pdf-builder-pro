@@ -1949,6 +1949,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    console.log('🎨 [CANVAS] renderCanvas() called, elements:', state.elements.length);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.warn('❌ [CANVAS] Canvas ref est NULL!');
