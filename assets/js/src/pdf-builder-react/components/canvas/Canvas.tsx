@@ -1864,8 +1864,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     ctx.scale(state.canvas.zoom, state.canvas.zoom);
 
-    // Dessiner la grille si activée (utiliser les paramètres Canvas Settings)
-    if (canvasSettings.gridShow) {
+    // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
+    if (canvasSettings.gridShow && state.canvas.showGrid) {
       drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
     }
 
@@ -1880,7 +1880,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
 
     ctx.restore();
-  }, [width, height, canvasSettings.gridSize, canvasSettings.gridColor, canvasSettings.gridShow, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement]);
+  }, [width, height, canvasSettings.gridSize, canvasSettings.gridColor, canvasSettings.gridShow, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement, state.canvas.showGrid]);
 
   // Redessiner quand l'état change
   useEffect(() => {
