@@ -147,32 +147,32 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       marginLeft: (windowSettings.margin_left as number) ?? DEFAULT_SETTINGS.marginLeft,
       
       // Grille
-      gridShow: (windowSettings.grid_show as boolean) !== false,
+      gridShow: (windowSettings.show_grid as boolean) !== false,
       gridSize: (windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize,
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
-      gridSnapEnabled: (windowSettings.grid_snap_enabled as boolean) !== false,
-      gridSnapTolerance: (windowSettings.grid_snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
+      gridSnapEnabled: (windowSettings.snap_to_grid as boolean) !== false,
+      gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
       
       // Zoom
-      zoomDefault: (windowSettings.zoom_default as number) ?? DEFAULT_SETTINGS.zoomDefault,
-      zoomMin: (windowSettings.zoom_min as number) ?? DEFAULT_SETTINGS.zoomMin,
-      zoomMax: (windowSettings.zoom_max as number) ?? DEFAULT_SETTINGS.zoomMax,
+      zoomDefault: (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault,
+      zoomMin: (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin,
+      zoomMax: (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax,
       zoomStep: (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep,
-      zoomWheelSupport: (windowSettings.zoom_wheel_support as boolean) !== false,
+      zoomWheelSupport: (windowSettings.zoom_with_wheel as boolean) !== false,
       
       // Sélection
-      selectionMultiSelectEnabled: (windowSettings.selection_multi_select_enabled as boolean) !== false,
-      selectionRotationEnabled: (windowSettings.selection_rotation_enabled as boolean) !== false,
-      selectionCopyPasteEnabled: (windowSettings.selection_copy_paste_enabled as boolean) !== false,
-      selectionShowHandles: (windowSettings.selection_show_handles as boolean) !== false,
-      selectionHandleSize: (windowSettings.selection_handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
-      selectionHandleColor: (windowSettings.selection_handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
+      selectionMultiSelectEnabled: (windowSettings.multi_select as boolean) !== false,
+      selectionRotationEnabled: (windowSettings.enable_rotation as boolean) !== false,
+      selectionCopyPasteEnabled: (windowSettings.copy_paste_enabled as boolean) !== false,
+      selectionShowHandles: (windowSettings.show_resize_handles as boolean) !== false,
+      selectionHandleSize: (windowSettings.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
+      selectionHandleColor: (windowSettings.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
       
       // Export
-      exportQuality: (windowSettings.export_quality as number) ?? DEFAULT_SETTINGS.exportQuality,
+      exportQuality: (windowSettings.image_quality as number) ?? DEFAULT_SETTINGS.exportQuality,
       exportFormat: (windowSettings.export_format as 'pdf' | 'png' | 'jpg') ?? DEFAULT_SETTINGS.exportFormat,
-      exportCompression: (windowSettings.export_compression as boolean) !== false,
-      exportIncludeMetadata: (windowSettings.export_include_metadata as boolean) !== false,
+      exportCompression: (windowSettings.compress_images as boolean) !== false,
+      exportIncludeMetadata: (windowSettings.include_metadata as boolean) !== false,
       
       // Historique
       historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
