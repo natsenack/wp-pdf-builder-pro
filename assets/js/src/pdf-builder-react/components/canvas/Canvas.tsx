@@ -1968,23 +1968,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.fillRect(0, 0, width, height);
     console.log('✅ [CANVAS] Fond blanc appliqué');
 
-    // DEBUG: Grille de référence pour voir les coordonnées
-    ctx.strokeStyle = '#f0f0f0';
-    ctx.lineWidth = 0.5;
-    for (let i = 0; i < width; i += 100) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, height);
-      ctx.stroke();
-    }
-    for (let i = 0; i < height; i += 100) {
-      ctx.beginPath();
-      ctx.moveTo(0, i);
-      ctx.lineTo(width, i);
-      ctx.stroke();
-    }
-    console.log('✅ [CANVAS] Grille dessinée');
-
     // DEBUG: Log elements
     if (state.elements.length === 0) {
       console.warn('⚠️ Canvas has 0 elements!');

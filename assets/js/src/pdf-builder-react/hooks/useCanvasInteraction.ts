@@ -149,6 +149,19 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   }, [dispatch]);
 
   // Gestionnaire de clic pour la sélection et création d'éléments
+  // Fonction utilitaire pour vérifier si un point est dans la hitbox d'un élément (avec marge pour les lignes)
+  const isPointInElement = (x: number, y: number, element: any): boolean => {
+    // Pour les lignes, ajouter une marge de 10px autour pour faciliter la sélection
+    const hitboxMargin = element.type === 'line' ? 10 : 0;
+    
+    const left = element.x - hitboxMargin;
+    const right = element.x + element.width + hitboxMargin;
+    const top = element.y - hitboxMargin;
+    const bottom = element.y + element.height + hitboxMargin;
+    
+    return x >= left && x <= right && y >= top && y <= bottom;
+  };
+
   const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -159,12 +172,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
     const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
 
-    // Trouver l'élément cliqué
-    const clickedElement = state.elements.find(el => {
-      const isInside = x >= el.x && x <= el.x + el.width &&
-                      y >= el.y && y <= el.y + el.height;
-      return isInside;
-    });
+    // Trouver l'élément cliqué (avec hitbox adaptée)
+    const clickedElement = state.elements.find(el => isPointInElement(x, y, el));
 
     if (clickedElement) {
       // Sélectionner l'élément existant
@@ -197,8 +206,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (state.selection.selectedElements.length > 0) {
       const selectedElement = state.elements.find(el =>
         state.selection.selectedElements.includes(el.id) &&
-        x >= el.x && x <= el.x + el.width &&
-        y >= el.y && y <= el.y + el.height
+        isPointInElement(x, y, el)
       );
 
       if (selectedElement) {
@@ -267,8 +275,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (state.selection.selectedElements.length > 0) {
       const elementUnderMouse = state.elements.find(el =>
         state.selection.selectedElements.includes(el.id) &&
-        x >= el.x && x <= el.x + el.width &&
-        y >= el.y && y <= el.y + el.height
+        isPointInElement(x, y, el)
       );
 
       if (elementUnderMouse) {
@@ -408,15 +415,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     const canvasX = (rawCanvasX - state.canvas.pan.x) / zoomScale;
     const canvasY = (rawCanvasY - state.canvas.pan.y) / zoomScale;
 
-    // Trouver l'élément cliqué
-    // TODO: Améliorer la détection pour les éléments tournés
-    const clickedElement = state.elements.find(el => {
-      // Pour l'instant, utiliser une vérification simple de rectangle englobant
-      // Cela fonctionne pour les éléments non tournés et donne une approximation pour les tournés
-      const isInside = canvasX >= el.x && canvasX <= el.x + el.width &&
-                      canvasY >= el.y && canvasY <= el.y + el.height;
-      return isInside;
-    });
+    // Trouver l'élément cliqué (avec hitbox adaptée)
+    const clickedElement = state.elements.find(el => isPointInElement(canvasX, canvasY, el));
 
     if (clickedElement) {
       // Ouvrir le menu contextuel pour l'élément
