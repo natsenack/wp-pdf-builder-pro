@@ -9,6 +9,21 @@ import { useTemplate } from '../hooks/useTemplate.ts';
 import { useAutoSave } from '../hooks/useAutoSave.ts';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
 
+// ✅ Add spin animation
+const spinStyles = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = spinStyles;
+  document.head.appendChild(style);
+}
+
 interface PDFBuilderContentProps {
   width?: number;
   height?: number;
@@ -36,6 +51,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     isNewTemplate,
     isModified,
     isSaving,
+    isLoading, // ✅ NEW: Template is loading
     isEditingExistingTemplate,
     saveTemplate,
     previewTemplate,
@@ -163,6 +179,43 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               >
                 A4: {width}×{height}px
               </div>
+              
+              {/* ✅ Loading spinner overlay */}
+              {isLoading && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 100,
+                    borderRadius: '4px'
+                  }}
+                >
+                  <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '4px solid #e0e0e0',
+                        borderTop: '4px solid #007acc',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 12px'
+                      }}
+                    />
+                    <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+                      Chargement du template...
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               <Canvas width={width} height={height} />
             </div>
 

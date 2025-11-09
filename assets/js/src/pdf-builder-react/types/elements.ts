@@ -25,6 +25,7 @@ export interface TemplateState {
   isNew: boolean;
   isModified: boolean;
   isSaving: boolean;
+  isLoading: boolean; // ✅ NEW: Template is loading from AJAX
   lastSaved?: Date;
 }
 

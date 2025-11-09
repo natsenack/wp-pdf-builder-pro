@@ -176,7 +176,8 @@ const initialHistoryState: HistoryState = {
     template: {
       isNew: true,
       isModified: false,
-      isSaving: false
+      isSaving: false,
+      isLoading: true // ✅ Start as loading
     },
     previewMode: 'editor',
     history: {} as HistoryState // Sera défini récursivement
@@ -199,6 +200,7 @@ const initialState: BuilderState = {
     isNew: true,
     isModified: false,
     isSaving: false,
+    isLoading: true, // ✅ Start as loading until template is fetched
     description: '',
     tags: [],
     canvasWidth: 794,  // A4 width in PX (plus large)
@@ -442,6 +444,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           isNew: false,
           isModified: true, // Template chargé est considéré comme modifiable
           isSaving: false,
+          isLoading: false, // ✅ Template is loaded
           lastSaved: (action.payload as Record<string, unknown>).lastSaved as Date
         },
         history: updateHistory(state, {
@@ -458,7 +461,8 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         template: {
           isNew: true,
           isModified: false,
-          isSaving: false
+          isSaving: false,
+          isLoading: false // ✅ New template ready immediately
         }
       };
     }

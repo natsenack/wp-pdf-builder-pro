@@ -251,6 +251,7 @@ export function useTemplate() {
     isNewTemplate: state.template.isNew,
     isModified: state.template.isModified,
     isSaving: state.template.isSaving,
+    isLoading: state.template.isLoading, // ✅ NEW: Template is loading
     lastSaved: state.template.lastSaved,
     isEditingExistingTemplate: isEditingExistingTemplate(),
     saveTemplate,
