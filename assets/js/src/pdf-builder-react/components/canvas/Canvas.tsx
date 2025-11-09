@@ -5,6 +5,8 @@ import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
+import { elementChangeTracker } from '../../utils/ElementChangeTracker';
+import { CanvasMonitoringDashboard } from '../../utils/CanvasMonitoringDashboard';
 import { ContextMenu, ContextMenuItem } from '../ui/ContextMenu.tsx';
 
 // Fonctions utilitaires de dessin (déplacées en dehors du composant pour éviter les avertissements React Compiler)
@@ -184,6 +186,22 @@ const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: 
 // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
 const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state: BuilderState) => {
   const props = element as ProductTableElementProperties;
+  
+  // ✅ BUGFIX-020: Validate element has minimum size for rendering
+  const minWidth = 100;
+  const minHeight = 50;
+  
+  if (element.width < minWidth || element.height < minHeight) {
+    // Element too small, draw placeholder
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, element.width, element.height);
+    ctx.fillStyle = '#999999';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Trop petit', element.width / 2, element.height / 2);
+    return;
+  }
+  
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showAlternatingRows = props.showAlternatingRows !== false;
@@ -216,17 +234,39 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   let currency: string;
 
   // Utiliser les données WooCommerce si en mode commande, sinon données fictives
-  if (state.previewMode === 'command' && wooCommerceManager.getOrderData()) {
-    const orderData = wooCommerceManager.getOrderData()!;
-    const orderItems = wooCommerceManager.getOrderItems();
-    const orderTotals = wooCommerceManager.getOrderTotals();
+  // ✅ BUGFIX-015: Validate WooCommerceManager access safely
+  if (state.previewMode === 'command' && wooCommerceManager?.getOrderData?.()) {
+    const orderData = wooCommerceManager.getOrderData();
+    if (orderData) {
+      const orderItems = wooCommerceManager.getOrderItems?.() || [];
+      const orderTotals = wooCommerceManager.getOrderTotals?.() || { shipping: 0, tax: 0, subtotal: 0, discount: 0 };
 
-    products = orderItems;
-    shippingCost = orderTotals.shipping;
-    taxRate = orderTotals.tax > 0 ? (orderTotals.tax / orderTotals.subtotal) * 100 : 20;
-    globalDiscount = orderTotals.discount;
-    orderFees = 0; // Les frais de commande sont déjà inclus dans les items
-    currency = orderData.currency;
+      products = orderItems;
+      shippingCost = orderTotals.shipping;
+      taxRate = orderTotals.tax > 0 ? (orderTotals.tax / orderTotals.subtotal) * 100 : 20;
+      globalDiscount = orderTotals.discount;
+      orderFees = 0; // Les frais de commande sont déjà inclus dans les items
+      currency = orderData.currency || '€';
+    } else {
+      // Fallback if orderData is null despite passing the check - use demo data
+      shippingCost = props.shippingCost || 8.50;
+      taxRate = props.taxRate || 20;
+      globalDiscount = props.globalDiscount || 5;
+      orderFees = props.orderFees || 2.50;
+      currency = '€';
+      
+      products = [
+        {
+          sku: 'DEMO-001',
+          name: 'Sample Product',
+          description: 'Demo product',
+          qty: 1,
+          price: 29.99,
+          discount: 0,
+          total: 29.99
+        }
+      ];
+    }
   } else {
     // Données fictives pour le mode éditeur
     shippingCost = props.shippingCost || 8.50;
@@ -1033,8 +1073,7 @@ interface CanvasProps {
 }
 
 // Constantes pour le cache des images
-const MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB max
-const MAX_CACHE_ITEMS = 100; // Max 100 images
+const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
   console.log('🎬 [COMPONENT] Canvas RE-RENDER');
@@ -1059,7 +1098,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
-  const imageCacheSizeRef = useRef<number>(0);
   
   // ✅ CORRECTION 7: Tracker les URLs rendues pour détecter changements
   const renderedLogoUrlsRef = useRef<Map<string, string>>(new Map()); // elementId -> logoUrl
@@ -1068,8 +1106,16 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const cleanupImageCache = useCallback(() => {
     const cache = imageCache.current;
     
-    if (cache.size > MAX_CACHE_ITEMS || imageCacheSizeRef.current > MAX_CACHE_SIZE) {
-      console.warn(`🧹 [CACHE] Nettoyage du cache - size: ${cache.size} items, ${(imageCacheSizeRef.current / 1024 / 1024).toFixed(2)}MB`);
+    // ✅ BUGFIX-005: Fix inaccurate size calculation
+    // Limit by number of items, not by size (size calculation is unreliable)
+    // Reason: We can't accurately measure actual memory used by images
+    // - naturalWidth * naturalHeight * 4 assumes RGBA format
+    // - But images may be compressed, grayscale, different bit depths
+    // - Browser might use different encoding than expected
+    // Solution: Limit by item count and let browser's GC handle memory
+    
+    if (cache.size > MAX_CACHE_ITEMS) {
+      console.warn(`🧹 [CACHE] Cache exceeds ${MAX_CACHE_ITEMS} items (size: ${cache.size}), cleaning...`);
       
       // Supprimer les 10 plus anciennes entrées (FIFO)
       const entriesToRemove = Math.min(10, Math.ceil(cache.size * 0.1));
@@ -1078,18 +1124,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       for (const [url] of cache) {
         if (removed >= entriesToRemove) break;
         
-        const img = cache.get(url);
-        if (img) {
-          // Estimer la taille de l'image
-          imageCacheSizeRef.current -= (img.naturalWidth * img.naturalHeight * 4); // RGBA = 4 bytes par pixel
-        }
-        
         cache.delete(url);
         removed++;
-        console.log(`  ✅ Supprimé du cache: ${url}`);
+        console.log(`  ✅ Removed from cache: ${url}`);
       }
       
-      console.log(`✅ [CACHE] Nettoyage terminé - ${removed} images supprimées`);
+      console.log(`✅ [CACHE] Cleanup complete - ${removed} images removed, cache now has ${cache.size} items`);
     }
   }, []);
 
@@ -1114,8 +1154,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     canvasRef
   });
 
-  // Fonction pour dessiner la grille avec les paramètres Canvas Settings
-  const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, size: number, color: string) => {
+  // ✅ BUGFIX-007: Memoize drawGrid to prevent recreation on every render
+  const drawGrid = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number, size: number, color: string) => {
     ctx.strokeStyle = color;
     ctx.lineWidth = 1;
 
@@ -1132,7 +1172,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       ctx.lineTo(w, y);
       ctx.stroke();
     }
-  };
+  }, []);  // No deps - pure function
 
   // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
 
@@ -1247,7 +1287,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }
   }, [drawLogoPlaceholder]);
 
-  const drawDynamicText = (ctx: CanvasRenderingContext2D, element: Element) => {
+  // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
+  const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as TextElementProperties;
     const text = props.text || 'Texte personnalisable';
     const fontSize = props.fontSize || 14;
@@ -1328,13 +1369,32 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         y += fontSize + 4;
       });
     }
-  };
+  }, []);  // No deps - pure function
 
-  const drawMentions = (ctx: CanvasRenderingContext2D, element: Element) => {
+  // ✅ BUGFIX-007: Memoize drawMentions to prevent recreation on every render
+  const drawMentions = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as MentionsElementProperties;
     const fontSizeRaw = props.fontSize || 10;
-    // Parser la valeur fontSize pour gérer les strings comme '11px'
-    const fontSize = typeof fontSizeRaw === 'string' ? parseFloat(fontSizeRaw.replace('px', '')) : fontSizeRaw;
+    
+    // ✅ BUGFIX-021: Robust font size parsing for various formats
+    let fontSize: number;
+    if (typeof fontSizeRaw === 'number') {
+      fontSize = fontSizeRaw;
+    } else if (typeof fontSizeRaw === 'string') {
+      // Try removing 'px', 'em', 'rem', 'pt' suffixes
+      const numStr = fontSizeRaw.replace(/px|em|rem|pt|%/g, '').trim();
+      fontSize = parseFloat(numStr) || 10;
+      // If it's 'em' or 'rem', convert to approximate px (1em ≈ 16px)
+      if (fontSizeRaw.includes('em') || fontSizeRaw.includes('rem')) {
+        fontSize = fontSize * 16;
+      }
+    } else {
+      fontSize = 10;
+    }
+    
+    // Ensure fontSize is reasonable
+    fontSize = Math.max(6, Math.min(72, fontSize));
+    
     const fontFamily = props.fontFamily || 'Arial';
     const fontWeight = props.fontWeight || 'normal';
     const fontStyle = props.fontStyle || 'normal';
@@ -1465,10 +1525,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       const lineY = (showSeparator ? 25 : 15) + index * lineHeight;
       ctx.fillText(line, x, lineY);
     });
-  };
+  }, []);  // No deps - pure function
 
-  // Fonction pour dessiner un élément
-  const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
+  // ✅ BUGFIX-001/004: Memoize drawElement but pass state as parameter to avoid dependency cycle
+  const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element, currentState: BuilderState) => {
     // Vérifier si l'élément est visible
     if (element.visible === false) {
       console.log(`  ⊘ [DRAW] ${element.type} caché (visible=false)`);
@@ -1509,11 +1569,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       case 'product_table':
         console.log(`    📊 [DRAW] drawProductTable`);
-        drawProductTable(ctx, element, state);
+        drawProductTable(ctx, element, currentState);
         break;
       case 'customer_info':
         console.log(`    👤 [DRAW] drawCustomerInfo`);
-        drawCustomerInfo(ctx, element, state);
+        drawCustomerInfo(ctx, element, currentState);
         break;
       case 'company_info':
         console.log(`    🏢 [DRAW] drawCompanyInfo`);
@@ -1525,11 +1585,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       case 'order_number':
         console.log(`    🔢 [DRAW] drawOrderNumber`);
-        drawOrderNumber(ctx, element, state);
+        drawOrderNumber(ctx, element, currentState);
         break;
       case 'document_type':
         console.log(`    📄 [DRAW] drawDocumentType`);
-        drawDocumentType(ctx, element, state);
+        drawDocumentType(ctx, element, currentState);
         break;
       case 'dynamic-text':
         console.log(`    ✨ [DRAW] drawDynamicText`);
@@ -1553,7 +1613,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     console.log(`    🔙 [DRAW] restore() effectué`);
     ctx.restore();
-  }, [state, drawCompanyLogo]);
+  }, [drawCompanyLogo, drawDynamicText, drawMentions]);  // ✅ BUGFIX-007: Include memoized draw functions
 
   // Fonction pour dessiner la sélection
   function drawSelection(ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) {
@@ -2072,7 +2132,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     console.log(`🎨 [CANVAS] Début du dessin de ${state.elements.length} éléments...`);
     state.elements.forEach((element, index) => {
       console.log(`  [${index}] Appel drawElement pour ${element.type}`);
-      drawElement(ctx, element);
+      drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
     console.log('✅ [CANVAS] Tous les éléments dessinés');
 
@@ -2085,27 +2145,41 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     console.log('🔙 [CANVAS] ctx.restore() appelé');
     ctx.restore();
     console.log('✅ [CANVAS] Rendu complet terminé');
-  }, [width, height, canvasSettings, state.canvas, state.elements, state.selection.selectedElements, drawElement]);
+  }, [width, height, canvasSettings, state, drawElement, drawGrid]);  // ✅ BUGFIX-007: Include memoized drawGrid
 
   // Redessiner quand l'état change
   useEffect(() => {
-    // ✅ Track FULL element state (id + position + size), not just IDs
-    const elementsKey = JSON.stringify(state.elements.map(e => ({ 
-      id: e.id, 
-      x: e.x, 
-      y: e.y, 
-      width: e.width, 
-      height: e.height 
-    })));
+    // ✅ BUGFIX-022: Use efficient hash instead of JSON.stringify
+    // Track FULL element state (id + position + size), but use hash for performance
+    let elementsHash = '';
+    for (let i = 0; i < state.elements.length; i++) {
+      const e = state.elements[i];
+      elementsHash += `${e.id}:${e.x},${e.y},${e.width},${e.height};`;
+    }
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
-    if (lastRenderedElementsRef.current === elementsKey) {
+    if (lastRenderedElementsRef.current === elementsHash) {
       console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments & positions que dernière fois');
       return;
     }
     
-    lastRenderedElementsRef.current = elementsKey;
+    lastRenderedElementsRef.current = elementsHash;
     renderCountRef.current++;
+    
+    // 🔍 REAL-TIME MONITORING: Track all element property changes
+    const changes = elementChangeTracker.trackElements(state.elements);
+    if (changes.length > 0) {
+      console.log(`📊 [REAL-TIME] ${changes.length} changement(s) détecté(s):`);
+      changes.forEach(change => {
+        if (change.changeType === 'created') {
+          console.log(`  ✨ Créé: ${change.elementId}`);
+        } else if (change.changeType === 'deleted') {
+          console.log(`  🗑️ Supprimé: ${change.elementId}`);
+        } else if (change.changeType === 'property_changed') {
+          console.log(`  ${change.property}: ${change.oldValue} → ${change.newValue}`);
+        }
+      });
+    }
     
     console.log(`🔄 [EFFECT] useEffect de rendu déclenché (${renderCountRef.current}), state.elements.length=`, state.elements.length);
     const timer = setTimeout(() => {
@@ -2127,6 +2201,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [state.template.isModified]);
+
+  // 🎯 Initialize monitoring dashboard
+  useEffect(() => {
+    CanvasMonitoringDashboard.initialize();
+    console.log('💡 Tip: Use CanvasMonitoringDashboard.showDashboard() in console to view real-time stats');
+  }, []);
 
   return (
     <>

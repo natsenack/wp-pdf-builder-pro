@@ -25,8 +25,10 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS (1000/60 ≈ 16ms)
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
+  // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
   const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: any[]) => {
     const handleSize = 8;
+    const handleMargin = 6;  // Consistent margin for all elements
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
 
     for (const element of selectedElements) {
@@ -39,8 +41,9 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       ];
 
       for (const handle of handles) {
-        if (x >= handle.x && x <= handle.x + handleSize &&
-            y >= handle.y && y <= handle.y + handleSize) {
+        // Use consistent margin for all element types
+        if (x >= handle.x - handleMargin && x <= handle.x + handleSize + handleMargin &&
+            y >= handle.y - handleMargin && y <= handle.y + handleSize + handleMargin) {
           return { elementId: element.id, handle: handle.name };
         }
       }
@@ -205,6 +208,13 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
+    
+    // ✅ BUGFIX-008: Validate rect BEFORE using it
+    if (!validateCanvasRect(rect)) {
+      console.warn('⚠️ [CLICK] Invalid canvas rect, skipping click handler');
+      return;
+    }
+    
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
     const zoomScale = state.canvas.zoom / 100;
     const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
@@ -227,7 +237,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         selectedElementRef.current = null;
       }
     }
-  }, [state, dispatch, canvasRef]);
+  }, [state, dispatch, canvasRef, createElementAtPosition]);
 
   // Gestionnaire de mouse down pour commencer le drag ou resize
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {

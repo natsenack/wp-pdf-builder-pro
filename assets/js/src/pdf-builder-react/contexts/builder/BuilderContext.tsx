@@ -34,10 +34,8 @@ interface ProductTableProperties {
 }
 
 // Fonction helper pour corriger les positions des éléments hors limites
-const clampElementPositions = (elements: Element[]): Element[] => {
-  const canvasWidth = 794;  // Largeur A4 Portrait en PX
-  const canvasHeight = 1123; // Hauteur A4 Portrait en PX
-
+// ✅ BUGFIX-014: Accept canvas dimensions as parameters for dynamic sizing
+const clampElementPositions = (elements: Element[], canvasWidth: number = 794, canvasHeight: number = 1123): Element[] => {
   return elements.map(element => {
     let newX = element.x;
     let newY = element.y;
@@ -233,24 +231,33 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
     }
 
     case 'UPDATE_ELEMENT': {
+      // ✅ BUGFIX-003: Comprehensive property preservation
+      // Ensure ALL existing properties are retained when updating
+      const updateElement = (element: Element): Element => {
+        if (element.id !== action.payload.id) return element;
+        
+        // Merge updates while preserving all existing properties
+        const updated: Element = {
+          ...element,  // First spread all existing properties (including dynamic ones)
+          ...action.payload.updates,  // Then apply updates (only specified properties)
+          updatedAt: new Date()  // Always update timestamp
+        };
+        
+        return updated;
+      };
+
+      const updatedElements = state.elements.map(updateElement);
+      
       return {
         ...state,
-        elements: state.elements.map(el =>
-          el.id === action.payload.id
-            ? { ...el, ...action.payload.updates, updatedAt: new Date() }
-            : el
-        ),
+        elements: updatedElements,
         template: {
           ...state.template,
           isModified: true
         },
         history: updateHistory(state, {
           ...state,
-          elements: state.elements.map(el =>
-            el.id === action.payload.id
-              ? { ...el, ...action.payload.updates, updatedAt: new Date() }
-              : el
-          )
+          elements: updatedElements
         })
       };
     }
@@ -475,8 +482,19 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
 
 // Fonctions utilitaires
 function updateHistory(currentState: BuilderState, newState: BuilderState): HistoryState {
+  // ✅ BUGFIX-011: Deep copy the state before storing in history to ensure immutability
+  const stateCopy: BuilderState = {
+    ...currentState,
+    elements: currentState.elements.map(el => ({ ...el })),  // Shallow copy of array + elements
+    canvas: { ...currentState.canvas },
+    selection: { ...currentState.selection, selectedElements: [...currentState.selection.selectedElements] },
+    drag: { ...currentState.drag },
+    template: { ...currentState.template },
+    history: currentState.history  // Don't deep copy history recursively
+  };
+  
   return {
-    past: [...currentState.history.past, currentState],
+    past: [...currentState.history.past, stateCopy],
     present: newState,
     future: [],
     canUndo: true,
