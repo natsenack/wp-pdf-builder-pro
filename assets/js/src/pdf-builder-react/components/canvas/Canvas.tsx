@@ -1945,6 +1945,16 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     ctx.scale(state.canvas.zoom, state.canvas.zoom);
 
+    // Appliquer les marges si activées
+    const showMargins = (canvasSettings as { show_margins?: boolean }).show_margins;
+    if (showMargins && canvasSettings) {
+      const marginTopPx = ((canvasSettings as { margin_top?: number }).margin_top || 0) * 3.78; // Convertir mm en px (1mm ≈ 3.78px)
+      const marginLeftPx = ((canvasSettings as { margin_left?: number }).margin_left || 0) * 3.78;
+      
+      ctx.save();
+      ctx.translate(marginLeftPx, marginTopPx);
+    }
+
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
     if (canvasSettings.gridShow && state.canvas.showGrid) {
       drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
@@ -1960,8 +1970,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
+    // Restaurer le contexte si les marges étaient appliquées
+    if (showMargins && canvasSettings) {
+      ctx.restore();
+    }
+
     ctx.restore();
-  }, [width, height, canvasSettings.gridSize, canvasSettings.gridColor, canvasSettings.gridShow, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement, state.canvas.showGrid]);
+  }, [width, height, canvasSettings, state.canvas.pan.x, state.canvas.pan.y, state.canvas.zoom, state.elements, state.selection.selectedElements, drawElement, state.canvas.showGrid]);
 
   // Redessiner quand l'état change
   useEffect(() => {
