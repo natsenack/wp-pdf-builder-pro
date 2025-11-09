@@ -1050,9 +1050,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
 
-  // État pour forcer le re-rendu quand les images se chargent
-  const [forceUpdate, setForceUpdate] = React.useState(0);
-
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver } = useCanvasDrop({
     canvasRef,
@@ -1138,14 +1135,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
         // Gérer les erreurs de chargement
         img.onerror = () => {
-          // Forcer un re-rendu du composant React
-          setForceUpdate(prev => prev + 1);
+          // Image failed to load - no action needed
         };
 
         // Gérer le chargement réussi
         img.onload = () => {
-          // Forcer un re-rendu du composant React
-          setForceUpdate(prev => prev + 1);
+          // Image loaded successfully - canvas will re-render from state changes
         };
       }
 
@@ -2003,7 +1998,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // Redessiner quand l'état change
   useEffect(() => {
     renderCanvas();
-  }, [renderCanvas, forceUpdate, state.elements]);
+  }, [renderCanvas, state.elements]);
 
   return (
     <>
