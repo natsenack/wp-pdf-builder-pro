@@ -1167,7 +1167,7 @@ class PDF_Builder_Admin {
     {
         $manager = $this->get_template_manager();
         if ($manager) {
-            return $manager->ajax_save_template();
+            $manager->ajax_save_template();
         }
     }
 
