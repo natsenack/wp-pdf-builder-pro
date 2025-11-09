@@ -387,8 +387,14 @@ class PDF_Builder_Admin {
             [$this, 'adminPage']
         );
         
-        // Éditeur React (nouvelle version)
-        add_submenu_page('pdf-builder-pro', __('Éditeur React - PDF Builder Pro', 'pdf-builder-pro'), __('⚛️ Éditeur React', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'react_editor_page']);
+        // Éditeur React (nouvelle version) - Templates personnalisés
+        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Personnalisés', 'pdf-builder-pro'), __('🎨 Éditeur Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=custom', [$this, 'react_editor_page']);
+        
+        // Éditeur Modèles prédéfinis
+        add_submenu_page('pdf-builder-pro', __('Éditeur Modèles Prédéfinis', 'pdf-builder-pro'), __('📝 Modèles Prédéfinis', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=predefined', [$this, 'react_editor_page']);
+        
+        // Éditeur Templates système (réservé aux admins)
+        add_submenu_page('pdf-builder-pro', __('Éditeur Templates Système', 'pdf-builder-pro'), __('⚙️ Templates Système', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor&type=system', [$this, 'react_editor_page']);
         
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
@@ -5487,14 +5493,39 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Page de l'éditeur React
+     * Page de l'éditeur React unifié
      */
     public function react_editor_page()
     {
         $this->checkAdminPermissions();
 
-        // Get template ID from URL parameter
+        // Get template ID and type from URL parameters
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+        $template_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'custom';
+
+        // Validate template type
+        $valid_types = ['custom', 'predefined', 'system'];
+        if (!in_array($template_type, $valid_types)) {
+            $template_type = 'custom';
+        }
+
+        // Déterminer le titre et la description selon le type
+        $editor_info = $this->get_editor_info($template_type);
+
+        // Get template ID and type from URL parameters
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+        $template_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'custom';
+
+        // Validate template type
+        $valid_types = ['custom', 'predefined', 'system'];
+        if (!in_array($template_type, $valid_types)) {
+            $template_type = 'custom';
+        }
+
+        // Déterminer le titre et la description selon le type
+        $editor_info = $this->get_editor_info($template_type);
+
+        // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
 
         // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
         wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
@@ -5604,11 +5635,17 @@ class PDF_Builder_Admin {
 
         ?>
         <div class="wrap">
-            <div style="background: #f0f8ff; border: 1px solid #007acc; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
-                <h1 style="margin: 0; color: #007acc;">🎨 Éditeur Templates Personnalisés</h1>
+            <div style="background: <?php echo esc_attr($editor_info['bg_color']); ?>; border: 1px solid <?php echo esc_attr($editor_info['border_color']); ?>; border-radius: 4px; padding: 12px; margin-bottom: 20px;">
+                <h1 style="margin: 0; color: <?php echo esc_attr($editor_info['text_color']); ?>;"><?php echo esc_html($editor_info['icon']); ?> <?php echo esc_html($editor_info['title']); ?></h1>
                 <p style="margin: 4px 0 0 0; font-size: 14px; color: #666;">
-                    Éditeur principal pour créer et modifier vos propres templates PDF personnalisés
+                    <?php echo esc_html($editor_info['description']); ?>
                 </p>
+                <?php if ($template_type !== 'custom'): ?>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: #888;">
+                    <strong>Type:</strong> <?php echo esc_html($template_type); ?> |
+                    <strong>ID:</strong> <?php echo $template_id ?: 'Nouveau'; ?>
+                </p>
+                <?php endif; ?>
             </div>
 
             <!-- Loading State -->
@@ -5726,7 +5763,40 @@ class PDF_Builder_Admin {
         <?php
     }
 
+    /**
+     * Retourne les informations d'affichage selon le type de template
+     */
+    private function get_editor_info($type)
+    {
+        $infos = [
+            'custom' => [
+                'title' => 'Éditeur Templates Personnalisés',
+                'description' => 'Éditeur principal pour créer et modifier vos propres templates PDF personnalisés',
+                'icon' => '🎨',
+                'bg_color' => '#f0f8ff',
+                'border_color' => '#007acc',
+                'text_color' => '#007acc'
+            ],
+            'predefined' => [
+                'title' => 'Éditeur Modèles Prédéfinis',
+                'description' => 'Éditeur spécialisé pour la création et modification de modèles prédéfinis',
+                'icon' => '📝',
+                'bg_color' => '#fff3cd',
+                'border_color' => '#ffc107',
+                'text_color' => '#856404'
+            ],
+            'system' => [
+                'title' => 'Éditeur Templates Système',
+                'description' => 'Éditeur administrateur pour les templates système (réservé aux administrateurs)',
+                'icon' => '⚙️',
+                'bg_color' => '#f8d7da',
+                'border_color' => '#dc3545',
+                'text_color' => '#721c24'
+            ]
+        ];
 
+        return $infos[$type] ?? $infos['custom'];
+    }
 }
 
 // Empêcher l'accès direct
