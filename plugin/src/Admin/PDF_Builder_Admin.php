@@ -5706,15 +5706,27 @@ class PDF_Builder_Admin {
                 initAttempts++;
                 if (initReactEditor()) {
                     clearInterval(initInterval);
-                    
+
                     // Now try to load existing data once
                     setTimeout(function() {
                         loadExistingTemplateData();
                     }, 1000);
-                    
+
                 } else if (initAttempts >= maxInitAttempts) {
                     console.error('❌ [PHP] Failed to initialize React editor after', maxInitAttempts, 'attempts');
                     clearInterval(initInterval);
+
+                    // ✅ CORRECTION: Masquer le loader même en cas d'échec pour éviter de masquer l'éditeur
+                    var loadingEl = document.getElementById('pdf-builder-react-loading');
+                    var editorEl = document.getElementById('pdf-builder-react-editor');
+                    if (loadingEl) {
+                        loadingEl.style.display = 'none';
+                        console.warn('⚠️ [PHP] Loader masqué après échec d\'initialisation React');
+                    }
+                    if (editorEl) {
+                        editorEl.style.display = 'block';
+                        editorEl.innerHTML = '<div style="padding: 40px; text-align: center; color: #dc3232;"><h3>Erreur d\'initialisation</h3><p>L\'éditeur React n\'a pas pu être chargé. Vérifiez la console pour plus de détails.</p><button onclick="location.reload()" class="button">Recharger la page</button></div>';
+                    }
                 }
             }, 500);
         } else {
@@ -5723,6 +5735,19 @@ class PDF_Builder_Admin {
                 loadExistingTemplateData();
             }, 1000);
         }
+
+        // ✅ CORRECTION: Fallback - masquer automatiquement le loader après 10 secondes maximum
+        setTimeout(function() {
+            var loadingEl = document.getElementById('pdf-builder-react-loading');
+            var editorEl = document.getElementById('pdf-builder-react-editor');
+            if (loadingEl && loadingEl.style.display !== 'none') {
+                console.warn('⚠️ [PHP] Timeout du loader - masquage automatique après 10 secondes');
+                loadingEl.style.display = 'none';
+                if (editorEl) {
+                    editorEl.style.display = 'block';
+                }
+            }
+        }, 10000);
 
         </script>
 
