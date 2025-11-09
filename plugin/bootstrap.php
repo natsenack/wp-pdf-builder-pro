@@ -797,18 +797,51 @@ function pdf_builder_ajax_get_template() {
         return;
     }
 
-    // Retourner les données du template
-    // Log des positions des éléments pour debug
+    // Transformer les éléments dans le format attendu par React
+    $transformed_elements = [];
+    foreach ($elements as $element) {
+        $transformed_element = [];
 
-    foreach ($elements as $index => $element) {
-        if (isset($element['type'])) {
-            if ($element['type'] === 'company_info') {
+        // Copier les propriétés de base
+        if (isset($element['id'])) $transformed_element['id'] = $element['id'];
+        if (isset($element['type'])) $transformed_element['type'] = $element['type'];
+        if (isset($element['content'])) $transformed_element['content'] = $element['content'];
 
-            } elseif ($element['type'] === 'order_number') {
+        // Transformer position -> x, y
+        if (isset($element['position']['x'])) $transformed_element['x'] = (int)$element['position']['x'];
+        if (isset($element['position']['y'])) $transformed_element['y'] = (int)$element['position']['y'];
 
-            }
+        // Transformer size -> width, height
+        if (isset($element['size']['width'])) $transformed_element['width'] = (int)$element['size']['width'];
+        if (isset($element['size']['height'])) $transformed_element['height'] = (int)$element['size']['height'];
+
+        // Transformer style -> propriétés à plat
+        if (isset($element['style'])) {
+            if (isset($element['style']['fontSize'])) $transformed_element['fontSize'] = (int)$element['style']['fontSize'];
+            if (isset($element['style']['fontWeight'])) $transformed_element['fontWeight'] = $element['style']['fontWeight'];
+            if (isset($element['style']['color'])) $transformed_element['color'] = $element['style']['color'];
+            if (isset($element['style']['textAlign'])) $transformed_element['textAlign'] = $element['style']['textAlign'];
+            if (isset($element['style']['verticalAlign'])) $transformed_element['verticalAlign'] = $element['style']['verticalAlign'];
+            if (isset($element['style']['backgroundColor'])) $transformed_element['backgroundColor'] = $element['style']['backgroundColor'];
         }
+
+        // Pour les éléments text, utiliser content comme text
+        if ($element['type'] === 'text' && isset($element['content'])) {
+            $transformed_element['text'] = $element['content'];
+        }
+
+        // Propriétés par défaut pour tous les éléments
+        if (!isset($transformed_element['x'])) $transformed_element['x'] = 0;
+        if (!isset($transformed_element['y'])) $transformed_element['y'] = 0;
+        if (!isset($transformed_element['width'])) $transformed_element['width'] = 100;
+        if (!isset($transformed_element['height'])) $transformed_element['height'] = 50;
+        if (!isset($transformed_element['visible'])) $transformed_element['visible'] = true;
+        if (!isset($transformed_element['locked'])) $transformed_element['locked'] = false;
+
+        $transformed_elements[] = $transformed_element;
     }
+
+    $elements = $transformed_elements;
 
     wp_send_json_success(array(
         'id' => $template['id'],

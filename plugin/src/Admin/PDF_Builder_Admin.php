@@ -2897,6 +2897,60 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Transforme les éléments du format PHP vers le format React
+     */
+    private function transform_elements_for_react($elements) {
+        if (!is_array($elements)) {
+            return [];
+        }
+
+        $transformed_elements = [];
+        foreach ($elements as $element) {
+            $transformed_element = [];
+
+            // Copier les propriétés de base
+            if (isset($element['id'])) $transformed_element['id'] = $element['id'];
+            if (isset($element['type'])) $transformed_element['type'] = $element['type'];
+            if (isset($element['content'])) $transformed_element['content'] = $element['content'];
+
+            // Transformer position -> x, y
+            if (isset($element['position']['x'])) $transformed_element['x'] = (int)$element['position']['x'];
+            if (isset($element['position']['y'])) $transformed_element['y'] = (int)$element['position']['y'];
+
+            // Transformer size -> width, height
+            if (isset($element['size']['width'])) $transformed_element['width'] = (int)$element['size']['width'];
+            if (isset($element['size']['height'])) $transformed_element['height'] = (int)$element['size']['height'];
+
+            // Transformer style -> propriétés à plat
+            if (isset($element['style'])) {
+                if (isset($element['style']['fontSize'])) $transformed_element['fontSize'] = (int)$element['style']['fontSize'];
+                if (isset($element['style']['fontWeight'])) $transformed_element['fontWeight'] = $element['style']['fontWeight'];
+                if (isset($element['style']['color'])) $transformed_element['color'] = $element['style']['color'];
+                if (isset($element['style']['textAlign'])) $transformed_element['textAlign'] = $element['style']['textAlign'];
+                if (isset($element['style']['verticalAlign'])) $transformed_element['verticalAlign'] = $element['style']['verticalAlign'];
+                if (isset($element['style']['backgroundColor'])) $transformed_element['backgroundColor'] = $element['style']['backgroundColor'];
+            }
+
+            // Pour les éléments text, utiliser content comme text
+            if ($element['type'] === 'text' && isset($element['content'])) {
+                $transformed_element['text'] = $element['content'];
+            }
+
+            // Propriétés par défaut pour tous les éléments
+            if (!isset($transformed_element['x'])) $transformed_element['x'] = 0;
+            if (!isset($transformed_element['y'])) $transformed_element['y'] = 0;
+            if (!isset($transformed_element['width'])) $transformed_element['width'] = 100;
+            if (!isset($transformed_element['height'])) $transformed_element['height'] = 50;
+            if (!isset($transformed_element['visible'])) $transformed_element['visible'] = true;
+            if (!isset($transformed_element['locked'])) $transformed_element['locked'] = false;
+
+            $transformed_elements[] = $transformed_element;
+        }
+
+        return $transformed_elements;
+    }
+
+    /**
      * Retourne un template de facture par défaut
      */
     private function get_default_invoice_template()
@@ -5568,6 +5622,8 @@ class PDF_Builder_Admin {
         if ($template_id > 0) {
             $existing_template_data = $this->load_template_robust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
+                // Transformer les éléments dans le format React
+                $existing_template_data['elements'] = $this->transform_elements_for_react($existing_template_data['elements']);
                 $localize_data['existingTemplate'] = $existing_template_data;
                 $localize_data['hasExistingData'] = true;
             }
