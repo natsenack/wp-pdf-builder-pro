@@ -70,46 +70,6 @@ export function Toolbar({ className }: ToolbarProps) {
     }
   };
 
-  const handleRegeneratePositions = async () => {
-    // @ts-ignore - confirm is a global function
-    if (!window.confirm('⚠️ Cela va régénérer les positions de TOUS les éléments du template. Êtes-vous sûr?')) {
-      return;
-    }
-
-    try {
-      // @ts-ignore - window has custom properties
-      const nonce = window.pdfBuilderData?.nonce || window.pdfBuilderReactData?.nonce || '';
-      // @ts-ignore - window has custom properties
-      const ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          action: 'pdf_builder_regenerate_positions',
-          nonce: nonce
-        })
-      });
-
-      // @ts-ignore
-      const data = await response.json();
-      
-      if (data.success) {
-        // @ts-ignore - window has custom properties
-        window.alert(`✅ Succès!\n${data.data.message}\n\nTemplates: ${data.data.count}\nÉléments régénérés: ${data.data.elements_fixed}\n\nVeuillez recharger la page.`);
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      } else {
-        // @ts-ignore
-        window.alert(`❌ Erreur: ${data.data}`);
-      }
-    } catch (error) {
-      // @ts-ignore
-      window.alert(`❌ Erreur réseau: ${error}`);
-    }
-  };
-
   return (
     <div className={`pdf-builder-toolbar ${className || ''}`} style={{
       display: 'flex',
@@ -218,22 +178,6 @@ export function Toolbar({ className }: ToolbarProps) {
             }}
           >
             {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
-          </button>
-          <button
-            onClick={handleRegeneratePositions}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #dc3545',
-              borderRadius: '4px',
-              backgroundColor: '#fff5f5',
-              color: '#dc3545',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }}
-            title="Régénérer les positions de tous les éléments avec des valeurs par défaut"
-          >
-            🔧 Régénérer positions
           </button>
         </div>
       </div>
