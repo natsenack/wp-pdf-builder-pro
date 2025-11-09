@@ -4571,6 +4571,33 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
             }
         });
 
+        // Gestion dynamique des champs marges
+        jQuery('#show_margins').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var $marginInputs = jQuery('#margin_top, #margin_right, #margin_bottom, #margin_left');
+            var $marginLabels = jQuery('label[for="margin_top"], label[for="margin_right"], label[for="margin_bottom"], label[for="margin_left"]');
+
+            if (isChecked) {
+                $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $marginLabels.css('color', '');
+            } else {
+                $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $marginLabels.css('color', '#999');
+            }
+        });
+
+        // Initialiser l'état des champs marges au chargement
+        jQuery(document).ready(function() {
+            var marginsEnabled = jQuery('#show_margins').is(':checked');
+            var $marginInputs = jQuery('#margin_top, #margin_right, #margin_bottom, #margin_left');
+            var $marginLabels = jQuery('label[for="margin_top"], label[for="margin_right"], label[for="margin_bottom"], label[for="margin_left"]');
+
+            if (!marginsEnabled) {
+                $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $marginLabels.css('color', '#999');
+            }
+        });
+
         // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
         jQuery('#default_canvas_format, #default_canvas_orientation').on('change', function() {
             var canvasFormat = jQuery('#default_canvas_format').val();
