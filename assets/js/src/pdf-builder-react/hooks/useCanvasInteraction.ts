@@ -1,5 +1,13 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { Element } from '../types/elements';
+
+interface ElementUpdates {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
 
 interface UseCanvasInteractionProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -26,7 +34,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
-  const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: any[]) => {
+  const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: Element[]) => {
     const handleSize = 8;
     const handleMargin = 6;  // Consistent margin for all elements
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
@@ -56,7 +64,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   const createElementAtPosition = useCallback((x: number, y: number, mode: string) => {
     const elementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    let newElement: any;
+    let newElement: Element;
 
     switch (mode) {
       case 'rectangle':
@@ -72,6 +80,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           strokeWidth: 1,
           borderRadius: 0,
           rotation: 0,
+          visible: true,
+          locked: false,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -89,6 +99,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           strokeColor: '#000000',
           strokeWidth: 1,
           rotation: 0,
+          visible: true,
+          locked: false,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -105,6 +117,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           strokeColor: '#000000',
           strokeWidth: 2,
           rotation: 0,
+          visible: true,
+          locked: false,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -123,6 +137,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           color: '#000000',
           align: 'left',
           rotation: 0,
+          visible: true,
+          locked: false,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -138,6 +154,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
           height: 100,
           src: '', // URL de l'image à définir
           rotation: 0,
+          visible: true,
+          locked: false,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -186,7 +204,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   // Gestionnaire de clic pour la sélection et création d'éléments
   // Fonction utilitaire pour vérifier si un point est dans la hitbox d'un élément (avec marge pour les lignes)
-  const isPointInElement = (x: number, y: number, element: any): boolean => {
+  const isPointInElement = (x: number, y: number, element: Element): boolean => {
     // Pour les lignes, ajouter une marge RÉDUITE pour faciliter la sélection sans overlap excessif
     // Pour les autres éléments, pas de marge
     let hitboxMargin = 0;
@@ -389,8 +407,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   }, [canvasRef]);
 
   // Fonction utilitaire pour calculer le redimensionnement
-  const calculateResize = (element: any, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
-    const updates: any = {};
+  const calculateResize = (element: Element, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
+    const updates: ElementUpdates = {};
 
     switch (handle) {
       case 'se': // Sud-Est
