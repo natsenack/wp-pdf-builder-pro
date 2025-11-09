@@ -4537,12 +4537,12 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
         });
 
         // Gestion dynamique des champs grille
-        $('#show_grid').on('change', function() {
-            var isChecked = $(this).is(':checked');
-            var $gridSizeInput = $('#grid_size');
-            var $gridColorInput = $('#grid_color');
-            var $gridSizeLabel = $('label[for="grid_size"]');
-            var $gridColorLabel = $('label[for="grid_color"]');
+        jQuery('#show_grid').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var $gridSizeInput = jQuery('#grid_size');
+            var $gridColorInput = jQuery('#grid_color');
+            var $gridSizeLabel = jQuery('label[for="grid_size"]');
+            var $gridColorLabel = jQuery('label[for="grid_color"]');
 
             if (isChecked) {
                 $gridSizeInput.prop('disabled', false).css({'background-color': '', 'color': ''});
@@ -4558,19 +4558,19 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
         });
 
         // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
-        $('#default_canvas_format, #default_canvas_orientation').on('change', function() {
-            var canvasFormat = $('#default_canvas_format').val();
-            var canvasOrientation = $('#default_canvas_orientation').val();
+        jQuery('#default_canvas_format, #default_canvas_orientation').on('change', function() {
+            var canvasFormat = jQuery('#default_canvas_format').val();
+            var canvasOrientation = jQuery('#default_canvas_orientation').val();
 
             // Synchroniser le format PDF avec le format Canvas (seulement si c'est un format standard)
             var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
             if (standardFormats.includes(canvasFormat)) {
-                $('#default_format').val(canvasFormat);
+                jQuery('#default_format').val(canvasFormat);
                 console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
             }
 
             // Synchroniser l'orientation PDF avec l'orientation Canvas
-            $('#default_orientation').val(canvasOrientation);
+            jQuery('#default_orientation').val(canvasOrientation);
             console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
         });
 
