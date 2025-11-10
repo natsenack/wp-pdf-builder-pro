@@ -1141,13 +1141,13 @@ Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
 # Upload les fichiers en parallèle
 Write-Host "📤 Upload des fichiers..." -ForegroundColor Yellow
-Write-Host "   Configuration: 50 uploads simultanés (ultra-optimisé)" -ForegroundColor Gray
+Write-Host "   Configuration: 5 uploads simultanés (optimisé pour la stabilité)" -ForegroundColor Gray
 
 # 🎯 PRIORISER LES FICHIERS MODIFIÉS : Trier par date de modification (les plus récents d'abord)
 Write-Host "🔄 Tri des fichiers par priorité (les modifiés récemment en premier)..." -ForegroundColor Cyan
 $filteredFiles = $filteredFiles | Sort-Object -Property LastWriteTime -Descending
 
-$maxParallelJobs = 50
+$maxParallelJobs = 5
 $runningJobs = @()
 $processedFiles = 0
 $lastProgressUpdate = Get-Date
@@ -1207,37 +1207,51 @@ foreach ($file in $filteredFiles) {
         Start-Sleep -Milliseconds 50
     }
     
-    # Lancer un job pour uploader le fichier
+    # Lancer un job pour uploader le fichier avec retry automatique
     $job = Start-Job -ScriptBlock {
         param($FtpHost, $FtpUser, $FtpPass, $FtpPath, $FilePath, $RelativePath)
         
-        try {
-            $ftpUri = "ftp://$FtpHost$FtpPath/$RelativePath"
-            
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
-            $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $true
-            $ftpRequest.EnableSsl = $false
-            $fileBytes = [System.IO.File]::ReadAllBytes($FilePath)
-            $ftpRequest.ContentLength = $fileBytes.Length
-            $ftpRequest.Timeout = 30000  # 30 secondes timeout
-            
-            $requestStream = $ftpRequest.GetRequestStream()
-            $requestStream.Write($fileBytes, 0, $fileBytes.Length)
-            $requestStream.Close()
-            
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-            
-            return @{Success = $true; RelativePath = $RelativePath; FileSize = $fileBytes.Length}
-        } catch {
-            return @{Success = $false; RelativePath = $RelativePath; Error = $_.Exception.Message}
-        }
+        $maxRetries = 3
+        $retryCount = 0
+        
+        do {
+            try {
+                $ftpUri = "ftp://$FtpHost$FtpPath/$RelativePath"
+                
+                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+                $ftpRequest.UseBinary = $true
+                $ftpRequest.UsePassive = $true
+                $ftpRequest.EnableSsl = $false
+                $fileBytes = [System.IO.File]::ReadAllBytes($FilePath)
+                $ftpRequest.ContentLength = $fileBytes.Length
+                $ftpRequest.Timeout = 30000  # 30 secondes timeout
+                
+                $requestStream = $ftpRequest.GetRequestStream()
+                $requestStream.Write($fileBytes, 0, $fileBytes.Length)
+                $requestStream.Close()
+                
+                $response = $ftpRequest.GetResponse()
+                $response.Close()
+                
+                return @{Success = $true; RelativePath = $RelativePath; FileSize = $fileBytes.Length; Retries = $retryCount}
+            } catch {
+                $retryCount++
+                if ($retryCount -lt $maxRetries) {
+                    # Attendre avant retry (exponentiel backoff)
+                    Start-Sleep -Seconds ($retryCount * 2)
+                    continue
+                }
+                return @{Success = $false; RelativePath = $RelativePath; Error = $_.Exception.Message; Retries = $retryCount}
+            }
+        } while ($retryCount -lt $maxRetries)
     } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $FtpPath, $file.FullName, $relativePath
     
     $runningJobs += $job
+    
+    # Petite pause pour éviter la surcharge du serveur FTP
+    Start-Sleep -Milliseconds 100
 }
 
 # Attendre tous les jobs restants
@@ -1251,9 +1265,13 @@ while ($runningJobs.Count -gt 0) {
                 if ($result.Success) {
                     $successCount++
                     $totalSize += $result.FileSize
+                    if ($result.Retries -gt 0) {
+                        Write-Log "⚠️ Upload réussi après $($result.Retries) tentative(s): $($result.RelativePath)" -Level "WARN" -Color "Yellow"
+                    }
                 } else {
                     $errorCount++
-                    Write-Log "❌ Erreur upload $($result.RelativePath): $($result.Error)" -Level "ERROR" -Color "Red"
+                    $retryInfo = if ($result.Retries) { " (après $($result.Retries) tentatives)" } else { "" }
+                    Write-Log "❌ Erreur upload $($result.RelativePath)$retryInfo`: $($result.Error)" -Level "ERROR" -Color "Red"
                 }
             }
             Remove-Job -Job $job -ErrorAction SilentlyContinue
