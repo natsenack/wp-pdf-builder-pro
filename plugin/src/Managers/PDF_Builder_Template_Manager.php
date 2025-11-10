@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Pro - Template Manager
  * Gestion centralisée des templates
- * Version: 1.0.2 - Forced deployment
+ * Version: 1.0.3 - Fixed data handling for camelCase and JSON
  */
 
 class PdfBuilderTemplateManager
@@ -88,14 +88,58 @@ class PdfBuilderTemplateManager
             }
 
             // Récupération et nettoyage des données
-            $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : '';
-            $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : '';
-            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
+            $json_data = null;
+            if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+                $json_input = file_get_contents('php://input');
+                $json_data = json_decode($json_input, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    \wp_send_json_error('Données JSON invalides dans le corps de la requête: ' . json_last_error_msg());
+                    return;
+                }
+            }
+
+            // Support pour les clés camelCase (frontend) et snake_case (ancien)
+            $template_data = '';
+            $template_name = '';
+            $template_id = 0;
+
+            if ($json_data) {
+                // Données JSON
+                $template_data = isset($json_data['templateData']) ? \wp_json_encode($json_data['templateData']) : 
+                                (isset($json_data['template_data']) ? $json_data['template_data'] : '');
+                $template_name = isset($json_data['templateName']) ? \sanitize_text_field($json_data['templateName']) : 
+                                (isset($json_data['template_name']) ? \sanitize_text_field($json_data['template_name']) : '');
+                $template_id = isset($json_data['templateId']) ? \intval($json_data['templateId']) : 
+                              (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
+            } else {
+                // Données FormData
+                $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : 
+                                (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
+                $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
+                                (isset($_POST['templateName']) ? \sanitize_text_field($_POST['templateName']) : '');
+                $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 
+                              (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
+            }
 
             // Si template_data n'est pas fourni, construire à partir d'elements et canvas séparés
             if (empty($template_data)) {
-                $elements = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '[]';
-                $canvas = isset($_POST['canvas']) ? \wp_unslash($_POST['canvas']) : '{}';
+                $elements = '';
+                $canvas = '';
+
+                if ($json_data) {
+                    // Données JSON
+                    $elements = isset($json_data['elements']) ? \wp_json_encode($json_data['elements']) : 
+                              (isset($json_data['elementsData']) ? \wp_json_encode($json_data['elementsData']) : '[]');
+                    $canvas = isset($json_data['canvas']) ? \wp_json_encode($json_data['canvas']) : 
+                             (isset($json_data['canvasData']) ? \wp_json_encode($json_data['canvasData']) : '{}');
+                } else {
+                    // Données FormData
+                    $elements = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : 
+                               (isset($_POST['elementsData']) ? \wp_unslash($_POST['elementsData']) : '[]');
+                    $canvas = isset($_POST['canvas']) ? \wp_unslash($_POST['canvas']) : 
+                             (isset($_POST['canvasData']) ? \wp_unslash($_POST['canvasData']) : '{}');
+                }
 
                 // Validation du JSON pour elements
                 $elements_data = \json_decode($elements, true);
