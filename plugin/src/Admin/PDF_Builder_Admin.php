@@ -150,6 +150,11 @@ class PdfBuilderAdmin
             $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
         }
 
+        // Initialiser le gestionnaire de templates
+        if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
+            $this->template_manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager($this->core ?? $this);
+        }
+
         $this->initHooks();
     }
 
@@ -245,6 +250,7 @@ class PdfBuilderAdmin
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
+        add_action('wp_ajax_pdf_builder_auto_save_template', [$this->template_manager, 'ajax_auto_save_template']);
 
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
 // Hook pdf_builder_get_template déjà enregistré plus haut
