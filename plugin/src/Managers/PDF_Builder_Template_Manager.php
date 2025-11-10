@@ -70,8 +70,12 @@ class PdfBuilderTemplateManager
     public function ajaxSaveTemplateV3()
     {
         try {
+            // Log pour debug
+            error_log('PDF Builder: ajaxSaveTemplateV3 called');
+
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
+                error_log('PDF Builder: Insufficient permissions');
                 \wp_send_json_error('Permissions insuffisantes');
             }
 
@@ -84,11 +88,15 @@ class PdfBuilderTemplateManager
             }
 
             if (!$nonce_valid) {
+                error_log('PDF Builder: Invalid nonce');
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
 
+            error_log('PDF Builder: Nonce valid, processing data');
+
             // Récupération et nettoyage des données
             // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
+            error_log('PDF Builder: Processing request data');
             $json_data = null;
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
                 $json_input = file_get_contents('php://input');
@@ -247,6 +255,7 @@ class PdfBuilderTemplateManager
             $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
 
             // Réponse de succès
+            error_log('PDF Builder: Template saved successfully, ID: ' . $template_id);
             \wp_send_json_success(
                 array(
                 'message' => 'Template sauvegardé avec succès',
