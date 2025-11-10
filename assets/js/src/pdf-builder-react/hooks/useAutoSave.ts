@@ -20,7 +20,7 @@ export interface UseAutoSaveReturn {
 }
 
 export function useAutoSave(): UseAutoSaveReturn {
-  const { state } = useBuilder();
+  const { state, dispatch } = useBuilder();
 
   // Récupérer le nonce
   const nonce =
@@ -63,6 +63,8 @@ export function useAutoSave(): UseAutoSaveReturn {
     },
     onSaveSuccess: (savedAt: string) => {
       debugLog(`[AUTO SAVE] Succès le ${savedAt}`);
+      // ✅ Mettre à jour l'état pour indiquer que le template n'est plus modifié
+      dispatch({ type: 'SET_TEMPLATE_MODIFIED', payload: false });
     },
     onSaveError: (error: string) => {
       debugError(`[AUTO SAVE] Erreur: ${error}`);

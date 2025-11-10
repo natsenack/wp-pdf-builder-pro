@@ -1212,7 +1212,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
-    console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
+    if (logoUrl) console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
 
     // ✅ CORRECTION 7: Détecter si l'URL a changé
     const lastRenderedUrl = renderedLogoUrlsRef.current.get(element.id);
