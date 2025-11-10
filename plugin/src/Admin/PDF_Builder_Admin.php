@@ -973,12 +973,12 @@ class PdfBuilderAdmin
     public function react_editor_page()
     {
         $this->checkAdminPermissions();
-        
+
         // Charger le core si nécessaire
         if (!function_exists('pdf_builder_load_core')) {
             require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'bootstrap.php';
         }
-        
+
         pdf_builder_load_core();
         $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
         $core->render_react_editor_page();
@@ -1091,6 +1091,135 @@ class PdfBuilderAdmin
 
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
+
+        // CHARGEMENT DES SCRIPTS REACT POUR L'ÉDITEUR REACT
+        if ($hook === 'pdf-builder-pro_page_pdf-builder-react-editor') {
+            $this->enqueueReactEditorScripts();
+        }
+    }
+
+    /**
+     * Charge les scripts spécifiques à l'éditeur React
+     */
+    private function enqueueReactEditorScripts()
+    {
+        // Récupérer l'ID du template depuis l'URL
+        $template_id = isset($_GET['template_id']) ? absint($_GET['template_id']) : 0;
+        $template_type = 'custom';
+
+        // Validate template type
+        $valid_types = ['custom', 'predefined', 'system'];
+        if (!in_array($template_type, $valid_types)) {
+            $template_type = 'custom';
+        }
+
+        // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
+        wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
+        wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
+
+        // Declare global variable BEFORE loading bundle
+        $inline_script = "window.pdfBuilderReact = {};";
+        wp_add_inline_script('react-dom', $inline_script);
+
+        // Enqueue PDF Builder React scripts from local build
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], '1.0.0', true);
+
+        // Charger les scripts de l'API Preview pour l'éditeur React
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
+        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
+        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
+
+        // Localize pdfBuilderAjax for API Preview scripts
+        wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+            'version' => PDF_BUILDER_PRO_VERSION,
+            'timestamp' => time(),
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+            ]
+        ]);
+
+        // Localize script with data
+        $localize_data = [
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'templateId' => $template_id,
+            'strings' => [
+                'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
+                'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
+            ]
+        ];
+
+        // Load existing template data if template_id is provided
+        if ($template_id > 0) {
+            $existing_template_data = $this->loadTemplateRobust($template_id);
+            if ($existing_template_data && isset($existing_template_data['elements'])) {
+                // Transformer les éléments dans le format React
+                $existing_template_data['elements'] = $this->transformElementsForReact($existing_template_data['elements']);
+                $localize_data['existingTemplate'] = $existing_template_data;
+                $localize_data['hasExistingData'] = true;
+            }
+        }
+
+        wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
+
+        // Définir les paramètres canvas pour l'éditeur React
+        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+        $canvas_settings_script = "
+        window.pdfBuilderCanvasSettings = " . wp_json_encode([
+            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+            'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
+            'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
+            'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
+            'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
+            'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
+            'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
+            'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
+            'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
+            'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
+            'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
+            'show_margins' => $canvas_settings_js['show_margins'] ?? false,
+            'show_grid' => $canvas_settings_js['show_grid'] ?? false,
+            'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
+            'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
+            'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? false,
+            'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? false,
+            'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
+            'show_guides' => $canvas_settings_js['show_guides'] ?? false,
+            'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
+            'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
+            'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
+            'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
+            'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? false,
+            'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? false,
+            'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? false,
+            'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
+            'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
+            'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? false,
+            'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
+            'multi_select' => $canvas_settings_js['multi_select'] ?? false,
+            'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
+            'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
+            'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
+            'compress_images' => $canvas_settings_js['compress_images'] ?? true,
+            'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
+            'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
+            'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
+            'pdf_author' => $canvas_settings_js['pdf_author'] ?? 'PDF Builder Pro',
+            'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
+            'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
+            'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
+            'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
+        ]) . ";
+        ";
+        wp_add_inline_script('react-dom', $canvas_settings_script);
     }
 
     /**
