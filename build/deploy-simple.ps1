@@ -57,16 +57,20 @@ try {
     
     # Recuperer les fichiers modifies depuis git (les warnings git ne doivent pas causer d'erreur)
     $ErrorActionPreference = "Continue"
-    $modifiedFiles = & git diff --name-only HEAD 2>&1
-    $stagedFiles = & git diff --cached --name-only HEAD 2>&1
-    $lastCommitFiles = & git diff --name-only HEAD~1 HEAD 2>&1
+    $statusOutput = & git status --porcelain 2>&1
     $ErrorActionPreference = "Stop"
     
-    # Filtrer pour enlever les warnings
-    $allModified = @($modifiedFiles) + @($stagedFiles) + @($lastCommitFiles) | Where-Object { $_ -and $_ -notlike "*warning*" } | Sort-Object -Unique
+    # Parser la sortie de git status pour extraire les fichiers modifiés
+    $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" } | ForEach-Object {
+        # Format de git status --porcelain: "XY fichier" où X=status index, Y=status working tree
+        if ($_ -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
+            $file = $matches[2]
+            $file
+        }
+    } | Sort-Object -Unique
     
-    # Filtrer pour le dossier plugin uniquement
-    $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" }
+    # Filtrer pour le dossier plugin uniquement, mais inclure aussi les fichiers de build
+    $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" -or $_ -like "build/*" }
     
     # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
     $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
