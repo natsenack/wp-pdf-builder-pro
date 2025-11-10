@@ -237,8 +237,8 @@ function pdf_builder_load_core()
     }
 
     // Charger la classe d'administration depuis src/ APRÈS les managers
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PdfBuilderAdmin.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PdfBuilderAdmin.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
     // Charger le handler AJAX pour les paramètres Canvas
