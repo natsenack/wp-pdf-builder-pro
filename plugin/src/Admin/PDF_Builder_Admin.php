@@ -5881,9 +5881,12 @@ class PdfBuilderAdmin
      */
     public function ajax_get_template()
     {
+        error_log('PDF Builder: ajax_get_template called');
+
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
+                error_log('PDF Builder: ajax_get_template - permissions denied');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
@@ -5891,21 +5894,28 @@ class PdfBuilderAdmin
             // Vérifier le nonce
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : '';
             if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+                error_log('PDF Builder: ajax_get_template - invalid nonce: ' . $nonce);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
             // Récupérer l'ID du template
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+            error_log('PDF Builder: ajax_get_template - template_id: ' . $template_id);
+
             if (!$template_id) {
+                error_log('PDF Builder: ajax_get_template - template_id missing or invalid');
                 wp_send_json_error('ID template manquant ou invalide');
                 return;
             }
 
             // Charger le template
             $template_data = $this->loadTemplateRobust($template_id);
+            error_log('PDF Builder: ajax_get_template - template loaded: ' . ($template_data ? 'success' : 'null'));
+
             if (!$template_data) {
                 // Si le template n'existe pas, créer un template par défaut
+                error_log('PDF Builder: ajax_get_template - creating default template');
                 $template_data = $this->createDefaultTemplate($template_id);
             }
 
@@ -5914,9 +5924,11 @@ class PdfBuilderAdmin
                 $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
+            error_log('PDF Builder: ajax_get_template - sending success response');
             wp_send_json_success($template_data);
 
         } catch (Exception $e) {
+            error_log('PDF Builder: ajax_get_template - exception: ' . $e->getMessage());
             wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
     }
