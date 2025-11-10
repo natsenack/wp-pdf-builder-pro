@@ -9,7 +9,7 @@ namespace WP_PDF_Builder_Pro\Canvas;
  * @package WP_PDF_Builder_Pro
  * @since 1.1.0
  */
-class CanvasManager
+class Canvas_Manager
 {
     /** @var Canvas_Manager Instance unique */
     private static $instance = null;
