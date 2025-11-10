@@ -1244,12 +1244,17 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveTemplateV3()
     {
-        $manager = $this->getTemplateManager();
-        if ($manager) {
-            $manager->ajaxSaveTemplateV3();
-        } else {
-            error_log('PDF Builder Admin: Template manager not available');
-            wp_send_json_error('Erreur: Gestionnaire de templates non disponible');
+        try {
+            $manager = $this->getTemplateManager();
+            if ($manager) {
+                $manager->ajaxSaveTemplateV3();
+            } else {
+                error_log('PDF Builder Admin: Template manager not available');
+                wp_send_json_error('Erreur: Gestionnaire de templates non disponible');
+            }
+        } catch (\Throwable $e) {
+            error_log('PDF Builder Admin: Critical error in ajaxSaveTemplateV3 wrapper: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            wp_send_json_error('Erreur critique dans le gestionnaire d\'administration: ' . $e->getMessage());
         }
     }
 

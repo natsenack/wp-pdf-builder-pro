@@ -77,6 +77,7 @@ class PdfBuilderTemplateManager
             if (!\current_user_can('manage_options')) {
                 error_log('PDF Builder: Insufficient permissions');
                 \wp_send_json_error('Permissions insuffisantes');
+                return;
             }
 
             // Vérification du nonce
@@ -90,6 +91,7 @@ class PdfBuilderTemplateManager
             if (!$nonce_valid) {
                 error_log('PDF Builder: Invalid nonce');
                 \wp_send_json_error('Sécurité: Nonce invalide');
+                return;
             }
 
             error_log('PDF Builder: Nonce valid, processing data');
@@ -331,7 +333,9 @@ class PdfBuilderTemplateManager
                 'element_count' => $element_count
                 )
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log('PDF Builder: Critical error in ajaxSaveTemplateV3: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            error_log('PDF Builder: Stack trace: ' . $e->getTraceAsString());
             \wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
         }
     }

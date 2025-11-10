@@ -1415,6 +1415,49 @@ function pdf_builder_register_fallback_hooks()
     // Actions AJAX fallback
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
+    
+    // Fallback pour la sauvegarde de template si la classe admin n'est pas disponible
+    if (!function_exists('pdf_builder_ajax_save_template_fallback')) {
+        function pdf_builder_ajax_save_template_fallback() {
+            try {
+                error_log('PDF Builder: Using fallback save handler');
+                
+                // Vérifier les permissions
+                if (!current_user_can('manage_options')) {
+                    wp_send_json_error('Permissions insuffisantes');
+                    return;
+                }
+
+                // Vérifier le nonce
+                $nonce_valid = false;
+                if (isset($_POST['nonce'])) {
+                    $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
+                                  wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
+                                  wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+                }
+
+                if (!$nonce_valid) {
+                    wp_send_json_error('Sécurité: Nonce invalide');
+                    return;
+                }
+
+                // Charger le Template Manager directement
+                if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
+                    $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
+                    $manager->ajaxSaveTemplateV3();
+                } else {
+                    wp_send_json_error('Gestionnaire de templates non disponible');
+                }
+            } catch (\Throwable $e) {
+                error_log('PDF Builder: Fallback save handler error: ' . $e->getMessage());
+                wp_send_json_error('Erreur critique: ' . $e->getMessage());
+            }
+        }
+        
+        add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
+        add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
+    }
+    
 // Hooks pour save_template supprimés - gérés par PDF_Builder_Admin.php
 // Hooks pour get_template supprimés - gérés par PDF_Builder_Admin.php
 }
