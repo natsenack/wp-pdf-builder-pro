@@ -5923,10 +5923,15 @@ class PdfBuilderAdmin
                 $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
-            wp_send_json_success([
+            error_log('PDF Builder: ajax_get_template - final template_data: ' . json_encode($template_data));
+
+            $response = [
                 'template' => $template_data,
                 'message' => 'Template chargé avec succès'
-            ]);
+            ];
+            error_log('PDF Builder: ajax_get_template - response: ' . json_encode($response));
+
+            wp_send_json_success($response);
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
