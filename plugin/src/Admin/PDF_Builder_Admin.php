@@ -975,11 +975,11 @@ class PdfBuilderAdmin
         $this->checkAdminPermissions();
         
         // Charger le core si nécessaire
-        if (!function_exists('pdf_builder_load_core_when_needed')) {
+        if (!function_exists('pdf_builder_load_core')) {
             require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'bootstrap.php';
         }
         
-        pdf_builder_load_core_when_needed();
+        pdf_builder_load_core();
         $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
         $core->render_react_editor_page();
     }
