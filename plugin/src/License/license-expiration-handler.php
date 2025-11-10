@@ -7,7 +7,7 @@
 
 namespace PDFBuilderPro\License;
 
-class LicenseExpirationHandler
+class License_Expiration_Handler
 {
     /**
      * Initialize the expiration handler
@@ -147,5 +147,13 @@ class LicenseExpirationHandler
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'pdf_builder_checkLicenseExpiration');
         }
+    }
+
+    /**
+     * Alias for clearScheduledExpirationCheck (backward compatibility)
+     */
+    public static function clear_scheduled_expiration_check()
+    {
+        self::clearScheduledExpirationCheck();
     }
 }
