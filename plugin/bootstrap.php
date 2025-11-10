@@ -1442,7 +1442,14 @@ function pdf_builder_register_fallback_hooks()
                 // Charger le Template Manager directement
                 if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
                     $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
-                    $manager->ajaxSaveTemplateV3();
+                    
+                    // Appeler la bonne méthode selon l'action
+                    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+                    if ($action === 'pdf_builder_auto_save_template') {
+                        $manager->ajax_auto_save_template();
+                    } else {
+                        $manager->ajaxSaveTemplateV3();
+                    }
                 } else {
                     error_log('PDF Builder: Fallback - TemplateManager class not found');
                     wp_send_json_error('Gestionnaire de templates non disponible');
@@ -1455,6 +1462,7 @@ function pdf_builder_register_fallback_hooks()
         
         add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
+        add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_ajax_save_template_fallback');
     }
     
 // Hooks pour save_template supprimés - gérés par PDF_Builder_Admin.php
