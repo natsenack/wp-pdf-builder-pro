@@ -179,6 +179,14 @@ class PdfBuilderCore
     }
 
     /**
+     * Alias pour initializeDirectories() - compatibilité
+     */
+    public function initialize_directories()
+    {
+        return $this->initializeDirectories();
+    }
+
+    /**
      * Enregistrer le menu admin - DÉSACTIVÉ COMPLÈTEMENT
      * Cette classe PDF_Builder_Core est remplacée par PdfBuilderAdmin
      * qui fournit un éditeur unifié avec support des types de templates
