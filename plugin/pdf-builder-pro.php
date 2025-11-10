@@ -133,6 +133,12 @@ function pdf_builder_init()
         return;
     }
 
+    // Charger l'autoloader Composer
+    $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    if (file_exists($autoload_path)) {
+        require_once $autoload_path;
+    }
+
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
 

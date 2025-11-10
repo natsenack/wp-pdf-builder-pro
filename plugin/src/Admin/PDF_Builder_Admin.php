@@ -1247,6 +1247,9 @@ class PdfBuilderAdmin
         $manager = $this->getTemplateManager();
         if ($manager) {
             $manager->ajaxSaveTemplateV3();
+        } else {
+            error_log('PDF Builder Admin: Template manager not available');
+            wp_send_json_error('Erreur: Gestionnaire de templates non disponible');
         }
     }
 
@@ -4454,6 +4457,8 @@ class PdfBuilderAdmin
                 }
             }
         }
+
+        return $this->template_manager;
 
 
         return $this->template_manager;
