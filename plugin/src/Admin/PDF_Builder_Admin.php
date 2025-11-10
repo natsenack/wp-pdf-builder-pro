@@ -4434,8 +4434,8 @@ class PdfBuilderAdmin
 
         if ($this->template_manager === null) {
             // Vérifier si la classe existe dans le bon namespace
-            if (class_exists('PDF_Builder_Template_Manager')) {
-                $this->template_manager = new PDF_Builder_Template_Manager($this->core ?? $this);
+            if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
+                $this->template_manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager($this->core ?? $this);
             } else {
                 // Classe non chargée, essayer de la charger manuellement
                 $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
@@ -4445,9 +4445,10 @@ class PdfBuilderAdmin
                 if (file_exists($template_manager_file)) {
                     require_once $template_manager_file;
 
-                    if (class_exists('PDF_Builder_Template_Manager')) {
-                        $this->template_manager = new PDF_Builder_Template_Manager($this->core ?? $this);
+                    if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
+                        $this->template_manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager($this->core ?? $this);
                     } else {
+
                     }
                 } else {
                 }
