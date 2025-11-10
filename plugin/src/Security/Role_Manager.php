@@ -139,6 +139,14 @@ class Role_Manager
     }
 
     /**
+     * Alias pour checkAndBlockAccess() - compatibilité
+     */
+    public static function check_and_block_access()
+    {
+        return self::checkAndBlockAccess();
+    }
+
+    /**
      * Retourne la capacité à utiliser pour les menus/pages
      *
      * @return string La capacité WordPress appropriée
