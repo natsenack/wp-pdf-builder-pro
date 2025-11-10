@@ -1,10 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugLog, debugError } from '../utils/debug';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
+  const { canvasWidth, canvasHeight } = useCanvasSettings();
 
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = (): string | null => {
@@ -229,14 +231,17 @@ export function useTemplate() {
       formData.append('template_id', templateId || '0');
       formData.append('template_name', state.template.name || 'Template sans nom');
       formData.append('elements', JSON.stringify(state.elements));
-      formData.append('canvas', JSON.stringify(state.canvas));
+      formData.append('canvas', JSON.stringify({
+        width: canvasWidth,
+        height: canvasHeight
+      }));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
       console.log('💾 [SAVE TEMPLATE] Envoi des données:', {
         templateId,
         templateName: state.template.name,
         elementsCount: state.elements.length,
-        canvasData: state.canvas,
+        canvasData: { width: canvasWidth, height: canvasHeight },
         firstElement: state.elements[0]
       });
 
@@ -270,7 +275,7 @@ export function useTemplate() {
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
-  }, [state.elements, state.canvas, state.template.name, dispatch]);
+  }, [state.elements, state.template.name, dispatch, canvasWidth, canvasHeight]);
 
   const previewTemplate = useCallback(() => {
     dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });

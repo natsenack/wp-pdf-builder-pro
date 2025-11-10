@@ -101,7 +101,7 @@ if ($Mode -eq "test") {
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $ftpRequest.UseBinary = $false
         $ftpRequest.UsePassive = $false
-        $ftpRequest.Timeout = 5000
+        $ftpRequest.Timeout = 8000  # 8 secondes pour le test
         $response = $ftpRequest.GetResponse()
         $response.Close()
         Write-Host "   Connexion FTP OK" -ForegroundColor Green
@@ -135,7 +135,8 @@ if ($Mode -eq "test") {
                     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
                     $ftpRequest.UseBinary = $true
                     $ftpRequest.UsePassive = $false
-                    $ftpRequest.Timeout = 10000
+                    $ftpRequest.Timeout = 8000  # 8 secondes pour la création de répertoires
+                    $ftpRequest.ReadWriteTimeout = 15000
                     $response = $ftpRequest.GetResponse()
                     $response.Close()
                 } catch {
@@ -145,6 +146,9 @@ if ($Mode -eq "test") {
         }
     }
 
+    # Creer repertoires sur FTP de maniere optimisee
+    Write-Host "   Creation des repertoires..." -ForegroundColor Yellow
+    $createdDirs = 0
     foreach ($dir in $dirs.Keys) {
         # Corriger le calcul du chemin FTP - enlever seulement le prefixe "plugin/" si present
         if ($dir.StartsWith("plugin/")) {
@@ -158,10 +162,16 @@ if ($Mode -eq "test") {
         $fullPath = "$FtpPath/$ftpDir".TrimEnd('/')
         if ($fullPath -ne $FtpPath) {
             New-FtpDirectory $fullPath
+            $createdDirs++
         }
     }
+    Write-Host "   Repertoires crees: $createdDirs" -ForegroundColor Green
 
-    # Upload fichiers avec status
+    # Upload fichiers avec status - VERSION OPTIMISEE AVEC PARALLELISME
+    Write-Host "   Upload des fichiers ($($pluginModified.Count) fichiers)..." -ForegroundColor Yellow
+    $maxConcurrentUploads = 3  # Limiter à 3 uploads simultanés pour éviter la surcharge
+    $uploadJobs = @()
+
     foreach ($file in $pluginModified) {
         $localFile = Join-Path $WorkingDir $file
 
@@ -180,31 +190,71 @@ if ($Mode -eq "test") {
         }
         $remotePath = $remotePath.Replace("\", "/")
 
-        try {
-            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$FtpPath/$remotePath"
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 20000
-            $ftpRequest.ReadWriteTimeout = 30000
-
-            $fileContent = [System.IO.File]::ReadAllBytes($localFile)
-            $ftpRequest.ContentLength = $fileContent.Length
-
-            $stream = $ftpRequest.GetRequestStream()
-            $stream.Write($fileContent, 0, $fileContent.Length)
-            $stream.Close()
-
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-
-            $uploadCount++
-            Write-Host "   OK: $file" -ForegroundColor Green
-        } catch {
-            $errorCount++
-            Write-Host "   ERREUR: $file - $($_.Exception.Message)" -ForegroundColor Red
+        # Attendre si on a atteint la limite de jobs simultanés
+        while ($uploadJobs.Count -ge $maxConcurrentUploads) {
+            $completedJobs = $uploadJobs | Where-Object { $_.IsCompleted }
+            $uploadJobs = $uploadJobs | Where-Object { -not $_.IsCompleted }
+            Start-Sleep -Milliseconds 100
         }
+
+        # Lancer l'upload en arrière-plan
+        $job = Start-Job -ScriptBlock {
+            param($ftpHost, $ftpUser, $ftpPass, $ftpPath, $remotePath, $localFile)
+
+            try {
+                $ftpUri = "ftp://$ftpUser`:$ftpPass@$ftpHost$ftpPath/$remotePath"
+                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                $ftpRequest.UseBinary = $true
+                $ftpRequest.UsePassive = $false
+                $ftpRequest.Timeout = 15000  # 15 secondes pour l'upload
+                $ftpRequest.ReadWriteTimeout = 30000  # 30 secondes pour les gros fichiers
+
+                $fileContent = [System.IO.File]::ReadAllBytes($localFile)
+                $ftpRequest.ContentLength = $fileContent.Length
+
+                $stream = $ftpRequest.GetRequestStream()
+                $stream.Write($fileContent, 0, $fileContent.Length)
+                $stream.Close()
+
+                $response = $ftpRequest.GetResponse()
+                $response.Close()
+
+                return @{ Success = $true; File = $remotePath }
+            } catch {
+                return @{ Success = $false; File = $remotePath; Error = $_.Exception.Message }
+            }
+        } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $FtpPath, $remotePath, $localFile
+
+        $uploadJobs += $job
+    }
+
+    # Attendre que tous les jobs se terminent et afficher les résultats
+    $completedCount = 0
+    while ($uploadJobs.Count -gt 0) {
+        $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
+
+        foreach ($job in $completedJobs) {
+            $result = Receive-Job $job
+            if ($result.Success) {
+                $uploadCount++
+                Write-Host "   OK: $($result.File)" -ForegroundColor Green
+            } else {
+                $errorCount++
+                Write-Host "   ERREUR: $($result.File) - $($result.Error)" -ForegroundColor Red
+            }
+            Remove-Job $job
+            $completedCount++
+        }
+
+        $uploadJobs = $uploadJobs | Where-Object { $_.State -ne 'Completed' }
+
+        # Afficher la progression toutes les 2 secondes
+        if ($completedCount % 2 -eq 0 -and $completedCount -gt 0) {
+            Write-Host "   Progression: $completedCount / $($pluginModified.Count) fichiers traites..." -ForegroundColor Yellow
+        }
+
+        Start-Sleep -Milliseconds 500
     }
 }
 
