@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Pro - Template Manager
  * Gestion centralisée des templates
- * Version: 1.0.1 - Fixed method calls
+ * Version: 1.0.2 - Forced deployment
  */
 
 class PdfBuilderTemplateManager
