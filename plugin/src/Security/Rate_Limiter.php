@@ -7,7 +7,7 @@
 
 namespace WP_PDF_Builder_Pro\Security;
 
-class RateLimiter
+class Rate_Limiter
 {
     const LIMIT_PER_MINUTE = 100;
     const TRANSIENT_PREFIX = 'pdf_builder_rate_limit_';
