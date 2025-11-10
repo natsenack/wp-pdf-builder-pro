@@ -244,6 +244,7 @@ class PdfBuilderAdmin
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
 
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
         add_action('wp_ajax_pdf_builder_auto_save_template', function () {
@@ -342,6 +343,7 @@ class PdfBuilderAdmin
         });
 
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
+        add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
 
         // Hooks WooCommerce - Délégation vers le manager
@@ -5872,6 +5874,51 @@ class PdfBuilderAdmin
         }
         </style>
         <?php
+    }
+
+    /**
+     * AJAX handler for getting template data (used by React editor)
+     */
+    public function ajax_get_template()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce
+            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : '';
+            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Récupérer l'ID du template
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+            if (!$template_id) {
+                wp_send_json_error('ID template manquant ou invalide');
+                return;
+            }
+
+            // Charger le template
+            $template_data = $this->loadTemplateRobust($template_id);
+            if (!$template_data) {
+                wp_send_json_error('Template non trouvé');
+                return;
+            }
+
+            // Transformer les éléments pour React si nécessaire
+            if (isset($template_data['elements'])) {
+                $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
+            }
+
+            wp_send_json_success($template_data);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+        }
     }
 }
 

@@ -6,10 +6,24 @@ import { debugLog, debugError } from '../utils/debug';
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
 
-  // Détecter si on est sur un template existant via l'URL
+  // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = (): string | null => {
+    // Priorité 1: Utiliser le templateId des données PHP localisées
+    if (window.pdfBuilderData?.templateId) {
+      debugLog('🔍 [useTemplate] Template ID from localized data:', window.pdfBuilderData.templateId);
+      return window.pdfBuilderData.templateId.toString();
+    }
+    
+    // Priorité 2: Utiliser le paramètre URL (pour compatibilité)
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('template_id');
+    const urlTemplateId = urlParams.get('template_id');
+    if (urlTemplateId) {
+      debugLog('🔍 [useTemplate] Template ID from URL:', urlTemplateId);
+      return urlTemplateId;
+    }
+    
+    debugLog('⚠️ [useTemplate] No template ID found (neither localized data nor URL param)');
+    return null;
   };
 
   const isEditingExistingTemplate = (): boolean => {
