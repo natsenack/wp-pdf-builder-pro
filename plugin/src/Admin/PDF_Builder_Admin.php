@@ -1069,6 +1069,14 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Alias pour enqueueAdminScripts() - compatibilité
+     */
+    public function enqueue_admin_scripts($hook)
+    {
+        return $this->enqueueAdminScripts($hook);
+    }
+
+    /**
      * AJAX - Génère un PDF depuis le canvas
      */
     public function ajaxGeneratePdfFromCanvas()
