@@ -157,6 +157,16 @@ function pdf_builder_init()
         }
     }
 
+    // Hook AJAX pour test
+    add_action('wp_ajax_pdf_builder_auto_save_template', function () {
+        wp_send_json_success(array(
+            'message' => 'Hook AJAX fonctionne depuis pdf-builder-pro.php',
+            'template_id' => isset($_POST['template_id']) ? intval($_POST['template_id']) : 0,
+            'saved_at' => current_time('mysql'),
+            'element_count' => 0
+        ));
+    });
+
     // Tools for development/tests removed from production bootstrap
 
     // Charger le moniteur de performance
