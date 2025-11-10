@@ -381,118 +381,17 @@ class PdfBuilderTemplateManager
     public function ajax_auto_save_template()
     {
         try {
-            // Log pour debug
-            error_log('PDF Builder: ajax_auto_save_template called');
-
-            // Vérification des permissions
-            if (!\current_user_can('manage_options')) {
-                error_log('PDF Builder: Auto-save - Insufficient permissions');
-                \wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérification du nonce
-            $nonce_valid = false;
-            if (isset($_POST['nonce'])) {
-                $nonce_valid = \wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
-                              \wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
-                              \wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
-            }
-
-            if (!$nonce_valid) {
-                error_log('PDF Builder: Auto-save - Invalid nonce: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'none'));
-                \wp_send_json_error('Sécurité: Nonce invalide');
-                return;
-            }
-
-            // Récupération des données
-            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
-            $elements_json = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '';
-
-            if (empty($template_id)) {
-                error_log('PDF Builder: Auto-save - Invalid template ID');
-                \wp_send_json_error('ID template invalide');
-                return;
-            }
-
-            if (empty($elements_json)) {
-                error_log('PDF Builder: Auto-save - No elements data');
-                \wp_send_json_error('Données éléments manquantes');
-                return;
-            }
-
-            // Décoder et valider les éléments
-            $elements = \json_decode($elements_json, true);
-            if (\json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder: Auto-save - Invalid JSON: ' . \json_last_error_msg());
-                \wp_send_json_error('Données JSON invalides');
-                return;
-            }
-
-            // Validation basique des éléments
-            if (!\is_array($elements)) {
-                error_log('PDF Builder: Auto-save - Elements not an array');
-                \wp_send_json_error('Format éléments invalide');
-                return;
-            }
-
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-            // Vérifier que le template existe
-            $existing_template = $wpdb->get_row(
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
-            );
-
-            if (!$existing_template) {
-                error_log('PDF Builder: Auto-save - Template not found: ' . $template_id);
-                \wp_send_json_error('Template introuvable');
-                return;
-            }
-
-            // Préparer les données du template
-            $template_data = array(
-                'elements' => $elements,
-                'canvas' => array(
-                    'width' => 794,  // A4 width
-                    'height' => 1123 // A4 height
-                ),
-                'updated_at' => \current_time('mysql')
-            );
-
-            // Sauvegarder dans la table personnalisée
-            $result = $wpdb->update(
-                $table_templates,
-                array(
-                    'template_data' => \wp_json_encode($template_data),
-                    'updated_at' => \current_time('mysql')
-                ),
-                array('id' => $template_id),
-                array('%s', '%s'),
-                array('%d')
-            );
-
-            if ($result === false) {
-                error_log('PDF Builder: Auto-save - Database update failed: ' . $wpdb->last_error);
-                \wp_send_json_error('Erreur de sauvegarde en base de données');
-                return;
-            }
-
-            // Réponse de succès
-            $saved_at = \current_time('mysql');
-            error_log('PDF Builder: Auto-save successful for template ID: ' . $template_id);
+            // Test simple pour vérifier que le hook fonctionne
+            error_log('PDF Builder: ajax_auto_save_template called - test');
             \wp_send_json_success(array(
-                'message' => 'Template auto-sauvegardé',
-                'template_id' => $template_id,
-                'saved_at' => $saved_at,
-                'element_count' => \count($elements)
+                'message' => 'Auto-save test réussi',
+                'template_id' => isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0,
+                'saved_at' => \current_time('mysql'),
+                'element_count' => 0
             ));
-
         } catch (\Throwable $e) {
-            error_log('PDF Builder: Critical error in ajax_auto_save_template: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            error_log('PDF Builder: Stack trace: ' . $e->getTraceAsString());
-            \wp_send_json_error('Erreur critique lors de l\'auto-sauvegarde: ' . $e->getMessage());
+            error_log('PDF Builder: Critical error in ajax_auto_save_template: ' . $e->getMessage());
+            \wp_send_json_error('Erreur critique: ' . $e->getMessage());
         }
     }
 
