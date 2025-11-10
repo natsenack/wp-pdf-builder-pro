@@ -6002,17 +6002,36 @@ class PdfBuilderAdmin
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-            $wpdb->insert(
-                $table_templates,
-                [
-                    'id' => $template_id,
-                    'name' => $default_template['name'],
-                    'template_data' => wp_json_encode($default_template),
-                    'created_at' => current_time('mysql'),
-                    'updated_at' => current_time('mysql')
-                ],
-                ['%d', '%s', '%s', '%s', '%s']
-            );
+            // Vérifier si le template existe déjà
+            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
+
+            if ($existing) {
+                // Mettre à jour le template existant
+                $wpdb->update(
+                    $table_templates,
+                    [
+                        'name' => $default_template['name'],
+                        'template_data' => wp_json_encode($default_template),
+                        'updated_at' => current_time('mysql')
+                    ],
+                    ['id' => $template_id],
+                    ['%s', '%s', '%s'],
+                    ['%d']
+                );
+            } else {
+                // Insérer un nouveau template
+                $wpdb->insert(
+                    $table_templates,
+                    [
+                        'id' => $template_id,
+                        'name' => $default_template['name'],
+                        'template_data' => wp_json_encode($default_template),
+                        'created_at' => current_time('mysql'),
+                        'updated_at' => current_time('mysql')
+                    ],
+                    ['%d', '%s', '%s', '%s', '%s']
+                );
+            }
         } catch (Exception $e) {
             // Si la sauvegarde échoue, retourner quand même le template par défaut
             error_log('Erreur lors de la création du template par défaut: ' . $e->getMessage());
