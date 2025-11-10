@@ -1404,8 +1404,7 @@ function pdf_builder_register_fallback_hooks()
     // Actions AJAX fallback
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
-    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
-    add_action('wp_ajax_nopriv_pdf_builder_save_template', 'pdf_builder_ajax_save_template');
+// Hooks pour save_template supprimés - gérés par PDF_Builder_Admin.php
 // Hooks pour get_template supprimés - gérés par PDF_Builder_Admin.php
 }
 
