@@ -101,7 +101,7 @@ if ($Mode -eq "test") {
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $ftpRequest.UseBinary = $false
         $ftpRequest.UsePassive = $false
-        $ftpRequest.Timeout = 10000
+        $ftpRequest.Timeout = 5000
         $response = $ftpRequest.GetResponse()
         $response.Close()
         Write-Host "   Connexion FTP OK" -ForegroundColor Green
@@ -135,7 +135,7 @@ if ($Mode -eq "test") {
                     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
                     $ftpRequest.UseBinary = $true
                     $ftpRequest.UsePassive = $false
-                    $ftpRequest.Timeout = 15000
+                    $ftpRequest.Timeout = 10000
                     $response = $ftpRequest.GetResponse()
                     $response.Close()
                 } catch {
@@ -186,7 +186,7 @@ if ($Mode -eq "test") {
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
             $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 30000
+            $ftpRequest.Timeout = 20000
             $ftpRequest.ReadWriteTimeout = 30000
 
             $fileContent = [System.IO.File]::ReadAllBytes($localFile)

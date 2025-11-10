@@ -242,8 +242,8 @@ class PdfBuilderAdmin
 
         // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
-        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplate']);
-        add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajaxSaveTemplate']);
+        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
 
         // Auto-save handler AJAX - implémentation complète inline pour éviter les problèmes
@@ -1242,7 +1242,7 @@ class PdfBuilderAdmin
     /**
      * AJAX - Sauvegarder le template
      */
-    public function ajaxSaveTemplate()
+    public function ajaxSaveTemplateV3()
     {
         $manager = $this->getTemplateManager();
         if ($manager) {
