@@ -462,20 +462,26 @@ function pdf_builder_load_bootstrap()
 
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Core')) {
+        error_log('PDF Builder: PDF_Builder_Core class exists');
         $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
         if (method_exists($core, 'init')) {
             $core->init();
+            error_log('PDF Builder: Core initialized');
         }
 
         // Initialiser l'interface d'administration
+        error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false'));
         if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+            error_log('PDF Builder: PdfBuilderAdmin class exists, creating instance');
             $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
             error_log('PDF Builder: Admin class loaded successfully');
         } else {
             // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
-            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
             error_log('PDF Builder: Using fallback admin menu - class not found or not in admin');
+            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
         }
+    } else {
+        error_log('PDF Builder: PDF_Builder_Core class does not exist');
     }
 
     // Marquer comme chargé globalement

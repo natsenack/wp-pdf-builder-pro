@@ -7,6 +7,8 @@
 
 namespace PDF_Builder\Admin;
 
+error_log('PDF Builder: PDF_Builder_Admin.php file loaded');
+
 // Importer les types/classes
 use Exception;
 use Error;
