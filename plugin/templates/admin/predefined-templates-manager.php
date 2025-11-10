@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * Predefined Templates Manager - PDF Builder Pro
  * Gestion des modèles prédéfinis pour la galerie
  */
-class PdfBuilderPredefinedTemplatesManager
+class PDF_Builder_Predefined_Templates_Manager
 {
     private $templates_dir;
     public function __construct()
