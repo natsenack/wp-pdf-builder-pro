@@ -261,7 +261,7 @@ class PdfBuilderAdmin
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this->template_manager, 'ajax_auto_save_template']);
 
-        add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
+        add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
 // Hook pdf_builder_get_template déjà enregistré plus haut
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
 
