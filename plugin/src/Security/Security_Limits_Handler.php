@@ -7,7 +7,7 @@
 
 namespace WP_PDF_Builder_Pro\Security;
 
-class SecurityLimitsHandler
+class Security_Limits_Handler
 {
     /**
      * Initialise le gestionnaire des limites
