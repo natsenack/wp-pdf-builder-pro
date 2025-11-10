@@ -5627,7 +5627,7 @@ class PdfBuilderAdmin
 
         // Enqueue PDF Builder React scripts from local build
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time() . '-' . rand(1000, 9999);
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
         // Charger les scripts de l'API Preview pour l'éditeur React
