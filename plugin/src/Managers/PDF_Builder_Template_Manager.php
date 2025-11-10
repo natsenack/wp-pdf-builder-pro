@@ -199,60 +199,109 @@ class PdfBuilderTemplateManager
                 return;
             }
 
-            // Sauvegarde en utilisant les posts WordPress
+            // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+                // Vérifier d'abord si le template existe dans la table personnalisée
+                $existing_template = null;
                 if ($template_id > 0) {
-                    // Vérifier que le post existe et est du bon type
-                    $existing_post = \get_post($template_id);
-                    if (!$existing_post || $existing_post->post_type !== 'pdf_template') {
-                        throw new \Exception('Template non trouvé ou type invalide');
-                    }
-
-                    // Mise à jour d'un template existant
-                    $post_data = array(
-                        'ID' => $template_id,
-                        'post_title' => $template_name,
-                        'post_modified' => \current_time('mysql')
+                    $existing_template = $wpdb->get_row(
+                        $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                        ARRAY_A
                     );
-
-                    $result = \wp_update_post($post_data, true);
-                    if (\is_wp_error($result)) {
-                        throw new \Exception('Erreur de mise à jour du post: ' . $result->get_error_message());
-                    }
-                } else {
-                    // Création d'un nouveau template
-                    $post_data = array(
-                        'post_title' => $template_name,
-                        'post_type' => 'pdf_template',
-                        'post_status' => 'publish',
-                        'post_date' => \current_time('mysql'),
-                        'post_modified' => \current_time('mysql')
-                    );
-
-                    $template_id = \wp_insert_post($post_data, true);
-                    if (\is_wp_error($template_id)) {
-                        throw new \Exception('Erreur de création du post: ' . $template_id->get_error_message());
-                    }
                 }
 
-                // Sauvegarder les données du template dans les métadonnées
-                \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                if ($existing_template) {
+                    // Mise à jour dans la table personnalisée
+                    $result = $wpdb->update(
+                        $table_templates,
+                        array(
+                            'name' => $template_name,
+                            'template_data' => $template_data,
+                            'updated_at' => current_time('mysql')
+                        ),
+                        array('id' => $template_id),
+                        array('%s', '%s', '%s'),
+                        array('%d')
+                    );
+
+                    if ($result === false) {
+                        throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
+                    }
+                } else {
+                    // Gérer comme post WordPress (nouveau template ou migration)
+                    if ($template_id > 0) {
+                        // Vérifier que le post existe et est du bon type
+                        $existing_post = \get_post($template_id);
+                        if (!$existing_post || $existing_post->post_type !== 'pdf_template') {
+                            throw new \Exception('Template non trouvé ou type invalide');
+                        }
+
+                        // Mise à jour d'un template existant
+                        $post_data = array(
+                            'ID' => $template_id,
+                            'post_title' => $template_name,
+                            'post_modified' => \current_time('mysql')
+                        );
+
+                        $result = \wp_update_post($post_data, true);
+                        if (\is_wp_error($result)) {
+                            throw new \Exception('Erreur de mise à jour du post: ' . $result->get_error_message());
+                        }
+                    } else {
+                        // Création d'un nouveau template
+                        $post_data = array(
+                            'post_title' => $template_name,
+                            'post_type' => 'pdf_template',
+                            'post_status' => 'publish',
+                            'post_date' => \current_time('mysql'),
+                            'post_modified' => \current_time('mysql')
+                        );
+
+                        $template_id = \wp_insert_post($post_data, true);
+                        if (\is_wp_error($template_id)) {
+                            throw new \Exception('Erreur de création du post: ' . $template_id->get_error_message());
+                        }
+                    }
+
+                    // Sauvegarder les données du template dans les métadonnées
+                    \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                }
             } catch (\Exception $e) {
                 \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
                 return;
             }
 
             // Vérification post-sauvegarde
-            $saved_post = \get_post($template_id);
-            $saved_template_data = \get_post_meta($template_id, '_pdf_template_data', true);
+            if ($existing_template) {
+                // Vérification pour la table personnalisée
+                $saved_template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                    ARRAY_A
+                );
 
-            if (!$saved_post || empty($saved_template_data)) {
-                \wp_send_json_error('Erreur: Template introuvable après sauvegarde');
-                return;
+                if (!$saved_template) {
+                    \wp_send_json_error('Erreur: Template introuvable après sauvegarde dans la table personnalisée');
+                    return;
+                }
+
+                $saved_data = \json_decode($saved_template['template_data'], true);
+                $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
+            } else {
+                // Vérification pour les posts WordPress
+                $saved_post = \get_post($template_id);
+                $saved_template_data = \get_post_meta($template_id, '_pdf_template_data', true);
+
+                if (!$saved_post || empty($saved_template_data)) {
+                    \wp_send_json_error('Erreur: Template introuvable après sauvegarde');
+                    return;
+                }
+
+                $saved_data = \json_decode($saved_template_data, true);
+                $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
             }
-
-            $saved_data = \json_decode($saved_template_data, true);
-            $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
 
             // Réponse de succès
             error_log('PDF Builder: Template saved successfully, ID: ' . $template_id);
