@@ -5637,9 +5637,9 @@ class PdfBuilderAdmin
     {
         $this->checkAdminPermissions();
 
-        // Get template ID and type from URL parameters - Always use template ID 1
-        $template_id = 1;
-        $template_type = 'custom';
+        // Get template ID and type from URL parameters
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
+        $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
 
         // Validate template type
         $valid_types = ['custom', 'predefined', 'system'];
@@ -5923,13 +5923,10 @@ class PdfBuilderAdmin
                 $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
-            error_log('PDF Builder: ajax_get_template - final template_data: ' . json_encode($template_data));
-
             $response = [
                 'template' => $template_data,
                 'message' => 'Template chargé avec succès'
             ];
-            error_log('PDF Builder: ajax_get_template - response: ' . json_encode($response));
 
             wp_send_json_success($response);
 
