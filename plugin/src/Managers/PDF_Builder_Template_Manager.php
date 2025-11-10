@@ -134,7 +134,7 @@ class PdfBuilderTemplateManager
             }
 
             // Validation de la structure du template
-            $validation_errors = $this->validate_template_structure($decoded_test);
+            $validation_errors = $this->validateTemplateStructure($decoded_test);
             if (!empty($validation_errors)) {
                 \wp_send_json_error('Structure invalide: ' . \implode(', ', $validation_errors));
                 return;
@@ -281,7 +281,7 @@ class PdfBuilderTemplateManager
             }
 
             // Validation de la structure
-            $validation_errors = $this->validate_template_structure($template_data);
+            $validation_errors = $this->validateTemplateStructure($template_data);
             if (!empty($validation_errors)) {
                 // Ajouter les propriétés manquantes par défaut pour la compatibilité
                 if (!isset($template_data['version'])) {
@@ -534,7 +534,7 @@ class PdfBuilderTemplateManager
 
         // ===== Vérification 6 : Validation de chaque élément =====
         foreach ($template_data['elements'] as $index => $element) {
-            $element_errors = $this->validate_template_element($element, $index);
+            $element_errors = $this->validateTemplateElement($element, $index);
             $errors = array_merge($errors, $element_errors);
 
             // Limiter à 10 erreurs pour éviter un flood de messages
