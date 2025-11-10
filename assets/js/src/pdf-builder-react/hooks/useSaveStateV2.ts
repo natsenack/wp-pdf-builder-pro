@@ -140,7 +140,8 @@ export function useSaveStateV2({
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: new URLSearchParams({
           action: 'pdf_builder_auto_save_template',
