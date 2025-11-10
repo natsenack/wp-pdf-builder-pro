@@ -376,6 +376,41 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Enregistre le custom post type pour les templates PDF
+     */
+    public function register_template_post_type()
+    {
+        $labels = array(
+            'name' => __('Templates PDF', 'pdf-builder-pro'),
+            'singular_name' => __('Template PDF', 'pdf-builder-pro'),
+            'menu_name' => __('Templates', 'pdf-builder-pro'),
+            'add_new' => __('Ajouter', 'pdf-builder-pro'),
+            'add_new_item' => __('Ajouter un template PDF', 'pdf-builder-pro'),
+            'edit_item' => __('Modifier le template', 'pdf-builder-pro'),
+            'new_item' => __('Nouveau template', 'pdf-builder-pro'),
+            'view_item' => __('Voir le template', 'pdf-builder-pro'),
+            'search_items' => __('Rechercher des templates', 'pdf-builder-pro'),
+            'not_found' => __('Aucun template trouvé', 'pdf-builder-pro'),
+            'not_found_in_trash' => __('Aucun template dans la corbeille', 'pdf-builder-pro'),
+        );
+
+        $args = array(
+            'labels' => $labels,
+            'public' => false,
+            'show_ui' => true,
+            'show_in_menu' => false, // Masqué du menu principal
+            'capability_type' => 'post',
+            'hierarchical' => false,
+            'supports' => array('title', 'editor', 'custom-fields'),
+            'has_archive' => false,
+            'rewrite' => false,
+            'query_var' => false,
+        );
+
+        register_post_type('pdf_template', $args);
+    }
+
+    /**
      * Compatibilité avec les anciens liens template_id - méthode vide (système supprimé)
      */
     public function handleLegacyTemplateLinks()
