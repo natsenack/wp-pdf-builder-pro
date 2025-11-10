@@ -235,6 +235,14 @@ class PdfBuilderCore
     }
 
     /**
+     * Alias pour registerAdminMenu() - compatibilité
+     */
+    public function register_admin_menu()
+    {
+        return $this->registerAdminMenu();
+    }
+
+    /**
      * Enregistrer les paramètres
      */
     public function registerSettings()
