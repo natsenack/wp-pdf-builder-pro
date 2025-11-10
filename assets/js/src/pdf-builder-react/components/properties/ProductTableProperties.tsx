@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { ProductTableElement } from '../../types/elements';
 
 interface ProductTablePropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: ProductTableElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -92,7 +92,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showHeaders !== false}
+              checked={element.showHeaders !== false}
               onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -105,7 +105,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showBorders !== false}
+              checked={element.showBorders !== false}
               onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -118,7 +118,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showAlternatingRows !== false}
+              checked={element.showAlternatingRows !== false}
               onChange={(e) => onChange(element.id, 'showAlternatingRows', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -131,7 +131,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showSku !== false}
+              checked={element.showSku !== false}
               onChange={(e) => onChange(element.id, 'showSku', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -144,7 +144,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showDescription !== false}
+              checked={element.showDescription !== false}
               onChange={(e) => onChange(element.id, 'showDescription', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -157,7 +157,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showQuantity !== false}
+              checked={element.showQuantity !== false}
               onChange={(e) => onChange(element.id, 'showQuantity', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -172,7 +172,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showShipping !== false}
+              checked={element.showShipping !== false}
               onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -185,7 +185,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showTax !== false}
+              checked={element.showTax !== false}
               onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -198,7 +198,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showGlobalDiscount !== false}
+              checked={element.showGlobalDiscount !== false}
               onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -1057,7 +1057,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               type="number"
               min="8"
               max="24"
-              value={(element as any).fontSize || 11}
+              value={element.fontSize || 11}
               onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 11)}
               style={{
                 width: '100%',
@@ -1074,7 +1074,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Famille de police
             </label>
             <select
-              value={(element as any).fontFamily || 'Arial'}
+              value={element.fontFamily || 'Arial'}
               onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
               style={{
                 width: '100%',
@@ -1102,7 +1102,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Épaisseur de police
             </label>
             <select
-              value={(element as any).fontWeight || 'normal'}
+              value={element.fontWeight || 'normal'}
               onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
               style={{
                 width: '100%',
@@ -1124,7 +1124,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Style de police
             </label>
             <select
-              value={(element as any).fontStyle || 'normal'}
+              value={element.fontStyle || 'normal'}
               onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
               style={{
                 width: '100%',
@@ -1146,7 +1146,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).backgroundColor || '#ffffff'}
+              value={element.backgroundColor || '#ffffff'}
               onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
               style={{
                 width: '100%',
@@ -1163,7 +1163,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).headerBackgroundColor || '#f9fafb'}
+              value={element.headerBackgroundColor || '#f9fafb'}
               onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
               style={{
                 width: '100%',
@@ -1180,7 +1180,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).alternateRowColor || '#f9fafb'}
+              value={element.alternateRowColor || '#f9fafb'}
               onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
               style={{
                 width: '100%',
@@ -1197,7 +1197,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).borderColor || '#e5e7eb'}
+              value={element.borderColor || '#e5e7eb'}
               onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
               style={{
                 width: '100%',
@@ -1214,7 +1214,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).textColor || '#111827'}
+              value={element.textColor || '#111827'}
               onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
               style={{
                 width: '100%',
@@ -1319,7 +1319,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Alignement horizontal
             </label>
             <select
-              value={(element as any).textAlign || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -1340,7 +1340,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Alignement vertical
             </label>
             <select
-              value={(element as any).verticalAlign || 'top'}
+              value={element.verticalAlign || 'top'}
               onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value)}
               style={{
                 width: '100%',

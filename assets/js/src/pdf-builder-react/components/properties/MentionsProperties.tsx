@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { MentionsElement } from '../../types/elements';
 
 interface MentionsPropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: MentionsElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -272,8 +272,8 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
   // Détecter automatiquement le type de mention basé sur le texte actuel
   const detectMentionType = () => {
-    const currentText = (element as any).text || '';
-    const currentMentionType = (element as any).mentionType || 'custom';
+    const currentText = element.text || '';
+    const currentMentionType = element.mentionType || 'custom';
 
     // Si un type est déjà défini et que ce n'est pas custom, le garder
     if (currentMentionType && currentMentionType !== 'custom') {
@@ -281,7 +281,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     }
 
     // Pour le medley, vérifier s'il y a des mentions sélectionnées
-    if ((element as any).selectedMentions && (element as any).selectedMentions.length > 0) {
+    if (element.selectedMentions && element.selectedMentions.length > 0) {
       return 'medley';
     }
 
@@ -413,7 +413,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 overflowY: 'auto'
               }}>
                 {predefinedMentions.filter(m => m.key !== 'medley' && m.key !== 'custom').map((mention) => {
-                  const selectedMentions = (element as any).selectedMentions || [];
+                  const selectedMentions = element.selectedMentions || [];
                   const isSelected = selectedMentions.includes(mention.key);
 
                   return (
@@ -430,7 +430,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                         type="checkbox"
                         checked={isSelected}
                         onChange={(e) => {
-                          const currentSelected = (element as any).selectedMentions || [];
+                          const currentSelected = element.selectedMentions || [];
                           let newSelected;
 
                           if (e.target.checked) {
@@ -449,7 +449,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                             'bullet': ' • ',
                             'pipe': ' | '
                           };
-                          const separator = separatorMap[((element as any).medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
+                          const separator = separatorMap[(element.medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
 
                           const combinedText = newSelected
                             .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
@@ -460,7 +460,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                           // Ajuster automatiquement la hauteur et la largeur selon le contenu
                           const lines = combinedText.split('\n');
-                          const fontSize = (element as any).fontSize || 10;
+                          const fontSize = typeof element.fontSize === 'string' ? parseFloat(element.fontSize) : (element.fontSize || 10);
                           const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
                           const padding = 10; // Réduire pour cohérence
                           const iconSpace = 20; // Espace pour l'icône
@@ -473,7 +473,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                           const canvas = document.createElement('canvas');
                           const ctx = canvas.getContext('2d');
                           if (ctx) {
-                            ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                            ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
                             const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
                             const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                             const minWidth = 500; // Largeur minimale basée sur la valeur par défaut
@@ -481,12 +481,12 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                             const maxWidth = 800; // Largeur maximale
                             const newWidth = Math.min(calculatedWidth, maxWidth);
 
-                            if ((element as any).width !== newWidth) {
+                            if (element.width !== newWidth) {
                               onChange(element.id, 'width', newWidth);
                             }
                           }
 
-                          if ((element as any).height !== newHeight) {
+                          if (element.height !== newHeight) {
                             onChange(element.id, 'height', newHeight);
                           }
                         }}
@@ -503,25 +503,25 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 })}
               </div>
               <div style={{ marginTop: '8px', fontSize: '10px', color: '#666' }}>
-                {(element as any).selectedMentions?.length || 0} mention(s) sélectionnée(s)
-                {(element as any).selectedMentions?.length > 0 && (
+                {(element.selectedMentions?.length ?? 0)} mention(s) sélectionnée(s)
+                {(element.selectedMentions?.length ?? 0) > 0 && (
                   <span style={{ color: '#007bff', marginLeft: '8px' }}>
                     • Dimensions ajustables manuellement (avec clipping)
                   </span>
                 )}
               </div>
-              {(element as any).selectedMentions?.length > 0 && (
+              {(element.selectedMentions?.length ?? 0) > 0 && (
                 <div style={{ marginTop: '8px' }}>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
                     Séparateur entre mentions :
                   </label>
                   <select
-                    value={(element as any).medleySeparator || 'double_newline'}
+                    value={element.medleySeparator || 'double_newline'}
                     onChange={(e) => {
                       onChange(element.id, 'medleySeparator', e.target.value);
 
                       // Régénérer le texte avec le nouveau séparateur
-                      const selectedMentions = (element as any).selectedMentions || [];
+                      const selectedMentions = element.selectedMentions || [];
                       const separatorMap = {
                         'double_newline': '\n\n',
                         'single_newline': '\n',
@@ -540,7 +540,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
                       // Ajuster la hauteur et la largeur selon le nouveau nombre de lignes
                       const lines = combinedText.split('\n');
-                      const fontSize = (element as any).fontSize || 10;
+                      const fontSize = typeof element.fontSize === 'string' ? parseFloat(element.fontSize) : (element.fontSize || 10);
                       const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
                       const padding = 10; // Réduire pour cohérence
                       const iconSpace = 20; // Espace pour l'icône
@@ -553,7 +553,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                       const canvas = document.createElement('canvas');
                       const ctx = canvas.getContext('2d');
                       if (ctx) {
-                        ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                        ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
                         const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
                         const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                         const minWidth = 200;
@@ -561,12 +561,12 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                         const maxWidth = 800;
                         const newWidth = Math.min(calculatedWidth, maxWidth);
 
-                        if ((element as any).width !== newWidth) {
+                        if (element.width !== newWidth) {
                           onChange(element.id, 'width', newWidth);
                         }
                       }
 
-                      if ((element as any).height !== newHeight) {
+                      if (element.height !== newHeight) {
                         onChange(element.id, 'height', newHeight);
                       }
                     }}
@@ -594,7 +594,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               Texte des mentions
             </label>
             <textarea
-              value={(element as any).text || ''}
+              value={element.text || ''}
               onChange={(e) => onChange(element.id, 'text', e.target.value)}
               placeholder="Entrez le texte des mentions légales..."
               rows={6}
@@ -615,7 +615,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showSeparator !== false}
+              checked={element.showSeparator !== false}
               onChange={(e) => onChange(element.id, 'showSeparator', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -627,7 +627,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               Style du séparateur
             </label>
             <select
-              value={(element as any).separatorStyle || 'solid'}
+              value={element.separatorStyle || 'solid'}
               onChange={(e) => onChange(element.id, 'separatorStyle', e.target.value)}
               style={{
                 width: '100%',
@@ -670,7 +670,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                   onClick={() => onChange(element.id, 'theme', theme.id)}
                   style={{
                     cursor: 'pointer',
-                    border: (element as any).theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
+                    border: element.theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
                     borderRadius: '6px',
                     padding: '6px',
                     backgroundColor: '#ffffff',
@@ -692,13 +692,13 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               Taille du texte
             </label>
             <select
-              value={(element as any).fontSize || '10'}
+              value={element.fontSize || '10'}
               onChange={(e) => {
                 onChange(element.id, 'fontSize', e.target.value);
 
                 // Si c'est un medley, ajuster la hauteur selon la nouvelle taille de police
-                if (currentMentionType === 'medley' && (element as any).selectedMentions?.length > 0) {
-                  const selectedMentions = (element as any).selectedMentions || [];
+                if (currentMentionType === 'medley' && (element.selectedMentions?.length ?? 0) > 0) {
+                  const selectedMentions = element.selectedMentions || [];
                   const separatorMap = {
                     'double_newline': '\n\n',
                     'single_newline': '\n',
@@ -706,7 +706,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                     'bullet': ' • ',
                     'pipe': ' | '
                   };
-                  const separator = separatorMap[((element as any).medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
+                  const separator = separatorMap[(element.medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
 
                   const combinedText = selectedMentions
                     .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
@@ -727,7 +727,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
                   if (ctx) {
-                    ctx.font = `${(element as any).fontWeight || 'normal'} ${fontSize}px ${(element as any).fontFamily || 'Arial'}`;
+                    ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
                     const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
                     const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                     const minWidth = 200;
@@ -735,12 +735,12 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                     const maxWidth = 800;
                     const newWidth = Math.min(calculatedWidth, maxWidth);
 
-                    if ((element as any).width !== newWidth) {
+                    if (element.width !== newWidth) {
                       onChange(element.id, 'width', newWidth);
                     }
                   }
 
-                  if ((element as any).height !== newHeight) {
+                  if (element.height !== newHeight) {
                     onChange(element.id, 'height', newHeight);
                   }
                 }
@@ -765,7 +765,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               Alignement du texte
             </label>
             <select
-              value={(element as any).textAlign || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -789,7 +789,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).fontWeight === 'bold'}
+                  checked={element.fontWeight === 'bold'}
                   onChange={(e) => onChange(element.id, 'fontWeight', e.target.checked ? 'bold' : 'normal')}
                   style={{ marginRight: '4px' }}
                 />
@@ -798,7 +798,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).fontStyle === 'italic'}
+                  checked={element.fontStyle === 'italic'}
                   onChange={(e) => onChange(element.id, 'fontStyle', e.target.checked ? 'italic' : 'normal')}
                   style={{ marginRight: '4px' }}
                 />
@@ -818,7 +818,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).x || 0}
+              value={element.x || 0}
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -836,7 +836,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).y || 0}
+              value={element.y || 0}
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -854,7 +854,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).width || 500}
+              value={element.width || 500}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 500)}
               style={{
                 width: '100%',
@@ -877,7 +877,7 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </label>
             <input
               type="number"
-              value={(element as any).height || 60}
+              value={element.height || 60}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 60)}
               style={{
                 width: '100%',

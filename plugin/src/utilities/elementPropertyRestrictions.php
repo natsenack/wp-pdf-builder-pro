@@ -1,4 +1,5 @@
 <?php
+
 // Système de gestion des propriétés d'éléments
 // Définit les restrictions et validations pour chaque type d'élément
 
@@ -88,7 +89,6 @@ const ELEMENT_PROPERTY_RESTRICTIONS = [
         ]
     ]
 ];
-
 // Mapping des types d'éléments vers leurs catégories
 const ELEMENT_TYPE_MAPPING = [
     // Spéciaux
@@ -163,14 +163,16 @@ const ELEMENT_TYPE_MAPPING = [
 /**
  * Vérifie si une propriété est autorisée pour un type d'élément
  */
-function isPropertyAllowed(string $elementType, string $propertyName): bool {
+function isPropertyAllowed(string $elementType, string $propertyName): bool
+{
+
     global $ELEMENT_TYPE_MAPPING, $ELEMENT_PROPERTY_RESTRICTIONS;
-
-    $category = $ELEMENT_TYPE_MAPPING[$elementType] ?? 'text'; // défaut texte
+    $category = $ELEMENT_TYPE_MAPPING[$elementType] ?? 'text';
+// défaut texte
     $restrictions = $ELEMENT_PROPERTY_RESTRICTIONS[$category] ?? null;
-
     if (!$restrictions || !isset($restrictions[$propertyName])) {
-        return true; // propriété autorisée par défaut
+        return true;
+    // propriété autorisée par défaut
     }
 
     return !$restrictions[$propertyName]['disabled'];
@@ -179,12 +181,12 @@ function isPropertyAllowed(string $elementType, string $propertyName): bool {
 /**
  * Obtient la valeur par défaut d'une propriété
  */
-function getPropertyDefault(string $elementType, string $propertyName) {
-    global $ELEMENT_TYPE_MAPPING, $ELEMENT_PROPERTY_RESTRICTIONS;
+function getPropertyDefault(string $elementType, string $propertyName)
+{
 
+    global $ELEMENT_TYPE_MAPPING, $ELEMENT_PROPERTY_RESTRICTIONS;
     $category = $ELEMENT_TYPE_MAPPING[$elementType] ?? 'text';
     $restrictions = $ELEMENT_PROPERTY_RESTRICTIONS[$category] ?? null;
-
     if ($restrictions && isset($restrictions[$propertyName]) && isset($restrictions[$propertyName]['default'])) {
         return $restrictions[$propertyName]['default'];
     }
@@ -195,12 +197,13 @@ function getPropertyDefault(string $elementType, string $propertyName) {
 /**
  * Valide une propriété
  */
-function validateProperty(string $elementType, string $propertyName, $value): array {
+function validateProperty(string $elementType, string $propertyName, $value): array
+{
+
     if (!isPropertyAllowed($elementType, $propertyName)) {
         global $ELEMENT_TYPE_MAPPING, $ELEMENT_PROPERTY_RESTRICTIONS;
         $category = $ELEMENT_TYPE_MAPPING[$elementType] ?? 'text';
         $restrictions = $ELEMENT_PROPERTY_RESTRICTIONS[$category] ?? null;
-
         $reason = 'Propriété non autorisée';
         if ($restrictions && isset($restrictions[$propertyName]) && isset($restrictions[$propertyName]['reason'])) {
             $reason = $restrictions[$propertyName]['reason'];
@@ -219,27 +222,27 @@ function validateProperty(string $elementType, string $propertyName, $value): ar
                 return ['valid' => false, 'reason' => 'La couleur doit être une chaîne'];
             }
             // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
-            break;
 
+            break;
         case 'borderWidth':
             if (!is_numeric($value) || $value < 0) {
                 return ['valid' => false, 'reason' => 'La largeur de bordure doit être un nombre positif'];
             }
-            break;
 
+            break;
         case 'fontSize':
             if (!is_numeric($value) || $value <= 0) {
                 return ['valid' => false, 'reason' => 'La taille de police doit être un nombre positif'];
             }
-            break;
 
+            break;
         case 'width':
         case 'height':
             if (!is_numeric($value) || $value <= 0) {
                 return ['valid' => false, 'reason' => 'Les dimensions doivent être positives'];
             }
-            break;
 
+            break;
         default:
             break;
     }
@@ -250,7 +253,9 @@ function validateProperty(string $elementType, string $propertyName, $value): ar
 /**
  * Corrige automatiquement une propriété invalide
  */
-function fixInvalidProperty(string $elementType, string $propertyName, $invalidValue) {
+function fixInvalidProperty(string $elementType, string $propertyName, $invalidValue)
+{
+
     // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
     // (pas de forçage automatique à 'transparent')
 
@@ -262,7 +267,6 @@ function fixInvalidProperty(string $elementType, string $propertyName, $invalidV
         'height' => 50,
         'padding' => 8
     ];
-
     if (isset($numericDefaults[$propertyName])) {
         return $numericDefaults[$propertyName];
     }
@@ -274,7 +278,5 @@ function fixInvalidProperty(string $elementType, string $propertyName, $invalidV
         'color' => '#000000',
         'fontFamily' => 'Arial, sans-serif'
     ];
-
     return $stringDefaults[$propertyName] ?? $invalidValue;
 }
-?>

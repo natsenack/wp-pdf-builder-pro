@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * PDF Builder Pro - Preview API Client
  * Intégration complète de l'API Preview 1.4

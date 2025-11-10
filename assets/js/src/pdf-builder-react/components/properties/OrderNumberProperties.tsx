@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { OrderNumberElement } from '../../types/elements';
 
 interface OrderNumberPropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: OrderNumberElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -105,21 +105,21 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showLabel !== false}
+              checked={element.showLabel !== false}
               onChange={(e) => onChange(element.id, 'showLabel', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche un texte devant le numéro</span>
           </div>
 
-          {(element as any).showLabel !== false && (
+          {element.showLabel !== false && (
             <div style={{ marginBottom: '12px' }}>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                 Texte du libellé
               </label>
               <input
                 type="text"
-                value={(element as any).labelText || 'N° de commande:'}
+              value={element.labelText || 'N° de commande:'}
                 onChange={(e) => onChange(element.id, 'labelText', e.target.value)}
                 placeholder="N° de commande:"
                 style={{
@@ -141,7 +141,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Position du libellé
             </label>
             <select
-              value={(element as any).labelPosition || 'above'}
+              value={element.labelPosition || 'above'}
               onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
               style={{
                 width: '100%',
@@ -164,7 +164,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showDate !== false}
+              checked={element.showDate !== false}
               onChange={(e) => onChange(element.id, 'showDate', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -176,7 +176,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Alignement du contenu
             </label>
             <select
-              value={(element as any).contentAlign || 'left'}
+              value={element.contentAlign || 'left'}
               onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -191,7 +191,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="right">Aligner à droite</option>
             </select>
             <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-              Positionne tout le contenu (libellé, numéro, date) dans l'élément
+              Positionne tout le contenu (libellé, numéro, date) dans l&apos;élément
             </div>
           </div>
 
@@ -215,7 +215,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Taille du texte
             </label>
             <select
-              value={(element as any).fontSize || '14'}
+              value={element.fontSize || '14'}
               onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
               style={{
                 width: '100%',
@@ -238,7 +238,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Police
             </label>
             <select
-              value={(element as any).fontFamily || 'Arial'}
+              value={element.fontFamily || 'Arial'}
               onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
               style={{
                 width: '100%',
@@ -262,7 +262,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Style du texte
             </label>
             <select
-              value={(element as any).fontWeight || 'normal'}
+              value={element.fontWeight || 'normal'}
               onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
               style={{
                 width: '100%',
@@ -288,7 +288,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).x || 0}
+              value={element.x || 0}
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -306,7 +306,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).y || 0}
+              value={element.y || 0}
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -324,7 +324,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).width || 200}
+              value={element.width || 200}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
               style={{
                 width: '100%',
@@ -342,7 +342,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).height || 40}
+              value={element.height || 40}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 40)}
               style={{
                 width: '100%',

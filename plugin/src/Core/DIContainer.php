@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Dependency Injection Container - Conteneur d'injection de dépendances
  *
@@ -22,22 +23,19 @@ class DIContainer
      * @var array
      */
     private array $instances = [];
-
-    /**
+/**
      * Définitions des services
      *
      * @var array
      */
     private array $definitions = [];
-
-    /**
+/**
      * Instances partagées (singletons)
      *
      * @var array
      */
     private array $shared = [];
-
-    /**
+/**
      * Enregistre une définition de service
      *
      * @param string $name Nom du service
@@ -48,7 +46,6 @@ class DIContainer
     public function set(string $name, callable $definition, bool $shared = false): self
     {
         $this->definitions[$name] = $definition;
-
         if ($shared) {
             $this->shared[$name] = true;
         }
@@ -95,8 +92,7 @@ class DIContainer
 
         // Créer l'instance
         $instance = call_user_func($this->definitions[$name], $this);
-
-        // Stocker si c'est un singleton
+// Stocker si c'est un singleton
         if (isset($this->shared[$name])) {
             $this->instances[$name] = $instance;
         }
@@ -126,7 +122,6 @@ class DIContainer
         unset($this->instances[$name]);
         unset($this->definitions[$name]);
         unset($this->shared[$name]);
-
         return $this;
     }
 
@@ -156,7 +151,6 @@ class DIContainer
         $this->instances = [];
         $this->definitions = [];
         $this->shared = [];
-
         return $this;
     }
 
@@ -167,10 +161,7 @@ class DIContainer
      */
     public function getServices(): array
     {
-        return array_unique(array_merge(
-            array_keys($this->instances),
-            array_keys($this->definitions)
-        ));
+        return array_unique(array_merge(array_keys($this->instances), array_keys($this->definitions)));
     }
 
     // Méthodes utilitaires pour l'injection de dépendances courantes
@@ -184,8 +175,10 @@ class DIContainer
     public function registerModeSwitcher(string $initialMode = 'canvas'): self
     {
         return $this->set('mode_switcher', function () use ($initialMode) {
+
             return new \PDF_Builder\Managers\ModeSwitcher($initialMode);
-        }, true); // Singleton
+        }, true);
+// Singleton
     }
 
     /**
@@ -197,10 +190,12 @@ class DIContainer
     public function registerPreviewRenderer(array $options = []): self
     {
         return $this->set('preview_renderer', function ($container) use ($options) {
+
             // Note: PreviewRenderer sera injecté plus tard quand disponible
             // Pour l'instant, retourner null ou une implémentation mock
             return null;
-        }, true); // Singleton
+        }, true);
+// Singleton
     }
 
     /**
@@ -212,16 +207,17 @@ class DIContainer
     {
         // CanvasModeProvider
         $this->set('canvas_provider', function () {
+
             return new \PDF_Builder_Pro\Providers\CanvasModeProvider();
         });
-
-        // MetaboxModeProvider (factory pour permettre l'injection d'ordre)
+// MetaboxModeProvider (factory pour permettre l'injection d'ordre)
         $this->set('metabox_provider_factory', function () {
+
             return function ($order = null) {
+
                 return new \PDF_Builder_Pro\Providers\MetaboxModeProvider($order);
             };
         });
-
         return $this;
     }
 

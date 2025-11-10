@@ -11,11 +11,13 @@
  * @since   Phase 5.8 - Corrections Sécurité
  */
 
+namespace WP_PDF_Builder_Pro\Core;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class PDF_Builder_Rate_Limiter
+class PdfBuilderRateLimiter
 {
     /**
      * Limites par défaut
@@ -42,26 +44,26 @@ class PDF_Builder_Rate_Limiter
      * @param  int    $user_id ID utilisateur (optionnel, utilise session si non fourni)
      * @return bool True si autorisé, false si limite dépassée
      */
-    public static function check_rate_limit($action = 'pdf_generation', $user_id = null)
+    public static function checkRateLimit($action = 'pdf_generation', $user_id = null)
     {
         // Utilisation de l'ID utilisateur ou de la session
         if ($user_id === null) {
             $user_id = get_current_user_id();
             if (!$user_id) {
                 // Pour les utilisateurs non connectés, utiliser l'IP
-                $user_id = 'ip_' . self::get_client_ip_hash();
+                $user_id = 'ip_' . self::getClientIpHash();
             }
         }
 
-        $limits = self::get_limits_for_action($action);
-        $key = self::build_cache_key($action, $user_id);
+        $limits = self::getLimitsForAction($action);
+        $key = self::buildCacheKey($action, $user_id);
 
         // Récupération du compteur actuel
         $current_count = get_transient($key) ?: 0;
 
         // Vérification de la limite
         if ($current_count >= $limits['max_requests']) {
-            self::log_rate_limit_exceeded($action, $user_id, $current_count, $limits['max_requests']);
+            self::logRateLimitExceeded($action, $user_id, $current_count, $limits['max_requests']);
             return false;
         }
 
@@ -78,17 +80,17 @@ class PDF_Builder_Rate_Limiter
      * @param  int    $user_id ID utilisateur
      * @return int Nombre de requêtes restantes
      */
-    public static function get_remaining_requests($action = 'pdf_generation', $user_id = null)
+    public static function getRemainingRequests($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
             $user_id = get_current_user_id();
             if (!$user_id) {
-                $user_id = 'ip_' . self::get_client_ip_hash();
+                $user_id = 'ip_' . self::getClientIpHash();
             }
         }
 
-        $limits = self::get_limits_for_action($action);
-        $key = self::build_cache_key($action, $user_id);
+        $limits = self::getLimitsForAction($action);
+        $key = self::buildCacheKey($action, $user_id);
 
         $current_count = get_transient($key) ?: 0;
         return max(0, $limits['max_requests'] - $current_count);
@@ -101,16 +103,16 @@ class PDF_Builder_Rate_Limiter
      * @param  int    $user_id ID utilisateur
      * @return int Temps en secondes
      */
-    public static function get_reset_time($action = 'pdf_generation', $user_id = null)
+    public static function getResetTime($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
             $user_id = get_current_user_id();
             if (!$user_id) {
-                $user_id = 'ip_' . self::get_client_ip_hash();
+                $user_id = 'ip_' . self::getClientIpHash();
             }
         }
 
-        $key = self::build_cache_key($action, $user_id);
+        $key = self::buildCacheKey($action, $user_id);
 
         // Vérification si la clé existe
         $timeout = wp_cache_get($key . '_timeout', 'transient');
@@ -128,19 +130,19 @@ class PDF_Builder_Rate_Limiter
      * @param  int    $user_id ID utilisateur
      * @return bool True si reset réussi
      */
-    public static function reset_counter($action = 'pdf_generation', $user_id = null)
+    public static function resetCounter($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
             $user_id = get_current_user_id();
             if (!$user_id) {
-                $user_id = 'ip_' . self::get_client_ip_hash();
+                $user_id = 'ip_' . self::getClientIpHash();
             }
         }
 
-        $key = self::build_cache_key($action, $user_id);
+        $key = self::buildCacheKey($action, $user_id);
         delete_transient($key);
 
-        self::log_rate_limit_reset($action, $user_id);
+        self::logRateLimitReset($action, $user_id);
 
         return true;
     }
@@ -151,7 +153,7 @@ class PDF_Builder_Rate_Limiter
      * @param  string $action Type d'action
      * @return array Configuration des limites
      */
-    private static function get_limits_for_action($action)
+    private static function getLimitsForAction($action)
     {
         // Possibilité de personnaliser via options WordPress
         $custom_limits = get_option('pdf_builder_rate_limits', []);
@@ -170,7 +172,7 @@ class PDF_Builder_Rate_Limiter
      * @param  string $identifier Identifiant utilisateur/IP
      * @return string Clé de cache
      */
-    private static function build_cache_key($action, $identifier)
+    private static function buildCacheKey($action, $identifier)
     {
         return 'pdf_rate_' . $action . '_' . md5($identifier);
     }
@@ -180,9 +182,9 @@ class PDF_Builder_Rate_Limiter
      *
      * @return string Hash de l'IP
      */
-    private static function get_client_ip_hash()
+    private static function getClientIpHash()
     {
-        $ip = self::get_client_ip();
+        $ip = self::getClientIp();
         return hash('sha256', $ip . wp_salt('nonce'));
     }
 
@@ -191,7 +193,7 @@ class PDF_Builder_Rate_Limiter
      *
      * @return string Adresse IP
      */
-    private static function get_client_ip()
+    private static function getClientIp()
     {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
@@ -230,7 +232,7 @@ class PDF_Builder_Rate_Limiter
      *                              requêtes
      * @param int    $max_requests  Limite maximale
      */
-    private static function log_rate_limit_exceeded($action, $identifier, $current_count, $max_requests)
+    private static function logRateLimitExceeded($action, $identifier, $current_count, $max_requests)
     {
         $log_data = [
             'timestamp' => current_time('mysql'),
@@ -239,7 +241,7 @@ class PDF_Builder_Rate_Limiter
             'identifier' => $identifier,
             'current_count' => $current_count,
             'max_requests' => $max_requests,
-            'ip' => self::get_client_ip(),
+            'ip' => self::getClientIp(),
             'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown'
         ];
 
@@ -247,7 +249,7 @@ class PDF_Builder_Rate_Limiter
         }
 
         // Alerte admin si nécessaire (optionnel)
-        self::maybe_send_admin_alert($action, $identifier, $current_count);
+        self::maybeSendAdminAlert($action, $identifier, $current_count);
     }
 
     /**
@@ -257,14 +259,14 @@ class PDF_Builder_Rate_Limiter
      *                           concernée
      * @param string $identifier Identifiant utilisateur
      */
-    private static function log_rate_limit_reset($action, $identifier)
+    private static function logRateLimitReset($action, $identifier)
     {
         $log_data = [
             'timestamp' => current_time('mysql'),
             'event' => 'rate_limit_reset',
             'action' => $action,
             'identifier' => $identifier,
-            'ip' => self::get_client_ip()
+            'ip' => self::getClientIp()
         ];
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -280,7 +282,7 @@ class PDF_Builder_Rate_Limiter
      * @param int    $current_count Nombre de
      *                              requêtes
      */
-    private static function maybe_send_admin_alert($action, $identifier, $current_count)
+    private static function maybeSendAdminAlert($action, $identifier, $current_count)
     {
         // Évite les spam d'alertes (une alerte par heure max)
         $alert_key = 'pdf_rate_alert_' . $action . '_' . date('Y-m-d-H');
@@ -302,7 +304,7 @@ class PDF_Builder_Rate_Limiter
             $action,
             $identifier,
             $current_count,
-            self::get_client_ip(),
+            self::getClientIp(),
             current_time('mysql')
         );
 
@@ -315,7 +317,7 @@ class PDF_Builder_Rate_Limiter
      * @param  array $custom_limits Nouvelles limites
      * @return bool True si sauvegardé
      */
-    public static function set_custom_limits($custom_limits)
+    public static function setCustomLimits($custom_limits)
     {
         // Validation des limites
         $validated_limits = [];
@@ -336,7 +338,7 @@ class PDF_Builder_Rate_Limiter
      *
      * @return array Statistiques
      */
-    public static function get_stats()
+    public static function getStats()
     {
         global $wpdb;
 

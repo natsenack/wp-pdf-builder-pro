@@ -1,15 +1,18 @@
 <?php
+
 /**
  * PDF Builder Pro - Générateur d'Aperçu
  * Phase 1: Génération d'aperçu côté serveur avec Dompdf
  */
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class PDF_Builder_Preview_Generator {
-
+class PdfBuilderPreviewGenerator
+{
     private $template_data;
     private $preview_type;
     private $order_id;
@@ -19,40 +22,36 @@ class PDF_Builder_Preview_Generator {
     /**
      * Constructeur
      */
-    public function __construct($template_data, $preview_type = 'sample', $order_id = 0) {
+    public function __construct($template_data, $preview_type = 'sample', $order_id = 0)
+    {
         $this->template_data = $template_data;
         $this->preview_type = $preview_type;
         $this->order_id = $order_id;
-
-        // Génère une clé de cache unique
-        $this->cache_key = $this->generate_cache_key();
-
-        // Initialise Dompdf
-        $this->init_dompdf();
+// Génère une clé de cache unique
+        $this->cache_key = $this->generateCacheKey();
+// Initialise Dompdf
+        $this->initDompdf();
     }
 
     /**
      * Génère l'aperçu et retourne l'URL
      */
-    public function generate_preview() {
+    public function generatePreview()
+    {
         try {
-            // Vérifie le cache d'abord
-            $cached_url = $this->get_cached_preview();
+// Vérifie le cache d'abord
+            $cached_url = $this->getCachedPreview();
             if ($cached_url) {
                 return $cached_url;
             }
 
             // Récupère les données d'aperçu
-            $preview_data = $this->get_preview_data();
-
-            // Génère le PDF
-            $this->render_pdf($preview_data);
-
-            // Sauvegarde et retourne l'URL
-            return $this->save_and_get_url();
-
+            $preview_data = $this->getPreviewData();
+// Génère le PDF
+            $this->renderPdf($preview_data);
+// Sauvegarde et retourne l'URL
+            return $this->saveAndGetUrl();
         } catch (Exception $e) {
-
             throw $e;
         }
     }
@@ -60,14 +59,16 @@ class PDF_Builder_Preview_Generator {
     /**
      * Retourne la clé de cache
      */
-    public function get_cache_key() {
+    public function getCacheKey()
+    {
         return $this->cache_key;
     }
 
     /**
      * Génère une clé de cache unique
      */
-    private function generate_cache_key() {
+    private function generateCacheKey()
+    {
         $data_hash = md5(serialize($this->template_data) . $this->preview_type . $this->order_id);
         return 'pdf_preview_' . $data_hash;
     }
@@ -75,9 +76,9 @@ class PDF_Builder_Preview_Generator {
     /**
      * Initialise Dompdf
      */
-    private function init_dompdf() {
+    private function initDompdf()
+    {
         require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
-
         $this->dompdf = new Dompdf\Dompdf();
         $this->dompdf->set_option('isRemoteEnabled', true);
         $this->dompdf->set_option('isHtml5ParserEnabled', true);
@@ -88,19 +89,19 @@ class PDF_Builder_Preview_Generator {
     /**
      * Vérifie si un aperçu est en cache
      */
-    private function get_cached_preview() {
-        $cache_dir = $this->get_cache_directory();
+    private function getCachedPreview()
+    {
+        $cache_dir = $this->getCacheDirectory();
         $cache_file = $cache_dir . $this->cache_key . '.png';
-
         if (file_exists($cache_file)) {
-            // Vérifie si le cache n'est pas trop vieux (5 minutes)
+        // Vérifie si le cache n'est pas trop vieux (5 minutes)
             $file_age = time() - filemtime($cache_file);
             if ($file_age < 300) {
                 $upload_dir = wp_upload_dir();
                 $relative_path = str_replace($upload_dir['basedir'], '', $cache_file);
                 return $upload_dir['baseurl'] . $relative_path;
             } else {
-                // Supprime le cache expiré
+    // Supprime le cache expiré
                 unlink($cache_file);
             }
         }
@@ -111,27 +112,30 @@ class PDF_Builder_Preview_Generator {
     /**
      * Récupère les données d'aperçu selon le type
      */
-    private function get_preview_data() {
+    private function getPreviewData()
+    {
         switch ($this->preview_type) {
             case 'order':
-                return $this->get_order_data();
+                return $this->getOrderData();
             case 'sample':
             default:
-                return $this->get_sample_data();
+                return $this->getSampleData();
         }
     }
 
     /**
      * Récupère les données d'une commande spécifique
      */
-    private function get_order_data() {
+    private function getOrderData()
+    {
         if (!$this->order_id || !function_exists('wc_get_order')) {
-            return $this->get_sample_data();
+            return $this->getSampleData();
         }
 
-        $order = call_user_func('wc_get_order', $this->order_id); // @phpstan-ignore-line
+        $order = call_user_func('wc_get_order', $this->order_id);
+// @phpstan-ignore-line
         if (!$order) {
-            return $this->get_sample_data();
+            return $this->getSampleData();
         }
 
         return array(
@@ -148,16 +152,17 @@ class PDF_Builder_Preview_Generator {
                 'number' => $order->get_order_number(),
                 'date' => $order->get_date_created()->format('d/m/Y'),
                 'total' => $order->get_total(),
-                'items' => $this->get_order_items($order)
+                'items' => $this->getOrderItems($order)
             ),
-            'company' => $this->get_company_info()
+            'company' => $this->getCompanyInfo()
         );
     }
 
     /**
      * Récupère les données d'exemple
      */
-    private function get_sample_data() {
+    private function getSampleData()
+    {
         return array(
             'customer' => array(
                 'name' => 'Jean Dupont',
@@ -187,16 +192,16 @@ class PDF_Builder_Preview_Generator {
                     )
                 )
             ),
-            'company' => $this->get_company_info()
+            'company' => $this->getCompanyInfo()
         );
     }
 
     /**
      * Récupère les articles de la commande
      */
-    private function get_order_items($order) {
+    private function getOrderItems($order)
+    {
         $items = array();
-
         foreach ($order->get_items() as $item) {
             $items[] = array(
                 'name' => $item->get_name(),
@@ -212,7 +217,8 @@ class PDF_Builder_Preview_Generator {
     /**
      * Récupère les informations de l'entreprise
      */
-    private function get_company_info() {
+    private function getCompanyInfo()
+    {
         return array(
             'name' => get_option('woocommerce_store_name', get_bloginfo('name')),
             'address' => get_option('woocommerce_store_address', ''),
@@ -227,11 +233,11 @@ class PDF_Builder_Preview_Generator {
     /**
      * Rend le PDF avec les données
      */
-    private function render_pdf($data) {
+    private function renderPdf($data)
+    {
         // Génère le HTML au lieu d'utiliser les méthodes TCPDF
-        $html = $this->generate_preview_html($data);
-
-        // Charge le HTML dans Dompdf
+        $html = $this->generatePreviewHtml($data);
+// Charge le HTML dans Dompdf
         $this->dompdf->loadHtml($html);
         $this->dompdf->render();
     }
@@ -239,7 +245,8 @@ class PDF_Builder_Preview_Generator {
     /**
      * Génère le HTML de l'aperçu
      */
-    private function generate_preview_html($data) {
+    private function generatePreviewHtml($data)
+    {
         ob_start();
         ?>
         <!DOCTYPE html>
@@ -360,26 +367,32 @@ class PDF_Builder_Preview_Generator {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($data['order']['items'] as $item): ?>
+                        <?php foreach ($data['order']['items'] as $item) :
+                            ?>
                         <tr>
                             <td><?php echo esc_html($item['name']); ?></td>
                             <td class="text-center"><?php echo esc_html($item['quantity']); ?></td>
                             <td class="text-right"><?php echo number_format($item['price'], 2, ',', ' ') . ' €'; ?></td>
                             <td class="text-right"><?php echo number_format($item['total'], 2, ',', ' ') . ' €'; ?></td>
                         </tr>
-                        <?php endforeach; ?>
+                            <?php
+                        endforeach; ?>
                     </tbody>
                 </table>
             </div>
 
-            <?php if (!empty($this->template_data['elements'])): ?>
+            <?php if (!empty($this->template_data['elements'])) :
+                ?>
             <div class="section">
                 <div class="section-title">Éléments du Template</div>
-                <?php foreach ($this->template_data['elements'] as $element): ?>
-                    <?php echo $this->render_template_element_html($element, $data); ?>
-                <?php endforeach; ?>
+                <?php foreach ($this->template_data['elements'] as $element) :
+                    ?>
+                    <?php echo $this->renderTemplateElementHtml($element, $data); ?>
+                    <?php
+                endforeach; ?>
             </div>
-            <?php endif; ?>
+                <?php
+            endif; ?>
         </body>
         </html>
         <?php
@@ -389,26 +402,27 @@ class PDF_Builder_Preview_Generator {
     /**
      * Rend un élément du template en HTML
      */
-    private function render_template_element_html($element, $data) {
+    private function renderTemplateElementHtml($element, $data)
+    {
         $output = '';
-
         switch ($element['type']) {
             case 'text':
-                $content = $this->process_text_content($element['content'] ?? '', $data);
+                                         $content = $this->processTextContent($element['content'] ?? '', $data);
                 $output = '<div class="element-text">' . esc_html($content) . '</div>';
-                break;
 
+                break;
             case 'image':
-                $src = $element['src'] ?? '';
+                                     $src = $element['src'] ?? '';
                 if ($src) {
                     $output = '<div class="element-placeholder"><img src="' . esc_url($src) . '" alt="Image" style="max-width: 100%; height: auto;"></div>';
                 } else {
                     $output = '<div class="element-placeholder">[IMAGE: non défini]</div>';
                 }
-                break;
 
+                break;
             default:
-                $output = '<div class="element-placeholder">[Élément: ' . esc_html($element['type']) . ']</div>';
+                                     $output = '<div class="element-placeholder">[Élément: ' . esc_html($element['type']) . ']</div>';
+
                 break;
         }
 
@@ -418,7 +432,8 @@ class PDF_Builder_Preview_Generator {
     /**
      * Traite le contenu texte avec les variables
      */
-    private function process_text_content($content, $data) {
+    private function processTextContent($content, $data)
+    {
         // Remplacement basique des variables
         $replacements = array(
             '{{customer_name}}' => $data['customer']['name'],
@@ -429,29 +444,26 @@ class PDF_Builder_Preview_Generator {
             '{{company_name}}' => $data['company']['name'],
             '{{company_email}}' => $data['company']['email']
         );
-
         return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 
     /**
      * Sauvegarde le PDF et retourne l'URL
      */
-    private function save_and_get_url() {
-        $cache_dir = $this->get_cache_directory();
-
-        // Crée le répertoire de cache s'il n'existe pas
+    private function saveAndGetUrl()
+    {
+        $cache_dir = $this->getCacheDirectory();
+// Crée le répertoire de cache s'il n'existe pas
         if (!file_exists($cache_dir)) {
             wp_mkdir_p($cache_dir);
         }
 
         // Génère le PDF avec Dompdf
         $pdf_content = $this->dompdf->output();
-
-        // Sauvegarde en PDF
+// Sauvegarde en PDF
         $cache_file = $cache_dir . $this->cache_key . '.pdf';
         file_put_contents($cache_file, $pdf_content);
-
-        // Retourne l'URL du PDF
+// Retourne l'URL du PDF
         $upload_dir = wp_upload_dir();
         $relative_path = str_replace($upload_dir['basedir'], '', $cache_file);
         return $upload_dir['baseurl'] . $relative_path;
@@ -460,7 +472,8 @@ class PDF_Builder_Preview_Generator {
     /**
      * Retourne le répertoire de cache
      */
-    private function get_cache_directory() {
+    private function getCacheDirectory()
+    {
         $upload_dir = wp_upload_dir();
         return $upload_dir['basedir'] . '/pdf-builder-previews/';
     }

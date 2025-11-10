@@ -116,7 +116,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           submenuY = 10;
         }
 
-        setSubmenuPosition({ x: submenuX, y: submenuY });
+        setSubmenuPosition(_prev => ({ x: submenuX, y: submenuY }));
       }
     } else {
       setSubmenuPosition(null);

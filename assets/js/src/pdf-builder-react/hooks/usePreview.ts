@@ -28,7 +28,7 @@ export interface UsePreviewReturn {
   setFormat: (format: 'png' | 'jpg' | 'pdf') => void;
 
   // Actions
-  generatePreview: (templateData: any, options?: PreviewOptions) => Promise<void>;
+  generatePreview: (templateData: Record<string, unknown>, options?: PreviewOptions) => Promise<void>;
   clearPreview: () => void;
 }
 
@@ -64,7 +64,7 @@ export function usePreview(): UsePreviewReturn {
   }, []);
 
   const generatePreview = useCallback(async (
-    templateData: any,
+    templateData: Record<string, unknown>,
     options: PreviewOptions = {}
   ) => {
     const finalFormat = options.format || format;
@@ -78,7 +78,7 @@ export function usePreview(): UsePreviewReturn {
 
     try {
       // Vérifier s'il y a du contenu dans le template
-      const hasContent = templateData.elements && templateData.elements.length > 0;
+      const hasContent = (templateData.elements as unknown[]) && (templateData.elements as unknown[]).length > 0;
 
       if (!hasContent) {
         throw new Error('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');

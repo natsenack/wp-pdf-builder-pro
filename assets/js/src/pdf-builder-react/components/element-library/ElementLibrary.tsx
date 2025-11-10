@@ -383,7 +383,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, element: any) => {
+  const handleDragStart = (e: React.DragEvent, element: Record<string, unknown>) => {
     // Stocker les données de l'élément dans le transfert
     e.dataTransfer.setData('application/json', JSON.stringify({
       type: element.type,
@@ -516,7 +516,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
         color: '#6c757d',
         textAlign: 'center'
       }}>
-        Cliquez sur un élément pour l'ajouter
+        Cliquez sur un élément pour l&apos;ajouter
       </div>
     </div>
   );

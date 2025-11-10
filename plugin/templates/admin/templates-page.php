@@ -58,32 +58,32 @@ if (!defined('ABSPATH')) {
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates ORDER BY id", ARRAY_A);
-            
+
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
-                
+
                 foreach ($templates as $template) {
                     $template_id = $template['id'];
                     $template_name = esc_html($template['name']);
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     $is_default = isset($template['is_default']) ? (bool)$template['is_default'] : false;
-                    
+
                     // Extraire les données du template
                     $template_data = json_decode($template['template_data'] ?? '{}', true);
                     $template_category = $template_data['category'] ?? 'autre';
-                    
+
                     // Utiliser la catégorie stockée pour déterminer le type
                     $template_type = $template_category;
-                    
+
                     $button_text = '⚙️ Paramètres';
                     $button_action = 'openTemplateSettings';
-                    
+
                     // Déterminer l'icône et la description basée sur la catégorie du template
                     $icon = '📄'; // Default
                     $description = 'Template personnalisé';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
-                    
+
                     if ($template_type === 'facture') {
                         $icon = '🧾';
                         $description = 'Template professionnel et élégant';
@@ -105,22 +105,22 @@ if (!defined('ABSPATH')) {
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
-                    
+
                     echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; flex-direction: column; height: 100%;">';
 
                     // Badge du type de template en haut à gauche
-                    
+
                     echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
                     echo $is_default ? '⭐' : '☆';
                     echo '</div>';
-                    
+
                     // Badge du type de template en haut à gauche
                     $type_colors = [
                         'facture' => '#007cba',
-                        'devis' => '#28a745', 
+                        'devis' => '#28a745',
                         'commande' => '#ffc107',
                         'contrat' => '#dc3545',
                         'newsletter' => '#6f42c1',
@@ -130,17 +130,17 @@ if (!defined('ABSPATH')) {
                     $type_labels = [
                         'facture' => 'Facture',
                         'devis' => 'Devis',
-                        'commande' => 'Commande', 
+                        'commande' => 'Commande',
                         'contrat' => 'Contrat',
                         'newsletter' => 'Newsletter',
                         'autre' => 'Autre'
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
-                    
+
                     echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo $type_label;
                     echo '</div>';
-                    
+
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
@@ -160,7 +160,7 @@ if (!defined('ABSPATH')) {
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
                 }
-                
+
                 echo '</div>';
             } else {
                 echo '<p>' . __('Template principal introuvable. Veuillez contacter l\'administrateur.', 'pdf-builder-pro') . '</p>';
@@ -200,12 +200,12 @@ if (!defined('ABSPATH')) {
                         <?php
                         // Charger les modèles prédéfinis depuis le dossier
                         $predefined_dir = plugin_dir_path(__FILE__) . '../predefined/';
-                        
+
                         // Créer le dossier s'il n'existe pas
                         if (!file_exists($predefined_dir)) {
                             wp_mkdir_p($predefined_dir);
                         }
-                        
+
                         $templates = [];
 
                         if (is_dir($predefined_dir)) {
@@ -217,12 +217,12 @@ if (!defined('ABSPATH')) {
 
                                 if ($data && isset($data['name'])) {
                                     $category = $data['category'] ?? 'autre';
-                                    
+
                                     // Désactiver les modèles qui ne sont pas des devis ou factures
                                     if (!in_array($category, ['devis', 'facture'])) {
                                         continue;
                                     }
-                                    
+
                                     $templates[] = [
                                         'slug' => $slug,
                                         'name' => $data['name'],
@@ -235,10 +235,10 @@ if (!defined('ABSPATH')) {
                             }
                         }
 
-                        if (empty($templates)): ?>
+                        if (empty($templates)) : ?>
                             <!-- Aucun modèle prédéfini disponible pour le moment -->
-                        <?php else: ?>
-                            <?php foreach ($templates as $template):
+                        <?php else : ?>
+                            <?php foreach ($templates as $template) :
                                 $type_colors = [
                                     'facture' => '#007cba',
                                     'devis' => '#28a745',
@@ -248,7 +248,7 @@ if (!defined('ABSPATH')) {
                                     'autre' => '#6c757d'
                                 ];
                                 $type_color = isset($type_colors[$template['category']]) ? $type_colors[$template['category']] : $type_colors['autre'];
-                            ?>
+                                ?>
                                 <!-- Template <?php echo esc_attr($template['name']); ?> -->
                                 <div class="predefined-template-card" data-category="<?php echo esc_attr($template['category']); ?>" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
                                     <div style="height: 160px; background: linear-gradient(135deg, <?php echo $template['category'] === 'facture' ? '#667eea 0%, #764ba2 100%' : ($template['category'] === 'devis' ? '#28a745 0%, #20c997 100%' : '#6c757d 0%, #495057 100%'); ?>); display: flex; align-items: center; justify-content: center; position: relative;">

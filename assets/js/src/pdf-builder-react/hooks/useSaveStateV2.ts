@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
+import { Element } from '../types/elements';
 import { debugLog, debugError } from '../utils/debug';
 
 /**
@@ -17,7 +18,7 @@ export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 export interface UseSaveStateV2Options {
   templateId?: number;
-  elements: any[];
+  elements: Element[];
   nonce: string;
   autoSaveInterval?: number; // Minimum entre sauvegardes
   onSaveStart?: () => void;
@@ -63,13 +64,13 @@ export function useSaveStateV2({
   /**
    * Calcule un hash robuste des éléments
    */
-  const getElementsHash = useCallback((els: any[]): string => {
+  const getElementsHash = useCallback((els: Element[]): string => {
     try {
-      const cleanObject = (obj: any): any => {
+      const cleanObject = (obj: unknown): unknown => {
         if (obj === null || typeof obj !== 'object') return obj;
         if (Array.isArray(obj)) return obj.map(cleanObject);
 
-        const cleaned: any = {};
+        const cleaned: Record<string, unknown> = {};
         for (const key in obj) {
           if (
             key === 'id' ||
@@ -83,18 +84,18 @@ export function useSaveStateV2({
             key === 'updatedAt' ||
             key === 'createdAt' ||
             key === 'timestamp' ||
-            typeof obj[key] === 'function'
+            typeof (obj as Record<string, unknown>)[key] === 'function'
           ) {
             continue;
           }
-          cleaned[key] = cleanObject(obj[key]);
+          cleaned[key] = cleanObject((obj as Record<string, unknown>)[key]);
         }
         return cleaned;
       };
 
       const cleanedElements = els.map(cleanObject);
       return JSON.stringify(cleanedElements);
-    } catch (err) {
+    } catch {
       return '';
     }
   }, []);
@@ -125,10 +126,10 @@ export function useSaveStateV2({
 
       // Nettoyer les éléments
       const cleanElements = elements.map(el => {
-        const cleaned: any = {};
+        const cleaned: Record<string, unknown> = {};
         Object.keys(el).forEach(key => {
-          if (typeof el[key] !== 'function' && !key.startsWith('__')) {
-            cleaned[key] = el[key];
+          if (typeof el[key as keyof Element] !== 'function' && !key.startsWith('__')) {
+            cleaned[key] = el[key as keyof Element];
           }
         });
         return cleaned;
@@ -136,7 +137,7 @@ export function useSaveStateV2({
 
       // Faire la requête
       debugLog('[SAVE V2] Envoi de la requête AJAX...');
-      const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -182,8 +183,8 @@ export function useSaveStateV2({
         setState('idle');
         setProgress(0);
       }, 2000);
-    } catch (err: any) {
-      debugError('[SAVE V2] Erreur:', err.message);
+    } catch (err: unknown) {
+      debugError('[SAVE V2] Erreur:', (err as Error)?.message);
 
       // Nettoyage
       if (progressIntervalRef.current) {
@@ -193,8 +194,8 @@ export function useSaveStateV2({
       setProgress(0);
 
       setState('error');
-      setError(err.message || 'Erreur inconnue');
-      onSaveError?.(err.message);
+      setError((err as Error)?.message || 'Erreur inconnue');
+      onSaveError?.((err as Error)?.message);
 
       // Retourner à idle après 3 secondes
       if (savedStateTimeoutRef.current) {
@@ -286,11 +287,16 @@ export function useSaveStateV2({
    * Cleanup à la dé-montage
    */
   useEffect(() => {
+    const autoSaveTimeout = autoSaveTimeoutRef.current;
+    const saveRequestTimeout = saveRequestTimeoutRef.current;
+    const savedStateTimeout = savedStateTimeoutRef.current;
+    const progressInterval = progressIntervalRef.current;
+
     return () => {
-      if (autoSaveTimeoutRef.current) clearTimeout(autoSaveTimeoutRef.current);
-      if (saveRequestTimeoutRef.current) clearTimeout(saveRequestTimeoutRef.current);
-      if (savedStateTimeoutRef.current) clearTimeout(savedStateTimeoutRef.current);
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+      if (saveRequestTimeout) clearTimeout(saveRequestTimeout);
+      if (savedStateTimeout) clearTimeout(savedStateTimeout);
+      if (progressInterval) clearInterval(progressInterval);
     };
   }, []);
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace WP_PDF_Builder_Pro\Data;
 
 use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
@@ -7,12 +8,11 @@ use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
  * Classe SampleDataProvider
  * Fournit des données fictives cohérentes pour l'aperçu en mode éditeur
  */
-class SampleDataProvider implements DataProviderInterface {
-
+class SampleDataProvider implements DataProviderInterface
+{
     /** @var array Données fictives de base */
     private $sampleData;
-
-    /** @var string Contexte d'utilisation */
+/** @var string Contexte d'utilisation */
     private $context;
 
     /**
@@ -20,7 +20,8 @@ class SampleDataProvider implements DataProviderInterface {
      *
      * @param string $context Contexte d'utilisation (canvas, metabox, etc.)
      */
-    public function __construct(string $context = 'canvas') {
+    public function __construct(string $context = 'canvas')
+    {
         $this->context = $context;
         $this->initializeSampleData();
     }
@@ -28,7 +29,8 @@ class SampleDataProvider implements DataProviderInterface {
     /**
      * Initialise les données fictives cohérentes
      */
-    private function initializeSampleData(): void {
+    private function initializeSampleData(): void
+    {
         $this->sampleData = [
             // Informations client
             'customer_name' => 'Jean Dupont',
@@ -134,7 +136,8 @@ class SampleDataProvider implements DataProviderInterface {
     /**
      * {@inheritDoc}
      */
-    public function getVariableValue(string $variable): string {
+    public function getVariableValue(string $variable): string
+    {
         // Recherche directe dans les données
         if (isset($this->sampleData[$variable])) {
             return $this->sampleData[$variable];
@@ -149,7 +152,6 @@ class SampleDataProvider implements DataProviderInterface {
             'billing_' . $variable,
             'shipping_' . $variable,
         ];
-
         foreach ($prefixedVars as $prefixedVar) {
             if (isset($this->sampleData[$prefixedVar])) {
                 return $this->sampleData[$prefixedVar];
@@ -166,34 +168,34 @@ class SampleDataProvider implements DataProviderInterface {
      * @param string $variable Nom de la variable
      * @return string Valeur de la variable
      */
-    private function handleSpecialVariables(string $variable): string {
+    private function handleSpecialVariables(string $variable): string
+    {
         switch ($variable) {
             case 'current_date':
                 return date('d/m/Y');
-
             case 'current_time':
                 return date('H:i');
-
             case 'current_datetime':
                 return date('d/m/Y H:i');
-
             case 'order_items_count':
-                return '3'; // Nombre d'articles dans notre exemple
+                return '3';
+// Nombre d'articles dans notre exemple
 
             case 'order_weight':
-                return '1.2 kg'; // Poids fictif
+                return '1.2 kg';
+// Poids fictif
 
             case 'customer_full_name':
                 return $this->sampleData['customer_firstname'] . ' ' . $this->sampleData['customer_lastname'];
-
             case 'company_full_address':
                 return $this->sampleData['company_address'] . ', ' .
                        $this->sampleData['company_postcode'] . ' ' .
                        $this->sampleData['company_city'] . ', ' .
                        $this->sampleData['company_country'];
-
             default:
                 // Retourne la variable elle-même si non trouvée (pour debug)
+
+
                 return '{{' . $variable . '}}';
         }
     }
@@ -201,14 +203,16 @@ class SampleDataProvider implements DataProviderInterface {
     /**
      * {@inheritDoc}
      */
-    public function isSampleData(): bool {
+    public function isSampleData(): bool
+    {
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getContext(): string {
+    public function getContext(): string
+    {
         return $this->context;
     }
 
@@ -219,23 +223,19 @@ class SampleDataProvider implements DataProviderInterface {
      * @param string $type Le type de données attendu
      * @return mixed La valeur validée et sanitizée
      */
-    public function validateAndSanitizeValue($value, string $type = 'string') {
+    public function validateAndSanitizeValue($value, string $type = 'string')
+    {
         switch ($type) {
             case 'email':
                 return $this->sanitizeEmail($value);
-
             case 'url':
                 return $this->sanitizeUrl($value);
-
             case 'html':
                 return $this->sanitizeHtml($value);
-
             case 'float':
                 return floatval($value);
-
             case 'int':
                 return intval($value);
-
             case 'string':
             default:
                 return $this->sanitizeText($value);
@@ -248,7 +248,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param mixed $value Valeur à sanitiser
      * @return string Email sanitizé ou chaîne vide
      */
-    private function sanitizeEmail($value): string {
+    private function sanitizeEmail($value): string
+    {
         if (function_exists('is_email') && function_exists('sanitize_email')) {
             return is_email($value) ? sanitize_email($value) : '';
         }
@@ -263,7 +264,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param mixed $value Valeur à sanitiser
      * @return string URL sanitizée
      */
-    private function sanitizeUrl($value): string {
+    private function sanitizeUrl($value): string
+    {
         if (function_exists('esc_url_raw')) {
             return esc_url_raw($value);
         }
@@ -277,7 +279,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param mixed $value Valeur à sanitiser
      * @return string HTML sanitizé
      */
-    private function sanitizeHtml($value): string {
+    private function sanitizeHtml($value): string
+    {
         if (function_exists('wp_kses_post')) {
             return wp_kses_post($value);
         }
@@ -291,7 +294,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param mixed $value Valeur à sanitiser
      * @return string Texte sanitizé
      */
-    private function sanitizeText($value): string {
+    private function sanitizeText($value): string
+    {
         if (function_exists('sanitize_text_field')) {
             return sanitize_text_field($value);
         }
@@ -302,7 +306,8 @@ class SampleDataProvider implements DataProviderInterface {
     /**
      * {@inheritDoc}
      */
-    public function validateAndSanitizeData(array $data): array {
+    public function validateAndSanitizeData(array $data): array
+    {
         $sanitized = [];
         foreach ($data as $key => $value) {
             $type = $this->guessDataType($key);
@@ -317,7 +322,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param string $key Clé de la donnée
      * @return string Type de données
      */
-    private function guessDataType(string $key): string {
+    private function guessDataType(string $key): string
+    {
         if (strpos($key, 'email') !== false) {
             return 'email';
         }
@@ -342,7 +348,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param string $variable Nom de la variable
      * @return bool True si la variable existe
      */
-    public function hasVariable(string $variable): bool {
+    public function hasVariable(string $variable): bool
+    {
         return isset($this->sampleData[$variable]);
     }
 
@@ -351,7 +358,8 @@ class SampleDataProvider implements DataProviderInterface {
      *
      * @return array Liste des noms de variables
      */
-    public function getAllVariables(): array {
+    public function getAllVariables(): array
+    {
         return array_keys($this->sampleData);
     }
 
@@ -360,7 +368,8 @@ class SampleDataProvider implements DataProviderInterface {
      *
      * @return array Données fictives complètes
      */
-    public function getAllSampleData(): array {
+    public function getAllSampleData(): array
+    {
         return $this->sampleData;
     }
 
@@ -370,7 +379,8 @@ class SampleDataProvider implements DataProviderInterface {
      * @param string $key Clé de la donnée
      * @param mixed $value Nouvelle valeur
      */
-    public function setSampleData(string $key, $value): void {
+    public function setSampleData(string $key, $value): void
+    {
         $this->sampleData[$key] = $this->validateAndSanitizeData($value);
     }
 }

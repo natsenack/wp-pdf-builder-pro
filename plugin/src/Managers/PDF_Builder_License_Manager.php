@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -11,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_License_Manager
+class PdfBuilderLicenseManager
 {
     /**
      * Instance unique
@@ -59,7 +61,7 @@ class PDF_Builder_License_Manager
     /**
      * Vérifier si l'utilisateur a une licence premium active
      */
-    public function is_premium()
+    public function isPremium()
     {
         return $this->license_status === 'active';
     }
@@ -67,7 +69,7 @@ class PDF_Builder_License_Manager
     /**
      * Obtenir le statut de la licence
      */
-    public function get_license_status()
+    public function getLicenseStatus()
     {
         return $this->license_status;
     }
@@ -75,7 +77,7 @@ class PDF_Builder_License_Manager
     /**
      * Obtenir les données de licence
      */
-    public function get_license_data()
+    public function getLicenseData()
     {
         return $this->license_data;
     }
@@ -83,7 +85,7 @@ class PDF_Builder_License_Manager
     /**
      * Activer une licence
      */
-    public function activate_license($license_key)
+    public function activateLicense($license_key)
     {
         // Validation basique
         if (empty($license_key)) {
@@ -111,7 +113,7 @@ class PDF_Builder_License_Manager
     /**
      * Désactiver la licence
      */
-    public function deactivate_license()
+    public function deactivateLicense()
     {
         delete_option('pdf_builder_license_key');
         delete_option('pdf_builder_license_status');
@@ -128,7 +130,7 @@ class PDF_Builder_License_Manager
      * Validation de la licence (simulation)
      * À remplacer par un appel à votre serveur de licences
      */
-    private function validate_license($license_key)
+    private function validateLicense($license_key)
     {
         // Simulation de validation - REMPLACER PAR VOTRE LOGIQUE RÉELLE
         $valid_keys = [
@@ -173,7 +175,7 @@ class PDF_Builder_License_Manager
     /**
      * Vérification périodique du statut de la licence
      */
-    public function check_license_status()
+    public function checkLicenseStatus()
     {
         if (empty($this->license_key) || $this->license_status !== 'active') {
             return;
@@ -198,7 +200,7 @@ class PDF_Builder_License_Manager
     /**
      * Obtenir les informations de licence formatées
      */
-    public function get_license_info()
+    public function getLicenseInfo()
     {
         return [
             'status' => $this->license_status,

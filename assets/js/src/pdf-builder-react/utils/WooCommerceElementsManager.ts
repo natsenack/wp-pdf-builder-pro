@@ -12,29 +12,21 @@ export class WooCommerceElementsManager {
    * Charge les données de commande WooCommerce
    */
   async loadOrderData(orderId: string): Promise<WooCommerceOrder> {
-    try {
-      // Simulation d'un appel API WooCommerce
-      // En production, ceci ferait un appel à l'API REST WooCommerce
-      const response = await this.mockFetchOrderData(orderId);
-      this.orderData = response;
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    // Simulation d'un appel API WooCommerce
+    // En production, ceci ferait un appel à l'API REST WooCommerce
+    const response = await this.mockFetchOrderData(orderId);
+    this.orderData = response;
+    return response;
   }
 
   /**
    * Charge les données client WooCommerce
    */
   async loadCustomerData(customerId: number): Promise<WooCommerceCustomer> {
-    try {
-      // Simulation d'un appel API WooCommerce
-      const response = await this.mockFetchCustomerData(customerId);
-      this.customerData = response;
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    // Simulation d'un appel API WooCommerce
+    const response = await this.mockFetchCustomerData(customerId);
+    this.customerData = response;
+    return response;
   }
 
   /**

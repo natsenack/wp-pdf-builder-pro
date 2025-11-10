@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './SaveIndicator.css';
 
 /**
@@ -30,7 +30,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   showProgressBar = false
 }) => {
   const [visible, setVisible] = useState(false);
-  const [autoHideTimer, setAutoHideTimer] = useState<NodeJS.Timeout | null>(null);
+  const autoHideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debug
   console.log('[SaveIndicator] state:', state, 'visible:', visible, 'progress:', progress);
@@ -39,27 +39,28 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   useEffect(() => {
     if (state === 'idle') {
       // Masquer immédiatement quand on revient à idle
-      setVisible(false);
-      if (autoHideTimer) {
-        clearTimeout(autoHideTimer);
-        setAutoHideTimer(null);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setVisible(_prev => false);
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+        autoHideTimerRef.current = null;
       }
     } else {
       setVisible(true);
 
       // Masquer automatiquement après 2 secondes pour 'saved', 3 secondes pour 'error', 10 secondes pour 'saving'
-      if (autoHideTimer) clearTimeout(autoHideTimer);
+      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
       const hideDelay = state === 'saved' ? 2000 : state === 'error' ? 3000 : 10000;
       const timer = setTimeout(() => {
         setVisible(false);
       }, hideDelay);
-      setAutoHideTimer(timer);
+      autoHideTimerRef.current = timer;
     }
 
     return () => {
-      if (autoHideTimer) clearTimeout(autoHideTimer);
+      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
     };
-  }, [state, autoHideTimer]);
+  }, [state]);
 
   if (!visible) {
     return null;

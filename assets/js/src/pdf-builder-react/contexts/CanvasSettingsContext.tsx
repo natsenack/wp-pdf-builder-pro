@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pdfBuilderCanvasSettings?: Record<string, any>;
+    pdfBuilderCanvasSettings?: Record<string, unknown>;
   }
 }
 

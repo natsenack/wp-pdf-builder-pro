@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion multi-niveaux du cache avec optimisations de performance
  */
 
-class PDF_Builder_Extended_Cache_Manager
+class PdfBuilderExtendedCacheManager
 {
     /**
      * Instance du main plugin
@@ -49,13 +51,13 @@ class PDF_Builder_Extended_Cache_Manager
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->initialize_cache();
+        $this->initializeCache();
     }
 
     /**
      * Initialiser le système de cache
      */
-    private function initialize_cache()
+    private function initializeCache()
     {
         // Initialiser le cache fichier
         $upload_dir = wp_upload_dir();
@@ -74,18 +76,18 @@ class PDF_Builder_Extended_Cache_Manager
         }
 
         // Initialiser la table DB si nécessaire
-        $this->ensure_db_table();
+        $this->ensureDbTable();
 
         // Nettoyer automatiquement si activé
         if ($this->cache_config['auto_cleanup']) {
-            $this->schedule_cleanup();
+            $this->scheduleCleanup();
         }
     }
 
     /**
      * S'assurer que la table DB existe
      */
-    private function ensure_db_table()
+    private function ensureDbTable()
     {
         global $wpdb;
 
@@ -122,22 +124,22 @@ class PDF_Builder_Extended_Cache_Manager
     public function set($key, $value, $type = 'general', $ttl = null)
     {
         if (!$ttl) {
-            $ttl = $this->get_default_ttl($type);
+            $ttl = $this->getDefaultTtl($type);
         }
 
         $success = true;
 
         // Cache mémoire
-        $this->set_memory_cache($key, $value, $ttl);
+        $this->setMemoryCache($key, $value, $ttl);
 
         // Cache fichier (pour données volumineuses)
-        if ($this->should_use_file_cache($value)) {
-            $file_success = $this->set_file_cache($key, $value, $type, $ttl);
+        if ($this->shouldUseFileCache($value)) {
+            $file_success = $this->setFileCache($key, $value, $type, $ttl);
             $success = $success && $file_success;
         }
 
         // Cache DB (pour données persistantes)
-        $db_success = $this->set_db_cache($key, $value, $type, $ttl);
+        $db_success = $this->setDbCache($key, $value, $type, $ttl);
         $success = $success && $db_success;
 
         return $success;
@@ -154,26 +156,26 @@ class PDF_Builder_Extended_Cache_Manager
     public function get($key, $type = 'general')
     {
         // 1. Vérifier le cache mémoire (le plus rapide)
-        $value = $this->get_memory_cache($key);
+        $value = $this->getMemoryCache($key);
         if ($value !== false) {
             return $value;
         }
 
         // 2. Vérifier le cache fichier
-        $value = $this->get_file_cache($key, $type);
+        $value = $this->getFileCache($key, $type);
         if ($value !== false) {
             // Remettre en mémoire pour accélérer les accès futurs
-            $this->set_memory_cache($key, $value, $this->cache_config['memory_ttl']);
+            $this->setMemoryCache($key, $value, $this->cache_config['memory_ttl']);
             return $value;
         }
 
         // 3. Vérifier le cache DB
-        $value = $this->get_db_cache($key, $type);
+        $value = $this->getDbCache($key, $type);
         if ($value !== false) {
             // Remettre en mémoire et fichier si volumineux
-            $this->set_memory_cache($key, $value, $this->cache_config['memory_ttl']);
-            if ($this->should_use_file_cache($value)) {
-                $this->set_file_cache($key, $value, $type, $this->cache_config['file_ttl']);
+            $this->setMemoryCache($key, $value, $this->cache_config['memory_ttl']);
+            if ($this->shouldUseFileCache($value)) {
+                $this->setFileCache($key, $value, $type, $this->cache_config['file_ttl']);
             }
             return $value;
         }
@@ -194,9 +196,9 @@ class PDF_Builder_Extended_Cache_Manager
      */
     public function delete($key, $type = 'general')
     {
-        $this->delete_memory_cache($key);
-        $this->delete_file_cache($key, $type);
-        $this->delete_db_cache($key, $type);
+        $this->deleteMemoryCache($key);
+        $this->deleteFileCache($key, $type);
+        $this->deleteDbCache($key, $type);
     }
 
     /**
@@ -205,20 +207,20 @@ class PDF_Builder_Extended_Cache_Manager
     public function clear($type = null)
     {
         if ($type) {
-            $this->clear_memory_cache_by_type($type);
-            $this->clear_file_cache_by_type($type);
-            $this->clear_db_cache_by_type($type);
+            $this->clearMemoryCacheByType($type);
+            $this->clearFileCacheByType($type);
+            $this->clearDbCacheByType($type);
         } else {
-            $this->clear_all_memory_cache();
-            $this->clear_all_file_cache();
-            $this->clear_all_db_cache();
+            $this->clearAllMemoryCache();
+            $this->clearAllFileCache();
+            $this->clearAllDbCache();
         }
     }
 
     /**
      * Cache mémoire
      */
-    private function set_memory_cache($key, $value, $ttl)
+    private function setMemoryCache($key, $value, $ttl)
     {
         $this->memory_cache[$key] = [
             'value' => $value,
@@ -227,11 +229,11 @@ class PDF_Builder_Extended_Cache_Manager
 
         // Limiter la taille du cache mémoire
         if (count($this->memory_cache) > $this->cache_config['max_memory_items']) {
-            $this->cleanup_memory_cache();
+            $this->cleanupMemoryCache();
         }
     }
 
-    private function get_memory_cache($key)
+    private function getMemoryCache($key)
     {
         if (!isset($this->memory_cache[$key])) {
             return false;
@@ -246,23 +248,23 @@ class PDF_Builder_Extended_Cache_Manager
         return $item['value'];
     }
 
-    private function delete_memory_cache($key)
+    private function deleteMemoryCache($key)
     {
         unset($this->memory_cache[$key]);
     }
 
-    private function clear_all_memory_cache()
+    private function clearAllMemoryCache()
     {
         $this->memory_cache = [];
     }
 
-    private function clear_memory_cache_by_type($type)
+    private function clearMemoryCacheByType($type)
     {
         // Le cache mémoire ne différencie pas par type, on nettoie tout
-        $this->clear_all_memory_cache();
+        $this->clearAllMemoryCache();
     }
 
-    private function cleanup_memory_cache()
+    private function cleanupMemoryCache()
     {
         $now = time();
         foreach ($this->memory_cache as $key => $item) {
@@ -288,9 +290,9 @@ class PDF_Builder_Extended_Cache_Manager
     /**
      * Cache fichier
      */
-    private function set_file_cache($key, $value, $type, $ttl)
+    private function setFileCache($key, $value, $type, $ttl)
     {
-        $cache_file = $this->get_cache_file_path($key, $type);
+        $cache_file = $this->getCacheFilePath($key, $type);
 
         $data = [
             'key' => $key,
@@ -309,9 +311,9 @@ class PDF_Builder_Extended_Cache_Manager
         return file_put_contents($cache_file, $serialized) !== false;
     }
 
-    private function get_file_cache($key, $type)
+    private function getFileCache($key, $type)
     {
-        $cache_file = $this->get_cache_file_path($key, $type);
+        $cache_file = $this->getCacheFilePath($key, $type);
 
         if (!file_exists($cache_file)) {
             return false;
@@ -340,31 +342,31 @@ class PDF_Builder_Extended_Cache_Manager
         return $unserialized['value'];
     }
 
-    private function delete_file_cache($key, $type)
+    private function deleteFileCache($key, $type)
     {
-        $cache_file = $this->get_cache_file_path($key, $type);
+        $cache_file = $this->getCacheFilePath($key, $type);
         if (file_exists($cache_file)) {
             unlink($cache_file);
         }
     }
 
-    private function clear_all_file_cache()
+    private function clearAllFileCache()
     {
-        $this->delete_directory_contents($this->file_cache_dir);
+        $this->deleteDirectoryContents($this->file_cache_dir);
     }
 
-    private function clear_file_cache_by_type($type)
+    private function clearFileCacheByType($type)
     {
         $type_dir = $this->file_cache_dir . '/' . $type;
         if (file_exists($type_dir)) {
-            $this->delete_directory_contents($type_dir);
+            $this->deleteDirectoryContents($type_dir);
         }
     }
 
     /**
      * Cache base de données
      */
-    private function set_db_cache($key, $value, $type, $ttl)
+    private function setDbCache($key, $value, $type, $ttl)
     {
         global $wpdb;
 
@@ -382,7 +384,7 @@ class PDF_Builder_Extended_Cache_Manager
         return $result !== false;
     }
 
-    private function get_db_cache($key, $type)
+    private function getDbCache($key, $type)
     {
         global $wpdb;
 
@@ -404,7 +406,7 @@ class PDF_Builder_Extended_Cache_Manager
         return maybe_unserialize($result->cache_value);
     }
 
-    private function delete_db_cache($key, $type)
+    private function deleteDbCache($key, $type)
     {
         global $wpdb;
 
@@ -419,7 +421,7 @@ class PDF_Builder_Extended_Cache_Manager
         );
     }
 
-    private function clear_all_db_cache()
+    private function clearAllDbCache()
     {
         global $wpdb;
 
@@ -427,7 +429,7 @@ class PDF_Builder_Extended_Cache_Manager
         $wpdb->query("TRUNCATE TABLE $table_name");
     }
 
-    private function clear_db_cache_by_type($type)
+    private function clearDbCacheByType($type)
     {
         global $wpdb;
 
@@ -438,7 +440,7 @@ class PDF_Builder_Extended_Cache_Manager
     /**
      * Utilitaires
      */
-    private function get_cache_file_path($key, $type)
+    private function getCacheFilePath($key, $type)
     {
         $subdir = $this->file_cache_dir . '/' . $type;
         if (!file_exists($subdir)) {
@@ -449,14 +451,14 @@ class PDF_Builder_Extended_Cache_Manager
         return $subdir . '/' . $safe_key . '.cache';
     }
 
-    private function should_use_file_cache($value)
+    private function shouldUseFileCache($value)
     {
         // Utiliser le cache fichier pour les données volumineuses
         $serialized = serialize($value);
         return strlen($serialized) > 10000; // Plus de 10KB
     }
 
-    private function get_default_ttl($type)
+    private function getDefaultTtl($type)
     {
         $ttls = [
             'pdf' => $this->cache_config['file_ttl'],
@@ -468,7 +470,7 @@ class PDF_Builder_Extended_Cache_Manager
         return $ttls[$type] ?? $this->cache_config['memory_ttl'];
     }
 
-    private function delete_directory_contents($dir)
+    private function deleteDirectoryContents($dir)
     {
         if (!file_exists($dir)) {
             return;
@@ -479,7 +481,7 @@ class PDF_Builder_Extended_Cache_Manager
             if (is_file($file)) {
                 unlink($file);
             } elseif (is_dir($file)) {
-                $this->delete_directory_contents($file);
+                $this->deleteDirectoryContents($file);
                 rmdir($file);
             }
         }
@@ -488,7 +490,7 @@ class PDF_Builder_Extended_Cache_Manager
     /**
      * Nettoyer automatiquement les caches expirés
      */
-    private function schedule_cleanup()
+    private function scheduleCleanup()
     {
         if (!wp_next_scheduled('pdf_builder_cache_cleanup')) {
             wp_schedule_event(time(), 'hourly', 'pdf_builder_cache_cleanup');
@@ -497,7 +499,7 @@ class PDF_Builder_Extended_Cache_Manager
         add_action('pdf_builder_cache_cleanup', [$this, 'cleanup_expired_cache']);
     }
 
-    public function cleanup_expired_cache()
+    public function cleanupExpiredCache()
     {
         // Nettoyer DB cache
         global $wpdb;
@@ -509,13 +511,13 @@ class PDF_Builder_Extended_Cache_Manager
         );
 
         // Nettoyer fichier cache
-        $this->cleanup_expired_files();
+        $this->cleanupExpiredFiles();
 
         // Nettoyer mémoire cache
-        $this->cleanup_memory_cache();
+        $this->cleanupMemoryCache();
     }
 
-    private function cleanup_expired_files()
+    private function cleanupExpiredFiles()
     {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($this->file_cache_dir, RecursiveDirectoryIterator::SKIP_DOTS)
@@ -541,7 +543,7 @@ class PDF_Builder_Extended_Cache_Manager
     /**
      * Obtenir les statistiques du cache
      */
-    public function get_cache_stats()
+    public function getCacheStats()
     {
         global $wpdb;
 
@@ -549,7 +551,7 @@ class PDF_Builder_Extended_Cache_Manager
 
         $stats = [
             'memory_items' => count($this->memory_cache),
-            'file_cache_size' => $this->get_directory_size($this->file_cache_dir),
+            'file_cache_size' => $this->getDirectorySize($this->file_cache_dir),
             'db_cache_count' => $wpdb->get_var("SELECT COUNT(*) FROM $table_name"),
             'config' => $this->cache_config
         ];
@@ -557,7 +559,7 @@ class PDF_Builder_Extended_Cache_Manager
         return $stats;
     }
 
-    private function get_directory_size($dir)
+    private function getDirectorySize($dir)
     {
         $size = 0;
         if (!file_exists($dir)) {
@@ -578,7 +580,7 @@ class PDF_Builder_Extended_Cache_Manager
     /**
      * Optimiser les performances du cache
      */
-    public function optimize_performance()
+    public function optimizePerformance()
     {
         // Augmenter la taille du cache mémoire si utilisation élevée
         $memory_usage = count($this->memory_cache) / $this->cache_config['max_memory_items'];
@@ -587,12 +589,12 @@ class PDF_Builder_Extended_Cache_Manager
         }
 
         // Activer/désactiver la compression selon les besoins
-        $file_cache_size = $this->get_directory_size($this->file_cache_dir);
+        $file_cache_size = $this->getDirectorySize($this->file_cache_dir);
         if ($file_cache_size > 100 * 1024 * 1024) { // Plus de 100MB
             $this->cache_config['compression_enabled'] = true;
         }
 
         // Nettoyer automatiquement
-        $this->cleanup_expired_cache();
+        $this->cleanupExpiredCache();
     }
 }

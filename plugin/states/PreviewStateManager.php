@@ -1,72 +1,27 @@
 <?php
+
 namespace WP_PDF_Builder_Pro\States;
-
-/**
- * Interface PreviewStateInterface
- * Définit le contrat pour les états d'aperçu
- */
-interface PreviewStateInterface {
-
-    /**
-     * Récupère le nom de l'état
-     *
-     * @return string Nom de l'état
-     */
-    public function getName(): string;
-
-    /**
-     * Vérifie si l'état permet certaines actions
-     *
-     * @param string $action Action à vérifier
-     * @return bool true si l'action est autorisée
-     */
-    public function canPerformAction(string $action): bool;
-
-    /**
-     * Exécute une transition vers un nouvel état
-     *
-     * @param string $new_state Nouvel état souhaité
-     * @return bool true si la transition est autorisée
-     */
-    public function canTransitionTo(string $new_state): bool;
-
-    /**
-     * Récupère les actions disponibles dans cet état
-     *
-     * @return array Liste des actions disponibles
-     */
-    public function getAvailableActions(): array;
-
-    /**
-     * Récupère le message d'état pour l'utilisateur
-     *
-     * @return string Message d'état
-     */
-    public function getUserMessage(): string;
-}
 
 /**
  * Classe PreviewStateManager
  * Gère les états du système d'aperçu avec transitions fluides
  */
-class PreviewStateManager {
-
+class PreviewStateManager
+{
     /** @var string État actuel */
     private $current_state;
-
     /** @var array Historique des états */
     private $state_history = [];
-
     /** @var array Callbacks pour les changements d'état */
     private $state_change_callbacks = [];
-
     /** @var array Configuration des états */
     private $states_config;
 
     /**
      * Constructeur
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->initializeStatesConfig();
         $this->current_state = 'idle';
         $this->logStateChange('idle', 'Initial state');
@@ -75,7 +30,8 @@ class PreviewStateManager {
     /**
      * Initialise la configuration des états
      */
-    private function initializeStatesConfig(): void {
+    private function initializeStatesConfig(): void
+    {
         $this->states_config = [
             'idle' => [
                 'name' => 'idle',
@@ -158,7 +114,8 @@ class PreviewStateManager {
      * @param array $metadata Métadonnées supplémentaires
      * @return bool true si le changement a réussi
      */
-    public function changeState(string $new_state, string $reason = '', array $metadata = []): bool {
+    public function changeState(string $new_state, string $reason = '', array $metadata = []): bool
+    {
         if (!isset($this->states_config[$new_state])) {
             $this->logError("Unknown state: {$new_state}");
             return false;
@@ -171,8 +128,7 @@ class PreviewStateManager {
 
         $old_state = $this->current_state;
         $this->current_state = $new_state;
-
-        // Ajouter à l'historique
+// Ajouter à l'historique
         $this->state_history[] = [
             'from' => $old_state,
             'to' => $new_state,
@@ -180,17 +136,14 @@ class PreviewStateManager {
             'reason' => $reason,
             'metadata' => $metadata
         ];
-
-        // Limiter l'historique à 50 entrées
+// Limiter l'historique à 50 entrées
         if (count($this->state_history) > 50) {
             array_shift($this->state_history);
         }
 
         $this->logStateChange($new_state, $reason, $metadata);
-
-        // Déclencher les callbacks
+// Déclencher les callbacks
         $this->triggerStateChangeCallbacks($old_state, $new_state, $reason, $metadata);
-
         return true;
     }
 
@@ -200,7 +153,8 @@ class PreviewStateManager {
      * @param string $new_state État cible
      * @return bool true si la transition est autorisée
      */
-    public function canTransitionTo(string $new_state): bool {
+    public function canTransitionTo(string $new_state): bool
+    {
         if (!isset($this->states_config[$this->current_state])) {
             return false;
         }
@@ -215,7 +169,8 @@ class PreviewStateManager {
      * @param string $action Action à vérifier
      * @return bool true si l'action est autorisée
      */
-    public function canPerformAction(string $action): bool {
+    public function canPerformAction(string $action): bool
+    {
         if (!isset($this->states_config[$this->current_state])) {
             return false;
         }
@@ -229,7 +184,8 @@ class PreviewStateManager {
      *
      * @return string État actuel
      */
-    public function getCurrentState(): string {
+    public function getCurrentState(): string
+    {
         return $this->current_state;
     }
 
@@ -238,7 +194,8 @@ class PreviewStateManager {
      *
      * @return array Configuration de l'état
      */
-    public function getCurrentStateConfig(): array {
+    public function getCurrentStateConfig(): array
+    {
         return $this->states_config[$this->current_state] ?? [];
     }
 
@@ -247,7 +204,8 @@ class PreviewStateManager {
      *
      * @return array Actions disponibles
      */
-    public function getAvailableActions(): array {
+    public function getAvailableActions(): array
+    {
         $config = $this->getCurrentStateConfig();
         return $config['allowed_actions'] ?? [];
     }
@@ -257,7 +215,8 @@ class PreviewStateManager {
      *
      * @return string Message utilisateur
      */
-    public function getUserMessage(): string {
+    public function getUserMessage(): string
+    {
         $config = $this->getCurrentStateConfig();
         return $config['user_message'] ?? '';
     }
@@ -267,7 +226,8 @@ class PreviewStateManager {
      *
      * @return array Historique des états
      */
-    public function getStateHistory(): array {
+    public function getStateHistory(): array
+    {
         return $this->state_history;
     }
 
@@ -276,7 +236,8 @@ class PreviewStateManager {
      *
      * @param callable $callback Fonction à appeler lors des changements d'état
      */
-    public function onStateChange(callable $callback): void {
+    public function onStateChange(callable $callback): void
+    {
         $this->state_change_callbacks[] = $callback;
     }
 
@@ -288,7 +249,8 @@ class PreviewStateManager {
      * @param string $reason Raison
      * @param array $metadata Métadonnées
      */
-    private function triggerStateChangeCallbacks(string $old_state, string $new_state, string $reason, array $metadata): void {
+    private function triggerStateChangeCallbacks(string $old_state, string $new_state, string $reason, array $metadata): void
+    {
         foreach ($this->state_change_callbacks as $callback) {
             try {
                 $callback($old_state, $new_state, $reason, $metadata);
@@ -304,10 +266,10 @@ class PreviewStateManager {
      * @param string $state État à forcer
      * @param string $reason Raison
      */
-    public function forceState(string $state, string $reason = 'Forced'): void {
+    public function forceState(string $state, string $reason = 'Forced'): void
+    {
         $old_state = $this->current_state;
         $this->current_state = $state;
-
         $this->state_history[] = [
             'from' => $old_state,
             'to' => $state,
@@ -315,14 +277,14 @@ class PreviewStateManager {
             'reason' => $reason,
             'forced' => true
         ];
-
         $this->logWarning("State forced from {$old_state} to {$state}: {$reason}");
     }
 
     /**
      * Réinitialise le gestionnaire d'état
      */
-    public function reset(): void {
+    public function reset(): void
+    {
         $this->current_state = 'idle';
         $this->state_history = [];
         $this->state_change_callbacks = [];
@@ -334,7 +296,8 @@ class PreviewStateManager {
      *
      * @return bool true si en erreur
      */
-    public function isInErrorState(): bool {
+    public function isInErrorState(): bool
+    {
         return $this->current_state === 'error';
     }
 
@@ -343,7 +306,8 @@ class PreviewStateManager {
      *
      * @return bool true si occupé
      */
-    public function isBusy(): bool {
+    public function isBusy(): bool
+    {
         return in_array($this->current_state, ['initializing', 'loading', 'generating']);
     }
 
@@ -352,7 +316,8 @@ class PreviewStateManager {
      *
      * @return array Statistiques des états
      */
-    public function getStateStats(): array {
+    public function getStateStats(): array
+    {
         $stats = [];
         foreach ($this->state_history as $entry) {
             $state = $entry['to'];
@@ -371,12 +336,12 @@ class PreviewStateManager {
      * @param string $reason Raison
      * @param array $metadata Métadonnées
      */
-    private function logStateChange(string $new_state, string $reason = '', array $metadata = []): void {
+    private function logStateChange(string $new_state, string $reason = '', array $metadata = []): void
+    {
         $message = "[State Change] {$this->current_state} -> {$new_state}";
         if (!empty($reason)) {
             $message .= " ({$reason})";
         }
-
     }
 
     /**
@@ -384,8 +349,8 @@ class PreviewStateManager {
      *
      * @param string $message Message d'erreur
      */
-    private function logError(string $message): void {
-
+    private function logError(string $message): void
+    {
     }
 
     /**
@@ -393,8 +358,8 @@ class PreviewStateManager {
      *
      * @param string $message Message d'avertissement
      */
-    private function logWarning(string $message): void {
-
+    private function logWarning(string $message): void
+    {
     }
 
     /**
@@ -402,7 +367,7 @@ class PreviewStateManager {
      *
      * @param string $message Message d'information
      */
-    private function logInfo(string $message): void {
-
+    private function logInfo(string $message): void
+    {
     }
 }

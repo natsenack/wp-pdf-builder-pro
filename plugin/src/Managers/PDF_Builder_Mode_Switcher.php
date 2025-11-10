@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mode Switcher - Gestionnaire de basculement entre modes Canvas/Metabox
  *
@@ -14,43 +15,38 @@ namespace PDF_Builder\Managers;
  * Gère le basculement entre les modes Canvas (données fictives) et Metabox (données WooCommerce)
  * Implémente le pattern Strategy pour l'injection de dépendances
  */
-class PDF_Builder_Mode_Switcher
+class PdfBuilderModeSwitcher
 {
     /**
      * Modes disponibles
      */
     const MODE_CANVAS = 'canvas';
     const MODE_METABOX = 'metabox';
-
-    /**
+/**
      * Mode actuel
      *
      * @var string
      */
     private string $currentMode = self::MODE_CANVAS;
-
-    /**
+/**
      * Instance du provider actuel
      *
      * @var mixed|null
      */
     private mixed $currentProvider = null;
-
-    /**
+/**
      * Instance du renderer
      *
      * @var mixed|null
      */
     private mixed $renderer = null;
-
-    /**
+/**
      * Cache des providers instanciés
      *
      * @var array
      */
     private array $providerCache = [];
-
-    /**
+/**
      * Constructeur
      *
      * @param string $initialMode Mode initial (canvas ou metabox)
@@ -81,11 +77,9 @@ class PDF_Builder_Mode_Switcher
 
         // Créer ou récupérer le provider pour ce mode
         $provider = $this->getProviderForMode($mode);
-
-        // Mettre à jour l'état (le renderer recevra les données lors du rendu)
+// Mettre à jour l'état (le renderer recevra les données lors du rendu)
         $this->currentMode = $mode;
         $this->currentProvider = $provider;
-
         return true;
     }
 
@@ -118,8 +112,7 @@ class PDF_Builder_Mode_Switcher
     public function setRenderer($renderer): self
     {
         $this->renderer = $renderer;
-
-        // Le renderer recevra les données lors des appels de rendu
+// Le renderer recevra les données lors des appels de rendu
         return $this;
     }
 
@@ -181,21 +174,21 @@ class PDF_Builder_Mode_Switcher
         // Créer le provider selon le mode
         switch ($mode) {
             case self::MODE_CANVAS:
-                $provider = [];
-                break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $provider = [];
 
+                break;
             case self::MODE_METABOX:
                 // Pour Metabox, initialiser avec null
-                $provider = [];
-                break;
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $provider = [];
+
+                break;
             default:
                 throw new \InvalidArgumentException("Mode non supporté: {$mode}");
         }
 
         // Mettre en cache
         $this->providerCache[$mode] = $provider;
-
         return $provider;
     }
 

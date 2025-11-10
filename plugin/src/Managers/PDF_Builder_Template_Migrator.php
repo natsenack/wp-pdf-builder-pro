@@ -7,7 +7,7 @@ namespace PDF_Builder\Managers;
  * Adapte les templates anciens aux nouvelles configurations par défaut
  */
 
-class PDF_Builder_Template_Migrator
+class PdfBuilderTemplateMigrator
 {
     /**
      * Corrige les valeurs par défaut incorrectes dans les templates existants

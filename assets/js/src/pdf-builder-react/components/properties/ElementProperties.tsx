@@ -3,7 +3,7 @@ import { Element } from '../../types/elements';
 
 interface ElementPropertiesProps {
   element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  onChange: (elementId: string, property: string, value: unknown) => void;
 }
 
 export function ElementProperties({ element, onChange }: ElementPropertiesProps) {
@@ -109,7 +109,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element as any).fillColor || '#ffffff'}
+              value={element.fillColor || '#ffffff'}
               onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
               style={{
                 width: '100%',
@@ -126,7 +126,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element as any).strokeColor || '#000000'}
+              value={element.strokeColor || '#000000'}
               onChange={(e) => onChange(element.id, 'strokeColor', e.target.value)}
               style={{
                 width: '100%',
@@ -145,7 +145,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               type="number"
               min="0"
               max="20"
-              value={(element as any).strokeWidth || 1}
+              value={element.strokeWidth || 1}
               onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 1)}
               style={{
                 width: '100%',
@@ -165,7 +165,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               type="number"
               min="0"
               max="50"
-              value={(element as any).borderRadius || 0}
+              value={element.borderRadius || 0}
               onChange={(e) => onChange(element.id, 'borderRadius', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -189,7 +189,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element as any).fillColor || '#ffffff'}
+              value={element.fillColor || '#ffffff'}
               onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
               style={{
                 width: '100%',
@@ -206,7 +206,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element as any).strokeColor || '#000000'}
+              value={element.strokeColor || '#000000'}
               onChange={(e) => onChange(element.id, 'strokeColor', e.target.value)}
               style={{
                 width: '100%',
@@ -225,7 +225,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               type="number"
               min="0"
               max="20"
-              value={(element as any).strokeWidth || 1}
+              value={element.strokeWidth || 1}
               onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 1)}
               style={{
                 width: '100%',
@@ -248,7 +248,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               Texte
             </label>
             <textarea
-              value={(element as any).text || ''}
+              value={element.text || ''}
               onChange={(e) => onChange(element.id, 'text', e.target.value)}
               rows={3}
               style={{
@@ -270,7 +270,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               type="number"
               min="8"
               max="72"
-              value={(element as any).fontSize || 12}
+              value={element.fontSize || 12}
               onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 12)}
               style={{
                 width: '100%',
@@ -288,7 +288,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element as any).color || '#000000'}
+              value={element.color || '#000000'}
               onChange={(e) => onChange(element.id, 'color', e.target.value)}
               style={{
                 width: '100%',
@@ -304,7 +304,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               Alignement
             </label>
             <select
-              value={(element as any).textAlign || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -325,7 +325,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               Police
             </label>
             <select
-              value={(element as any).fontFamily || 'Arial'}
+              value={element.fontFamily || 'Arial'}
               onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
               style={{
                 width: '100%',
@@ -352,7 +352,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).bold || false}
+                  checked={element.bold || false}
                   onChange={(e) => onChange(element.id, 'bold', e.target.checked)}
                   style={{ marginRight: '4px' }}
                 />
@@ -361,7 +361,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).italic || false}
+                  checked={element.italic || false}
                   onChange={(e) => onChange(element.id, 'italic', e.target.checked)}
                   style={{ marginRight: '4px' }}
                 />
@@ -370,7 +370,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).underline || false}
+                  checked={element.underline || false}
                   onChange={(e) => onChange(element.id, 'underline', e.target.checked)}
                   style={{ marginRight: '4px' }}
                 />
@@ -387,11 +387,11 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              URL de l'image
+              URL de l&apos;image
             </label>
             <input
               type="text"
-              value={(element as any).src || ''}
+              value={element.src || ''}
               onChange={(e) => onChange(element.id, 'src', e.target.value)}
               placeholder="https://example.com/image.jpg"
               style={{
@@ -409,7 +409,7 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
               Ajustement
             </label>
             <select
-              value={(element as any).objectFit || 'contain'}
+              value={element.objectFit || 'contain'}
               onChange={(e) => onChange(element.id, 'objectFit', e.target.value)}
               style={{
                 width: '100%',

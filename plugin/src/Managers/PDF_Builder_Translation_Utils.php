@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -14,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe utilitaire pour la gestion des traductions
  */
-class PDF_Builder_Translation_Utils
+class PdfBuilderTranslationUtils
 {
     /**
      * Instance unique de la classe
@@ -74,7 +76,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Détecter la langue actuelle
      */
-    private function detect_language()
+    private function detectLanguage()
     {
         // Utiliser la locale WordPress
         $locale = get_locale();
@@ -88,7 +90,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Charger les fichiers de traduction
      */
-    private function load_translations()
+    private function loadTranslations()
     {
         // Charger le textdomain
         load_plugin_textdomain(
@@ -101,7 +103,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Hook pour charger le textdomain
      */
-    public function load_textdomain()
+    public function loadTextdomain()
     {
         $this->load_translations();
     }
@@ -109,7 +111,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Filtre pour définir la locale
      */
-    public function set_locale($locale)
+    public function setLocale($locale)
     {
         // Vous pouvez ajouter une logique personnalisée ici
         // pour forcer une langue spécifique si nécessaire
@@ -137,7 +139,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Traduire une chaîne avec variables
      */
-    public function translate_with_vars($text, $vars = array(), $context = '')
+    public function translateWithVars($text, $vars = array(), $context = '')
     {
         $translated = $this->translate($text, $context);
 
@@ -151,7 +153,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Obtenir la langue actuelle
      */
-    public function get_current_language()
+    public function getCurrentLanguage()
     {
         return $this->current_language;
     }
@@ -159,7 +161,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Vérifier si une langue est supportée
      */
-    public function is_language_supported($language_code)
+    public function isLanguageSupported($language_code)
     {
         $supported_languages = array('fr', 'en', 'es', 'de', 'it');
         return in_array($language_code, $supported_languages);
@@ -168,7 +170,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Obtenir les langues supportées
      */
-    public function get_supported_languages()
+    public function getSupportedLanguages()
     {
         return array(
             'fr' => 'Français',
@@ -182,7 +184,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Formater une date selon la locale
      */
-    public function format_date($date, $format = null)
+    public function formatDate($date, $format = null)
     {
         if (!$format) {
             $format = get_option('date_format', 'd/m/Y');
@@ -198,7 +200,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Formater un nombre selon la locale
      */
-    public function format_number($number, $decimals = 2)
+    public function formatNumber($number, $decimals = 2)
     {
         return number_format_i18n($number, $decimals);
     }
@@ -206,7 +208,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Obtenir les informations de locale
      */
-    public function get_locale_info()
+    public function getLocaleInfo()
     {
         return array(
             'language' => $this->current_language,
@@ -219,7 +221,7 @@ class PDF_Builder_Translation_Utils
     /**
      * Nettoyer le cache des traductions
      */
-    public function clear_cache()
+    public function clearCache()
     {
         $this->translation_cache = array();
     }

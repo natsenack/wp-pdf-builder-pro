@@ -11,9 +11,11 @@ interface ElementUpdates {
 
 interface UseCanvasInteractionProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasWidth?: number;
+  canvasHeight?: number;
 }
 
-export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) => {
+export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
 
   // États pour le drag et resize
@@ -34,18 +36,24 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
-  const getResizeHandleAtPosition = (x: number, y: number, selectedIds: string[], elements: Element[]) => {
+  const getResizeHandleAtPosition = useCallback((x: number, y: number, selectedIds: string[], elements: Element[]) => {
     const handleSize = 8;
     const handleMargin = 6;  // Consistent margin for all elements
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
 
     for (const element of selectedElements) {
-      // Calculer les positions des poignées
+      // Calculer les positions des poignées (8 poignées : 4 coins + 4 milieux)
       const handles = [
+        // Coins
         { name: 'nw', x: element.x - handleSize/2, y: element.y - handleSize/2 },
         { name: 'ne', x: element.x + element.width - handleSize/2, y: element.y - handleSize/2 },
         { name: 'sw', x: element.x - handleSize/2, y: element.y + element.height - handleSize/2 },
-        { name: 'se', x: element.x + element.width - handleSize/2, y: element.y + element.height - handleSize/2 }
+        { name: 'se', x: element.x + element.width - handleSize/2, y: element.y + element.height - handleSize/2 },
+        // Milieux des côtés
+        { name: 'n', x: element.x + element.width/2 - handleSize/2, y: element.y - handleSize/2 },
+        { name: 's', x: element.x + element.width/2 - handleSize/2, y: element.y + element.height - handleSize/2 },
+        { name: 'w', x: element.x - handleSize/2, y: element.y + element.height/2 - handleSize/2 },
+        { name: 'e', x: element.x + element.width - handleSize/2, y: element.y + element.height/2 - handleSize/2 }
       ];
 
       for (const handle of handles) {
@@ -58,7 +66,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     }
 
     return null;
-  };
+  }, []);
 
   // Fonction pour créer un élément selon le mode à une position donnée
   const createElementAtPosition = useCallback((x: number, y: number, mode: string) => {
@@ -185,7 +193,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   }, [state.selection.selectedElements, state]);
 
   // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
-  const validateCanvasRect = (rect: any): boolean => {
+  const validateCanvasRect = (rect: { width: number; height: number; left: number; top: number; right: number; bottom: number }): boolean => {
     // Vérifier que rect a des dimensions positives et que left/top sont raisonnables
     if (!rect || rect.width <= 0 || rect.height <= 0) {
       console.warn('❌ [RECT] Invalid canvas rect - zero dimensions:', rect);
@@ -226,36 +234,29 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    
+
     // ✅ BUGFIX-008: Validate rect BEFORE using it
     if (!validateCanvasRect(rect)) {
       console.warn('⚠️ [CLICK] Invalid canvas rect, skipping click handler');
       return;
     }
-    
+
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
     const zoomScale = state.canvas.zoom / 100;
     const x = (event.clientX - rect.left - state.canvas.pan.x) / zoomScale;
     const y = (event.clientY - rect.top - state.canvas.pan.y) / zoomScale;
 
-    // Trouver l'élément cliqué (avec hitbox adaptée)
-    const clickedElement = state.elements.find(el => isPointInElement(x, y, el));
+    // ✅ CORRECTION: Vérifier qu'aucun élément n'est cliqué (pour éviter duplication avec handleMouseDown)
+    // Note: On cherche du dernier vers le premier pour cohérence avec handleMouseDown
+    const clickedElement = [...state.elements].reverse().find(el => isPointInElement(x, y, el));
 
-    if (clickedElement) {
-      // Sélectionner l'élément existant
-      dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-      selectedElementRef.current = clickedElement.id;
-    } else {
-      // Aucun élément cliqué - vérifier si on doit créer un nouvel élément selon le mode
-      if (state.mode !== 'select') {
-        createElementAtPosition(x, y, state.mode);
-      } else {
-        // Mode sélection - désélectionner
-        dispatch({ type: 'CLEAR_SELECTION' });
-        selectedElementRef.current = null;
-      }
+    // Ne créer un élément que si on clique dans le vide ET qu'on n'est pas en mode sélection
+    if (!clickedElement && state.mode !== 'select') {
+      console.log('➕ [CREATE] Clic dans le vide en mode', state.mode, '- création d\'élément');
+      createElementAtPosition(x, y, state.mode);
     }
-  }, [state, dispatch, canvasRef, createElementAtPosition]);
+    // Note: La sélection est gérée exclusivement par handleMouseDown
+  }, [state, canvasRef, createElementAtPosition]);
 
   // Gestionnaire de mouse down pour commencer le drag ou resize
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -285,7 +286,8 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     console.log('🖱️ [MOUSEDOWN] screenX:', event.clientX, 'screenY:', event.clientY, 'canvasRect:', {left: rect.left, top: rect.top}, 'canvasRelative:', {x: canvasRelativeX, y: canvasRelativeY}, 'pan:', state.canvas.pan, 'zoomScale:', zoomScale, 'finalCoords:', {x, y});
 
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
-    const clickedElement = state.elements.find(el => {
+    // Note: On cherche du dernier vers le premier pour sélectionner l'élément rendu au-dessus
+    const clickedElement = [...state.elements].reverse().find(el => {
       const isIn = isPointInElement(x, y, el);
       console.log('🔍 [HIT TEST]', el.type, el.id, '- x:', el.x, 'y:', el.y, 'w:', el.width, 'h:', el.height, 'clickX:', x.toFixed(2), 'clickY:', y.toFixed(2), 'isHit:', isIn);
       return isIn;
@@ -304,8 +306,14 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         console.log('✅ [SELECTION] State selection AVANT dispatch:', state.selection.selectedElements);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
         console.log('✅ [SELECTION] APRÈS dispatch - état sera mis à jour à:', [clickedElement.id]);
-        // ✅ CORRECTION: Ne pas preventDefault pour permettre onClick de se déclencher
-        // event.preventDefault();
+        // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
+        isDraggingRef.current = true;
+        const offsetX = x - clickedElement.x;
+        const offsetY = y - clickedElement.y;
+        dragStartRef.current = { x: offsetX, y: offsetY };
+        selectedElementRef.current = clickedElement.id;
+        console.log('🎯 [DRAG START] Élément fraîchement sélectionné - drag préparé:', clickedElement.id, 'offsetX:', offsetX, 'offsetY:', offsetY);
+        event.preventDefault();
         return;
       }
 
@@ -341,7 +349,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
     } else {
       console.log('❌ [NO ACTION] Clic sur le vide et rien sélectionné');
     }
-  }, [state, canvasRef, dispatch]);
+  }, [state, canvasRef, dispatch, getResizeHandleAtPosition]);
 
   // Gestionnaire de mouse up pour terminer le drag ou resize
   const handleMouseUp = useCallback(() => {
@@ -360,6 +368,14 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       case 'ne':
       case 'sw':
         return 'ne-resize';
+      case 'n':
+        return 'n-resize';
+      case 's':
+        return 's-resize';
+      case 'w':
+        return 'w-resize';
+      case 'e':
+        return 'e-resize';
       default:
         return 'default';
     }
@@ -395,7 +411,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
 
     // Curseur par défaut
     return 'default';
-  }, [state.selection.selectedElements, state.elements]);
+  }, [state.selection.selectedElements, state.elements, getResizeHandleAtPosition]);
 
   // Fonction pour mettre à jour le curseur du canvas
   const updateCursor = useCallback((cursor: string) => {
@@ -407,34 +423,62 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
   }, [canvasRef]);
 
   // Fonction utilitaire pour calculer le redimensionnement
-  const calculateResize = (element: Element, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
+  const calculateResize = useCallback((element: Element, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
     const updates: ElementUpdates = {};
 
     switch (handle) {
-      case 'se': // Sud-Est
-        updates.width = Math.max(20, currentX - element.x);
-        updates.height = Math.max(20, currentY - element.y);
+      case 'se': { // Sud-Est
+        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
+        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
         break;
-      case 'sw': // Sud-Ouest
-        updates.width = Math.max(20, element.x + element.width - currentX);
-        updates.height = Math.max(20, currentY - element.y);
-        updates.x = currentX;
+      }
+      case 'sw': { // Sud-Ouest
+        const maxWidth = element.x + element.width;
+        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
+        updates.x = Math.max(0, Math.min(element.x, currentX));
+        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
         break;
-      case 'ne': // Nord-Est
-        updates.width = Math.max(20, currentX - element.x);
-        updates.height = Math.max(20, element.y + element.height - currentY);
-        updates.y = currentY;
+      }
+      case 'ne': { // Nord-Est
+        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
+        const maxHeight = element.y + element.height;
+        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
+        updates.y = Math.max(0, Math.min(element.y, currentY));
         break;
-      case 'nw': // Nord-Ouest
-        updates.width = Math.max(20, element.x + element.width - currentX);
-        updates.height = Math.max(20, element.y + element.height - currentY);
-        updates.x = currentX;
-        updates.y = currentY;
+      }
+      case 'nw': { // Nord-Ouest
+        const maxWidth = element.x + element.width;
+        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
+        updates.x = Math.max(0, Math.min(element.x, currentX));
+        const maxHeight = element.y + element.height;
+        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
+        updates.y = Math.max(0, Math.min(element.y, currentY));
         break;
+      }
+      case 'n': { // Nord (haut)
+        const maxHeight = element.y + element.height;
+        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
+        updates.y = Math.max(0, Math.min(element.y, currentY));
+        break;
+      }
+      case 's': { // Sud (bas)
+        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
+        break;
+      }
+      case 'w': { // Ouest (gauche)
+        const maxWidth = element.x + element.width;
+        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
+        updates.x = Math.max(0, Math.min(element.x, currentX));
+        break;
+      }
+      case 'e': { // Est (droite)
+        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
+        break;
+      }
     }
 
     return updates;
-  };
+  }, [canvasWidth, canvasHeight]);
 
   // Gestionnaire de mouse move pour le drag, resize et curseur
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -480,18 +524,18 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
       console.log('🎯 [DRAG] currentMouse:', { x, y }, 'offset:', dragStartRef.current, 'newPosition:', { newX, newY }, 'element current pos:', { x: element.x, y: element.y });
 
       // S'assurer que l'élément reste dans les limites du canvas
-      const canvasWidth = 794; // Largeur A4 en pixels
-      const canvasHeight = 1123; // Hauteur A4 en pixels
+      const canvasWidthPx = canvasWidth;
+      const canvasHeightPx = canvasHeight;
 
       // Clamp X position (laisser au moins 20px visible)
       const minVisibleWidth = Math.min(50, element.width * 0.3);
       if (newX < 0) newX = 0;
-      if (newX + minVisibleWidth > canvasWidth) newX = canvasWidth - minVisibleWidth;
+      if (newX + minVisibleWidth > canvasWidthPx) newX = canvasWidthPx - minVisibleWidth;
 
       // Clamp Y position (laisser au moins 20px visible)
       const minVisibleHeight = Math.min(30, element.height * 0.3);
       if (newY < 0) newY = 0;
-      if (newY + minVisibleHeight > canvasHeight) newY = canvasHeight - minVisibleHeight;
+      if (newY + minVisibleHeight > canvasHeightPx) newY = canvasHeightPx - minVisibleHeight;
 
       console.log('🎯 [DRAG] Dispatch UPDATE_ELEMENT - newX:', newX, 'newY:', newY);
       
@@ -544,7 +588,7 @@ export const useCanvasInteraction = ({ canvasRef }: UseCanvasInteractionProps) =
         }
       });
     }
-  }, [state, dispatch, canvasRef, getCursorAtPosition, updateCursor]);
+  }, [state, dispatch, canvasRef, getCursorAtPosition, updateCursor, canvasWidth, canvasHeight, calculateResize]);
 
   // Gestionnaire de clic droit pour afficher le menu contextuel
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { DynamicTextElement } from '../../types/elements';
 
 interface DynamicTextPropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: DynamicTextElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -218,13 +218,13 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
   ];
 
   // Détecter le template actuel
-  const currentText = (element as any).text || '';
-  const currentTemplate = (element as any).textTemplate || 
-    textExamples.find((ex: any) => ex.template === currentText)?.id || 'custom';
+  const currentText = element.text || '';
+  const currentTemplate = element.textTemplate || 
+    textExamples.find((ex) => ex.template === currentText)?.id || 'custom';
 
   // Fonction pour changer de template
   const handleTemplateChange = (templateId: string) => {
-    const selectedExample = textExamples.find((ex: any) => ex.id === templateId);
+    const selectedExample = textExamples.find((ex) => ex.id === templateId);
     if (selectedExample) {
       onChange(element.id, 'text', selectedExample.template);
       onChange(element.id, 'textTemplate', selectedExample.id);
@@ -456,7 +456,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
                 fontSize: '12px'
               }}
             >
-              {textExamples.map((example: any) => (
+              {textExamples.map((example) => (
                 <option key={example.id} value={example.id}>
                   {example.label}
                 </option>
@@ -469,7 +469,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               Texte personnalisé
             </label>
             <textarea
-              value={(element as any).text || ''}
+              value={element.text || ''}
               onChange={(e) => onChange(element.id, 'text', e.target.value)}
               placeholder="Modifiez le texte ou utilisez les variables disponibles"
               rows={3}
@@ -500,7 +500,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
                 <div
                   key={variable.key}
                   onClick={() => {
-                    const currentText = (element as any).text || '';
+                    const currentText = element.text || '';
                     const newText = currentText + variable.key;
                     onChange(element.id, 'text', newText);
                   }}
@@ -528,7 +528,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={(element as any).autoWrap !== false}
+              checked={element.autoWrap !== false}
               onChange={(e) => onChange(element.id, 'autoWrap', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -561,7 +561,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
                   onClick={() => onChange(element.id, 'theme', theme.id)}
                   style={{
                     cursor: 'pointer',
-                    border: (element as any).theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
+                    border: element.theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
                     borderRadius: '6px',
                     padding: '6px',
                     backgroundColor: '#ffffff',
@@ -583,7 +583,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               Taille du texte
             </label>
             <select
-              value={(element as any).fontSize || '12'}
+              value={element.fontSize || '12'}
               onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
               style={{
                 width: '100%',
@@ -605,7 +605,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               Alignement du texte
             </label>
             <select
-              value={(element as any).textAlign || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -630,7 +630,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).fontWeight === 'bold'}
+                  checked={element.fontWeight === 'bold'}
                   onChange={(e) => onChange(element.id, 'fontWeight', e.target.checked ? 'bold' : 'normal')}
                   style={{ marginRight: '4px' }}
                 />
@@ -639,7 +639,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).fontStyle === 'italic'}
+                  checked={element.fontStyle === 'italic'}
                   onChange={(e) => onChange(element.id, 'fontStyle', e.target.checked ? 'italic' : 'normal')}
                   style={{ marginRight: '4px' }}
                 />
@@ -648,7 +648,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
               <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={(element as any).textDecoration === 'underline'}
+                  checked={element.textDecoration === 'underline'}
                   onChange={(e) => onChange(element.id, 'textDecoration', e.target.checked ? 'underline' : 'none')}
                   style={{ marginRight: '4px' }}
                 />
@@ -668,7 +668,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).x || 0}
+              value={element.x || 0}
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -686,7 +686,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).y || 0}
+              value={element.y || 0}
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -704,7 +704,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).width || 200}
+              value={element.width || 200}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
               style={{
                 width: '100%',
@@ -722,7 +722,7 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).height || 50}
+              value={element.height || 50}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 50)}
               style={{
                 width: '100%',

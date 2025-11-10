@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { DocumentTypeElement } from '../../types/elements';
 
 interface DocumentTypePropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: DocumentTypeElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -23,8 +23,6 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
     { value: 'CONTRAT', label: 'Contrat' }
   ];
 
-  const props = element as any;
-
   return (
     <div style={{ padding: '16px', backgroundColor: '#ffffff', borderRadius: '8px', marginBottom: '16px' }}>
       {/* Onglets */}
@@ -36,7 +34,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
         ].map(tab => (
           <button
             key={tab.key}
-            onClick={() => setDocumentCurrentTab(tab.key as any)}
+            onClick={() => setDocumentCurrentTab(tab.key)}
             style={{
               padding: '8px 16px',
               border: 'none',
@@ -65,7 +63,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               Type
             </label>
             <select
-              value={props.documentType || 'FACTURE'}
+              value={element.documentType || 'FACTURE'}
               onChange={(e) => onChange(element.id, 'documentType', e.target.value)}
               style={{
                 width: '100%',
@@ -99,7 +97,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="number"
-                value={props.fontSize || 18}
+                value={element.fontSize || 18}
                 onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 18)}
                 min="8"
                 max="72"
@@ -118,7 +116,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
                 Style de police
               </label>
               <select
-                value={props.fontWeight || 'bold'}
+                value={element.fontWeight || 'bold'}
                 onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -141,7 +139,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
                 Alignement
               </label>
               <select
-                value={props.textAlign || 'left'}
+                value={element.textAlign || 'left'}
                 onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
                 style={{
                   width: '100%',
@@ -164,7 +162,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="color"
-                value={props.textColor || '#000000'}
+                value={element.textColor || '#000000'}
                 onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
                 style={{
                   width: '100%',

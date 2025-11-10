@@ -1,4 +1,5 @@
 <?php
+
 namespace WP_PDF_Builder_Pro\Api;
 
 use WP_PDF_Builder_Pro\Generators\GeneratorManager;
@@ -7,38 +8,45 @@ use WP_PDF_Builder_Pro\Data\WooCommerceDataProvider;
 
 // Declare WooCommerce functions for linter
 if (!function_exists('wc_get_order')) {
-    /**
+/**
      * WooCommerce order getter function (declared for linter)
      * @param int $order_id
      * @return mixed
      */
-    function wc_get_order($order_id) { return null; }
+    function wcGetOrder($order_id)
+    {
+        return null;
+    }
+
 }
 
-class PreviewImageAPI {
+class PreviewImageAPI
+{
     private $cache_dir;
-    private $max_cache_age = 3600; // 1 heure
-    private $rate_limit_window = 60; // 1 minute
-    private $rate_limit_max = 10; // 10 requêtes par minute
+    private $max_cache_age = 3600;
+// 1 heure
+    private $rate_limit_window = 60;
+// 1 minute
+    private $rate_limit_max = 10;
+// 10 requêtes par minute
     private $request_log = [];
     private $generator_manager;
 
-    public function __construct() {
+    public function __construct()
+    {
 
-        $this->cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir()) . '/cache/wp-pdf-builder-previews/';
-
-        // Créer répertoire cache si inexistant
+        $this->cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir())
+            . '/cache/wp-pdf-builder-previews/';
+// Créer répertoire cache si inexistant
         if (!file_exists($this->cache_dir)) {
             wp_mkdir_p($this->cache_dir);
         }
 
         // Initialiser le gestionnaire de générateurs
         $this->generator_manager = new GeneratorManager();
-
-        // Enregistrer l'endpoint REST pour l'étape 1.4
+// Enregistrer l'endpoint REST pour l'étape 1.4
         add_action('rest_api_init', array($this, 'register_rest_routes'));
-
-        // NOTE: Les actions AJAX sont enregistrées dans pdf-builder-pro.php, pas ici
+// NOTE: Les actions AJAX sont enregistrées dans pdf-builder-pro.php, pas ici
         // pour éviter les conflits de double enregistrement
 
 
@@ -47,17 +55,17 @@ class PreviewImageAPI {
         if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
         }
-
     }
 
     /**
      * Enregistrer les routes REST API pour l'étape 1.4
      */
-    public function register_rest_routes() {
+    public function registerRestRoutes()
+    {
         register_rest_route('wp-pdf-builder-pro/v1', '/preview', array(
             'methods' => 'POST',
-            'callback' => array($this, 'handle_rest_preview'),
-            'permission_callback' => array($this, 'check_rest_permissions'),
+            'callback' => array($this, 'handleRestPreview'),
+            'permission_callback' => array($this, 'checkRestPermissions'),
             'args' => array(
                 'templateId' => array(
                     'required' => false,
@@ -99,12 +107,12 @@ class PreviewImageAPI {
         ));
     }
 
-    /**
-     * Vérification des permissions pour l'API REST
+        /**
+     * Vérifier les permissions REST API
      */
-    public function check_rest_permissions($request) {
-        $context = $request->get_param('context');
-
+    public function checkRestPermissions($request)
+    {
+        $context = $request->getParam('context');
         switch ($context) {
             case 'editor':
                 return current_user_can('manage_options');
@@ -118,30 +126,26 @@ class PreviewImageAPI {
     /**
      * Handler pour l'endpoint REST /preview
      */
-    public function handle_rest_preview($request) {
+    public function handleRestPreview($request)
+    {
         $start_time = microtime(true);
-
         try {
-            // Récupération des paramètres
+        // Récupération des paramètres
             $params = array(
-                'template_id' => $request->get_param('templateId'),
-                'order_id' => $request->get_param('orderId'),
-                'context' => $request->get_param('context'),
-                'template_data' => $request->get_param('templateData'),
-                'quality' => $request->get_param('quality') ?: 150,
-                'format' => $request->get_param('format') ?: 'png'
+                'template_id' => $request->getParam('templateId'),
+                'order_id' => $request->getParam('orderId'),
+                'context' => $request->getParam('context'),
+                'template_data' => $request->getParam('templateData'),
+                'quality' => $request->getParam('quality') ?: 150,
+                'format' => $request->getParam('format') ?: 'png'
             );
-
-            // Validation des paramètres
-            $validated_params = $this->validate_rest_params($params);
-
-            // Rate limiting
-            $this->check_rate_limit();
-
-            // Génération avec cache
-            $result = $this->generate_with_cache($validated_params);
-
-            // Log des performances
+        // Validation des paramètres
+            $validated_params = $this->validateRestParams($params);
+        // Rate limiting
+            $this->checkRateLimit();
+        // Génération avec cache
+            $result = $this->generateWithCache($validated_params);
+        // Log des performances
 
 
             return new WP_REST_Response(array(
@@ -152,61 +156,53 @@ class PreviewImageAPI {
                     'cached' => $result['cached'] ?? false
                 )
             ), 200);
-
         } catch (Exception $e) {
-
-
-            return new WP_Error(
-                'preview_generation_failed',
-                $e->getMessage(),
-                array(
+            return new WP_Error('preview_generation_failed', $e->getMessage(), array(
                     'status' => 500,
                     'performance' => array(
                         'duration' => round(microtime(true) - $start_time, 3)
                     )
-                )
-            );
+                ));
         }
     }
 
     /**
      * Validation des paramètres REST
      */
-    private function validate_rest_params($params) {
+    private function validateRestParams($params)
+    {
         $validated = array(
             'context' => sanitize_text_field($params['context']),
             'quality' => max(50, min(300, intval($params['quality']))),
             'format' => in_array(strtolower($params['format']), array('png', 'jpg', 'pdf')) ?
                        strtolower($params['format']) : 'png'
         );
-
-        // Validation selon contexte
+// Validation selon contexte
         switch ($validated['context']) {
             case 'editor':
                 if (empty($params['templateData'])) {
                     throw new Exception('templateData is required for editor context');
                 }
-                $validated['template_data'] = $this->validate_template_data(json_encode($params['templateData']));
+                $validated['template_data'] = $this->validateTemplateData(json_encode($params['templateData']));
                 $validated['preview_type'] = 'design';
-                break;
 
+                break;
             case 'metabox':
                 if (empty($params['templateData'])) {
                     throw new Exception('templateData is required for metabox context');
                 }
-                $validated['template_data'] = $this->validate_template_data(json_encode($params['templateData']));
+                $validated['template_data'] = $this->validateTemplateData(json_encode($params['templateData']));
                 $validated['order_id'] = !empty($params['orderId']) ? intval($params['orderId']) : null;
                 $validated['preview_type'] = $validated['order_id'] ? 'order' : 'design';
-
-                // Validation commande existe
+            // Validation commande existe
                 if ($validated['order_id'] && function_exists('wc_get_order')) {
                     $order = wc_get_order($validated['order_id']);
                     if (!$order) {
                         throw new Exception('Order not found', 404);
                     }
                 }
-                break;
 
+                break;
             default:
                 throw new Exception('Invalid context: ' . $validated['context']);
         }
@@ -217,28 +213,23 @@ class PreviewImageAPI {
     /**
      * Point d'entrée unifié pour tous les aperçus
      */
-    public function generate_preview() {
+    public function generatePreview()
+    {
         // === GESTION D'ERREUR EXTRÊMEMENT ROBUSTE ===
         // Nettoyer tous les output buffers d'abord
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
-        
+
         // Commencer un nouveau buffer
         ob_start();
-        
-        // Set JSON header IMMÉDIATEMENT
+// Set JSON header IMMÉDIATEMENT
         header('Content-Type: application/json; charset=UTF-8');
-        
-        // Enregistrer un handler d'erreur shutdown pour les erreurs fatales
+// Enregistrer un handler d'erreur shutdown pour les erreurs fatales
         register_shutdown_function(array($this, '_shutdown_handler'));
-        
-
-        
         $start_time = microtime(true);
-
         try {
-            // VALIDATION TRÈS SIMPLE INLINE
+        // VALIDATION TRÈS SIMPLE INLINE
             // Vérification nonce
             if (!isset($_POST['nonce'])) {
                 throw new \Exception('Missing nonce');
@@ -250,8 +241,7 @@ class PreviewImageAPI {
 
             // Vérification permissions
             $context = sanitize_text_field($_POST['context'] ?? 'editor');
-            $required_cap = $this->get_required_capability($context);
-
+            $required_cap = $this->getRequiredCapability($context);
             if (!current_user_can($required_cap)) {
                 throw new \Exception('Insufficient permissions');
             }
@@ -259,37 +249,32 @@ class PreviewImageAPI {
 
 
             // Rate limiting
-            $this->check_rate_limit();
+            $this->checkRateLimit();
+        // Récupération et validation des paramètres
 
+            $params = $this->getValidatedParams();
+        // Génération avec cache intelligent
 
-            // Récupération et validation des paramètres
-
-            $params = $this->get_validated_params();
-
-
-            // Génération avec cache intelligent
-
-            $result = $this->generate_with_cache($params);
-
-
-            // Clean buffer et envoyer réponse
+            $result = $this->generateWithCache($params);
+        // Clean buffer et envoyer réponse
             ob_clean();
-            $this->send_compressed_response($result);
-
+            $this->sendCompressedResponse($result);
         } catch (\Exception $e) {
-
             ob_clean();
-            $this->send_json_error($e->getMessage());
+            $this->sendJsonError($e->getMessage());
         }
     }
-    
+
     /**
      * Handler d'erreur PHP shutdown pour capturer les erreurs fatales
      */
-    public function _shutdown_handler() {
+    public function shutdownHandler()
+    {
         $error = error_get_last();
-        if ($error && ($error['type'] === E_ERROR || $error['type'] === E_PARSE || $error['type'] === E_CORE_ERROR || $error['type'] === E_COMPILE_ERROR)) {
-
+        if (
+            $error && ($error['type'] === E_ERROR || $error['type'] === E_PARSE
+                || $error['type'] === E_CORE_ERROR || $error['type'] === E_COMPILE_ERROR)
+        ) {
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
@@ -302,23 +287,22 @@ class PreviewImageAPI {
     /**
      * Rate limiting pour prévenir les abus
      */
-    private function check_rate_limit() {
+    private function checkRateLimit()
+    {
         $user_id = get_current_user_id();
         $ip = $_SERVER['REMOTE_ADDR'];
         $key = $user_id ?: $ip;
-
         $transient_key = 'wp_pdf_rate_limit_' . md5($key);
         $requests = get_transient($transient_key) ?: [];
-
-        // Nettoyer les anciennes requêtes
+// Nettoyer les anciennes requêtes
         $now = time();
-        $requests = array_filter($requests, function($timestamp) use ($now) {
+        $requests = array_filter($requests, function ($timestamp) use ($now) {
+
             return ($now - $timestamp) < $this->rate_limit_window;
         });
-
         if (count($requests) >= $this->rate_limit_max) {
-            // $this->log_security_event('rate_limit_exceeded', $ip, count($requests));
-            $this->send_json_error('Rate limit exceeded', 429);
+        // $this->logSecurityEvent('rate_limit_exceeded', $ip, count($requests));
+            $this->sendJsonError('Rate limit exceeded', 429);
         }
 
         $requests[] = $now;
@@ -328,9 +312,9 @@ class PreviewImageAPI {
     /**
      * Récupération et validation des paramètres selon contexte
      */
-    private function get_validated_params() {
+    private function getValidatedParams()
+    {
         $context = sanitize_text_field($_POST['context'] ?? 'editor');
-
         $params = [
             'context' => $context,
             'template_data' => null,
@@ -339,32 +323,30 @@ class PreviewImageAPI {
             'quality' => 150,
             'format' => 'png'
         ];
-
-        // Paramètres spécifiques selon contexte
+// Paramètres spécifiques selon contexte
         switch ($context) {
             case 'editor':
                 // Aperçu design - données fictives
-                $params['template_data'] = $this->validate_template_data($_POST['template_data'] ?? '');
+                $params['template_data'] = $this->validateTemplateData($_POST['template_data'] ?? '');
                 $params['preview_type'] = 'design';
-                break;
 
+                break;
             case 'metabox':
                 // Aperçu commande réelle
-                $params['template_data'] = $this->validate_template_data($_POST['template_data'] ?? '');
+                $params['template_data'] = $this->validateTemplateData($_POST['template_data'] ?? '');
                 $params['order_id'] = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
                 $params['preview_type'] = $params['order_id'] ? 'order' : 'design';
-
-                // Validation commande existe
+            // Validation commande existe
                 if ($params['order_id'] && function_exists('wc_get_order')) {
                     $order = wc_get_order($params['order_id']);
                     if (!$order) {
-                        $this->send_json_error('Order not found', 404);
+                        $this->sendJsonError('Order not found', 404);
                     }
                 }
-                break;
 
+                break;
             default:
-                $this->send_json_error('Invalid context', 400);
+                $this->sendJsonError('Invalid context', 400);
         }
 
         // Paramètres optionnels
@@ -384,32 +366,33 @@ class PreviewImageAPI {
     /**
      * Validation des données template
      */
-    private function validate_template_data($data) {
+    private function validateTemplateData($data)
+    {
         if (empty($data)) {
-            return $this->get_default_template();
+            return $this->getDefaultTemplate();
         }
 
         $decoded = json_decode(stripslashes($data), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->send_json_error('Invalid template data: ' . json_last_error_msg(), 400);
+            $this->sendJsonError('Invalid template data: ' . json_last_error_msg(), 400);
         }
 
         // Validation structure de base - accepter les deux formats
-        // Format 1: {template: {elements: [...]}} 
+        // Format 1: {template: {elements: [...]}}
         // Format 2: {elements: [...]}
         if (isset($decoded['template']) && isset($decoded['template']['elements'])) {
-            // Format avec template wrapper
+// Format avec template wrapper
             $elements = $decoded['template']['elements'];
         } elseif (isset($decoded['elements'])) {
-            // Format direct
+        // Format direct
             $elements = $decoded['elements'];
         } else {
-            $this->send_json_error('Invalid template structure - missing elements', 400);
+            $this->sendJsonError('Invalid template structure - missing elements', 400);
         }
 
         // Vérifier que elements est un array
         if (!is_array($elements)) {
-            $this->send_json_error('Elements must be an array', 400);
+            $this->sendJsonError('Elements must be an array', 400);
         }
 
         // Recréer la structure attendue
@@ -418,27 +401,25 @@ class PreviewImageAPI {
                 'elements' => $elements
             ]
         ];
+// Sanitisation des éléments
+        $decoded['template']['elements'] = array_map(function ($element) {
 
-        // Sanitisation des éléments
-        $decoded['template']['elements'] = array_map(function($element) {
-            return $this->sanitize_element($element);
+            return $this->sanitizeElement($element);
         }, $decoded['template']['elements']);
-
         return $decoded;
     }
 
     /**
      * Sanitisation d'un élément template
      */
-    private function sanitize_element($element) {
+    private function sanitizeElement($element)
+    {
         $sanitized = [];
-
-        // Champs autorisés selon type
+// Champs autorisés selon type
         $allowed_fields = [
             'type', 'content', 'x', 'y', 'width', 'height', 'fontSize', 'fontFamily',
             'color', 'backgroundColor', 'textAlign', 'fontWeight', 'fontStyle'
         ];
-
         foreach ($allowed_fields as $field) {
             if (isset($element[$field])) {
                 if (is_string($element[$field])) {
@@ -457,14 +438,14 @@ class PreviewImageAPI {
     /**
      * Génération avec cache intelligent - VERSION RÉELLE POUR ÉTAPE 1.4
      */
-    public function generate_with_cache($params) {
-        $cache_key = $this->generate_cache_key($params);
+    public function generateWithCache($params)
+    {
+        $cache_key = $this->generateCacheKey($params);
         $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
-
-        // Vérifier si cache valide
-        if ($this->is_cache_valid($cache_file, $params)) {
+// Vérifier si cache valide
+        if ($this->isCacheValid($cache_file, $params)) {
             return array(
-                'image_url' => $this->get_cache_url($cache_key, $params['format']),
+                'image_url' => $this->getCacheUrl($cache_key, $params['format']),
                 'cached' => true,
                 'cache_key' => $cache_key,
                 'status' => 'preview_ready',
@@ -474,8 +455,7 @@ class PreviewImageAPI {
         }
 
         // Générer l'image réelle
-        $image_url = $this->generate_real_image($params, $cache_file);
-
+        $image_url = $this->generateRealImage($params, $cache_file);
         return array(
             'image_url' => $image_url,
             'cached' => false,
@@ -490,27 +470,20 @@ class PreviewImageAPI {
      * Génération d'une vraie image à partir des données template
      * VERSION ARCHITECTURALE UNIFIÉE - Utilise GeneratorManager
      */
-    private function generate_real_image($params, $cache_file) {
+    private function generateRealImage($params, $cache_file)
+    {
         try {
-            // Créer le fournisseur de données selon le contexte
-            $data_provider = $this->create_data_provider($params);
-
-            // Préparer les données du template
+// Créer le fournisseur de données selon le contexte
+            $data_provider = $this->createDataProvider($params);
+// Préparer les données du template
             $template_data = $params['template_data'];
-
-            // Utiliser GeneratorManager pour générer l'image
-            $result = $this->generator_manager->generatePreview(
-                $template_data,
-                $data_provider,
-                $params['format'],
-                [
+// Utiliser GeneratorManager pour générer l'image
+            $result = $this->generator_manager->generatePreview($template_data, $data_provider, $params['format'], [
                     'quality' => $params['quality'],
                     'output_file' => $cache_file,
                     'context' => $params['context']
-                ]
-            );
-
-            // Vérifier si la génération a réussi
+                ]);
+// Vérifier si la génération a réussi
             // GeneratorManager peut retourner :
             // - true/false pour les générateurs simples
             // - array avec 'success' => true/false pour les générateurs complexes
@@ -518,18 +491,14 @@ class PreviewImageAPI {
 
 
             $generation_successful = false;
-
             if (is_array($result)) {
                 $generation_successful = isset($result['success']) ? $result['success'] : true;
-
             } elseif (is_bool($result)) {
                 $generation_successful = $result;
-
             } elseif ($result) {
-                $generation_successful = true; // Valeur truthy
-
+                $generation_successful = true;
+            // Valeur truthy
             } else {
-
             }
 
 
@@ -551,10 +520,8 @@ class PreviewImageAPI {
             }
 
             // Sinon, construire l'URL du fichier cache
-            return $this->get_cache_url(basename($cache_file, '.' . $params['format']), $params['format']);
-
+            return $this->getCacheUrl(basename($cache_file, '.' . $params['format']), $params['format']);
         } catch (Exception $e) {
-
             throw $e;
         }
     }
@@ -562,14 +529,14 @@ class PreviewImageAPI {
     /**
      * Crée le fournisseur de données approprié selon le contexte
      */
-    private function create_data_provider($params) {
+    private function createDataProvider($params)
+    {
         $context = $params['context'] ?? 'canvas';
-
         if ($context === 'metabox' && !empty($params['order_id'])) {
-            // Données réelles WooCommerce
+        // Données réelles WooCommerce
             return new WooCommerceDataProvider($params['order_id'], $context);
         } else {
-            // Données fictives pour l'éditeur
+        // Données fictives pour l'éditeur
             return new SampleDataProvider($context);
         }
     }
@@ -578,7 +545,8 @@ class PreviewImageAPI {
      * Création du générateur selon contexte
      * À implémenter ultérieurement selon la roadmap
      */
-    private function create_generator($params) {
+    private function createGenerator($params)
+    {
         // Implémentation future - étapes 3+ de la roadmap
         throw new \Exception('Generator not yet implemented - phase 1.5 en cours');
     }
@@ -586,7 +554,8 @@ class PreviewImageAPI {
     /**
      * Génération clé cache unique
      */
-    private function generate_cache_key($params) {
+    private function generateCacheKey($params)
+    {
         $data = [
             'template' => md5(serialize($params['template_data'])),
             'context' => $params['context'],
@@ -600,7 +569,8 @@ class PreviewImageAPI {
     /**
      * Vérification validité cache
      */
-    private function is_cache_valid($cache_file, $params) {
+    private function isCacheValid($cache_file, $params)
+    {
         if (!file_exists($cache_file)) {
             return false;
         }
@@ -615,7 +585,7 @@ class PreviewImageAPI {
         if ($params['order_id'] && function_exists('wc_get_order')) {
             $order = wc_get_order($params['order_id']);
             if ($order) {
-                $order_modified = strtotime($order->get_date_modified());
+                $order_modified = strtotime($order->getDateModified());
                 if ($order_modified > filemtime($cache_file)) {
                     return false;
                 }
@@ -628,7 +598,8 @@ class PreviewImageAPI {
     /**
      * URL du fichier en cache
      */
-    private function get_cache_url($cache_key, $format) {
+    private function getCacheUrl($cache_key, $format)
+    {
         // Utiliser le même chemin que le stockage (WP_CONTENT_DIR)
         $content_url = content_url();
         return $content_url . '/cache/wp-pdf-builder-previews/' . $cache_key . '.' . $format;
@@ -637,14 +608,14 @@ class PreviewImageAPI {
     /**
      * Nettoyage automatique du cache
      */
-    public function cleanup_cache() {
+    public function cleanupCache()
+    {
         if (!is_dir($this->cache_dir)) {
             return;
         }
 
         $files = glob($this->cache_dir . '*');
         $now = time();
-
         foreach ($files as $file) {
             if (is_file($file) && ($now - filemtime($file)) > $this->max_cache_age) {
                 unlink($file);
@@ -655,7 +626,8 @@ class PreviewImageAPI {
     /**
      * Template par défaut pour validation
      */
-    private function get_default_template() {
+    private function getDefaultTemplate()
+    {
         return [
             'template' => [
                 'elements' => [
@@ -677,12 +649,15 @@ class PreviewImageAPI {
     /**
      * Permission requise selon contexte
      */
-    private function get_required_capability($context) {
+    private function getRequiredCapability($context)
+    {
         switch ($context) {
             case 'editor':
-                return 'manage_options'; // Admin seulement pour éditeur
+                return 'manage_options';
+// Admin seulement pour éditeur
             case 'metabox':
-                return 'edit_shop_orders'; // Vendeurs peuvent voir metabox
+                return 'edit_shop_orders';
+// Vendeurs peuvent voir metabox
             default:
                 return 'manage_options';
         }
@@ -691,7 +666,8 @@ class PreviewImageAPI {
     /**
      * Log des événements de sécurité
      */
-    private function log_security_event($event, $ip, $extra = null) {
+    private function logSecurityEvent($event, $ip, $extra = null)
+    {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $message = sprintf(
                 '[PDF Builder Security] %s - IP: %s - Extra: %s',
@@ -699,14 +675,14 @@ class PreviewImageAPI {
                 $ip,
                 is_scalar($extra) ? $extra : json_encode($extra)
             );
-
         }
     }
 
     /**
      * Log des requêtes pour monitoring
      */
-    private function log_request($params) {
+    private function logRequest($params)
+    {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $this->request_log[] = [
                 'timestamp' => time(),
@@ -720,37 +696,41 @@ class PreviewImageAPI {
     /**
      * Réponse compressée pour performance
      */
-    private function send_compressed_response($result) {
+    private function sendCompressedResponse($result)
+    {
         // Compression GZIP si supportée
-        if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) &&
-            strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
+        if (
+            isset($_SERVER['HTTP_ACCEPT_ENCODING']) &&
+            strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false
+        ) {
             ob_start('ob_gzhandler');
         }
 
-        $this->send_json_success($result);
+        $this->sendJsonSuccess($result);
     }
 
     /**
      * Envoi de succès JSON forcé
      */
-    private function send_json_success($data) {
+    private function sendJsonSuccess($data)
+    {
         wp_send_json_success($data);
     }
 
     /**
      * Envoi d'erreur JSON - SIMPLE ET ROBUSTE
      */
-    private function send_json_error($message, $code = 400) {
+    private function sendJsonError($message, $code = 400)
+    {
         // Nettoyer les buffers
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
-        
+
         // Headers
         header('Content-Type: application/json; charset=UTF-8', true);
         http_response_code($code);
-
-        // Réponse JSON simple - même pattern que l'autre plugin
+// Réponse JSON simple - même pattern que l'autre plugin
         echo json_encode([
             'success' => false,
             'message' => $message
@@ -761,14 +741,13 @@ class PreviewImageAPI {
     /**
      * Gestion centralisée des erreurs
      */
-    private function handle_error($exception, $start_time) {
+    private function handleError($exception, $start_time)
+    {
         $duration = microtime(true) - $start_time;
         $error_message = $exception->getMessage();
-
-        // Pour debug, log aussi dans les headers de réponse
+// Pour debug, log aussi dans les headers de réponse
         header('X-PDF-Error: ' . substr($error_message, 0, 100));
-
-        // Réponse d'erreur générique pour sécurité
+// Réponse d'erreur générique pour sécurité
         wp_send_json_error([
             'message' => 'Preview generation failed: ' . substr($error_message, 0, 50),
             'code' => 'PREVIEW_ERROR',

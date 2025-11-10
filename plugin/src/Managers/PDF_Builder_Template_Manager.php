@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée des templates
  */
 
-class PDF_Builder_Template_Manager
+class PdfBuilderTemplateManager
 {
     /**
      * Instance du main plugin
@@ -31,7 +33,7 @@ class PDF_Builder_Template_Manager
      * NOTE: Cette méthode n'est plus appelée depuis le constructeur
      * Les hooks AJAX sont enregistrés directement par PDF_Builder_Admin
      */
-    private function init_hooks()
+    private function initHooks()
     {
         // AJAX handlers pour les templates
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
@@ -46,7 +48,7 @@ class PDF_Builder_Template_Manager
     /**
      * Page de gestion des templates
      */
-    public function templates_page()
+    public function templatesPage()
     {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
@@ -64,7 +66,7 @@ class PDF_Builder_Template_Manager
     /**
      * AJAX - Sauvegarder un template
      */
-    public function ajax_save_template()
+    public function ajaxSaveTemplate()
     {
         try {
             // Vérification des permissions
@@ -182,7 +184,6 @@ class PDF_Builder_Template_Manager
 
                 // Sauvegarder les données du template dans les métadonnées
                 \update_post_meta($template_id, '_pdf_template_data', $template_data);
-
             } catch (\Exception $e) {
                 \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
                 return;
@@ -216,7 +217,7 @@ class PDF_Builder_Template_Manager
     /**
      * AJAX - Charger un template
      */
-    public function ajax_load_template()
+    public function ajaxLoadTemplate()
     {
         try {
             // Vérification des permissions
@@ -246,7 +247,7 @@ class PDF_Builder_Template_Manager
                 // Trouver dans la table custom
                 $template_data_raw = $template_row['template_data'];
                 $template_name = $template_row['name'];
-                
+
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
                     $json_error = \json_last_error_msg();
@@ -301,21 +302,21 @@ class PDF_Builder_Template_Manager
             $element_count = isset($template_data['elements']) ? \count($template_data['elements']) : 0;
 
         // Analyser les types d'éléments
-        $element_types = [];
-        foreach ($template_data['elements'] as $element) {
-            $type = $element['type'] ?? 'unknown';
-            $element_types[$type] = ($element_types[$type] ?? 0) + 1;
-        }
+            $element_types = [];
+            foreach ($template_data['elements'] as $element) {
+                $type = $element['type'] ?? 'unknown';
+                $element_types[$type] = ($element_types[$type] ?? 0) + 1;
+            }
 
         // Réponse de succès
-        \wp_send_json_success(
-            array(
-            'template' => $template_data,
-            'name' => $template_name,
-            'element_count' => $element_count,
-            'element_types' => $element_types
-            )
-        );
+            \wp_send_json_success(
+                array(
+                'template' => $template_data,
+                'name' => $template_name,
+                'element_count' => $element_count,
+                'element_types' => $element_types
+                )
+            );
         } catch (Exception $e) {
             \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
@@ -324,7 +325,7 @@ class PDF_Builder_Template_Manager
     /**
      * AJAX - Auto-save un template (simplifié)
      */
-    public function ajax_auto_save_template()
+    public function ajaxAutoSaveTemplate()
     {
         try {
             // Vérification des permissions
@@ -417,7 +418,7 @@ class PDF_Builder_Template_Manager
     /**
      * AJAX - Vider le cache REST
      */
-    public function ajax_flush_rest_cache()
+    public function ajaxFlushRestCache()
     {
         if (!\current_user_can('manage_options')) {
             \wp_send_json_error('Permissions insuffisantes');
@@ -434,7 +435,7 @@ class PDF_Builder_Template_Manager
     /**
      * Charger un template de manière robuste
      */
-    public function load_template_robust($template_id)
+    public function loadTemplateRobust($template_id)
     {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -470,7 +471,7 @@ class PDF_Builder_Template_Manager
      * @param  array $template_data Données du template décodées
      * @return array Tableau d'erreurs de validation
      */
-    private function validate_template_structure($template_data)
+    private function validateTemplateStructure($template_data)
     {
         $errors = [];
 
@@ -555,7 +556,7 @@ class PDF_Builder_Template_Manager
  tableau
      * @return array Tableau d'erreurs pour cet élément
      */
-    private function validate_template_element($element, $index)
+    private function validateTemplateElement($element, $index)
     {
         $errors = [];
 
@@ -655,10 +656,4 @@ class PDF_Builder_Template_Manager
 
         return $errors;
     }
-
-
-
-
-
-
 }

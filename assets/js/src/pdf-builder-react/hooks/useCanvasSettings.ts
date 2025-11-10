@@ -1,15 +1,9 @@
 import { useMemo } from 'react';
 
-declare global {
-    interface Window {
-        pdfBuilderCanvasSettings?: Record<string, any>;
-    }
-}
-
 /**
  * Hook pour accéder aux paramètres du canvas
  * Retourne tous les paramètres canvas depuis les options WordPress
- * 
+ *
  * @returns {Object} Les paramètres du canvas
  */
 export const useCanvasSettings = () => {
@@ -29,11 +23,11 @@ export const useCanvasSettings = () => {
  * Hook pour accéder à un paramètre canvas spécifique
  * 
  * @param {string} key - Clé du paramètre
- * @param {any} defaultValue - Valeur par défaut
- * @returns {any} La valeur du paramètre
+ * @param {unknown} defaultValue - Valeur par défaut
+ * @returns {unknown} La valeur du paramètre
  */
-export const useCanvasSetting = (key: string, defaultValue: any = null) => {
-    const settings = useCanvasSettings() as Record<string, any>;
+export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
+    const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
         return key in settings ? settings[key] : defaultValue;
     }, [key, settings, defaultValue]);

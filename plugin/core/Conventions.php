@@ -1,11 +1,12 @@
 <?php
-namespace WP_PDF_Builder_Pro;
 
 /**
  * Conventions de nommage et namespaces pour PDF Builder Pro
  *
  * Ce fichier définit les standards utilisés dans tout le projet
  */
+
+namespace WP_PDF_Builder_Pro;
 
 // =============================================================================
 // NAMESPACES PRINCIPAUX
@@ -15,7 +16,6 @@ namespace WP_PDF_Builder_Pro;
  * Namespace racine du plugin
  */
 const ROOT_NAMESPACE = 'WP_PDF_Builder_Pro';
-
 /**
  * Sous-namespaces principaux
  */
@@ -28,7 +28,6 @@ const NAMESPACES = [
     'Templates' => ROOT_NAMESPACE . '\Templates',
     'Utilities' => ROOT_NAMESPACE . '\Utilities'
 ];
-
 // =============================================================================
 // CONVENTIONS DE NOMMAGE
 // =============================================================================
@@ -47,7 +46,6 @@ const CLASS_PREFIXES = [
     'exception' => 'Exception',           // ValidationException
     'service' => 'Service',               // CacheService
 ];
-
 /**
  * Suffixes pour les types spécifiques
  */
@@ -56,7 +54,6 @@ const CLASS_SUFFIXES = [
     'trait' => 'Trait',                   // LoggableTrait
     'exception' => 'Exception',           // InvalidDataException
 ];
-
 /**
  * Conventions pour les méthodes
  */
@@ -70,7 +67,6 @@ const METHOD_CONVENTIONS = [
     'initialize' => 'initialize',         // initialize()
     'generate' => 'generate',             // generateHTML()
 ];
-
 // =============================================================================
 // CONSTANTES DE CONFIGURATION
 // =============================================================================
@@ -84,17 +80,14 @@ const PAPER_FORMATS = [
     'Letter' => ['width' => 216, 'height' => 279],
     'Legal' => ['width' => 216, 'height' => 356],
 ];
-
 /**
  * Orientations supportées
  */
 const PAPER_ORIENTATIONS = ['portrait', 'landscape'];
-
 /**
  * Formats d'export supportés
  */
 const EXPORT_FORMATS = ['pdf', 'png', 'jpg', 'jpeg'];
-
 /**
  * Types d'éléments supportés
  */
@@ -109,7 +102,6 @@ const ELEMENT_TYPES = [
     'table',
     'divider'
 ];
-
 /**
  * Contextes d'utilisation
  */
@@ -119,7 +111,6 @@ const CONTEXTS = [
     'api' => 'API REST pour génération serveur',
     'preview' => 'Aperçu rapide côté client'
 ];
-
 // =============================================================================
 // CONSTANTES TECHNIQUES
 // =============================================================================
@@ -145,7 +136,6 @@ const DOMPDF_DEFAULT_CONFIG = [
     'debugLayoutInline' => false,
     'debugLayoutPaddingBox' => false,
 ];
-
 /**
  * Configuration de cache
  */
@@ -155,7 +145,6 @@ const CACHE_CONFIG = [
     'file_cache_dir' => 'wp-pdf-builder-cache',
     'max_cache_size' => 100 * 1024 * 1024, // 100MB
 ];
-
 /**
  * Limites de sécurité
  */
@@ -166,7 +155,6 @@ const SECURITY_LIMITS = [
     'rate_limit_per_minute' => 10,
     'max_execution_time' => 30, // secondes
 ];
-
 // =============================================================================
 // PATTERNS DE VALIDATION
 // =============================================================================
@@ -182,7 +170,6 @@ const VALIDATION_PATTERNS = [
     'url' => '/^https?:\/\/.+/i',
     'filename' => '/^[a-zA-Z0-9._-]+$/',
 ];
-
 // =============================================================================
 // CODES D'ERREUR
 // =============================================================================
@@ -213,7 +200,6 @@ const ERROR_CODES = [
     'MEMORY_LIMIT' => 4001,
     'TIMEOUT_ERROR' => 4002,
 ];
-
 // =============================================================================
 // ÉTATS DU SYSTÈME
 // =============================================================================
@@ -230,7 +216,6 @@ const SYSTEM_STATES = [
     'ERROR' => 'error',
     'CANCELLED' => 'cancelled',
 ];
-
 /**
  * Transitions d'état autorisées
  */
@@ -256,10 +241,11 @@ const STATE_TRANSITIONS = [
  * @param string $suffix Suffix optionnel
  * @return string Nom de classe formaté
  */
-function generateClassName(string $type, string $name, string $suffix = ''): string {
+function generateClassName(string $type, string $name, string $suffix = ''): string
+{
+
     $prefix = CLASS_PREFIXES[$type] ?? '';
     $finalSuffix = $suffix ?: (CLASS_SUFFIXES[$type] ?? '');
-
     return $prefix . $name . $finalSuffix;
 }
 
@@ -270,7 +256,9 @@ function generateClassName(string $type, string $name, string $suffix = ''): str
  * @param string $property Propriété concernée
  * @return string Nom de méthode formaté
  */
-function generateMethodName(string $convention, string $property): string {
+function generateMethodName(string $convention, string $property): string
+{
+
     $prefix = METHOD_CONVENTIONS[$convention] ?? '';
     return $prefix . ucfirst($property);
 }
@@ -281,7 +269,9 @@ function generateMethodName(string $convention, string $property): string {
  * @param string $format Format à valider
  * @return bool true si valide
  */
-function isValidPaperFormat(string $format): bool {
+function isValidPaperFormat(string $format): bool
+{
+
     return isset(PAPER_FORMATS[$format]);
 }
 
@@ -291,7 +281,9 @@ function isValidPaperFormat(string $format): bool {
  * @param string $orientation Orientation à valider
  * @return bool true si valide
  */
-function isValidOrientation(string $orientation): bool {
+function isValidOrientation(string $orientation): bool
+{
+
     return in_array($orientation, PAPER_ORIENTATIONS);
 }
 
@@ -301,7 +293,9 @@ function isValidOrientation(string $orientation): bool {
  * @param string $format Format à valider
  * @return bool true si valide
  */
-function isValidExportFormat(string $format): bool {
+function isValidExportFormat(string $format): bool
+{
+
     return in_array($format, EXPORT_FORMATS);
 }
 
@@ -311,6 +305,8 @@ function isValidExportFormat(string $format): bool {
  * @param string $type Type à valider
  * @return bool true si valide
  */
-function isValidElementType(string $type): bool {
+function isValidElementType(string $type): bool
+{
+
     return in_array($type, ELEMENT_TYPES);
 }

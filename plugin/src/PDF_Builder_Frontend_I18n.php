@@ -1,4 +1,7 @@
 <?php
+
+namespace WP_PDF_Builder_Pro\Src;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,14 +13,13 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_Frontend_I18n {
-
+class PdfBuilderFrontendI18n
+{
     /**
      * Instance unique de la classe
      */
     private static $instance = null;
-
-    /**
+/**
      * Chaînes de traduction chargées
      */
     private $strings = array();
@@ -25,15 +27,17 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Constructeur privé
      */
-    private function __construct() {
-        $this->init_hooks();
-        $this->load_strings();
+    private function __construct()
+    {
+        $this->initHooks();
+        $this->loadStrings();
     }
 
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -43,7 +47,8 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Initialiser les hooks
      */
-    private function init_hooks() {
+    private function initHooks()
+    {
         add_action('init', array($this, 'load_textdomain'));
         add_action('wp_enqueue_scripts', array($this, 'localize_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'localize_admin_scripts'));
@@ -52,19 +57,16 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Charger le domaine de texte
      */
-    public function load_textdomain() {
-        load_plugin_textdomain(
-            PDF_BUILDER_TEXT_DOMAIN,
-            false,
-            dirname(plugin_basename(PDF_BUILDER_PLUGIN_DIR)) . '/languages/'
-        );
-
+    public function loadTextdomain()
+    {
+        load_plugin_textdomain(PDF_BUILDER_TEXT_DOMAIN, false, dirname(plugin_basename(PDF_BUILDER_PLUGIN_DIR)) . '/languages/');
     }
 
     /**
      * Charger les chaînes de traduction
      */
-    private function load_strings() {
+    private function loadStrings()
+    {
         $this->strings = array(
             // Chaînes générales
             'loading' => __('Loading...', PDF_BUILDER_TEXT_DOMAIN),
@@ -149,16 +151,15 @@ class PDF_Builder_Frontend_I18n {
             'inches' => __('inches', PDF_BUILDER_TEXT_DOMAIN),
             'points' => __('points', PDF_BUILDER_TEXT_DOMAIN),
         );
-
-        // Filtrer les chaînes pour permettre la personnalisation
+// Filtrer les chaînes pour permettre la personnalisation
         $this->strings = apply_filters('pdf_builder_i18n_strings', $this->strings);
-
     }
 
     /**
      * Localiser les scripts frontend
      */
-    public function localize_scripts() {
+    public function localizeScripts()
+    {
         if (did_action('wp_enqueue_scripts')) {
             wp_localize_script('pdf-builder-frontend', 'pdfBuilderI18n', $this->strings);
         }
@@ -167,7 +168,8 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Localiser les scripts d'administration
      */
-    public function localize_admin_scripts() {
+    public function localizeAdminScripts()
+    {
         if (did_action('admin_enqueue_scripts')) {
             wp_localize_script('pdf-builder-admin', 'pdfBuilderI18n', $this->strings);
         }
@@ -176,36 +178,41 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Obtenir une chaîne traduite
      */
-    public function get_string($key, $default = '') {
+    public function getString($key, $default = '')
+    {
         return isset($this->strings[$key]) ? $this->strings[$key] : $default;
     }
 
     /**
      * Obtenir toutes les chaînes
      */
-    public function get_all_strings() {
+    public function getAllStrings()
+    {
         return $this->strings;
     }
 
     /**
      * Ajouter une chaîne personnalisée
      */
-    public function add_string($key, $value) {
+    public function addString($key, $value)
+    {
         $this->strings[$key] = $value;
     }
 
     /**
      * Supprimer une chaîne
      */
-    public function remove_string($key) {
+    public function removeString($key)
+    {
         unset($this->strings[$key]);
     }
 
     /**
      * Fonction utilitaire pour traduire avec sprintf
      */
-    public function sprintf($key, ...$args) {
-        $string = $this->get_string($key);
+    public function sprintf($key, ...$args)
+    {
+        $string = $this->getString($key);
         if (!$string) {
             return '';
         }
@@ -215,36 +222,41 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Fonction utilitaire pour obtenir la traduction avec contexte
      */
-    public function translate_with_context($text, $context = '', $domain = PDF_BUILDER_TEXT_DOMAIN) {
+    public function translateWithContext($text, $context = '', $domain = PDF_BUILDER_TEXT_DOMAIN)
+    {
         return _x($text, $context, $domain);
     }
 
     /**
      * Fonction utilitaire pour obtenir la traduction plurielle
      */
-    public function translate_plural($single, $plural, $number, $domain = PDF_BUILDER_TEXT_DOMAIN) {
+    public function translatePlural($single, $plural, $number, $domain = PDF_BUILDER_TEXT_DOMAIN)
+    {
         return _n($single, $plural, $number, $domain);
     }
 
     /**
      * Vérifier si une traduction existe pour la langue actuelle
      */
-    public function has_translation($key) {
-        $string = $this->get_string($key);
+    public function hasTranslation($key)
+    {
+        $string = $this->getString($key);
         return $string && $string !== $key;
     }
 
     /**
      * Obtenir la langue actuelle
      */
-    public function get_current_language() {
+    public function getCurrentLanguage()
+    {
         return get_locale();
     }
 
     /**
      * Obtenir la liste des langues disponibles
      */
-    public function get_available_languages() {
+    public function getAvailableLanguages()
+    {
         $languages = get_available_languages(PDF_BUILDER_LANGUAGES_DIR);
         return array_merge(array('en_US'), $languages);
     }
@@ -252,19 +264,18 @@ class PDF_Builder_Frontend_I18n {
     /**
      * Charger des traductions supplémentaires depuis un fichier
      */
-    public function load_additional_strings($file_path) {
+    public function loadAdditionalStrings($file_path)
+    {
         if (!file_exists($file_path)) {
             return false;
         }
 
         $additional_strings = include $file_path;
-
         if (!is_array($additional_strings)) {
             return false;
         }
 
         $this->strings = array_merge($this->strings, $additional_strings);
-
         return true;
     }
 }
@@ -274,15 +285,19 @@ class PDF_Builder_Frontend_I18n {
 /**
  * Obtenir une chaîne traduite (i18n)
  */
-function pdf_builder_i18n_translate($key, $default = '') {
+function pdfBuilderI18nTranslate($key, $default = '')
+{
+
     $i18n = PDF_Builder_Frontend_I18n::get_instance();
-    return $i18n->get_string($key, $default);
+    return $i18n->getString($key, $default);
 }
 
 /**
  * Traduction avec sprintf (i18n)
  */
-function pdf_builder_i18n_translate_sprintf($key, ...$args) {
+function pdfBuilderI18nTranslateSprintf($key, ...$args)
+{
+
     $i18n = PDF_Builder_Frontend_I18n::get_instance();
     return $i18n->sprintf($key, ...$args);
 }
@@ -290,17 +305,19 @@ function pdf_builder_i18n_translate_sprintf($key, ...$args) {
 /**
  * Traduction avec contexte (i18n)
  */
-function pdf_builder_i18n_translate_x($text, $context = '') {
+function pdfBuilderI18nTranslateX($text, $context = '')
+{
+
     $i18n = PDF_Builder_Frontend_I18n::get_instance();
-    return $i18n->translate_with_context($text, $context);
+    return $i18n->translateWithContext($text, $context);
 }
 
 /**
  * Traduction plurielle (i18n)
  */
-function pdf_builder_i18n_translate_n($single, $plural, $number) {
+function pdfBuilderI18nTranslateN($single, $plural, $number)
+{
+
     $i18n = PDF_Builder_Frontend_I18n::get_instance();
-    return $i18n->translate_plural($single, $plural, $number);
+    return $i18n->translatePlural($single, $plural, $number);
 }
-
-

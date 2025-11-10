@@ -3,6 +3,8 @@
  * A4: 595px = 210mm (largeur), 1123px = 297mm (hauteur)
  */
 
+import { Element } from '../types/elements';
+
 export const MM_TO_PX = 595 / 210; // ≈ 2.833
 export const PX_TO_MM = 210 / 595; // ≈ 0.353
 
@@ -43,7 +45,7 @@ export const mmValueToPx = (mmValue: number): number => {
 /**
  * Convertir tous les éléments de PX à MM
  */
-export const convertElementsToMM = (elements: any[]): any[] => {
+export const convertElementsToMM = (elements: Element[]): Element[] => {
   return elements.map(element => ({
     ...element,
     x: pxToMm(element.x),

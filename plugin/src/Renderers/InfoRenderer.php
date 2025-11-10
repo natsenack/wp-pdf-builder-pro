@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - InfoRenderer
  * Phase 3.3.5 - Renderer spécialisé pour les informations structurées
@@ -19,14 +20,13 @@ if (!defined('ABSPATH')) {
 // Import du système de cache
 use PDF_Builder\Cache\RendererCache;
 
-class InfoRenderer {
-
+class InfoRenderer
+{
     /**
      * Types d'éléments supportés par ce renderer
      */
     const SUPPORTED_TYPES = ['customer_info', 'company_info', 'mentions'];
-
-    /**
+/**
      * Styles CSS par défaut pour les informations
      */
     const DEFAULT_STYLES = [
@@ -36,8 +36,7 @@ class InfoRenderer {
         'line-height' => '1.4',
         'margin-bottom' => '10px'
     ];
-
-    /**
+/**
      * Templates prédéfinis pour company_info
      */
     const COMPANY_TEMPLATES = [
@@ -62,8 +61,7 @@ class InfoRenderer {
             'separator' => ' | '
         ]
     ];
-
-    /**
+/**
      * Templates prédéfinis pour les mentions légales
      */
     const MENTIONS_TEMPLATES = [
@@ -91,7 +89,8 @@ class InfoRenderer {
      * @param array $context Contexte de rendu (données du provider)
      * @return array Résultat du rendu HTML/CSS
      */
-    public function render(array $elementData, array $context = []): array {
+    public function render(array $elementData, array $context = []): array
+    {
         // Validation des données d'entrée
         if (!$this->validateElementData($elementData)) {
             return [
@@ -103,18 +102,14 @@ class InfoRenderer {
 
         $type = $elementData['type'] ?? 'customer_info';
         $properties = $elementData['properties'] ?? [];
-
-        // Rendu selon le type d'élément
+// Rendu selon le type d'élément
         switch ($type) {
             case 'customer_info':
                 return $this->renderCustomerInfo($properties, $context);
-
             case 'company_info':
                 return $this->renderCompanyInfo($properties, $context);
-
             case 'mentions':
                 return $this->renderMentions($properties, $context);
-
             default:
                 return [
                     'html' => '<!-- Erreur: Type d\'élément non supporté -->',
@@ -131,15 +126,15 @@ class InfoRenderer {
      * @param array $context Données du contexte
      * @return array Résultat du rendu
      */
-    private function renderCustomerInfo(array $properties, array $context): array {
+    private function renderCustomerInfo(array $properties, array $context): array
+    {
         // Vérifier si les propriétés individuelles sont définies (contrôle UI)
         $useIndividualProperties = isset($properties['customerName']) ||
                                    isset($properties['customerEmail']) ||
                                    isset($properties['customerAddress']) ||
                                    isset($properties['customerPhone']);
-
         if ($useIndividualProperties) {
-            // Utiliser les propriétés individuelles définies dans l'UI
+        // Utiliser les propriétés individuelles définies dans l'UI
             $customerData = [
                 'first_name' => $properties['customerName'] ?? '',
                 'last_name' => '',
@@ -148,7 +143,7 @@ class InfoRenderer {
                 'address' => $properties['customerAddress'] ?? ''
             ];
         } else {
-            // Récupération automatique des données client depuis le contexte
+        // Récupération automatique des données client depuis le contexte
             $customerData = $this->getCustomerData($context);
         }
 
@@ -164,10 +159,8 @@ class InfoRenderer {
         $fields = $properties['fields'] ?? ['first_name', 'last_name', 'address', 'email', 'phone'];
         $layout = $properties['layout'] ?? 'vertical';
         $showLabels = $properties['show_labels'] ?? true;
-
-        // Génération du HTML
+// Génération du HTML
         $html = '<div class="customer-info">';
-
         if ($layout === 'vertical') {
             $html .= $this->renderVerticalLayout($customerData, $fields, $showLabels);
         } else {
@@ -175,14 +168,13 @@ class InfoRenderer {
         }
 
         $html .= '</div>';
-
-        // Génération des styles CSS (avec cache)
+// Génération des styles CSS (avec cache)
         $styleKey = RendererCache::generateStyleKey($properties, 'info_customer');
         $css = RendererCache::get($styleKey);
-
         if ($css === null) {
             $css = $this->generateInfoStyles($properties, 'customer-info');
-            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+            RendererCache::set($styleKey, $css, 600);
+        // Cache 10 minutes
         }
 
         return [
@@ -199,22 +191,19 @@ class InfoRenderer {
      * @param array $context Données du contexte
      * @return array Résultat du rendu
      */
-    private function renderCompanyInfo(array $properties, array $context): array {
+    private function renderCompanyInfo(array $properties, array $context): array
+    {
         // Récupération des données société
         $companyData = $this->getCompanyData($context);
-
-        // Template à utiliser
+// Template à utiliser
         $template = $properties['template'] ?? 'default';
         $templateConfig = self::COMPANY_TEMPLATES[$template] ?? self::COMPANY_TEMPLATES['default'];
-
-        // Champs à afficher selon le template
+// Champs à afficher selon le template
         $fields = $templateConfig['fields'];
         $layout = $templateConfig['layout'];
         $separator = $templateConfig['separator'];
-
-        // Génération du HTML
+// Génération du HTML
         $html = '<div class="company-info">';
-
         if ($layout === 'vertical') {
             $html .= $this->renderCompanyVerticalLayout($companyData, $fields, $separator);
         } else {
@@ -222,14 +211,13 @@ class InfoRenderer {
         }
 
         $html .= '</div>';
-
-        // Génération des styles CSS (avec cache)
+// Génération des styles CSS (avec cache)
         $styleKey = RendererCache::generateStyleKey($properties, 'info_company');
         $css = RendererCache::get($styleKey);
-
         if ($css === null) {
             $css = $this->generateInfoStyles($properties, 'company-info');
-            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+            RendererCache::set($styleKey, $css, 600);
+        // Cache 10 minutes
         }
 
         return [
@@ -246,35 +234,31 @@ class InfoRenderer {
      * @param array $context Données du contexte
      * @return array Résultat du rendu
      */
-    private function renderMentions(array $properties, array $context): array {
+    private function renderMentions(array $properties, array $context): array
+    {
         // Template à utiliser
         $template = $properties['template'] ?? 'default';
         $templateConfig = self::MENTIONS_TEMPLATES[$template] ?? self::MENTIONS_TEMPLATES['default'];
-
-        // Récupération des données société pour remplacer les variables
+// Récupération des données société pour remplacer les variables
         $companyData = $this->getCompanyData($context);
-
-        // Remplacement des variables dans le contenu
+// Remplacement des variables dans le contenu
         $content = $this->replaceMentionsVariables($templateConfig['content'], $companyData);
-
-        // Génération du HTML
+// Génération du HTML
         $html = '<div class="mentions">';
         $html .= '<h4 class="mentions-title">' . htmlspecialchars($templateConfig['title']) . '</h4>';
         $html .= '<div class="mentions-content">' . nl2br(htmlspecialchars($content)) . '</div>';
-
         if ($templateConfig['show_date']) {
             $html .= '<div class="mentions-date">Document généré le ' . date('d/m/Y') . '</div>';
         }
 
         $html .= '</div>';
-
-        // Génération des styles CSS (avec cache)
+// Génération des styles CSS (avec cache)
         $styleKey = RendererCache::generateStyleKey($properties, 'info_mentions');
         $css = RendererCache::get($styleKey);
-
         if ($css === null) {
             $css = $this->generateMentionsStyles($properties);
-            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+            RendererCache::set($styleKey, $css, 600);
+        // Cache 10 minutes
         }
 
         return [
@@ -290,7 +274,8 @@ class InfoRenderer {
      * @param array $elementData Données à valider
      * @return bool True si valide
      */
-    private function validateElementData(array $elementData): bool {
+    private function validateElementData(array $elementData): bool
+    {
         return isset($elementData['type']) &&
                in_array($elementData['type'], self::SUPPORTED_TYPES);
     }
@@ -301,7 +286,8 @@ class InfoRenderer {
      * @param array $context Données du contexte
      * @return array Données client
      */
-    private function getCustomerData(array $context): array {
+    private function getCustomerData(array $context): array
+    {
         return $context['customer'] ?? [];
     }
 
@@ -311,7 +297,8 @@ class InfoRenderer {
      * @param array $context Données du contexte
      * @return array Données société
      */
-    private function getCompanyData(array $context): array {
+    private function getCompanyData(array $context): array
+    {
         return $context['company'] ?? [];
     }
 
@@ -323,15 +310,16 @@ class InfoRenderer {
      * @param bool $showLabels Afficher les labels
      * @return string HTML généré
      */
-    private function renderVerticalLayout(array $data, array $fields, bool $showLabels): string {
+    private function renderVerticalLayout(array $data, array $fields, bool $showLabels): string
+    {
         $html = '';
-
         foreach ($fields as $field) {
-            if (!isset($data[$field]) || empty($data[$field])) continue;
+            if (!isset($data[$field]) || empty($data[$field])) {
+                continue;
+            }
 
             $label = $showLabels ? $this->getFieldLabel($field) . ': ' : '';
             $value = $this->formatFieldValue($field, $data[$field]);
-
             $html .= '<div class="info-row">';
             $html .= '<span class="info-label">' . htmlspecialchars($label) . '</span>';
             $html .= '<span class="info-value">' . htmlspecialchars($value) . '</span>';
@@ -349,22 +337,22 @@ class InfoRenderer {
      * @param bool $showLabels Afficher les labels
      * @return string HTML généré
      */
-    private function renderHorizontalLayout(array $data, array $fields, bool $showLabels): string {
+    private function renderHorizontalLayout(array $data, array $fields, bool $showLabels): string
+    {
         $html = '<div class="info-row">';
-
         $items = [];
         foreach ($fields as $field) {
-            if (!isset($data[$field]) || empty($data[$field])) continue;
+            if (!isset($data[$field]) || empty($data[$field])) {
+                continue;
+            }
 
             $label = $showLabels ? $this->getFieldLabel($field) . ': ' : '';
             $value = $this->formatFieldValue($field, $data[$field]);
-
             $items[] = htmlspecialchars($label . $value);
         }
 
         $html .= implode(' | ', $items);
         $html .= '</div>';
-
         return $html;
     }
 
@@ -376,14 +364,16 @@ class InfoRenderer {
      * @param string $separator Séparateur
      * @return string HTML généré
      */
-    private function renderCompanyVerticalLayout(array $data, array $fields, string $separator): string {
-        $html = '';
+    private function renderCompanyVerticalLayout(array $data, array $fields, string $separator): string
+    {
 
+        $html = '';
         foreach ($fields as $field) {
-            if (!isset($data[$field]) || empty($data[$field])) continue;
+            if (!isset($data[$field]) || empty($data[$field])) {
+                continue;
+            }
 
             $value = $this->formatCompanyFieldValue($field, $data[$field]);
-
             $html .= '<div class="company-row">' . htmlspecialchars($value) . '</div>';
         }
 
@@ -398,11 +388,14 @@ class InfoRenderer {
      * @param string $separator Séparateur
      * @return string HTML généré
      */
-    private function renderCompanyHorizontalLayout(array $data, array $fields, string $separator): string {
-        $items = [];
+    private function renderCompanyHorizontalLayout(array $data, array $fields, string $separator): string
+    {
 
+        $items = [];
         foreach ($fields as $field) {
-            if (!isset($data[$field]) || empty($data[$field])) continue;
+            if (!isset($data[$field]) || empty($data[$field])) {
+                continue;
+            }
 
             $value = $this->formatCompanyFieldValue($field, $data[$field]);
             $items[] = htmlspecialchars($value);
@@ -418,14 +411,15 @@ class InfoRenderer {
      * @param array $companyData Données société
      * @return string Contenu avec variables remplacées
      */
-    private function replaceMentionsVariables(string $content, array $companyData): string {
+    private function replaceMentionsVariables(string $content, array $companyData): string
+    {
+
         $replacements = [
             '[capital]' => $companyData['capital'] ?? 'XXX',
             '[vat]' => $companyData['vat'] ?? 'XXX',
             '[name]' => $companyData['name'] ?? 'XXX',
             '[date]' => date('d/m/Y')
         ];
-
         return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 
@@ -435,7 +429,9 @@ class InfoRenderer {
      * @param string $field Nom du champ
      * @return string Label du champ
      */
-    private function getFieldLabel(string $field): string {
+    private function getFieldLabel(string $field): string
+    {
+
         $labels = [
             'first_name' => 'Prénom',
             'last_name' => 'Nom',
@@ -444,7 +440,6 @@ class InfoRenderer {
             'phone' => 'Téléphone',
             'company' => 'Société'
         ];
-
         return $labels[$field] ?? ucfirst(str_replace('_', ' ', $field));
     }
 
@@ -455,7 +450,9 @@ class InfoRenderer {
      * @param mixed $value Valeur du champ
      * @return string Valeur formatée
      */
-    private function formatFieldValue(string $field, $value): string {
+    private function formatFieldValue(string $field, $value): string
+    {
+
         if (is_array($value)) {
             return implode(', ', array_filter($value));
         }
@@ -470,7 +467,9 @@ class InfoRenderer {
      * @param mixed $value Valeur du champ
      * @return string Valeur formatée
      */
-    private function formatCompanyFieldValue(string $field, $value): string {
+    private function formatCompanyFieldValue(string $field, $value): string
+    {
+
         // Si la valeur est un array (comme l'adresse), la convertir en string
         if (is_array($value)) {
             switch ($field) {
@@ -484,22 +483,16 @@ class InfoRenderer {
         switch ($field) {
             case 'capital':
                 return 'Capital social : ' . number_format((float)$value, 2, ',', ' ') . ' €';
-
             case 'vat':
                 return 'TVA : ' . $value;
-
             case 'rcs':
                 return 'RCS : ' . $value;
-
             case 'phone':
                 return 'Tél : ' . $value;
-
             case 'email':
                 return 'Email : ' . $value;
-
             case 'website':
                 return 'Web : ' . $value;
-
             default:
                 return (string)$value;
         }
@@ -512,33 +505,30 @@ class InfoRenderer {
      * @param string $className Classe CSS
      * @return string CSS généré
      */
-    private function generateInfoStyles(array $properties, string $className): string {
-        $css = [];
+    private function generateInfoStyles(array $properties, string $className): string
+    {
 
-        // Styles de base
+        $css = [];
+// Styles de base
         $css[] = '.' . $className . ' {';
         $css[] = '  margin: 10px 0;';
         $css[] = '  padding: 5px;';
         $css[] = '}';
-
-        // Styles des lignes
+// Styles des lignes
         $css[] = '.' . $className . ' .info-row {';
         $css[] = '  margin-bottom: 3px;';
         $css[] = '  line-height: 1.4;';
         $css[] = '}';
-
-        // Styles des labels
+// Styles des labels
         $css[] = '.' . $className . ' .info-label {';
         $css[] = '  font-weight: bold;';
         $css[] = '  margin-right: 5px;';
         $css[] = '}';
-
-        // Styles des valeurs
+// Styles des valeurs
         $css[] = '.' . $className . ' .info-value {';
         $css[] = '  color: #333;';
         $css[] = '}';
-
-        // Styles spécifiques company
+// Styles spécifiques company
         if ($className === 'company-info') {
             $css[] = '.company-info .company-row {';
             $css[] = '  margin-bottom: 2px;';
@@ -555,10 +545,11 @@ class InfoRenderer {
      * @param array $properties Propriétés
      * @return string CSS généré
      */
-    private function generateMentionsStyles(array $properties): string {
-        $css = [];
+    private function generateMentionsStyles(array $properties): string
+    {
 
-        // Styles de base
+        $css = [];
+// Styles de base
         $css[] = '.mentions {';
         $css[] = '  margin: 15px 0;';
         $css[] = '  padding: 10px;';
@@ -566,8 +557,7 @@ class InfoRenderer {
         $css[] = '  font-size: 10px;';
         $css[] = '  color: #666;';
         $css[] = '}';
-
-        // Styles du titre
+// Styles du titre
         $css[] = '.mentions .mentions-title {';
         $css[] = '  margin: 0 0 8px 0;';
         $css[] = '  font-size: 11px;';
@@ -575,20 +565,17 @@ class InfoRenderer {
         $css[] = '  text-transform: uppercase;';
         $css[] = '  color: #333;';
         $css[] = '}';
-
-        // Styles du contenu
+// Styles du contenu
         $css[] = '.mentions .mentions-content {';
         $css[] = '  margin-bottom: 8px;';
         $css[] = '  line-height: 1.3;';
         $css[] = '}';
-
-        // Styles de la date
+// Styles de la date
         $css[] = '.mentions .mentions-date {';
         $css[] = '  font-style: italic;';
         $css[] = '  text-align: right;';
         $css[] = '  font-size: 9px;';
         $css[] = '}';
-
         return implode("\n", $css);
     }
 }

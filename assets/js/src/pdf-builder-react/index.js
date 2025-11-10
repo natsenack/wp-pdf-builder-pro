@@ -3,7 +3,7 @@
 // ============================================================================
 
 // Import des composants React
-import React, { useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error) {
     return { hasError: true };
   }
 
@@ -67,8 +67,8 @@ class ErrorBoundary extends React.Component {
 }
 
 // État de l'application
-let currentTemplate = null;
-let isModified = false;
+// let currentTemplate = null;
+// let isModified = false;
 
 debugLog('🚀 PDF Builder React bundle starting execution...');
 

@@ -1,4 +1,7 @@
 <?php
+
+namespace WP_PDF_Builder_Pro\Managers;
+
 /**
  * Gestionnaire de Commandes Sécurisées - PDF Builder Pro
  *
@@ -6,8 +9,8 @@
  * pour la page développeur.
  */
 
-class PDF_Builder_Safe_Command_Manager {
-
+class PdfBuilderSafeCommandManager
+{
     /**
      * Liste des commandes autorisées
      */
@@ -42,8 +45,7 @@ class PDF_Builder_Safe_Command_Manager {
         'extension_loaded' => 'extension_loaded',
         'get_loaded_extensions' => 'get_loaded_extensions',
     ];
-
-    /**
+/**
      * Variables globales autorisées pour l'inspection
      */
     private static $allowed_globals = [
@@ -62,30 +64,25 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Exécute une commande sécurisée
      */
-    public static function execute_safe_command($code) {
+    public static function executeSafeCommand($code)
+    {
         $code = trim($code);
-
-        // Vérifier la longueur
+// Vérifier la longueur
         if (strlen($code) > 1000) {
             return '❌ Commande trop longue (maximum 1000 caractères).';
         }
 
         // Analyser la commande
-        $command_type = self::analyze_command($code);
-
+        $command_type = self::analyzeCommand($code);
         switch ($command_type) {
             case 'function_call':
-                return self::execute_function_call($code);
-
+                return self::executeFunctionCall($code);
             case 'variable_dump':
-                return self::execute_variable_dump($code);
-
+                return self::executeVariableDump($code);
             case 'constant_check':
-                return self::execute_constant_check($code);
-
+                return self::executeConstantCheck($code);
             case 'info_command':
-                return self::execute_info_command($code);
-
+                return self::executeInfoCommand($code);
             default:
                 return '❌ Commande non reconnue ou non autorisée. Utilisez des fonctions comme var_dump(), print_r(), ou des commandes d\'info comme "phpinfo()".';
         }
@@ -94,7 +91,8 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Analyse le type de commande
      */
-    private static function analyze_command($code) {
+    private static function analyzeCommand($code)
+    {
         // Vérifier si c'est un appel de fonction autorisé
         if (preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/', $code, $matches)) {
             $function_name = $matches[1];
@@ -128,21 +126,20 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Exécute un appel de fonction autorisé
      */
-    private static function execute_function_call($code) {
+    private static function executeFunctionCall($code)
+    {
         try {
-            // Limiter le temps d'exécution
+// Limiter le temps d'exécution
             $old_time_limit = ini_get('max_execution_time');
-            set_time_limit(5); // 5 secondes max
+            set_time_limit(5);
+// 5 secondes max
 
             ob_start();
             $result = eval("return $code;");
             $output = ob_get_clean();
-
-            // Restaurer la limite de temps
+// Restaurer la limite de temps
             set_time_limit($old_time_limit);
-
             return $output . ($result !== null ? "\n" . var_export($result, true) : '');
-
         } catch (Throwable $e) {
             return 'Erreur : ' . $e->getMessage();
         }
@@ -151,7 +148,8 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Exécute un dump de variable globale
      */
-    private static function execute_variable_dump($code) {
+    private static function executeVariableDump($code)
+    {
         try {
             ob_start();
             eval($code);
@@ -164,7 +162,8 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Exécute une vérification de constante
      */
-    private static function execute_constant_check($code) {
+    private static function executeConstantCheck($code)
+    {
         try {
             ob_start();
             $result = eval("return $code;");
@@ -178,20 +177,19 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Exécute une commande d'information
      */
-    private static function execute_info_command($code) {
+    private static function executeInfoCommand($code)
+    {
         try {
             switch ($code) {
                 case 'phpinfo()':
-                    ob_start();
+                                    ob_start();
                     phpinfo();
-                    return ob_get_clean();
 
+                    return ob_get_clean();
                 case 'phpversion()':
                     return 'PHP Version : ' . phpversion();
-
                 case 'get_loaded_extensions()':
                     return 'Extensions chargées : ' . implode(', ', get_loaded_extensions());
-
                 default:
                     return 'Commande d\'info non reconnue.';
             }
@@ -203,19 +201,19 @@ class PDF_Builder_Safe_Command_Manager {
     /**
      * Vérifie si une commande est sûre (pour validation côté client)
      */
-    public static function is_command_safe($code) {
-        $command_type = self::analyze_command($code);
+    public static function isCommandSafe($code)
+    {
+        $command_type = self::analyzeCommand($code);
         return $command_type !== 'unknown';
     }
 
     /**
      * Liste des commandes disponibles
      */
-    public static function get_available_commands() {
-        return array_merge(
-            array_keys(self::$allowed_commands),
-            ['phpinfo', 'phpversion', 'get_loaded_extensions'],
-            array_map(function($var) { return "var_dump(\$$var)"; }, self::$allowed_globals)
-        );
+    public static function getAvailableCommands()
+    {
+        return array_merge(array_keys(self::$allowed_commands), ['phpinfo', 'phpversion', 'get_loaded_extensions'], array_map(function ($var) {
+            return "var_dump(\$$var)";
+        }, self::$allowed_globals));
     }
 }

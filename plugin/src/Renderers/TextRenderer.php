@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - TextRenderer
  * Phase 3.3.1 - Renderer spécialisé pour les éléments texte
@@ -19,14 +20,13 @@ if (!defined('ABSPATH')) {
 use PDF_Builder\Cache\RendererCache;
 use PDF_Builder\Performance\PerformanceMonitor;
 
-class TextRenderer {
-
+class TextRenderer
+{
     /**
      * Types d'éléments supportés par ce renderer
      */
     const SUPPORTED_TYPES = ['dynamic-text', 'order_number'];
-
-    /**
+/**
      * Styles CSS par défaut pour le texte
      */
     const DEFAULT_STYLES = [
@@ -39,8 +39,7 @@ class TextRenderer {
         'line-height' => '1.4',
         'text-decoration' => 'none'
     ];
-
-    /**
+/**
      * Variables système disponibles pour le remplacement
      */
     const SYSTEM_VARIABLES = [
@@ -57,8 +56,10 @@ class TextRenderer {
      * @param array $context Contexte de rendu (données du provider)
      * @return array Résultat du rendu HTML/CSS
      */
-    public function render(array $elementData, array $context = []): array {
-        return PerformanceMonitor::measure(function() use ($elementData, $context) {
+    public function render(array $elementData, array $context = []): array
+    {
+        return PerformanceMonitor::measure(function () use ($elementData, $context) {
+
             // Validation des données d'entrée
             if (!$this->validateElementData($elementData)) {
                 return [
@@ -71,28 +72,29 @@ class TextRenderer {
             $type = $elementData['type'] ?? 'dynamic-text';
             $content = $elementData['content'] ?? '';
             $properties = $elementData['properties'] ?? [];
-
-            // Rendu selon le type d'élément
+// Rendu selon le type d'élément
             switch ($type) {
                 case 'dynamic-text':
-                    $result = $this->renderDynamicText($content, $properties, $context);
-                    break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       $result = $this->renderDynamicText($content, $properties, $context);
 
+                    break;
                 case 'order_number':
-                    $result = $this->renderOrderNumber($properties, $context);
-                    break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       $result = $this->renderOrderNumber($properties, $context);
 
+                    break;
                 default:
-                    $result = [
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       $result = [
                         'html' => '<!-- Erreur: Type d\'élément non supporté -->',
                         'css' => '',
                         'error' => 'Type d\'élément non supporté: ' . $type
-                    ];
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ];
+
                     break;
             }
 
             // Enregistrement des métriques de performance
-            PerformanceMonitor::recordRendererCall('TextRenderer', $type, 0); // Le temps est mesuré par measure()
+            PerformanceMonitor::recordRendererCall('TextRenderer', $type, 0);
+// Le temps est mesuré par measure()
 
             return $result;
         }, [], 'TextRenderer::render_' . ($elementData['type'] ?? 'unknown'));
@@ -106,22 +108,21 @@ class TextRenderer {
      * @param array $context Données du contexte
      * @return array Résultat du rendu
      */
-    private function renderDynamicText(string $content, array $properties, array $context): array {
+    private function renderDynamicText(string $content, array $properties, array $context): array
+    {
         // Remplacement des variables (avec cache)
         $processedContent = $this->replaceVariables($content, $context);
-
-        // Génération des styles CSS (avec cache)
+// Génération des styles CSS (avec cache)
         $styleKey = RendererCache::generateStyleKey($properties, 'text');
         $css = RendererCache::get($styleKey);
-
         if ($css === null) {
             $css = $this->generateTextStyles($properties);
-            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes pour les styles
+            RendererCache::set($styleKey, $css, 600);
+        // Cache 10 minutes pour les styles
         }
 
         // Génération du HTML
         $html = $this->generateTextHtml($processedContent, $properties);
-
         return [
             'html' => $html,
             'css' => $css,
@@ -137,18 +138,15 @@ class TextRenderer {
      * @param array $context Données du contexte
      * @return array Résultat du rendu
      */
-    private function renderOrderNumber(array $properties, array $context): array {
+    private function renderOrderNumber(array $properties, array $context): array
+    {
         $orderData = $context['order'] ?? [];
-
-        // Formatage du numéro de commande
+// Formatage du numéro de commande
         $formattedNumber = $this->formatOrderNumber($orderData, $properties);
-
-        // Génération des styles CSS
+// Génération des styles CSS
         $css = $this->generateTextStyles($properties);
-
-        // Génération du HTML
+// Génération du HTML
         $html = $this->generateTextHtml($formattedNumber, $properties);
-
         return [
             'html' => $html,
             'css' => $css,
@@ -163,22 +161,21 @@ class TextRenderer {
      * @param array $context Données du contexte
      * @return string Contenu avec variables remplacées
      */
-    private function replaceVariables(string $content, array $context): string {
+    private function replaceVariables(string $content, array $context): string
+    {
         // Extraction des variables du contenu (avec cache)
         $contentKey = 'content_vars_' . md5($content);
         $variables = RendererCache::get($contentKey);
-
         if ($variables === null) {
             $variables = $this->extractVariables($content);
-            RendererCache::set($contentKey, $variables, 3600); // Cache 1 heure pour l'extraction
+            RendererCache::set($contentKey, $variables, 3600);
+        // Cache 1 heure pour l'extraction
         }
 
         $result = $content;
-
         foreach ($variables as $variable) {
             $value = $this->getVariableValue($variable, $context);
-
-            // Remplacement sécurisé (échappement HTML)
+        // Remplacement sécurisé (échappement HTML)
             $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
             $result = str_replace('{{' . $variable . '}}', $escapedValue, $result);
         }
@@ -192,12 +189,11 @@ class TextRenderer {
      * @param string $content Contenu à analyser
      * @return array Liste des variables trouvées
      */
-    private function extractVariables(string $content): array {
+    private function extractVariables(string $content): array
+    {
         $variables = [];
-
-        // Regex pour trouver {{variable}}
+// Regex pour trouver {{variable}}
         preg_match_all('/\{\{([^}]+)\}\}/', $content, $matches);
-
         if (!empty($matches[1])) {
             $variables = array_unique($matches[1]);
         }
@@ -212,18 +208,19 @@ class TextRenderer {
      * @param array $context Données du contexte
      * @return string Valeur de la variable ou placeholder
      */
-    private function getVariableValue(string $variable, array $context): string {
+    private function getVariableValue(string $variable, array $context): string
+    {
         // Variables système (avec cache)
         if (isset(self::SYSTEM_VARIABLES[$variable])) {
             $cacheKey = RendererCache::generateVariableKey($variable, []);
             $cachedValue = RendererCache::get($cacheKey);
-
             if ($cachedValue !== null) {
                 return $cachedValue;
             }
 
             $value = $this->getSystemVariableValue($variable);
-            RendererCache::set($cacheKey, $value, 60); // Cache 1 minute pour les variables système
+            RendererCache::set($cacheKey, $value, 60);
+// Cache 1 minute pour les variables système
             return $value;
         }
 
@@ -243,16 +240,19 @@ class TextRenderer {
      * @param string $variable Nom de la variable système
      * @return string Valeur de la variable
      */
-    private function getSystemVariableValue(string $variable): string {
+    private function getSystemVariableValue(string $variable): string
+    {
         switch ($variable) {
             case 'current_date':
                 return date('d/m/Y');
             case 'current_time':
                 return date('H:i:s');
             case 'page_number':
-                return '1'; // Sera géré par le système de pagination
+                return '1';
+// Sera géré par le système de pagination
             case 'total_pages':
-                return '1'; // Sera géré par le système de pagination
+                return '1';
+// Sera géré par le système de pagination
             default:
                 return '[Variable système inconnue: ' . $variable . ']';
         }
@@ -265,13 +265,13 @@ class TextRenderer {
      * @param array $context Données du contexte
      * @return string|null Valeur trouvée ou null
      */
-    private function getContextValue(string $variable, array $context): ?string {
+    private function getContextValue(string $variable, array $context): ?string
+    {
         // Recherche dans les différentes sections du contexte
         $sections = ['customer', 'order', 'company', 'variables'];
-
         foreach ($sections as $section) {
             if (isset($context[$section]) && is_array($context[$section])) {
-                // Recherche directe dans la section
+        // Recherche directe dans la section
                 if (isset($context[$section][$variable])) {
                     return (string) $context[$section][$variable];
                 }
@@ -299,7 +299,8 @@ class TextRenderer {
      * @param array $sectionData Données de la section
      * @return string|null Valeur mappée ou null
      */
-    private function mapVariableToContext(string $variable, array $sectionData): ?string {
+    private function mapVariableToContext(string $variable, array $sectionData): ?string
+    {
         $mappings = [
             // Customer mappings
             'customer_name' => ['first_name', 'last_name'], // Combine first + last name
@@ -330,12 +331,10 @@ class TextRenderer {
             'company_phone' => 'phone',
             'company_address' => 'address',
         ];
-
         if (isset($mappings[$variable])) {
             $mapping = $mappings[$variable];
-
             if (is_array($mapping)) {
-                // Combine multiple fields (ex: first_name + last_name)
+        // Combine multiple fields (ex: first_name + last_name)
                 $parts = [];
                 foreach ($mapping as $field) {
                     if (isset($sectionData[$field])) {
@@ -344,7 +343,7 @@ class TextRenderer {
                 }
                 return !empty($parts) ? implode(' ', $parts) : null;
             } else {
-                // Mapping direct
+    // Mapping direct
                 return isset($sectionData[$mapping]) ? (string) $sectionData[$mapping] : null;
             }
         }
@@ -359,18 +358,17 @@ class TextRenderer {
      * @param array $properties Propriétés de formatage
      * @return string Numéro formaté
      */
-    private function formatOrderNumber(array $orderData, array $properties): string {
+    private function formatOrderNumber(array $orderData, array $properties): string
+    {
         $number = $orderData['number'] ?? $orderData['id'] ?? 'CMD-0001';
         $format = $properties['format'] ?? 'CMD-{order_number}';
         $date = $orderData['date'] ?? date('Y-m-d');
-
-        // Remplacement des placeholders dans le format
+// Remplacement des placeholders dans le format
         $formatted = str_replace('{order_number}', $number, $format);
         $formatted = str_replace('{order_year}', date('Y', strtotime($date)), $formatted);
         $formatted = str_replace('{order_month}', date('m', strtotime($date)), $formatted);
         $formatted = str_replace('{order_day}', date('d', strtotime($date)), $formatted);
         $formatted = str_replace('{order_date}', date('d/m/Y', strtotime($date)), $formatted);
-
         return $formatted;
     }
 
@@ -380,12 +378,11 @@ class TextRenderer {
      * @param array $properties Propriétés de style
      * @return string CSS généré
      */
-    private function generateTextStyles(array $properties): string {
+    private function generateTextStyles(array $properties): string
+    {
         $styles = array_merge(self::DEFAULT_STYLES, $properties);
-
         $css = [];
-
-        // Police et taille
+// Police et taille
         if (!empty($styles['font-family'])) {
             $css[] = "font-family: {$styles['font-family']}";
         }
@@ -427,13 +424,12 @@ class TextRenderer {
      * @param array $properties Propriétés d'affichage
      * @return string HTML généré
      */
-    private function generateTextHtml(string $content, array $properties): string {
+    private function generateTextHtml(string $content, array $properties): string
+    {
         $tag = $properties['html-tag'] ?? 'div';
         $class = $properties['css-class'] ?? 'pdf-text-element';
-
-        // Gestion du multiligne
+// Gestion du multiligne
         $processedContent = nl2br($content);
-
         return "<{$tag} class=\"{$class}\">{$processedContent}</{$tag}>";
     }
 
@@ -443,7 +439,8 @@ class TextRenderer {
      * @param array $elementData Données à valider
      * @return bool True si valide
      */
-    private function validateElementData(array $elementData): bool {
+    private function validateElementData(array $elementData): bool
+    {
         // Vérification du type
         $type = $elementData['type'] ?? '';
         if (!in_array($type, self::SUPPORTED_TYPES)) {
@@ -464,7 +461,8 @@ class TextRenderer {
      * @param string $elementType Type d'élément
      * @return bool True si supporté
      */
-    public function supportsElementType(string $elementType): bool {
+    public function supportsElementType(string $elementType): bool
+    {
         return in_array($elementType, self::SUPPORTED_TYPES);
     }
 
@@ -474,10 +472,10 @@ class TextRenderer {
      * @param array $context Contexte de données
      * @return array Liste des variables disponibles
      */
-    public function getAvailableVariables(array $context = []): array {
+    public function getAvailableVariables(array $context = []): array
+    {
         $variables = array_keys(self::SYSTEM_VARIABLES);
-
-        // Variables depuis le contexte
+// Variables depuis le contexte
         foreach (['customer', 'order', 'company'] as $section) {
             if (isset($context[$section]) && is_array($context[$section])) {
                 $variables = array_merge($variables, array_keys($context[$section]));

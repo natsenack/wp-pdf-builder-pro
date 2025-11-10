@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 use PDF_Builder\Controllers\PDF_Builder_Pro_Generator;
 
-class PDF_Builder_WooCommerce_Integration
+class PdfBuilderWooCommerceIntegration
 {
     /**
      * Instance du main plugin
@@ -26,13 +26,13 @@ class PDF_Builder_WooCommerce_Integration
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->init_hooks();
+        $this->initHooks();
     }
 
     /**
      * Initialiser les hooks
      */
-    private function init_hooks()
+    private function initHooks()
     {
         // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles tôt
         add_action('init', [$this, 'register_ajax_hooks']);
@@ -41,7 +41,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Enregistrer les hooks AJAX
      */
-    public function register_ajax_hooks()
+    public function registerAjaxHooks()
     {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_order_pdf'], 1);
@@ -53,7 +53,7 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_get_company_data', [$this, 'ajax_get_company_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
     }
-    private function detect_document_type($order_status)
+    private function detectDocumentType($order_status)
     {
         $status_mapping = [
             'pending' => 'devis',
@@ -75,7 +75,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Retourne le label du type de document
      */
-    private function get_document_type_label($document_type)
+    private function getDocumentTypeLabel($document_type)
     {
         $labels = [
             'devis' => 'Devis',
@@ -92,7 +92,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Ajoute la meta box PDF Builder dans les commandes WooCommerce
      */
-    public function add_woocommerce_order_meta_box()
+    public function addWoocommerceOrderMetaBox()
     {
         // Vérifier que nous sommes sur la bonne page
         if (!function_exists('get_current_screen')) {
@@ -123,7 +123,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Rend la meta box dans les commandes WooCommerce - VERSION SIMPLE & ROBUSTE
      */
-    public function render_woocommerce_order_meta_box($post_or_order)
+    public function renderWoocommerceOrderMetaBox($post_or_order)
     {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -152,8 +152,8 @@ class PDF_Builder_WooCommerce_Integration
 
         // Détecter automatiquement le type de document basé sur le statut de la commande
         $order_status = $order->get_status();
-        $document_type = $this->detect_document_type($order_status);
-        $document_type_label = $this->get_document_type_label($document_type);
+        $document_type = $this->detectDocumentType($order_status);
+        $document_type_label = $this->getDocumentTypeLabel($document_type);
 
         // Récupérer tous les templates disponibles
         $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
@@ -306,7 +306,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX handler pour générer le PDF d'une commande
      */
-    public function ajax_generate_order_pdf()
+    public function ajaxGenerateOrderPdf()
     {
         // === SÉCURITÉ PHASE 5.8 - Vérifications de sécurité ===
 
@@ -370,7 +370,6 @@ class PDF_Builder_WooCommerce_Integration
             // Charger la commande WooCommerce
             $order = wc_get_order($order_id);
             if (!$order) {
-
                 wp_send_json_error('Commande introuvable');
                 return;
             }
@@ -513,7 +512,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Helper pour obtenir le nonce
      */
-    private function get_nonce()
+    private function getNonce()
     {
         return wp_create_nonce('pdf_builder_order_actions');
     }
@@ -521,7 +520,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Helper pour obtenir l'URL AJAX
      */
-    private function get_ajax_url()
+    private function getAjaxUrl()
     {
         return admin_url('admin-ajax.php');
     }
@@ -529,7 +528,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Récupère l'ID du template approprié pour une commande donnée
      */
-    private function get_template_for_order($order)
+    private function getTemplateForOrder($order)
     {
         if (!$order) {
             return null;
@@ -562,7 +561,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Construit le style CSS d'un élément
      */
-    private function build_element_style($element, $base_style)
+    private function buildElementStyle($element, $base_style)
     {
         $style = $base_style;
 
@@ -776,14 +775,14 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Rend le contenu d'un élément avec les données de la commande
      */
-    private function render_element_content($element, $order)
+    private function renderElementContent($element, $order)
     {
         $type = $element['type'] ?? 'text';
         $content = $element['content'] ?? '';
 
         // Remplacer les variables dynamiques avec les vraies données de la commande
         if ($order) {
-            $content = $this->replace_order_variables($content, $order);
+            $content = $this->replaceOrderVariables($content, $order);
         }
 
         switch ($type) {
@@ -849,7 +848,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Remplace les variables de commande dans le contenu
      */
-    private function replace_order_variables($content, $order)
+    private function replaceOrderVariables($content, $order)
     {
         if (!$order) {
             return $content;
@@ -956,7 +955,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX handler pour sauvegarder le canvas d'une commande
      */
-    public function ajax_save_order_canvas()
+    public function ajaxSaveOrderCanvas()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -995,7 +994,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Sanitiser les données canvas (validation basique)
-            $sanitized_elements = $this->sanitize_canvas_elements($canvas_elements);
+            $sanitized_elements = $this->sanitizeCanvasElements($canvas_elements);
 
             // Sauvegarder les données dans les meta de la commande
             $meta_key = '_pdf_builder_canvas_data';
@@ -1021,7 +1020,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Sanitise les éléments du canvas
      */
-    private function sanitize_canvas_elements($elements)
+    private function sanitizeCanvasElements($elements)
     {
         if (!is_array($elements)) {
             return [];
@@ -1045,12 +1044,12 @@ class PDF_Builder_WooCommerce_Integration
 
             // Sanitiser le contenu selon le type
             if (isset($element['content'])) {
-                $sanitized_element['content'] = $this->sanitize_element_content($element['content'], $element['type'] ?? '');
+                $sanitized_element['content'] = $this->sanitizeElementContent($element['content'], $element['type'] ?? '');
             }
 
             // Sanitiser les styles
             if (isset($element['style']) && is_array($element['style'])) {
-                $sanitized_element['style'] = $this->sanitize_element_styles($element['style']);
+                $sanitized_element['style'] = $this->sanitizeElementStyles($element['style']);
             }
 
             $sanitized[] = $sanitized_element;
@@ -1062,7 +1061,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Sanitise le contenu d'un élément selon son type
      */
-    private function sanitize_element_content($content, $type)
+    private function sanitizeElementContent($content, $type)
     {
         switch ($type) {
             case 'text':
@@ -1086,7 +1085,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Sanitise les styles d'un élément
      */
-    private function sanitize_element_styles($styles)
+    private function sanitizeElementStyles($styles)
     {
         $allowed_styles = [
             'fontSize', 'fontFamily', 'color', 'backgroundColor',
@@ -1113,7 +1112,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX handler pour charger le canvas d'une commande
      */
-    public function ajax_load_order_canvas()
+    public function ajaxLoadOrderCanvas()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -1179,7 +1178,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX handler pour récupérer les éléments canvas d'un template
      */
-    public function ajax_get_canvas_elements()
+    public function ajaxGetCanvasElements()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -1210,7 +1209,6 @@ class PDF_Builder_WooCommerce_Integration
             if (get_post($template_id)) {
                 $template_exists = true;
             } else {
-
                 // Essayer de récupérer depuis la table pdf_builder_templates
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -1236,13 +1234,11 @@ class PDF_Builder_WooCommerce_Integration
             $canvas_elements = get_transient($cache_key);
 
             if ($canvas_elements === false) {
-
                 // Si on a déjà les données du template depuis la table personnalisée, les utiliser
                 if ($template_data !== null) {
                     $decoded_data = json_decode($template_data, true);
 
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
-
                         // Extraire les éléments depuis la structure du template
                         if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                             $canvas_elements = $decoded_data['elements'];
@@ -1266,7 +1262,7 @@ class PDF_Builder_WooCommerce_Integration
                 }
 
                 // Validation et nettoyage des données
-                $canvas_elements = $this->validate_and_clean_canvas_elements($canvas_elements);
+                $canvas_elements = $this->validateAndCleanCanvasElements($canvas_elements);
 
                 // Mettre en cache pour 5 minutes
                 set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
@@ -1288,7 +1284,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Valide et nettoie les éléments canvas récupérés
      */
-    private function validate_and_clean_canvas_elements($elements)
+    private function validateAndCleanCanvasElements($elements)
     {
         if (!is_array($elements)) {
             // Essayer de décoder si c'est du JSON
@@ -1308,7 +1304,7 @@ class PDF_Builder_WooCommerce_Integration
         $cleaned_elements = [];
         foreach ($elements as $element) {
             if (is_array($element) && isset($element['type'])) {
-                $cleaned_element = $this->clean_canvas_element($element);
+                $cleaned_element = $this->cleanCanvasElement($element);
                 if ($cleaned_element) {
                     $cleaned_elements[] = $cleaned_element;
                 }
@@ -1321,7 +1317,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Nettoie un élément canvas individuel
      */
-    private function clean_canvas_element($element)
+    private function cleanCanvasElement($element)
     {
         $cleaned = [];
 
@@ -1331,14 +1327,14 @@ class PDF_Builder_WooCommerce_Integration
             if (!isset($element[$field])) {
                 return false; // Élément invalide
             }
-            $cleaned[$field] = $this->sanitize_element_field($field, $element[$field]);
+            $cleaned[$field] = $this->sanitizeElementField($field, $element[$field]);
         }
 
         // Champs optionnels
         $optional_fields = ['content', 'style', 'rotation', 'opacity', 'zIndex'];
         foreach ($optional_fields as $field) {
             if (isset($element[$field])) {
-                $cleaned[$field] = $this->sanitize_element_field($field, $element[$field]);
+                $cleaned[$field] = $this->sanitizeElementField($field, $element[$field]);
             }
         }
 
@@ -1348,7 +1344,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Sanitise un champ d'élément selon son type
      */
-    private function sanitize_element_field($field, $value)
+    private function sanitizeElementField($field, $value)
     {
         switch ($field) {
             case 'id':
@@ -1363,9 +1359,9 @@ class PDF_Builder_WooCommerce_Integration
             case 'zIndex':
                 return floatval($value);
             case 'content':
-                return $this->sanitize_element_content($value, 'text'); // Type par défaut
+                return $this->sanitizeElementContent($value, 'text'); // Type par défaut
             case 'style':
-                return is_array($value) ? $this->sanitize_element_styles($value) : [];
+                return is_array($value) ? $this->sanitizeElementStyles($value) : [];
             default:
                 return sanitize_text_field($value);
         }
@@ -1374,7 +1370,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Récupère et valide complètement une commande WooCommerce
      */
-    private function get_and_validate_order($order_id)
+    private function getAndValidateOrder($order_id)
     {
         // Vérifier que WooCommerce est actif
         if (!function_exists('wc_get_order')) {
@@ -1431,7 +1427,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * Récupère les données complètes des articles de commande
      */
-    private function get_order_items_complete_data($order)
+    private function getOrderItemsCompleteData($order)
     {
         $items_data = [];
 
@@ -1504,7 +1500,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX: Récupère les données complètes d'une commande pour le mode Metabox
      */
-    public function ajax_get_order_data()
+    public function ajaxGetOrderData()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -1528,7 +1524,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Récupération et validation complète de la commande
-            $order = $this->get_and_validate_order($order_id);
+            $order = $this->getAndValidateOrder($order_id);
             if (is_wp_error($order)) {
                 wp_send_json_error($order->get_error_message());
                 return;
@@ -1542,7 +1538,7 @@ class PDF_Builder_WooCommerce_Integration
                     'status' => $order->get_status(),
                     'total' => $order->get_total(),
                 ],
-                'items' => $this->get_order_items_complete_data($order),
+                'items' => $this->getOrderItemsCompleteData($order),
             ];
 
             wp_send_json_success(
@@ -1559,7 +1555,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX: Valide l'accès à une commande
      */
-    public function ajax_validate_order_access()
+    public function ajaxValidateOrderAccess()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -1583,7 +1579,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Récupération et validation de la commande
-            $order = $this->get_and_validate_order($order_id);
+            $order = $this->getAndValidateOrder($order_id);
             if (is_wp_error($order)) {
                 wp_send_json_error($order->get_error_message());
                 return;
@@ -1603,7 +1599,7 @@ class PDF_Builder_WooCommerce_Integration
     /**
      * AJAX: Récupère les données entreprise depuis WooCommerce/WordPress
      */
-    public function ajax_get_company_data()
+    public function ajaxGetCompanyData()
     {
         try {
             // Vérifier les permissions utilisateur
@@ -1645,10 +1641,8 @@ class PDF_Builder_WooCommerce_Integration
             wp_send_json_success([
                 'company' => $company_data
             ]);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
         }
     }
-
 }

@@ -1,12 +1,15 @@
 <?php
+
+namespace WP_PDF_Builder_Pro\Managers;
+
 /**
  * Gestionnaire d'Exécutions Shell Sécurisées - PDF Builder Pro
  *
  * Sécurise les appels shell_exec() avec validation et chemins absolus
  */
 
-class PDF_Builder_Secure_Shell_Manager {
-
+class PdfBuilderSecureShellManager
+{
     /**
      * Commandes autorisées avec leurs chemins validés
      */
@@ -27,8 +30,7 @@ class PDF_Builder_Secure_Shell_Manager {
             'allowed_args' => [] // which est sûr
         ]
     ];
-
-    /**
+/**
      * Cache des chemins validés
      */
     private static $path_cache = [];
@@ -36,16 +38,10 @@ class PDF_Builder_Secure_Shell_Manager {
     /**
      * Logger pour les exécutions
      */
-    private static function log_execution($command, $output, $success = true, $security_level = 'info') {
-        $log_message = sprintf(
-            "[SECURE_SHELL] %s - Command: %s - Output: %s - Level: %s",
-            $success ? 'SUCCESS' : 'FAILED',
-            $command,
-            is_string($output) ? substr($output, 0, 200) : 'N/A',
-            $security_level
-        );
-
-        // Log aussi dans le logger du plugin si disponible
+    private static function logExecution($command, $output, $success = true, $security_level = 'info')
+    {
+        $log_message = sprintf("[SECURE_SHELL] %s - Command: %s - Output: %s - Level: %s", $success ? 'SUCCESS' : 'FAILED', $command, is_string($output) ? substr($output, 0, 200) : 'N/A', $security_level);
+// Log aussi dans le logger du plugin si disponible
         if (class_exists('PDF_Builder_Logger')) {
             $method = $success ? 'log' : 'error';
             PDF_Builder_Logger::$method($log_message);
@@ -53,32 +49,24 @@ class PDF_Builder_Secure_Shell_Manager {
 
         // Log de sécurité pour les commandes à haut risque
         if ($security_level === 'high') {
-            self::log_security_event($command, $output, $success);
+            self::logSecurityEvent($command, $output, $success);
         }
     }
 
     /**
      * Log des événements de sécurité
      */
-    private static function log_security_event($command, $output, $success) {
-        $security_log = sprintf(
-            "[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s",
-            date('Y-m-d H:i:s'),
-            $command,
-            $success ? 'YES' : 'NO',
-            $_SERVER['REMOTE_ADDR'] ?? 'CLI',
-            get_current_user_id()
-        );
-
-        // Log dans un fichier séparé pour la sécurité
+    private static function logSecurityEvent($command, $output, $success)
+    {
+        $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", date('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', get_current_user_id());
+// Log dans un fichier séparé pour la sécurité
         $security_log_file = WP_CONTENT_DIR . '/pdf-builder-security.log';
         $log_entry = date('Y-m-d H:i:s') . ' - ' . $security_log . "\n";
-
-        // Limiter la taille du fichier de log (max 1MB)
+// Limiter la taille du fichier de log (max 1MB)
         if (file_exists($security_log_file) && filesize($security_log_file) > 1024 * 1024) {
             $content = file_get_contents($security_log_file);
             $lines = explode("\n", $content);
-            // Garder seulement les 1000 dernières lignes
+// Garder seulement les 1000 dernières lignes
             $lines = array_slice($lines, -1000);
             file_put_contents($security_log_file, implode("\n", $lines));
         }
@@ -89,20 +77,20 @@ class PDF_Builder_Secure_Shell_Manager {
     /**
      * Exécute une commande shell de manière sécurisée
      */
-    public static function execute_secure_command($command_name, $args = []) {
+    public static function executeSecureCommand($command_name, $args = [])
+    {
         // Vérifier si la commande est autorisée
         if (!isset(self::$allowed_commands[$command_name])) {
-            self::log_execution($command_name, 'Command not allowed', false);
+            self::logExecution($command_name, 'Command not allowed', false);
             return false;
         }
 
         $command_config = self::$allowed_commands[$command_name];
-
-        // Valider les arguments si nécessaire
+// Valider les arguments si nécessaire
         if (!empty($command_config['allowed_args']) && !empty($args)) {
             foreach ($args as $arg) {
                 if (!in_array($arg, $command_config['allowed_args'])) {
-                    self::log_execution($command_name, "Invalid argument: $arg", false);
+                    self::logExecution($command_name, "Invalid argument: $arg", false);
                     return false;
                 }
             }
@@ -110,9 +98,9 @@ class PDF_Builder_Secure_Shell_Manager {
 
         // Obtenir le chemin absolu si nécessaire
         if ($command_config['validate_path']) {
-            $full_path = self::get_secure_path($command_name);
+            $full_path = self::getSecurePath($command_name);
             if (!$full_path) {
-                self::log_execution($command_name, 'Path not found or insecure', false);
+                self::logExecution($command_name, 'Path not found or insecure', false);
                 return false;
             }
             $command = $full_path;
@@ -128,19 +116,16 @@ class PDF_Builder_Secure_Shell_Manager {
         // Exécuter avec timeout et limites
         try {
             $old_timeout = ini_get('max_execution_time');
-            set_time_limit(30); // 30 secondes max pour les commandes shell
+            set_time_limit(30);
+// 30 secondes max pour les commandes shell
 
             $output = shell_exec($command . ' 2>&1');
-
             set_time_limit($old_timeout);
-
             $success = $output !== null;
-            self::log_execution($command, $output, $success);
-
+            self::logExecution($command, $output, $success);
             return $success ? $output : false;
-
         } catch (Exception $e) {
-            self::log_execution($command, $e->getMessage(), false);
+            self::logExecution($command, $e->getMessage(), false);
             return false;
         }
     }
@@ -148,7 +133,8 @@ class PDF_Builder_Secure_Shell_Manager {
     /**
      * Obtient un chemin absolu sécurisé pour une commande
      */
-    private static function get_secure_path($command_name) {
+    private static function getSecurePath($command_name)
+    {
         if (isset(self::$path_cache[$command_name])) {
             return self::$path_cache[$command_name];
         }
@@ -160,16 +146,15 @@ class PDF_Builder_Secure_Shell_Manager {
         }
 
         $path = trim($which_output);
-
-        // Valider que le chemin est absolu et dans un répertoire système sûr
-        if (!self::is_secure_path($path)) {
-            self::log_execution($command_name, "Insecure path detected: $path", false, 'high');
+// Valider que le chemin est absolu et dans un répertoire système sûr
+        if (!self::isSecurePath($path)) {
+            self::logExecution($command_name, "Insecure path detected: $path", false, 'high');
             return false;
         }
 
         // Vérifier que le fichier existe et est exécutable
         if (!is_executable($path)) {
-            self::log_execution($command_name, "Path not executable: $path", false, 'high');
+            self::logExecution($command_name, "Path not executable: $path", false, 'high');
             return false;
         }
 
@@ -180,7 +165,8 @@ class PDF_Builder_Secure_Shell_Manager {
     /**
      * Vérifie si un chemin est sécurisé
      */
-    private static function is_secure_path($path) {
+    private static function isSecurePath($path)
+    {
         // Le chemin doit être absolu
         if (strpos($path, '/') !== 0 && strpos($path, '\\') !== 0) {
             return false;
@@ -206,8 +192,7 @@ class PDF_Builder_Secure_Shell_Manager {
             'C:/Windows/System32/', // Windows
             'C:/Windows/SysWOW64/', // Windows
         ];
-
-        // Vérifier si le chemin commence par un répertoire autorisé
+// Vérifier si le chemin commence par un répertoire autorisé
         $is_allowed = false;
         foreach ($allowed_dirs as $allowed_dir) {
             if (stripos($path, $allowed_dir) === 0) {
@@ -217,8 +202,8 @@ class PDF_Builder_Secure_Shell_Manager {
         }
 
         if (!$is_allowed) {
-            // Log de sécurité pour les chemins non autorisés
-            self::log_security_event("Unauthorized path access: $path", '', false);
+// Log de sécurité pour les chemins non autorisés
+            self::logSecurityEvent("Unauthorized path access: $path", '', false);
         }
 
         return $is_allowed;
@@ -227,17 +212,19 @@ class PDF_Builder_Secure_Shell_Manager {
     /**
      * Vérifie si une commande est disponible
      */
-    public static function is_command_available($command_name) {
-        $output = self::execute_secure_command('which', [$command_name]);
+    public static function isCommandAvailable($command_name)
+    {
+        $output = self::executeSecureCommand('which', [$command_name]);
         return !empty($output) && trim($output) !== '';
     }
 
     /**
      * Exécute wkhtmltopdf de manière sécurisée
      */
-    public static function execute_wkhtmltopdf($html_file, $pdf_path) {
+    public static function executeWkhtmltopdf($html_file, $pdf_path)
+    {
         // Valider les chemins des fichiers
-        if (!self::is_secure_file_path($html_file) || !self::is_secure_file_path($pdf_path)) {
+        if (!self::isSecureFilePath($html_file) || !self::isSecureFilePath($pdf_path)) {
             return false;
         }
 
@@ -252,28 +239,29 @@ class PDF_Builder_Secure_Shell_Manager {
             $html_file,
             $pdf_path
         ];
-
-        $output = self::execute_secure_command('wkhtmltopdf', $args);
+        $output = self::executeSecureCommand('wkhtmltopdf', $args);
         return $output !== false && file_exists($pdf_path) && filesize($pdf_path) > 0;
     }
 
     /**
      * Exécute Node.js de manière sécurisée
      */
-    public static function execute_node($script_path, $args = []) {
+    public static function executeNode($script_path, $args = [])
+    {
         // Valider que le script existe et est dans un répertoire autorisé
-        if (!file_exists($script_path) || !self::is_secure_file_path($script_path)) {
+        if (!file_exists($script_path) || !self::isSecureFilePath($script_path)) {
             return false;
         }
 
         $node_args = array_merge([$script_path], $args);
-        return self::execute_secure_command('node', $node_args);
+        return self::executeSecureCommand('node', $node_args);
     }
 
     /**
      * Vérifie si un chemin de fichier est sécurisé
      */
-    private static function is_secure_file_path($path) {
+    private static function isSecureFilePath($path)
+    {
         // Le chemin doit être absolu
         if (strpos($path, '/') !== 0 && strpos($path, '\\') !== 0) {
             return false;
@@ -287,7 +275,6 @@ class PDF_Builder_Secure_Shell_Manager {
         // Liste des extensions autorisées pour les fichiers temporaires
         $allowed_extensions = ['.html', '.pdf', '.js'];
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-
         if (!in_array($extension, $allowed_extensions)) {
             return false;
         }

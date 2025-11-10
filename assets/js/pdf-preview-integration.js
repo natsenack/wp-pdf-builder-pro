@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Exemple d'intégration de l'API Preview 1.4 dans l'interface
  * À intégrer dans votre éditeur ou metabox WooCommerce

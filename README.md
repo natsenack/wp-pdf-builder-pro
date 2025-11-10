@@ -109,7 +109,7 @@ window.pdfBuilderInitVanilla('canvas-container', {
 });
 ```
 
-## �🚀 Déploiement et Installation
+## 🚀 Déploiement et Installation
 
 ### 📦 Installation des dépendances PHP
 
@@ -229,7 +229,7 @@ FTP_PASSWORD=votre-mot-de-passe
 ### Structure de déploiement (Production) :
 ```
 📂 wp-content/plugins/wp-pdf-builder-pro/
-├── � .htaccess                    ← Sécurité
+├── 📄 .htaccess                    ← Sécurité
 ├── 📄 bootstrap.php               ← Démarrage
 ├── 📄 pdf-builder-pro.php         ← Plugin principal
 ├── 📄 README.md                   ← Documentation
@@ -299,7 +299,8 @@ FTP_PASSWORD=votre-mot-de-passe
 
 - 🚀 **Performance Optimisée** avec cache intelligent
 
-```php- �️ **Sécurité Renforcée** avec nonces et validation
+```php
+<!-- Sécurité Renforcée avec nonces et validation -->
 
 // Exemple de génération programmatique
 
@@ -1013,7 +1014,7 @@ Le fichier CSS `pdf-builder-pro-admin.css` contient :
 - ✅ **Système de prévisualisation WooCommerce** contrôlable
 - ✅ **Installation automatique** des templates lors de l'activation
 
-## � Leçons Apprises - Structure WordPress
+## 📚 Leçons Apprises - Structure WordPress
 
 ### ⚠️ Règle d'Or : Structure HTML WordPress
 **Dans WordPress, TOUS les éléments HTML doivent être à l'intérieur du `div.wrap`** pour respecter la structure d'administration.
@@ -1056,7 +1057,7 @@ if ($error) {
 
 **Impact :** Les `echo` prématurés peuvent casser complètement la mise en page, faire apparaître le footer WordPress au mauvais endroit, et briser la structure d'administration.
 
-## �💡 Support Technique
+## 💡 Support Technique
 
 ### Dépannage Commun
 - **Interface vide** → Vérifier console JS, s'assurer que jQuery UI est chargé

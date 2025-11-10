@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Optimisation et compression des assets (JS, CSS, images)
  */
 
-class PDF_Builder_Asset_Optimizer
+class PdfBuilderAssetOptimizer
 {
     /**
      * Instance du main plugin
@@ -41,13 +43,13 @@ class PDF_Builder_Asset_Optimizer
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->initialize_optimizer();
+        $this->initializeOptimizer();
     }
 
     /**
      * Initialiser l'optimiseur
      */
-    private function initialize_optimizer()
+    private function initializeOptimizer()
     {
         $upload_dir = wp_upload_dir();
         $this->optimized_dir = $upload_dir['basedir'] . '/pdf-builder-optimized';
@@ -68,33 +70,33 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser tous les assets du plugin
      */
-    public function optimize_all_assets()
+    public function optimizeAllAssets()
     {
         $results = [
-            'js' => $this->optimize_javascript_assets(),
-            'css' => $this->optimize_css_assets(),
-            'images' => $this->optimize_image_assets(),
-            'html' => $this->optimize_html_templates()
+            'js' => $this->optimizeJavascriptAssets(),
+            'css' => $this->optimizeCssAssets(),
+            'images' => $this->optimizeImageAssets(),
+            'html' => $this->optimizeHtmlTemplates()
         ];
 
-        $this->log_optimization_results($results);
+        $this->logOptimizationResults($results);
         return $results;
     }
 
     /**
      * Optimiser les assets JavaScript
      */
-    public function optimize_javascript_assets()
+    public function optimizeJavascriptAssets()
     {
         if (!$this->optimization_config['js_compression']) {
             return ['status' => 'disabled', 'files' => []];
         }
 
-        $js_files = $this->get_plugin_js_files();
+        $js_files = $this->getPluginJsFiles();
         $optimized_files = [];
 
         foreach ($js_files as $file) {
-            $optimized = $this->optimize_javascript_file($file);
+            $optimized = $this->optimizeJavascriptFile($file);
             if ($optimized) {
                 $optimized_files[] = $optimized;
             }
@@ -102,7 +104,7 @@ class PDF_Builder_Asset_Optimizer
 
         // Combiner les fichiers si activé
         if ($this->optimization_config['combine_files'] && count($optimized_files) > 1) {
-            $combined = $this->combine_javascript_files($optimized_files);
+            $combined = $this->combineJavascriptFiles($optimized_files);
             if ($combined) {
                 $optimized_files = [$combined];
             }
@@ -119,17 +121,17 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser les assets CSS
      */
-    public function optimize_css_assets()
+    public function optimizeCssAssets()
     {
         if (!$this->optimization_config['css_compression']) {
             return ['status' => 'disabled', 'files' => []];
         }
 
-        $css_files = $this->get_plugin_css_files();
+        $css_files = $this->getPluginCssFiles();
         $optimized_files = [];
 
         foreach ($css_files as $file) {
-            $optimized = $this->optimize_css_file($file);
+            $optimized = $this->optimizeCssFile($file);
             if ($optimized) {
                 $optimized_files[] = $optimized;
             }
@@ -137,7 +139,7 @@ class PDF_Builder_Asset_Optimizer
 
         // Combiner les fichiers si activé
         if ($this->optimization_config['combine_files'] && count($optimized_files) > 1) {
-            $combined = $this->combine_css_files($optimized_files);
+            $combined = $this->combineCssFiles($optimized_files);
             if ($combined) {
                 $optimized_files = [$combined];
             }
@@ -154,17 +156,17 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser les images
      */
-    public function optimize_image_assets()
+    public function optimizeImageAssets()
     {
         if (!$this->optimization_config['image_compression']) {
             return ['status' => 'disabled', 'files' => []];
         }
 
-        $image_files = $this->get_plugin_image_files();
+        $image_files = $this->getPluginImageFiles();
         $optimized_files = [];
 
         foreach ($image_files as $file) {
-            $optimized = $this->optimize_image_file($file);
+            $optimized = $this->optimizeImageFile($file);
             if ($optimized) {
                 $optimized_files[] = $optimized;
             }
@@ -181,17 +183,17 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser les templates HTML
      */
-    public function optimize_html_templates()
+    public function optimizeHtmlTemplates()
     {
         if (!$this->optimization_config['minify_html']) {
             return ['status' => 'disabled', 'files' => []];
         }
 
-        $html_files = $this->get_plugin_html_templates();
+        $html_files = $this->getPluginHtmlTemplates();
         $optimized_files = [];
 
         foreach ($html_files as $file) {
-            $optimized = $this->optimize_html_file($file);
+            $optimized = $this->optimizeHtmlFile($file);
             if ($optimized) {
                 $optimized_files[] = $optimized;
             }
@@ -208,7 +210,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser un fichier JavaScript
      */
-    private function optimize_javascript_file($file_path)
+    private function optimizeJavascriptFile($file_path)
     {
         if (!file_exists($file_path)) {
             return false;
@@ -220,7 +222,7 @@ class PDF_Builder_Asset_Optimizer
         }
 
         // Minifier le JavaScript
-        $minified = $this->minify_javascript($content);
+        $minified = $this->minifyJavascript($content);
 
         // Générer le nom du fichier optimisé
         $filename = basename($file_path, '.js') . '.min.js';
@@ -242,7 +244,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser un fichier CSS
      */
-    private function optimize_css_file($file_path)
+    private function optimizeCssFile($file_path)
     {
         if (!file_exists($file_path)) {
             return false;
@@ -254,7 +256,7 @@ class PDF_Builder_Asset_Optimizer
         }
 
         // Minifier le CSS
-        $minified = $this->minify_css($content);
+        $minified = $this->minifyCss($content);
 
         // Générer le nom du fichier optimisé
         $filename = basename($file_path, '.css') . '.min.css';
@@ -276,7 +278,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser un fichier image
      */
-    private function optimize_image_file($file_path)
+    private function optimizeImageFile($file_path)
     {
         if (!file_exists($file_path)) {
             return false;
@@ -293,13 +295,13 @@ class PDF_Builder_Asset_Optimizer
         switch ($extension) {
             case 'jpg':
             case 'jpeg':
-                $success = $this->optimize_jpeg($file_path, $optimized_path);
+                $success = $this->optimizeJpeg($file_path, $optimized_path);
                 break;
             case 'png':
-                $success = $this->optimize_png($file_path, $optimized_path);
+                $success = $this->optimizePng($file_path, $optimized_path);
                 break;
             case 'gif':
-                $success = $this->optimize_gif($file_path, $optimized_path);
+                $success = $this->optimizeGif($file_path, $optimized_path);
                 break;
         }
 
@@ -319,7 +321,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser un fichier HTML
      */
-    private function optimize_html_file($file_path)
+    private function optimizeHtmlFile($file_path)
     {
         if (!file_exists($file_path)) {
             return false;
@@ -331,7 +333,7 @@ class PDF_Builder_Asset_Optimizer
         }
 
         // Minifier le HTML
-        $minified = $this->minify_html($content);
+        $minified = $this->minifyHtml($content);
 
         // Générer le nom du fichier optimisé
         $filename = basename($file_path, '.html') . '.min.html';
@@ -353,7 +355,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Combiner plusieurs fichiers JavaScript
      */
-    private function combine_javascript_files($files)
+    private function combineJavascriptFiles($files)
     {
         $combined_content = '';
         $total_original_size = 0;
@@ -385,7 +387,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Combiner plusieurs fichiers CSS
      */
-    private function combine_css_files($files)
+    private function combineCssFiles($files)
     {
         $combined_content = '';
         $total_original_size = 0;
@@ -417,7 +419,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Minifier JavaScript
      */
-    private function minify_javascript($content)
+    private function minifyJavascript($content)
     {
         // Suppression des commentaires
         $content = preg_replace('/\/\*[\s\S]*?\*\//', '', $content);
@@ -433,7 +435,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Minifier CSS
      */
-    private function minify_css($content)
+    private function minifyCss($content)
     {
         // Suppression des commentaires
         $content = preg_replace('/\/\*[\s\S]*?\*\//', '', $content);
@@ -449,7 +451,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Minifier HTML
      */
-    private function minify_html($content)
+    private function minifyHtml($content)
     {
         // Suppression des commentaires HTML
         $content = preg_replace('/<!--[\s\S]*?-->/', '', $content);
@@ -466,7 +468,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser une image JPEG
      */
-    private function optimize_jpeg($input_path, $output_path)
+    private function optimizeJpeg($input_path, $output_path)
     {
         if (!function_exists('imagecreatefromjpeg')) {
             return copy($input_path, $output_path);
@@ -486,7 +488,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser une image PNG
      */
-    private function optimize_png($input_path, $output_path)
+    private function optimizePng($input_path, $output_path)
     {
         if (!function_exists('imagecreatefrompng')) {
             return copy($input_path, $output_path);
@@ -510,7 +512,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Optimiser une image GIF
      */
-    private function optimize_gif($input_path, $output_path)
+    private function optimizeGif($input_path, $output_path)
     {
         // Pour GIF, on copie simplement (difficile à optimiser sans bibliothèques spéciales)
         return copy($input_path, $output_path);
@@ -519,7 +521,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Obtenir les fichiers JS du plugin
      */
-    private function get_plugin_js_files()
+    private function getPluginJsFiles()
     {
         $js_files = [];
 
@@ -541,7 +543,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Obtenir les fichiers CSS du plugin
      */
-    private function get_plugin_css_files()
+    private function getPluginCssFiles()
     {
         $css_files = [];
 
@@ -557,7 +559,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Obtenir les fichiers images du plugin
      */
-    private function get_plugin_image_files()
+    private function getPluginImageFiles()
     {
         $image_files = [];
 
@@ -573,7 +575,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Obtenir les templates HTML
      */
-    private function get_plugin_html_templates()
+    private function getPluginHtmlTemplates()
     {
         $html_files = [];
 
@@ -589,7 +591,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Logger les résultats d'optimisation
      */
-    private function log_optimization_results($results)
+    private function logOptimizationResults($results)
     {
         $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
 
@@ -621,7 +623,7 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Générer les URLs des assets optimisés
      */
-    public function get_optimized_asset_urls()
+    public function getOptimizedAssetUrls()
     {
         $upload_dir = wp_upload_dir();
         $base_url = $upload_dir['baseurl'] . '/pdf-builder-optimized';
@@ -637,14 +639,14 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Nettoyer les assets optimisés
      */
-    public function cleanup_optimized_assets($older_than_days = 7)
+    public function cleanupOptimizedAssets($older_than_days = 7)
     {
         $cutoff_time = time() - ($older_than_days * 24 * 60 * 60);
 
-        $this->cleanup_directory($this->optimized_dir, $cutoff_time);
+        $this->cleanupDirectory($this->optimized_dir, $cutoff_time);
     }
 
-    private function cleanup_directory($dir, $cutoff_time)
+    private function cleanupDirectory($dir, $cutoff_time)
     {
         if (!file_exists($dir)) {
             return;
@@ -665,10 +667,10 @@ class PDF_Builder_Asset_Optimizer
     /**
      * Obtenir les statistiques d'optimisation
      */
-    public function get_optimization_stats()
+    public function getOptimizationStats()
     {
         $stats = [
-            'total_optimized_size' => $this->get_directory_size($this->optimized_dir),
+            'total_optimized_size' => $this->getDirectorySize($this->optimized_dir),
             'config' => $this->optimization_config,
             'last_optimization' => get_option('pdf_builder_last_asset_optimization', false)
         ];
@@ -676,7 +678,7 @@ class PDF_Builder_Asset_Optimizer
         return $stats;
     }
 
-    private function get_directory_size($dir)
+    private function getDirectorySize($dir)
     {
         $size = 0;
         if (!file_exists($dir)) {

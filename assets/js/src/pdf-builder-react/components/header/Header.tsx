@@ -8,8 +8,8 @@ import { debugLog } from '../../utils/debug';
 declare global {
   interface Window {
     pdfPreviewAPI?: {
-      generateEditorPreview: (templateData: any, options?: { format?: string; quality?: number }) => Promise<any>;
-      generateOrderPreview: (templateData: any, orderId: number, options?: { format?: string; quality?: number }) => Promise<any>;
+      generateEditorPreview: (templateData: Record<string, unknown>, options?: { format?: string; quality?: number }) => Promise<Record<string, unknown>>;
+      generateOrderPreview: (templateData: Record<string, unknown>, orderId: number, options?: { format?: string; quality?: number }) => Promise<Record<string, unknown>>;
     };
   }
 }
@@ -63,7 +63,7 @@ export const Header = memo(function Header({
   }, []);
 
   debugLog('🎯 Rendering Header component');
-  const { state, dispatch } = useBuilder();
+  const { state } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
@@ -80,7 +80,6 @@ export const Header = memo(function Header({
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [newTag, setNewTag] = useState('');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
-  const [predefinedTemplates, setPredefinedTemplates] = useState<any[]>([]);
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
   const {
@@ -157,8 +156,8 @@ export const Header = memo(function Header({
 
   // Effet pour fermer le dropdown des modèles prédéfinis quand on clique ailleurs
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      const target = event.target as any;
+    const handleClickOutside = (event: Event) => {
+      const target = event.target as HTMLElement;
       if (showPredefinedTemplates && !target.closest('[data-predefined-dropdown]')) {
         setShowPredefinedTemplates(false);
       }
@@ -722,7 +721,7 @@ export const Header = memo(function Header({
                   </button>
                 </div>
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  Appuyez sur Entrée ou cliquez sur "Ajouter" pour ajouter une étiquette
+                  Appuyez sur Entrée ou cliquez sur &quot;Ajouter&quot; pour ajouter une étiquette
                 </div>
               </div>
 
@@ -825,7 +824,7 @@ export const Header = memo(function Header({
                       onChange={(e) => setEditedShowGuides(e.target.checked)}
                       style={{ margin: 0 }}
                     />
-                    Afficher les guides d'alignement
+                    Afficher les guides d&apos;alignement
                   </label>
                 </div>
 
@@ -1173,7 +1172,7 @@ export const Header = memo(function Header({
                 color: '#333',
                 marginBottom: '8px'
               }}>
-                Format d'export :
+                Format d&apos;export :
               </label>
               <div style={{ display: 'flex', gap: '10px' }}>
                 {[
@@ -1242,7 +1241,7 @@ export const Header = memo(function Header({
                 ) : (
                   <>
                     <span>🎨</span>
-                    <span>Générer l'aperçu</span>
+                    <span>Générer l&apos;aperçu</span>
                   </>
                 )}
               </button>

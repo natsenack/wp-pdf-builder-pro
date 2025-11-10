@@ -1,4 +1,5 @@
 <?php
+
 namespace PDF_Builder\Admin;
 
 // Empêcher l'accès direct
@@ -11,35 +12,35 @@ if (!defined('ABSPATH')) {
  * Gestion des modèles prédéfinis pour la galerie
  */
 
-class PDF_Builder_Predefined_Templates_Manager {
-
+class PdfBuilderPredefinedTemplatesManager
+{
     private $templates_dir;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->templates_dir = plugin_dir_path(dirname(__FILE__)) . 'predefined/';
-
-        // Créer le dossier s'il n'existe pas
+// Créer le dossier s'il n'existe pas
         if (!file_exists($this->templates_dir)) {
             wp_mkdir_p($this->templates_dir);
         }
 
-        add_action('admin_menu', [$this, 'add_admin_menu']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
-        add_action('wp_ajax_pdf_builder_save_predefined_template', [$this, 'ajax_save_predefined_template']);
-        add_action('wp_ajax_pdf_builder_load_predefined_template', [$this, 'ajax_load_predefined_template']);
-        add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajax_delete_predefined_template']);
-        add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajax_generate_template_preview']);
-        add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajax_refresh_nonce']);
-
-        // Paramètres développeur
-        add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajax_developer_auth']);
-        add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajax_developer_logout']);
+        add_action('admin_menu', [$this, 'addAdminMenu']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
+        add_action('wp_ajax_pdf_builder_save_predefined_template', [$this, 'ajaxSavePredefinedTemplate']);
+        add_action('wp_ajax_pdf_builder_load_predefined_template', [$this, 'ajaxLoadPredefinedTemplate']);
+        add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajaxDeletePredefinedTemplate']);
+        add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajaxGenerateTemplatePreview']);
+        add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajaxRefreshNonce']);
+// Paramètres développeur
+        add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajaxDeveloperAuth']);
+        add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajaxDeveloperLogout']);
     }
 
     /**
      * Ajouter le menu admin - DÉSACTIVÉ car l'éditeur unique gère maintenant les modèles prédéfinis
      */
-    public function add_admin_menu() {
+    public function addAdminMenu()
+    {
         // DÉSACTIVÉ - Les modèles prédéfinis sont maintenant gérés dans l'éditeur unique
         return;
     }
@@ -47,7 +48,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Enqueue scripts et styles pour la page admin
      */
-    public function enqueue_admin_scripts($hook) {
+    public function enqueueAdminScripts($hook)
+    {
         // Load only on predefined templates page
         if ($hook !== 'pdf-builder_page_pdf-builder-predefined-templates') {
             return;
@@ -55,25 +57,11 @@ class PDF_Builder_Predefined_Templates_Manager {
         wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);
         wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
-
-        // Scripts personnalisés
-        wp_enqueue_script(
-            'pdf-builder-predefined-templates',
-            plugins_url('templates/admin/js/predefined-templates.js', dirname(__FILE__, 2)),
-            ['jquery', 'codemirror'],
-            '1.0.0',
-            true
-        );
-
-        // Styles personnalisés
-        wp_enqueue_style(
-            'pdf-builder-predefined-templates',
-            plugins_url('templates/admin/css/predefined-templates.css', dirname(__FILE__, 2)),
-            [],
-            '1.0.0'
-        );
-
-        // Localize script
+// Scripts personnalisés
+        wp_enqueue_script('pdf-builder-predefined-templates', plugins_url('templates/admin/js/predefined-templates.js', dirname(__FILE__, 2)), ['jquery', 'codemirror'], '1.0.0', true);
+// Styles personnalisés
+        wp_enqueue_style('pdf-builder-predefined-templates', plugins_url('templates/admin/css/predefined-templates.css', dirname(__FILE__, 2)), [], '1.0.0');
+// Localize script
         wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
@@ -88,8 +76,7 @@ class PDF_Builder_Predefined_Templates_Manager {
                 'previewError' => __('Erreur lors de la génération de l\'aperçu.', 'pdf-builder-pro')
             ]
         ]);
-
-        // Script pour gérer les paramètres URL (pour création automatique de template)
+// Script pour gérer les paramètres URL (pour création automatique de template)
         wp_add_inline_script('pdf-builder-predefined-templates', '
             jQuery(document).ready(function($) {
                 // Vérifier si des paramètres URL sont présents pour création automatique
@@ -153,35 +140,40 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Enregistrer les paramètres développeur
      */
-    public function register_developer_settings() {
+    public function registerDeveloperSettings()
+    {
         // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour la section développeur
      */
-    public function developer_settings_section_callback() {
+    public function developerSettingsSectionCallback()
+    {
         // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour le champ activation développeur
      */
-    public function developer_enabled_field_callback() {
+    public function developerEnabledFieldCallback()
+    {
         // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Callback pour le champ mot de passe développeur
      */
-    public function developer_password_field_callback() {
+    public function developerPasswordFieldCallback()
+    {
         // Cette méthode est maintenant gérée dans settings-page.php
     }
 
     /**
      * Vérifier si l'utilisateur est authentifié en mode développeur
      */
-    private function is_developer_authenticated() {
+    private function isDeveloperAuthenticated()
+    {
         $settings = get_option('pdf_builder_settings', []);
         if (empty($settings['developer_enabled'])) {
             return false;
@@ -195,7 +187,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Authentification développeur
      */
-    public function ajax_developer_auth() {
+    public function ajaxDeveloperAuth()
+    {
         try {
             $settings = get_option('pdf_builder_settings', []);
             if (empty($settings['developer_enabled'])) {
@@ -204,7 +197,6 @@ class PDF_Builder_Predefined_Templates_Manager {
 
             $password = sanitize_text_field($_POST['password'] ?? '');
             $stored_password = $settings['developer_password'] ?? '';
-
             if (empty($password) || $password !== $stored_password) {
                 wp_send_json_error('Mot de passe incorrect');
             }
@@ -217,9 +209,7 @@ class PDF_Builder_Predefined_Templates_Manager {
             // Authentifier pour cette session
             $session_key = 'pdf_builder_developer_auth_' . session_id();
             $_SESSION[$session_key] = true;
-
             wp_send_json_success(['message' => 'Authentification réussie']);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -228,7 +218,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Déconnexion développeur
      */
-    public function ajax_developer_logout() {
+    public function ajaxDeveloperLogout()
+    {
         try {
             if (session_id()) {
                 $session_key = 'pdf_builder_developer_auth_' . session_id();
@@ -236,7 +227,6 @@ class PDF_Builder_Predefined_Templates_Manager {
             }
 
             wp_send_json_success(['message' => 'Déconnexion réussie']);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -245,7 +235,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Rendre la page admin
      */
-    public function render_admin_page() {
+    public function renderAdminPage()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -264,12 +255,12 @@ class PDF_Builder_Predefined_Templates_Manager {
             return;
         }
 
-        if (!$this->is_developer_authenticated()) {
-            $this->render_developer_login_form();
+        if (!$this->isDeveloperAuthenticated()) {
+            $this->renderDeveloperLoginForm();
             return;
         }
 
-        $templates = $this->get_predefined_templates();
+        $templates = $this->getPredefinedTemplates();
         ?>
         <style>
         /* Styles de base inline pour la page des modèles prédéfinis */
@@ -426,13 +417,17 @@ class PDF_Builder_Predefined_Templates_Manager {
                     </div>
 
                     <div id="templates-list" class="templates-list">
-                        <?php if (empty($templates)): ?>
+                        <?php if (empty($templates)) :
+                            ?>
                             <div class="no-templates">
                                 <p><?php _e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
                                 <p><?php _e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($templates as $template): ?>
+                            <?php
+                        else :
+                            ?>
+                            <?php foreach ($templates as $template) :
+                                ?>
                                 <div class="template-item" data-slug="<?php echo esc_attr($template['slug']); ?>">
                                     <div class="template-header">
                                         <h3><?php echo esc_html($template['name']); ?></h3>
@@ -456,24 +451,30 @@ class PDF_Builder_Predefined_Templates_Manager {
                                         </details>
                                     </div>
                                     <div class="template-preview">
-                                        <?php if (!empty($template['preview_svg'])): ?>
+                                        <?php if (!empty($template['preview_svg'])) :
+                                            ?>
                                             <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
                                             <div class="preview-actions">
                                                 <button class="regenerate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
                                                     🔄 <?php _e('Régénérer Aperçu', 'pdf-builder-pro'); ?>
                                                 </button>
                                             </div>
-                                        <?php else: ?>
+                                            <?php
+                                        else :
+                                            ?>
                                             <div class="no-preview">
                                                 <button class="generate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
                                                     🎨 <?php _e('Générer Aperçu', 'pdf-builder-pro'); ?>
                                                 </button>
                                             </div>
-                                        <?php endif; ?>
+                                            <?php
+                                        endif; ?>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                                <?php
+                            endforeach; ?>
+                            <?php
+                        endif; ?>
                     </div>
                 </div>
 
@@ -567,7 +568,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Rendre le formulaire de connexion développeur
      */
-    private function render_developer_login_form() {
+    private function renderDeveloperLoginForm()
+    {
         ?>
         <style>
         .developer-login-container {
@@ -704,9 +706,9 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Récupérer la liste des modèles prédéfinis
      */
-    private function get_predefined_templates() {
+    private function getPredefinedTemplates()
+    {
         $templates = [];
-
         if (!is_dir($this->templates_dir)) {
             return $templates;
         }
@@ -714,15 +716,14 @@ class PDF_Builder_Predefined_Templates_Manager {
         $files = glob($this->templates_dir . '*.json');
         foreach ($files as $file) {
             $slug = basename($file, '.json');
-            $template_data = $this->load_template_from_file($slug);
-
+            $template_data = $this->loadTemplateFromFile($slug);
             if ($template_data) {
-                // Désactiver les modèles qui ne sont pas des devis ou factures
+        // Désactiver les modèles qui ne sont pas des devis ou factures
                 $category = $template_data['category'] ?? 'autre';
                 if (!in_array($category, ['devis', 'facture'])) {
                     continue;
                 }
-                
+
                 $templates[] = $template_data;
             }
         }
@@ -733,23 +734,21 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Charger un modèle depuis un fichier
      */
-    private function load_template_from_file($slug) {
+    private function loadTemplateFromFile($slug)
+    {
         $file_path = $this->templates_dir . $slug . '.json';
-
         if (!file_exists($file_path)) {
             return false;
         }
 
         $content = file_get_contents($file_path);
         $data = json_decode($content, true);
-
         if (!$data || !isset($data['name'])) {
             return false;
         }
 
         // Nettoyer les données pour s'assurer qu'elles sont dans le bon format
-        $clean_data = $this->clean_template_json_for_predefined($data);
-
+        $clean_data = $this->cleanTemplateJsonForPredefined($data);
         return [
             'slug' => $slug,
             'name' => $data['name'] ?? '',
@@ -764,9 +763,10 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Sauvegarder un modèle prédéfini
      */
-    public function ajax_save_predefined_template() {
+    public function ajaxSavePredefinedTemplate()
+    {
         try {
-            // Vérifications de sécurité
+// Vérifications de sécurité
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
@@ -784,17 +784,15 @@ class PDF_Builder_Predefined_Templates_Manager {
             $description = sanitize_textarea_field($_POST['description'] ?? $_GET['description'] ?? '');
             $icon = sanitize_text_field($_POST['icon'] ?? $_GET['icon'] ?? '📄');
             $json_config = stripslashes($_POST['json'] ?? $_GET['json'] ?? '');
-
-            // Validation
+// Validation
             if (empty($slug) || empty($name) || empty($category) || empty($json_config)) {
                 wp_send_json_error('Tous les champs obligatoires doivent être remplis');
             }
 
             // Vérifier si c'est un renommage (changement de slug)
             $is_rename = !empty($old_slug) && $old_slug !== $slug;
-
             if ($is_rename) {
-                // Vérifier que l'ancien fichier existe
+            // Vérifier que l'ancien fichier existe
                 $old_file_path = $this->templates_dir . $old_slug . '.json';
                 if (!file_exists($old_file_path)) {
                     wp_send_json_error('Le modèle original n\'existe pas');
@@ -814,26 +812,22 @@ class PDF_Builder_Predefined_Templates_Manager {
             }
 
             // Nettoyer le JSON pour en faire un modèle prédéfini réutilisable
-            $cleaned_data = $this->clean_template_json_for_predefined($json_data);
-
-            // Le JSON nettoyé contient déjà la structure complète (template + elements)
+            $cleaned_data = $this->cleanTemplateJsonForPredefined($json_data);
+// Le JSON nettoyé contient déjà la structure complète (template + elements)
             // On l'utilise directement comme contenu du fichier
             $template_data = $cleaned_data;
-
-            // Ajouter les métadonnées du modèle prédéfini
+// Ajouter les métadonnées du modèle prédéfini
             $template_data['name'] = $name;
             $template_data['category'] = $category;
             $template_data['description'] = $description;
             $template_data['icon'] = $icon;
             $template_data['created_at'] = current_time('mysql');
             $template_data['updated_at'] = current_time('mysql');
-
-            // Gestion du renommage si nécessaire
+// Gestion du renommage si nécessaire
             if ($is_rename) {
                 $old_file_path = $this->templates_dir . $old_slug . '.json';
                 $new_file_path = $this->templates_dir . $slug . '.json';
-
-                // Renommer le fichier
+// Renommer le fichier
                 if (!rename($old_file_path, $new_file_path)) {
                     wp_send_json_error('Erreur lors du renommage du fichier');
                 }
@@ -844,7 +838,6 @@ class PDF_Builder_Predefined_Templates_Manager {
             // Sauvegarde dans le fichier
             $file_path = $this->templates_dir . $slug . '.json';
             $result = file_put_contents($file_path, wp_json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
             if ($result === false) {
                 wp_send_json_error('Erreur lors de la sauvegarde du fichier');
             }
@@ -854,7 +847,6 @@ class PDF_Builder_Predefined_Templates_Manager {
                 'slug' => $slug,
                 'renamed' => $is_rename ? $old_slug : null
             ]);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -863,26 +855,23 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Charger un modèle prédéfini
      */
-    public function ajax_load_predefined_template() {
+    public function ajaxLoadPredefinedTemplate()
+    {
         try {
-            // Vérifications de sécurité
+// Vérifications de sécurité
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
-
             $slug = sanitize_key($_POST['slug'] ?? '');
-
             if (empty($slug)) {
                 wp_send_json_error('Slug du modèle manquant');
             }
 
             error_log('PDF Builder: Loading template with slug: ' . $slug);
             error_log('PDF Builder: Templates dir: ' . $this->templates_dir);
-
-            $template = $this->load_template_from_file($slug);
-
+            $template = $this->loadTemplateFromFile($slug);
             if (!$template) {
                 error_log('PDF Builder: Template not found for slug: ' . $slug);
                 wp_send_json_error('Modèle non trouvé');
@@ -890,7 +879,6 @@ class PDF_Builder_Predefined_Templates_Manager {
 
             error_log('PDF Builder: Template loaded successfully: ' . $slug);
             wp_send_json_success($template);
-
         } catch (Exception $e) {
             error_log('PDF Builder: Error loading template: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -900,23 +888,21 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Supprimer un modèle prédéfini
      */
-    public function ajax_delete_predefined_template() {
+    public function ajaxDeletePredefinedTemplate()
+    {
         try {
-            // Vérifications de sécurité
+// Vérifications de sécurité
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
-
             $slug = sanitize_key($_POST['slug'] ?? '');
-
             if (empty($slug)) {
                 wp_send_json_error('Slug du modèle manquant');
             }
 
             $file_path = $this->templates_dir . $slug . '.json';
-
             if (!file_exists($file_path)) {
                 wp_send_json_error('Modèle non trouvé');
             }
@@ -928,7 +914,6 @@ class PDF_Builder_Predefined_Templates_Manager {
             wp_send_json_success([
                 'message' => 'Modèle supprimé avec succès'
             ]);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -937,7 +922,8 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * AJAX - Actualiser le nonce
      */
-    public function ajax_refresh_nonce() {
+    public function ajaxRefreshNonce()
+    {
         try {
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
@@ -945,46 +931,40 @@ class PDF_Builder_Predefined_Templates_Manager {
 
             $fresh_nonce = wp_create_nonce('pdf_builder_predefined_templates_' . time() . '_' . wp_rand());
             wp_send_json_success(['nonce' => $fresh_nonce]);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
-    public function ajax_generate_template_preview() {
+    public function ajaxGenerateTemplatePreview()
+    {
         try {
-            // Vérifications de sécurité
+// Vérifications de sécurité
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
-
             $slug = sanitize_key($_POST['slug'] ?? '');
-
             if (empty($slug)) {
                 wp_send_json_error('Slug du modèle manquant');
             }
 
-            $template = $this->load_template_from_file($slug);
-
+            $template = $this->loadTemplateFromFile($slug);
             if (!$template) {
                 wp_send_json_error('Modèle non trouvé');
             }
 
             // Générer un aperçu SVG simple basé sur les éléments du template
             $json_data = json_decode($template['json'], true);
-            $svg_preview = $this->generate_svg_preview($json_data);
-
-            // Mettre à jour le fichier avec l'aperçu
+            $svg_preview = $this->generateSvgPreview($json_data);
+// Mettre à jour le fichier avec l'aperçu
             $json_data['preview_svg'] = $svg_preview;
             $file_path = $this->templates_dir . $slug . '.json';
             file_put_contents($file_path, wp_json_encode($json_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
             wp_send_json_success([
                 'message' => 'Aperçu généré avec succès',
                 'preview_svg' => $svg_preview
             ]);
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -993,21 +973,18 @@ class PDF_Builder_Predefined_Templates_Manager {
     /**
      * Générer un aperçu SVG simple du template
      */
-    private function generate_svg_preview($config) {
+    private function generateSvgPreview($config)
+    {
         $width = $config['canvasWidth'] ?? 794;
         $height = $config['canvasHeight'] ?? 1123;
-
-        // Calculer les proportions pour l'aperçu (max 300x300)
+// Calculer les proportions pour l'aperçu (max 300x300)
         $ratio = min(300 / $width, 300 / $height);
         $preview_width = $width * $ratio;
         $preview_height = $height * $ratio;
-
         $svg = '<svg width="' . $preview_width . '" height="' . $preview_height . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $width . ' ' . $height . '">';
-
-        // Fond blanc
+// Fond blanc
         $svg .= '<rect width="100%" height="100%" fill="white" stroke="#ddd" stroke-width="1"/>';
-
-        // Aperçu des éléments avec rendu réel
+// Aperçu des éléments avec rendu réel
         if (isset($config['elements']) && is_array($config['elements'])) {
             foreach ($config['elements'] as $element) {
                 $type = $element['type'] ?? 'text';
@@ -1015,27 +992,23 @@ class PDF_Builder_Predefined_Templates_Manager {
                 $y = $element['y'] ?? 0;
                 $w = $element['width'] ?? 100;
                 $h = $element['height'] ?? 20;
-
                 if ($type === 'text' && isset($element['content'])) {
-                    // Rendu réel du texte
+        // Rendu réel du texte
                     $content = $element['content'];
                     $fontSize = $element['fontSize'] ?? $element['style']['fontSize'] ?? 14;
                     $color = $element['color'] ?? $element['style']['color'] ?? '#000000';
                     $fontWeight = $element['fontWeight'] ?? $element['style']['fontWeight'] ?? 'normal';
                     $textAlign = $element['style']['textAlign'] ?? 'left';
-
-                    // Convertir la taille de police pour l'aperçu (réduire proportionnellement)
+        // Convertir la taille de police pour l'aperçu (réduire proportionnellement)
                     $scaledFontSize = max(8, $fontSize * $ratio);
-
-                    // Position Y ajustée (SVG text baseline)
+        // Position Y ajustée (SVG text baseline)
                     $textY = $y + ($h * 0.7);
-
-                    // Gestion de l'alignement horizontal
+        // Gestion de l'alignement horizontal
                     $textAnchor = 'start';
                     if ($textAlign === 'center') {
-                        $textAnchor = 'middle';
+                            $textAnchor = 'middle';
                     } elseif ($textAlign === 'right') {
-                        $textAnchor = 'end';
+                                $textAnchor = 'end';
                     }
 
                     $textX = $x;
@@ -1047,16 +1020,12 @@ class PDF_Builder_Predefined_Templates_Manager {
 
                     // Limiter le texte pour l'aperçu
                     $displayText = strlen($content) > 30 ? substr($content, 0, 27) . '...' : $content;
-
                     $svg .= '<text x="' . $textX . '" y="' . $textY . '" text-anchor="' . $textAnchor . '" font-family="Arial, sans-serif" font-size="' . $scaledFontSize . '" font-weight="' . $fontWeight . '" fill="' . $color . '">' . htmlspecialchars($displayText) . '</text>';
-
                 } else {
-                    // Rendu simplifié pour les autres types d'éléments
-                    $elementStyle = $this->get_element_preview_style($type);
-
+    // Rendu simplifié pour les autres types d'éléments
+                    $elementStyle = $this->getElementPreviewStyle($type);
                     $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $elementStyle['color'] . '" stroke="#ccc" stroke-width="0.5" opacity="0.8"/>';
-
-                    // Ajouter une icône pour identifier le type
+    // Ajouter une icône pour identifier le type
                     if ($elementStyle['icon']) {
                         $iconSize = min($w, $h) * 0.4;
                         $iconX = $x + ($w / 2);
@@ -1068,14 +1037,14 @@ class PDF_Builder_Predefined_Templates_Manager {
         }
 
         $svg .= '</svg>';
-
         return $svg;
     }
 
     /**
      * Obtenir le style d'aperçu pour un type d'élément
      */
-    private function get_element_preview_style($type) {
+    private function getElementPreviewStyle($type)
+    {
         $styles = [
             // Médias
             'image' => ['color' => '#fff3e0', 'icon' => '🖼️'],
@@ -1117,14 +1086,14 @@ class PDF_Builder_Predefined_Templates_Manager {
             // Défaut
             'default' => ['color' => '#f5f5f5', 'icon' => '']
         ];
-
         return $styles[$type] ?? $styles['default'];
     }
 
     /**
      * Nettoie le JSON d'un template pour en faire un modèle prédéfini réutilisable
      */
-    private function clean_template_json_for_predefined($json_data) {
+    private function cleanTemplateJsonForPredefined($json_data)
+    {
         // Supprimer les propriétés spécifiques à la session d'édition
         $session_properties = ['id', 'isNew', 'isModified', 'isSaving', 'lastSaved'];
         foreach ($session_properties as $prop) {
@@ -1134,7 +1103,7 @@ class PDF_Builder_Predefined_Templates_Manager {
         // Nettoyer les éléments
         if (isset($json_data['elements']) && is_array($json_data['elements'])) {
             foreach ($json_data['elements'] as &$element) {
-                // Supprimer les propriétés spécifiques à la session
+            // Supprimer les propriétés spécifiques à la session
                 $element_session_props = ['createdAt', 'updatedAt'];
                 foreach ($element_session_props as $prop) {
                     unset($element[$prop]);
@@ -1161,7 +1130,6 @@ class PDF_Builder_Predefined_Templates_Manager {
         $json_data['canvasWidth'] = $json_data['canvasWidth'] ?? 794;
         $json_data['canvasHeight'] = $json_data['canvasHeight'] ?? 1123;
         $json_data['version'] = $json_data['version'] ?? '1.0';
-
         return $json_data;
     }
 }

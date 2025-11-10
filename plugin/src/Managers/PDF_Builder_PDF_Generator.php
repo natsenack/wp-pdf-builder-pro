@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée de la génération PDF
  */
 
-class PDF_Builder_PDF_Generator
+class PdfBuilderPdfGenerator
 {
     /**
      * Instance du main plugin
@@ -22,13 +24,13 @@ class PDF_Builder_PDF_Generator
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->init_hooks();
+        $this->initHooks();
     }
 
     /**
      * Initialiser les hooks
      */
-    private function init_hooks()
+    private function initHooks()
     {
         // AJAX handlers pour la génération PDF
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajax_download_pdf']);
@@ -43,7 +45,7 @@ class PDF_Builder_PDF_Generator
     /**
      * AJAX - Télécharger PDF
      */
-    public function ajax_download_pdf()
+    public function ajaxDownloadPdf()
     {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
@@ -63,7 +65,7 @@ class PDF_Builder_PDF_Generator
         }
 
         try {
-            $pdf_path = $this->generate_pdf_from_template_data(json_decode($template_data, true), $filename);
+            $pdf_path = $this->generatePdfFromTemplateData(json_decode($template_data, true), $filename);
 
             if ($pdf_path && file_exists($pdf_path)) {
                 wp_send_json_success(
@@ -87,14 +89,14 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer PDF depuis les données template
      */
-    private function generate_pdf_from_template_data($template, $filename)
+    private function generatePdfFromTemplateData($template, $filename)
     {
         if (!$template || !is_array($template)) {
             throw new Exception('Données template invalides');
         }
 
         // Générer le HTML
-        $html = $this->generate_html_from_template_data($template);
+        $html = $this->generateHtmlFromTemplateData($template);
 
         // Créer le répertoire uploads s'il n'existe pas
         $upload_dir = wp_upload_dir();
@@ -127,24 +129,24 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer HTML depuis les données template
      */
-    private function generate_html_from_template_data($template)
+    private function generateHtmlFromTemplateData($template)
     {
         // Utiliser la même fonction que la génération commande pour la cohérence
-        if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
-            $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
+        if (class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+            $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance();
             if (method_exists($admin, 'generate_unified_html')) {
                 return $admin->generate_unified_html($template);
             }
         }
 
         // Fallback vers l'ancienne implémentation si nécessaire
-        return $this->generate_unified_html_legacy($template);
+        return $this->generateUnifiedHtmlLegacy($template);
     }
 
     /**
      * Générer HTML unifié (version legacy - conservée pour compatibilité)
      */
-    private function generate_unified_html_legacy($template, $order = null)
+    private function generateUnifiedHtmlLegacy($template, $order = null)
     {
         $html = '<div style="font-family: Arial, sans-serif; padding: 20px;">';
 
@@ -199,12 +201,12 @@ class PDF_Builder_PDF_Generator
 
                 // Remplacer les variables si on a une commande WooCommerce
                 if ($order) {
-                    $content = $this->replace_order_variables($content, $order);
+                    $content = $this->replaceOrderVariables($content, $order);
                 }
 
                 switch ($element['type']) {
                     case 'text':
-                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $final_content = $order ? $this->replaceOrderVariables($content, $order) : $content;
                         $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
@@ -229,7 +231,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Convertir les éléments en format template
      */
-    private function convert_elements_to_template($elements)
+    private function convertElementsToTemplate($elements)
     {
         return array(
             'pages' => array(
@@ -243,7 +245,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer le HTML à partir des éléments du canvas
      */
-    private function generate_html_from_elements($elements)
+    private function generateHtmlFromElements($elements)
     {
         // Vérifier que des éléments sont fournis
         if (empty($elements)) {
@@ -274,7 +276,7 @@ class PDF_Builder_PDF_Generator
     <div class="pdf-container">';
 
         foreach ($elements as $element) {
-            $html .= $this->render_element_to_html($element);
+            $html .= $this->renderElementToHtml($element);
         }
 
         $html .= '
@@ -288,7 +290,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Rendre un élément individuel en HTML
      */
-    private function render_element_to_html($element)
+    private function renderElementToHtml($element)
     {
         $type = $element['type'] ?? 'text';
 
@@ -386,7 +388,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Générer un PDF avec Dompdf pour un rendu fidèle
      */
-    public function generate_pdf($html_content, $filename = 'document.pdf', $context = [])
+    public function generatePdf($html_content, $filename = 'document.pdf', $context = [])
     {
         try {
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
@@ -400,7 +402,7 @@ class PDF_Builder_PDF_Generator
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
 
-            return $this->save_pdf($dompdf, $filename, $context);
+            return $this->savePdf($dompdf, $filename, $context);
         } catch (Exception $e) {
             // Déclencher le hook d'erreur de génération PDF
             do_action('pdf_builder_pdf_generation_error', $context['order_id'] ?? 0, $e->getMessage());
@@ -416,7 +418,7 @@ class PDF_Builder_PDF_Generator
      * @param string $filename Nom du fichier
      * @return string|false Chemin du fichier ou false en cas d'erreur
      */
-    public function save_pdf($dompdf, $filename = 'document.pdf', $context = [])
+    public function savePdf($dompdf, $filename = 'document.pdf', $context = [])
     {
         try {
             $upload_dir = wp_upload_dir();
@@ -438,7 +440,6 @@ class PDF_Builder_PDF_Generator
 
             return $pdf_path;
         } catch (Exception $e) {
-
             return false;
         }
     }
@@ -446,20 +447,20 @@ class PDF_Builder_PDF_Generator
     /**
      * Rendre un élément dans le PDF avec Dompdf
      */
-    public function render_template($template_data, $context = [])
+    public function renderTemplate($template_data, $context = [])
     {
         try {
             // Générer le HTML depuis les données template
-            $html = $this->generate_html_from_template_data($template_data);
+            $html = $this->generateHtmlFromTemplateData($template_data);
 
             // Appliquer le contexte s'il existe
             if (!empty($context)) {
-                $html = $this->apply_context_to_html($html, $context);
+                $html = $this->applyContextToHtml($html, $context);
             }
 
             // Générer le PDF
             $filename = isset($context['filename']) ? $context['filename'] : 'document.pdf';
-            $pdf_path = $this->generate_pdf($html, $filename);
+            $pdf_path = $this->generatePdf($html, $filename);
 
             return [
                 'success' => $pdf_path !== false,
@@ -467,7 +468,6 @@ class PDF_Builder_PDF_Generator
                 'html' => $html
             ];
         } catch (Exception $e) {
-
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -482,7 +482,7 @@ class PDF_Builder_PDF_Generator
      * @param array $context Contexte avec variables
      * @return string HTML modifié
      */
-    private function apply_context_to_html($html, $context)
+    private function applyContextToHtml($html, $context)
     {
         foreach ($context as $key => $value) {
             if (is_string($value)) {
@@ -504,7 +504,7 @@ class PDF_Builder_PDF_Generator
     /**
      * Remplacer les variables de commande
      */
-    private function replace_order_variables($content, $order)
+    private function replaceOrderVariables($content, $order)
     {
         // Variables simples
         $content = str_replace('{{order_id}}', $order->get_id(), $content);

@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -16,7 +18,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer les interactions de redimensionnement
  */
-class PDF_Builder_Resize_Manager
+class PdfBuilderResizeManager
 {
     /**
      * Instance singleton
@@ -37,7 +39,7 @@ class PDF_Builder_Resize_Manager
      */
     private function __construct()
     {
-        $this->init_dependencies();
+        $this->initDependencies();
     }
 
     /**
@@ -54,7 +56,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Initialiser les dépendances
      */
-    private function init_dependencies()
+    private function initDependencies()
     {
         // Plus de dépendances canvas
     }
@@ -62,7 +64,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Démarrer une session de redimensionnement
      */
-    public function start_resize_session($session_id, $element_id, $handle, $start_position, $initial_size, $constraints = [])
+    public function startResizeSession($session_id, $element_id, $handle, $start_position, $initial_size, $constraints = [])
     {
         $session = [
             'id' => $session_id,
@@ -91,7 +93,7 @@ class PDF_Builder_Resize_Manager
         $this->active_resize_sessions[$session_id] = $session;
 
         // Logger l'événement
-        $this->log_resize_event(
+        $this->logResizeEvent(
             'start',
             $session_id,
             [
@@ -107,7 +109,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Mettre à jour les dimensions pendant le redimensionnement
      */
-    public function update_resize_dimensions($session_id, $delta_x, $delta_y, $element_position = null)
+    public function updateResizeDimensions($session_id, $delta_x, $delta_y, $element_position = null)
     {
         if (!isset($this->active_resize_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Resize session not found');
@@ -144,7 +146,7 @@ class PDF_Builder_Resize_Manager
 
         // Appliquer le ratio d'aspect si nécessaire
         if ($session['constraints']['maintain_aspect_ratio'] && $session['constraints']['aspect_ratio']) {
-            $result = $this->apply_aspect_ratio($result, $session['constraints']['aspect_ratio'], $session['handle']);
+            $result = $this->applyAspectRatio($result, $session['constraints']['aspect_ratio'], $session['handle']);
         }
 
         $session['current_size'] = $result['size'];
@@ -157,7 +159,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Appliquer le ratio d'aspect pendant le redimensionnement
      */
-    private function apply_aspect_ratio($dimensions, $aspect_ratio, $handle)
+    private function applyAspectRatio($dimensions, $aspect_ratio, $handle)
     {
         $width = $dimensions['size']['width'];
         $height = $dimensions['size']['height'];
@@ -188,7 +190,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Finaliser une session de redimensionnement
      */
-    public function end_resize_session($session_id, $final_dimensions = null)
+    public function endResizeSession($session_id, $final_dimensions = null)
     {
         if (!isset($this->active_resize_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Resize session not found');
@@ -206,7 +208,7 @@ class PDF_Builder_Resize_Manager
         $session['duration'] = $session['end_time'] - $session['start_time'];
 
         // Logger l'événement
-        $this->log_resize_event(
+        $this->logResizeEvent(
             'end',
             $session_id,
             [
@@ -228,7 +230,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Obtenir l'état d'une session de redimensionnement
      */
-    public function get_resize_session($session_id)
+    public function getResizeSession($session_id)
     {
         return $this->active_resize_sessions[$session_id] ?? null;
     }
@@ -236,7 +238,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Nettoyer une session de redimensionnement
      */
-    public function cleanup_resize_session($session_id)
+    public function cleanupResizeSession($session_id)
     {
         if (isset($this->active_resize_sessions[$session_id])) {
             unset($this->active_resize_sessions[$session_id]);
@@ -246,7 +248,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Valider les données de redimensionnement
      */
-    public function validate_resize_data($element_id, $handle, $initial_size)
+    public function validateResizeData($element_id, $handle, $initial_size)
     {
         $errors = [];
 
@@ -273,7 +275,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Calculer les contraintes de redimensionnement pour un élément
      */
-    public function calculate_resize_constraints($element, $canvas_bounds = null, $options = [])
+    public function calculateResizeConstraints($element, $canvas_bounds = null, $options = [])
     {
         $constraints = [
             'min_width' => $options['min_width'] ?? 10,
@@ -301,7 +303,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Obtenir le curseur approprié pour une poignée de redimensionnement
      */
-    public function get_resize_cursor($handle)
+    public function getResizeCursor($handle)
     {
         // Logique simplifiée pour les curseurs de redimensionnement
         $cursors = [
@@ -321,7 +323,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Logger les événements de redimensionnement
      */
-    private function log_resize_event($event_type, $session_id, $data = [])
+    private function logResizeEvent($event_type, $session_id, $data = [])
     {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
@@ -341,7 +343,7 @@ class PDF_Builder_Resize_Manager
     /**
      * Obtenir les statistiques de performance du redimensionnement
      */
-    public function get_resize_performance_stats()
+    public function getResizePerformanceStats()
     {
         $stats = [
             'active_sessions' => count($this->active_resize_sessions),

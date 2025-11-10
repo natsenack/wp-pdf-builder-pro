@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion dynamique des statuts de commande WooCommerce et assignation de templates
  */
 
-class PDF_Builder_Status_Manager
+class PdfBuilderStatusManager
 {
     /**
      * Instance du main plugin
@@ -32,13 +34,13 @@ class PDF_Builder_Status_Manager
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->init_hooks();
+        $this->initHooks();
     }
 
     /**
      * Initialiser les hooks
      */
-    private function init_hooks()
+    private function initHooks()
     {
         // Détection automatique des statuts lors de l'activation de plugins
         add_action('activated_plugin', [$this, 'check_for_new_statuses']);
@@ -60,7 +62,7 @@ class PDF_Builder_Status_Manager
     /**
      * Détecter tous les statuts WooCommerce disponibles
      */
-    public function detect_woocommerce_statuses()
+    public function detectWoocommerceStatuses()
     {
         if ($this->detected_statuses !== null) {
             return $this->detected_statuses;
@@ -92,7 +94,7 @@ class PDF_Builder_Status_Manager
         }
 
         // Détecter les statuts via plugins populaires
-        $statuses = $this->detect_plugin_statuses($statuses);
+        $statuses = $this->detectPluginStatuses($statuses);
 
         $this->detected_statuses = $statuses;
         return $statuses;
@@ -101,7 +103,7 @@ class PDF_Builder_Status_Manager
     /**
      * Détecter les statuts ajoutés par des plugins populaires
      */
-    private function detect_plugin_statuses($existing_statuses)
+    private function detectPluginStatuses($existing_statuses)
     {
         // Liste des plugins qui ajoutent des statuts personnalisés
         $plugin_statuses = [
@@ -131,7 +133,7 @@ class PDF_Builder_Status_Manager
 
         // Vérifier si ces statuts existent réellement
         foreach ($plugin_statuses as $status_key => $status_name) {
-            if (!isset($existing_statuses[$status_key]) && $this->status_exists($status_key)) {
+            if (!isset($existing_statuses[$status_key]) && $this->statusExists($status_key)) {
                 $existing_statuses[$status_key] = $status_name;
             }
         }
@@ -142,7 +144,7 @@ class PDF_Builder_Status_Manager
     /**
      * Vérifier si un statut existe réellement
      */
-    private function status_exists($status_key)
+    private function statusExists($status_key)
     {
         // En mode test ou si $wpdb n'est pas disponible, retourner false
         if (!isset($GLOBALS['wpdb']) || !is_object($GLOBALS['wpdb'])) {
@@ -170,21 +172,21 @@ class PDF_Builder_Status_Manager
     /**
      * Étendre les paramètres avec les nouveaux statuts détectés
      */
-    public function extend_status_settings($settings)
+    public function extendStatusSettings($settings)
     {
-        $all_statuses = $this->detect_woocommerce_statuses();
-        $current_mappings = $this->get_status_mappings();
+        $all_statuses = $this->detectWoocommerceStatuses();
+        $current_mappings = $this->getStatusMappings();
 
         // Ajouter les nouveaux statuts automatiquement
         foreach ($all_statuses as $status_key => $status_name) {
             if (!isset($current_mappings[$status_key])) {
                 // Nouveau statut détecté - assigner template par défaut si disponible
-                $default_template = $this->get_default_template_id();
+                $default_template = $this->getDefaultTemplateId();
                 if ($default_template) {
                     $current_mappings[$status_key] = $default_template;
-                    $this->log_status_detection($status_key, $status_name, 'auto_assigned');
+                    $this->logStatusDetection($status_key, $status_name, 'auto_assigned');
                 } else {
-                    $this->log_status_detection($status_key, $status_name, 'detected_no_default');
+                    $this->logStatusDetection($status_key, $status_name, 'detected_no_default');
                 }
             }
         }
@@ -198,7 +200,7 @@ class PDF_Builder_Status_Manager
     /**
      * Obtenir l'ID du template par défaut
      */
-    private function get_default_template_id()
+    private function getDefaultTemplateId()
     {
         // En mode test ou si $wpdb n'est pas disponible, retourner null
         if (!isset($GLOBALS['wpdb']) || !is_object($GLOBALS['wpdb'])) {
@@ -228,7 +230,7 @@ class PDF_Builder_Status_Manager
     /**
      * Obtenir les mappings statut -> template
      */
-    public function get_status_mappings()
+    public function getStatusMappings()
     {
         if ($this->status_mappings === null) {
             $this->status_mappings = get_option('pdf_builder_order_status_templates', []);
@@ -239,18 +241,18 @@ class PDF_Builder_Status_Manager
     /**
      * Obtenir le template pour un statut avec fallback
      */
-    public function get_template_with_fallback($template_id, $status_key)
+    public function getTemplateWithFallback($template_id, $status_key)
     {
-        $mappings = $this->get_status_mappings();
+        $mappings = $this->getStatusMappings();
 
         if (isset($mappings[$status_key]) && $mappings[$status_key] > 0) {
             return $mappings[$status_key];
         }
 
         // Fallback vers template par défaut
-        $default_template = $this->get_default_template_id();
+        $default_template = $this->getDefaultTemplateId();
         if ($default_template) {
-            $this->log_unknown_status_usage($status_key);
+            $this->logUnknownStatusUsage($status_key);
             return $default_template;
         }
 
@@ -260,7 +262,7 @@ class PDF_Builder_Status_Manager
     /**
      * Logger la détection d'un nouveau statut
      */
-    private function log_status_detection($status_key, $status_name, $action)
+    private function logStatusDetection($status_key, $status_name, $action)
     {
         // Utiliser la classe avec le bon espace de noms
         $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
@@ -275,7 +277,7 @@ class PDF_Builder_Status_Manager
     /**
      * Logger l'utilisation d'un statut inconnu
      */
-    private function log_unknown_status_usage($status_key)
+    private function logUnknownStatusUsage($status_key)
     {
         $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $message = sprintf(
@@ -288,9 +290,9 @@ class PDF_Builder_Status_Manager
     /**
      * Vérification quotidienne des statuts
      */
-    public function daily_status_check()
+    public function dailyStatusCheck()
     {
-        $this->detect_woocommerce_statuses();
+        $this->detectWoocommerceStatuses();
         // Forcer la régénération du cache
         $this->detected_statuses = null;
         $this->status_mappings = null;
@@ -299,7 +301,7 @@ class PDF_Builder_Status_Manager
     /**
      * Vérifier les nouveaux statuts lors de l'activation d'un plugin
      */
-    public function check_for_new_statuses($plugin)
+    public function checkForNewStatuses($plugin)
     {
         // Plugins qui ajoutent des statuts personnalisés
         $status_plugins = [
@@ -318,7 +320,7 @@ class PDF_Builder_Status_Manager
     /**
      * Vérifier les statuts supprimés lors de la désactivation d'un plugin
      */
-    public function check_for_removed_statuses($plugin)
+    public function checkForRemovedStatuses($plugin)
     {
         // Nettoyer le cache
         $this->detected_statuses = null;
@@ -328,11 +330,11 @@ class PDF_Builder_Status_Manager
     /**
      * Obtenir les informations détaillées sur les statuts pour l'admin
      */
-    public function get_status_info_for_admin()
+    public function getStatusInfoForAdmin()
     {
-        $all_statuses = $this->detect_woocommerce_statuses();
-        $mappings = $this->get_status_mappings();
-        $default_template = $this->get_default_template_id();
+        $all_statuses = $this->detectWoocommerceStatuses();
+        $mappings = $this->getStatusMappings();
+        $default_template = $this->getDefaultTemplateId();
 
         $info = [
             'total_statuses' => count($all_statuses),

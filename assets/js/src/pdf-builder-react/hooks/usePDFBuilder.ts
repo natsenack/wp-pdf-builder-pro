@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Element, Point, CanvasState, BuilderMode } from '../types/elements';
+import { Element, CanvasState, BuilderMode } from '../types/elements';
 
 // État initial simple
 const initialCanvasState: CanvasState = {

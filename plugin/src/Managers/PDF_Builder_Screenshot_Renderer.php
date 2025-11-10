@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Génération de PDF haute-fidélité via capture d'écran du canvas
  */
 
-class PDF_Builder_Screenshot_Renderer
+class PdfBuilderScreenshotRenderer
 {
     /**
      * Instance du main plugin
@@ -32,7 +34,7 @@ class PDF_Builder_Screenshot_Renderer
      * @param  string $filename    Nom du fichier PDF
      * @return string|false Chemin du PDF généré ou false en cas d'erreur
      */
-    public function generate_pdf_from_canvas($canvas_data, $filename)
+    public function generatePdfFromCanvas($canvas_data, $filename)
     {
         try {
             // Créer le répertoire de destination
@@ -68,7 +70,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Générer le HTML du canvas pour capture
      */
-    private function generate_canvas_html($canvas_data)
+    private function generateCanvasHtml($canvas_data)
     {
         if (!is_array($canvas_data)) {
             return '';
@@ -140,7 +142,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Rendre un élément du canvas en HTML
      */
-    private function render_canvas_element($element)
+    private function renderCanvasElement($element)
     {
         if (!isset($element['type']) || !isset($element['properties'])) {
             return '';
@@ -182,7 +184,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Construire le style CSS d'un élément
      */
-    private function build_element_style($props)
+    private function buildElementStyle($props)
     {
         $style = [];
 
@@ -223,7 +225,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Générer PDF depuis HTML via différentes méthodes
      */
-    private function generate_pdf_from_html($html_file, $pdf_path)
+    private function generatePdfFromHtml($html_file, $pdf_path)
     {
         // Méthode 1: wkhtmltopdf (si disponible)
         if ($this->is_wkhtmltopdf_available()) {
@@ -242,7 +244,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Vérifier si wkhtmltopdf est disponible
      */
-    private function is_wkhtmltopdf_available()
+    private function isWkhtmltopdfAvailable()
     {
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return PDF_Builder_Secure_Shell_Manager::is_command_available('wkhtmltopdf');
@@ -251,7 +253,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Générer avec wkhtmltopdf
      */
-    private function generate_with_wkhtmltopdf($html_file, $pdf_path)
+    private function generateWithWkhtmltopdf($html_file, $pdf_path)
     {
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return PDF_Builder_Secure_Shell_Manager::execute_wkhtmltopdf($html_file, $pdf_path);
@@ -260,7 +262,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Vérifier si Puppeteer est disponible
      */
-    private function is_puppeteer_available()
+    private function isPuppeteerAvailable()
     {
         // Vérifier si Node.js est disponible via le gestionnaire sécurisé
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
@@ -277,7 +279,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Générer avec Puppeteer
      */
-    private function generate_with_puppeteer($html_file, $pdf_path)
+    private function generateWithPuppeteer($html_file, $pdf_path)
     {
         $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
 
@@ -290,7 +292,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Fallback vers Dompdf (qualité réduite)
      */
-    private function generate_with_dompdf_fallback($html_file, $pdf_path)
+    private function generateWithDompdfFallback($html_file, $pdf_path)
     {
         try {
             require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
@@ -316,7 +318,7 @@ class PDF_Builder_Screenshot_Renderer
     /**
      * Obtenir les informations sur les capacités du système
      */
-    public function get_system_capabilities()
+    public function getSystemCapabilities()
     {
         return [
             'wkhtmltopdf' => $this->is_wkhtmltopdf_available(),

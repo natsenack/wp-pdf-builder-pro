@@ -15,11 +15,11 @@ export interface SaveIndicatorProps {
  */
 export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   state,
-  lastSavedAt,
+  lastSavedAt: _lastSavedAt,
   error,
   onRetry,
   progress = 0,
-  showProgressBar = false
+  showProgressBar: _showProgressBar
 }) => {
   // Ne rien afficher si idle
   if (state === 'idle') {

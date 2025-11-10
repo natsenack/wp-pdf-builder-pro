@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Builtin Templates Editor
  * Éditeur dédié pour les templates prédéfinis
@@ -14,25 +15,29 @@ if (!defined('ABSPATH')) {
  * wp_verify_nonce retourne: 1 (valide), 2 (valide mais expiré), 0 (invalide)
  * CACHE BUST: 2025-11-06-02-12-00
  */
-function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_builder_builtin_editor') {
+function pdf_builder_verify_builtin_nonce($nonce_value, $nonce_action = 'pdf_builder_builtin_editor')
+{
+
     if (empty($nonce_value)) {
         wp_send_json_error('Nonce manquant');
     }
-    
+
     $nonce_check = wp_verify_nonce($nonce_value, $nonce_action);
-    // DEBUG: Accepter temporairement tout pour tester
+// DEBUG: Accepter temporairement tout pour tester
     if ($nonce_check === false || $nonce_check === 0) {
-        // DEBUG: Accepter quand même pour voir où est l'erreur vraie
+// DEBUG: Accepter quand même pour voir où est l'erreur vraie
         // Ne pas rejeter, laisser passer pour continuer
     }
-    
+
     return $nonce_check;
 }
 
 /**
  * Page d'édition des templates builtin
  */
-function pdf_builder_builtin_editor_page() {
+function pdf_builder_builtin_editor_page()
+{
+
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.'));
@@ -40,10 +45,9 @@ function pdf_builder_builtin_editor_page() {
 
     // Récupérer le template_id depuis l'URL
     $template_id = isset($_GET['template']) ? sanitize_text_field($_GET['template']) : '';
-
-    // Si un template est spécifié, charger son contenu JSON et rediriger vers l'éditeur React
+// Si un template est spécifié, charger son contenu JSON et rediriger vers l'éditeur React
     if (!empty($template_id)) {
-        // SYSTÈME BUILTIN SUPPRIMÉ - Redirection directe vers l'éditeur normal
+// SYSTÈME BUILTIN SUPPRIMÉ - Redirection directe vers l'éditeur normal
         $redirect_url = admin_url('admin.php?page=pdf-builder-react-editor');
         wp_redirect($redirect_url);
         exit;
@@ -56,12 +60,13 @@ function pdf_builder_builtin_editor_page() {
 /**
  * Page de liste des templates builtin avec liens vers l'éditeur visuel
  */
-function pdf_builder_builtin_templates_list_page() {
+function pdf_builder_builtin_templates_list_page()
+{
+
     // Enqueue les scripts et styles nécessaires
     wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
     wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.0.0');
-
-    // Localiser le script
+// Localiser le script
     wp_localize_script('pdf-builder-builtin-editor', 'pdfBuilderBuiltinEditor', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_builtin_editor'),
@@ -205,7 +210,9 @@ function pdf_builder_builtin_templates_list_page() {
  * AJAX - Charger la liste des templates builtin
  * SYSTÈME SUPPRIMÉ - Retourne une liste vide
  */
-function pdf_builder_ajax_load_builtin_templates() {
+function pdf_builder_ajax_load_builtin_templates()
+{
+
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -219,21 +226,21 @@ function pdf_builder_ajax_load_builtin_templates() {
  * AJAX - Charger un template builtin spécifique pour la modale d'édition
  * NO NONCE CHECK - Simple read operation
  */
-function pdf_builder_ajax_load_builtin_template() {
+function pdf_builder_ajax_load_builtin_template()
+{
+
     // Only check permissions, no nonce
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
     }
 
     $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
-
     if (empty($template_id)) {
         wp_send_json_error('ID du template manquant');
     }
 
     // Chemin vers le fichier
     $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
-
     if (!file_exists($file_path)) {
         wp_send_json_error('Template non trouvé');
     }
@@ -255,7 +262,9 @@ function pdf_builder_ajax_load_builtin_template() {
  * AJAX - Charger un template pour la modale (NEW - no nonce check)
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_load_template_for_modal() {
+function pdf_builder_ajax_load_template_for_modal()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -263,7 +272,9 @@ function pdf_builder_ajax_load_template_for_modal() {
  * AJAX - Sauvegarder un template builtin
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_save_builtin_template() {
+function pdf_builder_ajax_save_builtin_template()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -271,7 +282,9 @@ function pdf_builder_ajax_save_builtin_template() {
  * AJAX - Créer un nouveau template builtin
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_create_builtin_template() {
+function pdf_builder_ajax_create_builtin_template()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -279,7 +292,9 @@ function pdf_builder_ajax_create_builtin_template() {
  * AJAX - Supprimer un template builtin
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_delete_builtin_template() {
+function pdf_builder_ajax_delete_builtin_template()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -287,7 +302,9 @@ function pdf_builder_ajax_delete_builtin_template() {
  * AJAX - Mettre à jour les paramètres d'un template builtin
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_update_builtin_template_params() {
+function pdf_builder_ajax_update_builtin_template_params()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -295,7 +312,9 @@ function pdf_builder_ajax_update_builtin_template_params() {
  * AJAX - Hook wrapper pour auto-save qui détecte les templates builtin
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_auto_save_builtin_wrapper() {
+function pdf_builder_ajax_auto_save_builtin_wrapper()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }
 
@@ -303,6 +322,8 @@ function pdf_builder_ajax_auto_save_builtin_wrapper() {
  * AJAX - Sauvegarder un template builtin depuis l'éditeur React (OLD - to be removed)
  * SYSTÈME SUPPRIMÉ - Retourne une erreur
  */
-function pdf_builder_ajax_save_builtin_from_react() {
+function pdf_builder_ajax_save_builtin_from_react()
+{
+
     wp_send_json_error('Système builtin supprimé');
 }

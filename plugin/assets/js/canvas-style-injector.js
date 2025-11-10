@@ -3,8 +3,6 @@
  * Injecte les styles des éléments depuis les propriétés du template JSON
  */
 
-/* global document, window, setTimeout, MutationObserver, console */
-
 (function() {
     'use strict';
 
@@ -113,8 +111,8 @@
                 const cssRule = `[data-element-id="${elementId}"] { ${styles.join('; ')}; }`;
                 try {
                     styleSheet.sheet.insertRule(cssRule, styleSheet.sheet.cssRules.length);
-                } catch (e) {
-
+                } catch {
+                    // Ignore les erreurs d'insertion CSS
                 }
 
                 // Appliquer aussi directement si l'élément est un DIV
@@ -127,8 +125,6 @@
                             domElement.style[prop.replace(/-([a-z])/g, g => g[1].toUpperCase())] = value;
                         }
                     });
-                } else {
-
                 }
             }
         }

@@ -187,7 +187,7 @@ export const ELEMENT_PROPERTY_RESTRICTIONS = {
                                                                                     if (!isPropertyAllowed(elementType, propertyName)) {
                                                                                         return {
                                                                                             valid: false,
-                                                                                            reason: ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName] ? .reason || 'Propriété non autorisée'
+                                                                                            reason: ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]?.reason || 'Propriété non autorisée'
                                                                                         };
                                                                                     }
 

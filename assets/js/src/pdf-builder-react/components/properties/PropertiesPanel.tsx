@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
-import { Element } from '../../types/elements';
 import { ProductTableProperties } from './ProductTableProperties';
 import { CustomerInfoProperties } from './CustomerInfoProperties';
 import { CompanyInfoProperties } from './CompanyInfoProperties';
@@ -26,7 +25,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
   );
 
   // Optimisation: mémoriser les handlers
-  const handlePropertyChange = useCallback((elementId: string, property: string, value: any) => {
+  const handlePropertyChange = useCallback((elementId: string, property: string, value: unknown) => {
     updateElement(elementId, { [property]: value });
   }, [updateElement]);
 

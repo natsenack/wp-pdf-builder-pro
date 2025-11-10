@@ -62,7 +62,7 @@ export interface Element {
     opacity?: number;
     
     /** Métadonnées personnalisées */
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 /**
@@ -108,7 +108,7 @@ export interface CSSStyle {
     transform?: string;
     
     /** Autres styles personnalisés */
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 /**
@@ -232,7 +232,7 @@ export interface TemplateMetadata {
     notes?: string;
     
     /** Propriétés personnalisées */
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 /**
@@ -345,7 +345,7 @@ export interface CanvasEvent {
     type: 'element_added' | 'element_removed' | 'element_updated' | 'canvas_changed' | 'save';
     
     /** Données associées à l'événement */
-    data: any;
+    data: unknown;
     
     /** Timestamp de l'événement */
     timestamp: number;
@@ -368,7 +368,7 @@ export interface ValidationError {
     message: string;
     
     /** Valeur rejetée */
-    value?: any;
+    value?: unknown;
     
     /** Code d'erreur */
     code?: string;

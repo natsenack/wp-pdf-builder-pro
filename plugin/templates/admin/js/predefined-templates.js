@@ -198,34 +198,6 @@
         });
     }
 
-    /**
-     * Actualiser le nonce et réessayer le chargement
-     */
-    function refreshNonceAndRetry(slug) {
-        console.log('Refreshing nonce...');
-        $.ajax({
-            url: pdfBuilderPredefined.ajaxUrl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_refresh_nonce'
-            },
-            success: function(response) {
-                if (response.success) {
-                    console.log('Nonce refreshed:', response.data.nonce);
-                    pdfBuilderPredefined.nonce = response.data.nonce;
-                    // Réessayer le chargement avec le nouveau nonce
-                    loadTemplate(slug);
-                } else {
-                    console.error('Failed to refresh nonce');
-                    showErrorMessage('Erreur de sécurité - veuillez rafraîchir la page');
-                }
-            },
-            error: function() {
-                console.error('AJAX error refreshing nonce');
-                showErrorMessage('Erreur de sécurité - veuillez rafraîchir la page');
-            }
-        });
-    }
     function populateForm(data) {
         $('#template-slug').val(data.slug).prop('disabled', false);
         $('#template-name').val(data.name);

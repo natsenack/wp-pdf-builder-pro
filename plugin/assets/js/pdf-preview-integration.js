@@ -3,8 +3,6 @@
  * À intégrer dans votre éditeur ou metabox WooCommerce
  */
 
-/* global document, window, alert, localStorage, URLSearchParams, setTimeout */
-
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
 // ==========================================

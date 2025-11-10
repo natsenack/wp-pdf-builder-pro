@@ -9,7 +9,7 @@ namespace PDF_Builder\Managers;
 
 
 
-class PDF_Builder_Logger
+class PdfBuilderLogger
 {
     /**
      * Instance unique de la classe

@@ -1,18 +1,18 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { CompanyLogoElement } from '../../types/elements';
 
 // Déclaration des types WordPress pour TypeScript
 declare global {
   interface Window {
     wp?: {
-      media?: (options?: any) => any;
+      media?: (options?: Record<string, unknown>) => Record<string, unknown>;
     };
   }
 }
 
 interface CompanyLogoPropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: CompanyLogoElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -102,7 +102,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
               <input
                 type="text"
-                value={(element as any).src || ''}
+                value={element.src || ''}
                 onChange={(e) => onChange(element.id, 'src', e.target.value)}
                 placeholder="https://exemple.com/logo.png"
                 style={{
@@ -132,10 +132,10 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                       const attachment = mediaUploader.state().get('selection').first().toJSON();
                       onChange(element.id, 'src', attachment.url);
                       // Optionnellement, mettre à jour les dimensions si elles ne sont pas définies
-                      if (!(element as any).width || (element as any).width === 150) {
+                      if (!element.width || element.width === 150) {
                         onChange(element.id, 'width', attachment.width || 150);
                       }
-                      if (!(element as any).height || (element as any).height === 80) {
+                      if (!element.height || element.height === 80) {
                         onChange(element.id, 'height', attachment.height || 80);
                       }
                     });
@@ -169,7 +169,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="text"
-              value={(element as any).altText || ''}
+              value={element.altText || ''}
               onChange={(e) => onChange(element.id, 'altText', e.target.value)}
               placeholder="Logo de l'entreprise"
               style={{
@@ -188,7 +188,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={(element as any).maintainAspectRatio !== false}
+              checked={element.maintainAspectRatio !== false}
               onChange={(e) => onChange(element.id, 'maintainAspectRatio', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -201,7 +201,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showBorder !== false}
+              checked={element.showBorder !== false}
               onChange={(e) => onChange(element.id, 'showBorder', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -215,10 +215,10 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
         <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Mode d'ajustement
+              Mode d&apos;ajustement
             </label>
             <select
-              value={(element as any).objectFit || 'contain'}
+              value={element.objectFit || 'contain'}
               onChange={(e) => onChange(element.id, 'objectFit', e.target.value)}
               style={{
                 width: '100%',
@@ -245,7 +245,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               min="0"
               max="1"
               step="0.1"
-              value={(element as any).opacity || 1}
+              value={element.opacity || 1}
               onChange={(e) => onChange(element.id, 'opacity', parseFloat(e.target.value))}
               style={{
                 width: '100%',
@@ -253,7 +253,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               }}
             />
             <div style={{ fontSize: '11px', color: '#666', textAlign: 'center', marginTop: '2px' }}>
-              {(element as any).opacity || 1}
+              {element.opacity || 1}
             </div>
           </div>
 
@@ -265,7 +265,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               type="number"
               min="0"
               max="50"
-              value={(element as any).borderRadius || 0}
+              value={element.borderRadius || 0}
               onChange={(e) => onChange(element.id, 'borderRadius', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -285,7 +285,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               type="number"
               min="-180"
               max="180"
-              value={(element as any).rotation || 0}
+              value={element.rotation || 0}
               onChange={(e) => onChange(element.id, 'rotation', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -309,7 +309,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).x || 0}
+              value={element.x || 0}
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -327,7 +327,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).y || 0}
+              value={element.y || 0}
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
@@ -345,7 +345,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).width || 100}
+              value={element.width || 100}
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 100)}
               style={{
                 width: '100%',
@@ -363,7 +363,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="number"
-              value={(element as any).height || 100}
+              value={element.height || 100}
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 100)}
               style={{
                 width: '100%',

@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée des paramètres et configurations
  */
 
-class PDF_Builder_Settings_Manager
+class PdfBuilderSettingsManager
 {
     /**
      * Instance du main plugin
@@ -28,7 +30,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Initialiser les hooks
      */
-    private function init_hooks()
+    private function initHooks()
     {
         // Hooks pour les paramètres
         add_action('admin_init', [$this, 'register_settings']);
@@ -37,7 +39,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Page de paramètres généraux
      */
-    public function settings_page()
+    public function settingsPage()
     {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
@@ -56,7 +58,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Enregistrer les paramètres
      */
-    public function register_settings()
+    public function registerSettings()
     {
         // Paramètres généraux
         register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
@@ -75,7 +77,7 @@ class PDF_Builder_Settings_Manager
      * @param mixed $default Valeur par défaut
      * @return mixed Valeur du paramètre
      */
-    public function get_setting($option, $default = false)
+    public function getSetting($option, $default = false)
     {
         return get_option($option, $default);
     }
@@ -83,7 +85,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Sauvegarder les paramètres généraux
      */
-    private function save_settings()
+    private function saveSettings()
     {
         // Rôles autorisés
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
@@ -113,7 +115,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Sanitiser une valeur de paramètre
      */
-    private function sanitize_setting_value($value)
+    private function sanitizeSettingValue($value)
     {
         if (is_array($value)) {
             return array_map([$this, 'sanitize_setting_value'], $value);
@@ -129,7 +131,7 @@ class PDF_Builder_Settings_Manager
     /**
      * Nettoyer les données JSON
      */
-    private function clean_json_data($json_string)
+    private function cleanJsonData($json_string)
     {
         // Supprimer les caractères de contrôle
         $json_string = preg_replace('/[\x00-\x1F\x7F]/', '', $json_string);

@@ -4,8 +4,6 @@
  * SOLUTION: Centrage modal avec injecteur CSS agressif
  */
 
-/* global document, window, fetch, FormData, btoa, alert, toastr, pdfBuilderAjax */
-
 // ⚡ FORCE INJECTER LE CSS IMMÉDIATEMENT AU CHARGEMENT
 (function() {
     if (!document.getElementById('pdf-preview-modal-styles-v2')) {

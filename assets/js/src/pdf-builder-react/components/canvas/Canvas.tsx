@@ -1143,7 +1143,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   }, [cleanupImageCache]);
 
   // Utiliser les hooks pour les interactions
-  const { handleDrop, handleDragOver } = useCanvasDrop({
+  const { handleDrop, handleDragOver, handleDragLeave, isDragOver } = useCanvasDrop({
     canvasRef,
     canvasWidth: width,
     canvasHeight: height,
@@ -1151,7 +1151,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   });
 
   const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu } = useCanvasInteraction({
-    canvasRef
+    canvasRef,
+    canvasWidth: width,
+    canvasHeight: height
   });
 
   // ✅ BUGFIX-007: Memoize drawGrid to prevent recreation on every render
@@ -2149,12 +2151,22 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Redessiner quand l'état change
   useEffect(() => {
-    // ✅ BUGFIX-022: Use efficient hash instead of JSON.stringify
-    // Track FULL element state (id + position + size), but use hash for performance
+    // ✅ BUGFIX: Include ALL essential visual properties in hash
+    // This ensures canvas re-renders when ANY visual property changes
     let elementsHash = '';
     for (let i = 0; i < state.elements.length; i++) {
       const e = state.elements[i];
-      elementsHash += `${e.id}:${e.x},${e.y},${e.width},${e.height};`;
+      // Create a comprehensive hash of all element properties
+      // Use updatedAt to detect any changes, plus key visual properties
+      const hashData = {
+        id: e.id,
+        updatedAt: e.updatedAt?.getTime() || 0,
+        x: e.x, y: e.y, width: e.width, height: e.height,
+        rotation: e.rotation || 0,
+        opacity: e.opacity || 1,
+        visible: e.visible
+      };
+      elementsHash += JSON.stringify(hashData) + ';';
     }
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
@@ -2222,10 +2234,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         onContextMenu={handleCanvasContextMenu}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
         style={{
-          border: '1px solid #ccc',
+          border: `2px solid ${isDragOver ? '#007acc' : '#ccc'}`,
           cursor: 'crosshair',
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          transition: 'border-color 0.2s ease'
         }}
       />
       {contextMenu.isVisible && (

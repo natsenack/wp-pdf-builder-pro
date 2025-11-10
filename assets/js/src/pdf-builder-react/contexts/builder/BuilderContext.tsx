@@ -10,7 +10,7 @@ import {
   BuilderMode,
   HistoryState
 } from '../../types/elements';
-import { debugLog, debugError, debugWarn } from '../../utils/debug';
+import { debugLog, debugError } from '../../utils/debug';
 
 // Type pour les propriétés des éléments product_table
 interface ProductTableProperties {
@@ -647,8 +647,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     };
   }, []);
 
-  // Fonction de sauvegarde automatique
-  const autoSaveTemplate = async (): Promise<void> => {
+  // Fonction de sauvegarde automatique (commentée car non utilisée)
+  // const autoSaveTemplate = async (): Promise<void> => {
+  /*
     if (!state.template.id || state.template.isSaving) return;
 
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
@@ -800,7 +801,8 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
-  };
+  */
+  // };
 
   // Sauvegarde automatique DÉSACTIVÉE - utilise useSaveState à la place
   // useEffect(() => {

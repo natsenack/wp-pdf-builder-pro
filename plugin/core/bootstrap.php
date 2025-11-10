@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Core Bootstrap
  * Minimal bootstrap for tests - delegates to main bootstrap

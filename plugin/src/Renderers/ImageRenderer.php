@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - ImageRenderer
  * Phase 3.3.2 - Renderer spécialisé pour les éléments image
@@ -14,19 +15,17 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class ImageRenderer {
-
+class ImageRenderer
+{
     /**
      * Types d'éléments supportés par ce renderer
      */
     const SUPPORTED_TYPES = ['company_logo'];
-
-    /**
+/**
      * Formats d'image supportés
      */
     const SUPPORTED_FORMATS = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'bmp', 'tiff', 'ico', 'webp'];
-
-    /**
+/**
      * Dimensions par défaut pour les images
      */
     const DEFAULT_DIMENSIONS = [
@@ -34,8 +33,7 @@ class ImageRenderer {
         'height' => 100,
         'maintain_aspect_ratio' => true
     ];
-
-    /**
+/**
      * Styles CSS par défaut pour les images
      */
     const DEFAULT_STYLES = [
@@ -54,7 +52,8 @@ class ImageRenderer {
      * @param array $context Contexte de rendu (données WooCommerce, etc.)
      * @return string HTML généré pour l'image
      */
-    public function render(array $element, array $context = []): array {
+    public function render(array $element, array $context = []): array
+    {
         // Validation de base
         if (!$this->validateElement($element)) {
             return [
@@ -67,7 +66,6 @@ class ImageRenderer {
         // Récupération des propriétés
         $properties = $element['properties'] ?? [];
         $imageUrl = $this->getImageUrl($properties, $context);
-
         if (empty($imageUrl)) {
             return [
                 'html' => $this->getErrorPlaceholder('Aucune image spécifiée'),
@@ -87,13 +85,12 @@ class ImageRenderer {
 
         // Calcul des dimensions
         $dimensions = $this->calculateDimensions($properties);
-
-        // Génération des styles CSS
+// Génération des styles CSS
         $styles = $this->generateImageStyles($properties);
-
-        // Génération du HTML et CSS
+// Génération du HTML et CSS
         $html = $this->generateImageHtml($imageUrl, $dimensions, $styles, $properties);
-        $css = ''; // TODO: Implémenter la génération CSS pour les images si nécessaire
+        $css = '';
+// TODO: Implémenter la génération CSS pour les images si nécessaire
 
         return [
             'html' => $html,
@@ -108,7 +105,8 @@ class ImageRenderer {
      * @param array $element Élément à valider
      * @return bool True si valide
      */
-    private function validateElement(array $element): bool {
+    private function validateElement(array $element): bool
+    {
         return isset($element['type']) &&
                in_array($element['type'], self::SUPPORTED_TYPES) &&
                isset($element['properties']);
@@ -121,11 +119,11 @@ class ImageRenderer {
      * @param array $context Contexte de données
      * @return string URL de l'image ou chaîne vide
      */
-    private function getImageUrl(array $properties, array $context): string {
+    private function getImageUrl(array $properties, array $context): string
+    {
         // Priorité : src > imageUrl (pour compatibilité)
         $imageUrl = $properties['src'] ?? $properties['imageUrl'] ?? '';
-
-        // Si c'est une variable dynamique, la remplacer
+// Si c'est une variable dynamique, la remplacer
         if (strpos($imageUrl, '{{') !== false && strpos($imageUrl, '}}') !== false) {
             $imageUrl = $this->replaceVariables($imageUrl, $context);
         }
@@ -145,13 +143,13 @@ class ImageRenderer {
      * @param array $context Contexte de données
      * @return string URL avec variables remplacées
      */
-    private function replaceVariables(string $url, array $context): string {
+    private function replaceVariables(string $url, array $context): string
+    {
         // Variables de contexte (logo entreprise depuis WooCommerce)
         $replacements = [
             '{{company_logo}}' => $context['company_logo'] ?? '',
             '{{store_logo}}' => $context['store_logo'] ?? '',
         ];
-
         return str_replace(array_keys($replacements), array_values($replacements), $url);
     }
 
@@ -161,7 +159,8 @@ class ImageRenderer {
      * @param string $url URL relative
      * @return string URL absolue
      */
-    private function resolveRelativeUrl(string $url): string {
+    private function resolveRelativeUrl(string $url): string
+    {
         // Si c'est déjà une URL absolue, la retourner telle quelle
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
@@ -169,7 +168,7 @@ class ImageRenderer {
 
         // Résoudre les URLs relatives du thème/plugin
         if (strpos($url, '/') === 0) {
-            // URL absolue du site
+// URL absolue du site
             return home_url($url);
         }
 
@@ -183,10 +182,10 @@ class ImageRenderer {
      * @param string $imageUrl URL de l'image
      * @return bool True si format supporté
      */
-    private function isValidImageFormat(string $imageUrl): bool {
+    private function isValidImageFormat(string $imageUrl): bool
+    {
         $extension = strtolower(pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-        // Pour les URLs sans extension (comme les data URIs), accepter
+// Pour les URLs sans extension (comme les data URIs), accepter
         if (empty($extension)) {
             return true;
         }
@@ -200,16 +199,16 @@ class ImageRenderer {
      * @param array $properties Propriétés de l'élément
      * @return array Dimensions [width, height]
      */
-    private function calculateDimensions(array $properties): array {
+    private function calculateDimensions(array $properties): array
+    {
         $width = $properties['width'] ?? self::DEFAULT_DIMENSIONS['width'];
         $height = $properties['height'] ?? self::DEFAULT_DIMENSIONS['height'];
         $maintainAspectRatio = $properties['maintainAspectRatio'] ?? self::DEFAULT_DIMENSIONS['maintain_aspect_ratio'];
-
-        // Validation des dimensions
-        $width = max(1, min(2000, (int)$width)); // 1px à 2000px
+// Validation des dimensions
+        $width = max(1, min(2000, (int)$width));
+// 1px à 2000px
         $height = max(1, min(2000, (int)$height));
-
-        // TODO: Implémenter le redimensionnement automatique selon le ratio d'aspect
+// TODO: Implémenter le redimensionnement automatique selon le ratio d'aspect
         // Cela nécessiterait de charger l'image et calculer ses dimensions réelles
 
         return [
@@ -225,10 +224,10 @@ class ImageRenderer {
      * @param array $properties Propriétés de l'élément
      * @return string Styles CSS inline
      */
-    private function generateImageStyles(array $properties): string {
+    private function generateImageStyles(array $properties): string
+    {
         $styles = self::DEFAULT_STYLES;
-
-        // Propriétés de bordure
+// Propriétés de bordure
         if (isset($properties['borderWidth'])) {
             $styles['border-width'] = $this->sanitizeCssValue($properties['borderWidth'], '0px');
         }
@@ -269,24 +268,13 @@ class ImageRenderer {
      * @param array $properties Propriétés originales
      * @return string HTML de l'image
      */
-    private function generateImageHtml(string $imageUrl, array $dimensions, string $styles, array $properties): string {
+    private function generateImageHtml(string $imageUrl, array $dimensions, string $styles, array $properties): string
+    {
         $alt = $properties['alt'] ?? $properties['label'] ?? 'Image';
         $title = $properties['title'] ?? $alt;
-
-        // Placeholder par défaut pour le lazy loading
+// Placeholder par défaut pour le lazy loading
         $placeholder = $properties['placeholder'] ?? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+';
-
-        $html = sprintf(
-            '<img data-src="%s" src="%s" alt="%s" title="%s" loading="lazy" style="width: %dpx; height: %dpx; %s" class="lazy-image" />',
-            htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars($placeholder, ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
-            $dimensions['width'],
-            $dimensions['height'],
-            $styles
-        );
-
+        $html = sprintf('<img data-src="%s" src="%s" alt="%s" title="%s" loading="lazy" style="width: %dpx; height: %dpx; %s" class="lazy-image" />', htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'), htmlspecialchars($placeholder, ENT_QUOTES, 'UTF-8'), htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'), htmlspecialchars($title, ENT_QUOTES, 'UTF-8'), $dimensions['width'], $dimensions['height'], $styles);
         return $html;
     }
 
@@ -296,11 +284,9 @@ class ImageRenderer {
      * @param string $message Message d'erreur
      * @return string HTML du placeholder
      */
-    private function getErrorPlaceholder(string $message): string {
-        return sprintf(
-            '<div style="border: 1px solid #ff0000; padding: 10px; background-color: #ffe6e6; color: #ff0000; font-size: 12px;">%s</div>',
-            htmlspecialchars($message, ENT_QUOTES, 'UTF-8')
-        );
+    private function getErrorPlaceholder(string $message): string
+    {
+        return sprintf('<div style="border: 1px solid #ff0000; padding: 10px; background-color: #ffe6e6; color: #ff0000; font-size: 12px;">%s</div>', htmlspecialchars($message, ENT_QUOTES, 'UTF-8'));
     }
 
     /**
@@ -310,7 +296,8 @@ class ImageRenderer {
      * @param string $default Valeur par défaut
      * @return string Valeur nettoyée
      */
-    private function sanitizeCssValue($value, string $default): string {
+    private function sanitizeCssValue($value, string $default): string
+    {
         if (is_null($value) || $value === '') {
             return $default;
         }
@@ -340,7 +327,8 @@ class ImageRenderer {
      * @param array $styles Tableau de styles
      * @return string Chaîne CSS
      */
-    private function arrayToCss(array $styles): string {
+    private function arrayToCss(array $styles): string
+    {
         $css = [];
         foreach ($styles as $property => $value) {
             $css[] = sprintf('%s: %s', $property, $value);
@@ -354,7 +342,8 @@ class ImageRenderer {
      * @param string $type Type d'élément
      * @return bool True si supporté
      */
-    public function supports(string $type): bool {
+    public function supports(string $type): bool
+    {
         return in_array($type, self::SUPPORTED_TYPES);
     }
 
@@ -363,7 +352,8 @@ class ImageRenderer {
      *
      * @return array Types d'éléments supportés
      */
-    public function getSupportedTypes(): array {
+    public function getSupportedTypes(): array
+    {
         return self::SUPPORTED_TYPES;
     }
 }

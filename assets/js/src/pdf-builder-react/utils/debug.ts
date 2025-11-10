@@ -3,7 +3,7 @@ function isDebugEnabled(): boolean {
   return process.env.NODE_ENV === 'development' ||
          window.location.hostname === 'localhost' ||
          window.location.search.includes('debug=pdf') ||
-         (window as any).pdfBuilderDebug === true;
+         window.pdfBuilderDebug === true;
 }
 
 // Extension de Window pour le debug
@@ -14,19 +14,19 @@ declare global {
 }
 
 // Fonction de logging conditionnel
-export function debugLog(...args: any[]) {
+export function debugLog(...args: unknown[]) {
   if (isDebugEnabled()) {
     console.log(...args);
   }
 }
 
-export function debugError(...args: any[]) {
+export function debugError(...args: unknown[]) {
   if (isDebugEnabled()) {
     console.error(...args);
   }
 }
 
-export function debugWarn(...args: any[]) {
+export function debugWarn(...args: unknown[]) {
   if (isDebugEnabled()) {
     console.warn(...args);
   }

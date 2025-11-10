@@ -1,9 +1,9 @@
 import React from 'react';
-import { Element } from '../../types/elements';
+import { CustomerInfoElement } from '../../types/elements';
 
 interface CustomerInfoPropertiesProps {
-  element: Element;
-  onChange: (elementId: string, property: string, value: any) => void;
+  element: CustomerInfoElement;
+  onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
@@ -92,7 +92,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showHeaders !== false}
+              checked={element.showHeaders !== false}
               onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -105,7 +105,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showBorders !== false}
+              checked={element.showBorders !== false}
               onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -118,7 +118,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showFullName !== false}
+              checked={element.showFullName !== false}
               onChange={(e) => onChange(element.id, 'showFullName', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -127,11 +127,11 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l'adresse
+              Afficher l&apos;adresse
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showAddress !== false}
+              checked={element.showAddress !== false}
               onChange={(e) => onChange(element.id, 'showAddress', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -140,11 +140,11 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l'email
+              Afficher l&apos;email
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showEmail !== false}
+              checked={element.showEmail !== false}
               onChange={(e) => onChange(element.id, 'showEmail', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -157,7 +157,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showPhone !== false}
+              checked={element.showPhone !== false}
               onChange={(e) => onChange(element.id, 'showPhone', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -174,15 +174,15 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le nom de l'entreprise
+              Afficher le nom de l&apos;entreprise
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showCompanyName !== false}
+              checked={element.showCompanyName !== false}
               onChange={(e) => onChange(element.id, 'showCompanyName', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '11px', color: '#666' }}>Nom de l'entreprise du client</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Nom de l&apos;entreprise du client</span>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
@@ -191,7 +191,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showVatNumber !== false}
+              checked={element.showVatNumber !== false}
               onChange={(e) => onChange(element.id, 'showVatNumber', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
@@ -200,15 +200,15 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l'adresse de l'entreprise
+              Afficher l&apos;adresse de l&apos;entreprise
             </label>
             <input
               type="checkbox"
-              checked={(element as any).showCompanyAddress !== false}
+              checked={element.showCompanyAddress !== false}
               onChange={(e) => onChange(element.id, 'showCompanyAddress', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
-            <span style={{ fontSize: '11px', color: '#666' }}>Adresse de l'entreprise (si différente)</span>
+            <span style={{ fontSize: '11px', color: '#666' }}>Adresse de l&apos;entreprise (si différente)</span>
           </div>
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
@@ -218,7 +218,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               Disposition
             </label>
             <select
-              value={(element as any).layout || 'vertical'}
+              value={element.layout || 'vertical'}
               onChange={(e) => onChange(element.id, 'layout', e.target.value)}
               style={{
                 width: '100%',
@@ -558,10 +558,10 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
           {/* Police de l'en-tête - Uniquement si les en-têtes sont affichés */}
-          {(element as any).showHeaders !== false && (
+          {element.showHeaders !== false && (
             <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
               <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-                Police de l'en-tête
+                Police de l&apos;en-tête
               </h4>
 
             <div style={{ marginBottom: '8px' }}>
@@ -572,7 +572,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 type="number"
                 min="8"
                 max="32"
-                value={(element as any).headerFontSize || ((element as any).fontSize || 12) + 2}
+                value={element.headerFontSize || (element.fontSize || 12) + 2}
                 onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 14)}
                 style={{
                   width: '100%',
@@ -589,7 +589,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Famille de police
               </label>
               <select
-                value={(element as any).headerFontFamily || (element as any).fontFamily || 'Arial'}
+                value={element.headerFontFamily || element.fontFamily || 'Arial'}
                 onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -617,7 +617,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Épaisseur de police
               </label>
               <select
-                value={(element as any).headerFontWeight || (element as any).fontWeight || 'normal'}
+                value={element.headerFontWeight || element.fontWeight || 'normal'}
                 onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -639,7 +639,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Style de police
               </label>
               <select
-                value={(element as any).headerFontStyle || (element as any).fontStyle || 'normal'}
+                value={element.headerFontStyle || element.fontStyle || 'normal'}
                 onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -671,7 +671,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 type="number"
                 min="8"
                 max="24"
-                value={(element as any).bodyFontSize || (element as any).fontSize || 12}
+                value={element.bodyFontSize || element.fontSize || 12}
                 onChange={(e) => onChange(element.id, 'bodyFontSize', parseInt(e.target.value) || 12)}
                 style={{
                   width: '100%',
@@ -688,7 +688,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Famille de police
               </label>
               <select
-                value={(element as any).bodyFontFamily || (element as any).fontFamily || 'Arial'}
+                value={element.bodyFontFamily || element.fontFamily || 'Arial'}
                 onChange={(e) => onChange(element.id, 'bodyFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -716,7 +716,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Épaisseur de police
               </label>
               <select
-                value={(element as any).bodyFontWeight || (element as any).fontWeight || 'normal'}
+                value={element.bodyFontWeight || element.fontWeight || 'normal'}
                 onChange={(e) => onChange(element.id, 'bodyFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -738,7 +738,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 Style de police
               </label>
               <select
-                value={(element as any).bodyFontStyle || (element as any).fontStyle || 'normal'}
+                value={element.bodyFontStyle || element.fontStyle || 'normal'}
                 onChange={(e) => onChange(element.id, 'bodyFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -764,7 +764,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               type="number"
               min="8"
               max="24"
-              value={(element as any).fontSize || 12}
+              value={element.fontSize || 12}
               onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 12)}
               style={{
                 width: '100%',
@@ -778,7 +778,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px', opacity: 0.6 }}>
             <select
-              value={(element as any).fontFamily || 'Arial'}
+              value={element.fontFamily || 'Arial'}
               onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
               style={{
                 width: '100%',
@@ -803,7 +803,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px', opacity: 0.6 }}>
             <select
-              value={(element as any).fontWeight || 'normal'}
+              value={element.fontWeight || 'normal'}
               onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
               style={{
                 width: '100%',
@@ -822,7 +822,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px', opacity: 0.6 }}>
             <select
-              value={(element as any).fontStyle || 'normal'}
+              value={element.fontStyle || 'normal'}
               onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
               style={{
                 width: '100%',
@@ -844,7 +844,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).backgroundColor || 'transparent'}
+              value={element.backgroundColor || 'transparent'}
               onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
               style={{
                 width: '100%',
@@ -861,7 +861,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).borderColor || '#e5e7eb'}
+              value={element.borderColor || '#e5e7eb'}
               onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
               style={{
                 width: '100%',
@@ -878,7 +878,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </label>
             <input
               type="color"
-              value={(element as any).textColor || '#374151'}
+              value={element.textColor || '#374151'}
               onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
               style={{
                 width: '100%',
@@ -971,7 +971,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               Alignement horizontal
             </label>
             <select
-              value={(element as any).textAlign || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -992,7 +992,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               Alignement vertical
             </label>
             <select
-              value={(element as any).verticalAlign || 'top'}
+              value={element.verticalAlign || 'top'}
               onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value)}
               style={{
                 width: '100%',

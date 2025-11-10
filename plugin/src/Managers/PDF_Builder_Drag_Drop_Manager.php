@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -16,7 +18,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer les interactions de drag & drop
  */
-class PDF_Builder_Drag_Drop_Manager
+class PdfBuilderDragDropManager
 {
     /**
      * Instance singleton
@@ -54,7 +56,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Initialiser les dépendances
      */
-    private function init_dependencies()
+    private function initDependencies()
     {
         // Plus de dépendances canvas
     }
@@ -62,7 +64,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Démarrer une session de drag
      */
-    public function start_drag_session($session_id, $element_ids, $initial_positions, $canvas_bounds = null)
+    public function startDragSession($session_id, $element_ids, $initial_positions, $canvas_bounds = null)
     {
         $session = [
             'id' => $session_id,
@@ -94,7 +96,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Mettre à jour la position pendant le drag
      */
-    public function update_drag_position($session_id, $delta_x, $delta_y, $snap_to_grid = false, $grid_size = 10)
+    public function updateDragPosition($session_id, $delta_x, $delta_y, $snap_to_grid = false, $grid_size = 10)
     {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Drag session not found');
@@ -151,7 +153,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Finaliser une session de drag
      */
-    public function end_drag_session($session_id, $final_positions = null)
+    public function endDragSession($session_id, $final_positions = null)
     {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Drag session not found');
@@ -189,7 +191,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Obtenir l'état d'une session de drag
      */
-    public function get_drag_session($session_id)
+    public function getDragSession($session_id)
     {
         return $this->active_drag_sessions[$session_id] ?? null;
     }
@@ -197,7 +199,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Nettoyer une session de drag
      */
-    public function cleanup_drag_session($session_id)
+    public function cleanupDragSession($session_id)
     {
         if (isset($this->active_drag_sessions[$session_id])) {
             unset($this->active_drag_sessions[$session_id]);
@@ -207,7 +209,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Valider les données de drag
      */
-    public function validate_drag_data($element_ids, $initial_positions)
+    public function validateDragData($element_ids, $initial_positions)
     {
         $errors = [];
 
@@ -237,7 +239,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Calculer les collisions pendant le drag
      */
-    public function calculate_drag_collisions($session_id, $all_elements)
+    public function calculateDragCollisions($session_id, $all_elements)
     {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return [];
@@ -280,7 +282,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Logger les événements de drag
      */
-    private function log_drag_event($event_type, $session_id, $data = [])
+    private function logDragEvent($event_type, $session_id, $data = [])
     {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
@@ -300,7 +302,7 @@ class PDF_Builder_Drag_Drop_Manager
     /**
      * Obtenir les statistiques de performance du drag
      */
-    public function get_drag_performance_stats()
+    public function getDragPerformanceStats()
     {
         $stats = [
             'active_sessions' => count($this->active_drag_sessions),

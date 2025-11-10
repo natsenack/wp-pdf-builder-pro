@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Dynamic Element Styles
  * Génère les styles CSS dynamiques pour les éléments du canvas basés sur le template
@@ -9,14 +10,14 @@ if (!defined('ABSPATH')) {
 }
 
 // Cette fonction sera appelée pour générer des styles CSS pour les éléments
-function pdf_builder_get_element_inline_styles($element) {
+function pdf_builder_get_element_inline_styles($element)
+{
+
     $styles = [];
-    
-    // Récupérer les propriétés de l'élément
+// Récupérer les propriétés de l'élément
     $type = $element['type'] ?? '';
     $properties = $element['properties'] ?? [];
-    
-    // Appliquer les styles selon le type
+// Appliquer les styles selon le type
     switch ($type) {
         case 'rectangle':
         case 'shape':
@@ -24,10 +25,10 @@ function pdf_builder_get_element_inline_styles($element) {
                 $styles['background-color'] = $properties['fillColor'];
             }
             if (isset($properties['strokeColor']) && isset($properties['strokeWidth'])) {
-                $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
+                                                                                                                                                                                                             $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
             }
+
             break;
-            
         case 'circle':
             if (isset($properties['fillColor'])) {
                 $styles['background-color'] = $properties['fillColor'];
@@ -36,14 +37,14 @@ function pdf_builder_get_element_inline_styles($element) {
                 $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
             }
             $styles['border-radius'] = '50%';
+
             break;
-            
         case 'line':
             if (isset($properties['strokeColor'])) {
                 $styles['border-top'] = ($properties['strokeWidth'] ?? 1) . 'px solid ' . $properties['strokeColor'];
             }
+
             break;
-            
         case 'text':
         case 'document_type':
         case 'order_number':
@@ -67,8 +68,8 @@ function pdf_builder_get_element_inline_styles($element) {
             if (isset($properties['backgroundColor'])) {
                 $styles['background-color'] = $properties['backgroundColor'];
             }
+
             break;
-            
         case 'product_table':
         case 'company_info':
         case 'customer_info':
@@ -78,14 +79,17 @@ function pdf_builder_get_element_inline_styles($element) {
             if (isset($properties['borderColor']) && isset($properties['borderWidth'])) {
                 $styles['border'] = $properties['borderWidth'] . 'px solid ' . $properties['borderColor'];
             }
+
             break;
     }
-    
+
     return $styles;
 }
 
 // Convertir array de styles en string CSS
-function pdf_builder_styles_to_string($styles) {
+function pdf_builder_styles_to_string($styles)
+{
+
     $css = [];
     foreach ($styles as $property => $value) {
         $css[] = $property . ': ' . $value;
@@ -96,7 +100,9 @@ function pdf_builder_styles_to_string($styles) {
 /**
  * AJAX - Générer les styles pour les éléments du template
  */
-function pdf_builder_ajax_get_element_styles() {
+function pdf_builder_ajax_get_element_styles()
+{
+
     try {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
@@ -105,14 +111,12 @@ function pdf_builder_ajax_get_element_styles() {
         // Récupérer les éléments depuis le POST
         $elements_json = isset($_POST['elements']) ? wp_unslash($_POST['elements']) : '[]';
         $elements = json_decode($elements_json, true);
-
         if (!is_array($elements)) {
             wp_send_json_error('Éléments invalides');
         }
 
         $element_styles = [];
-
-        // Générer les styles pour chaque élément
+// Générer les styles pour chaque élément
         foreach ($elements as $element) {
             $element_id = $element['id'] ?? '';
             if (empty($element_id)) {
@@ -126,7 +130,6 @@ function pdf_builder_ajax_get_element_styles() {
         wp_send_json_success([
             'styles' => $element_styles
         ]);
-
     } catch (Exception $e) {
         wp_send_json_error('Erreur: ' . $e->getMessage());
     }

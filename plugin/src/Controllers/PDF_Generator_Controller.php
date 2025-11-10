@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class PDF_Builder_Pro_Generator
+class PdfBuilderProGenerator
 {
     private $html_content = '';
     private $cache = [];
@@ -84,24 +84,24 @@ class PDF_Builder_Pro_Generator
     {
         try {
             $this->reset();
-            $this->validate_elements($elements);
+            $this->validateElements($elements);
 
             // Générer le HTML au lieu du PDF
-            $this->html_content = $this->generate_html_from_elements($elements);
+            $this->html_content = $this->generateHtmlFromElements($elements);
 
             // Pour l'instant, retourner le HTML directement
             // TODO: Convertir HTML vers PDF avec une vraie bibliothèque
             return $this->html_content;
         } catch (Exception $e) {
-            $this->log_error('Generation PDF echouee: ' . $e->getMessage());
-            return $this->generate_fallback_html($elements);
+            $this->logError('Generation PDF echouee: ' . $e->getMessage());
+            return $this->generateFallbackHtml($elements);
         }
     }
 
     /**
      * Générer du HTML à partir des éléments Canvas
      */
-    private function generate_html_from_elements($elements)
+    private function generateHtmlFromElements($elements)
     {
         $html = '<!DOCTYPE html>
 <html>
@@ -127,7 +127,7 @@ class PDF_Builder_Pro_Generator
     <div class="pdf-container">';
 
         foreach ($elements as $element) {
-            $html .= $this->render_element_to_html($element);
+            $html .= $this->renderElementToHtml($element);
         }
 
         $html .= '
@@ -138,12 +138,12 @@ class PDF_Builder_Pro_Generator
         return $html;
     }
 
-    private function render_element_to_html($element)
+    private function renderElementToHtml($element)
     {
         $type = $element['type'] ?? 'text';
         $coords = $this->extractElementCoordinates($element, 1); // Garder en pixels pour HTML
 
-        
+
 
         // Donner des dimensions par défaut si manquantes
         if (empty($coords['width']) || $coords['width'] <= 0) {
@@ -172,7 +172,7 @@ class PDF_Builder_Pro_Generator
 
         // Utiliser la fonction centralisée pour extraire tous les styles
         if (isset($element['properties'])) {
-            $additional_styles = $this->extract_element_styles($element['properties']);
+            $additional_styles = $this->extractElementStyles($element['properties']);
             if (!empty($additional_styles)) {
                 $style .= $additional_styles . '; ';
             }
@@ -189,7 +189,7 @@ class PDF_Builder_Pro_Generator
 
         foreach ($direct_properties as $prop) {
             if (isset($element[$prop]) && !isset($element['properties'][$prop])) {
-                $css_prop = $this->convert_property_to_css($prop, $element[$prop], $element);
+                $css_prop = $this->convertPropertyToCss($prop, $element[$prop], $element);
                 if ($css_prop) {
                     $style .= $css_prop . '; ';
                 }
@@ -197,22 +197,21 @@ class PDF_Builder_Pro_Generator
         }
 
         try {
-            return $this->render_element_content($element, $style, $type);
+            return $this->renderElementContent($element, $style, $type);
         } catch (Exception $e) {
-            
             return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
         }
     }
 
-    private function render_element_content($element, $style, $type)
+    private function renderElementContent($element, $style, $type)
     {
         switch ($type) {
             case 'text':
             case 'dynamic-text':
             case 'multiline_text':
                 // LOG DES PROPRIÉTÉS TEXT
-                
-                
+
+
 
                 // Pour dynamic-text, prioriser customContent, sinon content/text
                 if ($type === 'dynamic-text') {
@@ -221,30 +220,28 @@ class PDF_Builder_Pro_Generator
                     $content = $element['content'] ?? $element['text'] ?? '';
                 }
 
-                
+
 
                 // Pour dynamic-text, remplacer les variables si un ordre est défini
                 if ($type === 'dynamic-text' && $this->order) {
                     $original_content = $content;
-                    $content = $this->replace_order_variables($content, $this->order);
-                    
+                    $content = $this->replaceOrderVariables($content, $this->order);
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
                 // LOG DES PROPRIÉTÉS IMAGE
-                
-                
+
+
 
                 $src = $element['imageUrl'] ?? $element['src'] ?? '';
                 if (!$src && $type === 'company_logo') {
                     $custom_logo_id = get_theme_mod('custom_logo');
                     $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
-                    
                 }
 
-                
+
 
                 if ($src) {
                     return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
@@ -253,33 +250,33 @@ class PDF_Builder_Pro_Generator
 
             case 'rectangle':
                 // LOG DES PROPRIÉTÉS RECTANGLE
-                
+
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
 
             case 'divider':
             case 'line':
                 // LOG DES PROPRIÉTÉS LINE
-                
+
 
                 $line_color = $element['lineColor'] ?? '#64748b';
                 $line_width = $element['lineWidth'] ?? 2;
                 $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
 
-                
+
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
             case 'product_table':
                 $table_html = '';
-                $table_html = $this->generate_table_html_from_canvas_template($element);
+                $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
 
             case 'customer_info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
-                
-                
-                
+
+
+
 
                 $customer_info = '';
                 if ($this->order) {
@@ -287,7 +284,7 @@ class PDF_Builder_Pro_Generator
                     $show_labels = $element['showLabels'] ?? true;
                     $label_style = $element['labelStyle'] ?? 'normal';
 
-                    
+
 
                     $customer_parts = [];
 
@@ -324,24 +321,23 @@ class PDF_Builder_Pro_Generator
                     }
 
                     $customer_info = implode('<br>', $customer_parts);
-                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
             case 'company_info':
                 // Récupération des données d'entreprise
-                $company_data = $this->get_company_data();
+                $company_data = $this->getCompanyData();
 
                 // Formatage selon le template choisi
-                $company_info = $this->format_company_info_by_template($element, $company_data);
+                $company_info = $this->formatCompanyInfoByTemplate($element, $company_data);
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
 
             case 'order_number':
                 // LOG DES PROPRIÉTÉS ORDER NUMBER
-                
-                
-                
+
+
+
 
                 $order_number = '';
                 if ($this->order) {
@@ -350,38 +346,36 @@ class PDF_Builder_Pro_Generator
                     $label_text = $element['labelText'] ?? 'N° de commande:';
 
                     // Replace variables in format
-                    $order_number = $this->replace_order_variables($format, $this->order);
+                    $order_number = $this->replaceOrderVariables($format, $this->order);
 
                     if ($show_label && $label_text) {
                         $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
                     }
-
-                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
 
             case 'document_type':
                 // LOG DES PROPRIÉTÉS DOCUMENT TYPE
-                
+
 
                 $doc_type = $element['documentType'] ?? 'invoice';
                 $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
 
-                
+
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
 
             case 'mentions':
                 // LOG DES PROPRIÉTÉS MENTIONS
-                
-                
-                
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
+
+
+
 
                 $mentions = '';
                 if ($this->order) {
@@ -444,7 +438,6 @@ class PDF_Builder_Pro_Generator
                     }
 
                     $mentions = implode($separator, $mention_parts);
-                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
         }
@@ -453,7 +446,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Extraire les styles CSS des propriétés de l'élément
      */
-    private function extract_element_styles($properties)
+    private function extractElementStyles($properties)
     {
         $styles = [];
 
@@ -581,7 +574,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Convertir une propriété d'élément en propriété CSS
      */
-    private function convert_property_to_css($property, $value, $element = null)
+    private function convertPropertyToCss($property, $value, $element = null)
     {
         switch ($property) {
             case 'color':
@@ -643,7 +636,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Alias pour la compatibilite descendante
      */
-    public function generate_from_elements($elements)
+    public function generateFromElements($elements)
     {
         return $this->generate($elements);
     }
@@ -662,7 +655,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Validation des elements d'entree
      */
-    private function validate_elements($elements)
+    private function validateElements($elements)
     {
         if (!is_array($elements) || empty($elements)) {
             throw new Exception('Elements invalides ou vides');
@@ -678,7 +671,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Génération de fallback HTML
      */
-    private function generate_fallback_html($elements)
+    private function generateFallbackHtml($elements)
     {
         return '<!DOCTYPE html>
 <html>
@@ -694,16 +687,15 @@ class PDF_Builder_Pro_Generator
     /**
      * Log d'erreur
      */
-    private function log_error($message)
+    private function logError($message)
     {
         $this->errors[] = $message;
-        
     }
 
     /**
      * Remplace les variables de commande et compagnie dans le contenu
      */
-    private function replace_order_variables($content, $order = null)
+    private function replaceOrderVariables($content, $order = null)
     {
         // Variables de compagnie (toujours disponibles)
         $company_replacements = array(
@@ -713,7 +705,7 @@ class PDF_Builder_Pro_Generator
             '{{company_siret}}' => get_option('pdf_builder_company_siret', ''),
             '{{company_vat}}' => get_option('pdf_builder_company_vat', ''),
             '{{company_address}}' => get_option('pdf_builder_company_address', ''),
-            '{{company_info}}' => $this->format_complete_company_info(),
+            '{{company_info}}' => $this->formatCompleteCompanyInfo(),
         );
 
         // Variables de commande (seulement si ordre existe)
@@ -790,11 +782,11 @@ class PDF_Builder_Pro_Generator
         // Appliquer les remplacements dans l'ordre : doubles, simples, crochets
         $original_content = $content;
         $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
-        
+
         $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
-        
+
         $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
-        
+
 
         return $content;
     }
@@ -802,7 +794,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Formate les informations complètes de la compagnie
      */
-    private function format_complete_company_info()
+    private function formatCompleteCompanyInfo()
     {
         $company_info = get_option('pdf_builder_company_info', '');
         if (!empty($company_info)) {
@@ -861,7 +853,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Récupère les données complètes de l'entreprise depuis WooCommerce/WordPress
      */
-    private function get_company_data()
+    private function getCompanyData()
     {
         return [
             'name' => get_bloginfo('name') ?: '',
@@ -891,7 +883,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Formate les informations d'entreprise selon le template choisi
      */
-    private function format_company_info_by_template($element, $company_data)
+    private function formatCompanyInfoByTemplate($element, $company_data)
     {
         $template = $element['template'] ?? 'default';
         $fields = $element['fields'] ?? ['name', 'address', 'phone', 'email', 'vat', 'siret'];
@@ -904,8 +896,8 @@ class PDF_Builder_Pro_Generator
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
                     $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
                 }
-                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
-                    $parts[] = $this->format_address($company_data);
+                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                    $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('phone', $fields) && !empty($company_data['phone'])) {
                     $parts[] = '📞 ' . esc_html($company_data['phone']);
@@ -923,8 +915,8 @@ class PDF_Builder_Pro_Generator
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
                     $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
                 }
-                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
-                    $parts[] = $this->format_address($company_data);
+                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                    $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('siret', $fields) && !empty($company_data['siret'])) {
                     $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
@@ -962,8 +954,8 @@ class PDF_Builder_Pro_Generator
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
                     $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
                 }
-                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
-                    $parts[] = $this->format_address($company_data);
+                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                    $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('phone', $fields) && !empty($company_data['phone'])) {
                     $parts[] = 'Téléphone: ' . esc_html($company_data['phone']);
@@ -992,7 +984,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Vérifie si des données d'adresse sont disponibles
      */
-    private function has_address_data($company_data)
+    private function hasAddressData($company_data)
     {
         return !empty($company_data['address']) ||
                !empty($company_data['city']) ||
@@ -1003,7 +995,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Formate l'adresse complète
      */
-    private function format_address($company_data)
+    private function formatAddress($company_data)
     {
         $address_parts = [];
 
@@ -1036,7 +1028,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Retourne les styles prédéfinis pour les tableaux selon le style choisi
      */
-    private function get_table_styles($style)
+    private function getTableStyles($style)
     {
         $styles = [
             'default' => [
@@ -1311,17 +1303,17 @@ class PDF_Builder_Pro_Generator
     /**
      * Génère le HTML du tableau en utilisant d'abord un template avec données fictives du canvas, puis remplace par les vraies données
      */
-    private function generate_table_html_from_canvas_template($element)
+    private function generateTableHtmlFromCanvasTemplate($element)
     {
         // Créer des données fictives pour générer le template HTML du canvas
-        $fake_data = $this->create_fake_order_data_for_template();
+        $fake_data = $this->createFakeOrderDataForTemplate();
 
         // Générer le HTML du tableau avec les données fictives (mais préserve tous les styles du canvas)
-        $fake_html = $this->generate_fake_table_html($element, $fake_data);
+        $fake_html = $this->generateFakeTableHtml($element, $fake_data);
 
         // Remplacer les données fictives par les vraies données de la commande
-        $real_data = $this->create_real_order_data();
-        $real_html = $this->replace_fake_data_with_real_data($fake_html, $fake_data, $real_data);
+        $real_data = $this->createRealOrderData();
+        $real_html = $this->replaceFakeDataWithRealData($fake_html, $fake_data, $real_data);
 
         return $real_html;
     }
@@ -1329,13 +1321,13 @@ class PDF_Builder_Pro_Generator
     /**
      * Crée des données fictives pour générer le template HTML du canvas
      */
-    private function create_fake_order_data_for_template()
+    private function createFakeOrderDataForTemplate()
     {
         return [
             'items' => [
-                $this->create_fake_item_data(1),
-                $this->create_fake_item_data(2),
-                $this->create_fake_fee_data(1), // Ajouter un frais fictif
+                $this->createFakeItemData(1),
+                $this->createFakeItemData(2),
+                $this->createFakeFeeData(1), // Ajouter un frais fictif
             ],
             'subtotal' => 50.00,
             'shipping' => 5.00,
@@ -1348,7 +1340,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Crée des données fictives complètes pour un item
      */
-    private function create_fake_item_data($index)
+    private function createFakeItemData($index)
     {
         return [
             // Propriétés de base
@@ -1448,7 +1440,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Crée des données fictives pour un frais
      */
-    private function create_fake_fee_data($index)
+    private function createFakeFeeData($index)
     {
         return [
             // Propriétés de base
@@ -1484,10 +1476,10 @@ class PDF_Builder_Pro_Generator
     /**
      * Crée les vraies données de la commande
      */
-    private function create_real_order_data()
+    private function createRealOrderData()
     {
         if (!$this->order) {
-            return $this->create_fake_order_data_for_template(); // Fallback
+            return $this->createFakeOrderDataForTemplate(); // Fallback
         }
 
         $items = [];
@@ -1497,7 +1489,7 @@ class PDF_Builder_Pro_Generator
             $product = $item->get_product();
 
             // Récupérer TOUTES les propriétés disponibles de l'item et du produit
-            $item_data = $this->extract_complete_item_data($item, $product);
+            $item_data = $this->extractCompleteItemData($item, $product);
             $item_data['item_type'] = 'line_item'; // Marquer comme item de produit
 
             $items[] = $item_data;
@@ -1505,7 +1497,7 @@ class PDF_Builder_Pro_Generator
 
         // Récupérer les frais (fees) et les ajouter au tableau
         foreach ($this->order->get_items('fee') as $fee) {
-            $fee_data = $this->extract_fee_item_data($fee);
+            $fee_data = $this->extractFeeItemData($fee);
             $fee_data['item_type'] = 'fee'; // Marquer comme frais
 
             $items[] = $fee_data;
@@ -1531,7 +1523,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Extrait toutes les propriétés disponibles d'un item de commande WooCommerce
      */
-    private function extract_complete_item_data($item, $product = null)
+    private function extractCompleteItemData($item, $product = null)
     {
         // Version simplifiée et robuste avec vérifications de sécurité
         $data = [
@@ -1572,7 +1564,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Extrait les données d'un frais (fee) de commande WooCommerce
      */
-    private function extract_fee_item_data($fee)
+    private function extractFeeItemData($fee)
     {
         $data = [
             'name' => 'Frais',
@@ -1598,14 +1590,14 @@ class PDF_Builder_Pro_Generator
     /**
      * Génère le HTML du tableau avec des données fictives pour le template du canvas
      */
-    private function generate_fake_table_html($element, $fake_data)
+    private function generateFakeTableHtml($element, $fake_data)
     {
         $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
         $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
         $table_style = $element['tableStyle'] ?? 'classic';
         $show_borders = $element['showBorders'] ?? true;
         $show_headers = $element['showHeaders'] ?? true;        // Appliquer les styles prédéfinis selon tableStyle
-        $table_styles = $this->get_table_styles($table_style);
+        $table_styles = $this->getTableStyles($table_style);
         $even_row_bg = $element['evenRowBg'] ?? $table_styles['even_row_bg'];
         $odd_row_bg = $element['oddRowBg'] ?? $table_styles['odd_row_bg'];
         $odd_row_text_color = $element['oddRowTextColor'] ?? $table_styles['odd_row_text_color'];
@@ -1825,7 +1817,7 @@ class PDF_Builder_Pro_Generator
     /**
      * Remplace les données fictives par les vraies données dans le HTML généré
      */
-    private function replace_fake_data_with_real_data($html, $fake_data, $real_data)
+    private function replaceFakeDataWithRealData($html, $fake_data, $real_data)
     {
         // Remplacer les données des items - toutes les propriétés disponibles
         foreach ($fake_data['items'] as $index => $fake_item) {
@@ -1851,8 +1843,6 @@ class PDF_Builder_Pro_Generator
                             // Remplacement simple pour les valeurs scalaires
                             $html = str_replace((string)$fake_value, (string)$real_value, $html);
                         }
-
-                        
                     }
                 }
             }
@@ -1863,11 +1853,10 @@ class PDF_Builder_Pro_Generator
         foreach ($totals_to_replace as $total_key) {
             if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
                 $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
-                
             }
         }
 
-        
+
         return $html;
     }
 }

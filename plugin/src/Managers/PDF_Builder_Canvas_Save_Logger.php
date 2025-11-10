@@ -1,7 +1,8 @@
 <?php
+
 /**
  * PDF Builder Pro - Canvas Save Logger
- * 
+ *
  * Système de logging dédié pour la sauvegarde des données canvas
  * Trace les éléments, les propriétés, et les résultats de sauvegarde
  *
@@ -9,23 +10,24 @@
  * @version 1.0.0
  */
 
+namespace WP_PDF_Builder_Pro\Managers;
+
+// Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Canvas_Save_Logger {
-
+class PdfBuilderCanvasSaveLogger
+{
     /**
      * Instance unique du logger
      */
     private static $instance = null;
-
-    /**
+/**
      * Fichier de log dédié
      */
     private $log_file;
-
-    /**
+/**
      * Niveaux de log
      */
     private $log_levels = [
@@ -34,8 +36,7 @@ class PDF_Builder_Canvas_Save_Logger {
         'WARNING' => 2,
         'ERROR' => 3,
     ];
-
-    /**
+/**
      * Niveau minimum de log à enregistrer
      */
     private $min_level = 'DEBUG';
@@ -43,18 +44,17 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Constructeur privé (Singleton)
      */
-    private function __construct() {
+    private function __construct()
+    {
         // Créer le fichier de log dans le répertoire cache du plugin
         $upload_dir = wp_upload_dir();
         $cache_dir = $upload_dir['basedir'] . '/pdf-builder-pro-cache/logs';
-        
         if (!is_dir($cache_dir)) {
             wp_mkdir_p($cache_dir);
         }
-        
+
         $this->log_file = $cache_dir . '/canvas-save.log';
-        
-        // Déterminer le niveau minimum à partir des options
+// Déterminer le niveau minimum à partir des options
         $level = get_option('pdf_builder_canvas_log_level', 'DEBUG');
         if (isset($this->log_levels[$level])) {
             $this->min_level = $level;
@@ -64,7 +64,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -74,7 +75,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Enregistrer un message de log
      */
-    private function log($level, $message, $data = null) {
+    private function log($level, $message, $data = null)
+    {
         // Vérifier si ce niveau doit être enregistré
         if ($this->log_levels[$level] < $this->log_levels[$this->min_level]) {
             return;
@@ -82,20 +84,19 @@ class PDF_Builder_Canvas_Save_Logger {
 
         $timestamp = current_time('Y-m-d H:i:s');
         $log_entry = "[$timestamp] [$level] $message";
-        
         if ($data !== null) {
             $log_entry .= "\n" . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
-        
+
         $log_entry .= "\n" . str_repeat('-', 80) . "\n";
-        
         file_put_contents($this->log_file, $log_entry, FILE_APPEND | LOCK_EX);
     }
 
     /**
      * Logger le début de sauvegarde
      */
-    public function log_save_start($template_id, $template_name) {
+    public function logSaveStart($template_id, $template_name)
+    {
         $this->log('INFO', 'Canvas Save Started', [
             'template_id' => $template_id,
             'template_name' => $template_name,
@@ -107,11 +108,13 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Logger les éléments reçus
      */
-    public function log_elements_received($elements, $count) {
+    public function logElementsReceived($elements, $count)
+    {
         $this->log('DEBUG', "Received $count element(s) from frontend", [
             'element_count' => $count,
             'first_element' => !empty($elements) ? $elements[0] : null,
             'elements_summary' => array_map(function ($el) {
+
                 return [
                     'id' => $el['id'] ?? 'N/A',
                     'type' => $el['type'] ?? 'N/A',
@@ -127,7 +130,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Logger les propriétés du canvas
      */
-    public function log_canvas_properties($canvas) {
+    public function logCanvasProperties($canvas)
+    {
         $this->log('DEBUG', 'Canvas Properties Received', [
             'zoom' => $canvas['zoom'] ?? 100,
             'width' => $canvas['width'] ?? 794,
@@ -142,10 +146,10 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Logger la validation
      */
-    public function log_validation($elements, $canvas) {
+    public function logValidation($elements, $canvas)
+    {
         $validation_errors = [];
-        
-        // Valider les éléments
+// Valider les éléments
         if (!is_array($elements)) {
             $validation_errors[] = 'Elements is not an array';
         } else {
@@ -174,7 +178,7 @@ class PDF_Builder_Canvas_Save_Logger {
             } elseif ($canvas['zoom'] < 10 || $canvas['zoom'] > 500) {
                 $validation_errors[] = 'Canvas: Zoom out of range (10-500)';
             }
-            
+
             if (!isset($canvas['width']) || !is_numeric($canvas['width'])) {
                 $validation_errors[] = 'Canvas: Invalid width';
             }
@@ -201,7 +205,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Logger une erreur de sauvegarde
      */
-    public function log_save_error($error_message, $error_data = null) {
+    public function logSaveError($error_message, $error_data = null)
+    {
         $this->log('ERROR', 'Canvas Save Error: ' . $error_message, [
             'error' => $error_message,
             'additional_data' => $error_data,
@@ -212,7 +217,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Logger le succès de la sauvegarde
      */
-    public function log_save_success($template_id, $element_count) {
+    public function logSaveSuccess($template_id, $element_count)
+    {
         $this->log('INFO', 'Canvas Save Successful', [
             'template_id' => $template_id,
             'elements_saved' => $element_count,
@@ -224,7 +230,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Nettoyer les anciens logs (garde les 7 derniers jours)
      */
-    public function cleanup_old_logs($days = 7) {
+    public function cleanupOldLogs($days = 7)
+    {
         if (!file_exists($this->log_file)) {
             return;
         }
@@ -236,16 +243,15 @@ class PDF_Builder_Canvas_Save_Logger {
 
         $cutoff_date = strtotime("-$days days");
         $new_lines = [];
-
         foreach ($lines as $line) {
-            // Vérifier si la ligne commence par un timestamp
+        // Vérifier si la ligne commence par un timestamp
             if (preg_match('/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/', $line, $matches)) {
                 $log_time = strtotime($matches[1]);
                 if ($log_time > $cutoff_date) {
                     $new_lines[] = $line;
                 }
             } elseif (!empty($line)) {
-                // Conserver les lignes qui font partie d'une entrée récente
+        // Conserver les lignes qui font partie d'une entrée récente
                 $new_lines[] = $line;
             }
         }
@@ -257,7 +263,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Obtenir les logs récents
      */
-    public function get_recent_logs($limit = 50) {
+    public function getRecentLogs($limit = 50)
+    {
         if (!file_exists($this->log_file)) {
             return [];
         }
@@ -269,7 +276,8 @@ class PDF_Builder_Canvas_Save_Logger {
     /**
      * Réinitialiser le fichier de log
      */
-    public function clear_logs() {
+    public function clearLogs()
+    {
         if (file_exists($this->log_file)) {
             file_put_contents($this->log_file, '');
         }

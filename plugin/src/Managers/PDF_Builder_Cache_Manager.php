@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -11,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_Cache_Manager
+class PdfBuilderCacheManager
 {
     /**
      * Instance unique de la classe
@@ -59,7 +61,7 @@ class PDF_Builder_Cache_Manager
     /**
      * Générer une clé de cache
      */
-    private function generate_key($key)
+    private function generateKey($key)
     {
         return $this->cache_prefix . md5($key);
     }
@@ -183,7 +185,7 @@ class PDF_Builder_Cache_Manager
     /**
      * Nettoyer le cache expiré
      */
-    public function cleanup_expired_cache()
+    public function cleanupExpiredCache()
     {
         // Vérifier si le cache est activé
         if (!$this->isEnabled()) {
@@ -200,7 +202,7 @@ class PDF_Builder_Cache_Manager
     /**
      * Obtenir les statistiques du cache
      */
-    public function get_stats()
+    public function getStats()
     {
         global $wpdb;
 
@@ -246,10 +248,10 @@ class PDF_Builder_Cache_Manager
     private function loadCacheSettings()
     {
         $settings = get_option('pdf_builder_settings', []);
-        
+
         // Vérifier si le cache est activé
         $this->cache_enabled = !empty($settings['cache_enabled']);
-        
+
         // Utiliser la TTL configurée ou la valeur par défaut
         $this->cache_expiration = intval($settings['cache_ttl'] ?? $this->cache_expiration);
     }

@@ -11,11 +11,14 @@
  * @since   Phase 5.8 - Corrections Sécurité
  */
 
+namespace WP_PDF_Builder_Pro\Core;
+
+// Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class PDF_Builder_Security_Validator
+class PdfBuilderSecurityValidator
 {
     /**
      * Sanitise le contenu HTML pour prévenir les attaques XSS
@@ -23,7 +26,7 @@ class PDF_Builder_Security_Validator
      * @param  string $content Contenu HTML à sanitiser
      * @return string Contenu HTML sécurisé
      */
-    public static function sanitize_html_content($content)
+    public static function sanitizeHtmlContent($content)
     {
         if (empty($content)) {
             return '';
@@ -147,13 +150,13 @@ class PDF_Builder_Security_Validator
 
         // Log des modifications pour audit
         if ($sanitized !== $content) {
-            self::log_security_event(
+            self::logSecurityEvent(
                 'html_sanitized',
                 [
                 'original_length' => strlen($content),
                 'sanitized_length' => strlen($sanitized),
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
         }
@@ -167,7 +170,7 @@ class PDF_Builder_Security_Validator
      * @param  string $json_data Données JSON à valider
      * @return mixed Données décodées et validées ou false si invalide
      */
-    public static function validate_json_data($json_data)
+    public static function validateJsonData($json_data)
     {
         if (empty($json_data)) {
             return false;
@@ -177,19 +180,19 @@ class PDF_Builder_Security_Validator
         $data = json_decode($json_data, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            self::log_security_event(
+            self::logSecurityEvent(
                 'invalid_json',
                 [
                 'error' => json_last_error_msg(),
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;
         }
 
         // Validation récursive des données
-        return self::sanitize_array_data($data);
+        return self::sanitizeArrayData($data);
     }
 
     /**
@@ -198,7 +201,7 @@ class PDF_Builder_Security_Validator
      * @param  array $data Données à sanitiser
      * @return array Données sanitizées
      */
-    private static function sanitize_array_data($data)
+    private static function sanitizeArrayData($data)
     {
         if (!is_array($data)) {
             return is_string($data) ? sanitize_text_field($data) : $data;
@@ -207,7 +210,7 @@ class PDF_Builder_Security_Validator
         $sanitized = [];
         foreach ($data as $key => $value) {
             $clean_key = sanitize_key($key);
-            $sanitized[$clean_key] = self::sanitize_array_data($value);
+            $sanitized[$clean_key] = self::sanitizeArrayData($value);
         }
 
         return $sanitized;
@@ -220,17 +223,17 @@ class PDF_Builder_Security_Validator
      * @param  string $action Action associée au nonce
      * @return bool True si valide
      */
-    public static function validate_nonce($nonce, $action)
+    public static function validateNonce($nonce, $action)
     {
         $valid = wp_verify_nonce($nonce, $action);
 
         if (!$valid) {
-            self::log_security_event(
+            self::logSecurityEvent(
                 'invalid_nonce',
                 [
                 'action' => $action,
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
         }
@@ -243,7 +246,7 @@ class PDF_Builder_Security_Validator
      *
      * @return string Adresse IP
      */
-    private static function get_client_ip()
+    private static function getClientIp()
     {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
@@ -281,7 +284,7 @@ class PDF_Builder_Security_Validator
      * @param array  $data  Données
      *                      supplémentaires
      */
-    private static function log_security_event($event, $data = [])
+    private static function logSecurityEvent($event, $data = [])
     {
         $log_data = array_merge(
             [
@@ -306,15 +309,15 @@ class PDF_Builder_Security_Validator
      * @param  string $capability Capacité requise (par défaut 'manage_options')
      * @return bool True si autorisé
      */
-    public static function check_permissions($capability = 'manage_options')
+    public static function checkPermissions($capability = 'manage_options')
     {
         if (!current_user_can($capability)) {
-            self::log_security_event(
+            self::logSecurityEvent(
                 'insufficient_permissions',
                 [
                 'required_capability' => $capability,
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;

@@ -11,11 +11,14 @@
  * @since   Phase 5.8 - Corrections Sécurité
  */
 
+namespace WP_PDF_Builder_Pro\Core;
+
+// Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class PDF_Builder_Path_Validator
+class PdfBuilderPathValidator
 {
     /**
      * Extensions de fichiers autorisées pour les PDFs
@@ -45,7 +48,7 @@ class PDF_Builder_Path_Validator
      *                                défaut)
      * @return bool True si valide
      */
-    public static function validate_file_path($path, $allow_absolute = false)
+    public static function validateFilePath($path, $allow_absolute = false)
     {
         if (empty($path)) {
             return false;
@@ -55,53 +58,53 @@ class PDF_Builder_Path_Validator
         $path = wp_normalize_path($path);
 
         // Vérification des traversées de répertoire
-        if (self::contains_directory_traversal($path)) {
-            self::log_security_event(
+        if (self::containsDirectoryTraversal($path)) {
+            self::logSecurityEvent(
                 'path_traversal_attempt',
                 [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;
         }
 
         // Vérification des chemins absolus
-        if (!$allow_absolute && self::is_absolute_path($path)) {
-            self::log_security_event(
+        if (!$allow_absolute && self::isAbsolutePath($path)) {
+            self::logSecurityEvent(
                 'absolute_path_attempt',
                 [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;
         }
 
         // Vérification de l'extension
-        if (!self::has_allowed_extension($path)) {
-            self::log_security_event(
+        if (!self::hasAllowedExtension($path)) {
+            self::logSecurityEvent(
                 'disallowed_extension',
                 [
                 'path' => $path,
                 'extension' => pathinfo($path, PATHINFO_EXTENSION),
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;
         }
 
         // Vérification du répertoire autorisé
-        if (!self::is_in_allowed_directory($path)) {
-            self::log_security_event(
+        if (!self::isInAllowedDirectory($path)) {
+            self::logSecurityEvent(
                 'disallowed_directory',
                 [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
-                'ip' => self::get_client_ip()
+                'ip' => self::getClientIp()
                 ]
             );
             return false;
@@ -116,7 +119,7 @@ class PDF_Builder_Path_Validator
      * @param  string $path Chemin à vérifier
      * @return bool True si contient une traversée
      */
-    private static function contains_directory_traversal($path)
+    private static function containsDirectoryTraversal($path)
     {
         // Vérifications de base
         $traversal_patterns = [
@@ -139,7 +142,7 @@ class PDF_Builder_Path_Validator
         }
 
         // Vérification des chemins qui commencent par /
-        if (strpos($path, '/') === 0 && !self::is_safe_absolute_path($path)) {
+        if (strpos($path, '/') === 0 && !self::isSafeAbsolutePath($path)) {
             return true;
         }
 
@@ -152,7 +155,7 @@ class PDF_Builder_Path_Validator
      * @param  string $path Chemin à vérifier
      * @return bool True si absolu
      */
-    private static function is_absolute_path($path)
+    private static function isAbsolutePath($path)
     {
         // Windows absolute paths
         if (preg_match('/^[A-Za-z]:[\\\\\/]/', $path)) {
@@ -173,7 +176,7 @@ class PDF_Builder_Path_Validator
      * @param  string $path Chemin absolu
      * @return bool True si sûr
      */
-    private static function is_safe_absolute_path($path)
+    private static function isSafeAbsolutePath($path)
     {
         $upload_dir = wp_upload_dir();
         $allowed_base_paths = [
@@ -198,13 +201,13 @@ class PDF_Builder_Path_Validator
      * @param  string $path Chemin du fichier
      * @return bool True si autorisée
      */
-    private static function has_allowed_extension($path)
+    private static function hasAllowedExtension($path)
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         // Pour les URLs data: (base64 encoded images)
         if (strpos($path, 'data:') === 0) {
-            return self::is_valid_data_url($path);
+            return self::isValidDataUrl($path);
         }
 
         return in_array($extension, self::ALLOWED_EXTENSIONS);
@@ -216,7 +219,7 @@ class PDF_Builder_Path_Validator
      * @param  string $data_url URL data à vérifier
      * @return bool True si valide
      */
-    private static function is_valid_data_url($data_url)
+    private static function isValidDataUrl($data_url)
     {
         // Format: data:[<mediatype>][;base64],<data>
         if (!preg_match('/^data:([a-z]+\/[a-z]+(;base64)?)?,/', $data_url)) {
@@ -242,7 +245,7 @@ class PDF_Builder_Path_Validator
      * @param  string $path Chemin du fichier
      * @return bool True si dans répertoire autorisé
      */
-    private static function is_in_allowed_directory($path)
+    private static function isInAllowedDirectory($path)
     {
         $upload_dir = wp_upload_dir();
 
@@ -270,7 +273,7 @@ class PDF_Builder_Path_Validator
      * @param  string $subdirectory Sous-répertoire (optionnel)
      * @return string Chemin complet sécurisé
      */
-    public static function build_safe_path($filename, $subdirectory = '')
+    public static function buildSafePath($filename, $subdirectory = '')
     {
         $upload_dir = wp_upload_dir();
 
@@ -282,7 +285,7 @@ class PDF_Builder_Path_Validator
         $full_path = wp_normalize_path(implode('/', $path_parts));
 
         // Vérification finale
-        if (!self::validate_file_path($full_path, true)) {
+        if (!self::validateFilePath($full_path, true)) {
             throw new Exception('Chemin de fichier invalide généré');
         }
 
@@ -294,7 +297,7 @@ class PDF_Builder_Path_Validator
      *
      * @return string Adresse IP
      */
-    private static function get_client_ip()
+    private static function getClientIp()
     {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
@@ -330,7 +333,7 @@ class PDF_Builder_Path_Validator
      * @param array  $data  Données
      *                      supplémentaires
      */
-    private static function log_security_event($event, $data = [])
+    private static function logSecurityEvent($event, $data = [])
     {
         $log_data = array_merge(
             [

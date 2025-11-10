@@ -4,16 +4,17 @@
  */
 
 import { debugLog, debugError, debugWarn } from '../utils/debug';
+import { TemplateState, BuilderState } from '../types/elements';
 
 // Stocker les références globales
-let editorInstance: any = null;
-let currentTemplate: any = null;
-let editorState: any = null;
+let editorInstance: unknown = null;
+let currentTemplate: TemplateState | null = null;
+let editorState: BuilderState | null = null;
 
 /**
  * Enregistre l'instance de l'éditeur
  */
-export function registerEditorInstance(instance: any) {
+export function registerEditorInstance(instance: unknown) {
   editorInstance = instance;
   debugLog('[Global API] Editor instance registered', { hasInstance: !!instance });
 }
@@ -21,7 +22,7 @@ export function registerEditorInstance(instance: any) {
 /**
  * Charge un template dans l'éditeur
  */
-export async function loadTemplate(templateData: any) {
+export async function loadTemplate(templateData: TemplateState) {
   debugLog('[Global API] loadTemplate called', { templateId: templateData?.id });
 
   try {
@@ -59,7 +60,7 @@ export function getEditorState() {
 /**
  * Met à jour l'état de l'éditeur
  */
-export function setEditorState(state: any) {
+export function setEditorState(state: BuilderState) {
   debugLog('[Global API] setEditorState called', { hasState: !!state });
   editorState = state;
 }
@@ -92,7 +93,7 @@ export function exportTemplate() {
 /**
  * Sauvegarde un template
  */
-export async function saveTemplate(templateData: any) {
+export async function saveTemplate(templateData: TemplateState) {
   debugLog('[Global API] saveTemplate called', { templateId: templateData?.id });
   
   try {

@@ -1,5 +1,7 @@
 <?php
 
+namespace WP_PDF_Builder_Pro\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -9,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Optimisation des requêtes de base de données pour WooCommerce
  */
 
-class PDF_Builder_Database_Query_Optimizer
+class PdfBuilderDatabaseQueryOptimizer
 {
     /**
      * Instance du main plugin
@@ -49,20 +51,20 @@ class PDF_Builder_Database_Query_Optimizer
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->initialize_optimizer();
+        $this->initializeOptimizer();
     }
 
     /**
      * Initialiser l'optimiseur
      */
-    private function initialize_optimizer()
+    private function initializeOptimizer()
     {
         // Préparer les requêtes fréquemment utilisées
-        $this->prepare_common_queries();
+        $this->prepareCommonQueries();
 
         // Activer le cache si configuré
         if ($this->optimization_config['enable_query_caching']) {
-            $this->initialize_query_cache();
+            $this->initializeQueryCache();
         }
 
         // Hook pour mesurer les performances des requêtes
@@ -72,7 +74,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Préparer les requêtes communes
      */
-    private function prepare_common_queries()
+    private function prepareCommonQueries()
     {
         global $wpdb;
 
@@ -143,7 +145,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Initialiser le cache des requêtes
      */
-    private function initialize_query_cache()
+    private function initializeQueryCache()
     {
         if (!wp_cache_get('pdf_builder_query_cache')) {
             wp_cache_set('pdf_builder_query_cache', [], '', 3600);
@@ -153,7 +155,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Récupérer les données de commande optimisées
      */
-    public function get_optimized_order_data($order_id)
+    public function getOptimizedOrderData($order_id)
     {
         $cache_key = 'order_data_' . $order_id;
 
@@ -206,7 +208,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Récupérer les données de produit optimisées
      */
-    public function get_optimized_product_data($product_ids)
+    public function getOptimizedProductData($product_ids)
     {
         if (empty($product_ids)) {
             return [];
@@ -277,20 +279,20 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Optimiser une requête WooCommerce
      */
-    public function optimize_woocommerce_query($query, $query_type = 'general')
+    public function optimizeWoocommerceQuery($query, $query_type = 'general')
     {
         $optimized_query = $query;
 
         // Ajouter des hints d'index si activé
         if ($this->optimization_config['enable_index_hints']) {
-            $optimized_query = $this->add_index_hints($query, $query_type);
+            $optimized_query = $this->addIndexHints($query, $query_type);
         }
 
         // Optimiser les jointures
-        $optimized_query = $this->optimize_joins($optimized_query);
+        $optimized_query = $this->optimizeJoins($optimized_query);
 
         // Optimiser les conditions WHERE
-        $optimized_query = $this->optimize_where_conditions($optimized_query);
+        $optimized_query = $this->optimizeWhereConditions($optimized_query);
 
         if ($optimized_query !== $query) {
             $this->query_stats['optimized']++;
@@ -302,7 +304,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Ajouter des hints d'index
      */
-    private function add_index_hints($query, $query_type)
+    private function addIndexHints($query, $query_type)
     {
         $hints = [
             'order' => 'USE INDEX (post_type_status_date)',
@@ -322,7 +324,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Optimiser les jointures
      */
-    private function optimize_joins($query)
+    private function optimizeJoins($query)
     {
         // Remplacer LEFT JOIN par INNER JOIN quand possible
         $query = preg_replace('/LEFT JOIN\s+(\w+)\s+ON\s+([^=]+)=\1\.(\w+)/i', 'INNER JOIN $1 ON $2=$1.$3', $query);
@@ -336,7 +338,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Optimiser les conditions WHERE
      */
-    private function optimize_where_conditions($query)
+    private function optimizeWhereConditions($query)
     {
         // Utiliser IN au lieu de multiples OR
         $query = preg_replace('/(\w+)\s*=\s*([^)]+)\s+OR\s+\1\s*=\s*([^)]+)/i', '$1 IN ($2, $3)', $query);
@@ -350,7 +352,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Mesurer les performances des requêtes
      */
-    public function measure_query_performance($query)
+    public function measureQueryPerformance($query)
     {
         // Ne mesurer que les requêtes liées au PDF Builder
         if (
@@ -385,7 +387,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Créer des index optimisés pour les performances
      */
-    public function create_performance_indexes()
+    public function createPerformanceIndexes()
     {
         global $wpdb;
 
@@ -415,7 +417,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Analyser les requêtes lentes
      */
-    public function analyze_slow_queries()
+    public function analyzeSlowQueries()
     {
         if (empty($this->query_stats['slow_queries'])) {
             return [];
@@ -428,7 +430,7 @@ class PDF_Builder_Database_Query_Optimizer
                 'query' => $slow_query['query'],
                 'execution_time' => $slow_query['time'],
                 'timestamp' => $slow_query['timestamp'],
-                'recommendations' => $this->get_query_recommendations($slow_query['query'])
+                'recommendations' => $this->getQueryRecommendations($slow_query['query'])
             ];
         }
 
@@ -438,7 +440,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Obtenir des recommandations pour optimiser une requête
      */
-    private function get_query_recommendations($query)
+    private function getQueryRecommendations($query)
     {
         $recommendations = [];
 
@@ -469,20 +471,20 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Obtenir les statistiques d'optimisation
      */
-    public function get_optimization_stats()
+    public function getOptimizationStats()
     {
         return [
             'query_stats' => $this->query_stats,
             'config' => $this->optimization_config,
-            'cache_info' => $this->get_cache_info(),
-            'slow_queries_analysis' => $this->analyze_slow_queries()
+            'cache_info' => $this->getCacheInfo(),
+            'slow_queries_analysis' => $this->analyzeSlowQueries()
         ];
     }
 
     /**
      * Obtenir les informations du cache
      */
-    private function get_cache_info()
+    private function getCacheInfo()
     {
         $cache = wp_cache_get('pdf_builder_query_cache');
         return [
@@ -495,10 +497,10 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Nettoyer le cache des requêtes
      */
-    public function clear_query_cache()
+    public function clearQueryCache()
     {
         wp_cache_delete('pdf_builder_query_cache');
-        $this->initialize_query_cache();
+        $this->initializeQueryCache();
 
         $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Cache des requêtes nettoyé', 'info', 'db_optimizer');
@@ -507,7 +509,7 @@ class PDF_Builder_Database_Query_Optimizer
     /**
      * Optimiser la base de données
      */
-    public function optimize_database()
+    public function optimizeDatabase()
     {
         global $wpdb;
 
@@ -525,7 +527,7 @@ class PDF_Builder_Database_Query_Optimizer
         }
 
         // Créer les index de performance
-        $this->create_performance_indexes();
+        $this->createPerformanceIndexes();
 
         $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $logger->log('Base de données optimisée pour PDF Builder', 'info', 'db_optimizer');

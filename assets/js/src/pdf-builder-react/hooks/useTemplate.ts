@@ -1,17 +1,7 @@
-import { useContext, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugLog, debugError } from '../utils/debug';
-
-// Extension de Window pour pdfBuilderData
-declare global {
-  interface Window {
-    pdfBuilderData?: {
-      ajaxUrl: string;
-      nonce: string;
-    };
-  }
-}
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -197,7 +187,7 @@ export function useTemplate() {
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
     };
-  }, [loadExistingTemplate]);
+  }, [loadExistingTemplate, dispatch]);
 
   // Effet pour charger automatiquement un template existant au montage
   // ✅ Dépendance vide: charger une seule fois au montage du composant

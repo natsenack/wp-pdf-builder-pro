@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Renderer Cache
  * Phase 3.3.6 - Système de cache pour optimiser les performances de rendu
@@ -17,8 +18,8 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class RendererCache {
-
+class RendererCache
+{
     /**
      * Cache statique en mémoire
      */
@@ -44,13 +45,14 @@ class RendererCache {
      *
      * @return array Paramètres de cache
      */
-    private static function getCacheSettings(): array {
+    private static function getCacheSettings(): array
+    {
         static $settings = null;
-        
+
         if ($settings === null) {
             $settings = get_option('pdf_builder_settings', []);
         }
-        
+
         return $settings;
     }
 
@@ -59,7 +61,8 @@ class RendererCache {
      *
      * @return bool True si le cache est activé
      */
-    private static function isCacheEnabled(): bool {
+    private static function isCacheEnabled(): bool
+    {
         $settings = self::getCacheSettings();
         return !empty($settings['cache_enabled']);
     }
@@ -69,7 +72,8 @@ class RendererCache {
      *
      * @return int TTL en secondes
      */
-    private static function getCacheTTL(): int {
+    private static function getCacheTTL(): int
+    {
         $settings = self::getCacheSettings();
         return intval($settings['cache_ttl'] ?? self::CACHE_TTL);
     }
@@ -80,7 +84,8 @@ class RendererCache {
      * @param string $key Clé du cache
      * @return mixed Valeur ou null si expirée/absente
      */
-    public static function get(string $key) {
+    public static function get(string $key)
+    {
         // Vérifier si le cache est activé
         if (!self::isCacheEnabled()) {
             return null;
@@ -111,7 +116,8 @@ class RendererCache {
      * @param mixed $value Valeur à stocker
      * @param int $ttl Durée de vie en secondes (optionnel)
      */
-    public static function set(string $key, $value, int $ttl = null): void {
+    public static function set(string $key, $value, ?int $ttl = null): void
+    {
         // Vérifier si le cache est activé
         if (!self::isCacheEnabled()) {
             return;
@@ -134,7 +140,8 @@ class RendererCache {
      * @param string $key Clé du cache
      * @return bool True si la clé existe et n'est pas expirée
      */
-    public static function has(string $key): bool {
+    public static function has(string $key): bool
+    {
         // Vérifier si le cache est activé
         if (!self::isCacheEnabled()) {
             return false;
@@ -153,7 +160,8 @@ class RendererCache {
      *
      * @param string $key Clé du cache
      */
-    public static function delete(string $key): void {
+    public static function delete(string $key): void
+    {
         if (isset(self::$cache[$key])) {
             unset(self::$cache[$key]);
         }
@@ -162,7 +170,8 @@ class RendererCache {
     /**
      * Vide complètement le cache
      */
-    public static function clear(): void {
+    public static function clear(): void
+    {
         self::$cache = [];
         self::$metrics['clears']++;
     }
@@ -170,7 +179,8 @@ class RendererCache {
     /**
      * Nettoie les entrées expirées
      */
-    public static function cleanup(): void {
+    public static function cleanup(): void
+    {
         $now = time();
         $cleaned = 0;
 
@@ -191,7 +201,8 @@ class RendererCache {
      *
      * @return array Métriques actuelles
      */
-    public static function getMetrics(): array {
+    public static function getMetrics(): array
+    {
         $total = self::$metrics['hits'] + self::$metrics['misses'];
         $hitRate = $total > 0 ? (self::$metrics['hits'] / $total) * 100 : 0;
 
@@ -210,7 +221,8 @@ class RendererCache {
      * @param string $prefix Préfixe pour la clé
      * @return string Clé de cache
      */
-    public static function generateStyleKey(array $properties, string $prefix = 'css'): string {
+    public static function generateStyleKey(array $properties, string $prefix = 'css'): string
+    {
         // Trier les propriétés pour cohérence
         ksort($properties);
         $hash = md5(serialize($properties));
@@ -224,7 +236,8 @@ class RendererCache {
      * @param array $context Contexte (optionnel)
      * @return string Clé de cache
      */
-    public static function generateVariableKey(string $variable, array $context = []): string {
+    public static function generateVariableKey(string $variable, array $context = []): string
+    {
         $contextHash = !empty($context) ? '_' . md5(serialize($context)) : '';
         return "var_{$variable}{$contextHash}";
     }
@@ -236,7 +249,8 @@ class RendererCache {
      * @param array $data Données du template
      * @return string Clé de cache
      */
-    public static function generateTemplateKey(string $template, array $data = []): string {
+    public static function generateTemplateKey(string $template, array $data = []): string
+    {
         $dataHash = !empty($data) ? '_' . md5(serialize($data)) : '';
         return "template_{$template}{$dataHash}";
     }
@@ -246,7 +260,8 @@ class RendererCache {
      *
      * @return string Utilisation formatée
      */
-    private static function getMemoryUsage(): string {
+    private static function getMemoryUsage(): string
+    {
         $bytes = strlen(serialize(self::$cache));
         $units = ['B', 'KB', 'MB', 'GB'];
         $i = 0;
@@ -268,7 +283,8 @@ class RendererCache {
      * @param int $ttl Durée de vie (optionnel)
      * @return mixed Résultat de la fonction
      */
-    public static function remember(callable $callback, array $args = [], string $key = null, int $ttl = null) {
+    public static function remember(callable $callback, array $args = [], ?string $key = null, ?int $ttl = null)
+    {
         $key = $key ?? 'func_' . md5(serialize($args));
 
         $cached = self::get($key);
@@ -282,4 +298,3 @@ class RendererCache {
         return $result;
     }
 }
-?>

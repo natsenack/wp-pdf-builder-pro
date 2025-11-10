@@ -24,16 +24,16 @@ export function useAutoSave(): UseAutoSaveReturn {
 
   // Récupérer le nonce
   const nonce =
-    (window as any).pdfBuilderData?.nonce ||
-    (window as any).pdfBuilderNonce ||
-    (window as any).pdfBuilderReactData?.nonce ||
+    window.pdfBuilderData?.nonce ||
+    window.pdfBuilderNonce ||
+    window.pdfBuilderReactData?.nonce ||
     '';
 
   // Récupérer l'intervalle de sauvegarde auto depuis les settings
   // Par défaut: 30 secondes si paramètre non défini
-  const autoSaveIntervalSetting = (window as any).pdfBuilderCanvasSettings?.auto_save_interval ||
-    (window as any).pdfBuilderData?.auto_save_interval ||
-    (window as any).pdfBuilderReactData?.auto_save_interval ||
+  const autoSaveIntervalSetting = (window.pdfBuilderCanvasSettings as { auto_save_interval?: number })?.auto_save_interval ||
+    window.pdfBuilderData?.auto_save_interval ||
+    (window.pdfBuilderReactData as { auto_save_interval?: number })?.auto_save_interval ||
     30; // 30 secondes par défaut
   
   const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s
@@ -41,7 +41,7 @@ export function useAutoSave(): UseAutoSaveReturn {
   // Vérifier si l'auto-save est activé dans les settings
   // Doit être explicitement TRUE pour être activé
   const autoSaveEnabled = 
-    (window as any).pdfBuilderCanvasSettings?.auto_save_enabled === true;
+    (window.pdfBuilderCanvasSettings as { auto_save_enabled?: boolean })?.auto_save_enabled === true;
 
   // Utiliser useSaveStateV2
   const {
