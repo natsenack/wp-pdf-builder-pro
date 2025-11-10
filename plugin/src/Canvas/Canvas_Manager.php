@@ -30,6 +30,16 @@ class Canvas_Manager
     }
 
     /**
+     * Alias pour getInstance() - compatibilité
+     *
+     * @return Canvas_Manager
+     */
+    public static function get_instance()
+    {
+        return self::getInstance();
+    }
+
+    /**
      * Constructeur
      */
     private function __construct()
