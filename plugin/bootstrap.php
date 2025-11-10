@@ -474,7 +474,7 @@ function pdf_builder_load_bootstrap()
 
         // Initialiser l'interface d'administration UNIQUEMENT dans l'admin (pas lors d'AJAX)
         error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false'));
-        if (is_admin() && !wp_doing_ajax() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+        if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             error_log('PDF Builder: PdfBuilderAdmin class exists, creating instance');
             $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
             error_log('PDF Builder: Admin class loaded successfully');
