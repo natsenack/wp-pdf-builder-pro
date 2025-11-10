@@ -1463,6 +1463,11 @@ function pdf_builder_register_fallback_hooks()
         add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_auto_save_template', function () {
+            // Charger le fichier si nécessaire
+            $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
+            if (file_exists($template_manager_file)) {
+                require_once $template_manager_file;
+            }
             if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
                 $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
                 $manager->ajax_auto_save_template();
