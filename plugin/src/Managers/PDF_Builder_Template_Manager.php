@@ -67,7 +67,7 @@ class PdfBuilderTemplateManager
     /**
      * AJAX - Sauvegarder un template
      */
-    public function ajaxSaveTemplate()
+    public function ajaxSaveTemplateV2()
     {
         try {
             // Vérification des permissions
