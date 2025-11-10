@@ -3787,8 +3787,7 @@ des rapports xdebug</div>
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo
-isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">HTTPS forcé</span>
@@ -4179,9 +4178,9 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 ?>
 <script>
 // Définir ajaxurl si pas déjà défini
-    if (typeof ajaxurl === 'undefined') {
-        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-    }
+if (typeof ajaxurl === 'undefined') {
+    ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+}
 </script>
 <script>
 // Script de définition des paramètres canvas - exécuté très tôt
@@ -4492,15 +4491,13 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         console.log('✅ License key generated:', response);
                         if (response.success && response.data.key) {
                             licenseTestKeyInput.value = response.data.key;
-                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès
-!</span>';
+                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
                             $btn.html('🔑 Régénérer');
                             $btn.prop('disabled', false);
                         } else {
                             const errorMsg = response.data && response.data.message ? response.data.message :
 'Impossible de générer la clé';
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px
-12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🔑 Générer');
                             $btn.prop('disabled', false);
                         }
@@ -4986,5 +4983,6 @@ l'email de test."));
             }
         });
 </script>
-   
+  
+ 
  
