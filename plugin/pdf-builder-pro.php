@@ -157,9 +157,9 @@ function pdf_builder_init()
         }
     }
 
-    // Hook AJAX pour test
+    // Hook AJAX pour test - version 2
     add_action('wp_ajax_pdf_builder_auto_save_template', function () {
-        die('Hook appelé');
+        die('Hook appelé v2');
     });
 
     // Tools for development/tests removed from production bootstrap
