@@ -5771,34 +5771,20 @@ class PdfBuilderAdmin
 
         <script>
         // ============================================================================
-        // DEBUGGING - PDF Builder React Editor Initialization
+        // PDF Builder React Editor Initialization
         // ============================================================================
-        console.log('🔍 [PHP] Starting PDF Builder React editor initialization...');
-
-        // Check if scripts are loaded
-        console.log('🔍 [PHP] Checking script loading...');
-        console.log('🔍 [PHP] React available:', typeof React);
-        console.log('🔍 [PHP] ReactDOM available:', typeof ReactDOM);
-        console.log('🔍 [PHP] pdfBuilderReact object:', typeof window.pdfBuilderReact);
 
         // Initialize React editor when DOM is ready
         function initReactEditor() {
-            console.log('🔍 [PHP] initReactEditor() called');
-
             if (typeof window.pdfBuilderReact === 'undefined') {
-                console.error('❌ [PHP] window.pdfBuilderReact is undefined');
                 return false;
             }
 
             if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
-                console.error('❌ [PHP] window.pdfBuilderReact.initPDFBuilderReact is not a function');
-                console.log('🔍 [PHP] Available methods:', Object.keys(window.pdfBuilderReact));
                 return false;
             }
 
-            console.log('✅ [PHP] Calling window.pdfBuilderReact.initPDFBuilderReact()...');
             var result = window.pdfBuilderReact.initPDFBuilderReact();
-            console.log('🔍 [PHP] initPDFBuilderReact returned:', result);
             return result;
         }
 
@@ -5815,17 +5801,12 @@ class PdfBuilderAdmin
         }
 
         // Initialize React editor immediately
-        console.log('🔍 [PHP] Attempting immediate initialization...');
         if (!initReactEditor()) {
-            console.log('🔍 [PHP] Immediate init failed, starting retry loop...');
             var initAttempts = 0;
             var maxInitAttempts = 30; // 15 seconds max
             var initInterval = setInterval(function() {
                 initAttempts++;
-                console.log('🔍 [PHP] Retry attempt', initAttempts, 'of', maxInitAttempts);
-
                 if (initReactEditor()) {
-                    console.log('✅ [PHP] React editor initialized successfully on attempt', initAttempts);
                     clearInterval(initInterval);
 
                     // Now try to load existing data once
@@ -5834,7 +5815,7 @@ class PdfBuilderAdmin
                     }, 1000);
 
                 } else if (initAttempts >= maxInitAttempts) {
-                    console.error('❌ [PHP] Failed to initialize React editor after', maxInitAttempts, 'attempts');
+                    console.error('❌ Failed to initialize React editor after', maxInitAttempts, 'attempts');
                     clearInterval(initInterval);
 
                     // ✅ CORRECTION: Masquer le loader même en cas d'échec pour éviter de masquer l'éditeur
@@ -5842,7 +5823,7 @@ class PdfBuilderAdmin
                     var editorEl = document.getElementById('pdf-builder-react-editor');
                     if (loadingEl) {
                         loadingEl.style.display = 'none';
-                        console.warn('⚠️ [PHP] Loader masqué après échec d\'initialisation React');
+                        console.warn('⚠️ Loader masqué après échec d\'initialisation React');
                     }
                     if (editorEl) {
                         editorEl.style.display = 'block';
@@ -5851,7 +5832,6 @@ class PdfBuilderAdmin
                 }
             }, 500);
         } else {
-            console.log('✅ [PHP] React editor initialized immediately');
             // Try to load existing data once
             setTimeout(function() {
                 loadExistingTemplateData();
