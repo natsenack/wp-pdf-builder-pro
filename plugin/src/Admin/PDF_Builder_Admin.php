@@ -1280,7 +1280,7 @@ class PdfBuilderAdmin
     {
         $manager = $this->getTemplateManager();
         if ($manager) {
-            $manager->ajax_load_template();
+            $manager->ajaxLoadTemplate();
         }
     }
 
