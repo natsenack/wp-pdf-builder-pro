@@ -474,13 +474,11 @@ function pdf_builder_load_bootstrap()
 
         // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
         $is_admin_or_pdf_ajax = is_admin();
-        if (!$is_admin_or_pdf_ajax && wp_doing_ajax()) {
-            // Vérifier si c'est une action de notre plugin
+        if (!$is_admin_or_pdf_ajax && (wp_doing_ajax() || defined('DOING_AJAX'))) {
+            // Charger l'admin pour TOUTES les requêtes AJAX, pas seulement les nôtres
+            $is_admin_or_pdf_ajax = true;
             $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
-            if (strpos($action, 'pdf_builder') === 0) {
-                $is_admin_or_pdf_ajax = true;
-                error_log('PDF Builder: Allowing admin load for PDF AJAX action: ' . $action);
-            }
+            error_log('PDF Builder: Loading admin for AJAX action: ' . $action . ', DOING_AJAX defined: ' . (defined('DOING_AJAX') ? 'yes' : 'no'));
         }
 
         error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', pdf_ajax_allowed: ' . ($is_admin_or_pdf_ajax ? 'true' : 'false'));
