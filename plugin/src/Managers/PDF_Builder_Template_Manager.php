@@ -382,10 +382,11 @@ class PdfBuilderTemplateManager
     {
         try {
             // Test simple pour vérifier que le hook fonctionne
-            error_log('PDF Builder: ajax_auto_save_template called - test');
+            error_log('PDF Builder: ajax_auto_save_template called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('PDF Builder: REQUEST data keys: ' . implode(', ', array_keys($_REQUEST)));
             \wp_send_json_success(array(
                 'message' => 'Auto-save test réussi',
-                'template_id' => isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0,
+                'template_id' => isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0,
                 'saved_at' => \current_time('mysql'),
                 'element_count' => 0
             ));
