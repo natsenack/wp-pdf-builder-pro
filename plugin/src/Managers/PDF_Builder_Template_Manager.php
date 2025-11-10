@@ -71,7 +71,8 @@ class PdfBuilderTemplateManager
     {
         try {
             // Log pour debug
-            error_log('PDF Builder: ajaxSaveTemplateV3 called');
+            error_log('PDF Builder: ajaxSaveTemplateV3 called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
@@ -89,7 +90,7 @@ class PdfBuilderTemplateManager
             }
 
             if (!$nonce_valid) {
-                error_log('PDF Builder: Invalid nonce');
+                error_log('PDF Builder: Invalid nonce - received: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'none'));
                 \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -102,6 +103,7 @@ class PdfBuilderTemplateManager
             $json_data = null;
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
                 $json_input = file_get_contents('php://input');
+                error_log('PDF Builder: JSON input length: ' . strlen($json_input));
                 $json_data = json_decode($json_input, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     \wp_send_json_error('Données JSON invalides dans le corps de la requête: ' . json_last_error_msg());
@@ -132,8 +134,11 @@ class PdfBuilderTemplateManager
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
 
+            error_log('PDF Builder: template_id: ' . $template_id . ', template_name: ' . $template_name . ', template_data length: ' . strlen($template_data));
+
             // Si template_data n'est pas fourni, construire à partir d'elements et canvas séparés
             if (empty($template_data)) {
+                error_log('PDF Builder: Constructing template data from elements and canvas');
                 $elements = '';
                 $canvas = '';
 
@@ -151,19 +156,27 @@ class PdfBuilderTemplateManager
                              (isset($_POST['canvasData']) ? \wp_unslash($_POST['canvasData']) : '{}');
                 }
 
+                error_log('PDF Builder: elements length: ' . strlen($elements) . ', canvas: ' . $canvas);
+
                 // Validation du JSON pour elements
                 $elements_data = \json_decode($elements, true);
                 if (\json_last_error() !== JSON_ERROR_NONE) {
-                    \wp_send_json_error('Données elements JSON invalides: ' . \json_last_error_msg());
+                    $json_error = \json_last_error_msg();
+                    error_log('PDF Builder: Elements JSON decode error: ' . $json_error . ' - Raw elements: ' . substr($elements, 0, 500));
+                    \wp_send_json_error('Données elements JSON invalides: ' . $json_error);
                     return;
                 }
 
                 // Validation du JSON pour canvas
                 $canvas_data = \json_decode($canvas, true);
                 if (\json_last_error() !== JSON_ERROR_NONE) {
-                    \wp_send_json_error('Données canvas JSON invalides: ' . \json_last_error_msg());
+                    $json_error = \json_last_error_msg();
+                    error_log('PDF Builder: Canvas JSON decode error: ' . $json_error . ' - Raw canvas: ' . $canvas);
+                    \wp_send_json_error('Données canvas JSON invalides: ' . $json_error);
                     return;
                 }
+
+                error_log('PDF Builder: Elements count: ' . count($elements_data) . ', Canvas data: ' . json_encode($canvas_data));
 
                 // Construction de la structure complète du template
                 $template_structure = [
@@ -175,34 +188,39 @@ class PdfBuilderTemplateManager
 
                 $template_data = \wp_json_encode($template_structure);
                 if ($template_data === false) {
+                    error_log('PDF Builder: Template structure JSON encode failed');
                     \wp_send_json_error('Erreur lors de l\'encodage des données template');
                     return;
                 }
-            }
-
-            // Validation du JSON
+                error_log('PDF Builder: Template data constructed, length: ' . strlen($template_data));
+            }            // Validation du JSON
             $decoded_test = \json_decode($template_data, true);
             if (\json_last_error() !== JSON_ERROR_NONE) {
                 $json_error = \json_last_error_msg();
+                error_log('PDF Builder: Template data JSON decode error: ' . $json_error . ' - Raw data: ' . substr($template_data, 0, 500));
                 \wp_send_json_error('Données JSON invalides: ' . $json_error);
                 return;
             }
 
             // Validation de la structure du template
+            error_log('PDF Builder: Validating template structure');
             $validation_errors = $this->validateTemplateStructure($decoded_test);
             if (!empty($validation_errors)) {
+                error_log('PDF Builder: Validation errors: ' . implode(', ', $validation_errors));
                 \wp_send_json_error('Structure invalide: ' . \implode(', ', $validation_errors));
                 return;
             }
 
             // Validation des données obligatoires
             if (empty($template_data) || empty($template_name)) {
+                error_log('PDF Builder: Missing required data - template_data empty: ' . empty($template_data) . ', template_name empty: ' . empty($template_name));
                 \wp_send_json_error('Données template ou nom manquant');
                 return;
             }
 
             // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {
+                error_log('PDF Builder: Starting database save operation');
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
