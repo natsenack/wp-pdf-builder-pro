@@ -4325,8 +4325,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         // Faire une requête AJAX pour vider le cache
                         const formData = new FormData();
                         formData.append('action', 'pdf_builder_clear_cache');
-                        formData.append('security', '<?php echo wp_create_nonce("pdf_builder_clear_cache_performance");
-?>');
+                        formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
                         
                         fetch(ajaxurl, {
                             method: 'POST',
@@ -4485,7 +4484,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     dataType: 'json',
                     data: {
                         action: 'pdf_builder_generate_test_license_key',
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>'
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
                     },
                     success: function(response) {
                         console.log('✅ License key generated:', response);
@@ -4508,8 +4507,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
                         }
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px
-12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                         $btn.html('🔑 Générer');
                         $btn.prop('disabled', false);
                     }
@@ -4544,8 +4542,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             deleteLicenseKeyBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est
-irréversible.')) {
+                if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
                     return;
                 }
                 
@@ -4561,14 +4558,13 @@ irréversible.')) {
                     dataType: 'json',
                     data: {
                         action: 'pdf_builder_delete_test_license_key',
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>'
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
                     },
                     success: function(response) {
                         console.log('✅ License key deleted:', response);
                         if (response.success) {
                             licenseTestKeyInput.value = '';
-                            licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px
-12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
+                            licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
                             
                             // Masquer le bouton de suppression
                             $btn.hide();
@@ -4580,8 +4576,7 @@ irréversible.')) {
                             const errorMsg = response.data && response.data.message ? response.data.message :
 'Impossible de supprimer la clé';
                             console.error('❌ Delete failed:', errorMsg);
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px
-12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🗑️ Supprimer');
                             $btn.prop('disabled', false);
                         }
@@ -4592,8 +4587,7 @@ irréversible.')) {
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
                         }
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px
-12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                         $btn.html('🗑️ Supprimer');
                         $btn.prop('disabled', false);
                     }
@@ -4621,7 +4615,7 @@ irréversible.')) {
                     dataType: 'json',
                     data: {
                         action: 'pdf_builder_toggle_test_mode',
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>'
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
                     },
                     success: function(response) {
                         console.log('✅ Test mode toggled:', response);
@@ -4649,8 +4643,7 @@ irréversible.')) {
                             
                             console.log(response.data.message);
                         } else {
-                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur
-lors du basculement';
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
                             console.error('❌ Toggle failed:', errorMsg);
                             alert('⚠️ Erreur: ' + errorMsg);
                             $btn.html('🎚️ Basculer Mode Test');
@@ -4678,8 +4671,7 @@ lors du basculement';
                 e.preventDefault();
                 
                 // Confirmation avant de nettoyer
-                if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera
-réinitialisée à l\'état libre.')) {
+                if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
                     return;
                 }
                 
@@ -4706,19 +4698,16 @@ réinitialisée à l\'état libre.')) {
                         $btn.prop('disabled', false);
                         
                         if (response.success) {
-                            cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px
-12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
+                            cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
                             
                             // Recharger la page après 2 secondes pour voir les changements
                             setTimeout(function() {
                                 location.reload();
                             }, 2000);
                         } else {
-                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur
-lors du nettoyage';
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
                             console.error('❌ Cleanup failed:', errorMsg);
-                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px
-12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
+                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                         }
                     },
                     error: function(xhr, status, error) {
@@ -4728,8 +4717,7 @@ lors du nettoyage';
                             errorMsg = xhr.responseJSON.data.message;
                         }
                         alert('⚠️ Erreur AJAX: ' + errorMsg);
-                        cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px;
-border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                         $btn.html('🧹 Nettoyer complètement la licence');
                         $btn.prop('disabled', false);
                     }
@@ -4768,10 +4756,8 @@ border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '
                             if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
                             if ($output.length) $output.html(response.data).show();
                         } else {
-                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test
-échoué</span>');
-                            if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') +
-'</p>').show();
+                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test échoué</span>');
+                            if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -4806,7 +4792,7 @@ border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '
                         dataType: "json",
                         data: {
                             action: "pdf_builder_test_smtp_connection",
-                            nonce: "<?php echo wp_create_nonce('pdf_builder_settings'); ?>"
+                            nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
                         },
                         timeout: 15000,
                         success: function(response) {
@@ -4814,11 +4800,9 @@ border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '
                             $testSmtpBtn.prop("disabled", false).html(originalText);
 
                             if (response.success) {
-                                alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au
-serveur SMTP fonctionne correctement."));
+                                alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."));
                             } else {
-                                alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se
-connecter au serveur SMTP."));
+                                alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se connecter au serveur SMTP."));
                             }
                         },
                         error: function(xhr, status, error) {
@@ -4846,7 +4830,7 @@ connecter au serveur SMTP."));
                         dataType: "json",
                         data: {
                             action: "pdf_builder_test_notifications",
-                            nonce: "<?php echo wp_create_nonce('pdf_builder_settings'); ?>"
+                            nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
                         },
                         timeout: 15000,
                         success: function(response) {
@@ -4854,11 +4838,9 @@ connecter au serveur SMTP."));
                             $testNotifBtn.prop("disabled", false).html(originalText);
 
                             if (response.success) {
-                                alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre
-boîte mail pour confirmer la réception."));
+                                alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."));
                             } else {
-                                alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer
-l'email de test."));
+                                alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer l'email de test."));
                             }
                         },
                         error: function(xhr, status, error) {
