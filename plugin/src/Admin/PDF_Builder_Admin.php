@@ -419,6 +419,14 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Alias pour handleLegacyTemplateLinks() - compatibilité
+     */
+    public function handle_legacy_template_links()
+    {
+        return $this->handleLegacyTemplateLinks();
+    }
+
+    /**
      * Ajoute le menu d'administration
      */
     public function addAdminMenu()
