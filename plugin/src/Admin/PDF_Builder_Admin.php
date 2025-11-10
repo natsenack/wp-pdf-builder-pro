@@ -968,6 +968,22 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Page de l'éditeur React
+     */
+    public function react_editor_page()
+    {
+        $this->checkAdminPermissions();
+        
+        // Charger le core si nécessaire
+        if (!class_exists('\PDF_Builder\Core\PDF_Builder_Core')) {
+            require_once plugin_dir_path(dirname(__FILE__)) . '../core/PDF_Builder_Core.php';
+        }
+        
+        $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+        $core->render_react_editor_page();
+    }
+
+    /**
      * Charge les scripts et styles d'administration
      */
     public function enqueueAdminScripts($hook)
