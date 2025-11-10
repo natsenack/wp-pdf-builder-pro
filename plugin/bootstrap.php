@@ -382,12 +382,14 @@ function pdf_builder_load_new_classes()
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap()
 {
-    error_log('PDF Builder: Bootstrap function called');
-
-    // Protection globale contre les chargements multiples
-    if (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED) {
+    // Protection globale contre les chargements multiples - plus robuste
+    static $bootstrap_loaded = false;
+    if ($bootstrap_loaded || (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED)) {
         return;
     }
+    $bootstrap_loaded = true;
+
+    error_log('PDF Builder: Bootstrap function called - starting load');
 
     // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (WP_PDF_Builder_Pro)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {

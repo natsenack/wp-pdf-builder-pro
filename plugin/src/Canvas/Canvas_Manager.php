@@ -40,6 +40,14 @@ class Canvas_Manager
     }
 
     /**
+     * Alias pour enqueueCanvasSettingsScript() - compatibilité
+     */
+    public function enqueue_canvas_settings_script()
+    {
+        return $this->enqueueCanvasSettingsScript();
+    }
+
+    /**
      * Constructeur
      */
     private function __construct()
