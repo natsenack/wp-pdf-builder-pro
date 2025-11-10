@@ -153,6 +153,15 @@ class PdfBuilderAdmin
         // Initialiser le gestionnaire de templates
         if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
             $this->template_manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager($this->core ?? $this);
+        } else {
+            // Essayer de charger manuellement
+            $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
+            if (file_exists($template_manager_file)) {
+                require_once $template_manager_file;
+                if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
+                    $this->template_manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager($this->core ?? $this);
+                }
+            }
         }
 
         $this->initHooks();
