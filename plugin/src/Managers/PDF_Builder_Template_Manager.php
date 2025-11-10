@@ -178,6 +178,22 @@ class PdfBuilderTemplateManager
 
                 error_log('PDF Builder: Elements count: ' . count($elements_data) . ', Canvas data: ' . json_encode($canvas_data));
 
+                // Log détaillé des éléments pour vérifier les propriétés
+                error_log('PDF Builder: Detailed elements data:');
+                foreach ($elements_data as $index => $element) {
+                    error_log('PDF Builder: Element ' . $index . ': ' . json_encode([
+                        'id' => $element['id'] ?? 'no-id',
+                        'type' => $element['type'] ?? 'no-type',
+                        'x' => $element['x'] ?? 'no-x',
+                        'y' => $element['y'] ?? 'no-y',
+                        'width' => $element['width'] ?? 'no-width',
+                        'height' => $element['height'] ?? 'no-height',
+                        'rotation' => $element['rotation'] ?? 'no-rotation',
+                        'visible' => $element['visible'] ?? 'no-visible',
+                        'all_keys' => array_keys($element)
+                    ]));
+                }
+
                 // Construction de la structure complète du template
                 $template_structure = [
                     'elements' => $elements_data,
@@ -193,6 +209,7 @@ class PdfBuilderTemplateManager
                     return;
                 }
                 error_log('PDF Builder: Template data constructed, length: ' . strlen($template_data));
+                error_log('PDF Builder: Final template structure: ' . json_encode($template_structure));
             }            // Validation du JSON
             $decoded_test = \json_decode($template_data, true);
             if (\json_last_error() !== JSON_ERROR_NONE) {
