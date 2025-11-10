@@ -67,6 +67,33 @@ function pdf_builder_activate()
         dbDelta($sql);
     }
     update_option('pdf_builder_version', '1.1.0');
+
+    // Vérifier et créer les tables manquantes pour les mises à jour
+    pdf_builder_check_tables();
+}
+
+/**
+ * Vérifier et créer les tables manquantes
+ */
+function pdf_builder_check_tables() {
+    global $wpdb;
+
+    // Créer la table de templates si elle n'existe pas
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table_templates (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            template_data longtext NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY name (name)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
 }
 
 /**
@@ -105,6 +132,9 @@ function pdf_builder_init()
     if (!function_exists('get_option') || !defined('ABSPATH')) {
         return;
     }
+
+    // Vérifier et créer les tables manquantes
+    pdf_builder_check_tables();
 
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
