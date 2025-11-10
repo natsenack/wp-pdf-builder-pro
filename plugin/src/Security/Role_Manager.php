@@ -7,7 +7,7 @@
 
 namespace WP_PDF_Builder_Pro\Security;
 
-class RoleManager
+class Role_Manager
 {
     /**
      * Initialise le gestionnaire des rôles
