@@ -206,6 +206,7 @@ class PdfBuilderTemplateManager
 
                 // Créer la table si elle n'existe pas
                 if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                    error_log('PDF Builder: Creating templates table');
                     $charset_collate = $wpdb->get_charset_collate();
                     $sql = "CREATE TABLE $table_templates (
                         id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -217,7 +218,8 @@ class PdfBuilderTemplateManager
                         KEY name (name)
                     ) $charset_collate;";
                     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                    dbDelta($sql);
+                    $result = dbDelta($sql);
+                    error_log('PDF Builder: Table creation result: ' . print_r($result, true));
                 }
 
                 // Vérifier d'abord si le template existe dans la table personnalisée
@@ -227,6 +229,7 @@ class PdfBuilderTemplateManager
                         $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                         ARRAY_A
                     );
+                    error_log('PDF Builder: Existing template in custom table: ' . ($existing_template ? 'YES' : 'NO'));
                 }
 
                 if ($existing_template) {
