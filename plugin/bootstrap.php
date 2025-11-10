@@ -382,6 +382,7 @@ function pdf_builder_load_new_classes()
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap()
 {
+    error_log('PDF Builder: Bootstrap function called');
 
     // Protection globale contre les chargements multiples
     if (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED) {
@@ -467,9 +468,11 @@ function pdf_builder_load_bootstrap()
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
+            error_log('PDF Builder: Admin class loaded successfully');
         } else {
             // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
             add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+            error_log('PDF Builder: Using fallback admin menu - class not found or not in admin');
         }
     }
 
@@ -480,6 +483,7 @@ function pdf_builder_load_bootstrap()
 // Fonction simple pour enregistrer le menu admin
 function pdf_builder_register_admin_menu_simple()
 {
+    error_log('PDF Builder: Registering simple admin menu');
 
     add_menu_page(
         'PDF Builder Pro',
