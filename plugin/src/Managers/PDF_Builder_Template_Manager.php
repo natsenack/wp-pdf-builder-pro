@@ -408,7 +408,7 @@ class PdfBuilderTemplateManager
             }
 
             // Récupération de l'ID (doit être numérique pour les templates personnalisés)
-            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
 
             if (empty($template_id)) {
                 \wp_send_json_error('ID template invalide');
