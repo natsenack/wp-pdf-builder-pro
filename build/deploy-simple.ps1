@@ -84,11 +84,15 @@ try {
 }
 
 # 3 UPLOAD FTP
+$uploadCount = 0
+$errorCount = 0
+$startTime = Get-Date
+
 if ($Mode -eq "test") {
     Write-Host "`nMODE TEST - Pas d'upload reel" -ForegroundColor Yellow
 } else {
     Write-Host "`n3 Upload FTP des fichiers modifies..." -ForegroundColor Magenta
-    
+
     # Test connexion FTP
     Write-Host "   Test de connexion FTP..." -ForegroundColor Yellow
     try {
@@ -105,11 +109,7 @@ if ($Mode -eq "test") {
         Write-Host "   Erreur FTP: $($_.Exception.Message)" -ForegroundColor Red
         exit 1
     }
-    
-    $uploadCount = 0
-    $errorCount = 0
-    $startTime = Get-Date
-    
+
     # Creer les repertoires d'abord
     $dirs = @{}
     foreach ($file in $pluginModified) {
@@ -118,14 +118,14 @@ if ($Mode -eq "test") {
             $dirs[$dir] = $true
         }
     }
-    
+
     # Creer repertoires sur FTP de maniere recursive
     function New-FtpDirectory {
         param([string]$ftpPath)
-        
+
         $parts = $ftpPath -split '/'
         $currentPath = ""
-        
+
         foreach ($part in $parts) {
             if ($part) {
                 $currentPath += "/$part"
@@ -135,33 +135,51 @@ if ($Mode -eq "test") {
                     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
                     $ftpRequest.UseBinary = $true
                     $ftpRequest.UsePassive = $false
+                    $ftpRequest.Timeout = 15000
                     $response = $ftpRequest.GetResponse()
                     $response.Close()
                 } catch {
-                    # Dossier peut deja exister
+                    # Dossier peut deja exister, ignorer l'erreur
                 }
             }
         }
     }
-    
+
     foreach ($dir in $dirs.Keys) {
-        $ftpDir = $dir.Replace("\", "/").Replace("plugin/", "")
-        $fullPath = "$FtpPath/$ftpDir"
-        New-FtpDirectory $fullPath
+        # Corriger le calcul du chemin FTP - enlever seulement le prefixe "plugin/" si present
+        if ($dir.StartsWith("plugin/")) {
+            $ftpDir = $dir.Substring(7)  # Enlever "plugin/"
+        } elseif ($dir.StartsWith("plugin\")) {
+            $ftpDir = $dir.Substring(7)  # Enlever "plugin\"
+        } else {
+            $ftpDir = $dir
+        }
+        $ftpDir = $ftpDir.Replace("\", "/")
+        $fullPath = "$FtpPath/$ftpDir".TrimEnd('/')
+        if ($fullPath -ne $FtpPath) {
+            New-FtpDirectory $fullPath
+        }
     }
-    
+
     # Upload fichiers avec status
     foreach ($file in $pluginModified) {
         $localFile = Join-Path $WorkingDir $file
-        
+
         if (!(Test-Path $localFile)) {
             # Fichier supprime
             continue
         }
-        
-        $remotePath = $file.Replace("\", "/").Replace("plugin/", "")
-        $ftpUri = "ftp://$FtpHost$FtpPath/$remotePath"
-        
+
+        # Corriger le calcul du remotePath
+        if ($file.StartsWith("plugin/")) {
+            $remotePath = $file.Substring(7)  # Enlever "plugin/"
+        } elseif ($file.StartsWith("plugin\")) {
+            $remotePath = $file.Substring(7)  # Enlever "plugin\"
+        } else {
+            $remotePath = $file
+        }
+        $remotePath = $remotePath.Replace("\", "/")
+
         try {
             $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$FtpPath/$remotePath"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
@@ -169,17 +187,18 @@ if ($Mode -eq "test") {
             $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $false
             $ftpRequest.Timeout = 30000
-            
+            $ftpRequest.ReadWriteTimeout = 30000
+
             $fileContent = [System.IO.File]::ReadAllBytes($localFile)
             $ftpRequest.ContentLength = $fileContent.Length
-            
+
             $stream = $ftpRequest.GetRequestStream()
             $stream.Write($fileContent, 0, $fileContent.Length)
             $stream.Close()
-            
+
             $response = $ftpRequest.GetResponse()
             $response.Close()
-            
+
             $uploadCount++
             Write-Host "   OK: $file" -ForegroundColor Green
         } catch {
@@ -187,20 +206,18 @@ if ($Mode -eq "test") {
             Write-Host "   ERREUR: $file - $($_.Exception.Message)" -ForegroundColor Red
         }
     }
-    
-    $totalTime = (Get-Date) - $startTime
-    Write-Host "`nUpload termine:" -ForegroundColor White
-    Write-Host "   Fichiers envoyes: $uploadCount" -ForegroundColor Green
-    Write-Host "   Erreurs: $errorCount" -ForegroundColor $(if ($errorCount -gt 0) { "Red" } else { "Green" })
-    Write-Host "   Temps: $([math]::Round($totalTime.TotalSeconds, 1))s" -ForegroundColor Gray
-    
-    if ($errorCount -gt 0) {
-        Write-Host "`nCertains fichiers n'ont pas pu etre uploades (probablement des fichiers binaires)." -ForegroundColor Yellow
-        Write-Host "Les fichiers importants ont été déployés avec succès." -ForegroundColor Green
-        # Ne pas sortir en erreur pour les fichiers binaires
-    }
+}
 
+$totalTime = (Get-Date) - $startTime
+Write-Host "`nUpload termine:" -ForegroundColor White
+Write-Host "   Fichiers envoyes: $uploadCount" -ForegroundColor Green
+Write-Host "   Erreurs: $errorCount" -ForegroundColor $(if ($errorCount -gt 0) { "Red" } else { "Green" })
+Write-Host "   Temps: $([math]::Round($totalTime.TotalSeconds, 1))s" -ForegroundColor Gray
 
+if ($errorCount -gt 0) {
+    Write-Host "`nCertains fichiers n'ont pas pu etre uploades (probablement des fichiers binaires)." -ForegroundColor Yellow
+    Write-Host "Les fichiers importants ont été déployés avec succès." -ForegroundColor Green
+    # Ne pas sortir en erreur pour les fichiers binaires
 }
 
 # 4 GIT COMMIT + PUSH + TAG
@@ -295,7 +312,13 @@ Write-Host "`nDEPLOIEMENT TERMINE AVEC SUCCES!" -ForegroundColor Green
 Write-Host ("=" * 60) -ForegroundColor White
 Write-Host "Resume:" -ForegroundColor Cyan
 Write-Host "   Compilation: OK" -ForegroundColor Green
-Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
+
+# Afficher le statut FTP selon le mode
+if ($Mode -eq "test") {
+    Write-Host "   Upload FTP: TEST (pas d'upload reel)" -ForegroundColor Yellow
+} else {
+    Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
+}
 
 # Afficher le statut Git selon les résultats
 if ($commitCreated -and $pushSuccess) {

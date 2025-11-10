@@ -333,6 +333,24 @@ class PdfBuilderCore
     }
 
     /**
+     * Page de l'éditeur React
+     */
+    public function render_react_editor_page()
+    {
+        ?>
+        <div class="wrap">
+            <h1><?php _e('PDF Builder React Editor', 'pdf-builder-pro'); ?></h1>
+            <p><?php _e('Advanced PDF template editor with React interface.', 'pdf-builder-pro'); ?></p>
+
+            <div id="pdf-builder-react-editor-container">
+                <!-- Le contenu React sera chargé ici -->
+                <p><?php _e('Loading React Editor...', 'pdf-builder-pro'); ?></p>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
      * Page des paramètres
      */
     public function settingsPage()

@@ -199,7 +199,7 @@ function pdf_builder_load_core()
     // Charger la classe principale PDF_Builder_Core depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
-        error_log('PDF Builder: PDF_Builder_Core.php loaded, class exists: ' . (class_exists('PDF_Builder\\Core\\PDF_Builder_Core') ? 'yes' : 'no'));
+        error_log('PDF Builder: PDF_Builder_Core.php loaded, class exists: ' . (class_exists('PDF_Builder\\Core\\PdfBuilderCore') ? 'yes' : 'no'));
     } else {
         error_log('PDF Builder: PDF_Builder_Core.php file not found');
     }
@@ -564,9 +564,9 @@ function pdf_builder_load_core_when_needed()
 
     if ($load_core) {
         pdf_builder_load_core();
-        if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
+        if (class_exists('PDF_Builder\Core\PdfBuilderCore')) {
             try {
-                \PDF_Builder\Core\PDF_Builder_Core::getInstance()->init();
+                \PDF_Builder\Core\PdfBuilderCore::getInstance()->init();
                 $core_loaded = true;
             } catch (Exception $e) {
     // Ne pas utiliser wp_die() car cela peut causer une erreur 500 en AJAX
@@ -601,7 +601,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_main_page();
@@ -614,7 +614,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_templates_page();
@@ -627,7 +627,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_documents_page();
@@ -640,7 +640,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_settings_page();
