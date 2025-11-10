@@ -5905,8 +5905,8 @@ class PdfBuilderAdmin
             // Charger le template
             $template_data = $this->loadTemplateRobust($template_id);
             if (!$template_data) {
-                wp_send_json_error('Template non trouvé');
-                return;
+                // Si le template n'existe pas, créer un template par défaut
+                $template_data = $this->createDefaultTemplate($template_id);
             }
 
             // Transformer les éléments pour React si nécessaire
@@ -5919,6 +5919,87 @@ class PdfBuilderAdmin
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Crée un template par défaut si aucun template n'existe
+     */
+    private function createDefaultTemplate($template_id)
+    {
+        // Template par défaut avec quelques éléments de base
+        $default_template = [
+            'id' => $template_id,
+            'name' => 'Template par défaut',
+            'description' => 'Template créé automatiquement',
+            'elements' => [
+                [
+                    'id' => 'title',
+                    'type' => 'text',
+                    'content' => 'PDF Builder Pro',
+                    'position' => ['x' => 50, 'y' => 50],
+                    'size' => ['width' => 200, 'height' => 40],
+                    'style' => [
+                        'fontSize' => 24,
+                        'fontWeight' => 'bold',
+                        'color' => '#000000',
+                        'textAlign' => 'center'
+                    ]
+                ],
+                [
+                    'id' => 'subtitle',
+                    'type' => 'text',
+                    'content' => 'Éditeur de PDF professionnel',
+                    'position' => ['x' => 50, 'y' => 100],
+                    'size' => ['width' => 200, 'height' => 30],
+                    'style' => [
+                        'fontSize' => 16,
+                        'color' => '#666666',
+                        'textAlign' => 'center'
+                    ]
+                ]
+            ],
+            'pages' => [
+                [
+                    'id' => 1,
+                    'name' => 'Page 1',
+                    'width' => 595, // A4 width in points
+                    'height' => 842, // A4 height in points
+                    'orientation' => 'portrait',
+                    'margins' => [
+                        'top' => 28,
+                        'right' => 28,
+                        'bottom' => 28,
+                        'left' => 28
+                    ],
+                    'backgroundColor' => '#ffffff'
+                ]
+            ],
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql')
+        ];
+
+        // Sauvegarder le template par défaut en base de données
+        try {
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            $wpdb->insert(
+                $table_templates,
+                [
+                    'id' => $template_id,
+                    'name' => $default_template['name'],
+                    'template_data' => wp_json_encode($default_template),
+                    'created_at' => current_time('mysql'),
+                    'updated_at' => current_time('mysql')
+                ],
+                ['%d', '%s', '%s', '%s', '%s']
+            );
+        } catch (Exception $e) {
+            // Si la sauvegarde échoue, retourner quand même le template par défaut
+            error_log('Erreur lors de la création du template par défaut: ' . $e->getMessage());
+        }
+
+        return $default_template;
     }
 }
 
