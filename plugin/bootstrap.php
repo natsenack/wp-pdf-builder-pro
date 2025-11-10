@@ -472,12 +472,14 @@ function pdf_builder_load_bootstrap()
             error_log('PDF Builder: Core initialized');
         }
 
-        // Initialiser l'interface d'administration
-        error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false'));
-        if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+        // Initialiser l'interface d'administration UNIQUEMENT dans l'admin (pas lors d'AJAX)
+        error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false'));
+        if (is_admin() && !wp_doing_ajax() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             error_log('PDF Builder: PdfBuilderAdmin class exists, creating instance');
             $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
             error_log('PDF Builder: Admin class loaded successfully');
+        } elseif (wp_doing_ajax()) {
+            error_log('PDF Builder: Skipping admin load during AJAX call');
         } else {
             // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
             error_log('PDF Builder: Using fallback admin menu - class not found or not in admin');
