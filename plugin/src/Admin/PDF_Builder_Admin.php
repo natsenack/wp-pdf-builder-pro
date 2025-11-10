@@ -960,6 +960,14 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Alias pour settingsPage() - compatibilité
+     */
+    public function settings_page()
+    {
+        return $this->settingsPage();
+    }
+
+    /**
      * Charge les scripts et styles d'administration
      */
     public function enqueueAdminScripts($hook)
