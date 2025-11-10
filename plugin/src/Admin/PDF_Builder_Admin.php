@@ -5935,7 +5935,10 @@ class PdfBuilderAdmin
             }
 
             error_log('PDF Builder: ajax_get_template - sending success response');
-            wp_send_json_success($template_data);
+            wp_send_json_success([
+                'template' => $template_data,
+                'message' => 'Template chargé avec succès'
+            ]);
 
         } catch (Exception $e) {
             error_log('PDF Builder: ajax_get_template - exception: ' . $e->getMessage());

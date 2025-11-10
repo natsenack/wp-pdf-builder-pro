@@ -48,7 +48,7 @@ export function useTemplate() {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
-      const templateData = result.data;
+      const templateData = result.data.template;
       debugLog('📊 [LOAD TEMPLATE] Données du template brutes:', templateData);
       
       // 🔍 Tracer les éléments reçus du serveur
