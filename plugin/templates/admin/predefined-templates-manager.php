@@ -1136,3 +1136,5 @@ class PdfBuilderPredefinedTemplatesManager
 
 // Initialiser le gestionnaire
 new PDF_Builder_Predefined_Templates_Manager();
+   
+ 
