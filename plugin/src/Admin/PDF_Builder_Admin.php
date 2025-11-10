@@ -5891,19 +5891,23 @@ class PdfBuilderAdmin
                 return;
             }
 
-            // Vérifier le nonce
-            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : '';
-            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+            // Vérifier le nonce - accepter plusieurs formats
+            $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : '';
+            $nonce_valid = wp_verify_nonce($nonce, 'pdf_builder_nonce') ||
+                          wp_verify_nonce($nonce, 'pdf_builder_order_actions') ||
+                          wp_verify_nonce($nonce, 'pdf_builder_templates');
+
+            if (!$nonce_valid) {
                 error_log('PDF Builder: ajax_get_template - invalid nonce: ' . $nonce);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
-            // Récupérer l'ID du template
-            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+            // Récupérer l'ID du template - accepter GET ou POST
+            $template_id = isset($_REQUEST['template_id']) ? intval($_REQUEST['template_id']) : 0;
             error_log('PDF Builder: ajax_get_template - template_id: ' . $template_id);
 
-            if (!$template_id) {
+            if (!$template_id || $template_id <= 0) {
                 error_log('PDF Builder: ajax_get_template - template_id missing or invalid');
                 wp_send_json_error('ID template manquant ou invalide');
                 return;
@@ -5919,8 +5923,14 @@ class PdfBuilderAdmin
                 $template_data = $this->createDefaultTemplate($template_id);
             }
 
+            // S'assurer que les données sont dans le bon format
+            if (!is_array($template_data)) {
+                error_log('PDF Builder: ajax_get_template - template_data is not array, fixing');
+                $template_data = ['error' => 'Invalid template data format'];
+            }
+
             // Transformer les éléments pour React si nécessaire
-            if (isset($template_data['elements'])) {
+            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
                 $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
@@ -5929,7 +5939,11 @@ class PdfBuilderAdmin
 
         } catch (Exception $e) {
             error_log('PDF Builder: ajax_get_template - exception: ' . $e->getMessage());
+            error_log('PDF Builder: ajax_get_template - stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+        } catch (Error $e) {
+            error_log('PDF Builder: ajax_get_template - fatal error: ' . $e->getMessage());
+            wp_send_json_error('Erreur fatale lors du chargement du template: ' . $e->getMessage());
         }
     }
 
