@@ -161,6 +161,9 @@ function pdf_builder_init()
     add_action('wp_ajax_pdf_builder_auto_save_template', function () {
         die('Hook appelé v2');
     });
+    add_action('wp_ajax_nopriv_pdf_builder_auto_save_template', function () {
+        die('Hook appelé nopriv v2');
+    });
 
     // Tools for development/tests removed from production bootstrap
 
