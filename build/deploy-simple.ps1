@@ -252,33 +252,42 @@ if ($Mode -eq "test") {
             Start-Sleep -Milliseconds 50  # Réduit à 50ms
         }
 
-        # Job d'upload optimisé
+        # Job d'upload optimisé avec retry
         $job = Start-Job -ScriptBlock {
             param($ftpHost, $ftpUser, $ftpPass, $ftpPath, $remotePath, $localFile)
 
-            try {
-                $ftpUri = "ftp://$ftpUser`:$ftpPass@$ftpHost$ftpPath/$remotePath"
-                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-                $ftpRequest.UseBinary = $true
-                $ftpRequest.UsePassive = $true
-                $ftpRequest.Timeout = 10000  # Réduit à 10 secondes
-                $ftpRequest.ReadWriteTimeout = 20000  # Réduit à 20 secondes
-                $ftpRequest.KeepAlive = $false
+            $maxRetries = 3
+            $retryCount = 0
 
-                $fileContent = [System.IO.File]::ReadAllBytes($localFile)
-                $ftpRequest.ContentLength = $fileContent.Length
+            while ($retryCount -lt $maxRetries) {
+                try {
+                    $ftpUri = "ftp://$ftpUser`:$ftpPass@$ftpHost$ftpPath/$remotePath"
+                    $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                    $ftpRequest.UseBinary = $true
+                    $ftpRequest.UsePassive = $true
+                    $ftpRequest.Timeout = 15000  # Augmenté à 15 secondes
+                    $ftpRequest.ReadWriteTimeout = 30000  # Augmenté à 30 secondes
+                    $ftpRequest.KeepAlive = $false
 
-                $stream = $ftpRequest.GetRequestStream()
-                $stream.Write($fileContent, 0, $fileContent.Length)
-                $stream.Close()
+                    $fileContent = [System.IO.File]::ReadAllBytes($localFile)
+                    $ftpRequest.ContentLength = $fileContent.Length
 
-                $response = $ftpRequest.GetResponse()
-                $response.Close()
+                    $stream = $ftpRequest.GetRequestStream()
+                    $stream.Write($fileContent, 0, $fileContent.Length)
+                    $stream.Close()
 
-                return @{ Success = $true; File = $remotePath }
-            } catch {
-                return @{ Success = $false; File = $remotePath; Error = $_.Exception.Message }
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+
+                    return @{ Success = $true; File = $remotePath }
+                } catch {
+                    $retryCount++
+                    if ($retryCount -ge $maxRetries) {
+                        return @{ Success = $false; File = $remotePath; Error = $_.Exception.Message }
+                    }
+                    Start-Sleep -Seconds 1  # Attendre 1 seconde avant retry
+                }
             }
         } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $FtpPath, $remotePath, $localFile
 
@@ -286,7 +295,7 @@ if ($Mode -eq "test") {
     }
 
     # Attendre la fin de tous les uploads avec timeout optimisé
-    $globalTimeout = $(if ($FastMode) { 90 } else { 120 })  # 1.5 min en rapide, 2 min normal
+    $globalTimeout = $(if ($FastMode) { 180 } else { 240 })  # Augmenté pour les retries
     $globalStartTime = Get-Date
 
     while ($uploadJobs.Count -gt 0 -and ((Get-Date) - $globalStartTime).TotalSeconds -lt $globalTimeout) {

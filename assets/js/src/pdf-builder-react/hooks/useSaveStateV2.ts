@@ -136,18 +136,19 @@ export function useSaveStateV2({
       });
 
       // Faire la requête
-      debugLog('[SAVE V2] Envoi de la requête AJAX...');
-      const response = await fetch(window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php', {
+      debugLog('[SAVE V2] Envoi de la requête AJAX avec méthode POST...');
+      const ajaxUrl = window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'X-Requested-With': 'XMLHttpRequest'
         },
         body: new URLSearchParams({
-          action: 'pdf_builder_auto_save_template',
-          template_id: templateId.toString(),
-          elements: JSON.stringify(cleanElements),
-          nonce: nonce
+          'action': 'pdf_builder_auto_save_template',
+          'nonce': nonce,
+          'template_id': templateId.toString(),
+          'elements': JSON.stringify(cleanElements)
         })
       });
 

@@ -592,16 +592,11 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
                        ((window as unknown as Record<string, unknown>).pdfBuilderNonce as string) ||
                        ((window as unknown as Record<string, unknown>).pdfBuilderReactData as Record<string, unknown>)?.nonce as string || '';
 
-          const response = await fetch(ajaxUrl, {
-            method: 'POST',
+          const response = await fetch(ajaxUrl + '?action=pdf_builder_load_template&template_id=' + templateId + '&nonce=' + nonce, {
+            method: 'GET',
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              action: 'pdf_builder_load_template',
-              template_id: templateId,
-              nonce: nonce
-            })
+              'X-Requested-With': 'XMLHttpRequest'
+            }
           });
 
           const data = await response.json();
