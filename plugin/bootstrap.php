@@ -1413,6 +1413,7 @@ function pdf_builder_register_fallback_hooks()
         function pdf_builder_ajax_save_template_fallback() {
             try {
                 error_log('PDF Builder: Fallback save handler called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+                error_log('PDF Builder: Fallback - Action: ' . (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'none'));
                 error_log('PDF Builder: Fallback - POST data keys: ' . implode(', ', array_keys($_POST)));
                 
                 // Vérifier les permissions

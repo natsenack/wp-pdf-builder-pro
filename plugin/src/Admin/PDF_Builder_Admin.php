@@ -3007,19 +3007,57 @@ class PdfBuilderAdmin
                 $transformed_element['content'] = $element['content'];
             }
 
-            // Transformer position -> x, y
-            if (isset($element['position']['x'])) {
+            // Gestion spéciale pour les éléments company_logo
+            if ($element['type'] === 'company_logo') {
+                $logo_url = '';
+                if (isset($element['imageUrl'])) {
+                    $logo_url = $element['imageUrl'];
+                } elseif (isset($element['content'])) {
+                    $logo_url = $element['content'];
+                }
+                if (!$logo_url) {
+                    $custom_logo_id = get_theme_mod('custom_logo');
+                    if ($custom_logo_id) {
+                        $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    }
+                }
+                if (!$logo_url) {
+                    $site_logo_id = get_option('site_logo');
+                    if ($site_logo_id) {
+                        $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                    }
+                }
+                if ($logo_url) {
+                    $transformed_element['logoUrl'] = $logo_url;
+                }
+            }
+
+            // Copier src si présent
+            if (isset($element['src'])) {
+                $transformed_element['src'] = $element['src'];
+            }
+
+            // Transformer position -> x, y (vérifier d'abord x direct, sinon position.x)
+            if (isset($element['x'])) {
+                $transformed_element['x'] = (int)$element['x'];
+            } elseif (isset($element['position']['x'])) {
                 $transformed_element['x'] = (int)$element['position']['x'];
             }
-            if (isset($element['position']['y'])) {
+            if (isset($element['y'])) {
+                $transformed_element['y'] = (int)$element['y'];
+            } elseif (isset($element['position']['y'])) {
                 $transformed_element['y'] = (int)$element['position']['y'];
             }
 
-            // Transformer size -> width, height
-            if (isset($element['size']['width'])) {
+            // Transformer size -> width, height (vérifier d'abord width direct, sinon size.width)
+            if (isset($element['width'])) {
+                $transformed_element['width'] = (int)$element['width'];
+            } elseif (isset($element['size']['width'])) {
                 $transformed_element['width'] = (int)$element['size']['width'];
             }
-            if (isset($element['size']['height'])) {
+            if (isset($element['height'])) {
+                $transformed_element['height'] = (int)$element['height'];
+            } elseif (isset($element['size']['height'])) {
                 $transformed_element['height'] = (int)$element['size']['height'];
             }
 
@@ -5893,6 +5931,7 @@ class PdfBuilderAdmin
     public function ajax_get_template()
     {
         try {
+            error_log('PDF Builder: ajax_get_template called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
