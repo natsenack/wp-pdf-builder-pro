@@ -199,6 +199,9 @@ function pdf_builder_load_core()
     // Charger la classe principale PDF_Builder_Core depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
+        error_log('PDF Builder: PDF_Builder_Core.php loaded, class exists: ' . (class_exists('PDF_Builder\\Core\\PDF_Builder_Core') ? 'yes' : 'no'));
+    } else {
+        error_log('PDF Builder: PDF_Builder_Core.php file not found');
     }
 
     // Charger les managers essentiels depuis src/Managers/ AVANT PdfBuilderAdmin
@@ -461,9 +464,9 @@ function pdf_builder_load_bootstrap()
     // dans pdf-builder-pro.php, pas ici, pour éviter les conflits
 
     // Vérification que les classes essentielles sont chargées
-    if (class_exists('PDF_Builder\\Core\\PDF_Builder_Core')) {
-        error_log('PDF Builder: PDF_Builder_Core class exists');
-        $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+    if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
+        error_log('PDF Builder: PdfBuilderCore class exists');
+        $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
         if (method_exists($core, 'init')) {
             $core->init();
             error_log('PDF Builder: Core initialized');
@@ -481,7 +484,7 @@ function pdf_builder_load_bootstrap()
             add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
         }
     } else {
-        error_log('PDF Builder: PDF_Builder_Core class does not exist');
+        error_log('PDF Builder: PdfBuilderCore class does not exist');
     }
 
     // Marquer comme chargé globalement
