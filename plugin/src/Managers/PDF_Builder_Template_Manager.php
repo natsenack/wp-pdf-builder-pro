@@ -381,15 +381,83 @@ class PdfBuilderTemplateManager
     public function ajax_auto_save_template()
     {
         try {
-            // Test simple pour vérifier que le hook fonctionne
-            error_log('PDF Builder: ajax_auto_save_template called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            error_log('PDF Builder: REQUEST data keys: ' . implode(', ', array_keys($_REQUEST)));
-            \wp_send_json_success(array(
-                'message' => 'Auto-save test réussi',
-                'template_id' => isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0,
+            // Vérification des permissions
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérifier le nonce
+            if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_nonce')) {
+                \wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            // Récupération des données
+            $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
+            $elements_raw = isset($_REQUEST['elements']) ? \wp_unslash($_REQUEST['elements']) : '[]';
+
+            if (empty($template_id)) {
+                \wp_send_json_error('ID template invalide');
+            }
+
+            // Décoder les éléments
+            $elements = \json_decode($elements_raw, true);
+            if ($elements === null && \json_last_error() !== JSON_ERROR_NONE) {
+                \wp_send_json_error('Données des éléments corrompues - Erreur JSON: ' . \json_last_error_msg());
+            }
+
+            // Charger le template existant pour récupérer le canvas
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $template_row = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+
+            if (!$template_row) {
+                \wp_send_json_error('Template non trouvé pour auto-save');
+            }
+
+            // Récupérer les données existantes
+            $existing_data = \json_decode($template_row['template_data'], true);
+            if ($existing_data === null) {
+                $existing_data = ['elements' => [], 'canvas' => []];
+            }
+
+            // Préparer les nouvelles données (conserver le canvas, mettre à jour les éléments)
+            $template_data = [
+                'elements' => $elements,
+                'canvas' => $existing_data['canvas'] ?? []
+            ];
+
+            // Encoder en JSON
+            $json_data = \wp_json_encode($template_data);
+            if ($json_data === false) {
+                \wp_send_json_error('Erreur lors de l\'encodage des données JSON');
+            }
+
+            // Mettre à jour la base de données
+            $updated = $wpdb->update(
+                $table_templates,
+                [
+                    'template_data' => $json_data,
+                    'updated_at' => \current_time('mysql')
+                ],
+                ['id' => $template_id],
+                ['%s', '%s'],
+                ['%d']
+            );
+
+            if ($updated === false) {
+                \wp_send_json_error('Erreur lors de la mise à jour du template');
+            }
+
+            \wp_send_json_success([
+                'message' => 'Auto-save réussi',
+                'template_id' => $template_id,
                 'saved_at' => \current_time('mysql'),
-                'element_count' => 0
-            ));
+                'element_count' => count($elements)
+            ]);
+
         } catch (\Throwable $e) {
             error_log('PDF Builder: Critical error in ajax_auto_save_template: ' . $e->getMessage());
             \wp_send_json_error('Erreur critique: ' . $e->getMessage());

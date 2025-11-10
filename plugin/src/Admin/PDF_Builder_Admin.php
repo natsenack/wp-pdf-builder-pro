@@ -5622,7 +5622,7 @@ class PdfBuilderAdmin
         wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
         // Declare global variable BEFORE loading bundle - Force rebuild 2025-11-06 03:37
-        $inline_script = "window.pdfBuilderReact = {};";
+        $inline_script = "window.pdfBuilderReact = {}; window.pdfBuilderDebug = true;";
         wp_add_inline_script('react-dom', $inline_script);
 
         // Enqueue PDF Builder React scripts from local build
