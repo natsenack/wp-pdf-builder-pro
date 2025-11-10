@@ -467,6 +467,9 @@ function pdf_builder_load_bootstrap()
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
+        } else {
+            // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
+            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
         }
     }
 
