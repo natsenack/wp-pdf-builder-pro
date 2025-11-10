@@ -133,7 +133,7 @@ class Canvas_Manager
         // Filtre pour appliquer les paramètres canvas à React
         add_filter('pdf_builder_react_settings', [$this, 'apply_canvas_settings_to_react'], 10, 1);
 // Action pour initialiser les paramètres canvas côté client
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_canvas_settings_script'], 15);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueCanvasSettingsScript'], 15);
     }
 
     /**
