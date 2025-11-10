@@ -481,6 +481,20 @@ function pdf_builder_load_bootstrap()
             error_log('PDF Builder: Loading admin for AJAX action: ' . $action . ', DOING_AJAX defined: ' . (defined('DOING_AJAX') ? 'yes' : 'no'));
         }
 
+        // Forcer le chargement pour les requêtes PDF Builder même si wp_doing_ajax() est false
+        if (!$is_admin_or_pdf_ajax) {
+            $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+            $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+            $is_pdf_request = strpos($request_uri, 'pdf_builder') !== false ||
+                             strpos($action, 'pdf_builder') !== false ||
+                             (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'pdf-builder') !== false);
+
+            if ($is_pdf_request) {
+                $is_admin_or_pdf_ajax = true;
+                error_log('PDF Builder: Forcing admin load for PDF request - URI: ' . $request_uri . ', Action: ' . $action);
+            }
+        }
+
         error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', pdf_ajax_allowed: ' . ($is_admin_or_pdf_ajax ? 'true' : 'false'));
 
         if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
@@ -1418,10 +1432,12 @@ function pdf_builder_register_fallback_hooks()
     if (!function_exists('pdf_builder_ajax_save_template_fallback')) {
         function pdf_builder_ajax_save_template_fallback() {
             try {
-                error_log('PDF Builder: Using fallback save handler');
+                error_log('PDF Builder: Fallback save handler called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+                error_log('PDF Builder: Fallback - POST data keys: ' . implode(', ', array_keys($_POST)));
                 
                 // Vérifier les permissions
                 if (!current_user_can('manage_options')) {
+                    error_log('PDF Builder: Fallback - Insufficient permissions');
                     wp_send_json_error('Permissions insuffisantes');
                     return;
                 }
@@ -1435,15 +1451,19 @@ function pdf_builder_register_fallback_hooks()
                 }
 
                 if (!$nonce_valid) {
+                    error_log('PDF Builder: Fallback - Invalid nonce: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'none'));
                     wp_send_json_error('Sécurité: Nonce invalide');
                     return;
                 }
+
+                error_log('PDF Builder: Fallback - Nonce valid, processing data');
 
                 // Charger le Template Manager directement
                 if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
                     $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
                     $manager->ajaxSaveTemplateV3();
                 } else {
+                    error_log('PDF Builder: Fallback - TemplateManager class not found');
                     wp_send_json_error('Gestionnaire de templates non disponible');
                 }
             } catch (\Throwable $e) {
