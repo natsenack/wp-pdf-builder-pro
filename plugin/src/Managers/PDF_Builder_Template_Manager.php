@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Pro - Template Manager
  * Gestion centralisée des templates
- * Version: 1.0.3 - Fixed data handling for camelCase and JSON
+ * Version: 1.0.4 - Fixed data handling for camelCase and JSON, cache bypass V3
  */
 
 class PdfBuilderTemplateManager
@@ -67,7 +67,7 @@ class PdfBuilderTemplateManager
     /**
      * AJAX - Sauvegarder un template
      */
-    public function ajaxSaveTemplateV2()
+    public function ajaxSaveTemplateV3()
     {
         try {
             // Vérification des permissions

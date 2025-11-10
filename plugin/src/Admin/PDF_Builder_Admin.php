@@ -1246,7 +1246,7 @@ class PdfBuilderAdmin
     {
         $manager = $this->getTemplateManager();
         if ($manager) {
-            $manager->ajaxSaveTemplateV2();
+            $manager->ajaxSaveTemplateV3();
         }
     }
 
