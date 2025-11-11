@@ -418,6 +418,10 @@ class PdfBuilderTemplateManager
                 \wp_send_json_error('ID template invalide');
             }
 
+            // 🔍 LOG EXACTLY WHAT WAS RECEIVED FROM FRONTEND
+            error_log('🔍 [AUTO-SAVE] ===== SAVE START =====');
+            error_log('🔍 [AUTO-SAVE] Raw elements string (first 500 chars): ' . substr($elements_raw, 0, 500));
+
             // Décoder les éléments
             $elements = \json_decode($elements_raw, true);
             if ($elements === null && \json_last_error() !== JSON_ERROR_NONE) {
@@ -442,9 +446,12 @@ class PdfBuilderTemplateManager
                 $existing_data = ['elements' => [], 'canvas' => []];
             }
 
-            error_log('🔍 [AUTO-SAVE] Avant enrichissement - Element count: ' . count($elements));
+            error_log('🔍 [AUTO-SAVE] Frontend sent ' . count($elements) . ' elements');
             if (!empty($elements)) {
-                error_log('🔍 [AUTO-SAVE] Element[0] keys: ' . implode(', ', array_keys($elements[0])));
+                error_log('🔍 [AUTO-SAVE] Element[0] structure: ' . json_encode($elements[0]));
+                if (count($elements) > 1) {
+                    error_log('🔍 [AUTO-SAVE] Element[1] structure: ' . json_encode($elements[1]));
+                }
             }
 
             // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
@@ -465,6 +472,15 @@ class PdfBuilderTemplateManager
             unset($el);
 
             error_log('🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
+            if (!empty($elements)) {
+                error_log('🔍 [AUTO-SAVE] Element[0] AFTER enrichment: ' . json_encode($elements[0]));
+                // Check for company_logo specifically
+                foreach ($elements as $idx => $el) {
+                    if (isset($el['type']) && $el['type'] === 'company_logo') {
+                        error_log('🔍 [AUTO-SAVE] company_logo[' . $idx . '] after enrichment: src=' . (isset($el['src']) ? $el['src'] : 'MISSING'));
+                    }
+                }
+            }
 
             // Préparer les nouvelles données (conserver le canvas, mettre à jour les éléments)
             $template_data = [
@@ -485,6 +501,8 @@ class PdfBuilderTemplateManager
             }
 
             error_log('🔍 [AUTO-SAVE] JSON encoded length: ' . strlen($json_data));
+            // Log the ACTUAL JSON being saved to DB (first 500 chars)
+            error_log('🔍 [AUTO-SAVE] JSON saved to DB (first 500 chars): ' . substr($json_data, 0, 500));
 
             // Mettre à jour la base de données
             $updated = $wpdb->update(

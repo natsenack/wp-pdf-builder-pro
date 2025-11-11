@@ -1134,6 +1134,12 @@ function pdf_builder_ajax_get_template()
         . ', canvas=' . (isset($canvas) ? 'YES' : 'NO'));
     if (count($elements) > 0) {
         error_log('✅ [GET TEMPLATE] First element: ' . json_encode($elements[0]));
+        // Log company_logo specifically
+        foreach ($elements as $idx => $el) {
+            if (isset($el['type']) && $el['type'] === 'company_logo') {
+                error_log('✅ [GET TEMPLATE] company_logo[' . $idx . '] returned: src=' . (isset($el['src']) ? $el['src'] : 'MISSING'));
+            }
+        }
     }
 
     // ✅ ÉTAPE 3: Cache DISABLED for now - always fresh from DB
@@ -1472,12 +1478,16 @@ function pdf_builder_register_fallback_hooks()
         add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_auto_save_template', function () {
+            error_log('🔍 [FALLBACK HOOK] Auto-save hook called! Action received');
+            error_log('🔍 [FALLBACK HOOK] POST data: ' . print_r($_POST, true));
+            
             // Appeler le vrai handler du template manager
             if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
+                error_log('🔍 [FALLBACK HOOK] PdfBuilderTemplateManager found, calling ajax_auto_save_template');
                 $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
                 $manager->ajax_auto_save_template();
             } else {
-                error_log('PDF Builder: PdfBuilderTemplateManager class not found in auto_save_template handler');
+                error_log('🔍 [FALLBACK HOOK] PdfBuilderTemplateManager class not found');
                 wp_send_json_error('Gestionnaire de templates non disponible');
             }
         });
