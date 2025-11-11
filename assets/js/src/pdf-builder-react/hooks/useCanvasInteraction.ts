@@ -450,19 +450,19 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       case 'ne': { // Nord-Est (coin haut-droit)
         updates.width = Math.max(MIN_SIZE, element.width + deltaX);
         updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = element.y + deltaY;
+        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
         break;
       }
       case 'nw': { // Nord-Ouest (coin haut-gauche)
         updates.width = Math.max(MIN_SIZE, element.width - deltaX);
-        updates.x = element.x + deltaX;
+        updates.x = Math.max(0, element.x + deltaX);  // Clamp x >= 0
         updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = element.y + deltaY;
+        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
         break;
       }
       case 'n': { // Nord (haut)
         updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = element.y + deltaY;
+        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
         break;
       }
       case 's': { // Sud (bas)
@@ -471,7 +471,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
       case 'w': { // Ouest (gauche)
         updates.width = Math.max(MIN_SIZE, element.width - deltaX);
-        updates.x = element.x + deltaX;
+        updates.x = Math.max(0, element.x + deltaX);  // Clamp x >= 0
         break;
       }
       case 'e': { // Est (droite)
