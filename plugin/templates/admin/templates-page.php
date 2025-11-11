@@ -5,12 +5,18 @@ if (!defined('ABSPATH')) {
 }
 /**
  * Templates Page - PDF Builder Pro
- * Gestion des t                <!-- Template Bon de Commande -->
-                <div class="template-card" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">plates PDF
+ * Gestion des templates PDF
  */
 
-
+// ✅ FIX: Créer le nonce directement dans le template PHP
+$templates_nonce = wp_create_nonce('pdf_builder_templates');
 ?>
+
+<!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
+<script>
+var pdfBuilderTemplatesNonce = '<?php echo esc_js($templates_nonce); ?>';
+var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+</script>
 
 <div class="wrap">
     <h1><?php _e('[DOC] Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
