@@ -548,19 +548,29 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
-      // ✅ SIMPLIFIED: Direct resize without complex property preservation
+      // ✅ BALANCED: Preserve essential properties without overkill
       const lastState = lastKnownStateRef.current;
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
       const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, resizeMouseStartRef.current);
 
-      // ✅ SIMPLE: Only update the resized properties
+      // ✅ Preserve essential visual properties (corners, styling, etc.)
+      const essentialUpdates: Record<string, unknown> = { ...resizeUpdates };
+
+      // Keep all properties except the ones we're updating and updatedAt
+      const elementAsRecord = element as Record<string, unknown>;
+      Object.keys(elementAsRecord).forEach(key => {
+        if (!(key in resizeUpdates) && key !== 'updatedAt') {
+          essentialUpdates[key] = elementAsRecord[key];
+        }
+      });
+
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates: resizeUpdates as Partial<Element>
+          updates: essentialUpdates as Partial<Element>
         }
       });
     }
