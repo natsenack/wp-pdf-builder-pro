@@ -19,8 +19,7 @@ export class CanvasMonitoringDashboard {
   static initialize(): void {
     this.monitoringEnabled = true;
     this.startTime = Date.now();
-    console.log('🎯 Canvas Monitoring Dashboard initialized');
-    console.log('Use: CanvasMonitoringDashboard.showDashboard() to view stats');
+    // Silent initialization - dashboard is available via showDashboard()
   }
 
   /**

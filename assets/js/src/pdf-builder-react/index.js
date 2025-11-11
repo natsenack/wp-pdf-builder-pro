@@ -70,21 +70,24 @@ class ErrorBoundary extends React.Component {
 // let currentTemplate = null;
 // let isModified = false;
 
-debugLog('🚀 PDF Builder React bundle starting execution...');
+// Flag pour afficher les logs d'initialisation détaillés
+const DEBUG_VERBOSE = false;
+
+if (DEBUG_VERBOSE) debugLog('🚀 PDF Builder React bundle starting execution...');
 
 function initPDFBuilderReact() {
-  debugLog('✅ initPDFBuilderReact function called');
+  if (DEBUG_VERBOSE) debugLog('✅ initPDFBuilderReact function called');
 
   try {
     // Vérifier si le container existe
     const container = document.getElementById('pdf-builder-react-root');
-    debugLog('🔍 Container element:', container);
+    if (DEBUG_VERBOSE) debugLog('🔍 Container element:', container);
     if (!container) {
       debugError('❌ Container #pdf-builder-react-root not found');
       return false;
     }
 
-    debugLog('✅ Container found, checking dependencies...');
+    if (DEBUG_VERBOSE) debugLog('✅ Container found, checking dependencies...');
 
     // Vérifier les dépendances
     if (typeof React === 'undefined') {
@@ -95,9 +98,9 @@ function initPDFBuilderReact() {
       debugError('❌ ReactDOM is not available');
       return false;
     }
-    debugLog('✅ React dependencies available');
+    if (DEBUG_VERBOSE) debugLog('✅ React dependencies available');
 
-    debugLog('🎯 All dependencies loaded, initializing React...');
+    if (DEBUG_VERBOSE) debugLog('🎯 All dependencies loaded, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     const loadingEl = document.getElementById('pdf-builder-react-loading');
@@ -106,16 +109,16 @@ function initPDFBuilderReact() {
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
 
-    debugLog('🎨 Creating React root...');
+    if (DEBUG_VERBOSE) debugLog('🎨 Creating React root...');
 
     // Créer et rendre l'application React
     const root = ReactDOM.createRoot(container);
-    debugLog('🎨 React root created, rendering component...');
+    if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
 
     root.render(React.createElement(ErrorBoundary, null, 
       React.createElement(PDFBuilder, { width: DEFAULT_CANVAS_WIDTH, height: DEFAULT_CANVAS_HEIGHT })
     ));
-    debugLog('✅ React component rendered successfully');
+    if (DEBUG_VERBOSE) debugLog('✅ React component rendered successfully');
 
     return true;
 
@@ -130,7 +133,7 @@ function initPDFBuilderReact() {
   }
 }
 
-debugLog('📦 Creating exports object...');
+if (DEBUG_VERBOSE) debugLog('📦 Creating exports object...');
 
 // Export default pour webpack
 const exports = {
@@ -145,7 +148,7 @@ const exports = {
   resetAPI
 };
 
-debugLog('🌐 Assigning to window...');
+if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 
 // Wrapper IIFE for immediate execution
 (function() {
@@ -165,7 +168,7 @@ debugLog('🌐 Assigning to window...');
   }
 }).call(window);
 
-debugLog('🎉 PDF Builder React bundle execution completed');
+if (DEBUG_VERBOSE) debugLog('🎉 PDF Builder React bundle execution completed');
 
 // NO MORE EXPORTS - webpack will handle this differently
 // Removed: export default exports;

@@ -34,6 +34,7 @@ export class ElementChangeTracker {
   private changeHistory: PropertyChange[] = [];
   private maxHistorySize = 500;
   private listeners: ((change: PropertyChange) => void)[] = [];
+  public debugEnabled = false; // Set to true to enable logging
 
   /**
    * Track element state at a specific point in time
@@ -63,9 +64,11 @@ export class ElementChangeTracker {
           changeType: 'created'
         });
 
-        console.log(
-          `✨ [CREATED] Element: ${element.id} (${element.type}) at (${element.x}, ${element.y})`
-        );
+        if (this.debugEnabled) {
+          console.log(
+            `✨ [CREATED] Element: ${element.id} (${element.type}) at (${element.x}, ${element.y})`
+          );
+        }
       } else {
         // Check for property changes
         this.detectPropertyChanges(previousSnapshot, snapshot, changes);
@@ -84,9 +87,11 @@ export class ElementChangeTracker {
           changeType: 'deleted'
         });
 
-        console.log(
-          `🗑️ [DELETED] Element: ${elementId} (${snapshot.type})`
-        );
+        if (this.debugEnabled) {
+          console.log(
+            `🗑️ [DELETED] Element: ${elementId} (${snapshot.type})`
+          );
+        }
       }
     });
 
@@ -131,11 +136,13 @@ export class ElementChangeTracker {
         const emoji = this.getPropertyEmoji(key);
         const typeLabel = this.getPropertyType(newValue);
 
-        console.log(
-          `${emoji} [PROPERTY] ${previous.id} → ${key}: ${this.formatValue(
-            oldValue
-          )} → ${this.formatValue(newValue)} (${typeLabel})`
-        );
+        if (this.debugEnabled) {
+          console.log(
+            `${emoji} [PROPERTY] ${previous.id} → ${key}: ${this.formatValue(
+              oldValue
+            )} → ${this.formatValue(newValue)} (${typeLabel})`
+          );
+        }
       }
     });
   }

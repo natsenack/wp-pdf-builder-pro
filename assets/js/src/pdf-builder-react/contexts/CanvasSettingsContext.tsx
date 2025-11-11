@@ -130,7 +130,10 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       };
     }
 
-    console.log('Loading canvas settings from window', windowSettings);
+    const debugVerbose = typeof window !== 'undefined' && !!(window as unknown as Record<string, boolean>).DEBUG_VERBOSE;
+    if (debugVerbose) {
+      console.log('Loading canvas settings from window', windowSettings);
+    }
 
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {

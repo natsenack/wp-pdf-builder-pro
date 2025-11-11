@@ -1072,6 +1072,10 @@ interface CanvasProps {
   className?: string;
 }
 
+// Flag global pour afficher les logs détaillés des éléments (debug)
+const DEBUG_DRAW = false;
+const DEBUG_MONITORING = false; // Set to true to see real-time element tracking logs
+
 // Constantes pour le cache des images
 const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
 
@@ -1130,7 +1134,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         console.log(`  ✅ Removed from cache: ${url}`);
       }
       
-      console.log(`✅ [CACHE] Cleanup complete - ${removed} images removed, cache now has ${cache.size} items`);
+      if (DEBUG_DRAW) console.log(`✅ [CACHE] Cleanup complete - ${removed} images removed, cache now has ${cache.size} items`);
     }
   }, []);
 
@@ -1213,7 +1217,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
-    if (logoUrl) console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
+    if (logoUrl) if (DEBUG_DRAW) console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
 
     // ✅ CORRECTION 7: Détecter si l'URL a changé
     const lastRenderedUrl = renderedLogoUrlsRef.current.get(element.id);
@@ -1231,7 +1235,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       let img = imageCache.current.get(logoUrl);
 
       if (!img) {
-        console.log('🖼️ [LOGO] Creating new image for URL:', logoUrl);
+        if (DEBUG_DRAW) console.log('🖼️ [LOGO] Creating new image for URL:', logoUrl);
         img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
@@ -1245,12 +1249,12 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         // Gérer le chargement réussi - force un re-render du canvas
         img.onload = () => {
           const loadedImg = img; // Capture img in closure
-          console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
+          if (DEBUG_DRAW) console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
           // Image is now cached and ready - next render will use it
           // No need to manually trigger re-render, the cache has it
         };
       } else {
-        console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
+        if (DEBUG_DRAW) console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
       }
 
       // Si l'image est chargée, la dessiner
@@ -1534,76 +1538,60 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element, currentState: BuilderState) => {
     // Vérifier si l'élément est visible
     if (element.visible === false) {
-      console.log(`  ⊘ [DRAW] ${element.type} caché (visible=false)`);
+      if (DEBUG_DRAW) console.log(`  ⊘ [DRAW] ${element.type} caché (visible=false)`);
       return;
     }
 
-    console.log(`  ✏️ [DRAW] ${element.type} (${element.id}) à (${element.x}, ${element.y})`);
+    if (DEBUG_DRAW) console.log(`  ✏️ [DRAW] ${element.type} (${element.id}) à (${element.x}, ${element.y})`);
 
     ctx.save();
-    console.log(`    📌 [DRAW] save() effectué`);
 
     // Appliquer transformation de l'élément
     ctx.translate(element.x, element.y);
-    console.log(`    📍 [DRAW] translate(${element.x}, ${element.y})`);
     
     if (element.rotation) {
       ctx.rotate((element.rotation * Math.PI) / 180);
-      console.log(`    🔄 [DRAW] rotate(${element.rotation}°)`);
     }
 
     // Dessiner selon le type d'élément
     switch (element.type) {
       case 'rectangle':
-        console.log(`    🟦 [DRAW] drawRectangle`);
         drawRectangle(ctx, element);
         break;
       case 'circle':
-        console.log(`    🟘 [DRAW] drawCircle`);
         drawCircle(ctx, element);
         break;
       case 'text':
-        console.log(`    📝 [DRAW] drawText`);
         drawText(ctx, element);
         break;
       case 'line':
-        console.log(`    ➖ [DRAW] drawLine`);
         drawLine(ctx, element);
         break;
       case 'product_table':
-        console.log(`    📊 [DRAW] drawProductTable`);
         drawProductTable(ctx, element, currentState);
         break;
       case 'customer_info':
-        console.log(`    👤 [DRAW] drawCustomerInfo`);
         drawCustomerInfo(ctx, element, currentState);
         break;
       case 'company_info':
-        console.log(`    🏢 [DRAW] drawCompanyInfo`);
         drawCompanyInfo(ctx, element);
         break;
       case 'company_logo':
-        console.log(`    🏷️ [DRAW] drawCompanyLogo`);
         drawCompanyLogo(ctx, element);
         break;
       case 'order_number':
-        console.log(`    🔢 [DRAW] drawOrderNumber`);
         drawOrderNumber(ctx, element, currentState);
         break;
       case 'document_type':
-        console.log(`    📄 [DRAW] drawDocumentType`);
         drawDocumentType(ctx, element, currentState);
         break;
       case 'dynamic-text':
-        console.log(`    ✨ [DRAW] drawDynamicText`);
         drawDynamicText(ctx, element);
         break;
       case 'mentions':
-        console.log(`    💬 [DRAW] drawMentions`);
         drawMentions(ctx, element);
         break;
       case 'image':
-        console.log(`    🖼️ [DRAW] drawImage`);
         drawImage(ctx, element, imageCache);
         break;
       default:
@@ -1613,8 +1601,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
     }
-
-    console.log(`    🔙 [DRAW] restore() effectué`);
     ctx.restore();
   }, [drawCompanyLogo, drawDynamicText, drawMentions]);  // ✅ BUGFIX-007: Include memoized draw functions
 
@@ -2077,7 +2063,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
-    console.log('🎨 [CANVAS] renderCanvas() called, elements:', state.elements.length);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.warn('❌ [CANVAS] Canvas ref est NULL!');
@@ -2090,32 +2075,25 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       return;
     }
 
-    console.log(`📐 [CANVAS] Dimensions: ${width}x${height}, Canvas client: ${canvas.clientWidth}x${canvas.clientHeight}`);
-
     // Clear canvas with white background (matching PDF background)
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
-    console.log('✅ [CANVAS] Fond blanc appliqué');
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
       console.warn('⚠️ Canvas has 0 elements!');
     } else {
-      console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
+      // console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
     }
 
     // Appliquer transformation (zoom, pan)
     // Note: zoom est en pourcentage (100 = 100%), donc diviser par 100
-    console.log(`🔄 [CANVAS] Avant save: pan=${JSON.stringify(state.canvas.pan)}, zoom=${state.canvas.zoom}%`);
     ctx.save();
-    console.log('✅ [CANVAS] ctx.save() exécuté');
     
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
-    console.log(`✅ [CANVAS] translate appliqué: (${state.canvas.pan.x}, ${state.canvas.pan.y})`);
     
     const zoomScale = state.canvas.zoom / 100;
     ctx.scale(zoomScale, zoomScale);
-    console.log(`✅ [CANVAS] scale appliqué: ${zoomScale} (${state.canvas.zoom}%)`);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
@@ -2127,17 +2105,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
     if (canvasSettings.gridShow && state.canvas.showGrid) {
-      console.log('🔶 [CANVAS] Dessin de la grille...');
       drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
     }
 
     // Dessiner les éléments
-    console.log(`🎨 [CANVAS] Début du dessin de ${state.elements.length} éléments...`);
-    state.elements.forEach((element, index) => {
-      console.log(`  [${index}] Appel drawElement pour ${element.type}`);
+    state.elements.forEach((element) => {
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
-    console.log('✅ [CANVAS] Tous les éléments dessinés');
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
@@ -2145,9 +2119,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
-    console.log('🔙 [CANVAS] ctx.restore() appelé');
     ctx.restore();
-    console.log('✅ [CANVAS] Rendu complet terminé');
   }, [width, height, canvasSettings, state, drawElement, drawGrid]);  // ✅ BUGFIX-007: Include memoized drawGrid
 
   // Redessiner quand l'état change
@@ -2182,10 +2154,14 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       };
       elementsHash += JSON.stringify(hashData) + ';';
     }
+
+    // ✅ IMPORTANT: Include selection in hash to trigger re-render when selection changes
+    const selectionHash = JSON.stringify(state.selection.selectedElements);
+    elementsHash += selectionHash;
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
     if (lastRenderedElementsRef.current === elementsHash) {
-      console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments & positions que dernière fois');
+    if (DEBUG_DRAW) console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments & positions que dernière fois');
       return;
     }
     
@@ -2193,8 +2169,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     renderCountRef.current++;
     
     // 🔍 REAL-TIME MONITORING: Track all element property changes
+    elementChangeTracker.debugEnabled = DEBUG_MONITORING;
     const changes = elementChangeTracker.trackElements(state.elements);
-    if (changes.length > 0) {
+    if (DEBUG_MONITORING && changes.length > 0) {
       console.log(`📊 [REAL-TIME] ${changes.length} changement(s) détecté(s):`);
       changes.forEach(change => {
         if (change.changeType === 'created') {
@@ -2207,13 +2184,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       });
     }
     
-    console.log(`🔄 [EFFECT] useEffect de rendu déclenché (${renderCountRef.current}), state.elements.length=`, state.elements.length);
+    if (DEBUG_DRAW) console.log(`🔄 [EFFECT] useEffect de rendu déclenché (${renderCountRef.current}), state.elements.length=`, state.elements.length);
     const timer = setTimeout(() => {
-      console.log('🔄 [EFFECT] Appel renderCanvas immédiatement');
+      if (DEBUG_DRAW) console.log('🔄 [EFFECT] Appel renderCanvas immédiatement');
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state.elements, renderCanvas]);
+  }, [state, renderCanvas]);
 
   // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
   useEffect(() => {
@@ -2231,7 +2208,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   // 🎯 Initialize monitoring dashboard
   useEffect(() => {
     CanvasMonitoringDashboard.initialize();
-    console.log('💡 Tip: Use CanvasMonitoringDashboard.showDashboard() in console to view real-time stats');
+    // Silent initialization
   }, []);
 
   return (
