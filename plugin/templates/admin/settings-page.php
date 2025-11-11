@@ -111,6 +111,7 @@ sauvegardés.</p></div>';
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
             'debug_php_errors' => isset($_POST['debug_php_errors']),
             'debug_javascript' => isset($_POST['debug_javascript']),
+            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
             'debug_ajax' => isset($_POST['debug_ajax']),
             'debug_performance' => isset($_POST['debug_performance']),
             'debug_database' => isset($_POST['debug_database']),
@@ -256,6 +257,7 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
             'debug_php_errors' => isset($_POST['debug_php_errors']),
             'debug_javascript' => isset($_POST['debug_javascript']),
+            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
             'debug_ajax' => isset($_POST['debug_ajax']),
             'debug_performance' => isset($_POST['debug_performance']),
             'debug_database' => isset($_POST['debug_database']),
@@ -556,6 +558,13 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
     window.pdfBuilderCanvasSettings.default_canvas_format,
     window.pdfBuilderCanvasSettings.default_canvas_orientation
 ).height;
+
+// ✅ CORRECTION 9: Initialiser PDF_BUILDER_VERBOSE basé sur les paramètres
+<?php
+$developer_settings = get_option('pdf_builder_settings', []);
+$verbose_enabled = isset($developer_settings['debug_javascript_verbose']) && $developer_settings['debug_javascript_verbose'];
+?>
+window.PDF_BUILDER_VERBOSE = <?php echo $verbose_enabled ? 'true' : 'false'; ?>;
 
 // Logs removed for clarity
 </script>
@@ -3666,6 +3675,20 @@ echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'ch
                         </div>
                         <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅
 success, ❌ error, ⚠️ warn)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_javascript_verbose" name="debug_javascript_verbose" value="1" <?php
+echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Logs détaillés</span>
+                        </div>
+                        <div class="toggle-description">Active les logs détaillés (rendu, interactions, etc.). À désactiver en production.</div>
                     </td>
                 </tr>
                 <tr>
