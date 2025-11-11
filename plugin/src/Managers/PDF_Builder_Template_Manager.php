@@ -673,10 +673,12 @@ class PdfBuilderTemplateManager
             $template_name = '';
 
             if ($template_row) {
+                error_log('PDF Builder: ajaxLoadTemplate - USING CUSTOM TABLE DATA');
                 // Trouver dans la table custom
                 $template_data_raw = $template_row['template_data'];
                 $template_name = $template_row['name'];
                 
+                error_log('PDF Builder: ajaxLoadTemplate - LOADING FROM CUSTOM TABLE');
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
                 // Write to uploads directory for guaranteed access
@@ -705,6 +707,7 @@ class PdfBuilderTemplateManager
                 
                 error_log('PDF Builder: ajaxLoadTemplate - JSON decode successful, elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             } else {
+                error_log('PDF Builder: ajaxLoadTemplate - USING POST META DATA');
                 // Fallback: chercher dans wp_posts
                 $post = get_post($template_id);
 
@@ -730,6 +733,7 @@ class PdfBuilderTemplateManager
                 }
                 
                 // Log loading from post meta
+                error_log('PDF Builder: ajaxLoadTemplate - LOADING FROM POST META');
                 $upload_dir = wp_upload_dir();
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);

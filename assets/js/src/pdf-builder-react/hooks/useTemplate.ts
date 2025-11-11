@@ -52,6 +52,8 @@ export function useTemplate() {
       console.log('[useTemplate] AJAX result success:', result.success);
       console.log('🔍 [TEMPLATE LOAD] Full AJAX response:', result);
       console.log('🔍 [TEMPLATE LOAD] Response keys:', Object.keys(result));
+      console.log('🔍 [TEMPLATE LOAD] result.data:', result.data);
+      console.log('🔍 [TEMPLATE LOAD] result.data keys:', result.data ? Object.keys(result.data) : 'NO DATA');
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
@@ -61,12 +63,24 @@ export function useTemplate() {
       console.log('🔍 [TEMPLATE LOAD] Extracted templateData:', templateData);
       console.log('🔍 [TEMPLATE LOAD] templateData type:', typeof templateData);
       console.log('🔍 [TEMPLATE LOAD] templateData keys:', templateData ? Object.keys(templateData) : 'NULL');
+      console.log('🔍 [TEMPLATE LOAD] templateData.elements:', templateData?.elements);
+      console.log('🔍 [TEMPLATE LOAD] templateData.elements type:', typeof templateData?.elements);
       console.log('[useTemplate] Template loaded - elements count:', templateData.elements ? templateData.elements.length : 0);
 
       
       // 🔍 Tracer les éléments reçus du serveur
       if (templateData.elements) {
-        // Log elements for debugging
+        console.log('🔍 [TEMPLATE LOAD] Raw elements from server:', templateData.elements);
+        console.log('🔍 [TEMPLATE LOAD] First element from server:', templateData.elements[0]);
+        
+        // 🔍 Vérifier spécifiquement les éléments order_number
+        const orderNumberElements = templateData.elements.filter(el => el.type === 'order_number');
+        console.log('🔍 [TEMPLATE LOAD] Order number elements found:', orderNumberElements.length);
+        if (orderNumberElements.length > 0) {
+          console.log('🔍 [TEMPLATE LOAD] First order_number element properties:', orderNumberElements[0].properties);
+          console.log('🔍 [TEMPLATE LOAD] First order_number element contentAlign:', orderNumberElements[0].properties?.contentAlign);
+          console.log('🔍 [TEMPLATE LOAD] First order_number element labelPosition:', orderNumberElements[0].properties?.labelPosition);
+        }
       }
 
       // Parse JSON strings
