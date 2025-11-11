@@ -3964,6 +3964,10 @@ class PdfBuilderAdmin
         // Essayer de décoder le JSON
         $template_data = json_decode($template['template_data'], true);
         if (json_last_error() === JSON_ERROR_NONE) {
+            // Ajouter le nom du template depuis la base de données
+            if (isset($template['name']) && !isset($template_data['name'])) {
+                $template_data['name'] = $template['name'];
+            }
             return $template_data;
         }
 
