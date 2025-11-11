@@ -682,6 +682,17 @@ class PdfBuilderTemplateManager
                 error_log('PDF Builder: ajaxLoadTemplate - LOADING FROM CUSTOM TABLE');
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
+                
+                // Log the raw data containing order_number properties
+                if (strpos($template_data_raw, 'order_number') !== false) {
+                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS ORDER NUMBER');
+                    // Extract just the order_number element from raw JSON
+                    $raw_data_log = $template_data_raw;
+                    $upload_dir = wp_upload_dir();
+                    $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' RAW TEMPLATE DATA: ' . $raw_data_log . "\n", FILE_APPEND);
+                }
+                
                 // Write to uploads directory for guaranteed access
                 $upload_dir = wp_upload_dir();
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
@@ -709,6 +720,12 @@ class PdfBuilderTemplateManager
                                 'hasContentAlign' => array_key_exists('contentAlign', $el),
                                 'hasLabelPosition' => array_key_exists('labelPosition', $el)
                             ]));
+                            
+                            // Log the raw JSON data for this element to compare with saved data
+                            $element_json = json_encode($el);
+                            $upload_dir = wp_upload_dir();
+                            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
+                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' DECODED ORDER ELEMENT ' . $index . ': ' . $element_json . "\n", FILE_APPEND);
                         }
                     }
                 }
