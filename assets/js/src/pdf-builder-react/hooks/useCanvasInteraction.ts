@@ -543,11 +543,24 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // Copier TOUS les champs de l'élément, même s'ils sont undefined
       const completeUpdates: Record<string, unknown> = { x: newX, y: newY };
       
-      // Préserver TOUTES les propriétés
-      for (const key in element) {
+      // ✅ Préserver TOUTES les propriétés - utiliser Object.keys() au lieu de for...in
+      // pour être sûr de capturer TOUTES les propriétés (y compris src, logoUrl, etc.)
+      const elementAsRecord = element as Record<string, unknown>;
+      Object.keys(elementAsRecord).forEach(key => {
         if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
-          completeUpdates[key] = (element as Record<string, unknown>)[key];
+          completeUpdates[key] = elementAsRecord[key];
         }
+      });
+      
+      // ✅ CRITICAL: Explicitement préserver ces propriétés critiques si elles existent
+      if ('src' in elementAsRecord) {
+        completeUpdates.src = elementAsRecord.src;
+      }
+      if ('logoUrl' in elementAsRecord) {
+        completeUpdates.logoUrl = elementAsRecord.logoUrl;
+      }
+      if ('alignment' in elementAsRecord) {
+        completeUpdates.alignment = elementAsRecord.alignment;
       }
       
       console.log('🎯 [DRAG] Propriétés preservées:', Object.keys(completeUpdates).length, 'avec src:', !!completeUpdates.src);
@@ -572,13 +585,27 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       
       // ✅ CORRECTION 6: Préserver TOUTES les propriétés pendant resize
       const completeUpdates: Record<string, unknown> = { ...resizeUpdates };
+      const elementAsRecord = element as Record<string, unknown>;
       
-      // Préserver les propriétés non-resize
-      for (const key in element) {
+      // Préserver les propriétés non-resize avec Object.keys() (plus fiable que for...in)
+      Object.keys(elementAsRecord).forEach(key => {
         if (!(key in resizeUpdates) && key !== 'updatedAt') {
-          completeUpdates[key] = (element as Record<string, unknown>)[key];
+          completeUpdates[key] = elementAsRecord[key];
         }
+      });
+      
+      // Explicitement préserver les propriétés critiques
+      if ('src' in elementAsRecord) {
+        completeUpdates.src = elementAsRecord.src;
       }
+      if ('logoUrl' in elementAsRecord) {
+        completeUpdates.logoUrl = elementAsRecord.logoUrl;
+      }
+      if ('alignment' in elementAsRecord) {
+        completeUpdates.alignment = elementAsRecord.alignment;
+      }
+      
+      console.log('📏 [RESIZE] Propriétés preservées:', Object.keys(completeUpdates).length, 'avec src:', !!completeUpdates.src);
       
       dispatch({
         type: 'UPDATE_ELEMENT',

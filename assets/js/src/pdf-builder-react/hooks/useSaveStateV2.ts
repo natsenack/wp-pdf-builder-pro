@@ -172,6 +172,17 @@ export function useSaveStateV2({
 
       const data = await response.json();
       debugLog('[SAVE V2] Server response: ' + JSON.stringify(data));
+      if (data.data?.elements_saved) {
+        debugLog('[SAVE V2] Elements returned from server (count=' + data.data.elements_saved.length + ')');
+        if (data.data.elements_saved.length > 0) {
+          debugLog('[SAVE V2] Server Element[0]: ' + JSON.stringify(data.data.elements_saved[0]));
+          data.data.elements_saved.forEach((el: any, idx: number) => {
+            if (el?.type === 'company_logo') {
+              debugLog('[SAVE V2] Server company_logo[' + idx + '] returned: src=' + (el?.src || 'MISSING'));
+            }
+          });
+        }
+      }
       if (!data.success) {
         throw new Error(data.data?.message || 'Erreur serveur');
       }

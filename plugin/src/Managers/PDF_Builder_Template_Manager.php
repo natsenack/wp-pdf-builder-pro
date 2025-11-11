@@ -526,7 +526,8 @@ class PdfBuilderTemplateManager
                 'message' => 'Auto-save réussi',
                 'template_id' => $template_id,
                 'saved_at' => \current_time('mysql'),
-                'element_count' => count($elements)
+                'element_count' => count($elements),
+                'elements_saved' => $elements  // ← Return the saved elements so frontend can verify
             ]);
 
         } catch (\Throwable $e) {
