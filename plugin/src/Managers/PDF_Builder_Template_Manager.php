@@ -194,11 +194,13 @@ class PdfBuilderTemplateManager
                     ]));
                 }
 
-                // Construction de la structure complète du template
+                // ✅ CORRECTION: Construction avec canvasWidth/canvasHeight standardisés
                 $template_structure = [
                     'elements' => $elements_data,
-                    'canvasWidth' => isset($canvas_data['width']) ? $canvas_data['width'] : 794,
-                    'canvasHeight' => isset($canvas_data['height']) ? $canvas_data['height'] : 1123,
+                    'canvasWidth' => isset($canvas_data['width']) ? $canvas_data['width'] : 
+                                   (isset($canvas_data['canvasWidth']) ? $canvas_data['canvasWidth'] : 794),
+                    'canvasHeight' => isset($canvas_data['height']) ? $canvas_data['height'] : 
+                                    (isset($canvas_data['canvasHeight']) ? $canvas_data['canvasHeight'] : 1123),
                     'version' => '1.0'
                 ];
 
