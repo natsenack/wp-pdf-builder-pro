@@ -106,21 +106,16 @@ try {
         }
     } | Sort-Object -Unique
     
-    # Filtrer pour les fichiers sources (assets, src) ET les fichiers de build/dist
-    # Inclure: plugin/*, build/*, assets/*, mais EXCLURE les fichiers dist non générés
+    # Filtrer pour les fichiers à déployer
+    # Inclure: plugin/*, build/*, mais EXCLURE les fichiers sources TypeScript (assets/js/src)
+    # Les fichiers sources TypeScript ne doivent pas être en production, seulement les fichiers compilés
     $pluginModified = $allModified | Where-Object { 
-        $_ -like "plugin/*" -or 
-        $_ -like "build/*" -or 
-        $_ -like "assets/*" -or
-        $_ -like "*.ts" -or 
-        $_ -like "*.tsx" -or 
-        $_ -like "*.js" -or 
-        $_ -like "*.jsx" -or 
-        $_ -like "*.php"
+        ($_ -like "plugin/*" -or $_ -like "build/*") -and
+        $_ -notlike "assets/js/src/*"
     }
     
     # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
-    $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
+    $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
     $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
     $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
     
