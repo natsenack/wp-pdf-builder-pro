@@ -198,14 +198,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const validateCanvasRect = (rect: { width: number; height: number; left: number; top: number; right: number; bottom: number }): boolean => {
     // Vérifier que rect a des dimensions positives et que left/top sont raisonnables
     if (!rect || rect.width <= 0 || rect.height <= 0) {
-      console.warn('❌ [RECT] Invalid canvas rect - zero dimensions:', rect);
       return false;
     }
     
     // Si rect.left ou rect.top sont très négatifs (canvas hors-écran), c'est OK
     // Mais si ils sont NaN, c'est un problème
     if (isNaN(rect.left) || isNaN(rect.top) || isNaN(rect.right) || isNaN(rect.bottom)) {
-      console.warn('❌ [RECT] Canvas rect has NaN values:', rect);
       return false;
     }
     
@@ -239,7 +237,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // ✅ BUGFIX-008: Validate rect BEFORE using it
     if (!validateCanvasRect(rect)) {
-      console.warn('⚠️ [CLICK] Invalid canvas rect, skipping click handler');
       return;
     }
 
@@ -254,7 +251,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Ne créer un élément que si on clique dans le vide ET qu'on n'est pas en mode sélection
     if (!clickedElement && state.mode !== 'select') {
-      console.log('➕ [CREATE] Clic dans le vide en mode', state.mode, '- création d\'élément');
       createElementAtPosition(x, y, state.mode);
     }
     // Note: La sélection est gérée exclusivement par handleMouseDown
@@ -269,7 +265,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     
     // ✅ CORRECTION 4: Vérifier que rect est valide avant de l'utiliser
     if (!validateCanvasRect(rect)) {
-      console.error('❌ [MOUSEDOWN] Canvas rect is invalid, skipping event');
       return;
     }
 
@@ -284,18 +279,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const canvasRelativeY = event.clientY - rect.top;
     const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
     const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
-    
-    console.log('🖱️ [MOUSEDOWN] screenX:', event.clientX, 'screenY:', event.clientY, 'canvasRect:', {left: rect.left, top: rect.top}, 'canvasRelative:', {x: canvasRelativeX, y: canvasRelativeY}, 'pan:', state.canvas.pan, 'zoomScale:', zoomScale, 'finalCoords:', {x, y});
 
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
     // Note: On cherche du dernier vers le premier pour sélectionner l'élément rendu au-dessus
     const clickedElement = [...state.elements].reverse().find(el => {
       const isIn = isPointInElement(x, y, el);
-      console.log('🔍 [HIT TEST]', el.type, el.id, '- x:', el.x, 'y:', el.y, 'w:', el.width, 'h:', el.height, 'clickX:', x.toFixed(2), 'clickY:', y.toFixed(2), 'isHit:', isIn);
       return isIn;
     });
-
-    console.log('🖱️ [MOUSEDOWN] Éléments disponibles:', state.elements.length, 'Cliqué:', clickedElement ? clickedElement.id : 'AUCUN', 'Sélection avant:', state.selection.selectedElements);
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
@@ -304,18 +294,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       
       // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
       if (!isAlreadySelected) {
-        console.log('✅ [SELECTION] Sélection du nouvel élément:', clickedElement.id, 'type:', clickedElement.type);
-        console.log('✅ [SELECTION] State selection AVANT dispatch:', state.selection.selectedElements);
         dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-        console.log('✅ [SELECTION] APRÈS dispatch - état sera mis à jour à:', [clickedElement.id]);
         // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
         isDraggingRef.current = true;
         dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
         dragMouseStartRef.current = { x, y };  // Position souris
         selectedElementRef.current = clickedElement.id;
-        const offsetX = x - clickedElement.x;
-        const offsetY = y - clickedElement.y;
-        console.log('🎯 [DRAG START] Élément fraîchement sélectionné - drag préparé:', clickedElement.id, 'offsetX:', offsetX, 'offsetY:', offsetY);
         event.preventDefault();
         return;
       }
@@ -325,9 +309,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
       dragMouseStartRef.current = { x, y };  // Position souris
       selectedElementRef.current = clickedElement.id;
-      const offsetX = x - clickedElement.x;
-      const offsetY = y - clickedElement.y;
-      console.log('🎯 [DRAG START] element:', clickedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', clickedElement.x, 'elementY:', clickedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
       event.preventDefault();
       return;
     }
@@ -335,7 +316,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Vérifier si on clique sur une poignée de redimensionnement
     const resizeHandle = getResizeHandleAtPosition(x, y, state.selection.selectedElements, state.elements);
     if (resizeHandle) {
-      console.log('📏 [RESIZE] Handle détecté:', resizeHandle.handle);
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
@@ -346,11 +326,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // ✅ Sinon on a cliqué sur le vide - désélectionner
     if (state.selection.selectedElements.length > 0) {
-      console.log('❌ [CLEAR] Clic sur le vide - désélection');
       dispatch({ type: 'CLEAR_SELECTION' });
       selectedElementRef.current = null;
-    } else {
-      console.log('❌ [NO ACTION] Clic sur le vide et rien sélectionné');
     }
   }, [state, canvasRef, dispatch, getResizeHandleAtPosition]);
 
@@ -510,13 +487,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     updateCursor(cursor);
 
     if (isDraggingRef.current && selectedElementRef.current) {
-      console.log('🎯 [DRAG] isDragging=true, element:', selectedElementRef.current, 'currentMouseX:', x, 'currentMouseY:', y);
-      
       // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour éviter closure stale
       const lastState = lastKnownStateRef.current;
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) {
-        console.warn('❌ [DRAG] Element not found:', selectedElementRef.current);
         return;
       }
 
@@ -527,7 +501,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       const deltaY = y - dragMouseStartRef.current.y;
       let newX = dragStartRef.current.x + deltaX;
       let newY = dragStartRef.current.y + deltaY;
-      console.log('🎯 [DRAG] currentMouse:', { x, y }, 'dragMouseStart:', dragMouseStartRef.current, 'delta:', { deltaX, deltaY }, 'dragStart:', dragStartRef.current, 'newPosition:', { newX, newY });
 
       // S'assurer que l'élément reste dans les limites du canvas
       const canvasWidthPx = canvasWidth;
@@ -543,8 +516,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if (newY < 0) newY = 0;
       if (newY + minVisibleHeight > canvasHeightPx) newY = canvasHeightPx - minVisibleHeight;
 
-      console.log('🎯 [DRAG] Dispatch UPDATE_ELEMENT - newX:', newX, 'newY:', newY);
-      
       // ✅ CORRECTION 6: Améliorer la préservation des propriétés
       // Copier TOUS les champs de l'élément, même s'ils sont undefined
       const completeUpdates: Record<string, unknown> = { x: newX, y: newY };
@@ -569,8 +540,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         completeUpdates.alignment = elementAsRecord.alignment;
       }
       
-      console.log('🎯 [DRAG] Propriétés preservées:', Object.keys(completeUpdates).length, 'avec src:', !!completeUpdates.src);
-      
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
@@ -579,15 +548,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
-      console.log('📏 [RESIZE] isResizing=true, element:', selectedElementRef.current);
-      
       // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour resize aussi
       const lastState = lastKnownStateRef.current;
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
       const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, resizeMouseStartRef.current);
-      console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', resizeUpdates);
       
       // ✅ CORRECTION 6: Préserver TOUTES les propriétés pendant resize
       const completeUpdates: Record<string, unknown> = { ...resizeUpdates };
@@ -610,8 +576,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if ('alignment' in elementAsRecord) {
         completeUpdates.alignment = elementAsRecord.alignment;
       }
-      
-      console.log('📏 [RESIZE] Propriétés preservées:', Object.keys(completeUpdates).length, 'avec src:', !!completeUpdates.src);
       
       dispatch({
         type: 'UPDATE_ELEMENT',
