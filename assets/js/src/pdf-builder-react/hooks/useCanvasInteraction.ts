@@ -34,7 +34,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   
   // ✅ CORRECTION 3: Throttling pour handleMouseMove
   const lastMouseMoveTimeRef = useRef<number>(0);
-  const MOUSEMOVE_THROTTLE_MS = 100; // 100ms - much slower for resize tracking
+  const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS - back to normal with simplified logic
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
@@ -548,40 +548,19 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
-      // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour resize aussi
+      // ✅ SIMPLIFIED: Direct resize without complex property preservation
       const lastState = lastKnownStateRef.current;
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
       const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, resizeMouseStartRef.current);
-      
-      // ✅ CORRECTION 6: Préserver TOUTES les propriétés pendant resize
-      const completeUpdates: Record<string, unknown> = { ...resizeUpdates };
-      const elementAsRecord = element as Record<string, unknown>;
-      
-      // Préserver les propriétés non-resize avec Object.keys() (plus fiable que for...in)
-      Object.keys(elementAsRecord).forEach(key => {
-        if (!(key in resizeUpdates) && key !== 'updatedAt') {
-          completeUpdates[key] = elementAsRecord[key];
-        }
-      });
-      
-      // Explicitement préserver les propriétés critiques
-      if ('src' in elementAsRecord) {
-        completeUpdates.src = elementAsRecord.src;
-      }
-      if ('logoUrl' in elementAsRecord) {
-        completeUpdates.logoUrl = elementAsRecord.logoUrl;
-      }
-      if ('alignment' in elementAsRecord) {
-        completeUpdates.alignment = elementAsRecord.alignment;
-      }
-      
+
+      // ✅ SIMPLE: Only update the resized properties
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {
           id: selectedElementRef.current,
-          updates: completeUpdates
+          updates: resizeUpdates as Partial<Element>
         }
       });
     }
