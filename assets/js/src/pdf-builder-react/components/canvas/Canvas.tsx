@@ -2149,7 +2149,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         x: e.x, y: e.y, width: e.width, height: e.height,
         rotation: e.rotation || 0,
         opacity: e.opacity || 1,
-        visible: e.visible
+        visible: e.visible,
+        // ✅ Include logoUrl in hash to trigger redraw when logo images load
+        logoUrl: 'logoUrl' in e ? (e as {logoUrl?: string}).logoUrl || '' : '',
+        src: 'src' in e ? (e as {src?: string}).src || '' : ''
       };
       elementsHash += JSON.stringify(hashData) + ';';
     }
