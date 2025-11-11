@@ -825,6 +825,11 @@ class PdfBuilderTemplateManager
                 foreach ($template_data['elements'] as $el) {
                     if (isset($el['type']) && $el['type'] === 'order_number') {
                         $debug_info['order_element'] = $el;
+                        $debug_info['order_element_json'] = json_encode($el);
+                        $debug_info['has_contentAlign'] = isset($el['contentAlign']);
+                        $debug_info['has_labelPosition'] = isset($el['labelPosition']);
+                        $debug_info['contentAlign_value'] = $el['contentAlign'] ?? 'MISSING';
+                        $debug_info['labelPosition_value'] = $el['labelPosition'] ?? 'MISSING';
                         break;
                     }
                 }

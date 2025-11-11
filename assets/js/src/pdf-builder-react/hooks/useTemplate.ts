@@ -54,6 +54,19 @@ export function useTemplate() {
       console.log('🔍 [TEMPLATE LOAD] Response keys:', Object.keys(result));
       console.log('🔍 [TEMPLATE LOAD] result.data:', result.data);
       console.log('🔍 [TEMPLATE LOAD] result.data keys:', result.data ? Object.keys(result.data) : 'NO DATA');
+      
+      // Log debug info from server
+      if (result.data && result.data.debug) {
+        console.log('🔍 [TEMPLATE LOAD] SERVER DEBUG INFO:', result.data.debug);
+        if (result.data.debug.order_element) {
+          console.log('🔍 [TEMPLATE LOAD] ORDER ELEMENT FROM SERVER:', result.data.debug.order_element);
+          console.log('🔍 [TEMPLATE LOAD] ORDER ELEMENT JSON:', result.data.debug.order_element_json);
+          console.log('🔍 [TEMPLATE LOAD] HAS contentAlign:', result.data.debug.has_contentAlign);
+          console.log('🔍 [TEMPLATE LOAD] HAS labelPosition:', result.data.debug.has_labelPosition);
+          console.log('🔍 [TEMPLATE LOAD] contentAlign VALUE:', result.data.debug.contentAlign_value);
+          console.log('🔍 [TEMPLATE LOAD] labelPosition VALUE:', result.data.debug.labelPosition_value);
+        }
+      }
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
