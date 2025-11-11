@@ -633,6 +633,9 @@ class PdfBuilderTemplateManager
         header('Pragma: no-cache');
         header('Expires: 0');
         
+        // LOG IMMEDIATELY to confirm function is called
+        error_log('=== PDF BUILDER LOAD START === Template ID: ' . (isset($_REQUEST['template_id']) ? $_REQUEST['template_id'] : 'none'));
+        
         try {
             // Log that function was called
             $upload_dir = wp_upload_dir();
@@ -771,6 +774,12 @@ class PdfBuilderTemplateManager
             }
 
         // Réponse de succès
+            // LOG JUST BEFORE RESPONSE
+            error_log('=== PDF BUILDER LOAD END === Sending response with ' . $element_count . ' elements');
+            $upload_dir = wp_upload_dir();
+            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' === SENDING RESPONSE === Elements: ' . $element_count . "\n", FILE_APPEND);
+            
             \wp_send_json_success(
                 array(
                 'template' => $template_data,
