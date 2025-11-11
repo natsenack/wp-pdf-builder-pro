@@ -39,8 +39,11 @@ export function useTemplate() {
   const loadExistingTemplate = useCallback(async (templateId: string) => {
     debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
     try {
-      // Faire un appel API pour récupérer les données du template
-      const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}`);
+      // ✅ CRITICAL: Add timestamp to AJAX URL to prevent caching
+      // This ensures F5 and Ctrl+F5 load fresh data from server
+      // The server also sends no-cache headers, this is backup
+      const cacheBreaker = Date.now();
+      const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);

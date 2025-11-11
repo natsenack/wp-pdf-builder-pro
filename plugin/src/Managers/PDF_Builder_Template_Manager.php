@@ -471,6 +471,13 @@ class PdfBuilderTemplateManager
      */
     public function ajaxLoadTemplate()
     {
+        // ✅ CRITICAL: Disable all caching for AJAX template loading
+        // This ensures F5 and Ctrl+F5 load the same fresh data from DB
+        // Without these headers, browsers or CDN can cache stale responses
+        header('Cache-Control: no-cache, no-store, must-revalidate, private');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
         try {
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
