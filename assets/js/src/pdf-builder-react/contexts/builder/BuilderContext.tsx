@@ -236,12 +236,18 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       const updateElement = (element: Element): Element => {
         if (element.id !== action.payload.id) return element;
         
+        console.log('[BuilderContext] UPDATE_ELEMENT - element ID:', action.payload.id);
+        console.log('[BuilderContext] UPDATE_ELEMENT - updates:', action.payload.updates);
+        console.log('[BuilderContext] UPDATE_ELEMENT - element before:', element);
+        
         // Merge updates while preserving all existing properties
         const updated: Element = {
           ...element,  // First spread all existing properties (including dynamic ones)
           ...action.payload.updates,  // Then apply updates (only specified properties)
           updatedAt: new Date()  // Always update timestamp
         };
+        
+        console.log('[BuilderContext] UPDATE_ELEMENT - element after:', updated);
         
         return updated;
       };

@@ -89,6 +89,16 @@ export function useTemplate() {
 
         }
 
+        console.log('[useTemplate] LOAD - parsed elements count:', elements.length);
+        
+        // Log specific properties for order_number elements
+        const orderNumberElements = elements.filter((el: any) => el.type === 'order_number');
+        console.log('[useTemplate] LOAD - order_number elements from server:', orderNumberElements.map((el: any) => ({
+          id: el.id,
+          contentAlign: el.contentAlign,
+          labelPosition: el.labelPosition
+        })));
+
 
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
         if (templateData.canvasWidth && templateData.canvasHeight) {
@@ -237,6 +247,17 @@ export function useTemplate() {
         canvasHeight: canvasHeight,
         version: '1.0'
       };
+      
+      console.log('[useTemplate] SAVE - templateData to send:', templateData);
+      console.log('[useTemplate] SAVE - elements count:', state.elements.length);
+      
+      // Log specific properties for order_number elements
+      const orderNumberElements = state.elements.filter(el => el.type === 'order_number');
+      console.log('[useTemplate] SAVE - order_number elements:', orderNumberElements.map(el => ({
+        id: el.id,
+        contentAlign: el.contentAlign,
+        labelPosition: el.labelPosition
+      })));
       
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
