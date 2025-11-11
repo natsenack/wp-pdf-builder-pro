@@ -1603,3 +1603,49 @@ function pdf_builder_generate_template_preview_cron($template_id, $template_file
     } catch (Exception $e) {
     }
 }
+
+// ============================================================================
+// FILTRER LES NOTICES ADMIN - NE MONTRER QUE CELLES DU PLUGIN PDF BUILDER PRO
+// ============================================================================
+
+add_action('admin_notices', function() {
+    // ✅ Masquer toutes les notices sauf celles du plugin PDF Builder Pro
+    // sur les pages du plugin
+    
+    $current_screen = get_current_screen();
+    if (!$current_screen) return;
+    
+    // Vérifier si c'est une page du plugin PDF Builder Pro
+    $is_pdf_builder_page = (
+        strpos($current_screen->base, 'pdf-builder') !== false ||
+        strpos($current_screen->base, 'pdf_builder') !== false ||
+        strpos($current_screen->id, 'pdf-builder') !== false ||
+        strpos($current_screen->id, 'pdf_builder') !== false
+    );
+    
+    // Si c'est une page PDF Builder Pro, masquer les notices des autres plugins
+    if ($is_pdf_builder_page) {
+        // Récupérer toutes les notices DOM
+        $notices = array_filter(array(
+            'notice',
+            'notice-info',
+            'notice-warning',
+            'notice-error',
+            'notice-success',
+            'error',
+            'updated'
+        ));
+        
+        echo '<style>';
+        echo 'div.notice:not(.pdf-builder-notice),';
+        echo 'div.notice-info:not(.pdf-builder-notice),';
+        echo 'div.notice-warning:not(.pdf-builder-notice),';
+        echo 'div.notice-error:not(.pdf-builder-notice),';
+        echo 'div.notice-success:not(.pdf-builder-notice),';
+        echo 'div.error:not(.pdf-builder-notice),';
+        echo 'div.updated:not(.pdf-builder-notice) {';
+        echo '  display: none !important;';
+        echo '}';
+        echo '</style>';
+    }
+}, 1);  // Hook très tôt pour intercepter avant les autres notices
