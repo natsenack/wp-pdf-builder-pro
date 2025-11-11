@@ -404,68 +404,45 @@ class PdfBuilderTemplateManager
         error_log($log_message);
         // Écrire aussi dans un fichier temporaire pour être sûr
         file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' ' . $log_message . "\n", FILE_APPEND);
-        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] THIS LOG SHOULD BE VISIBLE IF FUNCTION EXECUTES');
-        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] THIS LOG SHOULD BE VISIBLE IF FUNCTION EXECUTES' . "\n", FILE_APPEND);
-
         try {
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CHECKING PERMISSIONS...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CHECKING PERMISSIONS...' . "\n", FILE_APPEND);
+            error_log('PDF Builder: Auto-save - checking permissions and nonce');
             
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS FAILED - current_user_can(manage_options) = false');
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS FAILED' . "\n", FILE_APPEND);
+                error_log('PDF Builder: Auto-save - permissions failed');
                 \wp_send_json_error('Permissions insuffisantes');
             }
             
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS OK, CHECKING NONCE...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS OK, CHECKING NONCE...' . "\n", FILE_APPEND);
+            error_log('PDF Builder: Auto-save - permissions OK, processing data');
 
             // Vérifier le nonce
             if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_nonce')) {
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE FAILED - nonce: ' . (isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : 'NOT SET'));
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE FAILED' . "\n", FILE_APPEND);
+                error_log('PDF Builder: Auto-save - nonce verification failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
-            
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE OK, PROCESSING DATA...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE OK, PROCESSING DATA...' . "\n", FILE_APPEND);
+
+            error_log('PDF Builder: Auto-save - nonce OK, extracting data');
 
             // Récupération des données
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
             $elements_raw = isset($_REQUEST['elements']) ? \wp_unslash($_REQUEST['elements']) : '[]';
 
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATA EXTRACTED - template_id: ' . $template_id);
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATA EXTRACTED - template_id: ' . $template_id . "\n", FILE_APPEND);
-
             if (empty($template_id)) {
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ERROR: Template ID empty');
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ERROR: Template ID empty' . "\n", FILE_APPEND);
+                error_log('PDF Builder: Auto-save - invalid template_id: ' . $template_id);
                 \wp_send_json_error('ID template invalide');
             }
 
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE ID OK, DECODING JSON...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE ID OK, DECODING JSON...' . "\n", FILE_APPEND);
+            error_log('PDF Builder: Auto-save - template_id OK, decoding JSON');
 
-            // 🔍 LOG EXACTLY WHAT WAS RECEIVED FROM FRONTEND
-            error_log('🔍 [AUTO-SAVE] ===== SAVE START =====');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔍 [AUTO-SAVE] ===== SAVE START =====' . "\n", FILE_APPEND);
-            error_log('🔍 [AUTO-SAVE] Raw elements string (first 500 chars): ' . substr($elements_raw, 0, 500));
-
-            // Décoder les éléments
             $elements = \json_decode($elements_raw, true);
             if ($elements === null && \json_last_error() !== JSON_ERROR_NONE) {
                 $json_error = \json_last_error_msg();
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE FAILED: ' . $json_error);
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE FAILED: ' . $json_error . "\n", FILE_APPEND);
+                error_log('PDF Builder: Auto-save - JSON decode failed: ' . $json_error);
                 \wp_send_json_error('Données des éléments corrompues - Erreur JSON: ' . $json_error);
             }
             
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements));
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements) . "\n", FILE_APPEND);
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO LOG ELEMENTS...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO LOG ELEMENTS...' . "\n", FILE_APPEND);
+            error_log('PDF Builder: Auto-save - JSON decode success, elements count: ' . count($elements));
+            error_log('PDF Builder: Auto-save - about to log elements');
 
             // Charger le template existant pour récupérer le canvas
             global $wpdb;
@@ -476,6 +453,7 @@ class PdfBuilderTemplateManager
             );
 
             if (!$template_row) {
+                error_log('PDF Builder: Auto-save - template not found: ' . $template_id);
                 \wp_send_json_error('Template non trouvé pour auto-save');
             }
 
@@ -485,70 +463,24 @@ class PdfBuilderTemplateManager
                 $existing_data = ['elements' => [], 'canvas' => []];
             }
 
-            error_log('🔍 [AUTO-SAVE] Frontend sent ' . count($elements) . ' elements');
-            if (!empty($elements)) {
-                error_log('🔍 [AUTO-SAVE] Element[0] structure: ' . json_encode($elements[0]));
-                if (count($elements) > 1) {
-                    error_log('🔍 [AUTO-SAVE] Element[1] structure: ' . json_encode($elements[1]));
-                }
-            }
+            error_log('PDF Builder: Auto-save - processing ' . count($elements) . ' elements');
 
-            // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO ENRICH COMPANY LOGO ELEMENTS...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO ENRICH COMPANY LOGO ELEMENTS...' . "\n", FILE_APPEND);
-            
+            // Enrichir les éléments company_logo avec src si absent
             foreach ($elements as &$el) {
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PROCESSING ELEMENT: ' . json_encode($el));
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PROCESSING ELEMENT: ' . json_encode($el) . "\n", FILE_APPEND);
-                
                 if (isset($el['type']) && $el['type'] === 'company_logo') {
-                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FOUND COMPANY LOGO ELEMENT');
-                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FOUND COMPANY LOGO ELEMENT' . "\n", FILE_APPEND);
-                    
                     // Si src est vide ou absent, chercher le logo WordPress
                     if (empty($el['src']) && empty($el['logoUrl'])) {
-                        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO SRC IS EMPTY, GETTING THEME LOGO...');
-                        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO SRC IS EMPTY, GETTING THEME LOGO...' . "\n", FILE_APPEND);
-                        
-                        try {
-                            $custom_logo_id = \get_theme_mod('custom_logo');
-                            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CUSTOM LOGO ID: ' . ($custom_logo_id ? $custom_logo_id : 'NULL'));
-                            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CUSTOM LOGO ID: ' . ($custom_logo_id ? $custom_logo_id : 'NULL') . "\n", FILE_APPEND);
-                            
-                            if ($custom_logo_id) {
-                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] GETTING ATTACHMENT IMAGE URL...');
-                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] GETTING ATTACHMENT IMAGE URL...' . "\n", FILE_APPEND);
-                                
-                                $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
-                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL: ' . ($logo_url ? $logo_url : 'NULL'));
-                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL: ' . ($logo_url ? $logo_url : 'NULL') . "\n", FILE_APPEND);
-                                
-                                if ($logo_url) {
-                                    $el['src'] = $logo_url;
-                                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] SET LOGO SRC SUCCESSFULLY');
-                                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] SET LOGO SRC SUCCESSFULLY' . "\n", FILE_APPEND);
-                                } else {
-                                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL IS EMPTY');
-                                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL IS EMPTY' . "\n", FILE_APPEND);
-                                }
-                            } else {
-                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NO CUSTOM LOGO ID');
-                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NO CUSTOM LOGO ID' . "\n", FILE_APPEND);
+                        $custom_logo_id = \get_theme_mod('custom_logo');
+                        if ($custom_logo_id) {
+                            $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
+                            if ($logo_url) {
+                                $el['src'] = $logo_url;
                             }
-                        } catch (Exception $e) {
-                            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] EXCEPTION IN LOGO ENRICHMENT: ' . $e->getMessage());
-                            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] EXCEPTION IN LOGO ENRICHMENT: ' . $e->getMessage() . "\n", FILE_APPEND);
                         }
-                    } else {
-                        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO ALREADY HAS SRC: ' . ($el['src'] ?? 'no-src'));
-                        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO ALREADY HAS SRC: ' . ($el['src'] ?? 'no-src') . "\n", FILE_APPEND);
                     }
                 }
             }
             unset($el);
-            
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED' . "\n", FILE_APPEND);
 
             error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...');
             file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...' . "\n", FILE_APPEND);
@@ -654,6 +586,8 @@ class PdfBuilderTemplateManager
 
             error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...');
             file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...' . "\n", FILE_APPEND);
+
+            error_log('PDF Builder: Auto-save completed successfully - template_id: ' . $template_id . ', elements: ' . count($elements));
 
             \wp_send_json_success([
                 'message' => 'Auto-save réussi',
