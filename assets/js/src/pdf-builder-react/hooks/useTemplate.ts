@@ -50,12 +50,17 @@ export function useTemplate() {
 
       const result = await response.json();
       console.log('[useTemplate] AJAX result success:', result.success);
+      console.log('🔍 [TEMPLATE LOAD] Full AJAX response:', result);
+      console.log('🔍 [TEMPLATE LOAD] Response keys:', Object.keys(result));
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
-      const templateData = result.data.template;
+      const templateData = result.data ? result.data.template : result.template;
+      console.log('🔍 [TEMPLATE LOAD] Extracted templateData:', templateData);
+      console.log('🔍 [TEMPLATE LOAD] templateData type:', typeof templateData);
+      console.log('🔍 [TEMPLATE LOAD] templateData keys:', templateData ? Object.keys(templateData) : 'NULL');
       console.log('[useTemplate] Template loaded - elements count:', templateData.elements ? templateData.elements.length : 0);
 
       
