@@ -1265,6 +1265,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
       // Si l'image est chargée, la dessiner
       if (img.complete && img.naturalHeight !== 0) {
+        // Appliquer la rotation si définie
+        const rotation = element.rotation || 0;
+        const opacity = element.opacity !== undefined ? element.opacity : 1;
+        const borderRadius = element.borderRadius || 0;
+
         // Calculer les dimensions et position
         let logoWidth = element.width - 20;
         let logoHeight = element.height - 20;
@@ -1288,8 +1293,35 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
         const y = (element.height - logoHeight) / 2;
 
+        // Sauvegarder le contexte
+        ctx.save();
+
+        // Appliquer l'opacité
+        if (opacity < 1) {
+          ctx.globalAlpha = opacity;
+        }
+
+        // Appliquer la rotation
+        if (rotation !== 0) {
+          const centerX = x + logoWidth / 2;
+          const centerY = y + logoHeight / 2;
+          ctx.translate(centerX, centerY);
+          ctx.rotate((rotation * Math.PI) / 180);
+          ctx.translate(-centerX, -centerY);
+        }
+
+        // Si borderRadius > 0, créer un chemin arrondi
+        if (borderRadius > 0) {
+          ctx.beginPath();
+          roundedRect(ctx, x, y, logoWidth, logoHeight, borderRadius);
+          ctx.clip();
+        }
+
         // Dessiner l'image
         ctx.drawImage(img, x, y, logoWidth, logoHeight);
+
+        // Restaurer le contexte
+        ctx.restore();
       } else {
         // Image en cours de chargement ou erreur, dessiner un placeholder
         drawLogoPlaceholder(ctx, element, alignment, img.complete ? 'Erreur' : 'Company_logo');
