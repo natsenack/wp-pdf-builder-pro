@@ -464,6 +464,9 @@ class PdfBuilderTemplateManager
             error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements));
             file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements) . "\n", FILE_APPEND);
 
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO LOG ELEMENTS...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO LOG ELEMENTS...' . "\n", FILE_APPEND);
+
             // Charger le template existant pour récupérer le canvas
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
