@@ -95,8 +95,11 @@ export function useTemplate() {
         const orderNumberElements = elements.filter((el: any) => el.type === 'order_number');
         console.log('[useTemplate] LOAD - order_number elements from server:', orderNumberElements.map((el: any) => ({
           id: el.id,
-          contentAlign: el.contentAlign,
-          labelPosition: el.labelPosition
+          contentAlign: el.contentAlign || 'undefined',
+          labelPosition: el.labelPosition || 'undefined',
+          showLabel: el.showLabel,
+          labelText: el.labelText,
+          fullElement: el // Add full element for debugging
         })));
 
 
