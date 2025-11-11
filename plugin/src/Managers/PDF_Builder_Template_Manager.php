@@ -597,8 +597,10 @@ class PdfBuilderTemplateManager
             file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE SUCCESS - LENGTH: ' . strlen($json_data) . "\n", FILE_APPEND);
 
             error_log('🔍 [AUTO-SAVE] JSON encoded length: ' . strlen($json_data));
-            // Log the ACTUAL JSON being saved to DB (first 500 chars)
             error_log('🔍 [AUTO-SAVE] JSON saved to DB (first 500 chars): ' . substr($json_data, 0, 500));
+
+            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO UPDATE DATABASE...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO UPDATE DATABASE...' . "\n", FILE_APPEND);
 
             // Mettre à jour la base de données
             $updated = $wpdb->update(
@@ -612,18 +614,31 @@ class PdfBuilderTemplateManager
                 ['%d']
             );
 
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE COMPLETED - RESULT: ' . ($updated === false ? 'FALSE' : $updated));
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE COMPLETED - RESULT: ' . ($updated === false ? 'FALSE' : $updated) . "\n", FILE_APPEND);
+
             if ($updated === false) {
                 error_log('🔍 [AUTO-SAVE] Database update FAILED - Error: ' . $wpdb->last_error);
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔍 [AUTO-SAVE] Database update FAILED - Error: ' . $wpdb->last_error . "\n", FILE_APPEND);
                 \wp_send_json_error('Erreur lors de la mise à jour du template');
             }
 
-            error_log('🔍 [AUTO-SAVE] Database update successful - rows affected: ' . $updated);
+            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE SUCCESSFUL - ABOUT TO VERIFY...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE SUCCESSFUL - ABOUT TO VERIFY...' . "\n", FILE_APPEND);
+
+            error_log('�🔍 [AUTO-SAVE] Database update successful - rows affected: ' . $updated);
             
             // Vérifier que les données ont bien été sauvegardées en les relisant
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO VERIFY DATA IN DB...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO VERIFY DATA IN DB...' . "\n", FILE_APPEND);
+
             $verify_row = $wpdb->get_row(
                 $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
                 ARRAY_A
             );
+
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DB VERIFICATION COMPLETED - ROW FOUND: ' . ($verify_row ? 'YES' : 'NO'));
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DB VERIFICATION COMPLETED - ROW FOUND: ' . ($verify_row ? 'YES' : 'NO') . "\n", FILE_APPEND);
             
             if ($verify_row) {
                 $saved_data = json_decode($verify_row['template_data'], true);
@@ -636,6 +651,9 @@ class PdfBuilderTemplateManager
             } else {
                 error_log('🔍 [AUTO-SAVE] VERIFICATION FAILED: Could not read back from DB');
             }
+
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...' . "\n", FILE_APPEND);
 
             \wp_send_json_success([
                 'message' => 'Auto-save réussi',
