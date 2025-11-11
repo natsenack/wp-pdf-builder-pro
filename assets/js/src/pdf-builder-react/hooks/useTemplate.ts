@@ -34,26 +34,30 @@ export function useTemplate() {
 
   // Charger un template existant
   const loadExistingTemplate = useCallback(async (templateId: string) => {
+    console.log('[useTemplate] Loading template with ID:', templateId);
 
     try {
       // ✅ CRITICAL: Add timestamp to AJAX URL to prevent caching
       // This ensures F5 and Ctrl+F5 load fresh data from server
       // The server also sends no-cache headers, this is backup
       const cacheBreaker = Date.now();
+      // @ts-expect-error - pdfBuilderData is added by WordPress
       const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`);
+      console.log('[useTemplate] AJAX response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-
+      console.log('[useTemplate] AJAX result success:', result.success);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
       const templateData = result.data.template;
+      console.log('[useTemplate] Template loaded - elements count:', templateData.elements ? templateData.elements.length : 0);
 
       
       // 🔍 Tracer les éléments reçus du serveur

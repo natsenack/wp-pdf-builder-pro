@@ -429,19 +429,27 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE': {
+      console.log('[BuilderContext] LOAD_TEMPLATE action received:', action);
+      console.log('[BuilderContext] Action payload:', action.payload);
+
       const rawElements = (action.payload as Record<string, unknown>).elements as Element[] || [];
+      console.log('[BuilderContext] Raw elements from payload:', rawElements);
+      console.log('[BuilderContext] Raw elements count:', rawElements.length);
+
       const repairedElements = repairProductTableProperties(rawElements);
-      
+      console.log('[BuilderContext] Elements after repair:', repairedElements.length);
+
       // Ne pas convertir, garder les PX directement
       const clampedElements = clampElementPositions(repairedElements);
-      
+      console.log('[BuilderContext] Elements after clamping:', clampedElements.length);
+
       // Garder les dimensions du canvas si présentes
-      const canvasData = (action.payload as Record<string, unknown>).canvas ? { 
-        ...state.canvas, 
-        ...(action.payload as Record<string, unknown>).canvas as Partial<CanvasState>
-      } : state.canvas;
-      
-      return {
+      const canvasData = (action.payload as Record<string, unknown>).canvas ?
+        { ...state.canvas, ...(action.payload as Record<string, unknown>).canvas as Partial<CanvasState> } :
+        state.canvas;
+      console.log('[BuilderContext] Canvas data:', canvasData);
+
+      const newState = {
         ...state,
         elements: clampedElements,
         canvas: canvasData,
@@ -460,6 +468,14 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           canvas: canvasData
         })
       };
+
+      console.log('[BuilderContext] New state after LOAD_TEMPLATE:', {
+        elementsCount: newState.elements.length,
+        template: newState.template,
+        canvas: newState.canvas
+      });
+
+      return newState;
     }
 
     case 'NEW_TEMPLATE': {
@@ -584,18 +600,46 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   // Écouteur pour le chargement de template via API globale
   useEffect(() => {
     const handleLoadTemplate = (event: CustomEvent) => {
+      console.log('[BuilderContext] pdfBuilderLoadTemplate event received:', event);
+      console.log('[BuilderContext] Event detail:', event.detail);
 
       const templateData = event.detail;
       if (templateData) {
+        console.log('[BuilderContext] Template data received:', templateData);
+        console.log('[BuilderContext] Template has elements:', templateData.elements ? 'YES' : 'NO');
+
+        if (templateData.elements) {
+          console.log('[BuilderContext] Elements count:', templateData.elements.length);
+          // @ts-expect-error - Debug logs
+          templateData.elements.forEach((element, index) => {
+            console.log(`[BuilderContext] Element ${index}:`, {
+              type: element.type,
+              contentAlign: element.contentAlign,
+              labelPosition: element.labelPosition,
+              id: element.id,
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            });
+          });
+        }
+
+        console.log('[BuilderContext] Dispatching LOAD_TEMPLATE action');
         dispatch({
           type: 'LOAD_TEMPLATE',
           payload: templateData
         });
+        console.log('[BuilderContext] LOAD_TEMPLATE action dispatched');
+      } else {
+        console.warn('[BuilderContext] No template data in event detail');
       }
     };
 
+    console.log('[BuilderContext] Adding pdfBuilderLoadTemplate event listener');
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     return () => {
+      console.log('[BuilderContext] Removing pdfBuilderLoadTemplate event listener');
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     };
   }, []);
