@@ -9,6 +9,16 @@ interface OrderNumberPropertiesProps {
 }
 
 export function OrderNumberProperties({ element, onChange, activeTab, setActiveTab }: OrderNumberPropertiesProps) {
+  // 🔍 Log des propriétés reçues par le composant
+  console.log('🔍 [ORDER NUMBER PROPS] Component received element:', {
+    id: element.id,
+    contentAlign: element.contentAlign || 'NOT SET',
+    labelPosition: element.labelPosition || 'NOT SET',
+    showLabel: element.showLabel,
+    labelText: element.labelText || 'NOT SET',
+    allProperties: Object.keys(element)
+  });
+
   const currentTab = activeTab[element.id] || 'fonctionnalites';
   const setCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });

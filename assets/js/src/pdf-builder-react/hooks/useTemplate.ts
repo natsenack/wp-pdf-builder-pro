@@ -82,17 +82,20 @@ export function useTemplate() {
         }
 
         console.log('[useTemplate] LOAD - parsed elements count:', elements.length);
-        
-        // Log détaillé des éléments order_number chargés
+
+        // 🔍 Log détaillé des éléments order_number chargés (même format que sauvegarde)
         const loadedOrderNumberElements = elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
-        console.log('[useTemplate] LOAD - Order number elements received:', loadedOrderNumberElements.map((el: Record<string, unknown>) => ({
-          id: el.id,
-          contentAlign: el.contentAlign,
-          labelPosition: el.labelPosition,
-          showLabel: el.showLabel,
-          labelText: el.labelText,
-          allKeys: Object.keys(el)
-        })));
+        console.log('🔍 [TEMPLATE LOAD] Order number elements loaded:', loadedOrderNumberElements.length);
+        loadedOrderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
+          console.log(`🔍 [TEMPLATE LOAD] Order element ${index}:`, {
+            id: el.id,
+            contentAlign: el.contentAlign || 'NOT SET',
+            labelPosition: el.labelPosition || 'NOT SET',
+            showLabel: el.showLabel,
+            labelText: el.labelText || 'NOT SET',
+            allProperties: Object.keys(el)
+          });
+        });
 
 
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
@@ -179,6 +182,20 @@ export function useTemplate() {
       } catch {
         lastSavedDate = new Date();
       }
+
+      // 🔍 Log final des éléments order_number avant envoi au contexte
+      const finalOrderNumberElements = enrichedElements.filter((el: Record<string, unknown>) => el.type === 'order_number');
+      console.log('🔍 [TEMPLATE LOAD] Final order number elements before dispatch:', finalOrderNumberElements.length);
+      finalOrderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
+        console.log(`🔍 [TEMPLATE LOAD] Final order element ${index} before dispatch:`, {
+          id: el.id,
+          contentAlign: el.contentAlign || 'NOT SET',
+          labelPosition: el.labelPosition || 'NOT SET',
+          showLabel: el.showLabel,
+          labelText: el.labelText || 'NOT SET',
+          allProperties: Object.keys(el)
+        });
+      });
 
       dispatch({
         type: 'LOAD_TEMPLATE',
