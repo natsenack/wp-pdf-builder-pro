@@ -194,6 +194,23 @@ class PdfBuilderTemplateManager
                     ]));
                 }
 
+                // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
+                foreach ($elements_data as &$el) {
+                    if (isset($el['type']) && $el['type'] === 'company_logo') {
+                        // Si src est vide ou absent, chercher le logo WordPress
+                        if (empty($el['src']) && empty($el['logoUrl'])) {
+                            $custom_logo_id = \get_theme_mod('custom_logo');
+                            if ($custom_logo_id) {
+                                $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
+                                if ($logo_url) {
+                                    $el['src'] = $logo_url;
+                                }
+                            }
+                        }
+                    }
+                }
+                unset($el);
+
                 // ✅ CORRECTION: Construction avec canvasWidth/canvasHeight standardisés
                 $template_structure = [
                     'elements' => $elements_data,
@@ -425,17 +442,49 @@ class PdfBuilderTemplateManager
                 $existing_data = ['elements' => [], 'canvas' => []];
             }
 
+            error_log('🔍 [AUTO-SAVE] Avant enrichissement - Element count: ' . count($elements));
+            if (!empty($elements)) {
+                error_log('🔍 [AUTO-SAVE] Element[0] keys: ' . implode(', ', array_keys($elements[0])));
+            }
+
+            // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
+            foreach ($elements as &$el) {
+                if (isset($el['type']) && $el['type'] === 'company_logo') {
+                    // Si src est vide ou absent, chercher le logo WordPress
+                    if (empty($el['src']) && empty($el['logoUrl'])) {
+                        $custom_logo_id = \get_theme_mod('custom_logo');
+                        if ($custom_logo_id) {
+                            $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
+                            if ($logo_url) {
+                                $el['src'] = $logo_url;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($el);
+
+            error_log('🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
+
             // Préparer les nouvelles données (conserver le canvas, mettre à jour les éléments)
             $template_data = [
                 'elements' => $elements,
-                'canvas' => $existing_data['canvas'] ?? []
+                'canvas' => $existing_data['canvas'] ?? [],
+                'canvasWidth' => $existing_data['canvasWidth'] ?? 210,
+                'canvasHeight' => $existing_data['canvasHeight'] ?? 297,
+                'version' => '1.0'
             ];
+
+            error_log('🔍 [AUTO-SAVE] Template data structure - keys: ' . implode(', ', array_keys($template_data)));
+            error_log('🔍 [AUTO-SAVE] Elements in template_data: ' . count($template_data['elements']));
 
             // Encoder en JSON
             $json_data = \wp_json_encode($template_data);
             if ($json_data === false) {
                 \wp_send_json_error('Erreur lors de l\'encodage des données JSON');
             }
+
+            error_log('🔍 [AUTO-SAVE] JSON encoded length: ' . strlen($json_data));
 
             // Mettre à jour la base de données
             $updated = $wpdb->update(
@@ -452,6 +501,8 @@ class PdfBuilderTemplateManager
             if ($updated === false) {
                 \wp_send_json_error('Erreur lors de la mise à jour du template');
             }
+
+            error_log('🔍 [AUTO-SAVE] Database update successful - rows affected: ' . $updated);
 
             \wp_send_json_success([
                 'message' => 'Auto-save réussi',

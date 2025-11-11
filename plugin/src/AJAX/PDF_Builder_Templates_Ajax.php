@@ -289,7 +289,27 @@ class PdfBuilderTemplatesAjax
             // Récupérer les données actuelles du template
             $current_template = $wpdb->get_row($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             $template_data = json_decode($current_template['template_data'] ?? '{}', true);
-// Mettre à jour les paramètres dans template_data
+
+            // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET/AUTO-SAVE)
+            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+                foreach ($template_data['elements'] as &$el) {
+                    if (isset($el['type']) && $el['type'] === 'company_logo') {
+                        // Si src est vide ou absent, chercher le logo WordPress
+                        if (empty($el['src']) && empty($el['logoUrl'])) {
+                            $custom_logo_id = get_theme_mod('custom_logo');
+                            if ($custom_logo_id) {
+                                $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                                if ($logo_url) {
+                                    $el['src'] = $logo_url;
+                                }
+                            }
+                        }
+                    }
+                }
+                unset($el);
+            }
+
+            // Mettre à jour les paramètres dans template_data
             $template_data['description'] = $description;
             $template_data['category'] = $category;
             $template_data['is_public'] = $is_public;
