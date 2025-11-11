@@ -423,62 +423,60 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   }, [canvasRef]);
 
   // Fonction utilitaire pour calculer le redimensionnement
-  const calculateResize = useCallback((element: Element, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
+  const calculateResize = useCallback((element: Element, handle: string, currentX: number, currentY: number, startPos: { x: number, y: number }) => {
     const updates: ElementUpdates = {};
+    
+    // Calculer le delta depuis le point de départ du drag
+    const deltaX = currentX - startPos.x;
+    const deltaY = currentY - startPos.y;
 
     switch (handle) {
-      case 'se': { // Sud-Est
-        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
-        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
+      case 'se': { // Sud-Est (coin bas-droit)
+        updates.width = Math.max(20, element.width + deltaX);
+        updates.height = Math.max(20, element.height + deltaY);
         break;
       }
-      case 'sw': { // Sud-Ouest
-        const maxWidth = element.x + element.width;
-        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
-        updates.x = Math.max(0, Math.min(element.x, currentX));
-        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
+      case 'sw': { // Sud-Ouest (coin bas-gauche)
+        updates.width = Math.max(20, element.width - deltaX);
+        updates.x = element.x + deltaX;
+        updates.height = Math.max(20, element.height + deltaY);
         break;
       }
-      case 'ne': { // Nord-Est
-        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
-        const maxHeight = element.y + element.height;
-        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
-        updates.y = Math.max(0, Math.min(element.y, currentY));
+      case 'ne': { // Nord-Est (coin haut-droit)
+        updates.width = Math.max(20, element.width + deltaX);
+        updates.height = Math.max(20, element.height - deltaY);
+        updates.y = element.y + deltaY;
         break;
       }
-      case 'nw': { // Nord-Ouest
-        const maxWidth = element.x + element.width;
-        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
-        updates.x = Math.max(0, Math.min(element.x, currentX));
-        const maxHeight = element.y + element.height;
-        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
-        updates.y = Math.max(0, Math.min(element.y, currentY));
+      case 'nw': { // Nord-Ouest (coin haut-gauche)
+        updates.width = Math.max(20, element.width - deltaX);
+        updates.x = element.x + deltaX;
+        updates.height = Math.max(20, element.height - deltaY);
+        updates.y = element.y + deltaY;
         break;
       }
       case 'n': { // Nord (haut)
-        const maxHeight = element.y + element.height;
-        updates.height = Math.max(20, Math.min(maxHeight, element.y + element.height - currentY));
-        updates.y = Math.max(0, Math.min(element.y, currentY));
+        updates.height = Math.max(20, element.height - deltaY);
+        updates.y = element.y + deltaY;
         break;
       }
       case 's': { // Sud (bas)
-        updates.height = Math.max(20, Math.min(canvasHeight - element.y, currentY - element.y));
+        updates.height = Math.max(20, element.height + deltaY);
         break;
       }
       case 'w': { // Ouest (gauche)
-        const maxWidth = element.x + element.width;
-        updates.width = Math.max(20, Math.min(maxWidth, element.x + element.width - currentX));
-        updates.x = Math.max(0, Math.min(element.x, currentX));
+        updates.width = Math.max(20, element.width - deltaX);
+        updates.x = element.x + deltaX;
         break;
       }
       case 'e': { // Est (droite)
-        updates.width = Math.max(20, Math.min(canvasWidth - element.x, currentX - element.x));
+        updates.width = Math.max(20, element.width + deltaX);
         break;
       }
     }
 
     return updates;
-  }, [canvasWidth, canvasHeight]);
+  }, []);
 
   // Gestionnaire de mouse move pour le drag, resize et curseur
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
