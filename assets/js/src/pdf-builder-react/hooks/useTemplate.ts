@@ -214,62 +214,16 @@ export function useTemplate() {
     }
   }, [dispatch]);
 
-  // 🎯 Écouter les événements de chargement de template depuis l'API globale
+  // 🎯 DISABLED: Event-based template loading causes race conditions with useEffect
+  // Both methods try to load the same template, causing flashing/alternating canvas
+  // The useEffect approach (reading URL) is more reliable and runs once per page load
   useEffect(() => {
-    const handleLoadTemplate = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      const templateData = customEvent.detail;
-      debugLog('📡 [useTemplate] Événement pdfBuilderLoadTemplate reçu:', templateData);
-      debugLog('🔍 [useTemplate] Propriétés du templateData:', {
-        hasElements: 'elements' in templateData,
-        elementsType: typeof templateData.elements,
-        elementsValue: templateData.elements,
-        hasCanvas: 'canvas' in templateData,
-        canvasType: typeof templateData.canvas,
-        canvasValue: templateData.canvas,
-        allKeys: Object.keys(templateData),
-        elementsCount: Array.isArray(templateData.elements) ? templateData.elements.length : 'not array'
-      });
-
-      if (!templateData || !templateData.id) {
-        debugError('❌ [useTemplate] Données de template invalides');
-        return;
-      }
-
-      // Si les éléments sont déjà fournis, les utiliser directement
-      if (templateData.elements && Array.isArray(templateData.elements)) {
-        debugLog('✅ [useTemplate] Éléments fournis directement, chargement sans AJAX');
-        dispatch({
-          type: 'LOAD_TEMPLATE',
-          payload: {
-            id: templateData.id,
-            name: templateData.name || 'Template',
-            elements: templateData.elements,
-            canvas: templateData.canvas || null,
-            lastSaved: templateData.updated_at ? (() => {
-              try {
-                const date = new Date(templateData.updated_at);
-                return isNaN(date.getTime()) ? new Date() : date;
-              } catch {
-                return new Date();
-              }
-            })() : new Date()
-          } as LoadTemplatePayload
-        });
-      } else {
-        // Sinon, utiliser l'API AJAX
-        debugLog('🔄 [useTemplate] Éléments non fournis, utilisation de l\'API AJAX');
-        loadExistingTemplate(templateData.id).catch((error: unknown) => {
-          debugError('❌ [useTemplate] Erreur lors du chargement du template:', error);
-        });
-      }
-    };
-
-    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+    // ✅ Event listener disabled to prevent race conditions
+    // Only useEffect with URL reading will load templates now
     return () => {
-      document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate);
+      // cleanup
     };
-  }, [loadExistingTemplate, dispatch]);
+  }, []);
 
   // Effet pour charger automatiquement un template existant au montage
   // ✅ Dépendance vide: charger une seule fois au montage du composant
