@@ -265,9 +265,14 @@ export function useTemplate() {
   // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
+    console.log('[useTemplate] useEffect - templateId:', templateId);
+    console.log('[useTemplate] useEffect - state.template:', state.template);
 
     if (templateId) {
+      console.log('[useTemplate] Loading existing template:', templateId);
       loadExistingTemplate(templateId);
+    } else {
+      console.log('[useTemplate] No template ID found, creating new template');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
