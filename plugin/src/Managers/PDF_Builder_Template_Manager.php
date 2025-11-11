@@ -616,15 +616,20 @@ class PdfBuilderTemplateManager
         header('Expires: 0');
         
         try {
+            error_log('PDF Builder: ajaxLoadTemplate called - REQUEST: ' . print_r($_REQUEST, true));
+            
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
+                error_log('PDF Builder: ajaxLoadTemplate - permissions failed');
                 \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Récupération de l'ID (doit être numérique pour les templates personnalisés)
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
+            error_log('PDF Builder: ajaxLoadTemplate - template_id: ' . $template_id);
 
             if (empty($template_id)) {
+                error_log('PDF Builder: ajaxLoadTemplate - invalid template_id');
                 \wp_send_json_error('ID template invalide');
             }
 
@@ -636,6 +641,8 @@ class PdfBuilderTemplateManager
                 ARRAY_A
             );
 
+            error_log('PDF Builder: ajaxLoadTemplate - template_row found: ' . ($template_row ? 'YES' : 'NO'));
+            
             $template_data = null;
             $template_name = '';
 
@@ -643,13 +650,19 @@ class PdfBuilderTemplateManager
                 // Trouver dans la table custom
                 $template_data_raw = $template_row['template_data'];
                 $template_name = $template_row['name'];
+                
+                error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
+                error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
 
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
                     $json_error = \json_last_error_msg();
+                    error_log('PDF Builder: ajaxLoadTemplate - JSON decode failed: ' . $json_error);
                     \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
                     return;
                 }
+                
+                error_log('PDF Builder: ajaxLoadTemplate - JSON decode successful, elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             } else {
                 // Fallback: chercher dans wp_posts
                 $post = get_post($template_id);
@@ -702,6 +715,22 @@ class PdfBuilderTemplateManager
             foreach ($template_data['elements'] as $element) {
                 $type = $element['type'] ?? 'unknown';
                 $element_types[$type] = ($element_types[$type] ?? 0) + 1;
+            }
+
+            error_log('PDF Builder: ajaxLoadTemplate - sending response with ' . $element_count . ' elements');
+            error_log('PDF Builder: ajaxLoadTemplate - element types: ' . json_encode($element_types));
+            
+            // Vérifier si les éléments ont les bonnes propriétés
+            if (!empty($template_data['elements'])) {
+                $first_element = $template_data['elements'][0];
+                error_log('PDF Builder: ajaxLoadTemplate - first element keys: ' . implode(', ', array_keys($first_element)));
+                error_log('PDF Builder: ajaxLoadTemplate - first element type: ' . ($first_element['type'] ?? 'unknown'));
+                if (isset($first_element['type']) && $first_element['type'] === 'order_number') {
+                    error_log('PDF Builder: ajaxLoadTemplate - order_number properties: ' . json_encode([
+                        'contentAlign' => $first_element['contentAlign'] ?? 'missing',
+                        'labelPosition' => $first_element['labelPosition'] ?? 'missing'
+                    ]));
+                }
             }
 
         // Réponse de succès
