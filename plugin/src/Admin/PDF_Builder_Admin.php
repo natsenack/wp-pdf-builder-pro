@@ -5634,11 +5634,8 @@ class PdfBuilderAdmin
 
         // Enqueue PDF Builder React scripts from local build
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
-        // ✅ Use file modification time for stable cache busting
-        $react_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
-        $react_file_mtime = file_exists($react_file_path) ? filemtime($react_file_path) : time();
-        // Force cache bust by using current date (YYYY-MM-DD-HH format) instead of filemtime
-        $cache_bust = date('Y-m-d-H', time()); // Changes every hour
+        // ✅ Force cache bust by using current timestamp (changes every second)
+        $cache_bust = time(); // Unix timestamp - changes every second
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
