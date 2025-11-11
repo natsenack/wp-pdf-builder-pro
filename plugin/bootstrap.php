@@ -658,8 +658,9 @@ function pdf_builder_fallback_ajax_save_template()
     $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
     $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
-    error_log('🔍 [PHP SAVE] Template ID: ' . $template_id);
-    error_log('🔍 [PHP SAVE] Raw template_data length: ' . strlen($template_data));
+    error_log('🔍 [PHP SAVE] RECEIVED - Template ID: ' . $template_id);
+    error_log('🔍 [PHP SAVE] RECEIVED - Raw template_data length: ' . strlen($template_data));
+    error_log('🔍 [PHP SAVE] RECEIVED - First 500 chars: ' . substr($template_data, 0, 500));
 
     if (empty($template_data) || !$template_id) {
         wp_send_json_error('Données manquantes');

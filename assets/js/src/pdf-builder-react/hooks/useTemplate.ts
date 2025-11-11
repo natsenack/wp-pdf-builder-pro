@@ -266,6 +266,10 @@ export function useTemplate() {
         version: '1.0'
       };
 
+      console.log('🔍 [TEMPLATE SAVE] About to send templateData:', templateData);
+      console.log('🔍 [TEMPLATE SAVE] templateData.elements length:', templateData.elements.length);
+      console.log('🔍 [TEMPLATE SAVE] First element keys:', Object.keys(templateData.elements[0] || {}));
+
       // Log détaillé des éléments order_number
       const orderNumberElements = templateData.elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
       console.log('🔍 [TEMPLATE SAVE] Order number elements:', orderNumberElements.length);
