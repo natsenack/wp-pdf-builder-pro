@@ -1,7 +1,7 @@
 <?php
 /**
- * PDF Builder - Database Diagnostic Script
- * Check what's actually stored in the database for template ID 2
+ * PDF Builder - Database Diagnostic Tool
+ * Accessible via WordPress admin menu
  */
 
 // Prevent direct access
@@ -10,8 +10,8 @@ if (!defined('ABSPATH')) {
 }
 
 // Only run in admin or for logged-in users
-if (!is_user_logged_in()) {
-    wp_die('You must be logged in to access this diagnostic');
+if (!is_user_logged_in() || !current_user_can('manage_options')) {
+    wp_die('You must be logged in as administrator to access this diagnostic');
 }
 
 global $wpdb;
