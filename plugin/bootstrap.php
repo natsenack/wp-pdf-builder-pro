@@ -16,7 +16,7 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 
 error_log('🚀 PDF BUILDER BOOTSTRAP LOADED - Registering hooks...');
 
-// Hook global pour intercepter toutes les actions AJAX
+// Hook global pour intercepter TOUTES les requêtes AJAX
 add_action('wp_ajax_nopriv_pdf_builder_auto_save_template', function() {
     error_log('GLOBAL AJAX INTERCEPT: wp_ajax_nopriv_pdf_builder_auto_save_template called');
 });
@@ -29,6 +29,20 @@ add_action('wp_ajax_pdf_builder_save_template', function() {
     error_log('GLOBAL AJAX INTERCEPT: wp_ajax_pdf_builder_save_template called - BEFORE ANY OTHER HOOKS');
     // Ne pas traiter ici, laisser les autres hooks gérer
 }, 1); // Priorité 1 pour être exécuté en premier
+
+// Hook pour intercepter TOUTES les actions AJAX sans distinction
+add_action('admin_init', function() {
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_auto_save_template') {
+        error_log('ADMIN_INIT INTERCEPT: pdf_builder_auto_save_template detected in admin_init');
+    }
+});
+
+// Hook très tôt pour intercepter
+add_action('init', function() {
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_auto_save_template') {
+        error_log('INIT INTERCEPT: pdf_builder_auto_save_template detected in init hook');
+    }
+}, 1);
 
 add_action('wp_ajax_pdf_builder_regenerate_positions', function () {
     error_log('🔍 REGENERATE POSITIONS HOOK CALLED - This proves AJAX routing works');
