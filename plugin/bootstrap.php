@@ -497,6 +497,10 @@ function pdf_builder_load_bootstrap()
     // NOTE: PreviewImageAPI est instanciée dans pdf_builder_handle_preview_ajax()
     // dans pdf-builder-pro.php, pas ici, pour éviter les conflits
 
+    // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
+    // Cela garantit que les fonctionnalités de sauvegarde/chargement fonctionnent
+    pdf_builder_register_essential_ajax_hooks();
+
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
         error_log('PDF Builder: PdfBuilderCore class exists');
@@ -573,8 +577,156 @@ function pdf_builder_templates_page_simple()
     echo '<div class="wrap"><h1>Templates</h1><p>Page templates en cours de développement.</p></div>';
 }
 
-// Inclusion différée de la classe principale
+// Fonction pour enregistrer les hooks AJAX essentiels
+function pdf_builder_register_essential_ajax_hooks()
+{
+    error_log('PDF Builder: Registering essential AJAX hooks...');
+
+    // Charger les classes nécessaires pour les handlers AJAX
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
+        error_log('PDF Builder: Template Manager loaded');
+    }
+
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+        error_log('PDF Builder: Admin class loaded');
+    }
+
+    // Créer une instance du template manager pour les handlers AJAX
+    $template_manager = null;
+    if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
+        $template_manager = new PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
+        error_log('PDF Builder: Template Manager instance created');
+    } else {
+        error_log('PDF Builder: Template Manager class not found, using fallback handlers');
+    }
+
+    // Enregistrer les hooks AJAX essentiels
+    add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
+        error_log('PDF Builder: AJAX save_template hook triggered');
+        if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
+            $template_manager->ajaxSaveTemplateV3();
+        } else {
+            // Fallback handler
+            pdf_builder_fallback_ajax_save_template();
+        }
+    });
+
+    add_action('wp_ajax_pdf_builder_load_template', function() use ($template_manager) {
+        error_log('PDF Builder: AJAX load_template hook triggered');
+        if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+            $template_manager->ajaxLoadTemplate();
+        } else {
+            // Fallback handler
+            pdf_builder_fallback_ajax_load_template();
+        }
+    });
+
+    add_action('wp_ajax_pdf_builder_auto_save_template', function() use ($template_manager) {
+        error_log('PDF Builder: AJAX auto_save_template hook triggered');
+        if ($template_manager && method_exists($template_manager, 'ajax_auto_save_template')) {
+            $template_manager->ajax_auto_save_template();
+        } else {
+            // Fallback handler
+            pdf_builder_fallback_ajax_auto_save_template();
+        }
+    });
+
+    error_log('PDF Builder: Essential AJAX hooks registered successfully');
+}
+
+// Fonction de chargement différé (maintenant vide car les hooks sont enregistrés au bootstrap)
 function pdf_builder_load_core_when_needed()
+{
+    // Les hooks essentiels sont déjà enregistrés dans pdf_builder_load_bootstrap()
+    // Cette fonction est gardée pour compatibilité
+}
+
+// Handlers AJAX de fallback
+function pdf_builder_fallback_ajax_save_template()
+{
+    error_log('PDF Builder: Using fallback save template handler');
+
+    // Vérifications de base
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Récupérer les données
+    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+    $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+    if (empty($template_data) || !$template_id) {
+        wp_send_json_error('Données manquantes');
+        return;
+    }
+
+    // Sauvegarder dans la base de données
+    global $wpdb;
+    $table = $wpdb->prefix . 'pdf_builder_templates';
+
+    $result = $wpdb->update(
+        $table,
+        ['template_data' => $template_data, 'updated_at' => current_time('mysql')],
+        ['id' => $template_id],
+        ['%s', '%s'],
+        ['%d']
+    );
+
+    if ($result !== false) {
+        wp_send_json_success(['message' => 'Template sauvegardé avec succès']);
+    } else {
+        wp_send_json_error('Erreur lors de la sauvegarde');
+    }
+}
+
+function pdf_builder_fallback_ajax_load_template()
+{
+    error_log('PDF Builder: Using fallback load template handler');
+
+    // Vérifications de base
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+    if (!$template_id) {
+        wp_send_json_error('ID de template manquant');
+        return;
+    }
+
+    // Charger depuis la base de données
+    global $wpdb;
+    $table = $wpdb->prefix . 'pdf_builder_templates';
+
+    $template = $wpdb->get_row(
+        $wpdb->prepare("SELECT * FROM $table WHERE id = %d", $template_id),
+        ARRAY_A
+    );
+
+    if ($template) {
+        $template_data = json_decode($template['template_data'], true);
+        wp_send_json_success([
+            'template' => $template_data,
+            'id' => $template['id'],
+            'name' => $template['name']
+        ]);
+    } else {
+        wp_send_json_error('Template non trouvé');
+    }
+}
+
+function pdf_builder_fallback_ajax_auto_save_template()
+{
+    error_log('PDF Builder: Using fallback auto-save template handler');
+
+    // Même logique que save_template mais pour l'auto-save
+    pdf_builder_fallback_ajax_save_template();
+}
 {
 
     static $core_loaded = false;
