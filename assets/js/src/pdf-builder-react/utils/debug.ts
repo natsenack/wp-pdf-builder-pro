@@ -1,22 +1,6 @@
 // Fonction pour vérifier si le debug est activé
-function isDebugEnabled(): boolean {
-  // ✅ CORRECTION: Check for PDF_BUILDER_VERBOSE flag first
-  // This allows users to enable verbose logging with: window.PDF_BUILDER_VERBOSE = true
-  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true) {
-    return true;
-  }
-  
-  // If verbose mode is explicitly disabled, don't log
-  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === false) {
-    return false;
-  }
-  
-  // Otherwise use development environment checks
-  return process.env.NODE_ENV === 'development' ||
-         window.location.hostname === 'localhost' ||
-         window.location.search.includes('debug=pdf') ||
-         (window as unknown as Record<string, unknown>).pdfBuilderDebug === true;
-}
+// Note: Now only used for explicit opt-in via PDF_BUILDER_VERBOSE
+// By default, only errors are shown
 
 // Extension de Window pour le debug
 declare global {
@@ -28,19 +12,19 @@ declare global {
 
 // Fonction de logging conditionnel
 export function debugLog(...args: unknown[]) {
-  if (isDebugEnabled()) {
+  // Disabled by default - only errors are shown
+  // To enable debug logging: window.PDF_BUILDER_VERBOSE = true
+  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true) {
     console.log(...args);
   }
 }
 
 export function debugError(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    console.error(...args);
-  }
+  // Always show errors
+  console.error(...args);
 }
 
 export function debugWarn(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    console.warn(...args);
-  }
+  // Always show warnings
+  console.warn(...args);
 }
