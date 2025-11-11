@@ -400,7 +400,8 @@ class PdfBuilderTemplateManager
     public function ajax_auto_save_template()
     {
         // LOG AU DÉBUT POUR VÉRIFIER QUE LA FONCTION EST APPELEE
-        error_log('🔥 [AUTO-SAVE] FUNCTION CALLED - ajax_auto_save_template() - REQUEST: ' . print_r($_REQUEST, true));
+        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FUNCTION CALLED - ajax_auto_save_template() - REQUEST: ' . print_r($_REQUEST, true));
+        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] THIS LOG SHOULD BE VISIBLE IF FUNCTION EXECUTES');
 
         try {
             // Vérification des permissions
