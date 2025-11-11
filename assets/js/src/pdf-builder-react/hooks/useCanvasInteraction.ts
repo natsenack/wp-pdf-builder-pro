@@ -403,56 +403,58 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   }, [canvasRef]);
 
   // Fonction utilitaire pour calculer le redimensionnement
-  const calculateResize = useCallback((element: Element, handle: string, currentX: number, currentY: number, startPos: { x: number, y: number }) => {
+  const calculateResize = useCallback((element: Element, handle: string, currentX: number, currentY: number, _startPos: { x: number, y: number }) => {
     const updates: ElementUpdates = {};
-    
-    // Calculer le delta depuis le point de départ du drag
-    const deltaX = currentX - startPos.x;
-    const deltaY = currentY - startPos.y;
-    
+
     const MIN_SIZE = 20;
 
     switch (handle) {
-      case 'se': { // Sud-Est (coin bas-droit)
-        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
-        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
+      case 'se': { // Sud-Est (coin bas-droit) - coin suit directement la souris
+        updates.width = Math.max(MIN_SIZE, currentX - element.x);
+        updates.height = Math.max(MIN_SIZE, currentY - element.y);
         break;
       }
       case 'sw': { // Sud-Ouest (coin bas-gauche)
-        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
-        updates.x = element.x + deltaX;
-        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
+        const newX = Math.min(currentX, element.x + element.width - MIN_SIZE);
+        updates.width = Math.max(MIN_SIZE, element.x + element.width - newX);
+        updates.x = newX;
+        updates.height = Math.max(MIN_SIZE, currentY - element.y);
         break;
       }
       case 'ne': { // Nord-Est (coin haut-droit)
-        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
-        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
+        const newY = Math.min(currentY, element.y + element.height - MIN_SIZE);
+        updates.width = Math.max(MIN_SIZE, currentX - element.x);
+        updates.height = Math.max(MIN_SIZE, element.y + element.height - newY);
+        updates.y = newY;
         break;
       }
-      case 'nw': { // Nord-Ouest (coin haut-gauche)
-        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
-        updates.x = Math.max(0, element.x + deltaX);  // Clamp x >= 0
-        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
+      case 'nw': { // Nord-Ouest (coin haut-gauche) - coin suit directement la souris
+        const newX = Math.min(currentX, element.x + element.width - MIN_SIZE);
+        const newY = Math.min(currentY, element.y + element.height - MIN_SIZE);
+        updates.width = Math.max(MIN_SIZE, element.x + element.width - newX);
+        updates.height = Math.max(MIN_SIZE, element.y + element.height - newY);
+        updates.x = newX;
+        updates.y = newY;
         break;
       }
       case 'n': { // Nord (haut)
-        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
-        updates.y = Math.max(0, element.y + deltaY);  // Clamp y >= 0
+        const newY = Math.min(currentY, element.y + element.height - MIN_SIZE);
+        updates.height = Math.max(MIN_SIZE, element.y + element.height - newY);
+        updates.y = newY;
         break;
       }
-      case 's': { // Sud (bas)
-        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
+      case 's': { // Sud (bas) - coin suit directement la souris
+        updates.height = Math.max(MIN_SIZE, currentY - element.y);
         break;
       }
       case 'w': { // Ouest (gauche)
-        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
-        updates.x = Math.max(0, element.x + deltaX);  // Clamp x >= 0
+        const newX = Math.min(currentX, element.x + element.width - MIN_SIZE);
+        updates.width = Math.max(MIN_SIZE, element.x + element.width - newX);
+        updates.x = newX;
         break;
       }
-      case 'e': { // Est (droite)
-        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
+      case 'e': { // Est (droite) - coin suit directement la souris
+        updates.width = Math.max(MIN_SIZE, currentX - element.x);
         break;
       }
     }
@@ -575,7 +577,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     }
-  }, [state, dispatch, canvasRef, getCursorAtPosition, updateCursor, canvasWidth, canvasHeight, calculateResize]);
+  }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, canvasWidth, canvasHeight, calculateResize]);
 
   // Gestionnaire de clic droit pour afficher le menu contextuel
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {
