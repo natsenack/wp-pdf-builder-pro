@@ -1269,29 +1269,102 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const rotation = element.rotation || 0;
         const opacity = element.opacity !== undefined ? element.opacity : 1;
         const borderRadius = element.borderRadius || 0;
+        const objectFit = element.objectFit || 'contain';
 
-        // Calculer les dimensions et position
-        let logoWidth = element.width - 20;
-        let logoHeight = element.height - 20;
+        // Calculer les dimensions et position selon objectFit
+        const containerWidth = element.width - 20;
+        const containerHeight = element.height - 20;
+        const imageAspectRatio = img.naturalWidth / img.naturalHeight;
+        const containerAspectRatio = containerWidth / containerHeight;
 
-        // Respecter les proportions si demandé
-        if (props.maintainAspectRatio !== false) {
-          const aspectRatio = img.naturalWidth / img.naturalHeight;
-          if (logoWidth / logoHeight > aspectRatio) {
-            logoWidth = logoHeight * aspectRatio;
-          } else {
-            logoHeight = logoWidth / aspectRatio;
+        let logoWidth: number;
+        let logoHeight: number;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        switch (objectFit) {
+          case 'contain':
+            // Respecte les proportions, image tient entièrement dans le conteneur
+            if (containerAspectRatio > imageAspectRatio) {
+              logoHeight = containerHeight;
+              logoWidth = logoHeight * imageAspectRatio;
+            } else {
+              logoWidth = containerWidth;
+              logoHeight = logoWidth / imageAspectRatio;
+            }
+            break;
+
+          case 'cover':
+            // Respecte les proportions, image couvre entièrement le conteneur
+            if (containerAspectRatio > imageAspectRatio) {
+              logoWidth = containerWidth;
+              logoHeight = logoWidth / imageAspectRatio;
+              offsetY = (containerHeight - logoHeight) / 2;
+            } else {
+              logoHeight = containerHeight;
+              logoWidth = logoHeight * imageAspectRatio;
+              offsetX = (containerWidth - logoWidth) / 2;
+            }
+            break;
+
+          case 'fill':
+            // Étire l'image pour remplir exactement le conteneur
+            logoWidth = containerWidth;
+            logoHeight = containerHeight;
+            break;
+
+          case 'none':
+            // Taille originale, centrée
+            logoWidth = img.naturalWidth;
+            logoHeight = img.naturalHeight;
+            break;
+
+          case 'scale-down': {
+            // Taille originale ou contain, selon ce qui est plus petit
+            const originalWidth = img.naturalWidth;
+            const originalHeight = img.naturalHeight;
+
+            if (originalWidth <= containerWidth && originalHeight <= containerHeight) {
+              // Taille originale tient, l'utiliser
+              logoWidth = originalWidth;
+              logoHeight = originalHeight;
+            } else {
+              // Utiliser contain
+              if (containerAspectRatio > imageAspectRatio) {
+                logoHeight = containerHeight;
+                logoWidth = logoHeight * imageAspectRatio;
+              } else {
+                logoWidth = containerWidth;
+                logoHeight = logoWidth / imageAspectRatio;
+              }
+            }
+            break;
           }
+
+          default:
+            // Par défaut contain
+            if (containerAspectRatio > imageAspectRatio) {
+              logoHeight = containerHeight;
+              logoWidth = logoHeight * imageAspectRatio;
+            } else {
+              logoWidth = containerWidth;
+              logoHeight = logoWidth / imageAspectRatio;
+            }
         }
 
+        // Calculer la position de base selon l'alignement
         let x = 10;
         if (alignment === 'center') {
-          x = (element.width - logoWidth) / 2;
+          x = (element.width - containerWidth) / 2;
         } else if (alignment === 'right') {
-          x = element.width - logoWidth - 10;
+          x = element.width - containerWidth - 10;
         }
 
-        const y = (element.height - logoHeight) / 2;
+        const y = (element.height - containerHeight) / 2;
+
+        // Ajuster pour centrer l'image dans son conteneur selon objectFit
+        const imageX = x + (containerWidth - logoWidth) / 2 + offsetX;
+        const imageY = y + (containerHeight - logoHeight) / 2 + offsetY;
 
         // Sauvegarder le contexte
         ctx.save();
@@ -1318,7 +1391,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         }
 
         // Dessiner l'image
-        ctx.drawImage(img, x, y, logoWidth, logoHeight);
+        ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
 
         // Restaurer le contexte
         ctx.restore();
