@@ -1217,6 +1217,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawCompanyLogo = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
     const props = element as ImageElementProperties;
     const logoUrl = props.src || props.logoUrl || '';
+
+    // ✅ FIX: If no logo URL, show a better placeholder
+    if (!logoUrl) {
+      drawLogoPlaceholder(ctx, element, 'center', 'Configurez le logo entreprise');
+      return;
+    }
+
     // const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
