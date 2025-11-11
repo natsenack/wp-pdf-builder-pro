@@ -62,7 +62,6 @@ export const Header = memo(function Header({
     debugLog('🔧 Header component mounted/updated');
   }, []);
 
-  debugLog('🎯 Rendering Header component');
   const { state } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);

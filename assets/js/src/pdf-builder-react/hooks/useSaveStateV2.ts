@@ -280,8 +280,6 @@ export function useSaveStateV2({
       return;
     }
 
-    debugLog('[SAVE V2] Changements détectés, programmation sauvegarde...');
-
     // Annuler le timeout précédent
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
