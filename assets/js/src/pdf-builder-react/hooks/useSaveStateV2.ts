@@ -135,9 +135,23 @@ export function useSaveStateV2({
         return cleaned;
       });
 
+      // 🔍 DEBUG: Log elements being sent
+      debugLog('[SAVE V2] Elements avant envoi (count=' + cleanElements.length + ')');
+      if (cleanElements.length > 0) {
+        debugLog('[SAVE V2] Element[0] structure: ' + JSON.stringify(cleanElements[0]));
+        // Check for company_logo specifically
+        cleanElements.forEach((el, idx) => {
+          const elType = (el as Record<string, unknown>)?.type;
+          const elSrc = (el as Record<string, unknown>)?.src;
+          if (elType === 'company_logo') {
+            debugLog('[SAVE V2] company_logo[' + idx + '] sent: src=' + (elSrc || 'MISSING'));
+          }
+        });
+      }
+
       // Faire la requête
       debugLog('[SAVE V2] Envoi de la requête AJAX avec méthode POST...');
-      const ajaxUrl = window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
@@ -157,6 +171,7 @@ export function useSaveStateV2({
       }
 
       const data = await response.json();
+      debugLog('[SAVE V2] Server response: ' + JSON.stringify(data));
       if (!data.success) {
         throw new Error(data.data?.message || 'Erreur serveur');
       }
