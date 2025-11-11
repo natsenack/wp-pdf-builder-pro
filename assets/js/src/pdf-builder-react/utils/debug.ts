@@ -5,7 +5,6 @@
 // Extension de Window pour le debug
 declare global {
   interface Window {
-    pdfBuilderDebug?: boolean;
     PDF_BUILDER_VERBOSE?: boolean; // Set to true/false to control debug logging
   }
 }
@@ -14,7 +13,8 @@ declare global {
 export function debugLog(...args: unknown[]) {
   // Disabled by default - only errors are shown
   // To enable debug logging: window.PDF_BUILDER_VERBOSE = true
-  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true) {
+  const isVerbose = typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true;
+  if (isVerbose) {
     console.log(...args);
   }
 }
