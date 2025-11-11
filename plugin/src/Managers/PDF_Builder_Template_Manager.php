@@ -550,7 +550,10 @@ class PdfBuilderTemplateManager
             error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED');
             file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED' . "\n", FILE_APPEND);
 
-            error_log('🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
+            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...' . "\n", FILE_APPEND);
+
+            error_log('�🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
             if (!empty($elements)) {
                 error_log('🔍 [AUTO-SAVE] Element[0] AFTER enrichment: ' . json_encode($elements[0]));
                 // Check for company_logo specifically
@@ -561,6 +564,9 @@ class PdfBuilderTemplateManager
                 }
             }
 
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO CREATE TEMPLATE_DATA ARRAY...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO CREATE TEMPLATE_DATA ARRAY...' . "\n", FILE_APPEND);
+
             // Préparer les nouvelles données (conserver le canvas, mettre à jour les éléments)
             $template_data = [
                 'elements' => $elements,
@@ -570,14 +576,25 @@ class PdfBuilderTemplateManager
                 'version' => '1.0'
             ];
 
-            error_log('🔍 [AUTO-SAVE] Template data structure - keys: ' . implode(', ', array_keys($template_data)));
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE_DATA ARRAY CREATED SUCCESSFULLY');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' � 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE_DATA ARRAY CREATED SUCCESSFULLY' . "\n", FILE_APPEND);
+
+            error_log('�🔍 [AUTO-SAVE] Template data structure - keys: ' . implode(', ', array_keys($template_data)));
             error_log('🔍 [AUTO-SAVE] Elements in template_data: ' . count($template_data['elements']));
+
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO JSON ENCODE...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO JSON ENCODE...' . "\n", FILE_APPEND);
 
             // Encoder en JSON
             $json_data = \wp_json_encode($template_data);
             if ($json_data === false) {
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE FAILED');
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE FAILED' . "\n", FILE_APPEND);
                 \wp_send_json_error('Erreur lors de l\'encodage des données JSON');
             }
+
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE SUCCESS - LENGTH: ' . strlen($json_data));
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE SUCCESS - LENGTH: ' . strlen($json_data) . "\n", FILE_APPEND);
 
             error_log('🔍 [AUTO-SAVE] JSON encoded length: ' . strlen($json_data));
             // Log the ACTUAL JSON being saved to DB (first 500 chars)
