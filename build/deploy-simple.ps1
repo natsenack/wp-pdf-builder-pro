@@ -106,8 +106,18 @@ try {
         }
     } | Sort-Object -Unique
     
-    # Filtrer pour le dossier plugin uniquement, mais inclure aussi les fichiers de build
-    $pluginModified = $allModified | Where-Object { $_ -like "plugin/*" -or $_ -like "build/*" }
+    # Filtrer pour les fichiers sources (assets, src) ET les fichiers de build/dist
+    # Inclure: plugin/*, build/*, assets/*, mais EXCLURE les fichiers dist non générés
+    $pluginModified = $allModified | Where-Object { 
+        $_ -like "plugin/*" -or 
+        $_ -like "build/*" -or 
+        $_ -like "assets/*" -or
+        $_ -like "*.ts" -or 
+        $_ -like "*.tsx" -or 
+        $_ -like "*.js" -or 
+        $_ -like "*.jsx" -or 
+        $_ -like "*.php"
+    }
     
     # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
     $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName

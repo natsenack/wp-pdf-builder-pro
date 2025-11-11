@@ -1076,7 +1076,6 @@ interface CanvasProps {
 const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
 
 export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
-  console.log('🎬 [COMPONENT] Canvas RE-RENDER - Selection:', state.selection.selectedElements, 'Elements:', state.elements.length);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // ✅ Track derniers éléments rendus pour éviter double rendu
@@ -1085,6 +1084,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
+
+  console.log('🎬 [COMPONENT] Canvas RE-RENDER - Selection:', state.selection.selectedElements, 'Elements:', state.elements.length);
 
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
