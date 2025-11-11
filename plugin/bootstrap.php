@@ -1472,13 +1472,14 @@ function pdf_builder_register_fallback_hooks()
         add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_auto_save_template', function () {
-            // Test simple sans charger de fichiers
-            wp_send_json_success(array(
-                'message' => 'Hook AJAX fonctionne',
-                'template_id' => isset($_POST['template_id']) ? intval($_POST['template_id']) : 0,
-                'saved_at' => current_time('mysql'),
-                'element_count' => 0
-            ));
+            // Appeler le vrai handler du template manager
+            if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
+                $manager = new \PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
+                $manager->ajax_auto_save_template();
+            } else {
+                error_log('PDF Builder: PdfBuilderTemplateManager class not found in auto_save_template handler');
+                wp_send_json_error('Gestionnaire de templates non disponible');
+            }
         });
     }
     
