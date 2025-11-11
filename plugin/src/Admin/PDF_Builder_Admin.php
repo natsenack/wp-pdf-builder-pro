@@ -2919,21 +2919,12 @@ class PdfBuilderAdmin
 
         $transformed_elements = [];
         foreach ($elements as $element) {
-            $transformed_element = [];
-
-            // Copier les propriétés de base
-            if (isset($element['id'])) {
-                $transformed_element['id'] = $element['id'];
-            }
-            if (isset($element['type'])) {
-                $transformed_element['type'] = $element['type'];
-            }
-            if (isset($element['content'])) {
-                $transformed_element['content'] = $element['content'];
-            }
+            // ✅ CRITICAL: Commencer par une copie COMPLÈTE de l'élément
+            // Cela préserve TOUTES les propriétés personnalisées comme contentAlign, labelPosition
+            $transformed_element = $element;
 
             // Gestion spéciale pour les éléments company_logo
-            if ($element['type'] === 'company_logo') {
+            if (isset($element['type']) && $element['type'] === 'company_logo') {
                 $logo_url = '';
                 if (isset($element['imageUrl'])) {
                     $logo_url = $element['imageUrl'];
@@ -2957,75 +2948,48 @@ class PdfBuilderAdmin
                 }
             }
 
-            // Copier src si présent
-            if (isset($element['src'])) {
-                $transformed_element['src'] = $element['src'];
+            // Valider et standardiser les positions et dimensions
+            if (!isset($transformed_element['x'])) {
+                if (isset($element['position']['x'])) {
+                    $transformed_element['x'] = (int)$element['position']['x'];
+                } else {
+                    $transformed_element['x'] = 0;
+                }
+            } else {
+                $transformed_element['x'] = (int)$transformed_element['x'];
             }
 
-            // Transformer position -> x, y (vérifier d'abord x direct, sinon position.x)
-            if (isset($element['x'])) {
-                $transformed_element['x'] = (int)$element['x'];
-            } elseif (isset($element['position']['x'])) {
-                $transformed_element['x'] = (int)$element['position']['x'];
-            }
-            if (isset($element['y'])) {
-                $transformed_element['y'] = (int)$element['y'];
-            } elseif (isset($element['position']['y'])) {
-                $transformed_element['y'] = (int)$element['position']['y'];
+            if (!isset($transformed_element['y'])) {
+                if (isset($element['position']['y'])) {
+                    $transformed_element['y'] = (int)$element['position']['y'];
+                } else {
+                    $transformed_element['y'] = 0;
+                }
+            } else {
+                $transformed_element['y'] = (int)$transformed_element['y'];
             }
 
-            // Transformer size -> width, height (vérifier d'abord width direct, sinon size.width)
-            if (isset($element['width'])) {
-                $transformed_element['width'] = (int)$element['width'];
-            } elseif (isset($element['size']['width'])) {
-                $transformed_element['width'] = (int)$element['size']['width'];
-            }
-            if (isset($element['height'])) {
-                $transformed_element['height'] = (int)$element['height'];
-            } elseif (isset($element['size']['height'])) {
-                $transformed_element['height'] = (int)$element['size']['height'];
+            if (!isset($transformed_element['width'])) {
+                if (isset($element['size']['width'])) {
+                    $transformed_element['width'] = (int)$element['size']['width'];
+                } else {
+                    $transformed_element['width'] = 100;
+                }
+            } else {
+                $transformed_element['width'] = (int)$transformed_element['width'];
             }
 
-            // Transformer style -> propriétés à plat
-            if (isset($element['style'])) {
-                if (isset($element['style']['fontSize'])) {
-                    $transformed_element['fontSize'] = (int)$element['style']['fontSize'];
+            if (!isset($transformed_element['height'])) {
+                if (isset($element['size']['height'])) {
+                    $transformed_element['height'] = (int)$element['size']['height'];
+                } else {
+                    $transformed_element['height'] = 50;
                 }
-                if (isset($element['style']['fontWeight'])) {
-                    $transformed_element['fontWeight'] = $element['style']['fontWeight'];
-                }
-                if (isset($element['style']['color'])) {
-                    $transformed_element['color'] = $element['style']['color'];
-                }
-                if (isset($element['style']['textAlign'])) {
-                    $transformed_element['textAlign'] = $element['style']['textAlign'];
-                }
-                if (isset($element['style']['verticalAlign'])) {
-                    $transformed_element['verticalAlign'] = $element['style']['verticalAlign'];
-                }
-                if (isset($element['style']['backgroundColor'])) {
-                    $transformed_element['backgroundColor'] = $element['style']['backgroundColor'];
-                }
-            }
-
-            // Pour les éléments text, utiliser content comme text
-            if ($element['type'] === 'text' && isset($element['content'])) {
-                $transformed_element['text'] = $element['content'];
+            } else {
+                $transformed_element['height'] = (int)$transformed_element['height'];
             }
 
             // Propriétés par défaut pour tous les éléments
-            if (!isset($transformed_element['x'])) {
-                $transformed_element['x'] = 0;
-            }
-            if (!isset($transformed_element['y'])) {
-                $transformed_element['y'] = 0;
-            }
-            if (!isset($transformed_element['width'])) {
-                $transformed_element['width'] = 100;
-            }
-            if (!isset($transformed_element['height'])) {
-                $transformed_element['height'] = 50;
-            }
             if (!isset($transformed_element['visible'])) {
                 $transformed_element['visible'] = true;
             }
