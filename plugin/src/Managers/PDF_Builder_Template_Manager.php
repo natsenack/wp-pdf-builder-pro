@@ -455,8 +455,14 @@ class PdfBuilderTemplateManager
             // Décoder les éléments
             $elements = \json_decode($elements_raw, true);
             if ($elements === null && \json_last_error() !== JSON_ERROR_NONE) {
-                \wp_send_json_error('Données des éléments corrompues - Erreur JSON: ' . \json_last_error_msg());
+                $json_error = \json_last_error_msg();
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE FAILED: ' . $json_error);
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE FAILED: ' . $json_error . "\n", FILE_APPEND);
+                \wp_send_json_error('Données des éléments corrompues - Erreur JSON: ' . $json_error);
             }
+            
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements));
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON DECODE SUCCESS - elements count: ' . count($elements) . "\n", FILE_APPEND);
 
             // Charger le template existant pour récupérer le canvas
             global $wpdb;
