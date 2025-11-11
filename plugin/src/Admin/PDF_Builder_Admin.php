@@ -5630,14 +5630,14 @@ class PdfBuilderAdmin
         // Enqueue PDF Builder React scripts from local build
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         // ✅ Use file modification time for stable cache busting (not random time())
-        $react_file_path = PDF_BUILDER_PRO_PLUGIN_DIR . 'assets/js/dist/pdf-builder-react.js';
+        $react_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
         $react_file_mtime = file_exists($react_file_path) ? filemtime($react_file_path) : time();
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $react_file_mtime;
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
         // Charger les scripts de l'API Preview pour l'éditeur React
         // ✅ Use file modification time for stable cache busting
-        $preview_client_path = PDF_BUILDER_PRO_PLUGIN_DIR . 'assets/js/pdf-preview-api-client.js';
+        $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
         $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
         $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param_api, true);
