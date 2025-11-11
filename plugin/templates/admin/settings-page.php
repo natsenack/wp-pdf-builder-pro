@@ -682,6 +682,17 @@ style="background-color: #6c757d; border-color: #6c757d; color: white; font-weig
 #e7f5e9; border-left: 4px solid #28a745; border-radius: 4px; color: #155724;"></div>
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row">Vider le cache</th>
+                    <td>
+                        <button type="button" id="clear-cache-general-btn" class="button button-secondary"
+style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
+                            🗑️ Vider tout le cache
+                        </button>
+                        <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
+                        <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
+                    </td>
+                </tr>
             </table>
             
             <h3 style="margin-top: 30px; border-bottom: 2px solid #007cba; padding-bottom: 10px; color: #007cba;">📄
@@ -1242,6 +1253,61 @@ list-style: none;">
                 var modal = document.getElementById('deactivate_modal');
                 if (event.target === modal) {
                     closeDeactivateModal();
+                }
+            });
+
+            // ✅ Handler pour le bouton "Vider le cache" dans l'onglet Général
+            document.addEventListener('DOMContentLoaded', function() {
+                var clearCacheBtn = document.getElementById('clear-cache-general-btn');
+                if (clearCacheBtn) {
+                    clearCacheBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var resultsSpan = document.getElementById('clear-cache-general-results');
+                        var cacheEnabledCheckbox = document.getElementById('cache_enabled');
+                        
+                        // ✅ Vérifie si le cache est activé
+                        if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
+                            resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
+                            resultsSpan.style.color = '#ff9800';
+                            return;
+                        }
+                        
+                        clearCacheBtn.disabled = true;
+                        clearCacheBtn.textContent = '⏳ Vérification...';
+                        resultsSpan.textContent = '';
+                        
+                        // ✅ Appel AJAX pour vider le cache
+                        var formData = new FormData();
+                        formData.append('action', 'pdf_builder_clear_cache');
+                        formData.append('security', '<?php echo wp_create_nonce('pdf_builder_clear_cache_performance'); ?>');
+                        
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            clearCacheBtn.disabled = false;
+                            clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+                            
+                            if (data.success) {
+                                resultsSpan.textContent = '✅ Cache vidé avec succès!';
+                                resultsSpan.style.color = '#28a745';
+                            } else {
+                                resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
+                                resultsSpan.style.color = '#dc3232';
+                            }
+                        })
+                        .catch(function(error) {
+                            clearCacheBtn.disabled = false;
+                            clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+                            resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
+                            resultsSpan.style.color = '#dc3232';
+                            console.error('Erreur lors du vide du cache:', error);
+                        });
+                    });
                 }
             });
             </script>
