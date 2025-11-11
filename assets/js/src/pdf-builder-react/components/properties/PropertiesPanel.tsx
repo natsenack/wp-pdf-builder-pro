@@ -69,20 +69,53 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
         <h4 style={{ margin: '0', fontSize: '14px', fontWeight: 'bold' }}>
           Propriétés ({selectedElements.length})
         </h4>
-        <button
-          onClick={handleDeleteSelected}
-          style={{
-            padding: '4px 8px',
-            border: '1px solid #dc3545',
-            borderRadius: '4px',
-            backgroundColor: '#dc3545',
-            color: '#ffffff',
-            cursor: 'pointer',
-            fontSize: '12px'
-          }}
-        >
-          🗑️ Supprimer
-        </button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button
+            onClick={() => {
+              console.log('🔍 [DEBUG] Current state elements:', state.elements);
+              const orderElements = state.elements.filter(el => el.type === 'order_number');
+              console.log('🔍 [DEBUG] Order number elements in state:', orderElements);
+              orderElements.forEach((el, index) => {
+                console.log(`🔍 [DEBUG] Order element ${index}:`, {
+                  id: el.id,
+                  contentAlign: el.contentAlign || 'NOT SET',
+                  labelPosition: el.labelPosition || 'NOT SET',
+                  allProperties: Object.keys(el)
+                });
+              });
+              alert(`Order elements in state: ${orderElements.length}\n` +
+                orderElements.map((el, i) => 
+                  `Element ${i}: contentAlign=${el.contentAlign || 'NOT SET'}, labelPosition=${el.labelPosition || 'NOT SET'}`
+                ).join('\n'));
+            }}
+            style={{
+              padding: '4px 8px',
+              border: '1px solid #007cba',
+              borderRadius: '4px',
+              backgroundColor: '#007cba',
+              color: '#ffffff',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+            title="Debug: Afficher les propriétés order_number dans le state"
+          >
+            🔍 Debug
+          </button>
+          <button
+            onClick={handleDeleteSelected}
+            style={{
+              padding: '4px 8px',
+              border: '1px solid #dc3545',
+              borderRadius: '4px',
+              backgroundColor: '#dc3545',
+              color: '#ffffff',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            🗑️ Supprimer
+          </button>
+        </div>
       </div>
 
       {selectedElements.map(element => (
