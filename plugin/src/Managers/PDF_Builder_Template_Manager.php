@@ -408,15 +408,28 @@ class PdfBuilderTemplateManager
         file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] THIS LOG SHOULD BE VISIBLE IF FUNCTION EXECUTES' . "\n", FILE_APPEND);
 
         try {
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CHECKING PERMISSIONS...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CHECKING PERMISSIONS...' . "\n", FILE_APPEND);
+            
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS FAILED - current_user_can(manage_options) = false');
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS FAILED' . "\n", FILE_APPEND);
                 \wp_send_json_error('Permissions insuffisantes');
             }
+            
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS OK, CHECKING NONCE...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PERMISSIONS OK, CHECKING NONCE...' . "\n", FILE_APPEND);
 
             // Vérifier le nonce
             if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_nonce')) {
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE FAILED - nonce: ' . (isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : 'NOT SET'));
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE FAILED' . "\n", FILE_APPEND);
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
+            
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE OK, PROCESSING DATA...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NONCE OK, PROCESSING DATA...' . "\n", FILE_APPEND);
 
             // Récupération des données
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
