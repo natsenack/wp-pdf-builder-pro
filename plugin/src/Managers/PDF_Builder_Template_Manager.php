@@ -71,8 +71,9 @@ class PdfBuilderTemplateManager
         try {
             // Log pour debug
             error_log('PDF Builder: ajaxSaveTemplateV3 called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            // Write to plugin directory for easier access
-            $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+            // Write to uploads directory for guaranteed access
+            $upload_dir = wp_upload_dir();
+            $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
             file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
             file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
 
@@ -182,7 +183,8 @@ class PdfBuilderTemplateManager
 
                 // Log détaillé des éléments pour vérifier les propriétés
                 error_log('PDF Builder: SAVE - Elements data saved, count: ' . count($elements_data));
-                $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+                $upload_dir = wp_upload_dir();
+                $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
                 // Log order_number elements specifically
@@ -311,7 +313,8 @@ class PdfBuilderTemplateManager
                     }
                     
                     // Log what was actually saved
-                    $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+                    $upload_dir = wp_upload_dir();
+                    $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                 } else {
@@ -354,7 +357,8 @@ class PdfBuilderTemplateManager
                     \update_post_meta($template_id, '_pdf_template_data', $template_data);
                     
                     // Log what was actually saved
-                    $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+                    $upload_dir = wp_upload_dir();
+                    $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                 }
@@ -630,6 +634,11 @@ class PdfBuilderTemplateManager
         header('Expires: 0');
         
         try {
+            // Log that function was called
+            $upload_dir = wp_upload_dir();
+            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' === LOAD FUNCTION CALLED === REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
+            
             error_log('PDF Builder: ajaxLoadTemplate called - REQUEST: ' . print_r($_REQUEST, true));
             
             // Vérification des permissions
@@ -667,9 +676,11 @@ class PdfBuilderTemplateManager
                 
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
-                // Write to plugin directory for easier access
-                $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_load.log';
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD - RAW DATA: ' . substr($template_data_raw, 0, 1000) . "\n", FILE_APPEND);
+                // Write to uploads directory for guaranteed access
+                $upload_dir = wp_upload_dir();
+                $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
 
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
@@ -706,7 +717,8 @@ class PdfBuilderTemplateManager
                 }
                 
                 // Log loading from post meta
-                $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_load.log';
+                $upload_dir = wp_upload_dir();
+                $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
             }
@@ -752,7 +764,8 @@ class PdfBuilderTemplateManager
                         'contentAlign' => $first_element['contentAlign'] ?? 'missing',
                         'labelPosition' => $first_element['labelPosition'] ?? 'missing'
                     ]));
-                    $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_load.log';
+                    $upload_dir = wp_upload_dir();
+                    $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD - ORDER ELEMENT: ' . json_encode($first_element) . "\n", FILE_APPEND);
                 }
             }
