@@ -1102,9 +1102,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     position: { x: 0, y: 0 }
   });
 
-  // ✅ CORRECTION 8: Force re-render when images load by incrementing counter
-  const [imageLoadCounter, setImageLoadCounter] = React.useState<number>(0);
-
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
   
@@ -1254,8 +1251,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         img.onload = () => {
           const loadedImg = img; // Capture img in closure
           if (DEBUG_DRAW) console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
-          // ✅ CORRECTION 8: Increment counter to trigger canvas re-render
-          setImageLoadCounter(prev => prev + 1);
         };
       } else {
         if (DEBUG_DRAW) console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
@@ -1296,7 +1291,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas d'URL, dessiner un placeholder
       drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
-  }, [drawLogoPlaceholder, setImageLoadCounter]);
+  }, [drawLogoPlaceholder]);  // ✅ BUGFIX-008: REMOVED setImageLoadCounter
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
@@ -2194,7 +2189,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state, renderCanvas, imageLoadCounter]);
+  }, [state, renderCanvas]);  // ✅ BUGFIX-008: REMOVED imageLoadCounter - it causes double renders when images load
 
   // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
   useEffect(() => {
