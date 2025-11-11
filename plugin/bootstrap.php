@@ -25,6 +25,11 @@ add_action('wp_ajax_pdf_builder_auto_save_template', function() {
     // Ne pas traiter ici, laisser les autres hooks gérer
 }, 1); // Priorité 1 pour être exécuté en premier
 
+add_action('wp_ajax_pdf_builder_save_template', function() {
+    error_log('GLOBAL AJAX INTERCEPT: wp_ajax_pdf_builder_save_template called - BEFORE ANY OTHER HOOKS');
+    // Ne pas traiter ici, laisser les autres hooks gérer
+}, 1); // Priorité 1 pour être exécuté en premier
+
 add_action('wp_ajax_pdf_builder_regenerate_positions', function () {
     error_log('🔍 REGENERATE POSITIONS HOOK CALLED - This proves AJAX routing works');
     error_log('🔍 REGENERATE POSITIONS HOOK CALLED - This proves AJAX routing works');
