@@ -574,54 +574,12 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
   }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, state.canvas.zoom]);
 
-  // Chargement automatique du template depuis l'URL
-  useEffect(() => {
-    if (typeof URLSearchParams === 'undefined') return;
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const templateId = urlParams.get('template_id');
-
-    if (templateId) {
-      debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
-
-      // Charger le template depuis l'API WordPress
-      const loadTemplate = async () => {
-        try {
-          const ajaxUrl = (window as unknown as Record<string, unknown>).ajaxurl as string || '/wp-admin/admin-ajax.php';
-          const nonce = ((window as unknown as Record<string, unknown>).pdfBuilderData as Record<string, unknown>)?.nonce as string ||
-                       ((window as unknown as Record<string, unknown>).pdfBuilderNonce as string) ||
-                       ((window as unknown as Record<string, unknown>).pdfBuilderReactData as Record<string, unknown>)?.nonce as string || '';
-
-          const response = await fetch(ajaxUrl + '?action=pdf_builder_load_template&template_id=' + templateId + '&nonce=' + nonce, {
-            method: 'GET',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-          });
-
-          const data = await response.json();
-
-          if (data.success && data.data) {
-            debugLog('✅ [LOAD TEMPLATE] Template chargé avec succès:', data.data);
-            dispatch({
-              type: 'LOAD_TEMPLATE',
-              payload: {
-                ...data.data.template,
-                id: templateId,
-                name: data.data.name
-              }
-            });
-          } else {
-            debugError('❌ [LOAD TEMPLATE] Erreur lors du chargement:', data.data?.error || 'Erreur inconnue');
-          }
-        } catch (error) {
-          debugError('❌ [LOAD TEMPLATE] Exception lors du chargement:', error);
-        }
-      };
-
-      loadTemplate();
-    }
-  }, []); // Uniquement au montage du composant
+  // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
+  // which reads template_id from URL/localized data and calls AJAX GET
+  // This prevents duplicate/race condition loads which caused double canvas renders
+  // Previously: BuilderContext useEffect loaded → dispatch → Canvas renders
+  //             useTemplate hook also loaded → dispatch → Canvas renders AGAIN (1/10th sec later)
+  // Now: Only useTemplate.ts loads the template, ensuring single source of truth
 
   // Écouteur pour le chargement de template via API globale
   useEffect(() => {
