@@ -309,6 +309,11 @@ class PdfBuilderTemplateManager
                     if ($result === false) {
                         throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
                     }
+                    
+                    // Log what was actually saved
+                    $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                 } else {
                     // Gérer comme post WordPress (nouveau template ou migration)
                     if ($template_id > 0) {
@@ -347,6 +352,11 @@ class PdfBuilderTemplateManager
 
                     // Sauvegarder les données du template dans les métadonnées
                     \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                    
+                    // Log what was actually saved
+                    $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_save.log';
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                 }
             } catch (\Exception $e) {
                 \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
@@ -694,6 +704,11 @@ class PdfBuilderTemplateManager
                     \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
                     return;
                 }
+                
+                // Log loading from post meta
+                $log_file = dirname(dirname(dirname(__FILE__))) . '/debug_pdf_load.log';
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
             }
 
             // Validation de la structure
