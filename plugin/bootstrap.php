@@ -1538,11 +1538,18 @@ function pdf_builder_check_media_library() {
     $attachments = get_posts($args);
     error_log('Attachments in DB: ' . count($attachments));
     foreach ($attachments as $attachment) {
-        error_log('  - ID: ' . $attachment->ID . ', Title: ' . $attachment->post_title);
+        error_log('  - ID: ' . $attachment->ID . ', Title: ' . $attachment->post_title . ', URL: ' . wp_get_attachment_url($attachment->ID));
     }
 }
 
-// Appeler au chargement de la page du PDF builder
+// Appeler aussi en admin et en AJAX
+add_action('admin_enqueue_scripts', function() {
+    if (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) {
+        pdf_builder_check_media_library();
+    }
+}, 5);
+
+// Aussi en frontend pour le diagnostic
 add_action('wp_enqueue_scripts', function() {
     if (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) {
         pdf_builder_check_media_library();
