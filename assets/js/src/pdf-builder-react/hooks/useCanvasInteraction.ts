@@ -21,7 +21,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
   const isResizingRef = useRef(false);
-  const dragStartRef = useRef({ x: 0, y: 0 });
+  const dragStartRef = useRef({ x: 0, y: 0 });  // Pour drag : position élément initial
+  const dragMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du drag
+  const resizeMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du resize
   const selectedElementRef = useRef<string | null>(null);
   const selectedElementsRef = useRef<string[]>([]);  // ✅ Track locally instead of relying on stale state
   const resizeHandleRef = useRef<string | null>(null);
@@ -308,10 +310,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         console.log('✅ [SELECTION] APRÈS dispatch - état sera mis à jour à:', [clickedElement.id]);
         // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
         isDraggingRef.current = true;
+        dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
+        dragMouseStartRef.current = { x, y };  // Position souris
+        selectedElementRef.current = clickedElement.id;
         const offsetX = x - clickedElement.x;
         const offsetY = y - clickedElement.y;
-        dragStartRef.current = { x: offsetX, y: offsetY };
-        selectedElementRef.current = clickedElement.id;
         console.log('🎯 [DRAG START] Élément fraîchement sélectionné - drag préparé:', clickedElement.id, 'offsetX:', offsetX, 'offsetY:', offsetY);
         event.preventDefault();
         return;
@@ -319,11 +322,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
       // ✅ L'élément est déjà sélectionné - préparer le drag
       isDraggingRef.current = true;
-      // Store the OFFSET from element's top-left corner to mouse click point
+      dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
+      dragMouseStartRef.current = { x, y };  // Position souris
+      selectedElementRef.current = clickedElement.id;
       const offsetX = x - clickedElement.x;
       const offsetY = y - clickedElement.y;
-      dragStartRef.current = { x: offsetX, y: offsetY };
-      selectedElementRef.current = clickedElement.id;
       console.log('🎯 [DRAG START] element:', clickedElement.id, 'clickX:', x, 'clickY:', y, 'elementX:', clickedElement.x, 'elementY:', clickedElement.y, 'offsetX:', offsetX, 'offsetY:', offsetY);
       event.preventDefault();
       return;
@@ -336,7 +339,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
-      dragStartRef.current = { x, y };
+      resizeMouseStartRef.current = { x, y };  // Position souris au début du resize
       event.preventDefault();
       return;
     }
@@ -429,48 +432,50 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Calculer le delta depuis le point de départ du drag
     const deltaX = currentX - startPos.x;
     const deltaY = currentY - startPos.y;
+    
+    const MIN_SIZE = 20;
 
     switch (handle) {
       case 'se': { // Sud-Est (coin bas-droit)
-        updates.width = Math.max(20, element.width + deltaX);
-        updates.height = Math.max(20, element.height + deltaY);
+        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
+        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
         break;
       }
       case 'sw': { // Sud-Ouest (coin bas-gauche)
-        updates.width = Math.max(20, element.width - deltaX);
+        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
         updates.x = element.x + deltaX;
-        updates.height = Math.max(20, element.height + deltaY);
+        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
         break;
       }
       case 'ne': { // Nord-Est (coin haut-droit)
-        updates.width = Math.max(20, element.width + deltaX);
-        updates.height = Math.max(20, element.height - deltaY);
+        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
+        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
         updates.y = element.y + deltaY;
         break;
       }
       case 'nw': { // Nord-Ouest (coin haut-gauche)
-        updates.width = Math.max(20, element.width - deltaX);
+        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
         updates.x = element.x + deltaX;
-        updates.height = Math.max(20, element.height - deltaY);
+        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
         updates.y = element.y + deltaY;
         break;
       }
       case 'n': { // Nord (haut)
-        updates.height = Math.max(20, element.height - deltaY);
+        updates.height = Math.max(MIN_SIZE, element.height - deltaY);
         updates.y = element.y + deltaY;
         break;
       }
       case 's': { // Sud (bas)
-        updates.height = Math.max(20, element.height + deltaY);
+        updates.height = Math.max(MIN_SIZE, element.height + deltaY);
         break;
       }
       case 'w': { // Ouest (gauche)
-        updates.width = Math.max(20, element.width - deltaX);
+        updates.width = Math.max(MIN_SIZE, element.width - deltaX);
         updates.x = element.x + deltaX;
         break;
       }
       case 'e': { // Est (droite)
-        updates.width = Math.max(20, element.width + deltaX);
+        updates.width = Math.max(MIN_SIZE, element.width + deltaX);
         break;
       }
     }
@@ -515,11 +520,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         return;
       }
 
-      // dragStartRef now contains the OFFSET (where we clicked on the element)
-      // NEW position = current mouse position - offset
-      let newX = x - dragStartRef.current.x;
-      let newY = y - dragStartRef.current.y;
-      console.log('🎯 [DRAG] currentMouse:', { x, y }, 'offset:', dragStartRef.current, 'newPosition:', { newX, newY }, 'element current pos:', { x: element.x, y: element.y });
+      // dragStartRef now contains the INITIAL ELEMENT POSITION
+      // dragMouseStartRef contains the INITIAL MOUSE POSITION
+      // NEW position = initial element position + (current mouse - initial mouse)
+      const deltaX = x - dragMouseStartRef.current.x;
+      const deltaY = y - dragMouseStartRef.current.y;
+      let newX = dragStartRef.current.x + deltaX;
+      let newY = dragStartRef.current.y + deltaY;
+      console.log('🎯 [DRAG] currentMouse:', { x, y }, 'dragMouseStart:', dragMouseStartRef.current, 'delta:', { deltaX, deltaY }, 'dragStart:', dragStartRef.current, 'newPosition:', { newX, newY });
 
       // S'assurer que l'élément reste dans les limites du canvas
       const canvasWidthPx = canvasWidth;
@@ -578,7 +586,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
       if (!element) return;
 
-      const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, dragStartRef.current);
+      const resizeUpdates = calculateResize(element, resizeHandleRef.current, x, y, resizeMouseStartRef.current);
       console.log('📏 [RESIZE] Dispatch UPDATE_ELEMENT - updates:', resizeUpdates);
       
       // ✅ CORRECTION 6: Préserver TOUTES les propriétés pendant resize
