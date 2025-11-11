@@ -129,9 +129,9 @@ export function useTemplate() {
       const enrichedElements = elements.map((el: Record<string, unknown>) => {
         let enrichedElement = { ...el };
         
-        // Enrichir les éléments company_logo avec src si manquant
-        if (el.type === 'company_logo' && (!el.src || !el.logoUrl)) {
-          debugLog('🏷️ [LOAD TEMPLATE] Logo sans src trouvé, recherche de src:', {
+        // ✅ CORRECTION: Enrichir les éléments company_logo SEULEMENT si src ET logoUrl sont vides
+        if (el.type === 'company_logo' && !el.src && !el.logoUrl) {
+          debugLog('🏷️ [LOAD TEMPLATE] Logo sans src/logoUrl trouvé, recherche de src:', {
             elementId: el.id,
             currentSrc: el.src,
             currentLogoUrl: el.logoUrl,
@@ -139,9 +139,10 @@ export function useTemplate() {
           });
           
           // Essayer d'obtenir le logo depuis les propriétés de l'élément
-          const logoUrl = (el.src as string) || (el.logoUrl as string) || (el.defaultSrc as string) || '';
+          const logoUrl = (el.defaultSrc as string) || '';
           if (logoUrl) {
             enrichedElement.src = logoUrl;
+            debugLog('🏷️ [LOAD TEMPLATE] Logo enrichi avec src:', logoUrl);
           }
         }
         
@@ -171,7 +172,10 @@ export function useTemplate() {
         return enrichedElement;
       });
 
-      debugLog('📋 [LOAD TEMPLATE] Premiers éléments après enrichissement:', enrichedElements.slice(0, 2));
+      debugLog('📋 [LOAD TEMPLATE] Éléments enrichis - Total:', enrichedElements.length);
+      enrichedElements.slice(0, 3).forEach((el: any, idx: number) => {
+        debugLog(`  [${idx}] ${el.type}: src=${el.src ? '✅' : '❌'}`);
+      });
 
       // Créer une date valide pour lastSaved
       let lastSavedDate: Date;
