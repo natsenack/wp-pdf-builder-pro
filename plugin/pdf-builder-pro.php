@@ -157,13 +157,13 @@ function pdf_builder_init()
         }
     }
 
-    // Hook AJAX pour test - version 2
-    add_action('wp_ajax_pdf_builder_auto_save_template', function () {
-        die('Hook appelé v2');
-    });
-    add_action('wp_ajax_nopriv_pdf_builder_auto_save_template', function () {
-        die('Hook appelé nopriv v2');
-    });
+    // Hook AJAX pour test - version 2 - REMOVED FOR PRODUCTION
+    // add_action('wp_ajax_pdf_builder_auto_save_template', function () {
+    //     die('Hook appelé v2');
+    // });
+    // add_action('wp_ajax_nopriv_pdf_builder_auto_save_template', function () {
+    //     die('Hook appelé nopriv v2');
+    // });
 
     // Tools for development/tests removed from production bootstrap
 
