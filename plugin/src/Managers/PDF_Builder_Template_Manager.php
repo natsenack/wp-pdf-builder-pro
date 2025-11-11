@@ -504,15 +504,6 @@ class PdfBuilderTemplateManager
             // Log the ACTUAL JSON being saved to DB (first 500 chars)
             error_log('🔍 [AUTO-SAVE] JSON saved to DB (first 500 chars): ' . substr($json_data, 0, 500));
 
-            // 🔍 VÉRIFICATION: Décoder le JSON pour confirmer qu'il est valide
-            $decoded_check = json_decode($json_data, true);
-            if ($decoded_check === null) {
-                error_log('🔍 [AUTO-SAVE] ❌ ERREUR: JSON invalide après encodage!');
-                wp_send_json_error('Erreur: JSON invalide après encodage');
-                return;
-            }
-            error_log('🔍 [AUTO-SAVE] ✅ JSON valide - éléments décodés: ' . count($decoded_check['elements'] ?? []));
-
             // Mettre à jour la base de données
             $updated = $wpdb->update(
                 $table_templates,
@@ -526,26 +517,28 @@ class PdfBuilderTemplateManager
             );
 
             if ($updated === false) {
-                error_log('🔍 [AUTO-SAVE] ❌ ERREUR DB: Mise à jour échouée - Erreur SQL: ' . $wpdb->last_error);
+                error_log('🔍 [AUTO-SAVE] Database update FAILED - Error: ' . $wpdb->last_error);
                 \wp_send_json_error('Erreur lors de la mise à jour du template');
             }
 
-            error_log('🔍 [AUTO-SAVE] ✅ Database update successful - rows affected: ' . $updated);
-
-            // 🔍 VÉRIFICATION FINALE: Relire depuis la DB pour confirmer
+            error_log('🔍 [AUTO-SAVE] Database update successful - rows affected: ' . $updated);
+            
+            // Vérifier que les données ont bien été sauvegardées en les relisant
             $verify_row = $wpdb->get_row(
                 $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
                 ARRAY_A
             );
+            
             if ($verify_row) {
-                $verify_data = json_decode($verify_row['template_data'], true);
-                $verify_count = count($verify_data['elements'] ?? []);
-                error_log('🔍 [AUTO-SAVE] ✅ VÉRIFICATION DB: ' . $verify_count . ' éléments trouvés en base');
-                if ($verify_count !== count($elements)) {
-                    error_log('🔍 [AUTO-SAVE] ⚠️ ATTENTION: Nombre d\'éléments différent! Envoyé: ' . count($elements) . ', Sauvegardé: ' . $verify_count);
+                $saved_data = json_decode($verify_row['template_data'], true);
+                $saved_elements_count = isset($saved_data['elements']) ? count($saved_data['elements']) : 0;
+                error_log('🔍 [AUTO-SAVE] VERIFICATION: ' . $saved_elements_count . ' elements found in DB after save');
+                
+                if ($saved_elements_count > 0) {
+                    error_log('🔍 [AUTO-SAVE] VERIFICATION: First element type: ' . (isset($saved_data['elements'][0]['type']) ? $saved_data['elements'][0]['type'] : 'unknown'));
                 }
             } else {
-                error_log('🔍 [AUTO-SAVE] ❌ ERREUR: Impossible de relire depuis la DB après sauvegarde');
+                error_log('🔍 [AUTO-SAVE] VERIFICATION FAILED: Could not read back from DB');
             }
 
             \wp_send_json_success([
