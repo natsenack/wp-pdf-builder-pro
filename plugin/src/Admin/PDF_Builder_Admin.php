@@ -999,6 +999,9 @@ class PdfBuilderAdmin
             ]
         ]);
 
+        // ✅ FIX: Ajouter le nonce pour la page templates (loadTemplateSettings, saveTemplateSettings, etc)
+        wp_localize_script('pdf-preview-api-client', 'pdfBuilderTemplatesNonce', wp_create_nonce('pdf_builder_templates'));
+
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le Canvas Manager
         $canvas_settings_js = [];
