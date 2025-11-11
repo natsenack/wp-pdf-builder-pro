@@ -502,3 +502,21 @@ if ($commitCreated -and $pushSuccess) {
     Write-Host "   Git: SKIP (rien a committer)" -ForegroundColor Gray
 }
 Write-Host ""
+
+# ✅ FINAL GIT PUSH - S'assurer que tout est pousse
+Write-Host "5 Final Git Push..." -ForegroundColor Cyan
+try {
+    Push-Location $WorkingDir
+    $ErrorActionPreference = "Continue"
+    $finalPushResult = & git push origin dev 2>&1
+    $ErrorActionPreference = "Stop"
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   ✅ Final push vers origin/dev reussi" -ForegroundColor Green
+    } else {
+        Write-Host "   ⚠️ Final push info: $($finalPushResult -join ' ')" -ForegroundColor Yellow
+    }
+    Pop-Location
+} catch {
+    Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow
+}
