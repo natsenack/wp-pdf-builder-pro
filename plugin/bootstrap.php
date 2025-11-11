@@ -1497,6 +1497,29 @@ function pdf_builder_enqueue_editor_scripts($hook)
         strpos($hook, 'pdf-builder') !== false
         || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)
     ) {
+        // Diagnostic immédiat
+        error_log('=== PDF BUILDER MEDIA DIAGNOSTIC ===');
+        error_log('GD Library: ' . (extension_loaded('gd') ? 'YES' : 'NO'));
+        error_log('ImageMagick: ' . (extension_loaded('imagick') ? 'YES' : 'NO'));
+        
+        $upload_dir = wp_upload_dir();
+        error_log('Upload basedir: ' . $upload_dir['basedir']);
+        error_log('Upload dir writable: ' . (is_writable($upload_dir['basedir']) ? 'YES' : 'NO'));
+        
+        // Lister les attachments
+        $args = array(
+            'post_type'      => 'attachment',
+            'posts_per_page' => 10,
+            'post_status'    => 'inherit'
+        );
+        $attachments = get_posts($args);
+        error_log('Attachments in DB: ' . count($attachments));
+        foreach ($attachments as $att) {
+            $url = wp_get_attachment_url($att->ID);
+            error_log('  ID: ' . $att->ID . ', Title: ' . $att->post_title . ', URL: ' . $url);
+        }
+        error_log('=== END DIAGNOSTIC ===');
+        
         wp_enqueue_media();
     }
 }
