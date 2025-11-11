@@ -674,18 +674,25 @@ function pdf_builder_fallback_ajax_save_template()
         return;
     }
 
+    error_log('🔍 [PHP SAVE] Decoded data structure: ' . print_r(array_keys($decoded_data), true));
+
     // Log détaillé des éléments order_number
     if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
+        error_log('🔍 [PHP SAVE] Elements array found with ' . count($decoded_data['elements']) . ' elements');
+
         $order_elements = array_filter($decoded_data['elements'], function($el) {
             return isset($el['type']) && $el['type'] === 'order_number';
         });
         error_log('🔍 [PHP SAVE] Order number elements count: ' . count($order_elements));
         foreach ($order_elements as $index => $element) {
-            error_log('🔍 [PHP SAVE] Order element ' . $index . ': contentAlign=' .
-                (isset($element['contentAlign']) ? $element['contentAlign'] : 'NOT_SET') .
+            error_log('🔍 [PHP SAVE] Order element ' . $index . ': id=' .
+                (isset($element['id']) ? $element['id'] : 'NO_ID') .
+                ', contentAlign=' . (isset($element['contentAlign']) ? $element['contentAlign'] : 'NOT_SET') .
                 ', labelPosition=' . (isset($element['labelPosition']) ? $element['labelPosition'] : 'NOT_SET') .
-                ', id=' . (isset($element['id']) ? $element['id'] : 'NO_ID'));
+                ', all_keys=' . implode(',', array_keys($element)));
         }
+    } else {
+        error_log('🔍 [PHP SAVE] No elements array found in decoded data');
     }
 
     // Sauvegarder dans la base de données
@@ -738,6 +745,7 @@ function pdf_builder_fallback_ajax_load_template()
 
     if ($template) {
         error_log('🔍 [PHP LOAD] Raw template_data from DB length: ' . strlen($template['template_data']));
+        error_log('🔍 [PHP LOAD] First 200 chars of raw data: ' . substr($template['template_data'], 0, 200));
 
         $template_data = json_decode($template['template_data'], true);
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -746,18 +754,25 @@ function pdf_builder_fallback_ajax_load_template()
             return;
         }
 
+        error_log('🔍 [PHP LOAD] Decoded data structure: ' . print_r(array_keys($template_data), true));
+
         // Log détaillé des éléments order_number chargés
         if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            error_log('🔍 [PHP LOAD] Elements array found with ' . count($template_data['elements']) . ' elements');
+
             $order_elements = array_filter($template_data['elements'], function($el) {
                 return isset($el['type']) && $el['type'] === 'order_number';
             });
             error_log('🔍 [PHP LOAD] Order number elements loaded: ' . count($order_elements));
             foreach ($order_elements as $index => $element) {
-                error_log('🔍 [PHP LOAD] Order element ' . $index . ': contentAlign=' .
-                    (isset($element['contentAlign']) ? $element['contentAlign'] : 'NOT_SET') .
+                error_log('🔍 [PHP LOAD] Order element ' . $index . ': id=' .
+                    (isset($element['id']) ? $element['id'] : 'NO_ID') .
+                    ', contentAlign=' . (isset($element['contentAlign']) ? $element['contentAlign'] : 'NOT_SET') .
                     ', labelPosition=' . (isset($element['labelPosition']) ? $element['labelPosition'] : 'NOT_SET') .
-                    ', id=' . (isset($element['id']) ? $element['id'] : 'NO_ID'));
+                    ', all_keys=' . implode(',', array_keys($element)));
             }
+        } else {
+            error_log('🔍 [PHP LOAD] No elements array found in loaded data');
         }
 
         wp_send_json_success([
@@ -766,6 +781,7 @@ function pdf_builder_fallback_ajax_load_template()
             'name' => $template['name']
         ]);
     } else {
+        error_log('🔍 [PHP LOAD] Template not found in database');
         wp_send_json_error('Template non trouvé');
     }
 }
