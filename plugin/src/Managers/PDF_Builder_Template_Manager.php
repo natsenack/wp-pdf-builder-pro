@@ -397,12 +397,14 @@ class PdfBuilderTemplateManager
                 $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
             }
 
-            // Réponse de succès
-            error_log('PDF Builder: Template saved successfully, ID: ' . $template_id);
+            // Réponse de succès - INCLURE LE NOM DU TEMPLATE
+            error_log('PDF Builder: Template saved successfully, ID: ' . $template_id . ', Name: ' . $template_name);
             \wp_send_json_success(
                 array(
                 'message' => 'Template sauvegardé avec succès',
                 'template_id' => $template_id,
+                'template_name' => $template_name,
+                'name' => $template_name,
                 'element_count' => $element_count
                 )
             );
@@ -879,6 +881,7 @@ class PdfBuilderTemplateManager
             
             // LOG FINAL RESPONSE DATA - JUST BEFORE SENDING
             error_log('=== PDF BUILDER LOAD FINAL RESPONSE === About to send template_data');
+            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Template name: ' . $template_name);
             error_log('=== PDF BUILDER LOAD FINAL RESPONSE === template_data elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
             if (isset($template_data['elements'])) {
                 foreach ($template_data['elements'] as $index => $el) {
@@ -902,6 +905,7 @@ class PdfBuilderTemplateManager
                 array(
                 'template' => $template_data,
                 'name' => $template_name,
+                'template_name' => $template_name,
                 'element_count' => $element_count,
                 'element_types' => $element_types,
                 'debug' => $debug_info

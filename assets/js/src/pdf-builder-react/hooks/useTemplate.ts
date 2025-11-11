@@ -73,12 +73,15 @@ export function useTemplate() {
       }
 
       const templateData = result.data ? result.data.template : result.template;
+      const templateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
       console.log('🔍 [TEMPLATE LOAD] Extracted templateData:', templateData);
+      console.log('🔍 [TEMPLATE LOAD] Extracted templateName:', templateName);
       console.log('🔍 [TEMPLATE LOAD] templateData type:', typeof templateData);
       console.log('🔍 [TEMPLATE LOAD] templateData keys:', templateData ? Object.keys(templateData) : 'NULL');
       console.log('🔍 [TEMPLATE LOAD] templateData.elements:', templateData?.elements);
       console.log('🔍 [TEMPLATE LOAD] templateData.elements type:', typeof templateData?.elements);
       console.log('[useTemplate] Template loaded - elements count:', templateData.elements ? templateData.elements.length : 0);
+      console.log('[useTemplate] Template name:', templateName);
 
       
       // 🔍 Tracer les éléments reçus du serveur
@@ -233,7 +236,7 @@ export function useTemplate() {
         type: 'LOAD_TEMPLATE',
         payload: {
           id: templateId,
-          name: templateData.name,
+          name: templateName || templateData.name,
           elements: enrichedElements,
           canvas: canvasData,
           lastSaved: lastSavedDate
