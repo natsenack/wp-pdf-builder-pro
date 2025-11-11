@@ -1263,8 +1263,14 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
       }
 
-      // Si l'image est chargée, la dessiner
-      if (img.complete && img.naturalHeight !== 0) {
+      // ✅ IMPROVED: More aggressive image rendering for cached images
+      const shouldRenderImage = (img.complete && img.naturalHeight > 0) ||
+                               (img.naturalWidth > 0 && img.naturalHeight > 0);
+
+      // DEBUG: Log image state
+      console.log(`🖼️ [LOGO] ${logoUrl}: complete=${img.complete}, natural=${img.naturalWidth}x${img.naturalHeight}, shouldRender=${shouldRenderImage}`);
+
+      if (shouldRenderImage) {
         // Appliquer la rotation si définie
         const rotation = element.rotation || 0;
         const opacity = element.opacity !== undefined ? element.opacity : 1;
@@ -2297,11 +2303,25 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   useEffect(() => {
     if (state.elements.length > 0 && !initialImageCheckDoneRef.current) {
       initialImageCheckDoneRef.current = true;
-      // Force a render after a short delay to ensure images are ready
-      const timer = setTimeout(() => {
+
+      // Force multiple renders to ensure images are displayed
+      const timer1 = setTimeout(() => {
         setImageLoadCount(prev => prev + 1);
       }, 100);
-      return () => clearTimeout(timer);
+
+      const timer2 = setTimeout(() => {
+        setImageLoadCount(prev => prev + 1);
+      }, 500);
+
+      const timer3 = setTimeout(() => {
+        setImageLoadCount(prev => prev + 1);
+      }, 1000);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+      };
     }
   }, [state.elements.length]);
 
