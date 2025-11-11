@@ -14,6 +14,8 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 // ENDPOINTS AJAX POUR RÉGÉNÉRATION DES POSITIONS
 // ============================================================================
 
+error_log('🚀 PDF BUILDER BOOTSTRAP LOADED - Registering hooks...');
+
 add_action('wp_ajax_pdf_builder_regenerate_positions', function () {
 
     // Vérifier le nonce
@@ -1502,6 +1504,7 @@ function pdf_builder_register_fallback_hooks()
 if (function_exists('add_action')) {
 // Action cron pour la génération de previews de templates
     add_action('pdf_builder_generate_template_preview', 'pdf_builder_generate_template_preview_cron');
+    error_log('📝 REGISTERING FALLBACK HOOKS...');
     pdf_builder_register_fallback_hooks();
 }
 
