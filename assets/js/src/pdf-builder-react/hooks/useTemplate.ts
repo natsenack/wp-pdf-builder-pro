@@ -116,8 +116,11 @@ export function useTemplate() {
         canvas: canvas
       });
 
-      // 🏷️ Enrichir les éléments company_logo avec src si manquant
+      // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
       const enrichedElements = elements.map((el: Record<string, unknown>) => {
+        let enrichedElement = { ...el };
+        
+        // Enrichir les éléments company_logo avec src si manquant
         if (el.type === 'company_logo' && (!el.src || !el.logoUrl)) {
           debugLog('🏷️ [LOAD TEMPLATE] Logo sans src trouvé, recherche de src:', {
             elementId: el.id,
@@ -129,13 +132,53 @@ export function useTemplate() {
           // Essayer d'obtenir le logo depuis les propriétés de l'élément
           const logoUrl = (el.src as string) || (el.logoUrl as string) || (el.defaultSrc as string) || '';
           if (logoUrl) {
-            return { ...el, src: logoUrl };
+            enrichedElement.src = logoUrl;
           }
         }
-        return el;
+        
+        // Convertir les propriétés de date en objets Date valides
+        if (enrichedElement.createdAt) {
+          try {
+            const createdAt = new Date(enrichedElement.createdAt as string | number | Date);
+            enrichedElement.createdAt = isNaN(createdAt.getTime()) ? new Date() : createdAt;
+          } catch {
+            enrichedElement.createdAt = new Date();
+          }
+        } else {
+          enrichedElement.createdAt = new Date();
+        }
+        
+        if (enrichedElement.updatedAt) {
+          try {
+            const updatedAt = new Date(enrichedElement.updatedAt as string | number | Date);
+            enrichedElement.updatedAt = isNaN(updatedAt.getTime()) ? new Date() : updatedAt;
+          } catch {
+            enrichedElement.updatedAt = new Date();
+          }
+        } else {
+          enrichedElement.updatedAt = new Date();
+        }
+        
+        return enrichedElement;
       });
 
       debugLog('📋 [LOAD TEMPLATE] Premiers éléments après enrichissement:', enrichedElements.slice(0, 2));
+
+      // Créer une date valide pour lastSaved
+      let lastSavedDate: Date;
+      try {
+        if (templateData.updated_at) {
+          lastSavedDate = new Date(templateData.updated_at);
+          // Vérifier si la date est valide
+          if (isNaN(lastSavedDate.getTime())) {
+            lastSavedDate = new Date();
+          }
+        } else {
+          lastSavedDate = new Date();
+        }
+      } catch {
+        lastSavedDate = new Date();
+      }
 
       dispatch({
         type: 'LOAD_TEMPLATE',
@@ -144,7 +187,7 @@ export function useTemplate() {
           name: templateData.name,
           elements: enrichedElements,
           canvas: canvas,
-          lastSaved: new Date(templateData.updated_at)
+          lastSaved: lastSavedDate
         } as LoadTemplatePayload
       });
 
@@ -187,7 +230,14 @@ export function useTemplate() {
             name: templateData.name || 'Template',
             elements: templateData.elements,
             canvas: templateData.canvas || null,
-            lastSaved: templateData.updated_at ? new Date(templateData.updated_at) : new Date()
+            lastSaved: templateData.updated_at ? (() => {
+              try {
+                const date = new Date(templateData.updated_at);
+                return isNaN(date.getTime()) ? new Date() : date;
+              } catch {
+                return new Date();
+              }
+            })() : new Date()
           } as LoadTemplatePayload
         });
       } else {

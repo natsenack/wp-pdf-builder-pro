@@ -2158,9 +2158,22 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       const e = state.elements[i];
       // Create a comprehensive hash of all element properties
       // Use updatedAt to detect any changes, plus key visual properties
+      const getUpdatedAtTime = (updatedAt: unknown): number => {
+        if (updatedAt instanceof Date && !isNaN(updatedAt.getTime())) {
+          return updatedAt.getTime();
+        }
+        if (typeof updatedAt === 'string' || typeof updatedAt === 'number') {
+          const date = new Date(updatedAt);
+          if (!isNaN(date.getTime())) {
+            return date.getTime();
+          }
+        }
+        return 0;
+      };
+
       const hashData = {
         id: e.id,
-        updatedAt: e.updatedAt?.getTime() || 0,
+        updatedAt: getUpdatedAtTime(e.updatedAt),
         x: e.x, y: e.y, width: e.width, height: e.height,
         rotation: e.rotation || 0,
         opacity: e.opacity || 1,
