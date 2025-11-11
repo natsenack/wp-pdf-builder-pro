@@ -5621,8 +5621,10 @@ class PdfBuilderAdmin
         wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
         wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
-        // Declare global variable BEFORE loading bundle - Force rebuild 2025-11-06 03:37
-        $inline_script = "window.pdfBuilderReact = {}; window.pdfBuilderDebug = true;";
+        // Declare global variables BEFORE loading bundle - Initialize verbose logging flag
+        $developer_settings = get_option('pdf_builder_settings', []);
+        $verbose_enabled = isset($developer_settings['debug_javascript_verbose']) && $developer_settings['debug_javascript_verbose'];
+        $inline_script = "window.pdfBuilderReact = {}; window.pdfBuilderDebug = true; window.PDF_BUILDER_VERBOSE = " . ($verbose_enabled ? 'true' : 'false') . ";";
         wp_add_inline_script('react-dom', $inline_script);
 
         // Enqueue PDF Builder React scripts from local build

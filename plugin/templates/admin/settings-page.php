@@ -559,12 +559,7 @@ window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasS
     window.pdfBuilderCanvasSettings.default_canvas_orientation
 ).height;
 
-// ✅ CORRECTION 9: Initialiser PDF_BUILDER_VERBOSE basé sur les paramètres
-<?php
-$developer_settings = get_option('pdf_builder_settings', []);
-$verbose_enabled = isset($developer_settings['debug_javascript_verbose']) && $developer_settings['debug_javascript_verbose'];
-?>
-window.PDF_BUILDER_VERBOSE = <?php echo $verbose_enabled ? 'true' : 'false'; ?>;
+// ✅ PDF_BUILDER_VERBOSE initialized in PDF_Builder_Admin.php via wp_add_inline_script()
 
 // Logs removed for clarity
 </script>
