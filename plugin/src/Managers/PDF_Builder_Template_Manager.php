@@ -698,6 +698,18 @@ class PdfBuilderTemplateManager
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
+                
+                // ADD DEBUG LOG: Check if properties exist in raw data
+                if (strpos($template_data_raw, 'contentAlign') !== false) {
+                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS contentAlign');
+                } else {
+                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA DOES NOT CONTAIN contentAlign');
+                }
+                if (strpos($template_data_raw, 'labelPosition') !== false) {
+                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS labelPosition');
+                } else {
+                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA DOES NOT CONTAIN labelPosition');
+                }
 
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
