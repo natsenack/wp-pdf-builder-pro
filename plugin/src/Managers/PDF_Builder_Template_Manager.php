@@ -494,21 +494,61 @@ class PdfBuilderTemplateManager
             }
 
             // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO ENRICH COMPANY LOGO ELEMENTS...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO ENRICH COMPANY LOGO ELEMENTS...' . "\n", FILE_APPEND);
+            
             foreach ($elements as &$el) {
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PROCESSING ELEMENT: ' . json_encode($el));
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] PROCESSING ELEMENT: ' . json_encode($el) . "\n", FILE_APPEND);
+                
                 if (isset($el['type']) && $el['type'] === 'company_logo') {
+                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FOUND COMPANY LOGO ELEMENT');
+                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FOUND COMPANY LOGO ELEMENT' . "\n", FILE_APPEND);
+                    
                     // Si src est vide ou absent, chercher le logo WordPress
                     if (empty($el['src']) && empty($el['logoUrl'])) {
-                        $custom_logo_id = \get_theme_mod('custom_logo');
-                        if ($custom_logo_id) {
-                            $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
-                            if ($logo_url) {
-                                $el['src'] = $logo_url;
+                        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO SRC IS EMPTY, GETTING THEME LOGO...');
+                        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO SRC IS EMPTY, GETTING THEME LOGO...' . "\n", FILE_APPEND);
+                        
+                        try {
+                            $custom_logo_id = \get_theme_mod('custom_logo');
+                            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CUSTOM LOGO ID: ' . ($custom_logo_id ? $custom_logo_id : 'NULL'));
+                            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] CUSTOM LOGO ID: ' . ($custom_logo_id ? $custom_logo_id : 'NULL') . "\n", FILE_APPEND);
+                            
+                            if ($custom_logo_id) {
+                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] GETTING ATTACHMENT IMAGE URL...');
+                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] GETTING ATTACHMENT IMAGE URL...' . "\n", FILE_APPEND);
+                                
+                                $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
+                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL: ' . ($logo_url ? $logo_url : 'NULL'));
+                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL: ' . ($logo_url ? $logo_url : 'NULL') . "\n", FILE_APPEND);
+                                
+                                if ($logo_url) {
+                                    $el['src'] = $logo_url;
+                                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] SET LOGO SRC SUCCESSFULLY');
+                                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] SET LOGO SRC SUCCESSFULLY' . "\n", FILE_APPEND);
+                                } else {
+                                    error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL IS EMPTY');
+                                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] LOGO URL IS EMPTY' . "\n", FILE_APPEND);
+                                }
+                            } else {
+                                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NO CUSTOM LOGO ID');
+                                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] NO CUSTOM LOGO ID' . "\n", FILE_APPEND);
                             }
+                        } catch (Exception $e) {
+                            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] EXCEPTION IN LOGO ENRICHMENT: ' . $e->getMessage());
+                            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] EXCEPTION IN LOGO ENRICHMENT: ' . $e->getMessage() . "\n", FILE_APPEND);
                         }
+                    } else {
+                        error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO ALREADY HAS SRC: ' . ($el['src'] ?? 'no-src'));
+                        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] COMPANY LOGO ALREADY HAS SRC: ' . ($el['src'] ?? 'no-src') . "\n", FILE_APPEND);
                     }
                 }
             }
             unset($el);
+            
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ENRICHMENT LOOP COMPLETED' . "\n", FILE_APPEND);
 
             error_log('🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
             if (!empty($elements)) {
