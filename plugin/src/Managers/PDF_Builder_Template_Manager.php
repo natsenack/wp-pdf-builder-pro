@@ -790,12 +790,24 @@ class PdfBuilderTemplateManager
             $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
             file_put_contents($log_file, date('Y-m-d H:i:s') . ' === SENDING RESPONSE === Elements: ' . $element_count . "\n", FILE_APPEND);
             
+            // Add debug info to response
+            $debug_info = array();
+            if (isset($template_data['elements'])) {
+                foreach ($template_data['elements'] as $el) {
+                    if (isset($el['type']) && $el['type'] === 'order_number') {
+                        $debug_info['order_element'] = $el;
+                        break;
+                    }
+                }
+            }
+            
             \wp_send_json_success(
                 array(
                 'template' => $template_data,
                 'name' => $template_name,
                 'element_count' => $element_count,
-                'element_types' => $element_types
+                'element_types' => $element_types,
+                'debug' => $debug_info
                 )
             );
         } catch (Exception $e) {
