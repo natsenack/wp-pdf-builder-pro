@@ -122,17 +122,11 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     const windowSettings = window.pdfBuilderCanvasSettings;
     
     if (!windowSettings) {
-      console.warn('Canvas settings not found in window object, using defaults');
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
         isReady: true
       };
-    }
-
-    const debugVerbose = typeof window !== 'undefined' && !!(window as unknown as Record<string, boolean>).DEBUG_VERBOSE;
-    if (debugVerbose) {
-      console.log('Loading canvas settings from window', windowSettings);
     }
 
     // Mapper les paramètres depuis le format WordPress vers notre format
@@ -194,7 +188,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
-    console.warn('Error loading canvas settings:', errorMsg);
     return {
       ...DEFAULT_SETTINGS,
       isLoading: false,
@@ -215,7 +208,6 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Écouter les événements custom pour les mises à jour
   useEffect(() => {
     const handleCustomUpdate = () => {
-      console.log('Canvas settings update detected, refreshing...');
       handleRefresh();
     };
     

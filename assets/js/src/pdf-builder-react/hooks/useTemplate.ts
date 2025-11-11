@@ -4,9 +4,6 @@ import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError } from '../utils/debug';
 
-// Debug flags
-const DEBUG_VERBOSE = false; // Set to true to see detailed logs
-
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
@@ -238,12 +235,7 @@ export function useTemplate() {
       };
       
       formData.append('template_data', JSON.stringify(templateData));
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');      if (DEBUG_VERBOSE) console.log('💾 [SAVE TEMPLATE] Envoi des données:', {
-        templateId,
-        templateName: state.template.name,
-        elementsCount: state.elements.length,
-        canvasData: { width: canvasWidth, height: canvasHeight }
-      });
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
       // Faire un appel API pour sauvegarder le template
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
@@ -256,7 +248,6 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      if (DEBUG_VERBOSE) console.log('✅ [SAVE TEMPLATE] Réponse du serveur:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
@@ -270,7 +261,6 @@ export function useTemplate() {
         }
       });
     } catch (error) {
-      if (DEBUG_VERBOSE) console.error('❌ [SAVE TEMPLATE] Erreur:', error);
       throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });

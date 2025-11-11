@@ -32,9 +32,6 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   const [visible, setVisible] = useState(false);
   const autoHideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Debug
-  console.log('[SaveIndicator] state:', state, 'visible:', visible, 'progress:', progress);
-
   // Gérer la visibilité automatique
   useEffect(() => {
     if (state === 'idle') {

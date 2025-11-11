@@ -1,9 +1,6 @@
 import React from 'react';
 import { CompanyLogoElement } from '../../types/elements';
 
-// Debug flags
-const DEBUG_VERBOSE = false; // Set to true to see detailed logs
-
 // Déclaration des types WordPress pour TypeScript
 declare global {
   interface Window {
@@ -127,7 +124,6 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                   }
 
                   try {
-                    if (DEBUG_VERBOSE) console.log('🎬 [LOGO] Ouverture de la bibliothèque de médias...');
                     
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const mediaUploader: any = window.wp.media({
@@ -143,34 +139,21 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
 
                     // Écouter l'événement select avec closure pour avoir accès à mediaUploader
                     mediaUploader.on('select', () => {
-                      if (DEBUG_VERBOSE) console.log('📍 [LOGO] Événement SELECT déclenché');
                       try {
                         const state = mediaUploader.state();
                         const selection = state.get('selection');
-                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Selection from event:', selection);
-                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Selection length:', selection?.length);
                         
                         if (!selection || selection.length === 0) {
-                          if (DEBUG_VERBOSE) console.warn('⚠️ [LOGO] Aucune image sélectionnée');
                           return;
                         }
 
                         const attachment = selection.first().toJSON();
-                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Attachment object:', attachment);
 
                         if (!attachment || !attachment.url) {
                           console.error('❌ [LOGO] Attachment invalide:', attachment);
                           alert('Erreur: L\'image sélectionnée n\'a pas d\'URL valide');
                           return;
                         }
-
-                        if (DEBUG_VERBOSE) console.log('✅ [LOGO] Image sélectionnée:', {
-                          id: attachment.id,
-                          url: attachment.url,
-                          width: attachment.width,
-                          height: attachment.height,
-                          type: attachment.type
-                        });
 
                         // Mettre à jour l'URL
                         onChange(element.id, 'src', attachment.url);
@@ -188,7 +171,6 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                       }
                     });
 
-                    if (DEBUG_VERBOSE) console.log('🎬 [LOGO] Select listener enregistré, ouverture...');
                     mediaUploader.open();
                   } catch (error) {
                     console.error('❌ [LOGO] Erreur lors de l\'ouverture de la bibliothèque:', error);

@@ -64,11 +64,6 @@ export class ElementChangeTracker {
           changeType: 'created'
         });
 
-        if (this.debugEnabled) {
-          console.log(
-            `✨ [CREATED] Element: ${element.id} (${element.type}) at (${element.x}, ${element.y})`
-          );
-        }
       } else {
         // Check for property changes
         this.detectPropertyChanges(previousSnapshot, snapshot, changes);
@@ -87,11 +82,6 @@ export class ElementChangeTracker {
           changeType: 'deleted'
         });
 
-        if (this.debugEnabled) {
-          console.log(
-            `🗑️ [DELETED] Element: ${elementId} (${snapshot.type})`
-          );
-        }
       }
     });
 
@@ -132,17 +122,6 @@ export class ElementChangeTracker {
           changeType: 'property_changed'
         });
 
-        // Color-coded logging based on property type
-        const emoji = this.getPropertyEmoji(key);
-        const typeLabel = this.getPropertyType(newValue);
-
-        if (this.debugEnabled) {
-          console.log(
-            `${emoji} [PROPERTY] ${previous.id} → ${key}: ${this.formatValue(
-              oldValue
-            )} → ${this.formatValue(newValue)} (${typeLabel})`
-          );
-        }
       }
     });
   }

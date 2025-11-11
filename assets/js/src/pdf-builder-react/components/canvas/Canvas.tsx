@@ -1073,8 +1073,7 @@ interface CanvasProps {
 }
 
 // Flag global pour afficher les logs détaillés des éléments (debug)
-const DEBUG_DRAW = false;
-const DEBUG_VERBOSE = false; // Set to true to see detailed logs
+// Debug flags - set to true to enable verbose logging
 const DEBUG_MONITORING = false; // Set to true to see real-time element tracking logs
 
 // Constantes pour le cache des images
@@ -1089,8 +1088,6 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-
-  if (DEBUG_DRAW) console.log('🎬 [COMPONENT] Canvas RE-RENDER - Selection:', state.selection.selectedElements, 'Elements:', state.elements.length);
 
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
@@ -1121,7 +1118,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Solution: Limit by item count and let browser's GC handle memory
     
     if (cache.size > MAX_CACHE_ITEMS) {
-      if (DEBUG_DRAW) console.warn(`🧹 [CACHE] Cache exceeds ${MAX_CACHE_ITEMS} items (size: ${cache.size}), cleaning...`);
+
       
       // Supprimer les 10 plus anciennes entrées (FIFO)
       const entriesToRemove = Math.min(10, Math.ceil(cache.size * 0.1));
@@ -1132,10 +1129,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         
         cache.delete(url);
         removed++;
-        if (DEBUG_DRAW) console.log(`  ✅ Removed from cache: ${url}`);
+
       }
       
-      if (DEBUG_DRAW) console.log(`✅ [CACHE] Cleanup complete - ${removed} images removed, cache now has ${cache.size} items`);
+
     }
   }, []);
 
@@ -1218,12 +1215,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // const fit = props.fit || 'contain';
     const alignment = props.alignment || 'left';
 
-    if (logoUrl) if (DEBUG_DRAW) console.log('🏷️ [LOGO] drawCompanyLogo called - logoUrl:', logoUrl, 'src:', props.src, 'logoUrl prop:', props.logoUrl);
-
     // ✅ CORRECTION 7: Détecter si l'URL a changé
     const lastRenderedUrl = renderedLogoUrlsRef.current.get(element.id);
     if (logoUrl !== lastRenderedUrl) {
-      if (DEBUG_DRAW) console.log('✅ [LOGO SYNC] URL changée pour', element.id, ':', lastRenderedUrl, '→', logoUrl);
+
       renderedLogoUrlsRef.current.set(element.id, logoUrl);
     }
 
@@ -1236,7 +1231,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       let img = imageCache.current.get(logoUrl);
 
       if (!img) {
-        if (DEBUG_DRAW) console.log('🖼️ [LOGO] Creating new image for URL:', logoUrl);
+
         img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
@@ -1250,10 +1245,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         // Gérer le chargement réussi - force un re-render du canvas
         img.onload = () => {
           const loadedImg = img; // Capture img in closure
-          if (DEBUG_DRAW) console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
+
         };
       } else {
-        if (DEBUG_DRAW) console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
+
       }
 
       // Si l'image est chargée, la dessiner
@@ -1537,11 +1532,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element, currentState: BuilderState) => {
     // Vérifier si l'élément est visible
     if (element.visible === false) {
-      if (DEBUG_DRAW) console.log(`  ⊘ [DRAW] ${element.type} caché (visible=false)`);
+
       return;
     }
 
-    if (DEBUG_DRAW) console.log(`  ✏️ [DRAW] ${element.type} (${element.id}) à (${element.x}, ${element.y})`);
+
 
     ctx.save();
 
@@ -1595,7 +1590,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       default:
         // Élément générique - dessiner un rectangle simple
-        if (DEBUG_DRAW) console.warn(`    ⚠️ [DRAW] Élément inconnu: ${element.type}`);
+
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
@@ -1676,7 +1671,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonctions pour gérer le menu contextuel
   const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
-    if (DEBUG_VERBOSE) console.log('Setting context menu visible at:', x, y, 'elementId:', elementId);
+
     setContextMenu({
       isVisible: true,
       position: { x, y },
@@ -1763,7 +1758,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
           // TODO: Implémenter le presse-papiers interne
-          if (DEBUG_VERBOSE) console.log('Copy functionality not yet implemented');
+
         }
         break;
       }
@@ -1772,7 +1767,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
           // TODO: Implémenter le presse-papiers interne
-          if (DEBUG_VERBOSE) console.log('Cut functionality not yet implemented');
+
           // dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
         }
         break;
@@ -1874,7 +1869,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
           shortcut: 'Ctrl+V',
           action: () => {
             // TODO: Implémenter le collage depuis le presse-papiers
-            if (DEBUG_VERBOSE) console.log('Paste functionality not yet implemented');
+
           },
           disabled: true // Désactiver jusqu'à implémentation
         },
@@ -2064,13 +2059,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
-      if (DEBUG_DRAW) console.warn('❌ [CANVAS] Canvas ref est NULL!');
+
       return;
     }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      if (DEBUG_DRAW) console.warn('❌ [CANVAS] Context 2D non disponible!');
+
       return;
     }
 
@@ -2080,9 +2075,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
-      if (DEBUG_DRAW) console.warn('⚠️ Canvas has 0 elements!');
+
     } else {
-      if (DEBUG_DRAW) console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
+
     }
 
     // Appliquer transformation (zoom, pan)
@@ -2114,7 +2109,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
-      if (DEBUG_DRAW) console.log(`📦 [CANVAS] Dessin de la sélection: ${state.selection.selectedElements.length} éléments`);
+
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
@@ -2160,7 +2155,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
     if (lastRenderedElementsRef.current === elementsHash) {
-    if (DEBUG_DRAW) console.log('⏭️ [EFFECT] Skip rendu - mêmes éléments & positions que dernière fois');
+
       return;
     }
     
@@ -2183,9 +2178,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       });
     }
     
-    if (DEBUG_DRAW) console.log(`🔄 [EFFECT] useEffect de rendu déclenché (${renderCountRef.current}), state.elements.length=`, state.elements.length);
+
     const timer = setTimeout(() => {
-      if (DEBUG_DRAW) console.log('🔄 [EFFECT] Appel renderCanvas immédiatement');
+
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
@@ -2195,7 +2190,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   useEffect(() => {
     const handleBeforeUnload = (e: Event) => {
       if (state.template.isModified) {
-        if (DEBUG_VERBOSE) console.warn('⚠️ [BEFOREUNLOAD] Changements non-sauvegardés!');
+
         e.preventDefault();
       }
     };

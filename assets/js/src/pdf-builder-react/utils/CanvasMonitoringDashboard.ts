@@ -41,105 +41,6 @@ export class CanvasMonitoringDashboard {
   }
 
   /**
-   * Display comprehensive dashboard
-   */
-  static showDashboard(): void {
-    const uptime = Date.now() - this.startTime;
-    const history = elementChangeTracker.getHistory();
-    const snapshots = elementChangeTracker.getSnapshots();
-
-    // Count changes by type
-    const changeBreakdown = history.reduce(
-      (acc, change) => {
-        acc[change.changeType] = (acc[change.changeType] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    // Count changes by property
-    const propertyChanges = history.reduce(
-      (acc, change) => {
-        if (change.changeType === 'property_changed') {
-          acc[change.property] = (acc[change.property] || 0) + 1;
-        }
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    // Count changes by element
-    const elementChanges = history.reduce(
-      (acc, change) => {
-        acc[change.elementId] = (acc[change.elementId] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    console.clear();
-    console.log('%c🎯 CANVAS MONITORING DASHBOARD', 'font-size: 20px; font-weight: bold; color: #2196F3;');
-    console.log('%c═══════════════════════════════════════', 'font-size: 14px; color: #2196F3;');
-
-    // Session Stats
-    console.log('%c📊 SESSION STATISTICS', 'font-size: 14px; font-weight: bold; color: #4CAF50;');
-    console.log(`  Uptime: ${(uptime / 1000).toFixed(2)}s`);
-    console.log(`  Total Renders: ${this.renderCount}`);
-    console.log(`  Total Changes: ${history.length}`);
-    console.log(`  Elements Tracked: ${snapshots.size}`);
-
-    // Change Breakdown
-    if (Object.keys(changeBreakdown).length > 0) {
-      console.log('%c🔄 CHANGE BREAKDOWN', 'font-size: 14px; font-weight: bold; color: #FF9800;');
-      Object.entries(changeBreakdown).forEach(([type, count]) => {
-        const emoji = this.getChangeTypeEmoji(type);
-        console.log(`  ${emoji} ${type}: ${count}`);
-      });
-    }
-
-    // Top Changed Properties
-    if (Object.keys(propertyChanges).length > 0) {
-      console.log('%c🔧 TOP CHANGED PROPERTIES', 'font-size: 14px; font-weight: bold; color: #9C27B0;');
-      const topProps = Object.entries(propertyChanges)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-      topProps.forEach(([prop, count]) => {
-        const emoji = this.getPropertyEmoji(prop);
-        console.log(`  ${emoji} ${prop}: ${count} changes`);
-      });
-    }
-
-    // Most Changed Elements
-    if (Object.keys(elementChanges).length > 0) {
-      console.log('%c🎨 MOST CHANGED ELEMENTS', 'font-size: 14px; font-weight: bold; color: #F44336;');
-      const topElements = Object.entries(elementChanges)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-      topElements.forEach(([elementId, count]) => {
-        console.log(`  📦 ${elementId}: ${count} changes`);
-      });
-    }
-
-    // Current Snapshots
-    if (snapshots.size > 0) {
-      console.log('%c📸 CURRENT ELEMENT SNAPSHOTS', 'font-size: 14px; font-weight: bold; color: #00BCD4;');
-      Array.from(snapshots.values()).slice(0, 3).forEach(snapshot => {
-        console.log(`  ${snapshot.id} (${snapshot.type}): (${snapshot.x}, ${snapshot.y}) ${snapshot.width}×${snapshot.height}`);
-      });
-      if (snapshots.size > 3) {
-        console.log(`  ... and ${snapshots.size - 3} more elements`);
-      }
-    }
-
-    console.log('%c═══════════════════════════════════════', 'font-size: 14px; color: #2196F3;');
-    console.log('%cCommands:', 'font-weight: bold;');
-    console.log('  - CanvasMonitoringDashboard.getHistory()');
-    console.log('  - CanvasMonitoringDashboard.getElementHistory("elementId")');
-    console.log('  - CanvasMonitoringDashboard.getPropertyHistory("propertyName")');
-    console.log('  - CanvasMonitoringDashboard.generateReport()');
-  }
-
-  /**
    * Get formatted history
    */
   static getHistory() {
@@ -246,7 +147,6 @@ export class CanvasMonitoringDashboard {
     elementChangeTracker.clearHistory();
     this.renderCount = 0;
     this.elementChanges = 0;
-    console.log('🧹 Monitoring history cleared');
   }
 }
 
