@@ -11,6 +11,16 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // ============================================================================
+// ✅ CACHE DÉSACTIVÉ - Force désactiver le cache pour la cohérence des données
+// ============================================================================
+add_action('plugins_loaded', function() {
+    $settings = get_option('pdf_builder_settings', []);
+    $settings['cache_enabled'] = false;  // Force désactivé
+    $settings['cache_ttl'] = 0;           // Pas de TTL
+    update_option('pdf_builder_settings', $settings);
+}, 1);
+
+// ============================================================================
 // ENDPOINTS AJAX POUR RÉGÉNÉRATION DES POSITIONS
 // ============================================================================
 
@@ -1099,22 +1109,10 @@ function pdf_builder_ajax_get_template()
         return;
     }
 
-    // ✅ ÉTAPE 1: Vérifier le cache transient (optimisation performance ~50-100ms saved)
-    // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
-    $cache_key = 'pdf_builder_template_' . $template_id;
-    $cache_enabled = !empty(get_option('pdf_builder_settings', [])['cache_enabled']);
-    $cached_template = false;
+    // ✅ ÉTAPE 1: Cache DÉSACTIVÉ - toujours charger les données fraîches
+    // Performance: toujours charger depuis la DB pour garantir la cohérence des données
+    // Les données custom comme contentAlign et labelPosition nécessitent toujours les données fraîches
     
-    if ($cache_enabled) {
-        $cached_template = get_transient($cache_key);
-    }
-    
-    if ($cached_template !== false) {
-    // Template trouvé en cache, retourner directement
-        wp_send_json_success($cached_template);
-        return;
-    }
-
     // ✅ ÉTAPE 2: Récupérer le template depuis la table personnalisée
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';

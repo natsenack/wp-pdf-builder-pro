@@ -168,21 +168,12 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Vérifie les permissions d'administration avec mise en cache
+     * Vérifie les permissions d'administration sans mise en cache
      */
     private function checkAdminPermissions()
     {
-        // Créer une clé de cache basée sur l'ID utilisateur
-        $cache_key = 'pdf_builder_admin_access_' . get_current_user_id();
-
-        // Vérifier le cache d'abord
-        $cached_result = get_transient($cache_key);
-        if ($cached_result !== false) {
-            return $cached_result === 'allowed';
-        }
-
-        // Diagnostic helper removed: diagnose_template_json()
-        // Removed to avoid exposing debug utilities in production.
+        // ✅ Cache DÉSACTIVÉ - toujours vérifier les permissions fraîches
+        // Pas de transient pour les permissions d'admin
 
         // Récupérer les rôles autorisés depuis les options
         $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
@@ -202,8 +193,7 @@ class PdfBuilderAdmin
             }
         }
 
-        // Mettre en cache le résultat (5 minutes)
-        set_transient($cache_key, $has_access ? 'allowed' : 'denied', 5 * MINUTE_IN_SECONDS);
+        // ✅ Cache DÉSACTIVÉ - retourner directement sans transient
         return $has_access;
     }
 
