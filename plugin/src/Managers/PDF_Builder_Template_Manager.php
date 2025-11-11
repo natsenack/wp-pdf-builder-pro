@@ -435,12 +435,21 @@ class PdfBuilderTemplateManager
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
             $elements_raw = isset($_REQUEST['elements']) ? \wp_unslash($_REQUEST['elements']) : '[]';
 
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATA EXTRACTED - template_id: ' . $template_id);
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATA EXTRACTED - template_id: ' . $template_id . "\n", FILE_APPEND);
+
             if (empty($template_id)) {
+                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ERROR: Template ID empty');
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ERROR: Template ID empty' . "\n", FILE_APPEND);
                 \wp_send_json_error('ID template invalide');
             }
 
+            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE ID OK, DECODING JSON...');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE ID OK, DECODING JSON...' . "\n", FILE_APPEND);
+
             // 🔍 LOG EXACTLY WHAT WAS RECEIVED FROM FRONTEND
             error_log('🔍 [AUTO-SAVE] ===== SAVE START =====');
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔍 [AUTO-SAVE] ===== SAVE START =====' . "\n", FILE_APPEND);
             error_log('🔍 [AUTO-SAVE] Raw elements string (first 500 chars): ' . substr($elements_raw, 0, 500));
 
             // Décoder les éléments
