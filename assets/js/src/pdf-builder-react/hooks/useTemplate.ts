@@ -4,6 +4,9 @@ import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugLog, debugError } from '../utils/debug';
 
+// Debug flags
+const DEBUG_VERBOSE = false; // Set to true to see detailed logs
+
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
@@ -76,7 +79,7 @@ export function useTemplate() {
 
       // Parse JSON strings
       let elements = [];
-      let canvas = null;
+      let canvasData = null;
       try {
         debugLog('🔍 [LOAD TEMPLATE] Parsing elements:', typeof templateData.elements, templateData.elements);
         // Check if elements is already an object or needs parsing
@@ -91,29 +94,35 @@ export function useTemplate() {
           debugLog('⚠️ [LOAD TEMPLATE] Elements not string or array, using empty array');
         }
 
-        debugLog('🔍 [LOAD TEMPLATE] Parsing canvas:', typeof templateData.canvas, templateData.canvas);
-        // Same for canvas
-        if (typeof templateData.canvas === 'string') {
-          canvas = JSON.parse(templateData.canvas);
+        debugLog('🔍 [LOAD TEMPLATE] Parsing canvas data');
+        // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
+        if (templateData.canvasWidth && templateData.canvasHeight) {
+          canvasData = {
+            width: templateData.canvasWidth,
+            height: templateData.canvasHeight
+          };
+          debugLog('✅ [LOAD TEMPLATE] Canvas dimensions from canvasWidth/canvasHeight:', canvasData);
+        } else if (typeof templateData.canvas === 'string') {
+          canvasData = JSON.parse(templateData.canvas);
           debugLog('✅ [LOAD TEMPLATE] Canvas parsed from string');
         } else if (templateData.canvas && typeof templateData.canvas === 'object') {
-          canvas = templateData.canvas;
+          canvasData = templateData.canvas;
           debugLog('✅ [LOAD TEMPLATE] Canvas already object');
         } else {
-          canvas = null;
-          debugLog('⚠️ [LOAD TEMPLATE] Canvas not valid, using null');
+          canvasData = { width: 210, height: 297 };
+          debugLog('⚠️ [LOAD TEMPLATE] Canvas not valid, using defaults:', canvasData);
         }
       } catch (parseError) {
         debugError('❌ [LOAD TEMPLATE] Erreur de parsing:', parseError);
         elements = [];
-        canvas = null;
+        canvasData = { width: 210, height: 297 };
       }
 
       debugLog('🚀 [LOAD TEMPLATE] Dispatch LOAD_TEMPLATE avec:', {
         id: templateId,
         name: templateData.name,
         elementsCount: elements.length,
-        canvas: canvas
+        canvas: canvasData
       });
 
       // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
@@ -186,7 +195,7 @@ export function useTemplate() {
           id: templateId,
           name: templateData.name,
           elements: enrichedElements,
-          canvas: canvas,
+          canvas: canvasData,
           lastSaved: lastSavedDate
         } as LoadTemplatePayload
       });
@@ -269,30 +278,32 @@ export function useTemplate() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const saveTemplate = useCallback(async () => {
+      const saveTemplate = useCallback(async () => {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
 
-      // Préparer les données à envoyer
+      // Préparer les données à envoyer - Utiliser la structure complète avec canvasWidth/canvasHeight
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
       formData.append('template_id', templateId || '0');
       formData.append('template_name', state.template.name || 'Template sans nom');
-      formData.append('elements', JSON.stringify(state.elements));
-      formData.append('canvas', JSON.stringify({
-        width: canvasWidth,
-        height: canvasHeight
-      }));
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');
-
-      console.log('💾 [SAVE TEMPLATE] Envoi des données:', {
+      
+      // ✅ CORRECTION: Envoyer la structure complète du template
+      const templateData = {
+        elements: state.elements,
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        version: '1.0'
+      };
+      
+      formData.append('template_data', JSON.stringify(templateData));
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');      if (DEBUG_VERBOSE) console.log('💾 [SAVE TEMPLATE] Envoi des données:', {
         templateId,
         templateName: state.template.name,
         elementsCount: state.elements.length,
-        canvasData: { width: canvasWidth, height: canvasHeight },
-        firstElement: state.elements[0]
+        canvasData: { width: canvasWidth, height: canvasHeight }
       });
 
       // Faire un appel API pour sauvegarder le template
@@ -306,7 +317,7 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      console.log('✅ [SAVE TEMPLATE] Réponse du serveur:', result);
+      if (DEBUG_VERBOSE) console.log('✅ [SAVE TEMPLATE] Réponse du serveur:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
@@ -320,7 +331,7 @@ export function useTemplate() {
         }
       });
     } catch (error) {
-      console.error('❌ [SAVE TEMPLATE] Erreur:', error);
+      if (DEBUG_VERBOSE) console.error('❌ [SAVE TEMPLATE] Erreur:', error);
       throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });

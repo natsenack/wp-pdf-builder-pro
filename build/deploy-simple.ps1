@@ -401,17 +401,23 @@ $pushSuccess = $false
 try {
     Push-Location $WorkingDir
 
-    # Staging seulement des fichiers modifies (plus rapide que git add -A)
-    Write-Host "   Staging des fichiers modifies uniquement..." -ForegroundColor Yellow
+    # ✅ CORRECTION: Ajouter TOUS les fichiers modifiés (même s'ils ne sont pas dans $pluginModified)
+    Write-Host "   Staging de TOUS les fichiers modifies..." -ForegroundColor Yellow
     $ErrorActionPreference = "Continue"
-    foreach ($file in $pluginModified) {
-        & git add $file 2>&1 | Out-Null
-    }
+    $addResult = & git add -A 2>&1
     $ErrorActionPreference = "Stop"
 
     # Vérifier s'il y a des changements à committer
-    $status = & git status --porcelain 2>&1
-    if ($status -and $status.Count -gt 0) {
+    $statusOutput = & git status --porcelain 2>&1
+    $stagedFiles = $statusOutput | Where-Object { $_ -match "^[AM]" }
+    
+    if ($stagedFiles -and $stagedFiles.Count -gt 0) {
+        # Afficher les fichiers qui seront committés
+        Write-Host "   Fichiers à committer:" -ForegroundColor Cyan
+        $stagedFiles | ForEach-Object {
+            Write-Host "     $_" -ForegroundColor Gray
+        }
+        
         # Générer un message de commit intelligent basé sur les fichiers modifiés
         $commitMsg = Get-SmartCommitMessage -ModifiedFiles $pluginModified
         Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
@@ -452,7 +458,8 @@ try {
 
     # Tag seulement si push réussi - OPTIONNEL, peut être désactivé pour accélérer
     if ($pushSuccess -and $commitCreated) {
-        $version = Get-Date -Format "v1.0.0-deploy-yyyyMMdd-HHmmss"
+        # ✅ CORRECTION: Utiliser le format de version déployé (comme dans les logs)
+        $version = Get-Date -Format "v1.0.0-11eplo25-yyyyMMdd-HHmmss"
         Write-Host "   Tag: $version" -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
         $tagResult = & git tag -a $version -m "Deploiement $version" 2>&1
@@ -503,10 +510,39 @@ if ($commitCreated -and $pushSuccess) {
 }
 Write-Host ""
 
-# ✅ FINAL GIT PUSH - S'assurer que tout est pousse
+# ✅ FINAL GIT PUSH - S'assurer que tout est pousse et clean
 Write-Host "5 Final Git Push..." -ForegroundColor Cyan
 try {
     Push-Location $WorkingDir
+    
+    # ✅ CORRECTION: Vérifier qu'il n'y a plus de fichiers non committés
+    $ErrorActionPreference = "Continue"
+    $finalStatus = & git status --porcelain 2>&1
+    $ErrorActionPreference = "Stop"
+    
+    # Filtrer pour ne montrer que les fichiers modifiés (pas les fichiers non suivis)
+    $unstagedFiles = $finalStatus | Where-Object { $_ -match "^ [MADRCU]" }
+    
+    if ($unstagedFiles -and $unstagedFiles.Count -gt 0) {
+        Write-Host "   ⚠️ Fichiers modifies non commits detects:" -ForegroundColor Yellow
+        $unstagedFiles | ForEach-Object {
+            Write-Host "     $_" -ForegroundColor Gray
+        }
+        
+        # Ajouter et commiter les fichiers restants
+        Write-Host "   Commitment des fichiers restants..." -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        & git add -A 2>&1 | Out-Null
+        $commitMsg = "chore: Commit final des fichiers restants - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+        $finalCommitResult = & git commit -m $commitMsg 2>&1
+        $ErrorActionPreference = "Stop"
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   ✅ Commit final cree" -ForegroundColor Green
+        }
+    }
+    
+    # Pousser tout vers le remote
     $ErrorActionPreference = "Continue"
     $finalPushResult = & git push origin dev 2>&1
     $ErrorActionPreference = "Stop"
@@ -516,6 +552,7 @@ try {
     } else {
         Write-Host "   ⚠️ Final push info: $($finalPushResult -join ' ')" -ForegroundColor Yellow
     }
+    
     Pop-Location
 } catch {
     Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow

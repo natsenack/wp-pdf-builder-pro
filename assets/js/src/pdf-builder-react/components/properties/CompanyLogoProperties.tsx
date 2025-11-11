@@ -1,6 +1,9 @@
 import React from 'react';
 import { CompanyLogoElement } from '../../types/elements';
 
+// Debug flags
+const DEBUG_VERBOSE = false; // Set to true to see detailed logs
+
 // Déclaration des types WordPress pour TypeScript
 declare global {
   interface Window {
@@ -116,8 +119,18 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               <button
                 onClick={() => {
                   // Ouvrir la bibliothèque de médias WordPress
-                  if (window.wp && window.wp.media) {
-                    const mediaUploader = window.wp.media({
+                  if (!window.wp?.media) {
+                    const errorMsg = 'Bibliothèque de médias WordPress non disponible (wp_enqueue_media non appelé ?)';
+                    console.error('❌ [LOGO] ' + errorMsg);
+                    alert(errorMsg + '\n\nSaisissez l\'URL manuellement.');
+                    return;
+                  }
+
+                  try {
+                    if (DEBUG_VERBOSE) console.log('🎬 [LOGO] Ouverture de la bibliothèque de médias...');
+                    
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const mediaUploader: any = window.wp.media({
                       title: 'Sélectionner un logo',
                       button: {
                         text: 'Utiliser ce logo'
@@ -128,21 +141,58 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                       }
                     });
 
-                    mediaUploader.on('select', function() {
-                      const attachment = mediaUploader.state().get('selection').first().toJSON();
-                      onChange(element.id, 'src', attachment.url);
-                      // Optionnellement, mettre à jour les dimensions si elles ne sont pas définies
-                      if (!element.width || element.width === 150) {
-                        onChange(element.id, 'width', attachment.width || 150);
-                      }
-                      if (!element.height || element.height === 80) {
-                        onChange(element.id, 'height', attachment.height || 80);
+                    // Écouter l'événement select avec closure pour avoir accès à mediaUploader
+                    mediaUploader.on('select', () => {
+                      if (DEBUG_VERBOSE) console.log('📍 [LOGO] Événement SELECT déclenché');
+                      try {
+                        const state = mediaUploader.state();
+                        const selection = state.get('selection');
+                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Selection from event:', selection);
+                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Selection length:', selection?.length);
+                        
+                        if (!selection || selection.length === 0) {
+                          if (DEBUG_VERBOSE) console.warn('⚠️ [LOGO] Aucune image sélectionnée');
+                          return;
+                        }
+
+                        const attachment = selection.first().toJSON();
+                        if (DEBUG_VERBOSE) console.log('🔍 [LOGO] Attachment object:', attachment);
+
+                        if (!attachment || !attachment.url) {
+                          console.error('❌ [LOGO] Attachment invalide:', attachment);
+                          alert('Erreur: L\'image sélectionnée n\'a pas d\'URL valide');
+                          return;
+                        }
+
+                        if (DEBUG_VERBOSE) console.log('✅ [LOGO] Image sélectionnée:', {
+                          id: attachment.id,
+                          url: attachment.url,
+                          width: attachment.width,
+                          height: attachment.height,
+                          type: attachment.type
+                        });
+
+                        // Mettre à jour l'URL
+                        onChange(element.id, 'src', attachment.url);
+                        
+                        // Optionnellement, mettre à jour les dimensions
+                        if (!element.width || element.width === 150) {
+                          onChange(element.id, 'width', attachment.width || 150);
+                        }
+                        if (!element.height || element.height === 80) {
+                          onChange(element.id, 'height', attachment.height || 80);
+                        }
+                      } catch (error) {
+                        console.error('❌ [LOGO] Erreur dans select event:', error);
+                        alert('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
                       }
                     });
 
+                    if (DEBUG_VERBOSE) console.log('🎬 [LOGO] Select listener enregistré, ouverture...');
                     mediaUploader.open();
-                  } else {
-                    alert('La bibliothèque de médias WordPress n\'est pas disponible. Veuillez saisir l\'URL manuellement.');
+                  } catch (error) {
+                    console.error('❌ [LOGO] Erreur lors de l\'ouverture de la bibliothèque:', error);
+                    alert('Erreur: ' + (error instanceof Error ? error.message : 'Impossible d\'ouvrir la bibliothèque'));
                   }
                 }}
                 style={{

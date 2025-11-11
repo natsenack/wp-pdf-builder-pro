@@ -1074,6 +1074,7 @@ interface CanvasProps {
 
 // Flag global pour afficher les logs détaillés des éléments (debug)
 const DEBUG_DRAW = false;
+const DEBUG_VERBOSE = false; // Set to true to see detailed logs
 const DEBUG_MONITORING = false; // Set to true to see real-time element tracking logs
 
 // Constantes pour le cache des images
@@ -1089,7 +1090,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
-  console.log('🎬 [COMPONENT] Canvas RE-RENDER - Selection:', state.selection.selectedElements, 'Elements:', state.elements.length);
+  if (DEBUG_DRAW) console.log('🎬 [COMPONENT] Canvas RE-RENDER - Selection:', state.selection.selectedElements, 'Elements:', state.elements.length);
 
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
@@ -1100,6 +1101,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     isVisible: false,
     position: { x: 0, y: 0 }
   });
+
+  // ✅ CORRECTION 8: Force re-render when images load by incrementing counter
+  const [imageLoadCounter, setImageLoadCounter] = React.useState<number>(0);
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -1120,7 +1124,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // Solution: Limit by item count and let browser's GC handle memory
     
     if (cache.size > MAX_CACHE_ITEMS) {
-      console.warn(`🧹 [CACHE] Cache exceeds ${MAX_CACHE_ITEMS} items (size: ${cache.size}), cleaning...`);
+      if (DEBUG_DRAW) console.warn(`🧹 [CACHE] Cache exceeds ${MAX_CACHE_ITEMS} items (size: ${cache.size}), cleaning...`);
       
       // Supprimer les 10 plus anciennes entrées (FIFO)
       const entriesToRemove = Math.min(10, Math.ceil(cache.size * 0.1));
@@ -1131,7 +1135,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         
         cache.delete(url);
         removed++;
-        console.log(`  ✅ Removed from cache: ${url}`);
+        if (DEBUG_DRAW) console.log(`  ✅ Removed from cache: ${url}`);
       }
       
       if (DEBUG_DRAW) console.log(`✅ [CACHE] Cleanup complete - ${removed} images removed, cache now has ${cache.size} items`);
@@ -1222,7 +1226,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     // ✅ CORRECTION 7: Détecter si l'URL a changé
     const lastRenderedUrl = renderedLogoUrlsRef.current.get(element.id);
     if (logoUrl !== lastRenderedUrl) {
-      console.log('✅ [LOGO SYNC] URL changée pour', element.id, ':', lastRenderedUrl, '→', logoUrl);
+      if (DEBUG_DRAW) console.log('✅ [LOGO SYNC] URL changée pour', element.id, ':', lastRenderedUrl, '→', logoUrl);
       renderedLogoUrlsRef.current.set(element.id, logoUrl);
     }
 
@@ -1250,8 +1254,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         img.onload = () => {
           const loadedImg = img; // Capture img in closure
           if (DEBUG_DRAW) console.log('✅ [LOGO] Image loaded:', logoUrl, 'size:', loadedImg!.naturalWidth, 'x', loadedImg!.naturalHeight);
-          // Image is now cached and ready - next render will use it
-          // No need to manually trigger re-render, the cache has it
+          // ✅ CORRECTION 8: Increment counter to trigger canvas re-render
+          setImageLoadCounter(prev => prev + 1);
         };
       } else {
         if (DEBUG_DRAW) console.log('🖼️ [LOGO] Using cached image:', logoUrl, 'complete:', img.complete, 'naturalHeight:', img.naturalHeight);
@@ -1292,7 +1296,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       // Pas d'URL, dessiner un placeholder
       drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
-  }, [drawLogoPlaceholder]);
+  }, [drawLogoPlaceholder, setImageLoadCounter]);
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
@@ -1596,7 +1600,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         break;
       default:
         // Élément générique - dessiner un rectangle simple
-        console.warn(`    ⚠️ [DRAW] Élément inconnu: ${element.type}`);
+        if (DEBUG_DRAW) console.warn(`    ⚠️ [DRAW] Élément inconnu: ${element.type}`);
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
@@ -1677,7 +1681,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonctions pour gérer le menu contextuel
   const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
-    console.log('Setting context menu visible at:', x, y, 'elementId:', elementId);
+    if (DEBUG_VERBOSE) console.log('Setting context menu visible at:', x, y, 'elementId:', elementId);
     setContextMenu({
       isVisible: true,
       position: { x, y },
@@ -1764,7 +1768,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
           // TODO: Implémenter le presse-papiers interne
-          console.log('Copy functionality not yet implemented');
+          if (DEBUG_VERBOSE) console.log('Copy functionality not yet implemented');
         }
         break;
       }
@@ -1773,7 +1777,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
           // TODO: Implémenter le presse-papiers interne
-          console.log('Cut functionality not yet implemented');
+          if (DEBUG_VERBOSE) console.log('Cut functionality not yet implemented');
           // dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
         }
         break;
@@ -1875,7 +1879,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
           shortcut: 'Ctrl+V',
           action: () => {
             // TODO: Implémenter le collage depuis le presse-papiers
-            console.log('Paste functionality not yet implemented');
+            if (DEBUG_VERBOSE) console.log('Paste functionality not yet implemented');
           },
           disabled: true // Désactiver jusqu'à implémentation
         },
@@ -2065,13 +2069,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
-      console.warn('❌ [CANVAS] Canvas ref est NULL!');
+      if (DEBUG_DRAW) console.warn('❌ [CANVAS] Canvas ref est NULL!');
       return;
     }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      console.warn('❌ [CANVAS] Context 2D non disponible!');
+      if (DEBUG_DRAW) console.warn('❌ [CANVAS] Context 2D non disponible!');
       return;
     }
 
@@ -2081,9 +2085,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
-      console.warn('⚠️ Canvas has 0 elements!');
+      if (DEBUG_DRAW) console.warn('⚠️ Canvas has 0 elements!');
     } else {
-      // console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
+      if (DEBUG_DRAW) console.log(`✅ [CANVAS] Rendering ${state.elements.length} elements`);
     }
 
     // Appliquer transformation (zoom, pan)
@@ -2115,7 +2119,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
-      console.log(`📦 [CANVAS] Dessin de la sélection: ${state.selection.selectedElements.length} éléments`);
+      if (DEBUG_DRAW) console.log(`📦 [CANVAS] Dessin de la sélection: ${state.selection.selectedElements.length} éléments`);
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
@@ -2190,13 +2194,13 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state, renderCanvas]);
+  }, [state, renderCanvas, imageLoadCounter]);
 
   // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
   useEffect(() => {
     const handleBeforeUnload = (e: Event) => {
       if (state.template.isModified) {
-        console.warn('⚠️ [BEFOREUNLOAD] Changements non-sauvegardés!');
+        if (DEBUG_VERBOSE) console.warn('⚠️ [BEFOREUNLOAD] Changements non-sauvegardés!');
         e.preventDefault();
       }
     };
