@@ -1,10 +1,21 @@
 // Fonction pour vérifier si le debug est activé
 function isDebugEnabled(): boolean {
-  // ✅ CORRECTION: Check for PDF_BUILDER_VERBOSE flag ONLY
-  // This requires explicit opt-in: window.PDF_BUILDER_VERBOSE = true
-  // By default, debug logging is disabled in production
-  const debugFlag = (window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE;
-  return debugFlag === true;
+  // ✅ CORRECTION: Check for PDF_BUILDER_VERBOSE flag first
+  // This allows users to enable verbose logging with: window.PDF_BUILDER_VERBOSE = true
+  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true) {
+    return true;
+  }
+  
+  // If verbose mode is explicitly disabled, don't log
+  if ((window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === false) {
+    return false;
+  }
+  
+  // Otherwise use development environment checks
+  return process.env.NODE_ENV === 'development' ||
+         window.location.hostname === 'localhost' ||
+         window.location.search.includes('debug=pdf') ||
+         (window as unknown as Record<string, unknown>).pdfBuilderDebug === true;
 }
 
 // Extension de Window pour le debug
