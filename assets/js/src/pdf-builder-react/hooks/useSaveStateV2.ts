@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Element } from '../types/elements';
-import { debugError } from '../utils/debug';
+import { debugError, debugSave } from '../utils/debug';
 
 /**
  * Hook simplifié pour auto-save
@@ -110,6 +110,8 @@ export function useSaveStateV2({
     const now = Date.now();
     lastSaveTimeRef.current = now;
 
+    debugSave('[SAVE V2] Début de la sauvegarde manuelle', { templateId, elementsCount: elements.length });
+
     try {
       // Démarrer la sauvegarde
       setState('saving');
@@ -138,6 +140,8 @@ export function useSaveStateV2({
       // 🔍 DEBUG: Log elements being sent
 
       if (cleanElements.length > 0) {
+        debugSave('[SAVE V2] Éléments nettoyés à envoyer:', cleanElements.length, 'éléments');
+        debugSave('[SAVE V2] Premier élément exemple:', cleanElements[0]);
 
         // Check for company_logo specifically
         cleanElements.forEach((el, idx) => {
@@ -173,6 +177,7 @@ export function useSaveStateV2({
       const data = await response.json();
 
       if (data.data?.elements_saved) {
+        debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.elements_saved.length);
 
         if (data.data.elements_saved.length > 0) {
 
@@ -188,6 +193,7 @@ export function useSaveStateV2({
       }
 
       const savedAt = data.data?.saved_at || new Date().toISOString();
+      debugSave('[SAVE V2] Sauvegarde réussie à:', savedAt);
 
       // Succès : progression à 100%
       if (progressIntervalRef.current) {
@@ -212,6 +218,7 @@ export function useSaveStateV2({
         setProgress(0);
       }, 2000);
     } catch (err: unknown) {
+      debugSave('[SAVE V2] Erreur de sauvegarde:', (err as Error)?.message);
       debugError('[SAVE V2] Erreur:', (err as Error)?.message);
 
       // Nettoyage
