@@ -3976,6 +3976,10 @@ class PdfBuilderAdmin
         if ($clean_json !== $template['template_data']) {
             $template_data = json_decode($clean_json, true);
             if (json_last_error() === JSON_ERROR_NONE) {
+                // Ajouter le nom du template depuis la base de données
+                if (isset($template['name']) && !isset($template_data['name'])) {
+                    $template_data['name'] = $template['name'];
+                }
                 return $template_data;
             }
         }
@@ -3985,6 +3989,10 @@ class PdfBuilderAdmin
         if ($aggressive_clean !== $template['template_data']) {
             $template_data = json_decode($aggressive_clean, true);
             if (json_last_error() === JSON_ERROR_NONE) {
+                // Ajouter le nom du template depuis la base de données
+                if (isset($template['name']) && !isset($template_data['name'])) {
+                    $template_data['name'] = $template['name'];
+                }
                 return $template_data;
             }
         }

@@ -3,6 +3,7 @@ import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError } from '../utils/debug';
+import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -156,8 +157,13 @@ export function useTemplate() {
         canvasData = { width: 210, height: 297 };
       }
 
+      // ✅ NORMALISER LES ÉLÉMENTS APRÈS CHARGE (CRITIQUE!)
+      // Cela garantit que contentAlign, labelPosition, etc. sont préservés
+      const normalizedElements = normalizeElementsAfterLoad(elements as any);
+      debugElementState(normalizedElements as any, 'APRÈS CHARGEMENT');
+
       // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
-      const enrichedElements = elements.map((el: Record<string, unknown>) => {
+      const enrichedElements = normalizedElements.map((el: Record<string, unknown>) => {
         let enrichedElement = { ...el };
         
         // ✅ CORRECTION: Enrichir les éléments company_logo SEULEMENT si src ET logoUrl sont vides
@@ -293,9 +299,14 @@ export function useTemplate() {
       console.log('🔍 [TEMPLATE SAVE] Template ID:', templateId);
       console.log('🔍 [TEMPLATE SAVE] Elements count:', state.elements.length);
 
+      // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
+      // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
+      const normalizedElements = normalizeElementsBeforeSave(state.elements as any);
+      debugElementState(normalizedElements as any, 'AVANT SAUVEGARDE');
+
       // Structure simple et propre pour la sauvegarde
       const templateData = {
-        elements: state.elements,
+        elements: normalizedElements,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         version: '1.0'
