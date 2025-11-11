@@ -15,73 +15,27 @@ class AnalyticsTracker implements AnalyticsInterface
 
     public function trackEvent(string $event, array $data = [], ?int $user_id = null): void
     {
-        $event_data = [
-            'event' => $event,
-            'data' => $data,
-            'user_id' => $user_id,
-            'timestamp' => current_time('timestamp'),
-            'ip' => $this->getClientIP()
-        ];
-
-        // Stockage en transient pour traitement différé
-        $transient_key = $this->transient_prefix . 'event_' . uniqid();
-        set_transient($transient_key, $event_data, $this->transient_expiry);
-
+        // ✅ ANALYTICS DÉSACTIVÉ - les transients ne sont plus utilisés
         // Log immédiat pour debug
         $this->logInfo("Event tracked: {$event}");
     }
 
     public function trackPerformance(string $operation, float $duration, array $metadata = []): void
     {
-        $perf_data = [
-            'operation' => $operation,
-            'duration' => $duration,
-            'metadata' => $metadata,
-            'timestamp' => current_time('timestamp'),
-            'memory_usage' => memory_get_peak_usage(true)
-        ];
-
-        $transient_key = $this->transient_prefix . 'perf_' . uniqid();
-        set_transient($transient_key, $perf_data, $this->transient_expiry);
-
+        // ✅ ANALYTICS DÉSACTIVÉ - les transients ne sont plus utilisés
         $this->logInfo("Performance tracked: {$operation} ({$duration}s)");
     }
 
     public function trackError(string $error_type, string $message, array $context = []): void
     {
-        $error_data = [
-            'error_type' => $error_type,
-            'message' => $message,
-            'context' => $context,
-            'timestamp' => current_time('timestamp'),
-            'trace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)
-        ];
-
-        $transient_key = $this->transient_prefix . 'error_' . uniqid();
-        set_transient($transient_key, $error_data, $this->transient_expiry);
-
+        // ✅ ANALYTICS DÉSACTIVÉ - les transients ne sont plus utilisés
         error_log("WP PDF Builder Pro Error [{$error_type}]: {$message}");
     }
 
     public function getMetrics(string $metric_type, array $filters = []): array
     {
-        $metrics = [];
-
-        // Récupération des données depuis les transients
-        global $wpdb;
-        $transient_keys = $wpdb->get_col($wpdb->prepare(
-            "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-            $this->transient_prefix . $metric_type . '_%'
-        ));
-
-        foreach ($transient_keys as $key) {
-            $data = get_transient(str_replace('_transient_', '', $key));
-            if ($data && $this->matchesFilters($data, $filters)) {
-                $metrics[] = $data;
-            }
-        }
-
-        return $metrics;
+        // ✅ ANALYTICS DÉSACTIVÉ - retourner tableau vide
+        return [];
     }
 
     public function getPopularTemplates(int $limit = 10, string $period = 'month'): array

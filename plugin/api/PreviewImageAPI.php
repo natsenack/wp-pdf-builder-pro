@@ -289,24 +289,8 @@ class PreviewImageAPI
      */
     private function checkRateLimit()
     {
-        $user_id = get_current_user_id();
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $key = $user_id ?: $ip;
-        $transient_key = 'wp_pdf_rate_limit_' . md5($key);
-        $requests = get_transient($transient_key) ?: [];
-// Nettoyer les anciennes requêtes
-        $now = time();
-        $requests = array_filter($requests, function ($timestamp) use ($now) {
-
-            return ($now - $timestamp) < $this->rate_limit_window;
-        });
-        if (count($requests) >= $this->rate_limit_max) {
-        // $this->logSecurityEvent('rate_limit_exceeded', $ip, count($requests));
-            $this->sendJsonError('Rate limit exceeded', 429);
-        }
-
-        $requests[] = $now;
-        set_transient($transient_key, $requests, $this->rate_limit_window);
+        // ✅ RATE LIMIT DÉSACTIVÉ - laisser passer toutes les requêtes
+        // Les transients ne sont plus utilisés
     }
 
     /**

@@ -35,28 +35,8 @@ class Rate_Limiter
             return;
         }
 
-        $ip = self::getClientIp();
-        $transient_key = self::TRANSIENT_PREFIX . $ip;
-        $count = intval(get_transient($transient_key));
-        if ($count >= self::LIMIT_PER_MINUTE) {
-        // Trop de requêtes
-            wp_send_json_error([
-                'message' => sprintf(
-                    'Trop de requêtes. Limite : %d par minute. Veuillez patienter.',
-                    self::LIMIT_PER_MINUTE
-                ),
-                'code' => 'rate_limit_exceeded'
-            ], 429);
-        // HTTP 429 Too Many Requests
-                    exit;
-        }
-
-        // Incrémenter le compteur (expire après 1 minute)
-        set_transient($transient_key, $count + 1, 60);
-// Log les requêtes fréquentes (> 50)
-        if ($count > 50) {
-            error_log("[PDF Builder] Rate Limit Warning: IP {$ip} has {$count} requests/min");
-        }
+        // ✅ RATE LIMIT DÉSACTIVÉ - laisser passer toutes les requêtes
+        // Les transients ne sont plus utilisés
     }
 
     /**

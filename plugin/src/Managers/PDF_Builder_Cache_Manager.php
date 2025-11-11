@@ -71,26 +71,8 @@ class PdfBuilderCacheManager
      */
     public function set($key, $value, $expiration = null)
     {
-        // Vérifier si le cache est activé
-        if (!$this->isEnabled()) {
-            return false;
-        }
-
-        if (null === $expiration) {
-            $expiration = $this->cache_expiration;
-        }
-
-        $cache_key = $this->generate_key($key);
-
-        // Utiliser le cache WordPress transient
-        $result = set_transient($cache_key, $value, $expiration);
-
-        // Logger l'action (si la fonction existe)
-        if (function_exists('pdf_builder_log')) {
-            pdf_builder_log("Cache set: $key", 3, array('expiration' => $expiration));
-        }
-
-        return $result;
+        // ✅ CACHE DÉSACTIVÉ - ne rien mettre en cache
+        return false;
     }
 
     /**
@@ -98,19 +80,8 @@ class PdfBuilderCacheManager
      */
     public function get($key, $default = null)
     {
-        // Vérifier si le cache est activé
-        if (!$this->isEnabled()) {
-            return $default;
-        }
-
-        $cache_key = $this->generate_key($key);
-        $value = get_transient($cache_key);
-
-        if (false === $value) {
-            return $default;
-        }
-
-        return $value;
+        // ✅ CACHE DÉSACTIVÉ - toujours retourner la valeur par défaut
+        return $default;
     }
 
     /**
@@ -140,19 +111,8 @@ class PdfBuilderCacheManager
      */
     public function delete($key)
     {
-        // Vérifier si le cache est activé
-        if (!$this->isEnabled()) {
-            return false;
-        }
-
-        $cache_key = $this->generate_key($key);
-        $deleted = delete_transient($cache_key);
-
-        if ($deleted && function_exists('pdf_builder_log')) {
-            pdf_builder_log("Cache deleted: $key", 2);
-        }
-
-        return $deleted;
+        // ✅ CACHE DÉSACTIVÉ - rien à supprimer
+        return false;
     }
 
     /**
@@ -160,26 +120,8 @@ class PdfBuilderCacheManager
      */
     public function flush()
     {
-        // Vérifier si le cache est activé
-        if (!$this->isEnabled()) {
-            return 0;
-        }
-
-        global $wpdb;
-
-        $pattern = $this->cache_prefix . '%';
-        $deleted = $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-                $pattern
-            )
-        );
-
-        if (function_exists('pdf_builder_log')) {
-            pdf_builder_log("Cache flushed: $deleted entries deleted", 1);
-        }
-
-        return $deleted;
+        // ✅ CACHE DÉSACTIVÉ - rien à vider
+        return 0;
     }
 
     /**
@@ -255,13 +197,13 @@ class PdfBuilderCacheManager
         // Utiliser la TTL configurée ou la valeur par défaut
         $this->cache_expiration = intval($settings['cache_ttl'] ?? $this->cache_expiration);
     }
-
     /**
      * Vérifier si le cache est activé
      */
     public function isEnabled()
     {
-        return $this->cache_enabled;
+        // ✅ CACHE TOUJOURS DÉSACTIVÉ
+        return false;
     }
 }
 
