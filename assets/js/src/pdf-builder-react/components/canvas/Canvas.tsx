@@ -1106,6 +1106,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   
   // ✅ CORRECTION 7: Tracker les URLs rendues pour détecter changements
   const renderedLogoUrlsRef = useRef<Map<string, string>>(new Map()); // elementId -> logoUrl
+  
+  // ✅ Flag: Track if we've done initial render check for images
+  const initialImageCheckDoneRef = useRef(false);
 
   // ✅ CORRECTION 2: Fonction pour nettoyer le cache des images
   const cleanupImageCache = useCallback(() => {
@@ -2174,6 +2177,18 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     }, 0);
     return () => clearTimeout(timer);
   }, [state, renderCanvas, imageLoadCount]);  // ✅ BUGFIX: Include imageLoadCount to trigger redraw when images load
+
+  // ✅ Force initial render when elements first load (for cached images)
+  useEffect(() => {
+    if (state.elements.length > 0 && !initialImageCheckDoneRef.current) {
+      initialImageCheckDoneRef.current = true;
+      // Force a render after a short delay to ensure images are ready
+      const timer = setTimeout(() => {
+        setImageLoadCount(prev => prev + 1);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [state.elements.length]);
 
   // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
   useEffect(() => {

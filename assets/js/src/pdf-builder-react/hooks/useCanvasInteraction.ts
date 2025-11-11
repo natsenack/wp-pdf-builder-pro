@@ -34,7 +34,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   
   // ✅ CORRECTION 3: Throttling pour handleMouseMove
   const lastMouseMoveTimeRef = useRef<number>(0);
-  const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS (1000/60 ≈ 16ms)
+  const MOUSEMOVE_THROTTLE_MS = 32; // ~30 FPS (1000/30 ≈ 33ms) - slower for resize tracking
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
