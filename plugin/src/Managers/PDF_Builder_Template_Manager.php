@@ -201,6 +201,15 @@ class PdfBuilderTemplateManager
                     }
                 }
 
+                // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
+                foreach ($elements_data as $idx => $el) {
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
+                    if (isset($el['type']) && $el['type'] === 'order_number') {
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                    }
+                }
+
                 // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
                 foreach ($elements_data as &$el) {
                     if (isset($el['type']) && $el['type'] === 'company_logo') {
@@ -313,11 +322,23 @@ class PdfBuilderTemplateManager
                         throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
                     }
                     
-                    // Log what was actually saved
+                    // ✅ CRITICAL: Log what was actually saved - especially order_number elements
                     $upload_dir = wp_upload_dir();
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
+                    
+                    // Decode and re-check what was saved
+                    $saved_decoded = json_decode($template_data, true);
+                    if (isset($saved_decoded['elements'])) {
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
+                        
+                        // Find order_number in saved data
+                        foreach ($saved_decoded['elements'] as $el) {
+                            if (isset($el['type']) && $el['type'] === 'order_number') {
+                                file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                            }
+                        }
+                    }
                 } else {
                     // Gérer comme post WordPress (nouveau template ou migration)
                     if ($template_id > 0) {
