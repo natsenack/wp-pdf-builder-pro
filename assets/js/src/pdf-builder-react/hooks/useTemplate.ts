@@ -41,7 +41,6 @@ export function useTemplate() {
       // This ensures F5 and Ctrl+F5 load fresh data from server
       // The server also sends no-cache headers, this is backup
       const cacheBreaker = Date.now();
-      // @ts-expect-error - pdfBuilderData is added by WordPress
       const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`);
       console.log('[useTemplate] AJAX response status:', response.status);
 
@@ -62,14 +61,7 @@ export function useTemplate() {
       
       // 🔍 Tracer les éléments reçus du serveur
       if (templateData.elements) {
-        try {
-          const elementsForDebug = typeof templateData.elements === 'string' 
-            ? JSON.parse(templateData.elements)
-            : templateData.elements;
-          
-        } catch (e) {
-
-        }
+        // Log elements for debugging
       }
 
       // Parse JSON strings
@@ -90,6 +82,17 @@ export function useTemplate() {
         }
 
         console.log('[useTemplate] LOAD - parsed elements count:', elements.length);
+        
+        // Log détaillé des éléments order_number chargés
+        const loadedOrderNumberElements = elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
+        console.log('[useTemplate] LOAD - Order number elements received:', loadedOrderNumberElements.map((el: Record<string, unknown>) => ({
+          id: el.id,
+          contentAlign: el.contentAlign,
+          labelPosition: el.labelPosition,
+          showLabel: el.showLabel,
+          labelText: el.labelText,
+          allKeys: Object.keys(el)
+        })));
 
 
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
@@ -157,7 +160,7 @@ export function useTemplate() {
       });
 
 
-      enrichedElements.slice(0, 3).forEach((el: any, idx: number) => {
+      enrichedElements.slice(0, 3).forEach((_el: Record<string, unknown>, _idx: number) => {
 
       });
 
@@ -212,17 +215,14 @@ export function useTemplate() {
     const templateId = getTemplateIdFromUrl();
 
     if (templateId) {
-
       loadExistingTemplate(templateId);
-    } else {
-
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
-    console.log('[useTemplate] SAVE - Manual save initiated');
+    console.log('🔍 [TEMPLATE SAVE] Starting manual save...');
 
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
@@ -233,8 +233,8 @@ export function useTemplate() {
         throw new Error('Aucun template chargé pour la sauvegarde');
       }
 
-      console.log('[useTemplate] SAVE - Template ID:', templateId);
-      console.log('[useTemplate] SAVE - Elements to save:', state.elements.length);
+      console.log('🔍 [TEMPLATE SAVE] Template ID:', templateId);
+      console.log('🔍 [TEMPLATE SAVE] Elements count:', state.elements.length);
 
       // Structure simple et propre pour la sauvegarde
       const templateData = {
@@ -244,7 +244,19 @@ export function useTemplate() {
         version: '1.0'
       };
 
-      console.log('[useTemplate] SAVE - Template data structure:', templateData);
+      // Log détaillé des éléments order_number
+      const orderNumberElements = templateData.elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
+      console.log('🔍 [TEMPLATE SAVE] Order number elements:', orderNumberElements.length);
+      orderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
+        console.log(`🔍 [TEMPLATE SAVE] Order element ${index}:`, {
+          id: el.id,
+          contentAlign: el.contentAlign || 'NOT SET',
+          labelPosition: el.labelPosition || 'NOT SET',
+          showLabel: el.showLabel,
+          labelText: el.labelText || 'NOT SET',
+          allProperties: Object.keys(el)
+        });
+      });
 
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
