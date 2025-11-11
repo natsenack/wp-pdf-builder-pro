@@ -187,16 +187,17 @@ class PdfBuilderTemplateManager
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
-                // Log order_number elements specifically
+                // Log order_number elements specifically BEFORE saving
                 foreach ($elements_data as $el) {
                     if (isset($el['type']) && $el['type'] === 'order_number') {
-                        error_log('PDF Builder: SAVE - Order number element: ' . json_encode([
+                        error_log('PDF Builder: SAVE - Order number element BEFORE SAVE: ' . json_encode([
                             'id' => $el['id'] ?? 'missing',
                             'contentAlign' => $el['contentAlign'] ?? 'missing',
                             'labelPosition' => $el['labelPosition'] ?? 'missing',
-                            'type' => $el['type'] ?? 'missing'
+                            'type' => $el['type'] ?? 'missing',
+                            'all_keys' => array_keys($el)
                         ]));
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT: ' . json_encode($el) . "\n", FILE_APPEND);
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
                     }
                 }
 
@@ -695,12 +696,19 @@ class PdfBuilderTemplateManager
                     return;
                 }
                 
-                // LOG DECODED DATA
+                // LOG DECODED DATA - DÉTAILLÉ
                 error_log('=== PDF BUILDER LOAD DECODED === Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
                 if (isset($template_data['elements'])) {
-                    foreach ($template_data['elements'] as $el) {
+                    foreach ($template_data['elements'] as $index => $el) {
                         if (isset($el['type']) && $el['type'] === 'order_number') {
-                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT === ' . json_encode($el));
+                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' === ' . json_encode($el));
+                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' KEYS === ' . json_encode(array_keys($el)));
+                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' PROPERTIES === ' . json_encode([
+                                'contentAlign' => isset($el['contentAlign']) ? $el['contentAlign'] : 'NOT_SET',
+                                'labelPosition' => isset($el['labelPosition']) ? $el['labelPosition'] : 'NOT_SET',
+                                'hasContentAlign' => array_key_exists('contentAlign', $el),
+                                'hasLabelPosition' => array_key_exists('labelPosition', $el)
+                            ]));
                         }
                     }
                 }
