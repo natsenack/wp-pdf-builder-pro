@@ -122,7 +122,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
     setIsDragOver(false);
 
     try {
-      console.log('🎯 [DROP] Drop event received');
 
       // Parsing des données de drag
       const rawData = e.dataTransfer.getData('application/json');
@@ -131,7 +130,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       }
 
       const dragData = JSON.parse(rawData);
-      console.log('📦 [DROP] Parsed drag data:', dragData);
 
       // Validation des données
       if (!validateDragData(dragData)) {
@@ -143,22 +141,18 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       const elementHeight = (dragData.defaultProps.height as number) || 50;
 
       const position = calculateDropPosition(e.clientX, e.clientY, elementWidth, elementHeight);
-      console.log('📍 [DROP] Calculated position:', position);
 
       // Création de l'élément
       const newElement = createElementFromDragData(dragData, position);
-      console.log('🆕 [DROP] Created element:', newElement);
 
       // Vérification des conflits d'ID
       const existingElement = elements.find(el => el.id === newElement.id);
       if (existingElement) {
-        console.warn('⚠️ [DROP] Element ID conflict, regenerating...');
         newElement.id = generateElementId(dragData.type);
       }
 
       // Ajout au state
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
-      console.log('✅ [DROP] Element added successfully');
 
       // Notification de succès (optionnel - retiré pour éviter les erreurs de type)
       // if (window.pdfBuilder?.showNotification) {
@@ -181,7 +175,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
 
     if (!isDragOver) {
       setIsDragOver(true);
-      console.log('🎯 [DRAG] Drag over canvas started');
     }
   }, [isDragOver]);
 
@@ -190,7 +183,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
     // This is a simplified approach to avoid DOM type issues
     if (e.relatedTarget) {
       setIsDragOver(false);
-      console.log('🎯 [DRAG] Drag left canvas');
     }
   }, []);
 

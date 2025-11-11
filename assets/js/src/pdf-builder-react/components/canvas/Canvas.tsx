@@ -1074,7 +1074,6 @@ interface CanvasProps {
 
 // Flag global pour afficher les logs détaillés des éléments (debug)
 // Debug flags - set to true to enable verbose logging
-const DEBUG_MONITORING = false; // Set to true to see real-time element tracking logs
 
 // Constantes pour le cache des images
 const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
@@ -2163,20 +2162,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     renderCountRef.current++;
     
     // 🔍 REAL-TIME MONITORING: Track all element property changes
-    elementChangeTracker.debugEnabled = DEBUG_MONITORING;
-    const changes = elementChangeTracker.trackElements(state.elements);
-    if (DEBUG_MONITORING && changes.length > 0) {
-      console.log(`📊 [REAL-TIME] ${changes.length} changement(s) détecté(s):`);
-      changes.forEach(change => {
-        if (change.changeType === 'created') {
-          console.log(`  ✨ Créé: ${change.elementId}`);
-        } else if (change.changeType === 'deleted') {
-          console.log(`  🗑️ Supprimé: ${change.elementId}`);
-        } else if (change.changeType === 'property_changed') {
-          console.log(`  ${change.property}: ${change.oldValue} → ${change.newValue}`);
-        }
-      });
-    }
+    elementChangeTracker.trackElements(state.elements);
     
 
     const timer = setTimeout(() => {
