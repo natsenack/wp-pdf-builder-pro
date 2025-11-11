@@ -693,6 +693,16 @@ class PdfBuilderTemplateManager
                     return;
                 }
                 
+                // LOG DECODED DATA
+                error_log('=== PDF BUILDER LOAD DECODED === Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
+                if (isset($template_data['elements'])) {
+                    foreach ($template_data['elements'] as $el) {
+                        if (isset($el['type']) && $el['type'] === 'order_number') {
+                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT === ' . json_encode($el));
+                        }
+                    }
+                }
+                
                 error_log('PDF Builder: ajaxLoadTemplate - JSON decode successful, elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             } else {
                 // Fallback: chercher dans wp_posts
