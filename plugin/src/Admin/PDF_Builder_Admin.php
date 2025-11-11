@@ -6006,8 +6006,13 @@ class PdfBuilderAdmin
                 $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
+            // Extraire le nom du template
+            $template_name = isset($template_data['name']) ? $template_data['name'] : 'Template ' . $template_id;
+
             $response = [
                 'template' => $template_data,
+                'name' => $template_name,
+                'template_name' => $template_name,
                 'message' => 'Template chargé avec succès'
             ];
 

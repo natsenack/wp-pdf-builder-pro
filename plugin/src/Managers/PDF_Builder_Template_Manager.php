@@ -901,16 +901,22 @@ class PdfBuilderTemplateManager
                 'debug' => $debug_info
             ]));
             
-            \wp_send_json_success(
-                array(
+            $response_data = array(
                 'template' => $template_data,
                 'name' => $template_name,
                 'template_name' => $template_name,
                 'element_count' => $element_count,
                 'element_types' => $element_types,
                 'debug' => $debug_info
-                )
             );
+            
+            error_log('=== PDF BUILDER ABOUT TO SEND RESPONSE ===');
+            error_log('Response data array: ' . json_encode($response_data));
+            error_log('Response data keys: ' . json_encode(array_keys($response_data)));
+            error_log('Template name in response: ' . ($response_data['name'] ?? 'MISSING'));
+            error_log('=== END ABOUT TO SEND RESPONSE ===');
+            
+            \wp_send_json_success($response_data);
         } catch (Exception $e) {
             \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
