@@ -1098,6 +1098,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     position: { x: 0, y: 0 }
   });
 
+  // ✅ STATE for image loading - force redraw when images load
+  const [imageLoadCount, setImageLoadCount] = React.useState(0);
+
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
   
@@ -1241,10 +1244,10 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
           console.error('❌ [LOGO] Image failed to load:', logoUrl);
         };
 
-        // Gérer le chargement réussi - force un re-render du canvas
+        // ✅ CRITICAL: Quand l'image se charge, redessiner le canvas
         img.onload = () => {
-          const loadedImg = img; // Capture img in closure
-
+          // Incrémenter le counter pour forcer un redraw
+          setImageLoadCount(prev => prev + 1);
         };
       } else {
 
@@ -2170,7 +2173,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state, renderCanvas]);  // ✅ BUGFIX-008: REMOVED imageLoadCounter - it causes double renders when images load
+  }, [state, renderCanvas, imageLoadCount]);  // ✅ BUGFIX: Include imageLoadCount to trigger redraw when images load
 
   // ✅ CORRECTION 1: Ajouter beforeunload event pour avertir des changements non-sauvegardés
   useEffect(() => {
