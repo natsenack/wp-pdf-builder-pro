@@ -877,6 +877,27 @@ class PdfBuilderTemplateManager
                 }
             }
             
+            // LOG FINAL RESPONSE DATA - JUST BEFORE SENDING
+            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === About to send template_data');
+            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === template_data elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
+            if (isset($template_data['elements'])) {
+                foreach ($template_data['elements'] as $index => $el) {
+                    if (isset($el['type']) && $el['type'] === 'order_number') {
+                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ': ' . json_encode($el));
+                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ' contentAlign: ' . ($el['contentAlign'] ?? 'MISSING'));
+                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ' labelPosition: ' . ($el['labelPosition'] ?? 'MISSING'));
+                        break;
+                    }
+                }
+            }
+            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Full response data: ' . json_encode([
+                'template' => $template_data,
+                'name' => $template_name,
+                'element_count' => $element_count,
+                'element_types' => $element_types,
+                'debug' => $debug_info
+            ]));
+            
             \wp_send_json_success(
                 array(
                 'template' => $template_data,
