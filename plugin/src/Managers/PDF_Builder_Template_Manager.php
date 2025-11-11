@@ -399,6 +399,9 @@ class PdfBuilderTemplateManager
      */
     public function ajax_auto_save_template()
     {
+        // LOG AU DÉBUT POUR VÉRIFIER QUE LA FONCTION EST APPELEE
+        error_log('🔥 [AUTO-SAVE] FUNCTION CALLED - ajax_auto_save_template() - REQUEST: ' . print_r($_REQUEST, true));
+
         try {
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
