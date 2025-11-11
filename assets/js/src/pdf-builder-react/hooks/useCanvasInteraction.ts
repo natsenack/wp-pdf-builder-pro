@@ -474,13 +474,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     const rect = canvas.getBoundingClientRect();
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
-    const zoomScale = state.canvas.zoom / 100;
+    // const zoomScale = state.canvas.zoom / 100;
     
     // Même calcul que handleMouseDown pour cohérence
     const canvasRelativeX = event.clientX - rect.left;
     const canvasRelativeY = event.clientY - rect.top;
-    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
+    // ✅ DEBUG: Try without zoom/pan transformation
+    const x = canvasRelativeX; // (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    const y = canvasRelativeY; // (canvasRelativeY - state.canvas.pan.y) / zoomScale;
 
     // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
