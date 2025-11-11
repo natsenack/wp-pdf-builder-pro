@@ -22,12 +22,9 @@ export function debugLog(...args: unknown[]) {
 
 // Fonction de debug pour les sauvegardes (activable séparément)
 export function debugSave(...args: unknown[]) {
-  // Disabled by default - only activated when debugging save issues
+  // TEMPORAIRE : Toujours afficher les logs de sauvegarde pour le debug
   // To enable save debugging: window.PDF_BUILDER_DEBUG_SAVE = true
-  const isDebugSave = typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).PDF_BUILDER_DEBUG_SAVE === true;
-  if (isDebugSave) {
-    console.log('💾 [SAVE DEBUG]', ...args);
-  }
+  console.log('💾 [SAVE DEBUG]', ...args);
 }
 
 export function debugError(...args: unknown[]) {
