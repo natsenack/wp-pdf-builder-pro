@@ -849,8 +849,15 @@ function pdf_builder_ajax_get_template()
     }
 
     // ✅ ÉTAPE 1: Vérifier le cache transient (optimisation performance ~50-100ms saved)
+    // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
     $cache_key = 'pdf_builder_template_' . $template_id;
-    $cached_template = get_transient($cache_key);
+    $cache_enabled = !empty(get_option('pdf_builder_settings', [])['cache_enabled']);
+    $cached_template = false;
+    
+    if ($cache_enabled) {
+        $cached_template = get_transient($cache_key);
+    }
+    
     if ($cached_template !== false) {
     // Template trouvé en cache, retourner directement
         wp_send_json_success($cached_template);

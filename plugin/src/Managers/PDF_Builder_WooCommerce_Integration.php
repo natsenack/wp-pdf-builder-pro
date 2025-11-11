@@ -1230,8 +1230,14 @@ class PdfBuilderWooCommerceIntegration
             }
 
             // Récupérer les éléments depuis le cache ou la base de données
+            // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
             $cache_key = 'pdf_builder_canvas_elements_' . $template_id;
-            $canvas_elements = get_transient($cache_key);
+            $cache_enabled = !empty(get_option('pdf_builder_settings', [])['cache_enabled']);
+            $canvas_elements = false;
+            
+            if ($cache_enabled) {
+                $canvas_elements = get_transient($cache_key);
+            }
 
             if ($canvas_elements === false) {
                 // Si on a déjà les données du template depuis la table personnalisée, les utiliser
@@ -1264,8 +1270,10 @@ class PdfBuilderWooCommerceIntegration
                 // Validation et nettoyage des données
                 $canvas_elements = $this->validateAndCleanCanvasElements($canvas_elements);
 
-                // Mettre en cache pour 5 minutes
-                set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
+                // ✅ RESPECT DU SETTING CACHE: Only cache if cache is enabled in settings
+                if ($cache_enabled) {
+                    set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
+                }
             }
 
             wp_send_json_success(
