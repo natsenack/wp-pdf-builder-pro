@@ -1478,7 +1478,8 @@ function pdf_builder_register_fallback_hooks()
         add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_pro_save_template', 'pdf_builder_ajax_save_template_fallback');
         add_action('wp_ajax_pdf_builder_auto_save_template', function () {
-            error_log('🔍 [FALLBACK HOOK] Auto-save hook called! Action received');
+            error_log('� [FALLBACK HOOK] wp_ajax_pdf_builder_auto_save_template CALLED!');
+            error_log('�🔍 [FALLBACK HOOK] Auto-save hook called! Action received');
             error_log('🔍 [FALLBACK HOOK] POST data: ' . print_r($_POST, true));
             
             // Appeler le vrai handler du template manager
