@@ -660,6 +660,36 @@ class PdfBuilderTemplateManager
                 \wp_send_json_error('ID template invalide');
             }
 
+            // DIRECT DATABASE CHECK - BEFORE ANY PROCESSING
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $template_row = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+            
+            if ($template_row) {
+                $raw_data = $template_row['template_data'];
+                error_log('=== DIRECT DB CHECK === Template ID: ' . $template_id);
+                error_log('=== DIRECT DB CHECK === Raw data contains contentAlign: ' . (strpos($raw_data, 'contentAlign') !== false ? 'YES' : 'NO'));
+                error_log('=== DIRECT DB CHECK === Raw data contains labelPosition: ' . (strpos($raw_data, 'labelPosition') !== false ? 'YES' : 'NO'));
+                
+                // Extract order_number element from raw data
+                if (strpos($raw_data, 'order_number') !== false) {
+                    $data = json_decode($raw_data, true);
+                    if ($data && isset($data['elements'])) {
+                        foreach ($data['elements'] as $el) {
+                            if (isset($el['type']) && $el['type'] === 'order_number') {
+                                error_log('=== DIRECT DB CHECK === Order element in DB: ' . json_encode($el));
+                                error_log('=== DIRECT DB CHECK === Has contentAlign: ' . (isset($el['contentAlign']) ? 'YES (' . $el['contentAlign'] . ')' : 'NO'));
+                                error_log('=== DIRECT DB CHECK === Has labelPosition: ' . (isset($el['labelPosition']) ? 'YES (' . $el['labelPosition'] . ')' : 'NO'));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             // Chercher d'abord dans la table personnalisée (custom table)
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
