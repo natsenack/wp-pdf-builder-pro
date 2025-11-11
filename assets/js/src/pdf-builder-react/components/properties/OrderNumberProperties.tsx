@@ -142,10 +142,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <select
               value={element.labelPosition || 'above'}
-              onChange={(e) => {
-                console.log('[OrderNumberProperties] labelPosition changed from:', element.labelPosition, 'to:', e.target.value);
-                onChange(element.id, 'labelPosition', e.target.value);
-              }}
+              onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
               style={{
                 width: '100%',
                 padding: '6px',
@@ -180,10 +177,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </label>
             <select
               value={element.contentAlign || 'left'}
-              onChange={(e) => {
-                console.log('[OrderNumberProperties] contentAlign changed from:', element.contentAlign, 'to:', e.target.value);
-                onChange(element.id, 'contentAlign', e.target.value);
-              }}
+              onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
               style={{
                 width: '100%',
                 padding: '6px',

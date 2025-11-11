@@ -9,7 +9,7 @@ export function useTemplate() {
   const { canvasWidth, canvasHeight } = useCanvasSettings();
 
   // Détecter si on est sur un template existant via l'URL ou les données localisées
-  const getTemplateIdFromUrl = (): string | null => {
+  const getTemplateIdFromUrl = useCallback((): string | null => {
     // Priorité 1: Utiliser le templateId des données PHP localisées
     if (window.pdfBuilderData?.templateId) {
 
@@ -26,7 +26,7 @@ export function useTemplate() {
     
 
     return null;
-  };
+  }, []);
 
   const isEditingExistingTemplate = (): boolean => {
     return getTemplateIdFromUrl() !== null;
@@ -90,17 +90,6 @@ export function useTemplate() {
         }
 
         console.log('[useTemplate] LOAD - parsed elements count:', elements.length);
-        
-        // Log specific properties for order_number elements
-        const orderNumberElements = elements.filter((el: any) => el.type === 'order_number');
-        console.log('[useTemplate] LOAD - order_number elements from server:', orderNumberElements.map((el: any) => ({
-          id: el.id,
-          contentAlign: el.contentAlign || 'undefined',
-          labelPosition: el.labelPosition || 'undefined',
-          showLabel: el.showLabel,
-          labelText: el.labelText,
-          fullElement: el // Add full element for debugging
-        })));
 
 
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
@@ -231,55 +220,60 @@ export function useTemplate() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-      const saveTemplate = useCallback(async () => {
+  // Sauvegarder un template manuellement
+  const saveTemplate = useCallback(async () => {
+    console.log('[useTemplate] SAVE - Manual save initiated');
+
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
 
-      // Préparer les données à envoyer - Utiliser la structure complète avec canvasWidth/canvasHeight
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_save_template');
-      formData.append('template_id', templateId || '0');
-      formData.append('template_name', state.template.name || 'Template sans nom');
-      
-      // ✅ CORRECTION: Envoyer la structure complète du template
+      if (!templateId) {
+        throw new Error('Aucun template chargé pour la sauvegarde');
+      }
+
+      console.log('[useTemplate] SAVE - Template ID:', templateId);
+      console.log('[useTemplate] SAVE - Elements to save:', state.elements.length);
+
+      // Structure simple et propre pour la sauvegarde
       const templateData = {
         elements: state.elements,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         version: '1.0'
       };
-      
-      console.log('[useTemplate] SAVE - templateData to send:', templateData);
-      console.log('[useTemplate] SAVE - elements count:', state.elements.length);
-      
-      // Log specific properties for order_number elements
-      const orderNumberElements = state.elements.filter(el => el.type === 'order_number');
-      console.log('[useTemplate] SAVE - order_number elements:', orderNumberElements.map(el => ({
-        id: el.id,
-        contentAlign: el.contentAlign,
-        labelPosition: el.labelPosition
-      })));
-      
+
+      console.log('[useTemplate] SAVE - Template data structure:', templateData);
+
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_save_template');
+      formData.append('template_id', templateId);
+      formData.append('template_name', state.template.name || 'Template sans nom');
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
-      // Faire un appel API pour sauvegarder le template
+      console.log('[useTemplate] SAVE - Sending request...');
+
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
+
+      console.log('[useTemplate] SAVE - Response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('[useTemplate] SAVE - Server response:', result);
 
       if (!result.success) {
-        throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
+        throw new Error(result.data || 'Erreur lors de la sauvegarde');
       }
+
+      console.log('[useTemplate] SAVE - Save successful, updating state');
 
       dispatch({
         type: 'SAVE_TEMPLATE',
@@ -288,12 +282,16 @@ export function useTemplate() {
           name: result.data.name
         }
       });
+
+      console.log('[useTemplate] SAVE - State updated, save complete');
+
     } catch (error) {
-      throw error; // Re-throw pour que l'appelant puisse gérer l'erreur
+      console.error('[useTemplate] SAVE - Error:', error);
+      throw error;
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
     }
-  }, [state.elements, state.template.name, dispatch, canvasWidth, canvasHeight]);
+  }, [state.elements, state.template.name, dispatch, canvasWidth, canvasHeight, getTemplateIdFromUrl]);
 
   const previewTemplate = useCallback(() => {
     dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });

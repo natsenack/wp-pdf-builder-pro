@@ -236,18 +236,12 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       const updateElement = (element: Element): Element => {
         if (element.id !== action.payload.id) return element;
         
-        console.log('[BuilderContext] UPDATE_ELEMENT - element ID:', action.payload.id);
-        console.log('[BuilderContext] UPDATE_ELEMENT - updates:', action.payload.updates);
-        console.log('[BuilderContext] UPDATE_ELEMENT - element before:', element);
-        
         // Merge updates while preserving all existing properties
         const updated: Element = {
           ...element,  // First spread all existing properties (including dynamic ones)
           ...action.payload.updates,  // Then apply updates (only specified properties)
           updatedAt: new Date()  // Always update timestamp
         };
-        
-        console.log('[BuilderContext] UPDATE_ELEMENT - element after:', updated);
         
         return updated;
       };
@@ -616,19 +610,6 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
         if (templateData.elements) {
           console.log('[BuilderContext] Elements count:', templateData.elements.length);
-          // @ts-expect-error - Debug logs
-          templateData.elements.forEach((element, index) => {
-            console.log(`[BuilderContext] Element ${index}:`, {
-              type: element.type,
-              contentAlign: element.contentAlign,
-              labelPosition: element.labelPosition,
-              id: element.id,
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            });
-          });
         }
 
         console.log('[BuilderContext] Dispatching LOAD_TEMPLATE action');
@@ -650,177 +631,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     };
   }, []);
 
-  // Fonction de sauvegarde automatique (commentée car non utilisée)
-  // const autoSaveTemplate = async (): Promise<void> => {
-  /*
-    if (!state.template.id || state.template.isSaving) return;
 
-    dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
-    try {
-      const ajaxUrl = (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
-      const nonce = (window as any).pdfBuilderData?.nonce ||
-                   (window as any).pdfBuilderNonce ||
-                   (window as any).pdfBuilderReactData?.nonce || '';
 
-      // Fonction de nettoyage ultra-robuste pour JSON
-      const deepCleanForJSON = (obj: any, visited = new WeakSet(), path = ''): any => {
-        // Éviter les références circulaires
-        if (obj === null || typeof obj !== 'object') {
-          return obj;
-        }
-
-        if (visited.has(obj)) {
-          debugWarn(`🔄 [CLEAN JSON] Référence circulaire détectée à ${path}`);
-          return '[Circular Reference]';
-        }
-
-        visited.add(obj);
-
-        try {
-          if (Array.isArray(obj)) {
-            return obj.map((item, index) => deepCleanForJSON(item, visited, `${path}[${index}]`));
-          }
-
-          if (obj instanceof Date) {
-            return obj.toISOString();
-          }
-
-          if (typeof obj === 'function') {
-            debugWarn(`⚠️ [CLEAN JSON] Fonction supprimée à ${path}`);
-            return undefined;
-          }
-
-          // Pour les objets, créer une copie propre
-          const cleanObj: any = {};
-          for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-              const value = obj[key];
-
-              // Skip les propriétés problématiques
-              if (typeof value === 'function' ||
-                  key === 'canvas' ||
-                  key === 'context' ||
-                  key === '_reactInternalInstance' ||
-                  key === '_reactInternals' ||
-                  key.startsWith('__react')) {
-                debugWarn(`⚠️ [CLEAN JSON] Propriété problématique supprimée: ${key} à ${path}`);
-                continue;
-              }
-
-              // Nettoyer récursivement les valeurs
-              const cleanValue = deepCleanForJSON(value, visited, `${path}.${key}`);
-              if (cleanValue !== undefined) {
-                cleanObj[key] = cleanValue;
-              }
-            }
-          }
-
-          return cleanObj;
-        } finally {
-          visited.delete(obj);
-        }
-      };
-
-      // Nettoyer tous les éléments
-      const cleanElements = state.elements.map((element, index) => {
-        try {
-          const cleaned = deepCleanForJSON(element, new WeakSet(), `element[${index}]`);
-
-          // S'assurer que les propriétés essentielles sont présentes
-          const finalElement = {
-            id: cleaned.id || `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            type: cleaned.type || 'text',
-            x: cleaned.x || 0,
-            y: cleaned.y || 0,
-            width: cleaned.width || 100,
-            height: cleaned.height || 50,
-            visible: cleaned.visible !== false,
-            locked: cleaned.locked || false,
-            createdAt: cleaned.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            ...cleaned // Garder toutes les autres propriétés nettoyées
-          };
-
-          return finalElement;
-        } catch (error) {
-          debugError(`❌ [CLEAN ELEMENT] Erreur lors du nettoyage d'un élément ${index}:`, error, element);
-          // Retourner un élément minimal en cas d'échec
-          return {
-            id: element.id || `fallback_${Date.now()}`,
-            type: element.type || 'text',
-            x: element.x || 0,
-            y: element.y || 0,
-            width: element.width || 100,
-            height: element.height || 50,
-            visible: true,
-            locked: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-        }
-      });
-
-      // Test final de sérialisation avant envoi
-      let serializedElements: string;
-      try {
-        serializedElements = JSON.stringify(cleanElements);
-        // Vérifier que c'est du JSON valide
-        JSON.parse(serializedElements);
-      } catch (jsonError) {
-        debugError('❌ [AUTO SAVE] Erreur JSON même après nettoyage:', jsonError);
-        debugError('🔍 [AUTO SAVE] Éléments nettoyés qui causent le problème:', cleanElements);
-        throw new Error('Impossible de sérialiser les éléments même après nettoyage');
-      }
-
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          action: 'pdf_builder_auto_save_template',
-          template_id: state.template.id.toString(),
-          elements: serializedElements,
-          nonce: nonce
-        })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        dispatch({
-          type: 'SAVE_TEMPLATE',
-          payload: {
-            id: state.template.id,
-            lastSaved: new Date()
-          }
-        });
-      } else {
-        debugError('Erreur sauvegarde automatique:', data.data);
-      }
-    } catch (error) {
-      debugError('Erreur réseau sauvegarde automatique:', error);
-    } finally {
-      dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });
-    }
-  */
-  // };
-
-  // Sauvegarde automatique DÉSACTIVÉE - utilise useSaveState à la place
-  // useEffect(() => {
-  //   if (!state.elements.length || !state.template.id) return;
-
-  //   const saveTimer = setTimeout(async () => {
-  //     try {
-  //       await autoSaveTemplate();
-  //     } catch (error) {
-  //       console.error('Erreur lors de la sauvegarde automatique:', error);
-  //     }
-  //   }, 2500); // 2.5 secondes
-
-  //   return () => clearTimeout(saveTimer);
-  // }, [state.elements, state.template.id]);
 
   // Actions helpers
   const addElement = (element: Element) => {
