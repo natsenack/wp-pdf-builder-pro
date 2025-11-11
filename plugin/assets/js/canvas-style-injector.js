@@ -130,26 +130,25 @@
         }
 
         // Intercepter le chargement du template et appliquer les styles
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            return originalFetch.apply(this, args).then(response => {
-                // Vérifier si c'est un appel AJAX pour charger un template
-                if (args[0] && args[0].includes('load_template')) {
-                    return response.clone().json().then(data => {
-                        if (data.success && data.data && data.data.template && data.data.template.elements) {
-
-                            // Appliquer les styles après un délai pour laisser React rendre
-                            setTimeout(() => {
-
-                                applyTemplateStyles(data.data.template);
-                            }, 500);
-                        }
-                        return response;
-                    }).catch(() => response);
-                }
-                return response;
-            });
-        };
+        // ✅ DISABLED: Cette interception causait un double rendu du canvas (race condition)
+        // React gère maintenant le rendu des styles via les composants, pas via ce mécanisme global
+        // const originalFetch = window.fetch;
+        // window.fetch = function(...args) {
+        //     return originalFetch.apply(this, args).then(response => {
+        //         // Vérifier si c'est un appel AJAX pour charger un template
+        //         if (args[0] && args[0].includes('load_template')) {
+        //             return response.clone().json().then(data => {
+        //                 if (data.success && data.data && data.data.template && data.data.template.elements) {
+        //                     setTimeout(() => {
+        //                         applyTemplateStyles(data.data.template);
+        //                     }, 500);
+        //                 }
+        //                 return response;
+        //             }).catch(() => response);
+        //         }
+        //         return response;
+        //     });
+        // };
 
         // Surveiller les mutations du DOM pour appliquer les styles aux nouveaux éléments
         const observer = new MutationObserver((mutations) => {
