@@ -10,7 +10,7 @@ import {
   BuilderMode,
   HistoryState
 } from '../../types/elements';
-import { debugLog, debugError } from '../../utils/debug';
+import { debugError } from '../../utils/debug';
 
 // Type pour les propriétés des éléments product_table
 interface ProductTableProperties {
@@ -584,7 +584,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   // Écouteur pour le chargement de template via API globale
   useEffect(() => {
     const handleLoadTemplate = (event: CustomEvent) => {
-      debugLog('🔄 [LOAD TEMPLATE] Custom event received', event.detail);
+
       const templateData = event.detail;
       if (templateData) {
         dispatch({

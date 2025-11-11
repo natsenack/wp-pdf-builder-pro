@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Element } from '../types/elements';
-import { debugLog, debugError } from '../utils/debug';
+import { debugError } from '../utils/debug';
 
 /**
  * Hook simplifié pour auto-save
@@ -136,21 +136,21 @@ export function useSaveStateV2({
       });
 
       // 🔍 DEBUG: Log elements being sent
-      debugLog('[SAVE V2] Elements avant envoi (count=' + cleanElements.length + ')');
+
       if (cleanElements.length > 0) {
-        debugLog('[SAVE V2] Element[0] structure: ' + JSON.stringify(cleanElements[0]));
+
         // Check for company_logo specifically
         cleanElements.forEach((el, idx) => {
           const elType = (el as Record<string, unknown>)?.type;
           const elSrc = (el as Record<string, unknown>)?.src;
           if (elType === 'company_logo') {
-            debugLog('[SAVE V2] company_logo[' + idx + '] sent: src=' + (elSrc || 'MISSING'));
+
           }
         });
       }
 
       // Faire la requête
-      debugLog('[SAVE V2] Envoi de la requête AJAX avec méthode POST...');
+
       const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
       const response = await fetch(ajaxUrl, {
         method: 'POST',
@@ -171,14 +171,14 @@ export function useSaveStateV2({
       }
 
       const data = await response.json();
-      debugLog('[SAVE V2] Server response: ' + JSON.stringify(data));
+
       if (data.data?.elements_saved) {
-        debugLog('[SAVE V2] Elements returned from server (count=' + data.data.elements_saved.length + ')');
+
         if (data.data.elements_saved.length > 0) {
-          debugLog('[SAVE V2] Server Element[0]: ' + JSON.stringify(data.data.elements_saved[0]));
+
           data.data.elements_saved.forEach((el: any, idx: number) => {
             if (el?.type === 'company_logo') {
-              debugLog('[SAVE V2] Server company_logo[' + idx + '] returned: src=' + (el?.src || 'MISSING'));
+
             }
           });
         }
@@ -201,7 +201,7 @@ export function useSaveStateV2({
       elementsHashRef.current = getElementsHash(elements);
       onSaveSuccess?.(savedAt);
 
-      debugLog('[SAVE V2] Sauvegarde réussie');
+
 
       // Retourner à idle après 2 secondes
       if (savedStateTimeoutRef.current) {
@@ -280,7 +280,7 @@ export function useSaveStateV2({
       return;
     }
 
-    debugLog('[SAVE V2] Changements détectés, programmation sauvegarde...');
+
 
     // Annuler le timeout précédent
     if (autoSaveTimeoutRef.current) {

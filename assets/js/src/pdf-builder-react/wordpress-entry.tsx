@@ -6,7 +6,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
-import { debugLog, debugError, debugWarn } from './utils/debug';
+import { debugError, debugWarn } from './utils/debug';
 import {
   registerEditorInstance,
   loadTemplate,
@@ -42,7 +42,7 @@ export function initPDFBuilderReact() {
 
   // Check if React has already been initialized
   if (container.hasAttribute('data-react-initialized')) {
-    debugLog('PDF Builder React: Already initialized, skipping');
+
     return true;
   }
 
@@ -63,17 +63,13 @@ export function initPDFBuilderReact() {
       // In development, it can help catch bugs, but production needs single render
       <PDFBuilder />
     );
-    debugLog('PDF Builder React: Successfully initialized');
+
 
     // Charger les données initiales du template s'il y en a
     const dataWindow = window as unknown as { pdfBuilderData?: { existingTemplate?: unknown } };
     const existingTemplate = dataWindow.pdfBuilderData?.existingTemplate;
     if (existingTemplate) {
       const tpl = existingTemplate as { id?: string; elements?: unknown[] };
-      debugLog('PDF Builder React: Loading existing template data', {
-        id: tpl.id,
-        elementsCount: Array.isArray(tpl.elements) ? tpl.elements.length : 0
-      });
       
       // Charger le template via l'API globale
       setTimeout(() => {

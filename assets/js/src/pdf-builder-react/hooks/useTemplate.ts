@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
-import { debugLog, debugError } from '../utils/debug';
+import { debugError } from '../utils/debug';
 
 // Debug flags
 const DEBUG_VERBOSE = false; // Set to true to see detailed logs
@@ -15,7 +15,7 @@ export function useTemplate() {
   const getTemplateIdFromUrl = (): string | null => {
     // Priorité 1: Utiliser le templateId des données PHP localisées
     if (window.pdfBuilderData?.templateId) {
-      debugLog('🔍 [useTemplate] Template ID from localized data:', window.pdfBuilderData.templateId);
+
       return window.pdfBuilderData.templateId.toString();
     }
     
@@ -23,11 +23,11 @@ export function useTemplate() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlTemplateId = urlParams.get('template_id');
     if (urlTemplateId) {
-      debugLog('🔍 [useTemplate] Template ID from URL:', urlTemplateId);
+
       return urlTemplateId;
     }
     
-    debugLog('⚠️ [useTemplate] No template ID found (neither localized data nor URL param)');
+
     return null;
   };
 
@@ -37,7 +37,7 @@ export function useTemplate() {
 
   // Charger un template existant
   const loadExistingTemplate = useCallback(async (templateId: string) => {
-    debugLog('🔄 [LOAD TEMPLATE] Début du chargement du template:', templateId);
+
     try {
       // ✅ CRITICAL: Add timestamp to AJAX URL to prevent caching
       // This ensures F5 and Ctrl+F5 load fresh data from server
@@ -50,14 +50,14 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      debugLog('📡 [LOAD TEMPLATE] Réponse API reçue:', result);
+
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
       const templateData = result.data.template;
-      debugLog('📊 [LOAD TEMPLATE] Données du template brutes:', templateData);
+
       
       // 🔍 Tracer les éléments reçus du serveur
       if (templateData.elements) {
@@ -66,17 +66,8 @@ export function useTemplate() {
             ? JSON.parse(templateData.elements)
             : templateData.elements;
           
-          debugLog('🔍 [LOAD TEMPLATE] Éléments bruts du serveur:', {
-            type: typeof templateData.elements,
-            count: Array.isArray(elementsForDebug) ? elementsForDebug.length : 'N/A',
-            firstElement: Array.isArray(elementsForDebug) ? elementsForDebug[0] : 'N/A',
-            hasCompanyLogo: Array.isArray(elementsForDebug) ? elementsForDebug.some((e: Record<string, unknown>) => e.type === 'company_logo') : false,
-            logoElements: Array.isArray(elementsForDebug) 
-              ? elementsForDebug.filter((e: Record<string, unknown>) => e.type === 'company_logo')
-              : []
-          });
         } catch (e) {
-          debugLog('🔍 [LOAD TEMPLATE] Could not trace elements:', e);
+
         }
       }
 
@@ -84,36 +75,36 @@ export function useTemplate() {
       let elements = [];
       let canvasData = null;
       try {
-        debugLog('🔍 [LOAD TEMPLATE] Parsing elements:', typeof templateData.elements, templateData.elements);
+
         // Check if elements is already an object or needs parsing
         if (typeof templateData.elements === 'string') {
           elements = JSON.parse(templateData.elements);
-          debugLog('✅ [LOAD TEMPLATE] Elements parsed from string:', elements.length, 'éléments');
+
         } else if (Array.isArray(templateData.elements)) {
           elements = templateData.elements;
-          debugLog('✅ [LOAD TEMPLATE] Elements already array:', elements.length, 'éléments');
+
         } else {
           elements = [];
-          debugLog('⚠️ [LOAD TEMPLATE] Elements not string or array, using empty array');
+
         }
 
-        debugLog('🔍 [LOAD TEMPLATE] Parsing canvas data');
+
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
         if (templateData.canvasWidth && templateData.canvasHeight) {
           canvasData = {
             width: templateData.canvasWidth,
             height: templateData.canvasHeight
           };
-          debugLog('✅ [LOAD TEMPLATE] Canvas dimensions from canvasWidth/canvasHeight:', canvasData);
+
         } else if (typeof templateData.canvas === 'string') {
           canvasData = JSON.parse(templateData.canvas);
-          debugLog('✅ [LOAD TEMPLATE] Canvas parsed from string');
+
         } else if (templateData.canvas && typeof templateData.canvas === 'object') {
           canvasData = templateData.canvas;
-          debugLog('✅ [LOAD TEMPLATE] Canvas already object');
+
         } else {
           canvasData = { width: 210, height: 297 };
-          debugLog('⚠️ [LOAD TEMPLATE] Canvas not valid, using defaults:', canvasData);
+
         }
       } catch (parseError) {
         debugError('❌ [LOAD TEMPLATE] Erreur de parsing:', parseError);
@@ -121,31 +112,18 @@ export function useTemplate() {
         canvasData = { width: 210, height: 297 };
       }
 
-      debugLog('🚀 [LOAD TEMPLATE] Dispatch LOAD_TEMPLATE avec:', {
-        id: templateId,
-        name: templateData.name,
-        elementsCount: elements.length,
-        canvas: canvasData
-      });
-
       // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
       const enrichedElements = elements.map((el: Record<string, unknown>) => {
         let enrichedElement = { ...el };
         
         // ✅ CORRECTION: Enrichir les éléments company_logo SEULEMENT si src ET logoUrl sont vides
         if (el.type === 'company_logo' && !el.src && !el.logoUrl) {
-          debugLog('🏷️ [LOAD TEMPLATE] Logo sans src/logoUrl trouvé, recherche de src:', {
-            elementId: el.id,
-            currentSrc: el.src,
-            currentLogoUrl: el.logoUrl,
-            elementKeys: Object.keys(el)
-          });
           
           // Essayer d'obtenir le logo depuis les propriétés de l'élément
           const logoUrl = (el.defaultSrc as string) || '';
           if (logoUrl) {
             enrichedElement.src = logoUrl;
-            debugLog('🏷️ [LOAD TEMPLATE] Logo enrichi avec src:', logoUrl);
+
           }
         }
         
@@ -175,9 +153,9 @@ export function useTemplate() {
         return enrichedElement;
       });
 
-      debugLog('📋 [LOAD TEMPLATE] Éléments enrichis - Total:', enrichedElements.length);
+
       enrichedElements.slice(0, 3).forEach((el: any, idx: number) => {
-        debugLog(`  [${idx}] ${el.type}: src=${el.src ? '✅' : '❌'}`);
+
       });
 
       // Créer une date valide pour lastSaved
@@ -229,12 +207,12 @@ export function useTemplate() {
   // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
-    debugLog('🔍 [useTemplate] Template ID from URL:', templateId, 'URL:', window.location.href);
+
     if (templateId) {
-      debugLog('🔄 [useTemplate] Loading template:', templateId);
+
       loadExistingTemplate(templateId);
     } else {
-      debugLog('⚠️ [useTemplate] No template ID in URL');
+
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

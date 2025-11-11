@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { usePreview } from '../../hooks/usePreview';
-import { debugLog } from '../../utils/debug';
 
 // Extension de Window pour l'API Preview
 declare global {
@@ -59,10 +58,10 @@ export const Header = memo(function Header({
   const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
     // Debug logging
   useEffect(() => {
-    debugLog('🔧 Header component mounted/updated');
+
   }, []);
 
-  debugLog('🎯 Rendering Header component');
+
   const { state } = useBuilder();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -97,11 +96,11 @@ export const Header = memo(function Header({
 
   // Debug logging
   useEffect(() => {
-    debugLog('🔧 Header component mounted/updated');
+
   }, []);
 
   useEffect(() => {
-    debugLog('🪟 Preview modal state changed:', showPreviewModal);
+
   }, [showPreviewModal]);
 
   // Synchroniser les états locaux avec les props quand elles changent
@@ -457,7 +456,7 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-            debugLog('📸 Aperçu Image button clicked!');
+
             openPreviewModal();
           }}
           onMouseEnter={() => setHoveredButton('preview-image')}
@@ -475,7 +474,7 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-            debugLog('📄 Aperçu PDF button clicked!');
+
             // Pour PDF, définir le format et ouvrir directement
             setPreviewFormat('pdf');
             openPreviewModal();

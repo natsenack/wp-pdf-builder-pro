@@ -1,6 +1,6 @@
 import { useBuilder } from '../contexts/builder/BuilderContext';
 import { useSaveStateV2, SaveState } from './useSaveStateV2';
-import { debugLog, debugError } from '../utils/debug';
+import { debugError } from '../utils/debug';
 
 /**
  * Hook useAutoSave
@@ -59,10 +59,10 @@ export function useAutoSave(): UseAutoSaveReturn {
     nonce,
     autoSaveInterval: autoSaveEnabled ? autoSaveInterval : 0, // 0 désactive l'auto-save
     onSaveStart: () => {
-      debugLog('[AUTO SAVE] Sauvegarde commencée (intervalle: ' + autoSaveInterval + 'ms)');
+
     },
     onSaveSuccess: (savedAt: string) => {
-      debugLog(`[AUTO SAVE] Succès le ${savedAt}`);
+
       // ✅ Mettre à jour l'état pour indiquer que le template n'est plus modifié
       dispatch({ type: 'SET_TEMPLATE_MODIFIED', payload: false });
     },

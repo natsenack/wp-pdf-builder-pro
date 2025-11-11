@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { debugLog } from '../utils/debug';
 
 export interface PreviewOptions {
   format?: 'png' | 'jpg' | 'pdf';
@@ -44,14 +43,14 @@ export function usePreview(): UsePreviewReturn {
   const [format, setFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
 
   const openModal = useCallback(() => {
-    debugLog('🪟 Ouverture de la modale d\'aperçu');
+
     setIsModalOpen(true);
     setError(null);
     setPreviewUrl(null);
   }, []);
 
   const closeModal = useCallback(() => {
-    debugLog('🪟 Fermeture de la modale d\'aperçu');
+
     setIsModalOpen(false);
     setIsGenerating(false);
     setPreviewUrl(null);
@@ -70,7 +69,7 @@ export function usePreview(): UsePreviewReturn {
     const finalFormat = options.format || format;
     const quality = options.quality || 150;
 
-    debugLog('🎨 Génération d\'aperçu démarrée', { format: finalFormat, quality });
+
 
     setIsGenerating(true);
     setError(null);
@@ -98,12 +97,12 @@ export function usePreview(): UsePreviewReturn {
       if (result && result.success && result.image_url) {
         if (finalFormat === 'pdf') {
           // Pour PDF, ouvrir dans un nouvel onglet
-          debugLog('📄 Ouverture du PDF dans un nouvel onglet', result.image_url);
+
           window.open(result.image_url, '_blank');
           setPreviewUrl(null); // Ne pas afficher dans la modale
         } else {
           // Pour PNG/JPG, afficher dans la modale
-          debugLog('🖼️ Aperçu généré avec succès', result.image_url);
+
           setPreviewUrl(result.image_url);
         }
       } else {
@@ -111,7 +110,7 @@ export function usePreview(): UsePreviewReturn {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la génération';
-      debugLog('❌ Erreur de génération d\'aperçu', errorMessage);
+
       setError(errorMessage);
     } finally {
       setIsGenerating(false);

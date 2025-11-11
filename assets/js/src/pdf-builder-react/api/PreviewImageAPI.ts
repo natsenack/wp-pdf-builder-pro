@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-import { debugLog, debugError, debugWarn } from '../utils/debug';
+import { debugError, debugWarn } from '../utils/debug';
 
 export interface PreviewImageOptions {
   orderId: number;
@@ -70,7 +70,7 @@ export class PreviewImageAPI {
     // Vérifier le cache
     const cacheKey = this.getCacheKey(options);
     if (this.cachedImages.has(cacheKey)) {
-      debugLog('[PreviewImageAPI] Image trouvée en cache');
+
       return {
         success: true,
         data: {
@@ -125,7 +125,7 @@ export class PreviewImageAPI {
       const imageData = result.data.image;
       this.cachedImages.set(cacheKey, imageData);
 
-      debugLog('[PreviewImageAPI] Image générée avec succès');
+
       return {
         success: true,
         data: result.data
@@ -178,7 +178,7 @@ export class PreviewImageAPI {
    */
   clearCache(): void {
     this.cachedImages.clear();
-    debugLog('[PreviewImageAPI] Cache vidé');
+
   }
 
   /**
@@ -192,7 +192,7 @@ export class PreviewImageAPI {
       }
     }
     keysToDelete.forEach(key => this.cachedImages.delete(key));
-    debugLog(`[PreviewImageAPI] Cache vidé pour commande ${orderId}`);
+
   }
 
   /**
