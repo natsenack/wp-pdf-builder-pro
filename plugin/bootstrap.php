@@ -349,7 +349,8 @@ function pdf_builder_load_new_classes()
     // Charger l'API
     $api_classes = [
         'api/PreviewImageAPI.php',
-        'api/MediaDiagnosticAPI.php'
+        'api/MediaDiagnosticAPI.php',
+        'api/MediaLibraryFixAPI.php'
     ];
     foreach ($api_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
