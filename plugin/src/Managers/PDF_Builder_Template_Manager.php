@@ -71,7 +71,9 @@ class PdfBuilderTemplateManager
         try {
             // Log pour debug
             error_log('PDF Builder: ajaxSaveTemplateV3 called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
+            // Write to temp file for visibility
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_save.log', date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
+            file_put_contents(ABSPATH . '/wp-content/debug_pdf_save.log', date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
@@ -179,6 +181,20 @@ class PdfBuilderTemplateManager
 
                 // Log détaillé des éléments pour vérifier les propriétés
                 error_log('PDF Builder: SAVE - Elements data saved, count: ' . count($elements_data));
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_save.log', date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
+
+                // Log order_number elements specifically
+                foreach ($elements_data as $el) {
+                    if (isset($el['type']) && $el['type'] === 'order_number') {
+                        error_log('PDF Builder: SAVE - Order number element: ' . json_encode([
+                            'id' => $el['id'] ?? 'missing',
+                            'contentAlign' => $el['contentAlign'] ?? 'missing',
+                            'labelPosition' => $el['labelPosition'] ?? 'missing',
+                            'type' => $el['type'] ?? 'missing'
+                        ]));
+                        file_put_contents(ABSPATH . '/wp-content/debug_pdf_save.log', date('Y-m-d H:i:s') . ' ORDER ELEMENT: ' . json_encode($el) . "\n", FILE_APPEND);
+                    }
+                }
 
                 // 🏷️ Enrichir les éléments company_logo avec src si absent (même logique que GET)
                 foreach ($elements_data as &$el) {
@@ -639,6 +655,7 @@ class PdfBuilderTemplateManager
                 
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
                 error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
+                file_put_contents(ABSPATH . '/wp-content/debug_pdf_load.log', date('Y-m-d H:i:s') . ' LOAD - RAW DATA: ' . substr($template_data_raw, 0, 1000) . "\n", FILE_APPEND);
 
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
@@ -716,6 +733,7 @@ class PdfBuilderTemplateManager
                         'contentAlign' => $first_element['contentAlign'] ?? 'missing',
                         'labelPosition' => $first_element['labelPosition'] ?? 'missing'
                     ]));
+                    file_put_contents(ABSPATH . '/wp-content/debug_pdf_load.log', date('Y-m-d H:i:s') . ' LOAD - ORDER ELEMENT: ' . json_encode($first_element) . "\n", FILE_APPEND);
                 }
             }
 
