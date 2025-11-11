@@ -21,6 +21,43 @@ $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
 $WorkingDir = "I:\wp-pdf-builder-pro"
 
+# Fonction pour générer un message de commit intelligent
+function Get-SmartCommitMessage {
+    param([string[]]$ModifiedFiles)
+
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+    # Analyser les types de fichiers modifiés
+    $hasJs = $ModifiedFiles | Where-Object { $_ -like "*.js" -or $_ -like "*.jsx" -or $_ -like "*.ts" -or $_ -like "*.tsx" }
+    $hasCss = $ModifiedFiles | Where-Object { $_ -like "*.css" -or $_ -like "*.scss" -or $_ -like "*.sass" }
+    $hasPhp = $ModifiedFiles | Where-Object { $_ -like "*.php" }
+    $hasDist = $ModifiedFiles | Where-Object { $_ -like "*dist*" -or $_ -like "*build*" }
+    $hasConfig = $ModifiedFiles | Where-Object { $_ -like "*.json" -or $_ -like "*.config.*" -or $_ -like "*.yml" -or $_ -like "*.yaml" }
+
+    # Priorité: JS/TS > PHP > CSS > Config > Dist
+    if ($hasJs) {
+        $type = "feat"
+        $description = "Mise à jour des assets JavaScript/TypeScript"
+    } elseif ($hasPhp) {
+        $type = "fix"
+        $description = "Corrections PHP"
+    } elseif ($hasCss) {
+        $type = "style"
+        $description = "Mise à jour des styles CSS"
+    } elseif ($hasConfig) {
+        $type = "chore"
+        $description = "Configuration mise à jour"
+    } elseif ($hasDist) {
+        $type = "build"
+        $description = "Build et déploiement"
+    } else {
+        $type = "chore"
+        $description = "Mise à jour fichiers"
+    }
+
+    return "$type`: $description - $timestamp"
+}
+
 # Configuration FastMode
 if ($FastMode) {
     $SkipConnectionTest = $true
@@ -370,9 +407,8 @@ try {
     # Vérifier s'il y a des changements à committer
     $status = & git status --porcelain 2>&1
     if ($status -and $status.Count -gt 0) {
-        # Commit
-        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $commitMsg = "fix: Drag-drop FTP deploy - $timestamp"
+        # Générer un message de commit intelligent basé sur les fichiers modifiés
+        $commitMsg = Get-SmartCommitMessage -ModifiedFiles $pluginModified
         Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
         $commitResult = & git commit -m $commitMsg 2>&1
