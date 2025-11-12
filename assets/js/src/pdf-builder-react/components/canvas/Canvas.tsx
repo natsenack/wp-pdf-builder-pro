@@ -2316,6 +2316,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // ✅ IMPORTANT: Include selection in hash to trigger re-render when selection changes
     const selectionHash = JSON.stringify(state.selection.selectedElements);
     elementsHash += selectionHash;
+
+    // ✅ CRITICAL: Include imageLoadCount in hash to force re-render when images load
+    elementsHash += `;imageLoadCount:${imageLoadCount}`;
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
     console.log(`🔄 [CANVAS] Checking hash - current: ${lastRenderedElementsRef.current?.substring(0, 50)}..., new: ${elementsHash?.substring(0, 50)}...`);
