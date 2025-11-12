@@ -12,6 +12,8 @@ var pdfBuilderWizard = {
         this.bindEvents();
         this.updateNavigation();
         this.initLogoPreview();
+        // Test AJAX au chargement
+        this.testAjax();
     },
 
     bindEvents: function() {
@@ -49,6 +51,23 @@ var pdfBuilderWizard = {
         // Aperçu du logo
         jQuery('#company_logo').on('input', function() {
             self.updateLogoPreview(jQuery(this).val());
+        });
+    },
+
+    testAjax: function() {
+        console.log('PDF Builder Wizard: Testing AJAX...');
+        jQuery.ajax({
+            url: pdfBuilderWizard.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'test_ajax'
+            },
+            success: function(response) {
+                console.log('PDF Builder Wizard: AJAX test successful:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('PDF Builder Wizard: AJAX test failed:', xhr, status, error);
+            }
         });
     },
 
