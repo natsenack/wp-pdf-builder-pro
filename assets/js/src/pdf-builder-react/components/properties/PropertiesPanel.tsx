@@ -8,6 +8,9 @@ import { OrderNumberProperties } from './OrderNumberProperties';
 import { DynamicTextProperties } from './DynamicTextProperties';
 import { MentionsProperties } from './MentionsProperties';
 import { DocumentTypeProperties } from './DocumentTypeProperties';
+import { TextProperties } from './TextProperties';
+import { ShapeProperties } from './ShapeProperties';
+import { ImageProperties } from './ImageProperties';
 import { ElementProperties } from './ElementProperties';
 
 interface PropertiesPanelProps {
@@ -212,72 +215,106 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           </div>
           )}
 
-          {/* Propriétés spécifiques selon le type */}
           {element.type === 'product_table' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <ProductTableProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'customer_info' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <CustomerInfoProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'company_info' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <CompanyInfoProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'company_logo' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <CompanyLogoProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'order_number' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <OrderNumberProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'document_type' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <DocumentTypeProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'dynamic-text' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <DynamicTextProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'mentions' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <MentionsProperties
-              element={element}
+              element={element as any}
               onChange={handlePropertyChange}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
           )}
-          {(element.type === 'rectangle' || element.type === 'circle' || element.type === 'text' || element.type === 'image') && (
+          {element.type === 'text' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <TextProperties
+              element={element as any}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {(element.type === 'rectangle' || element.type === 'circle') && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <ShapeProperties
+              element={element as any}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {element.type === 'image' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <ImageProperties
+              element={element as any}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image') && (
             <ElementProperties
               element={element}
               onChange={handlePropertyChange}
