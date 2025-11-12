@@ -10,32 +10,34 @@ const Accordion = ({ title, children, defaultOpen = false }: {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div style={{ marginBottom: '8px', border: '1px solid #e1e5e9', borderRadius: '4px' }}>
-      <button
+    <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+      <div
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          width: '100%',
-          padding: '8px 12px',
+          padding: '12px',
           backgroundColor: '#f8f9fa',
-          border: 'none',
-          borderRadius: isOpen ? '4px 4px 0 0' : '4px',
           cursor: 'pointer',
-          textAlign: 'left',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          color: '#495057',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          borderBottom: isOpen ? '1px solid #e9ecef' : 'none'
         }}
       >
-        <span>{title}</span>
-        <span style={{ fontSize: '10px', color: '#6c757d' }}>
-          {isOpen ? '▼' : '▶'}
+        <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+          {title}
+        </h4>
+        <span style={{
+          fontSize: '12px',
+          color: '#6c757d',
+          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.2s ease'
+        }}>
+          ▼
         </span>
-      </button>
+      </div>
+
       {isOpen && (
-        <div style={{ padding: '12px', backgroundColor: '#ffffff', borderTop: '1px solid #e1e5e9' }}>
+        <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
           {children}
         </div>
       )}
