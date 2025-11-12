@@ -226,7 +226,7 @@ export const Header = memo(function Header({
       width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
       zIndex: 1000,
       boxSizing: 'border-box',
-      transition: 'all 0.15s ease-out'
+      transition: 'all 0.25s ease-in-out'
     }}>
       {/* Left Section - Title and Status */}
       <div style={{
