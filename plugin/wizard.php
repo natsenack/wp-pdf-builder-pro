@@ -413,8 +413,12 @@ class PDF_Builder_Installation_Wizard {
             return $info;
         }
 
-        // Nom de l'entreprise (nom de la boutique)
-        $info['name'] = get_option('woocommerce_store_name', '');
+        // Nom de l'entreprise (nom de la boutique WooCommerce ou nom du site)
+        $store_name = get_option('woocommerce_store_name', '');
+        if (empty($store_name)) {
+            $store_name = get_option('blogname', '');
+        }
+        $info['name'] = $store_name;
 
         // Adresse de la boutique
         $address_parts = array(
@@ -434,14 +438,29 @@ class PDF_Builder_Installation_Wizard {
         // Téléphone (si configuré dans WooCommerce)
         $info['phone'] = get_option('woocommerce_store_phone', '');
 
-        // Email (email admin ou email de la boutique)
+        // Email (email WooCommerce ou admin email)
         $info['email'] = get_option('woocommerce_email_from_address', '');
         if (empty($info['email'])) {
             $info['email'] = get_option('admin_email', '');
         }
 
-        // Logo (si configuré dans WooCommerce)
-        $info['logo'] = get_option('woocommerce_store_logo', '');
+        // Logo (logo WooCommerce personnalisé ou site icon WordPress)
+        $logo_url = get_option('woocommerce_store_logo', '');
+        if (empty($logo_url)) {
+            // Essayer le custom logo WordPress
+            $custom_logo_id = get_option('site_logo', '');
+            if (!empty($custom_logo_id)) {
+                $logo_url = wp_get_attachment_url($custom_logo_id);
+            }
+            // Fallback vers le site icon
+            if (empty($logo_url)) {
+                $site_icon_id = get_option('site_icon', '');
+                if (!empty($site_icon_id)) {
+                    $logo_url = wp_get_attachment_url($site_icon_id);
+                }
+            }
+        }
+        $info['logo'] = $logo_url;
 
         return $info;
     }
