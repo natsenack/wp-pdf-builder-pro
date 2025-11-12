@@ -340,6 +340,9 @@ export interface CustomerInfoElementProperties {
   showPhone?: boolean;
   showAddress?: boolean;
   showCompany?: boolean;
+  showCompanySection?: boolean; // Contrôle l'affichage de toute la section entreprise B2B
+  showVatNumber?: boolean;
+  showCompanyAddress?: boolean;
   labelColor?: string;
   valueColor?: string;
   separator?: string;

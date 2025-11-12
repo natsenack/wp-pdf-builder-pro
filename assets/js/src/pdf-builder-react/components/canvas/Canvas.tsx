@@ -689,6 +689,96 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
     }
     ctx.fillText(line, 10, compactY);
   }
+
+  // Informations entreprise (B2B) - seulement si activé
+  const showCompanySection = props.showCompanySection !== false;
+  const showCompany = props.showCompany !== false;
+  const showVatNumber = props.showVatNumber !== false;
+  const showCompanyAddress = props.showCompanyAddress !== false;
+
+  if (showCompanySection) {
+    // Sauter une ligne avant la section entreprise
+    y += 10;
+
+    // En-tête section entreprise
+    ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
+    ctx.fillStyle = normalizeColor(props.headerTextColor || '#111827');
+    ctx.fillText('Informations Entreprise', 10, y);
+    y += 18;
+    ctx.fillStyle = normalizeColor(props.textColor || '#000000');
+    ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+
+    // Données entreprise fictives ou réelles selon le mode
+    let companyData: {
+      name: string;
+      vatNumber: string;
+      address: string;
+    };
+
+    if (state.previewMode === 'command') {
+      // En mode commande réel, récupérer depuis WooCommerce
+      // TODO: Implémenter récupération des données entreprise depuis WooCommerce
+      companyData = {
+        name: 'Entreprise Client', // À remplacer par données réelles
+        vatNumber: 'FR 12 345 678 901', // À remplacer par données réelles
+        address: 'Adresse entreprise' // À remplacer par données réelles
+      };
+    } else {
+      // Données fictives pour le mode éditeur
+      companyData = {
+        name: 'Tech Solutions SARL',
+        vatNumber: 'FR 12 345 678 901',
+        address: '123 rue de l\'Innovation, 75001 Paris'
+      };
+    }
+
+    if (layout === 'vertical') {
+      if (showCompany) {
+        ctx.fillText(companyData.name, 10, y);
+        y += 18;
+      }
+      if (showVatNumber) {
+        ctx.fillText(`TVA: ${companyData.vatNumber}`, 10, y);
+        y += 18;
+      }
+      if (showCompanyAddress) {
+        ctx.fillText(companyData.address, 10, y);
+      }
+    } else if (layout === 'horizontal') {
+      let companyText = '';
+      if (showCompany) companyText += companyData.name;
+      if (showVatNumber) companyText += (companyText ? ' - TVA: ' : 'TVA: ') + companyData.vatNumber;
+      if (companyText) ctx.fillText(companyText, 10, y);
+
+      if (showCompanyAddress) {
+        ctx.fillText(companyData.address, element.width - ctx.measureText(companyData.address).width - 10, y);
+      }
+    } else if (layout === 'compact') {
+      let compactCompanyText = '';
+      if (showCompany) compactCompanyText += companyData.name;
+      if (showVatNumber) compactCompanyText += (compactCompanyText ? ' • TVA: ' : 'TVA: ') + companyData.vatNumber;
+      if (showCompanyAddress) compactCompanyText += (compactCompanyText ? ' • ' : '') + companyData.address.split(',')[0];
+
+      // Wrap text if too long
+      const maxWidth = element.width - 20;
+      const words = compactCompanyText.split(' ');
+      let line = '';
+      let compactY = y;
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && i > 0) {
+          ctx.fillText(line, 10, compactY);
+          line = words[i] + ' ';
+          compactY += 16;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, 10, compactY);
+    }
+  }
 };
 
 const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
