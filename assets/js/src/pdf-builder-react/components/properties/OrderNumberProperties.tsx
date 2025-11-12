@@ -1,6 +1,66 @@
 import React from 'react';
 import { OrderNumberElement } from '../../types/elements';
 
+// Composant Toggle personnalisé
+const Toggle = ({ checked, onChange, label, description }: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+  description: string;
+}) => (
+  <div style={{ marginBottom: '12px' }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '6px'
+    }}>
+      <label style={{
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#333',
+        flex: 1
+      }}>
+        {label}
+      </label>
+      <div
+        onClick={() => onChange(!checked)}
+        style={{
+          position: 'relative',
+          width: '44px',
+          height: '24px',
+          backgroundColor: checked ? '#007bff' : '#ccc',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s ease',
+          border: 'none'
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '2px',
+            left: checked ? '22px' : '2px',
+            width: '20px',
+            height: '20px',
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            transition: 'left 0.2s ease',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          }}
+        />
+      </div>
+    </div>
+    <div style={{
+      fontSize: '11px',
+      color: '#666',
+      lineHeight: '1.4'
+    }}>
+      {description}
+    </div>
+  </div>
+);
+
 interface OrderNumberPropertiesProps {
   element: OrderNumberElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
@@ -86,31 +146,19 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Fonctionnalités */}
       {currentTab === 'fonctionnalites' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le numéro de commande
-            </label>
-            <input
-              type="checkbox"
-              checked={true}
-              disabled={true}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Toujours affiché</span>
-          </div>
+          <Toggle
+            checked={true}
+            onChange={() => {}} // Désactivé, toujours affiché
+            label="Afficher le numéro de commande"
+            description="Toujours affiché"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le libellé
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showLabel !== false}
-              onChange={(e) => onChange(element.id, 'showLabel', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche un texte devant le numéro</span>
-          </div>
+          <Toggle
+            checked={element.showLabel !== false}
+            onChange={(checked) => onChange(element.id, 'showLabel', checked)}
+            label="Afficher le libellé"
+            description="Affiche un texte devant le numéro"
+          />
 
           {element.showLabel !== false && (
             <div style={{ marginBottom: '12px' }}>
@@ -158,18 +206,12 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la date
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showDate !== false}
-              onChange={(e) => onChange(element.id, 'showDate', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche la date de commande</span>
-          </div>
+          <Toggle
+            checked={element.showDate !== false}
+            onChange={(checked) => onChange(element.id, 'showDate', checked)}
+            label="Afficher la date"
+            description="Affiche la date de commande"
+          />
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
