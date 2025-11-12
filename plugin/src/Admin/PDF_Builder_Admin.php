@@ -1867,42 +1867,82 @@ class PdfBuilderAdmin
                         break;
                     case 'customer_info':
                         if ($order) {
-            // Formater comme dans le builder avec les vraies données
+                            // Données réelles depuis WooCommerce
+                            $billing_data = [
+                                'first_name' => $order->get_billing_first_name(),
+                                'last_name' => $order->get_billing_last_name(),
+                                'company' => $order->get_billing_company(),
+                                'address_1' => $order->get_billing_address_1(),
+                                'address_2' => $order->get_billing_address_2(),
+                                'city' => $order->get_billing_city(),
+                                'postcode' => $order->get_billing_postcode(),
+                                'country' => $order->get_billing_country(),
+                                'state' => $order->get_billing_state(),
+                                'email' => $order->get_billing_email(),
+                                'phone' => $order->get_billing_phone(),
+                                'payment_method' => $order->get_payment_method_title(),
+                                'transaction_id' => $order->get_transaction_id() ?: '',
+                            ];
+
+                            // Construction de l'adresse complète
+                            $full_name = trim($billing_data['first_name'] . ' ' . $billing_data['last_name']);
+                            $full_address = '';
+                            if (!empty($full_name)) {
+                                $full_address .= '<div style="font-weight: bold; margin-bottom: 4px;">' . esc_html($full_name) . '</div>';
+                            }
+                            if (!empty($billing_data['company'])) {
+                                $full_address .= '<div>' . esc_html($billing_data['company']) . '</div>';
+                            }
+                            if (!empty($billing_data['address_1'])) {
+                                $full_address .= '<div>' . esc_html($billing_data['address_1']) . '</div>';
+                            }
+                            if (!empty($billing_data['address_2'])) {
+                                $full_address .= '<div>' . esc_html($billing_data['address_2']) . '</div>';
+                            }
+                            $city_line = trim($billing_data['postcode'] . ' ' . $billing_data['city']);
+                            if (!empty($city_line)) {
+                                $full_address .= '<div>' . esc_html($city_line) . '</div>';
+                            }
+                            $country_line = '';
+                            if (!empty($billing_data['state'])) {
+                                $country_line .= $billing_data['state'] . ', ';
+                            }
+                            $country_line .= $billing_data['country'];
+                            if (!empty($country_line)) {
+                                $full_address .= '<div>' . esc_html($country_line) . '</div>';
+                            }
+
                             $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
-                            $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
-            // Adresse de facturation
-                            $billing_address = $order->get_formatted_billing_address();
-                            if ($billing_address) {
-                                $address_lines = explode("\n", $billing_address);
-                                foreach ($address_lines as $line) {
-                                    if (!empty(trim($line))) {
-                                                $customer_html .= '<div>' . esc_html(trim($line)) . '</div>';
-                                    }
-                                }
-                            }
+                            $customer_html .= $full_address;
 
-            // Email
-                            $email = $order->get_billing_email();
-                            if (!empty($email)) {
-                                $customer_html .= '<div>' . esc_html($email) . '</div>';
+                            if (!empty($billing_data['email'])) {
+                                $customer_html .= '<div style="margin-top: 4px;">' . esc_html($billing_data['email']) . '</div>';
                             }
-
-            // Téléphone
-                            $phone = $order->get_billing_phone();
-                            if (!empty($phone)) {
-                                $customer_html .= '<div>' . esc_html($phone) . '</div>';
+                            if (!empty($billing_data['phone'])) {
+                                $customer_html .= '<div>' . esc_html($billing_data['phone']) . '</div>';
+                            }
+                            if (!empty($billing_data['payment_method'])) {
+                                $customer_html .= '<div style="margin-top: 4px; font-style: italic;">Paiement: ' . esc_html($billing_data['payment_method']) . '</div>';
+                            }
+                            if (!empty($billing_data['transaction_id'])) {
+                                $customer_html .= '<div style="font-size: 11px; color: #666;">ID: ' . esc_html($billing_data['transaction_id']) . '</div>';
                             }
 
                             $customer_html .= '</div>';
                             $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $customer_html);
                         } else {
-            // Exemple fictif comme dans le builder
+                            // Données fictives pour l'éditeur (canvas)
                             $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
-                            $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Client</div>';
-                            $customer_html .= '<div>Jean Dupont</div>';
+                            $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Jean Dupont</div>';
+                            $customer_html .= '<div>Entreprise Exemple</div>';
                             $customer_html .= '<div>123 Rue de la Paix</div>';
+                            $customer_html .= '<div>Appartement 4B</div>';
                             $customer_html .= '<div>75001 Paris</div>';
-                            $customer_html .= '<div>France</div>';
+                            $customer_html .= '<div>Île-de-France, France</div>';
+                            $customer_html .= '<div style="margin-top: 4px;">jean.dupont@example.com</div>';
+                            $customer_html .= '<div>+33 1 23 45 67 89</div>';
+                            $customer_html .= '<div style="margin-top: 4px; font-style: italic;">Paiement: Carte de crédit</div>';
+                            $customer_html .= '<div style="font-size: 11px; color: #666;">ID: TXN123456789</div>';
                             $customer_html .= '</div>';
                             $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $customer_html);
                         }

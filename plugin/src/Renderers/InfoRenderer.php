@@ -156,7 +156,7 @@ class InfoRenderer
         }
 
         // Configuration des champs à afficher
-        $fields = $properties['fields'] ?? ['first_name', 'last_name', 'address', 'email', 'phone'];
+        $fields = $properties['fields'] ?? ['first_name', 'last_name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
         $layout = $properties['layout'] ?? 'vertical';
         $showLabels = $properties['show_labels'] ?? true;
 // Génération du HTML

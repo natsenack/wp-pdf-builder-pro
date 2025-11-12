@@ -280,7 +280,7 @@ class PdfBuilderProGenerator
 
                 $customer_info = '';
                 if ($this->order) {
-                    $fields = $element['fields'] ?? ['name', 'phone', 'address', 'email'];
+                    $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
                     $show_labels = $element['showLabels'] ?? true;
                     $label_style = $element['labelStyle'] ?? 'normal';
 
@@ -296,11 +296,34 @@ class PdfBuilderProGenerator
                         }
                     }
 
-                    if (in_array('phone', $fields)) {
-                        $phone = $this->order->get_billing_phone();
-                        if ($phone) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Tél:</strong> ' : 'Tél: ') : '';
-                            $customer_parts[] = $label . $phone;
+                    if (in_array('company', $fields)) {
+                        $company = $this->order->get_billing_company();
+                        if ($company) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
+                            $customer_parts[] = $label . $company;
+                        }
+                    }
+
+                    if (in_array('address', $fields)) {
+                        $address_parts = [];
+                        $address_1 = $this->order->get_billing_address_1();
+                        $address_2 = $this->order->get_billing_address_2();
+                        $city = $this->order->get_billing_city();
+                        $postcode = $this->order->get_billing_postcode();
+                        $state = $this->order->get_billing_state();
+                        $country = $this->order->get_billing_country();
+
+                        if ($address_1) $address_parts[] = $address_1;
+                        if ($address_2) $address_parts[] = $address_2;
+                        if ($postcode || $city) $address_parts[] = trim($postcode . ' ' . $city);
+                        if ($state || $country) {
+                            $country_line = $state ? $state . ', ' . $country : $country;
+                            $address_parts[] = $country_line;
+                        }
+
+                        if (!empty($address_parts)) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                            $customer_parts[] = $label . implode('<br>', $address_parts);
                         }
                     }
 
@@ -312,12 +335,72 @@ class PdfBuilderProGenerator
                         }
                     }
 
-                    if (in_array('address', $fields)) {
-                        $address = $this->order->get_formatted_billing_address();
-                        if ($address) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
-                            $customer_parts[] = $label . nl2br($address);
+                    if (in_array('phone', $fields)) {
+                        $phone = $this->order->get_billing_phone();
+                        if ($phone) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
+                            $customer_parts[] = $label . $phone;
                         }
+                    }
+
+                    if (in_array('payment_method', $fields)) {
+                        $payment_method = $this->order->get_payment_method_title();
+                        if ($payment_method) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
+                            $customer_parts[] = $label . $payment_method;
+                        }
+                    }
+
+                    if (in_array('transaction_id', $fields)) {
+                        $transaction_id = $this->order->get_transaction_id();
+                        if ($transaction_id) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
+                            $customer_parts[] = $label . $transaction_id;
+                        }
+                    }
+
+                    $customer_info = implode('<br>', $customer_parts);
+                } else {
+                    // Données fictives pour l'éditeur
+                    $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
+                    $show_labels = $element['showLabels'] ?? true;
+                    $label_style = $element['labelStyle'] ?? 'normal';
+
+                    $customer_parts = [];
+
+                    if (in_array('name', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
+                        $customer_parts[] = $label . 'Jean Dupont';
+                    }
+
+                    if (in_array('company', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
+                        $customer_parts[] = $label . 'Entreprise Exemple';
+                    }
+
+                    if (in_array('address', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                        $customer_parts[] = $label . '123 Rue de la Paix<br>Appartement 4B<br>75001 Paris<br>Île-de-France, France';
+                    }
+
+                    if (in_array('email', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
+                        $customer_parts[] = $label . 'jean.dupont@example.com';
+                    }
+
+                    if (in_array('phone', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
+                        $customer_parts[] = $label . '+33 1 23 45 67 89';
+                    }
+
+                    if (in_array('payment_method', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
+                        $customer_parts[] = $label . 'Carte de crédit';
+                    }
+
+                    if (in_array('transaction_id', $fields)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
+                        $customer_parts[] = $label . 'TXN123456789';
                     }
 
                     $customer_info = implode('<br>', $customer_parts);
