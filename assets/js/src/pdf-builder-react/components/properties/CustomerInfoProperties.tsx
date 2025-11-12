@@ -146,31 +146,26 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
       {/* Onglet Fonctionnalités */}
       {customerCurrentTab === 'fonctionnalites' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les en-têtes
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showHeaders !== false}
-              onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les titres des sections</span>
-          </div>
+          <Toggle
+            checked={element.showHeaders !== false}
+            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+            label="Afficher les en-têtes"
+            description="Affiche les titres des sections"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les bordures
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showBorders !== false}
-              onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures autour des sections</span>
-          </div>
+          <Toggle
+            checked={element.showBorders !== false}
+            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+            label="Afficher les bordures"
+            description="Affiche les bordures autour des sections"
+          />
+
+          <Toggle
+            checked={element.showName !== false}
+            onChange={(checked) => onChange(element.id, 'showName', checked)}
+            label="Afficher le nom"
+            description="Nom du client"
+          />
 
           <Toggle
             checked={element.showFullName !== false}
@@ -209,6 +204,13 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           </div>
 
           <Toggle
+            checked={element.showCompany !== false}
+            onChange={(checked) => onChange(element.id, 'showCompany', checked)}
+            label="Afficher l'entreprise"
+            description="Nom de l'entreprise du client"
+          />
+
+          <Toggle
             checked={element.showCompanyName !== false}
             onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
             label="Afficher le nom de l'entreprise"
@@ -222,18 +224,12 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             description="Numéro de TVA intracommunautaire"
           />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l&apos;adresse de l&apos;entreprise
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showCompanyAddress !== false}
-              onChange={(e) => onChange(element.id, 'showCompanyAddress', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Adresse de l&apos;entreprise (si différente)</span>
-          </div>
+          <Toggle
+            checked={element.showCompanyAddress !== false}
+            onChange={(checked) => onChange(element.id, 'showCompanyAddress', checked)}
+            label="Afficher l'adresse de l'entreprise"
+            description="Adresse de l'entreprise (si différente)"
+          />
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
