@@ -146,70 +146,119 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {/* Onglet Fonctionnalités */}
       {currentTab === 'fonctionnalites' && (
         <>
-          <Toggle
-            checked={element.showHeaders !== false}
-            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
-            label="Afficher les en-têtes"
-            description="Affiche les noms des colonnes"
-          />
+          {/* Section Structure du tableau */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Structure du tableau
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showHeaders !== false}
+                onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+                label="Afficher les en-têtes"
+                description="Affiche les noms des colonnes"
+              />
 
-          <Toggle
-            checked={element.showBorders !== false}
-            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
-            label="Afficher les bordures"
-            description="Affiche les bordures du tableau"
-          />
+              <Toggle
+                checked={element.showBorders !== false}
+                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+                label="Afficher les bordures"
+                description="Affiche les bordures du tableau"
+              />
 
-          <Toggle
-            checked={element.showAlternatingRows !== false}
-            onChange={(checked) => onChange(element.id, 'showAlternatingRows', checked)}
-            label="Lignes alternées"
-            description="Alterne les couleurs des lignes"
-          />
+              <Toggle
+                checked={element.showAlternatingRows !== false}
+                onChange={(checked) => onChange(element.id, 'showAlternatingRows', checked)}
+                label="Lignes alternées"
+                description="Alterne les couleurs des lignes"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showSku !== false}
-            onChange={(checked) => onChange(element.id, 'showSku', checked)}
-            label="Afficher les SKU"
-            description="Colonne des références produit"
-          />
+          {/* Section Colonnes produits */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Colonnes produits
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showSku !== false}
+                onChange={(checked) => onChange(element.id, 'showSku', checked)}
+                label="Afficher les SKU"
+                description="Colonne des références produit"
+              />
 
-          <Toggle
-            checked={element.showDescription !== false}
-            onChange={(checked) => onChange(element.id, 'showDescription', checked)}
-            label="Afficher les descriptions"
-            description="Colonne des descriptions courtes"
-          />
+              <Toggle
+                checked={element.showDescription !== false}
+                onChange={(checked) => onChange(element.id, 'showDescription', checked)}
+                label="Afficher les descriptions"
+                description="Colonne des descriptions courtes"
+              />
 
-          <Toggle
-            checked={element.showQuantity !== false}
-            onChange={(checked) => onChange(element.id, 'showQuantity', checked)}
-            label="Afficher la quantité"
-            description="Colonne quantité des produits"
-          />
+              <Toggle
+                checked={element.showQuantity !== false}
+                onChange={(checked) => onChange(element.id, 'showQuantity', checked)}
+                label="Afficher la quantité"
+                description="Colonne quantité des produits"
+              />
+            </div>
+          </div>
 
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+          {/* Section Éléments de calcul */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Éléments de calcul
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showShipping !== false}
+                onChange={(checked) => onChange(element.id, 'showShipping', checked)}
+                label="Afficher les frais de port"
+                description="Affiche les frais de livraison"
+              />
 
-          <Toggle
-            checked={element.showShipping !== false}
-            onChange={(checked) => onChange(element.id, 'showShipping', checked)}
-            label="Afficher les frais de port"
-            description="Affiche les frais de livraison"
-          />
+              <Toggle
+                checked={element.showTax !== false}
+                onChange={(checked) => onChange(element.id, 'showTax', checked)}
+                label="Afficher la TVA"
+                description="Affiche les taxes sur le total"
+              />
 
-          <Toggle
-            checked={element.showTax !== false}
-            onChange={(checked) => onChange(element.id, 'showTax', checked)}
-            label="Afficher la TVA"
-            description="Affiche les taxes sur le total"
-          />
-
-          <Toggle
-            checked={element.showGlobalDiscount !== false}
-            onChange={(checked) => onChange(element.id, 'showGlobalDiscount', checked)}
-            label="Afficher la remise globale"
-            description="Affiche la remise globale appliquée"
-          />
+              <Toggle
+                checked={element.showGlobalDiscount !== false}
+                onChange={(checked) => onChange(element.id, 'showGlobalDiscount', checked)}
+                label="Afficher la remise globale"
+                description="Affiche la remise globale appliquée"
+              />
+            </div>
+          </div>
         </>
       )}
 
