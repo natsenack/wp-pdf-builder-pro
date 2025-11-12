@@ -524,10 +524,17 @@ class PDF_Builder_Installation_Wizard {
      */
     public function handle_ajax_step() {
         try {
+            // Log pour debug
+            error_log('PDF Builder Wizard: AJAX request received');
+            error_log('PDF Builder Wizard: POST data: ' . print_r($_POST, true));
+
             check_ajax_referer('pdf_builder_wizard_nonce', 'nonce');
 
             $step = sanitize_text_field($_POST['step']);
+            error_log('PDF Builder Wizard: Step = ' . $step);
+
             $data = isset($_POST['data']) ? $_POST['data'] : array();
+            error_log('PDF Builder Wizard: Data = ' . print_r($data, true));
 
             $response = array('success' => false);
 
@@ -549,7 +556,10 @@ class PDF_Builder_Installation_Wizard {
                     $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
             }
 
+            error_log('PDF Builder Wizard: Response = ' . print_r($response, true));
+
         } catch (Exception $e) {
+            error_log('PDF Builder Wizard: Exception caught: ' . $e->getMessage());
             $response = array(
                 'success' => false,
                 'message' => 'Erreur serveur: ' . $e->getMessage()
@@ -564,8 +574,11 @@ class PDF_Builder_Installation_Wizard {
      */
     private function save_company_data($data) {
         try {
+            error_log('PDF Builder Wizard: save_company_data called with data: ' . print_r($data, true));
+
             // Validation des données
             if (empty($data['company_name'])) {
+                error_log('PDF Builder Wizard: Company name is empty');
                 return array('success' => false, 'message' => 'Le nom de l\'entreprise est obligatoire');
             }
 
@@ -577,16 +590,22 @@ class PDF_Builder_Installation_Wizard {
                 'logo' => esc_url_raw($data['company_logo'] ?? '')
             );
 
+            error_log('PDF Builder Wizard: Sanitized data: ' . print_r($company_data, true));
+
             // Sauvegarder dans les options WordPress
             $result = update_option('pdf_builder_company_info', $company_data);
+            error_log('PDF Builder Wizard: update_option result: ' . ($result ? 'true' : 'false'));
 
             if ($result === false) {
+                error_log('PDF Builder Wizard: update_option returned false');
                 return array('success' => false, 'message' => 'Erreur lors de la sauvegarde en base de données');
             }
 
+            error_log('PDF Builder Wizard: Company data saved successfully');
             return array('success' => true, 'message' => 'Informations entreprise sauvegardées avec succès');
 
         } catch (Exception $e) {
+            error_log('PDF Builder Wizard: Exception in save_company_data: ' . $e->getMessage());
             return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }

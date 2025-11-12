@@ -67,15 +67,18 @@ var pdfBuilderWizard = {
 
         // Sauvegarde des données si nécessaire
         this.saveCurrentStepData().done(function(response) {
+            console.log('PDF Builder Wizard: AJAX response:', response);
             if (response.success) {
                 pdfBuilderWizard.showSuccess('Étape sauvegardée avec succès !');
                 pdfBuilderWizard.navigateToStep(step);
             } else {
+                console.error('PDF Builder Wizard: Error response:', response);
                 pdfBuilderWizard.showError(response.message || 'Erreur lors de la sauvegarde des données.');
             }
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
-        }).fail(function() {
+        }).fail(function(xhr, status, error) {
+            console.error('PDF Builder Wizard: AJAX failed:', xhr, status, error);
             pdfBuilderWizard.showError('Erreur de communication avec le serveur. Vérifiez votre connexion internet.');
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
@@ -153,6 +156,8 @@ var pdfBuilderWizard = {
             company_email: jQuery('#company_email').val(),
             company_logo: jQuery('#company_logo').val()
         };
+
+        console.log('PDF Builder Wizard: Sending data:', data);
 
         return jQuery.ajax({
             url: pdfBuilderWizard.ajax_url,
