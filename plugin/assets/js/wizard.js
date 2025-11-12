@@ -57,9 +57,10 @@ var pdfBuilderWizard = {
     testAjax: function() {
         console.log('PDF Builder Wizard: Testing AJAX...');
         console.log('PDF Builder Wizard: ajax_url =', pdfBuilderWizard.ajax_url);
+        console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
         console.log('PDF Builder Wizard: nonce =', pdfBuilderWizard.nonce);
         jQuery.ajax({
-            url: pdfBuilderWizard.ajax_url,
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'test_ajax'
@@ -181,37 +182,37 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: Sending data:', data);
 
         return jQuery.ajax({
-            url: pdfBuilderWizard.ajax_url,
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
                 step: 'save_company',
                 data: data,
-                nonce: pdfBuilderWizard.nonce
+                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
             }
         });
     },
 
     createTemplate: function() {
         return jQuery.ajax({
-            url: pdfBuilderWizard.ajax_url,
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
                 step: 'create_template',
-                nonce: pdfBuilderWizard.nonce
+                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
             }
         });
     },
 
     completeSetup: function() {
         return jQuery.ajax({
-            url: pdfBuilderWizard.ajax_url,
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
                 step: 'complete',
-                nonce: pdfBuilderWizard.nonce
+                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
             }
         });
     },
