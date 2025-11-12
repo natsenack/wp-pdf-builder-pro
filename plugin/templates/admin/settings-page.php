@@ -715,14 +715,6 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                         $full_address = array_filter([$address, $city, $postcode, $country]);
                         echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
                     ?></p>
-                    <p style="margin: 5px 0;"><strong>Téléphone :</strong> <?php 
-                        $phone = get_option('woocommerce_store_phone', '');
-                        if ($phone) {
-                            echo esc_html($phone);
-                        } else {
-                            echo '<em>Non configuré dans WooCommerce</em> <a href="' . admin_url('admin.php?page=wc-settings&tab=general') . '" target="_blank" style="color: #007cba; text-decoration: none;">⚙️ Configurer</a>';
-                        }
-                    ?></p>
                     <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
                     <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
                         ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
@@ -741,7 +733,7 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                             <input type="text" id="company_phone_manual" name="company_phone_manual" 
                                    value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>" 
                                    placeholder="+33 1 23 45 67 89" />
-                            <p class="description">Numéro de téléphone complémentaire ou de remplacement</p>
+                            <p class="description">Téléphone de l'entreprise (WooCommerce n'a pas de champ téléphone général)</p>
                         </td>
                     </tr>
                     <tr>
