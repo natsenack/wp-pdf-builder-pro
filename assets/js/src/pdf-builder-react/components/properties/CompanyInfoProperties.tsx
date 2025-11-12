@@ -449,6 +449,48 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             label="Afficher le numéro TVA"
             description="Numéro TVA de l'entreprise"
           />
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur de fond
+            </label>
+            <select
+              value={element.backgroundColor === 'transparent' ? 'none' : 'custom'}
+              onChange={(e) => {
+                if (e.target.value === 'none') {
+                  onChange(element.id, 'backgroundColor', 'transparent');
+                } else {
+                  // Si on passe de "aucun fond" à "couleur personnalisée", utiliser la valeur par défaut
+                  onChange(element.id, 'backgroundColor', element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor || '#ffffff');
+                }
+              }}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px',
+                marginBottom: '6px'
+              }}
+            >
+              <option value="custom">Couleur personnalisée</option>
+              <option value="none">Aucun fond</option>
+            </select>
+            {element.backgroundColor !== 'transparent' && (
+              <input
+                type="color"
+                value={element.backgroundColor || '#ffffff'}
+                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              />
+            )}
+          </div>
         </>
       )}
 
@@ -764,48 +806,6 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
               <option value="center">Centre</option>
               <option value="right">Droite</option>
             </select>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de fond
-            </label>
-            <select
-              value={element.backgroundColor === 'transparent' ? 'none' : 'custom'}
-              onChange={(e) => {
-                if (e.target.value === 'none') {
-                  onChange(element.id, 'backgroundColor', 'transparent');
-                } else {
-                  // Si on passe de "aucun fond" à "couleur personnalisée", utiliser la valeur par défaut
-                  onChange(element.id, 'backgroundColor', element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor || '#ffffff');
-                }
-              }}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px',
-                marginBottom: '6px'
-              }}
-            >
-              <option value="custom">Couleur personnalisée</option>
-              <option value="none">Aucun fond</option>
-            </select>
-            {element.backgroundColor !== 'transparent' && (
-              <input
-                type="color"
-                value={element.backgroundColor || '#ffffff'}
-                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              />
-            )}
           </div>
 
           {element.showBorders !== false && (
