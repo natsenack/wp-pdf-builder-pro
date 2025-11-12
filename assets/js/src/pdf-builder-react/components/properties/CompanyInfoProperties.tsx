@@ -787,33 +787,41 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
               Couleur de fond
             </label>
             <select
-              value={element.backgroundColor || 'transparent'}
-              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+              value={element.backgroundColor === 'transparent' ? 'none' : 'custom'}
+              onChange={(e) => {
+                if (e.target.value === 'none') {
+                  onChange(element.id, 'backgroundColor', 'transparent');
+                } else {
+                  // Si on passe de "aucun fond" à "couleur personnalisée", utiliser la valeur par défaut
+                  onChange(element.id, 'backgroundColor', element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor || '#ffffff');
+                }
+              }}
               style={{
                 width: '100%',
-                padding: '6px 8px',
+                height: '32px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 fontSize: '12px',
-                backgroundColor: '#ffffff'
+                marginBottom: '6px'
               }}
             >
-              <option value="transparent">Aucun fond</option>
-              <option value="#ffffff">Blanc</option>
-              <option value="#f9fafb">Gris très clair</option>
-              <option value="#f3f4f6">Gris clair</option>
-              <option value="#e5e7eb">Gris moyen</option>
-              <option value="#d1d5db">Gris</option>
-              <option value="#9ca3af">Gris foncé</option>
-              <option value="#6b7280">Gris très foncé</option>
-              <option value="#374151">Gris anthracite</option>
-              <option value="#1f2937">Noir</option>
-              <option value="#3b82f6">Bleu</option>
-              <option value="#10b981">Vert</option>
-              <option value="#f59e0b">Orange</option>
-              <option value="#ef4444">Rouge</option>
-              <option value="#8b5cf6">Violet</option>
+              <option value="custom">Couleur personnalisée</option>
+              <option value="none">Aucun fond</option>
             </select>
+            {element.backgroundColor !== 'transparent' && (
+              <input
+                type="color"
+                value={element.backgroundColor || '#ffffff'}
+                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              />
+            )}
           </div>
 
           <div style={{ marginBottom: '12px' }}>
