@@ -965,6 +965,42 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                   </div>
                 )}
 
+                <div style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Couleur du texte d&apos;en-tête
+                  </label>
+                  <input
+                    type="color"
+                    value={(element.headerTextColor as string) || element.textColor || '#111827'}
+                    onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: '32px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Couleur du texte du corps
+                  </label>
+                  <input
+                    type="color"
+                    value={element.textColor || '#374151'}
+                    onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: '32px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                </div>
+
                 <div style={{ marginBottom: '0' }}>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
                     Couleur du texte
