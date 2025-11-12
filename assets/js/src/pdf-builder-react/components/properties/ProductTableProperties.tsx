@@ -310,16 +310,10 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {currentTab === 'personnalisation' && (
         <>
           {/* Section Police globale */}
-          <div style={{ marginBottom: '20px', padding: '12px', backgroundColor: '#f0f8ff', borderRadius: '6px', border: '2px solid #007bff' }}>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#007bff',
-              marginBottom: '12px',
-              textAlign: 'center'
-            }}>
-              🎨 Police globale du tableau
-            </div>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+              Police globale du tableau
+            </label>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
