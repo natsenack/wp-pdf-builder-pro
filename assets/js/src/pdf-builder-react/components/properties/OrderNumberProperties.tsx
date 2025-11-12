@@ -154,6 +154,13 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
           />
 
           <Toggle
+            checked={element.showDate !== false}
+            onChange={(checked) => onChange(element.id, 'showDate', checked)}
+            label="Afficher la date"
+            description="Affiche la date de commande"
+          />
+
+          <Toggle
             checked={element.showLabel !== false}
             onChange={(checked) => onChange(element.id, 'showLabel', checked)}
             label="Afficher le libellé"
@@ -184,34 +191,29 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
           )}
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position du libellé
-            </label>
-            <select
-              value={element.labelPosition || 'above'}
-              onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="above">Au-dessus du numéro</option>
-              <option value="left">À gauche du numéro</option>
-              <option value="right">À droite du numéro</option>
-              <option value="below">En-dessous du numéro</option>
-            </select>
-          </div>
-
-          <Toggle
-            checked={element.showDate !== false}
-            onChange={(checked) => onChange(element.id, 'showDate', checked)}
-            label="Afficher la date"
-            description="Affiche la date de commande"
-          />
+          {element.showLabel !== false && (
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                Position du libellé
+              </label>
+              <select
+                value={element.labelPosition || 'above'}
+                onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="above">Au-dessus du numéro</option>
+                <option value="left">À gauche du numéro</option>
+                <option value="right">À droite du numéro</option>
+                <option value="below">En-dessous du numéro</option>
+              </select>
+            </div>
+          )}
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
