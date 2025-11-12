@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 use PDF_Builder\Controllers\PDF_Builder_Pro_Generator;
 
-class PdfBuilderWooCommerceIntegration
+class PDF_Builder_WooCommerce_Integration
 {
     /**
      * Instance du main plugin

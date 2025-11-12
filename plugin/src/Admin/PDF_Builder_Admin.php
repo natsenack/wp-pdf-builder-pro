@@ -256,11 +256,11 @@ class PdfBuilderAdmin
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
 
         // Hooks WooCommerce - Délégation vers le manager
-        if (class_exists('WooCommerce')) {
-            add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
+        if (class_exists('WooCommerce') && $this->woocommerce_integration !== null) {
+            add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
             // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement s'il existe
             if (has_action('add_meta_boxes_woocommerce_page_wc-orders') !== false || defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
-                add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
+                add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
             }
         }
 
