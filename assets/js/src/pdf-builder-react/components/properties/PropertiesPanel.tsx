@@ -11,6 +11,7 @@ import { DocumentTypeProperties } from './DocumentTypeProperties';
 import { TextProperties } from './TextProperties';
 import { ShapeProperties } from './ShapeProperties';
 import { ImageProperties } from './ImageProperties';
+import { LineProperties } from './LineProperties';
 import { ElementProperties } from './ElementProperties';
 
 interface PropertiesPanelProps {
@@ -103,7 +104,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           </h5>
 
           {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
-          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && (
+          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line' && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -314,7 +315,16 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
               setActiveTab={setActiveTab}
             />
           )}
-          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image') && (
+          {element.type === 'line' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <LineProperties
+              element={element as any}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
             <ElementProperties
               element={element}
               onChange={handlePropertyChange}
