@@ -140,12 +140,20 @@ export const Header = memo(function Header({
     setEditedSnapToGrid(snapToGrid);
   }, [snapToGrid]);
 
-  // Optimisation: mémoriser le handler de scroll
+  // State pour le throttling du scroll
+  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Optimisation: mémoriser le handler de scroll avec throttling
   const handleScroll = useCallback(() => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    // Le header devient fixe après 100px de scroll
-    setIsHeaderFixed(scrollTop > 100);
-  }, []);
+    if (scrollTimeout) return; // Si un timeout est déjà en cours, ignorer
+
+    setScrollTimeout(setTimeout(() => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      // Le header devient fixe après 120px de scroll
+      setIsHeaderFixed(scrollTop > 120);
+      setScrollTimeout(null);
+    }, 50)); // Délai de 50ms pour éviter les changements trop fréquents
+  }, [scrollTimeout]);
 
   // Effet pour gérer le scroll et rendre le header fixe
   useEffect(() => {
