@@ -211,48 +211,6 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          <Toggle
-            checked={element.showCompanySection !== false}
-            onChange={(checked) => onChange(element.id, 'showCompanySection', checked)}
-            label="Informations entreprise (B2B)"
-            description="Activer les informations entreprise pour factures B2B"
-          />
-
-          {/* Section entreprise - masquée si showCompanySection est false */}
-          {element.showCompanySection !== false && (
-            <>
-              <Toggle
-                checked={element.showCompany !== false}
-                onChange={(checked) => onChange(element.id, 'showCompany', checked)}
-                label="Afficher l'entreprise"
-                description="Nom de l'entreprise du client"
-              />
-
-              <Toggle
-                checked={element.showCompanyName !== false}
-                onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
-                label="Afficher le nom de l'entreprise"
-                description="Nom de l'entreprise du client"
-              />
-
-              <Toggle
-                checked={element.showVatNumber !== false}
-                onChange={(checked) => onChange(element.id, 'showVatNumber', checked)}
-                label="Afficher le numéro TVA"
-                description="Numéro de TVA intracommunautaire"
-              />
-
-              <Toggle
-                checked={element.showCompanyAddress !== false}
-                onChange={(checked) => onChange(element.id, 'showCompanyAddress', checked)}
-                label="Afficher l'adresse de l'entreprise"
-                description="Adresse de l'entreprise (si différente)"
-              />
-            </>
-          )}
-
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
-
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Disposition

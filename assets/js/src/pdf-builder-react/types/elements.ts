@@ -342,9 +342,6 @@ export interface CustomerInfoElementProperties {
   showCompany?: boolean;
   showPaymentMethod?: boolean;
   showTransactionId?: boolean;
-  showCompanySection?: boolean; // Contrôle l'affichage de toute la section entreprise B2B
-  showVatNumber?: boolean;
-  showCompanyAddress?: boolean;
   labelColor?: string;
   valueColor?: string;
   separator?: string;
