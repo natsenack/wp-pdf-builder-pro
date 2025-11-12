@@ -66,7 +66,8 @@ class PDF_Builder_Installation_Wizard {
      * Charger les scripts et styles
      */
     public function enqueue_scripts($hook) {
-        if ($hook !== 'toplevel_page_pdf-builder-wizard') {
+        // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard
+        if (strpos($hook, 'pdf-builder-wizard') === false && (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-wizard')) {
             return;
         }
 
