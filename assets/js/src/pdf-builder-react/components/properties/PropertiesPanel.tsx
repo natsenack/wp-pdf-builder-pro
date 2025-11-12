@@ -102,8 +102,8 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
             {element.type.charAt(0).toUpperCase() + element.type.slice(1)} - {element.id.slice(0, 8)}
           </h5>
 
-          {/* Propriétés communes - masquées pour les éléments WooCommerce qui ont leurs propres onglets */}
-          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && (
+          {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
+          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
