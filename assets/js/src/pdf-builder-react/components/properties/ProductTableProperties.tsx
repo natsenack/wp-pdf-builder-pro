@@ -29,8 +29,7 @@ const Accordion = ({ title, children, defaultOpen = false }: {
         <span style={{
           fontSize: '12px',
           color: '#6c757d',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s ease'
+          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
         }}>
           ▼
         </span>
@@ -76,7 +75,6 @@ const Toggle = ({ checked, onChange, label, description }: {
           backgroundColor: checked ? '#007bff' : '#ccc',
           borderRadius: '12px',
           cursor: 'pointer',
-          transition: 'background-color 0.2s ease',
           border: 'none'
         }}
       >
@@ -89,7 +87,6 @@ const Toggle = ({ checked, onChange, label, description }: {
             height: '20px',
             backgroundColor: 'white',
             borderRadius: '50%',
-            transition: 'left 0.2s ease',
             boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
           }}
         />
@@ -1611,7 +1608,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                     backgroundColor: '#ffffff',
                     cursor: 'pointer',
                     textAlign: 'center',
-                    transition: 'all 0.2s ease',
                     minHeight: '50px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -1620,13 +1616,9 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#007bff';
-                    e.currentTarget.style.backgroundColor = '#f8f9fa';
-                    e.currentTarget.style.transform = 'translateY(-1px)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = 'transparent';
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                   title={`Appliquer le thème ${theme.name}`}
                 >
