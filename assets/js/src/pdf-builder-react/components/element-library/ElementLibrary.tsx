@@ -110,6 +110,8 @@ const WOOCOMMERCE_ELEMENTS = [
       showPhone: true,
       showSiret: true,
       showVat: true,
+      showRcs: true,
+      showCapital: true,
       showCompanyName: true,
       layout: 'vertical',
       fontSize: 12,

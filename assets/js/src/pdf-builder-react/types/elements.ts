@@ -399,6 +399,8 @@ export interface CompanyInfoElementProperties {
   showCompanyName?: boolean;
   showSiret?: boolean;
   showVat?: boolean;
+  showRcs?: boolean;
+  showCapital?: boolean;
   borderColor?: string;
   borderWidth?: number;
   headerTextColor?: string;
@@ -408,6 +410,8 @@ export interface CompanyInfoElementProperties {
   companyCity?: string;
   companySiret?: string;
   companyTva?: string;
+  companyRcs?: string;
+  companyCapital?: string;
   companyEmail?: string;
   companyPhone?: string;
 }
@@ -497,6 +501,8 @@ export interface CompanyInfoElement extends BaseElement {
   showEmail?: boolean;
   showSiret?: boolean;
   showVat?: boolean;
+  showRcs?: boolean;
+  showCapital?: boolean;
   // Propriétés de thème
   theme?: string;
   // Propriétés de police pour les en-têtes

@@ -457,6 +457,20 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             label="Afficher le numéro TVA"
             description="Numéro TVA de l'entreprise"
           />
+
+          <Toggle
+            checked={element.showRcs !== false}
+            onChange={(checked) => onChange(element.id, 'showRcs', checked)}
+            label="Afficher le RCS"
+            description="Registre du Commerce et des Sociétés"
+          />
+
+          <Toggle
+            checked={element.showCapital !== false}
+            onChange={(checked) => onChange(element.id, 'showCapital', checked)}
+            label="Afficher le capital social"
+            description="Montant du capital social de l'entreprise"
+          />
         </>
       )}
 

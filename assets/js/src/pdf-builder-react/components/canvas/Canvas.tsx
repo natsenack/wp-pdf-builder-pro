@@ -718,6 +718,8 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const showEmail = props.showEmail !== false; // Par défaut true
   const showSiret = props.showSiret !== false; // Par défaut true
   const showVat = props.showVat !== false; // Par défaut true
+  const showRcs = props.showRcs !== false; // Par défaut true
+  const showCapital = props.showCapital !== false; // Par défaut true
 
   // Définition des thèmes
   const themes = {
@@ -789,6 +791,8 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     city: props.companyCity || '69000 Lyon',
     siret: props.companySiret || 'SIRET: 123 456 789 00012',
     tva: props.companyTva || 'TVA: FR 12 345 678 901',
+    rcs: props.companyRcs || 'RCS: Lyon B 123 456 789',
+    capital: props.companyCapital || 'Capital social: 10 000 €',
     email: props.companyEmail || 'contact@maboutique.com',
     phone: props.companyPhone || '+33 4 12 34 56 78'
   };
@@ -822,6 +826,18 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   // Afficher la TVA si demandée
   if (showVat) {
     ctx.fillText(companyData.tva, x, y);
+    y += Math.round(fontSize * 1.2);
+  }
+
+  // Afficher le RCS si demandé
+  if (showRcs) {
+    ctx.fillText(companyData.rcs, x, y);
+    y += Math.round(fontSize * 1.2);
+  }
+
+  // Afficher le Capital social si demandé
+  if (showCapital) {
+    ctx.fillText(companyData.capital, x, y);
     y += Math.round(fontSize * 1.2);
   }
 

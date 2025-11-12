@@ -728,12 +728,12 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                 
                 <table class="form-table" style="background: white; padding: 15px; border-radius: 6px;">
                     <tr>
-                        <th scope="row"><label for="company_phone_manual">Téléphone (manuel)</label></th>
+                        <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                         <td>
                             <input type="text" id="company_phone_manual" name="company_phone_manual" 
                                    value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>" 
                                    placeholder="+33 1 23 45 67 89" />
-                            <p class="description">Téléphone de l'entreprise (WooCommerce n'a pas de champ téléphone général)</p>
+                            <p class="description">Téléphone de l'entreprise</p>
                         </td>
                     </tr>
                     <tr>
