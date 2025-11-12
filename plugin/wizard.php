@@ -26,7 +26,8 @@ class PDF_Builder_Installation_Wizard {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_wizard_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_pdf_builder_wizard_step', array($this, 'handle_ajax_step'));
+        // AJAX handler moved to main plugin file to avoid loading dependencies
+        // add_action('wp_ajax_pdf_builder_wizard_step', array($this, 'handle_ajax_step'));
         add_action('admin_init', array($this, 'check_first_install'));
 
         // Créer les tables nécessaires au premier chargement
