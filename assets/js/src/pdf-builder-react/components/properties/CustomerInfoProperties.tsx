@@ -831,7 +831,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="color"
-                value={element.backgroundColor || 'transparent'}
+                value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
                 onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
                 style={{
                   width: '100%',

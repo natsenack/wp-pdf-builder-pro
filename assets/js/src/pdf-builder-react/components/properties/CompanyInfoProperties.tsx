@@ -907,7 +907,7 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                     </label>
                     <input
                       type="color"
-                      value={element.backgroundColor || '#ffffff'}
+                      value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
                       onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
                       style={{
                         width: '100%',
@@ -927,7 +927,7 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                     </label>
                     <input
                       type="color"
-                      value={element.borderColor || '#e5e7eb'}
+                      value={element.borderColor === 'transparent' ? '#e5e7eb' : (element.borderColor || '#e5e7eb')}
                       onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
                       style={{
                         width: '100%',
