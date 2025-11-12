@@ -77,7 +77,10 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
   // État pour les accordéons de police
   const [fontAccordions, setFontAccordions] = useState({
     headerFont: false, // Accordéon du nom de l'entreprise fermé par défaut
-    bodyFont: false   // Accordéon des informations fermé par défaut
+    bodyFont: false,   // Accordéon des informations fermé par défaut
+    layout: true,      // Accordéon disposition ouvert par défaut
+    themes: false,     // Accordéon thèmes fermé par défaut
+    colors: false      // Accordéon couleurs fermé par défaut
   });
 
   const toggleAccordion = (accordion: 'headerFont' | 'bodyFont') => {
@@ -477,42 +480,143 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Personnalisation */}
       {companyCurrentTab === 'personnalisation' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
-              Thème visuel
-            </label>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '8px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              padding: '4px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '4px',
-              backgroundColor: '#fafafa'
-            }}>
-              {companyThemes.map((theme) => (
-                <div
-                  key={theme.id}
-                  onClick={() => onChange(element.id, 'theme', theme.id)}
-                  style={{
-                    cursor: 'pointer',
-                    border: element.theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
-                    borderRadius: '6px',
-                    padding: '6px',
-                    backgroundColor: '#ffffff',
-                    transition: 'all 0.2s ease'
-                  }}
-                  title={theme.name}
-                >
-                  <div style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '4px', textAlign: 'center' }}>
-                    {theme.name}
-                  </div>
-                  {theme.preview}
-                </div>
-              ))}
+          {/* Accordéon Disposition */}
+          <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              onClick={() => setFontAccordions(prev => ({ ...prev, layout: !prev.layout }))}
+              style={{
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: fontAccordions.layout ? '1px solid #e9ecef' : 'none'
+              }}
+            >
+              <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Disposition
+              </h4>
+              <span style={{
+                fontSize: '12px',
+                color: '#6c757d',
+                transform: fontAccordions.layout ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
             </div>
+
+            {fontAccordions.layout && (
+              <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+                <div style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Type de disposition
+                  </label>
+                  <select
+                    value={(element.layout as string) || 'vertical'}
+                    onChange={(e) => onChange(element.id, 'layout', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '4px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  >
+                    <option value="vertical">Verticale</option>
+                    <option value="horizontal">Horizontale</option>
+                    <option value="compact">Compacte</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '0' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Alignement du texte
+                  </label>
+                  <select
+                    value={element.textAlign || 'left'}
+                    onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '4px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Droite</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Accordéon Thèmes prédéfinis */}
+          <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              onClick={() => setFontAccordions(prev => ({ ...prev, themes: !prev.themes }))}
+              style={{
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: fontAccordions.themes ? '1px solid #e9ecef' : 'none'
+              }}
+            >
+              <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Thèmes prédéfinis
+              </h4>
+              <span style={{
+                fontSize: '12px',
+                color: '#6c757d',
+                transform: fontAccordions.themes ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
+            </div>
+
+            {fontAccordions.themes && (
+              <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '8px',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  padding: '4px',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '4px',
+                  backgroundColor: '#fafafa'
+                }}>
+                  {companyThemes.map((theme) => (
+                    <div
+                      key={theme.id}
+                      onClick={() => onChange(element.id, 'theme', theme.id)}
+                      style={{
+                        cursor: 'pointer',
+                        border: element.theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
+                        borderRadius: '6px',
+                        padding: '6px',
+                        backgroundColor: '#ffffff',
+                        transition: 'all 0.2s ease'
+                      }}
+                      title={theme.name}
+                    >
+                      <div style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '4px', textAlign: 'center' }}>
+                        {theme.name}
+                      </div>
+                      {theme.preview}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
@@ -767,108 +871,119 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Alignement du texte
-            </label>
-            <select
-              value={element.textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+          {/* Accordéon Couleurs */}
+          <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              onClick={() => setFontAccordions(prev => ({ ...prev, colors: !prev.colors }))}
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: fontAccordions.colors ? '1px solid #e9ecef' : 'none'
               }}
             >
-              <option value="left">Gauche</option>
-              <option value="center">Centre</option>
-              <option value="right">Droite</option>
-            </select>
-          </div>
-
-          {element.showBackground !== false && (
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                Couleur de fond
-              </label>
-              <input
-                type="color"
-                value={element.backgroundColor || '#ffffff'}
-                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              />
+              <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Couleurs
+              </h4>
+              <span style={{
+                fontSize: '12px',
+                color: '#6c757d',
+                transform: fontAccordions.colors ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
             </div>
-          )}
 
-          {element.showBorders !== false && (
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                Couleur des bordures
-              </label>
-              <input
-                type="color"
-                value={element.borderColor || '#e5e7eb'}
-                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
-          )}
+            {fontAccordions.colors && (
+              <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+                {element.showBackground !== false && (
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                      Couleur de fond
+                    </label>
+                    <input
+                      type="color"
+                      value={element.backgroundColor || '#ffffff'}
+                      onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                      style={{
+                        width: '100%',
+                        height: '32px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </div>
+                )}
 
-          {element.showBorders !== false && (
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                Épaisseur de la bordure
-              </label>
-              <select
-                value={String(element.borderWidth || '1')}
-                onChange={(e) => onChange(element.id, 'borderWidth', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="0.5">Fin (0.5px)</option>
-                <option value="1">Normal (1px)</option>
-                <option value="1.5">Moyen (1.5px)</option>
-                <option value="2">Épais (2px)</option>
-                <option value="3">Très épais (3px)</option>
-              </select>
-            </div>
-          )}
+                {element.showBorders !== false && (
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                      Couleur des bordures
+                    </label>
+                    <input
+                      type="color"
+                      value={element.borderColor || '#e5e7eb'}
+                      onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+                      style={{
+                        width: '100%',
+                        height: '32px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </div>
+                )}
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur du texte
-            </label>
-            <input
-              type="color"
-              value={element.textColor || '#000000'}
-              onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            />
+                {element.showBorders !== false && (
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                      Épaisseur de la bordure
+                    </label>
+                    <select
+                      value={String(element.borderWidth || '1')}
+                      onChange={(e) => onChange(element.id, 'borderWidth', e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '4px 8px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    >
+                      <option value="0.5">Fin (0.5px)</option>
+                      <option value="1">Normal (1px)</option>
+                      <option value="1.5">Moyen (1.5px)</option>
+                      <option value="2">Épais (2px)</option>
+                      <option value="3">Très épais (3px)</option>
+                    </select>
+                  </div>
+                )}
+
+                <div style={{ marginBottom: '0' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Couleur du texte
+                  </label>
+                  <input
+                    type="color"
+                    value={element.textColor || '#000000'}
+                    onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: '32px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}
