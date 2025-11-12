@@ -457,6 +457,27 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             label="Afficher le numéro TVA"
             description="Numéro TVA de l'entreprise"
           />
+
+          <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+              Couleur de fond
+            </label>
+            <input
+              type="color"
+              value={element.backgroundColor || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+              style={{
+                width: '100%',
+                height: '40px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            />
+            <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>
+              Couleur d&apos;arrière-plan de l&apos;élément
+            </div>
+          </div>
         </>
       )}
 
