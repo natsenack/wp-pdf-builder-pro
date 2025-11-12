@@ -24,6 +24,7 @@ class PDF_Builder_Installation_Wizard {
     private $current_step = 'welcome';
 
     public function __construct() {
+        error_log('PDF Builder Wizard: Constructor called - instantiating wizard');
         add_action('admin_menu', array($this, 'add_wizard_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         // AJAX handler moved to main plugin file to avoid loading dependencies
@@ -767,4 +768,5 @@ function pdf_builder_create_default_template() {
 // add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_wizard_ajax_handler');
 
 // Initialiser le wizard
+error_log('PDF Builder Wizard: About to instantiate wizard class');
 new PDF_Builder_Installation_Wizard();
