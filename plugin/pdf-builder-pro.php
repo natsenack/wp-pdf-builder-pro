@@ -168,13 +168,141 @@ function pdf_builder_init()
         require_once $wizard_path;
     }
 
+    // Fonctions AJAX inline pour éviter les dépendances de chargement
+    function pdf_builder_ajax_save_company_data($data) {
+        try {
+            error_log('PDF Builder Wizard: pdf_builder_ajax_save_company_data called with data: ' . print_r($data, true));
+
+            // Validation des données
+            if (empty($data['company_name'])) {
+                error_log('PDF Builder Wizard: Company name is empty');
+                return array('success' => false, 'message' => 'Le nom de l\'entreprise est obligatoire');
+            }
+
+            $company_data = array(
+                'name' => sanitize_text_field($data['company_name']),
+                'address' => sanitize_textarea_field($data['company_address'] ?? ''),
+                'phone' => sanitize_text_field($data['company_phone'] ?? ''),
+                'email' => sanitize_email($data['company_email'] ?? ''),
+                'logo' => esc_url_raw($data['company_logo'] ?? '')
+            );
+
+            error_log('PDF Builder Wizard: Sanitized data: ' . print_r($company_data, true));
+
+            // Sauvegarder dans les options WordPress
+            $result = update_option('pdf_builder_company_info', $company_data);
+            error_log('PDF Builder Wizard: update_option result: ' . ($result ? 'true' : 'false'));
+
+            if ($result === false) {
+                error_log('PDF Builder Wizard: update_option returned false');
+                return array('success' => false, 'message' => 'Erreur lors de la sauvegarde en base de données');
+            }
+
+            error_log('PDF Builder Wizard: Company data saved successfully');
+            return array('success' => true, 'message' => 'Informations entreprise sauvegardées avec succès');
+
+        } catch (Exception $e) {
+            error_log('PDF Builder Wizard: Exception in pdf_builder_ajax_save_company_data: ' . $e->getMessage());
+            return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
+    }
+
+    function pdf_builder_ajax_create_template() {
+        try {
+            global $wpdb;
+
+            // Vérifier si la table existe
+            $table_name = $wpdb->prefix . 'pdf_builder_templates';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+                return array('success' => false, 'message' => 'La table des templates n\'existe pas. Veuillez vérifier l\'installation du plugin.');
+            }
+
+            $template_data = array(
+                'name' => 'Template par défaut',
+                'elements' => array(
+                    array('type' => 'company_logo', 'x' => 20, 'y' => 20),
+                    array('type' => 'company_info', 'x' => 20, 'y' => 80),
+                    array('type' => 'customer_info', 'x' => 300, 'y' => 20),
+                    array('type' => 'product_table', 'x' => 20, 'y' => 150),
+                    array('type' => 'order_total', 'x' => 400, 'y' => 400)
+                ),
+                'settings' => array(
+                    'width' => 595,
+                    'height' => 842,
+                    'margin_top' => 20,
+                    'margin_bottom' => 20
+                )
+            );
+
+            $result = $wpdb->insert(
+                $table_name,
+                array(
+                    'name' => $template_data['name'],
+                    'template_data' => wp_json_encode($template_data)
+                ),
+                array('%s', '%s')
+            );
+
+            if ($result === false) {
+                return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $wpdb->last_error);
+            }
+
+            return array('success' => true, 'message' => 'Template par défaut créé avec succès');
+
+        } catch (Exception $e) {
+            return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $e->getMessage());
+        }
+    }
+
     // Enregistrer le handler AJAX pour le wizard
     error_log('PDF Builder Pro: Registering AJAX handler');
     add_action('wp_ajax_pdf_builder_wizard_step', function() {
-        // Test simple pour vérifier que l'AJAX fonctionne
-        error_log('PDF Builder Wizard: AJAX handler called from main plugin file');
-        wp_send_json(array('success' => true, 'message' => 'AJAX handler is working!'));
-        exit;
+        try {
+            // Log pour debug
+            error_log('PDF Builder Wizard: AJAX handler called from main plugin file');
+            error_log('PDF Builder Wizard: POST data: ' . print_r($_POST, true));
+
+            check_ajax_referer('pdf_builder_wizard_nonce', 'nonce');
+
+            $step = sanitize_text_field($_POST['step']);
+            error_log('PDF Builder Wizard: Step = ' . $step);
+
+            $data = isset($_POST['data']) ? $_POST['data'] : array();
+            error_log('PDF Builder Wizard: Data = ' . print_r($data, true));
+
+            $response = array('success' => false);
+
+            switch ($step) {
+                case 'save_company':
+                    // Fonction inline pour éviter les dépendances
+                    $response = pdf_builder_ajax_save_company_data($data);
+                    break;
+
+                case 'create_template':
+                    // Fonction inline pour éviter les dépendances
+                    $response = pdf_builder_ajax_create_template();
+                    break;
+
+                case 'complete':
+                    update_option('pdf_builder_installed', true);
+                    $response = array('success' => true, 'message' => 'Installation terminée');
+                    break;
+
+                default:
+                    $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
+            }
+
+            error_log('PDF Builder Wizard: Response = ' . print_r($response, true));
+
+        } catch (Exception $e) {
+            error_log('PDF Builder Wizard: Exception caught: ' . $e->getMessage());
+            $response = array(
+                'success' => false,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            );
+        }
+
+        wp_send_json($response);
     });
 
     // Test AJAX standard de WordPress
