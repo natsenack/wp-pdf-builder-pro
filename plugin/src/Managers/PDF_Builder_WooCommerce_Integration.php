@@ -35,7 +35,7 @@ class PDF_Builder_WooCommerce_Integration
     private function initHooks()
     {
         // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles tôt
-        add_action('init', [$this, 'register_ajax_hooks']);
+        add_action('init', [$this, 'registerAjaxHooks']);
     }
 
     /**
