@@ -66,10 +66,16 @@ class PDF_Builder_Installation_Wizard {
      * Charger les scripts et styles
      */
     public function enqueue_scripts($hook) {
+        error_log('PDF Builder Wizard: enqueue_scripts called with hook: ' . $hook);
+        error_log('PDF Builder Wizard: _GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+
         // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard
         if (strpos($hook, 'pdf-builder-wizard') === false && (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-wizard')) {
+            error_log('PDF Builder Wizard: Not loading scripts - condition not met');
             return;
         }
+
+        error_log('PDF Builder Wizard: Loading scripts for wizard page');
 
         wp_enqueue_style('pdf-builder-wizard', plugins_url('assets/css/wizard.css', PDF_BUILDER_PLUGIN_FILE), array(), PDF_BUILDER_VERSION);
         wp_enqueue_script('pdf-builder-wizard', plugins_url('assets/js/wizard.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), PDF_BUILDER_VERSION, true);
