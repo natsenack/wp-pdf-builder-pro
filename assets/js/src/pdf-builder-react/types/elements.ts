@@ -394,6 +394,7 @@ export interface CompanyInfoElementProperties {
   // Propriétés de thème et style
   theme?: string;
   showHeaders?: boolean;
+  showBackground?: boolean;
   showBorders?: boolean;
   showCompanyName?: boolean;
   showSiret?: boolean;
