@@ -195,6 +195,20 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             description="Numéro de téléphone du client"
           />
 
+          <Toggle
+            checked={element.showPaymentMethod !== false}
+            onChange={(checked) => onChange(element.id, 'showPaymentMethod', checked)}
+            label="Afficher le moyen de paiement"
+            description="Méthode de paiement utilisée"
+          />
+
+          <Toggle
+            checked={element.showTransactionId !== false}
+            onChange={(checked) => onChange(element.id, 'showTransactionId', checked)}
+            label="Afficher l'ID de transaction"
+            description="Identifiant unique de la transaction"
+          />
+
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
           <Toggle

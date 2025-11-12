@@ -64,6 +64,8 @@ const WOOCOMMERCE_ELEMENTS = [
       showAddress: true,
       showEmail: true,
       showPhone: true,
+      showPaymentMethod: false,
+      showTransactionId: false,
       showCompanyName: false,
       showVatNumber: false,
       showCompanyAddress: false,

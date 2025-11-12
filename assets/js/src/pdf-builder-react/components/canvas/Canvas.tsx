@@ -590,6 +590,8 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
   const showAddress = props.showAddress !== false;
   const showEmail = props.showEmail !== false;
   const showPhone = props.showPhone !== false;
+  const showPaymentMethod = props.showPaymentMethod !== false;
+  const showTransactionId = props.showTransactionId !== false;
 
   // Fond
   ctx.fillStyle = props.backgroundColor || '#ffffff';
@@ -653,6 +655,14 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
     }
     if (showPhone) {
       ctx.fillText(customerData.phone, 10, y);
+      y += 18;
+    }
+    if (showPaymentMethod) {
+      ctx.fillText('Paiement: Carte bancaire', 10, y);
+      y += 18;
+    }
+    if (showTransactionId) {
+      ctx.fillText('ID: TXN123456789', 10, y);
     }
   } else if (layout === 'horizontal') {
     let text = '';
