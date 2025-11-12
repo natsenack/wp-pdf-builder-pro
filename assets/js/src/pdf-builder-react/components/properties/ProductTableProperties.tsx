@@ -35,11 +35,14 @@ const Accordion = ({ title, children, defaultOpen = false }: {
         </span>
       </div>
 
-      {isOpen && (
-        <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
-          {children}
-        </div>
-      )}
+      <div style={{
+        maxHeight: isOpen ? '1000px' : '0px',
+        overflow: 'hidden',
+        padding: isOpen ? '12px' : '0px 12px',
+        backgroundColor: '#ffffff'
+      }}>
+        {children}
+      </div>
     </div>
   );
 };
@@ -118,7 +121,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
   return (
     <>
       {/* Système d'onglets pour Product Table */}
-      <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px' }}>
         <button
           onClick={() => setCurrentTab('fonctionnalites')}
           style={{
@@ -312,8 +315,8 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Police globale du tableau
             </label>
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              display: 'flex',
+              flexDirection: 'column',
               gap: '12px'
             }}>
               <div>
@@ -811,8 +814,8 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               Thèmes prédéfinis
             </label>
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+              display: 'flex',
+              flexDirection: 'column',
               gap: '6px',
               maxHeight: '120px',
               overflowY: 'auto',
