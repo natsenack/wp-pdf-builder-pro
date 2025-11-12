@@ -97,7 +97,9 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           padding: '12px',
           backgroundColor: '#ffffff',
           border: '1px solid #e0e0e0',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          maxHeight: 'calc(100vh - 120px)',
+          overflowY: 'auto'
         }}>
           <h5 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 'bold' }}>
             {element.type.charAt(0).toUpperCase() + element.type.slice(1)} - {element.id.slice(0, 8)}
