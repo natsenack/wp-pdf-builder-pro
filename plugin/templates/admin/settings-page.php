@@ -219,6 +219,12 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
             'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
             'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            // Informations entreprise manuelles
+            'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
+            'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
+            'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
+            'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
+            'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
         ];
 // Update individual settings
         foreach ($general_settings as $key => $value) {
@@ -694,6 +700,81 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                     </td>
                 </tr>
             </table>
+            
+            <h3 style="margin-top: 30px; border-bottom: 2px solid #28a745; padding-bottom: 10px; color: #28a745;">🏢 Informations Entreprise</h3>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+                <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
+                <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', '<em>Non défini</em>')); ?></p>
+                    <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php 
+                        $address = get_option('woocommerce_store_address', '');
+                        $city = get_option('woocommerce_store_city', '');
+                        $postcode = get_option('woocommerce_store_postcode', '');
+                        $country = get_option('woocommerce_default_country', '');
+                        $full_address = array_filter([$address, $city, $postcode, $country]);
+                        echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
+                    ?></p>
+                    <p style="margin: 5px 0;"><strong>Téléphone :</strong> <?php echo esc_html(get_option('woocommerce_store_phone', '<em>Non défini</em>')); ?></p>
+                    <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
+                    <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                        ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
+                    </p>
+                </div>
+                
+                <h4 style="color: #dc3545;">📝 Informations à saisir manuellement</h4>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                    Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
+                </p>
+                
+                <table class="form-table" style="background: white; padding: 15px; border-radius: 6px;">
+                    <tr>
+                        <th scope="row"><label for="company_phone_manual">Téléphone (manuel)</label></th>
+                        <td>
+                            <input type="text" id="company_phone_manual" name="company_phone_manual" 
+                                   value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>" 
+                                   placeholder="+33 1 23 45 67 89" />
+                            <p class="description">Numéro de téléphone complémentaire ou de remplacement</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
+                        <td>
+                            <input type="text" id="company_siret" name="company_siret" 
+                                   value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>" 
+                                   placeholder="123 456 789 00012" />
+                            <p class="description">Numéro SIRET de l'entreprise</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="company_vat">Numéro TVA</label></th>
+                        <td>
+                            <input type="text" id="company_vat" name="company_vat" 
+                                   value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>" 
+                                   placeholder="FR 12 345 678 901" />
+                            <p class="description">Numéro de TVA intracommunautaire</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="company_rcs">RCS</label></th>
+                        <td>
+                            <input type="text" id="company_rcs" name="company_rcs" 
+                                   value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>" 
+                                   placeholder="Lyon B 123 456 789" />
+                            <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="company_capital">Capital social</label></th>
+                        <td>
+                            <input type="text" id="company_capital" name="company_capital" 
+                                   value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>" 
+                                   placeholder="10 000 €" />
+                            <p class="description">Montant du capital social de l'entreprise</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             
             <h3 style="margin-top: 30px; border-bottom: 2px solid #007cba; padding-bottom: 10px; color: #007cba;">📄
 Paramètres PDF</h3>
@@ -1305,7 +1386,7 @@ list-style: none;">
                             clearCacheBtn.textContent = '🗑️ Vider tout le cache';
                             resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
                             resultsSpan.style.color = '#dc3232';
-
+                            console.error('Erreur lors du vide du cache:', error);
                         });
                     });
                 }
@@ -2209,7 +2290,7 @@ padding: 8px 16px;">
                             }
                         }, true); // useCapture = true
                     } else {
-
+                        console.error('❌ Roles form not found!');
                     }
                     
                     const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
@@ -3427,7 +3508,7 @@ Développement</h3>
                     <th scope="row"><label>Console de Debug</label></th>
                     <td>
                         <button type="button" class="button button-secondary" onclick="alert('Ouverture de la
-
+console...');">
                             🖥️ Ouvrir Console
                         </button>
                         <p class="description">Affiche les logs JavaScript avec emojis (🚀, ✅, ❌, ⚠️)</p>
@@ -3976,9 +4057,9 @@ Clavier Développeur</h3>
                     <th scope="row"><label for="test_code">Code Test</label></th>
                     <td>
                         <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding:
-10px;">
+10px;">// Exemple: console.log('Test développeur');
 // var result = pdf_builder ? 'Plugin chargé' : 'Plugin non chargé';
-
+// console.log(result);</textarea>
                         <p class="description">Zone d'essai pour du code JavaScript (exécution côté client)</p>
                         <div style="margin-top: 10px;">
                             <button type="button" id="execute_code_btn" class="button button-secondary">▶️ Exécuter
@@ -4336,7 +4417,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             const globalSaveBtn = document.getElementById('global-save-btn');
             const saveStatus = document.getElementById('save-status');
             
-
+            console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
             
             if (globalSaveBtn) {
                 globalSaveBtn.addEventListener('click', function(e) {
@@ -4347,7 +4428,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                                     document.querySelector('.tab-content.active');
                     
                     if (activeTab) {
-
+                        console.log('📑 Active tab ID:', activeTab.id);
                         
                         // Trouver le formulaire dans l'onglet actif
                         let form = activeTab.querySelector('form');
@@ -4358,7 +4439,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         }
                         
                         if (form) {
-
+                            console.log('✅ Form found, submitting:', form.id || 'unnamed form');
                             
                             // Afficher le statut de sauvegarde
                             if (saveStatus) {
@@ -4377,14 +4458,14 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                                 }
                             }
                         } else {
-
+                            console.error('❌ No form found in active tab:', activeTab.id);
                             if (saveStatus) {
                                 saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
                                 saveStatus.style.color = '#dc3232';
                             }
                         }
                     } else {
-
+                        console.error('❌ No active tab found');
                         if (saveStatus) {
                             saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
                             saveStatus.style.color = '#dc3232';
@@ -4439,7 +4520,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             }
                         })
                         .catch(error => {
-
+                            console.error('Erreur AJAX:', error);
                             if (saveStatus) {
                                 saveStatus.textContent = '❌ Erreur de connexion';
                                 saveStatus.style.color = '#dc3232';
@@ -4470,7 +4551,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             }
             
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
-
+            console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
             
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -4494,7 +4575,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     if (targetTabContent) {
                         targetTabContent.classList.remove('hidden-tab');
                     } else {
-
+                        console.error('❌ TAB NOT FOUND:', targetTab);
                     }
                     
                     // Activer le lien d'onglet
@@ -4520,7 +4601,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             if (savedTab) {
                 const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
                 if (savedTabLink) {
-
+                    console.log('📑 RESTORING SAVED TAB:', savedTab);
                     savedTabLink.click();
                 }
             }
@@ -4538,11 +4619,11 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 if (passwordInput.type === 'password') {
                     passwordInput.type = 'text';
                     this.innerHTML = '🙈 Masquer';
-
+                    console.log('🔐 Password field shown');
                 } else {
                     passwordInput.type = 'password';
                     this.innerHTML = '👁️ Afficher';
-
+                    console.log('🔐 Password field hidden');
                 }
             });
         }
@@ -4556,7 +4637,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         if (generateLicenseKeyBtn) {
             generateLicenseKeyBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-
+                console.log('🔑 Generating license test key...');
                 
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
@@ -4571,7 +4652,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
                     },
                     success: function(response) {
-
+                        console.log('✅ License key generated:', response);
                         if (response.success && response.data.key) {
                             licenseTestKeyInput.value = response.data.key;
                             licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
@@ -4586,7 +4667,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         }
                     },
                     error: function(xhr, status, error) {
-
+                        console.error('❌ AJAX error:', error);
                         let errorMsg = error;
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
@@ -4604,13 +4685,13 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 e.preventDefault();
                 if (licenseTestKeyInput.value) {
                     navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
-
+                        console.log('📋 License key copied to clipboard');
                         licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
                         setTimeout(function() {
                             licenseKeyStatus.innerHTML = '';
                         }, 3000);
                     }).catch(function(err) {
-
+                        console.error('❌ Copy failed:', err);
                         licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Impossible de copier</span>';
                     });
                 } else {
@@ -4630,7 +4711,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     return;
                 }
                 
-
+                console.log('🗑️ Deleting license test key...');
                 
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
@@ -4645,7 +4726,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
                     },
                     success: function(response) {
-
+                        console.log('✅ License key deleted:', response);
                         if (response.success) {
                             licenseTestKeyInput.value = '';
                             licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
@@ -4659,14 +4740,14 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         } else {
                             const errorMsg = response.data && response.data.message ? response.data.message :
 'Impossible de supprimer la clé';
-
+                            console.error('❌ Delete failed:', errorMsg);
                             licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🗑️ Supprimer');
                             $btn.prop('disabled', false);
                         }
                     },
                     error: function(xhr, status, error) {
-
+                        console.error('❌ AJAX error:', error);
                         let errorMsg = error;
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
@@ -4687,7 +4768,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
         if (toggleTestModeBtn) {
             toggleTestModeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-
+                console.log('🎚️ Toggling license test mode...');
                 
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
@@ -4702,7 +4783,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
                     },
                     success: function(response) {
-
+                        console.log('✅ Test mode toggled:', response);
                         if (response.success) {
                             const enabled = response.data.enabled;
                             
@@ -4725,17 +4806,17 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
                             
-
+                            console.log(response.data.message);
                         } else {
                             const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
-
+                            console.error('❌ Toggle failed:', errorMsg);
                             alert('⚠️ Erreur: ' + errorMsg);
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
                         }
                     },
                     error: function(xhr, status, error) {
-
+                        console.error('❌ AJAX error:', error);
                         let errorMsg = error;
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
@@ -4759,7 +4840,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     return;
                 }
                 
-
+                console.log('🧹 Cleaning up license...');
                 
                 const $btn = jQuery(this);
                 const cleanupStatus = document.getElementById('cleanup_status');
@@ -4777,7 +4858,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         nonce: cleanupNonce ? cleanupNonce.value : ''
                     },
                     success: function(response) {
-
+                        console.log('✅ Cleanup successful:', response);
                         $btn.html('🧹 Nettoyer complètement la licence');
                         $btn.prop('disabled', false);
                         
@@ -4790,12 +4871,12 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             }, 2000);
                         } else {
                             const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
-
+                            console.error('❌ Cleanup failed:', errorMsg);
                             cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                         }
                     },
                     error: function(xhr, status, error) {
-
+                        console.error('❌ AJAX error:', error);
                         let errorMsg = error;
                         if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                             errorMsg = xhr.responseJSON.data.message;
@@ -4811,14 +4892,14 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 
                 // Gestion du test du système de cache
         jQuery(document).ready(function($) {
-
+            console.log("🔧 Cache test button ready");
             const $btn = $("#test-cache-btn");
             const $results = $("#cache-test-results");
             const $output = $("#cache-test-output");
             
             $btn.on("click", function(e) {
                 e.preventDefault();
-
+                console.log("🖱️ Cache test button clicked");
                 
                 $btn.prop("disabled", true).html("🔄 Test en cours...");
                 if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
@@ -4833,7 +4914,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                     },
                     timeout: 30000,
                     success: function(response) {
-
+                        console.log("✅ AJAX success:", response);
                         $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
                         
                         if (response.success) {
@@ -4845,7 +4926,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         }
                     },
                     error: function(xhr, status, error) {
-
+                        console.error("❌ AJAX error:", status, error);
                         $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
                         
                         if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status
@@ -4858,14 +4939,14 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
 
         // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
         jQuery(document).ready(function($) {
-
+            console.log("🔧 Notification test buttons ready");
 
             // Test SMTP Connection
             const $testSmtpBtn = $("#test-smtp-connection");
             if ($testSmtpBtn.length) {
                 $testSmtpBtn.on("click", function(e) {
                     e.preventDefault();
-
+                    console.log("🖱️ Test SMTP button clicked");
 
                     const originalText = $testSmtpBtn.html();
                     $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
@@ -4880,7 +4961,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         },
                         timeout: 15000,
                         success: function(response) {
-
+                            console.log("✅ SMTP Test response:", response);
                             $testSmtpBtn.prop("disabled", false).html(originalText);
 
                             if (response.success) {
@@ -4890,7 +4971,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             }
                         },
                         error: function(xhr, status, error) {
-
+                            console.error("❌ SMTP Test AJAX error:", status, error);
                             $testSmtpBtn.prop("disabled", false).html(originalText);
                             alert("⚠️ Erreur lors du test SMTP\n\nErreur: " + error);
                         }
@@ -4903,7 +4984,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             if ($testNotifBtn.length) {
                 $testNotifBtn.on("click", function(e) {
                     e.preventDefault();
-
+                    console.log("🖱️ Test Notifications button clicked");
 
                     const originalText = $testNotifBtn.html();
                     $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
@@ -4918,7 +4999,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                         },
                         timeout: 15000,
                         success: function(response) {
-
+                            console.log("✅ Notification Test response:", response);
                             $testNotifBtn.prop("disabled", false).html(originalText);
 
                             if (response.success) {
@@ -4928,7 +5009,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                             }
                         },
                         error: function(xhr, status, error) {
-
+                            console.error("❌ Notification Test AJAX error:", status, error);
                             $testNotifBtn.prop("disabled", false).html(originalText);
                             alert("⚠️ Erreur lors du test de notification\n\nErreur: " + error);
                         }
@@ -4994,29 +5075,29 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             if (isChecked) {
                 $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
                 $marginLabels.css('color', '');
-
+                console.log('Marges activées');
             } else {
                 $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
                 $marginLabels.css('color', '#999');
-
+                console.log('Marges désactivées');
             }
         }
 
         // Gestion dynamique des champs marges - event listener
         jQuery('#show_margins').on('change', function() {
-
+            console.log('Toggle marges changé:', jQuery(this).is(':checked'));
             updateMarginsState();
         });
 
         // Initialiser l'état des champs marges au chargement
         jQuery(document).ready(function() {
-
+            console.log('Document ready - initialisation des marges');
             setTimeout(updateMarginsState, 100);
         });
 
         // Également initialiser après un délai pour être sûr que les éléments sont chargés
         window.addEventListener('load', function() {
-
+            console.log('Window load - vérification des marges');
             updateMarginsState();
         });
 
@@ -5029,12 +5110,12 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
             var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
             if (standardFormats.includes(canvasFormat)) {
                 jQuery('#default_format').val(canvasFormat);
-
+                console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
             }
 
             // Synchroniser l'orientation PDF avec l'orientation Canvas
             jQuery('#default_orientation').val(canvasOrientation);
-
+            console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
         });
 
         // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
@@ -5044,7 +5125,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
                 setTimeout(function() {
                     // Déclencher l'événement personnalisé pour notifier React
                     window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
-
+                    console.log('Canvas settings updated event dispatched');
                 }, 500);
             }
         });
