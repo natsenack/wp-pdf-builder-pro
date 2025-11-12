@@ -142,6 +142,21 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
               }}
             />
           </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Opacité <span style={{ color: '#666', fontSize: '10px' }}>({Math.round((element.opacity || 1) * 100)}%)</span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={element.opacity || 1}
+              onChange={(e) => onChange(element.id, 'opacity', parseFloat(e.target.value))}
+              style={{ width: '100%' }}
+            />
+          </div>
         </>
       )}
 
@@ -220,21 +235,6 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
                 borderRadius: '3px',
                 fontSize: '12px'
               }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Opacité <span style={{ color: '#666', fontSize: '10px' }}>({Math.round((element.opacity || 1) * 100)}%)</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={element.opacity || 1}
-              onChange={(e) => onChange(element.id, 'opacity', parseFloat(e.target.value))}
-              style={{ width: '100%' }}
             />
           </div>
         </>
