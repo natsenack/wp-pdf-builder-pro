@@ -1,6 +1,66 @@
 import React from 'react';
 import { ProductTableElement } from '../../types/elements';
 
+// Composant Toggle personnalisé
+const Toggle = ({ checked, onChange, label, description }: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+  description: string;
+}) => (
+  <div style={{ marginBottom: '12px' }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '6px'
+    }}>
+      <label style={{
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#333',
+        flex: 1
+      }}>
+        {label}
+      </label>
+      <div
+        onClick={() => onChange(!checked)}
+        style={{
+          position: 'relative',
+          width: '44px',
+          height: '24px',
+          backgroundColor: checked ? '#007bff' : '#ccc',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s ease',
+          border: 'none'
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '2px',
+            left: checked ? '22px' : '2px',
+            width: '20px',
+            height: '20px',
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            transition: 'left 0.2s ease',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          }}
+        />
+      </div>
+    </div>
+    <div style={{
+      fontSize: '11px',
+      color: '#666',
+      lineHeight: '1.4'
+    }}>
+      {description}
+    </div>
+  </div>
+);
+
 interface ProductTablePropertiesProps {
   element: ProductTableElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
@@ -86,124 +146,70 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {/* Onglet Fonctionnalités */}
       {currentTab === 'fonctionnalites' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les en-têtes
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showHeaders !== false}
-              onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les noms des colonnes</span>
-          </div>
+          <Toggle
+            checked={element.showHeaders !== false}
+            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+            label="Afficher les en-têtes"
+            description="Affiche les noms des colonnes"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les bordures
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showBorders !== false}
-              onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures du tableau</span>
-          </div>
+          <Toggle
+            checked={element.showBorders !== false}
+            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+            label="Afficher les bordures"
+            description="Affiche les bordures du tableau"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Lignes alternées
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showAlternatingRows !== false}
-              onChange={(e) => onChange(element.id, 'showAlternatingRows', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Alterne les couleurs des lignes</span>
-          </div>
+          <Toggle
+            checked={element.showAlternatingRows !== false}
+            onChange={(checked) => onChange(element.id, 'showAlternatingRows', checked)}
+            label="Lignes alternées"
+            description="Alterne les couleurs des lignes"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les SKU
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showSku !== false}
-              onChange={(e) => onChange(element.id, 'showSku', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des références produit</span>
-          </div>
+          <Toggle
+            checked={element.showSku !== false}
+            onChange={(checked) => onChange(element.id, 'showSku', checked)}
+            label="Afficher les SKU"
+            description="Colonne des références produit"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les descriptions
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showDescription !== false}
-              onChange={(e) => onChange(element.id, 'showDescription', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne des descriptions courtes</span>
-          </div>
+          <Toggle
+            checked={element.showDescription !== false}
+            onChange={(checked) => onChange(element.id, 'showDescription', checked)}
+            label="Afficher les descriptions"
+            description="Colonne des descriptions courtes"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la quantité
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showQuantity !== false}
-              onChange={(e) => onChange(element.id, 'showQuantity', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Colonne quantité des produits</span>
-          </div>
+          <Toggle
+            checked={element.showQuantity !== false}
+            onChange={(checked) => onChange(element.id, 'showQuantity', checked)}
+            label="Afficher la quantité"
+            description="Colonne quantité des produits"
+          />
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les frais de port
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showShipping !== false}
-              onChange={(e) => onChange(element.id, 'showShipping', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les frais de livraison</span>
-          </div>
+          <Toggle
+            checked={element.showShipping !== false}
+            onChange={(checked) => onChange(element.id, 'showShipping', checked)}
+            label="Afficher les frais de port"
+            description="Affiche les frais de livraison"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la TVA
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showTax !== false}
-              onChange={(e) => onChange(element.id, 'showTax', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les taxes sur le total</span>
-          </div>
+          <Toggle
+            checked={element.showTax !== false}
+            onChange={(checked) => onChange(element.id, 'showTax', checked)}
+            label="Afficher la TVA"
+            description="Affiche les taxes sur le total"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher la remise globale
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showGlobalDiscount !== false}
-              onChange={(e) => onChange(element.id, 'showGlobalDiscount', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche la remise globale appliquée</span>
-          </div>
+          <Toggle
+            checked={element.showGlobalDiscount !== false}
+            onChange={(checked) => onChange(element.id, 'showGlobalDiscount', checked)}
+            label="Afficher la remise globale"
+            description="Affiche la remise globale appliquée"
+          />
         </>
       )}
 
