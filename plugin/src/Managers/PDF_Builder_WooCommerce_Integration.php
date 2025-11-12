@@ -121,6 +121,14 @@ class PDF_Builder_WooCommerce_Integration
     }
 
     /**
+     * Alias pour la compatibilité - méthode appelée par WooCommerce
+     */
+    public function render_woocommerce_order_meta_box($post_or_order)
+    {
+        return $this->renderWoocommerceOrderMetaBox($post_or_order);
+    }
+
+    /**
      * Rend la meta box dans les commandes WooCommerce - VERSION SIMPLE & ROBUSTE
      */
     public function renderWoocommerceOrderMetaBox($post_or_order)
