@@ -103,6 +103,24 @@ export interface ProductTableElement extends BaseElement {
   borderColor?: string;
   textColor?: string;
   verticalAlign?: string;
+  // Propriétés de police spécifiques à l'entête
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  headerTextColor?: string;
+  // Propriétés de police spécifiques aux lignes
+  rowFontSize?: number;
+  rowFontFamily?: string;
+  rowFontWeight?: string;
+  rowFontStyle?: string;
+  rowTextColor?: string;
+  // Propriétés de police spécifiques aux totaux
+  totalFontSize?: number;
+  totalFontFamily?: string;
+  totalFontWeight?: string;
+  totalFontStyle?: string;
+  totalTextColor?: string;
 }
 
 export interface MentionsElement extends BaseElement {

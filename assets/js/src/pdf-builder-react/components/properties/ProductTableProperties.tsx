@@ -1,5 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProductTableElement } from '../../types/elements';
+
+// Composant Accordion personnalisé
+const Accordion = ({ title, children, defaultOpen = false }: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          padding: '12px',
+          backgroundColor: '#f8f9fa',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: isOpen ? '1px solid #e9ecef' : 'none'
+        }}
+      >
+        <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+          {title}
+        </h4>
+        <span style={{
+          fontSize: '12px',
+          color: '#6c757d',
+          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.2s ease'
+        }}>
+          ▼
+        </span>
+      </div>
+
+      {isOpen && (
+        <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -1279,6 +1323,339 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               }}
             />
           </div>
+
+          {/* Accordéon Police de l'entête */}
+          <Accordion title="Police de l'entête" defaultOpen={false}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police de l&apos;entête
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="24"
+                value={element.headerFontSize || 12}
+                onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 12)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police de l&apos;entête
+              </label>
+              <select
+                value={element.headerFontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police de l&apos;entête
+              </label>
+              <select
+                value={element.headerFontWeight || 'bold'}
+                onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police de l&apos;entête
+              </label>
+              <select
+                value={element.headerFontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur du texte de l&apos;entête
+              </label>
+              <input
+                type="color"
+                value={element.headerTextColor || '#374151'}
+                onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
+          </Accordion>
+
+          {/* Accordéon Police des lignes */}
+          <Accordion title="Police des lignes" defaultOpen={false}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police des lignes
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="24"
+                value={element.rowFontSize || 11}
+                onChange={(e) => onChange(element.id, 'rowFontSize', parseInt(e.target.value) || 11)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police des lignes
+              </label>
+              <select
+                value={element.rowFontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'rowFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police des lignes
+              </label>
+              <select
+                value={element.rowFontWeight || 'normal'}
+                onChange={(e) => onChange(element.id, 'rowFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police des lignes
+              </label>
+              <select
+                value={element.rowFontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'rowFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur du texte des lignes
+              </label>
+              <input
+                type="color"
+                value={element.rowTextColor || '#111827'}
+                onChange={(e) => onChange(element.id, 'rowTextColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
+          </Accordion>
+
+          {/* Accordéon Police des totaux */}
+          <Accordion title="Police des totaux" defaultOpen={false}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police des totaux
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="24"
+                value={element.totalFontSize || 12}
+                onChange={(e) => onChange(element.id, 'totalFontSize', parseInt(e.target.value) || 12)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Famille de police des totaux
+              </label>
+              <select
+                value={element.totalFontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'totalFontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Épaisseur de police des totaux
+              </label>
+              <select
+                value={element.totalFontWeight || 'bold'}
+                onChange={(e) => onChange(element.id, 'totalFontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal (400)</option>
+                <option value="bold">Gras (700)</option>
+                <option value="lighter">Fin (300)</option>
+                <option value="bolder">Très gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police des totaux
+              </label>
+              <select
+                value={element.totalFontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'totalFontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur du texte des totaux
+              </label>
+              <input
+                type="color"
+                value={element.totalTextColor || '#111827'}
+                onChange={(e) => onChange(element.id, 'totalTextColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
+          </Accordion>
         </>
       )}
 
