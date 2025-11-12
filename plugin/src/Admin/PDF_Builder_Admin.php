@@ -5767,7 +5767,7 @@ class PdfBuilderAdmin
                     }, 1000);
 
                 } else if (initAttempts >= maxInitAttempts) {
-                    console.error('❌ Failed to initialize React editor after', maxInitAttempts, 'attempts');
+                    // Failed to initialize React editor after max attempts
                     clearInterval(initInterval);
 
                     // ✅ CORRECTION: Masquer le loader même en cas d'échec pour éviter de masquer l'éditeur
@@ -5775,7 +5775,6 @@ class PdfBuilderAdmin
                     var editorEl = document.getElementById('pdf-builder-react-editor');
                     if (loadingEl) {
                         loadingEl.style.display = 'none';
-                        console.warn('⚠️ Loader masqué après échec d\'initialisation React');
                     }
                     if (editorEl) {
                         editorEl.style.display = 'block';
@@ -5795,7 +5794,6 @@ class PdfBuilderAdmin
             var loadingEl = document.getElementById('pdf-builder-react-loading');
             var editorEl = document.getElementById('pdf-builder-react-editor');
             if (loadingEl && loadingEl.style.display !== 'none') {
-                console.warn('⚠️ [PHP] Timeout du loader - masquage automatique après 10 secondes');
                 loadingEl.style.display = 'none';
                 if (editorEl) {
                     editorEl.style.display = 'block';

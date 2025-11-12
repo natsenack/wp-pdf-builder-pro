@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, memo } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
@@ -1078,7 +1078,7 @@ interface CanvasProps {
 // Constantes pour le cache des images
 const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
 
-export const Canvas = memo(function Canvas({ width, height, className }: CanvasProps) {
+export const Canvas = function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // ✅ Track derniers éléments rendus pour éviter double rendu
@@ -1100,6 +1100,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // ✅ STATE for image loading - force redraw when images load
   const [imageLoadCount, setImageLoadCount] = React.useState(0);
+
+  console.log(`🎨 [CANVAS] Canvas component render - state.elements.length: ${state.elements.length}, imageLoadCount: ${imageLoadCount}`);
 
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -1215,8 +1217,11 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
   }, []);
 
   const drawCompanyLogo = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
+    console.log(`�🚨🚨 DRAWCOMPANYLOGO FUNCTION EXECUTING - UNIQUE TEST LOG 🚨🚨🚨`);
+    console.log(`�🖼️ [LOGO] DRAWCOMPANYLOGO CALLED - element: ${element.id}, type: ${element.type}`);
     const props = element as ImageElementProperties;
     const logoUrl = props.src || props.logoUrl || '';
+    console.log(`🖼️ [LOGO] logoUrl extracted: "${logoUrl}"`);
 
     // ✅ FIX: If no logo URL, show a better placeholder
     if (!logoUrl) {
@@ -1243,7 +1248,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       let img = imageCache.current.get(logoUrl);
 
       if (!img) {
-
+        console.log(`🖼️ [LOGO] Creating new image for: ${logoUrl}`);
         img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
@@ -1256,86 +1261,55 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
         // ✅ CRITICAL: Quand l'image se charge, redessiner le canvas
         img.onload = () => {
+          console.log(`✅ [LOGO] Image loaded successfully: ${logoUrl}`);
           // Incrémenter le counter pour forcer un redraw
           setImageLoadCount(prev => prev + 1);
         };
       } else {
-
+        console.log(`🖼️ [LOGO] Using cached image for: ${logoUrl}`);
       }
 
-      // ✅ IMPROVED: More aggressive image rendering for cached images
-      const shouldRenderImage = (img.complete && img.naturalHeight > 0) ||
-                               (img.naturalWidth > 0 && img.naturalHeight > 0);
+      // ✅ APPROCHE PLUS DIRECTE: Vérifier img.complete au rendu au lieu de compter sur onload
+      // Rendre l'image si elle a une URL valide, même si elle n'est pas encore complètement chargée
+      const shouldRenderImage = logoUrl && logoUrl.trim() !== '';
 
-      // DEBUG: Log image state
-      console.log(`🖼️ [LOGO] ${logoUrl}: complete=${img.complete}, natural=${img.naturalWidth}x${img.naturalHeight}, shouldRender=${shouldRenderImage}`);
+      // DEBUG: Log detailed breakdown of shouldRenderImage condition
+      console.log(`🖼️ [LOGO] DEBUG shouldRenderImage: logoUrl=${!!logoUrl}, logoUrl.trim()=${logoUrl?.trim()}, img.src=${img.src}, img.src?=${!!img.src}, img.src !== ''=${img.src !== ''}`);
+
+      // DEBUG: Log image state with more details
+      console.log(`🖼️ [LOGO] ${logoUrl}: complete=${img.complete}, natural=${img.naturalWidth}x${img.naturalHeight}, src=${img.src}, shouldRender=${shouldRenderImage}`);
 
       if (shouldRenderImage) {
-        // Appliquer la rotation si définie
-        const rotation = element.rotation || 0;
-        const opacity = element.opacity !== undefined ? element.opacity : 1;
-        const borderRadius = element.borderRadius || 0;
-        const objectFit = element.objectFit || 'contain';
+        try {
+          // Appliquer la rotation si définie
+          const rotation = element.rotation || 0;
+          const opacity = element.opacity !== undefined ? element.opacity : 1;
+          const borderRadius = element.borderRadius || 0;
+          const objectFit = element.objectFit || 'contain';
 
-        // Calculer les dimensions et position selon objectFit
-        const containerWidth = element.width - 20;
-        const containerHeight = element.height - 20;
-        const imageAspectRatio = img.naturalWidth / img.naturalHeight;
-        const containerAspectRatio = containerWidth / containerHeight;
+          // Calculer les dimensions et position selon objectFit
+          const containerWidth = element.width - 20;
+          const containerHeight = element.height - 20;
 
-        let logoWidth: number;
-        let logoHeight: number;
-        let offsetX = 0;
-        let offsetY = 0;
+          // Si l'image n'est pas encore chargée, utiliser des dimensions par défaut ou essayer de deviner
+          let imageAspectRatio: number;
+          if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+            imageAspectRatio = img.naturalWidth / img.naturalHeight;
+          } else {
+            // Estimation par défaut pour les logos d'entreprise (généralement rectangulaires)
+            imageAspectRatio = 2; // 2:1 ratio par défaut
+          }
 
-        switch (objectFit) {
-          case 'contain':
-            // Respecte les proportions, image tient entièrement dans le conteneur
-            if (containerAspectRatio > imageAspectRatio) {
-              logoHeight = containerHeight;
-              logoWidth = logoHeight * imageAspectRatio;
-            } else {
-              logoWidth = containerWidth;
-              logoHeight = logoWidth / imageAspectRatio;
-            }
-            break;
+          const containerAspectRatio = containerWidth / containerHeight;
 
-          case 'cover':
-            // Respecte les proportions, image couvre entièrement le conteneur
-            if (containerAspectRatio > imageAspectRatio) {
-              logoWidth = containerWidth;
-              logoHeight = logoWidth / imageAspectRatio;
-              offsetY = (containerHeight - logoHeight) / 2;
-            } else {
-              logoHeight = containerHeight;
-              logoWidth = logoHeight * imageAspectRatio;
-              offsetX = (containerWidth - logoWidth) / 2;
-            }
-            break;
+          let logoWidth: number;
+          let logoHeight: number;
+          let offsetX = 0;
+          let offsetY = 0;
 
-          case 'fill':
-            // Étire l'image pour remplir exactement le conteneur
-            logoWidth = containerWidth;
-            logoHeight = containerHeight;
-            break;
-
-          case 'none':
-            // Taille originale, centrée
-            logoWidth = img.naturalWidth;
-            logoHeight = img.naturalHeight;
-            break;
-
-          case 'scale-down': {
-            // Taille originale ou contain, selon ce qui est plus petit
-            const originalWidth = img.naturalWidth;
-            const originalHeight = img.naturalHeight;
-
-            if (originalWidth <= containerWidth && originalHeight <= containerHeight) {
-              // Taille originale tient, l'utiliser
-              logoWidth = originalWidth;
-              logoHeight = originalHeight;
-            } else {
-              // Utiliser contain
+          switch (objectFit) {
+            case 'contain':
+              // Respecte les proportions, image tient entièrement dans le conteneur
               if (containerAspectRatio > imageAspectRatio) {
                 logoHeight = containerHeight;
                 logoWidth = logoHeight * imageAspectRatio;
@@ -1343,67 +1317,126 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
                 logoWidth = containerWidth;
                 logoHeight = logoWidth / imageAspectRatio;
               }
+              break;
+
+            case 'cover':
+              // Respecte les proportions, image couvre entièrement le conteneur
+              if (containerAspectRatio > imageAspectRatio) {
+                logoWidth = containerWidth;
+                logoHeight = logoWidth / imageAspectRatio;
+                offsetY = (containerHeight - logoHeight) / 2;
+              } else {
+                logoHeight = containerHeight;
+                logoWidth = logoHeight * imageAspectRatio;
+                offsetX = (containerWidth - logoWidth) / 2;
+              }
+              break;
+
+            case 'fill':
+              // Étire l'image pour remplir exactement le conteneur
+              logoWidth = containerWidth;
+              logoHeight = containerHeight;
+              break;
+
+            case 'none':
+              // Taille originale, centrée
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                logoWidth = img.naturalWidth;
+                logoHeight = img.naturalHeight;
+              } else {
+                // Taille par défaut si pas encore chargée
+                logoWidth = Math.min(containerWidth, 120);
+                logoHeight = Math.min(containerHeight, 60);
+              }
+              break;
+
+            case 'scale-down': {
+              // Taille originale ou contain, selon ce qui est plus petit
+              const originalWidth = img.naturalWidth || 120; // Défaut si pas chargé
+              const originalHeight = img.naturalHeight || 60; // Défaut si pas chargé
+
+              if (originalWidth <= containerWidth && originalHeight <= containerHeight) {
+                // Taille originale tient, l'utiliser
+                logoWidth = originalWidth;
+                logoHeight = originalHeight;
+              } else {
+                // Utiliser contain
+                if (containerAspectRatio > imageAspectRatio) {
+                  logoHeight = containerHeight;
+                  logoWidth = logoHeight * imageAspectRatio;
+                } else {
+                  logoWidth = containerWidth;
+                  logoHeight = logoWidth / imageAspectRatio;
+                }
+              }
+              break;
             }
-            break;
+
+            default:
+              // Par défaut contain
+              if (containerAspectRatio > imageAspectRatio) {
+                logoHeight = containerHeight;
+                logoWidth = logoHeight * imageAspectRatio;
+              } else {
+                logoWidth = containerWidth;
+                logoHeight = logoWidth / imageAspectRatio;
+              }
           }
 
-          default:
-            // Par défaut contain
-            if (containerAspectRatio > imageAspectRatio) {
-              logoHeight = containerHeight;
-              logoWidth = logoHeight * imageAspectRatio;
-            } else {
-              logoWidth = containerWidth;
-              logoHeight = logoWidth / imageAspectRatio;
-            }
+          // Calculer la position de base selon l'alignement
+          let x = 10;
+          if (alignment === 'center') {
+            x = (element.width - containerWidth) / 2;
+          } else if (alignment === 'right') {
+            x = element.width - containerWidth - 10;
+          }
+
+          const y = (element.height - containerHeight) / 2;
+
+          // Ajuster pour centrer l'image dans son conteneur selon objectFit
+          const imageX = x + (containerWidth - logoWidth) / 2 + offsetX;
+          const imageY = y + (containerHeight - logoHeight) / 2 + offsetY;
+
+          // Sauvegarder le contexte
+          ctx.save();
+
+          // Appliquer l'opacité
+          if (opacity < 1) {
+            ctx.globalAlpha = opacity;
+          }
+
+          // Appliquer la rotation
+          if (rotation !== 0) {
+            const centerX = x + logoWidth / 2;
+            const centerY = y + logoHeight / 2;
+            ctx.translate(centerX, centerY);
+            ctx.rotate((rotation * Math.PI) / 180);
+            ctx.translate(-centerX, -centerY);
+          }
+
+          // Si borderRadius > 0, créer un chemin arrondi
+          if (borderRadius > 0) {
+            ctx.beginPath();
+            roundedRect(ctx, x, y, logoWidth, logoHeight, borderRadius);
+            ctx.clip();
+          }
+
+          // Essayer de dessiner l'image - si elle n'est pas chargée, cela ne fera rien
+          // mais au moins on aura essayé
+          ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
+
+          // Restaurer le contexte
+          ctx.restore();
+
+          console.log(`✅ [LOGO] Image rendered successfully for: ${logoUrl}`);
+        } catch (error) {
+          console.error(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
+          // En cas d'erreur, dessiner un placeholder
+          drawLogoPlaceholder(ctx, element, alignment, 'Erreur de chargement');
         }
-
-        // Calculer la position de base selon l'alignement
-        let x = 10;
-        if (alignment === 'center') {
-          x = (element.width - containerWidth) / 2;
-        } else if (alignment === 'right') {
-          x = element.width - containerWidth - 10;
-        }
-
-        const y = (element.height - containerHeight) / 2;
-
-        // Ajuster pour centrer l'image dans son conteneur selon objectFit
-        const imageX = x + (containerWidth - logoWidth) / 2 + offsetX;
-        const imageY = y + (containerHeight - logoHeight) / 2 + offsetY;
-
-        // Sauvegarder le contexte
-        ctx.save();
-
-        // Appliquer l'opacité
-        if (opacity < 1) {
-          ctx.globalAlpha = opacity;
-        }
-
-        // Appliquer la rotation
-        if (rotation !== 0) {
-          const centerX = x + logoWidth / 2;
-          const centerY = y + logoHeight / 2;
-          ctx.translate(centerX, centerY);
-          ctx.rotate((rotation * Math.PI) / 180);
-          ctx.translate(-centerX, -centerY);
-        }
-
-        // Si borderRadius > 0, créer un chemin arrondi
-        if (borderRadius > 0) {
-          ctx.beginPath();
-          roundedRect(ctx, x, y, logoWidth, logoHeight, borderRadius);
-          ctx.clip();
-        }
-
-        // Dessiner l'image
-        ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
-
-        // Restaurer le contexte
-        ctx.restore();
       } else {
-        // Image en cours de chargement ou erreur, dessiner un placeholder
-        drawLogoPlaceholder(ctx, element, alignment, img.complete ? 'Erreur' : 'Company_logo');
+        // Pas d'URL valide, dessiner un placeholder
+        drawLogoPlaceholder(ctx, element, alignment, 'URL manquante');
       }
     } else {
       // Pas d'URL, dessiner un placeholder
@@ -1653,6 +1686,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // ✅ BUGFIX-001/004: Memoize drawElement but pass state as parameter to avoid dependency cycle
   const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element, currentState: BuilderState) => {
+    console.log(`🎨 [CANVAS] 🚨🚨🚨 DRAWELEMENT CALLED for ${element.type} 🚨🚨🚨`);
     // Vérifier si l'élément est visible
     if (element.visible === false) {
 
@@ -1694,6 +1728,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         drawCompanyInfo(ctx, element);
         break;
       case 'company_logo':
+        console.log(`🎨 [CANVAS] 🚨🚨🚨 DRAWING COMPANY_LOGO ELEMENT 🚨🚨🚨`);
         drawCompanyLogo(ctx, element);
         break;
       case 'order_number':
@@ -2180,6 +2215,8 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    console.log(`🎨 [CANVAS] renderCanvas called, elements count: ${state.elements.length}`);
+    console.log(`🎨 [CANVAS] 🚨🚨🚨 RENDERCANVAS EXECUTING 🚨🚨🚨`);
     const canvas = canvasRef.current;
     if (!canvas) {
 
@@ -2241,6 +2278,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
 
   // Redessiner quand l'état change
   useEffect(() => {
+    console.log(`🔄 [CANVAS] useEffect triggered - state.elements.length: ${state.elements.length}, imageLoadCount: ${imageLoadCount}`);
     // ✅ BUGFIX: Include ALL essential visual properties in hash
     // This ensures canvas re-renders when ANY visual property changes
     let elementsHash = '';
@@ -2280,8 +2318,9 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
     elementsHash += selectionHash;
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
+    console.log(`🔄 [CANVAS] Checking hash - current: ${lastRenderedElementsRef.current?.substring(0, 50)}..., new: ${elementsHash?.substring(0, 50)}...`);
     if (lastRenderedElementsRef.current === elementsHash) {
-
+      console.log(`🔄 [CANVAS] Hash unchanged, skipping render`);
       return;
     }
     
@@ -2297,7 +2336,7 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state, renderCanvas, imageLoadCount]);  // ✅ BUGFIX: Include imageLoadCount to trigger redraw when images load
+  }, [state, imageLoadCount]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
 
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {
@@ -2317,10 +2356,16 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
         setImageLoadCount(prev => prev + 1);
       }, 1000);
 
+      // Add longer timeout for slow-loading images
+      const timer4 = setTimeout(() => {
+        setImageLoadCount(prev => prev + 1);
+      }, 2000);
+
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
         clearTimeout(timer3);
+        clearTimeout(timer4);
       };
     }
   }, [state.elements.length]);
@@ -2376,4 +2421,4 @@ export const Canvas = memo(function Canvas({ width, height, className }: CanvasP
       )}
     </>
   );
-});
+}

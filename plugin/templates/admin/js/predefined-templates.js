@@ -75,8 +75,8 @@
         // Éditer un modèle existant
         $(document).on('click', '.edit-template', function() {
             const slug = $(this).data('slug');
-            console.log('Edit button clicked for template:', slug);
-            console.log('Loading template data...');
+            // console.log('Edit button clicked for template:', slug);
+            // console.log('Loading template data...');
             loadTemplate(slug);
         });
 
@@ -164,8 +164,8 @@
      * Charger un modèle pour l'édition
      */
     function loadTemplate(slug) {
-        console.log('loadTemplate called with slug:', slug);
-        console.log('Sending nonce:', pdfBuilderPredefined.nonce);
+        // console.log('loadTemplate called with slug:', slug);
+        // console.log('Sending nonce:', pdfBuilderPredefined.nonce);
         showLoadingState();
 
         $.ajax({
@@ -177,21 +177,21 @@
                 nonce: pdfBuilderPredefined.nonce
             },
             success: function(response) {
-                console.log('AJAX success response:', response);
+                // console.log('AJAX success response:', response);
                 hideLoadingState();
 
                 if (response.success) {
-                    console.log('Template loaded successfully, populating form...');
+                    // console.log('Template loaded successfully, populating form...');
                     populateForm(response.data);
                     showTemplateEditor(response.data);
                 } else {
                     // Nonce temporairement désactivé pour debug
-                    console.error('Template load failed:', response.data.message);
+                    // console.error('Template load failed:', response.data.message);
                     showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error, xhr.responseText);
+                // console.error('AJAX error:', status, error, xhr.responseText);
                 hideLoadingState();
                 showErrorMessage(pdfBuilderPredefined.strings.loadError);
             }
@@ -241,7 +241,7 @@
                     // Mettre à jour le slug actuel si le modèle a été renommé
                     if (response.data.renamed) {
                         currentEditingSlug = response.data.slug;
-                        console.log('Template renamed from', response.data.renamed, 'to', response.data.slug);
+                        // console.log('Template renamed from', response.data.renamed, 'to', response.data.slug);
                     }
 
                     showSuccessMessage(pdfBuilderPredefined.strings.saveSuccess);

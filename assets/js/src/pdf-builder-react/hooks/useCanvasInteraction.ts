@@ -32,9 +32,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
   
-  // ✅ CORRECTION 3: Throttling pour handleMouseMove
+  // ✅ CORRECTION 3: Throttling pour handleMouseMove - augmenté drastiquement à 100ms pour éviter resize trop rapide
   const lastMouseMoveTimeRef = useRef<number>(0);
-  const MOUSEMOVE_THROTTLE_MS = 16; // ~60 FPS - back to normal with simplified logic
+  const MOUSEMOVE_THROTTLE_MS = 100; // Augmenté de 16ms à 100ms pour simplifier et ralentir le système
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
