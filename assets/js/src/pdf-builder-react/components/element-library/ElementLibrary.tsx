@@ -103,7 +103,6 @@ const WOOCOMMERCE_ELEMENTS = [
       y: 340,
       width: 250,
       height: 120,
-      showHeaders: true,
       showBorders: false,
       showFullName: true,
       showAddress: true,

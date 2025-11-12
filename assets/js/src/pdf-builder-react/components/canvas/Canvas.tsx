@@ -710,7 +710,6 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const textAlign = 'left'; // Forcer alignement à gauche pour company_info
   const theme = (props.theme || 'corporate') as keyof typeof themes;
-  const showHeaders = props.showHeaders !== false; // Par défaut true
   const showBackground = props.showBackground !== false; // Par défaut true
   const showBorders = props.showBorders !== false; // Par défaut true
   const showCompanyName = props.showCompanyName !== false; // Par défaut true
@@ -794,8 +793,8 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
     phone: props.companyPhone || '+33 4 12 34 56 78'
   };
 
-  // Afficher le nom de l'entreprise si demandé et si les en-têtes sont activés
-  if (showCompanyName && showHeaders) {
+  // Afficher le nom de l'entreprise si demandé
+  if (showCompanyName) {
     ctx.fillStyle = headerTxtColor;
     ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
     ctx.fillText(companyData.name, x, y);

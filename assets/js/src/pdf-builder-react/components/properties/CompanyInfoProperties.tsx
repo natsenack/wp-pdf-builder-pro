@@ -410,13 +410,6 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
           />
 
           <Toggle
-            checked={element.showHeaders !== false}
-            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
-            label="Afficher les en-têtes"
-            description="Affiche les titres des sections"
-          />
-
-          <Toggle
             checked={element.showBorders !== false}
             onChange={(checked) => onChange(element.id, 'showBorders', checked)}
             label="Afficher les bordures"
@@ -459,8 +452,8 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
           />
 
           <Toggle
-            checked={element.showTva !== false}
-            onChange={(checked) => onChange(element.id, 'showTva', checked)}
+            checked={element.showVat !== false}
+            onChange={(checked) => onChange(element.id, 'showVat', checked)}
             label="Afficher le numéro TVA"
             description="Numéro TVA de l'entreprise"
           />
@@ -511,7 +504,7 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
           {/* Police du nom de l'entreprise - Accordéon */}
-          {element.showHeaders !== false && (
+          {element.showCompanyName !== false && (
             <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
               <div
                 onClick={() => toggleAccordion('headerFont')}

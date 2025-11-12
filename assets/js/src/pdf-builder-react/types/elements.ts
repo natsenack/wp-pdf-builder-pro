@@ -496,7 +496,7 @@ export interface CompanyInfoElement extends BaseElement {
   showPhone?: boolean;
   showEmail?: boolean;
   showSiret?: boolean;
-  showTva?: boolean;
+  showVat?: boolean;
   // Propriétés de thème
   theme?: string;
   // Propriétés de police pour les en-têtes
