@@ -1,64 +1,72 @@
 import React, { useState } from 'react';
 import { CompanyInfoElement } from '../../types/elements';
 
-// Composant Toggle personnalisé
-interface ToggleProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label?: string;
-  description?: string;
-}
-
-function Toggle({ checked, onChange, label, description }: ToggleProps) {
-  return (
-    <div style={{ marginBottom: '12px' }}>
-      {label && (
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-          {label}
-        </label>
-      )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div
-          onClick={() => onChange(!checked)}
-          style={{
-            width: '44px',
-            height: '24px',
-            borderRadius: '12px',
-            backgroundColor: checked ? '#007bff' : '#ccc',
-            cursor: 'pointer',
-            position: 'relative',
-            transition: 'background-color 0.2s ease',
-            border: '2px solid transparent'
-          }}
-        >
-          <div
-            style={{
-              width: '18px',
-              height: '18px',
-              borderRadius: '50%',
-              backgroundColor: 'white',
-              position: 'absolute',
-              top: '1px',
-              left: checked ? '21px' : '1px',
-              transition: 'left 0.2s ease',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-            }}
-          />
-        </div>
-        {description && (
-          <span style={{ fontSize: '11px', color: '#666' }}>{description}</span>
-        )}
-      </div>
-    </div>
-  );
-}
-
 interface CompanyInfoPropertiesProps {
   element: CompanyInfoElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
 }
+
+// Composant Toggle personnalisé
+const Toggle = ({ checked, onChange, label, description }: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+  description: string;
+}) => (
+  <div style={{ marginBottom: '12px' }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '6px'
+    }}>
+      <label style={{
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#333',
+        flex: 1
+      }}>
+        {label}
+      </label>
+      <div
+        onClick={() => onChange(!checked)}
+        style={{
+          position: 'relative',
+          width: '44px',
+          height: '24px',
+          backgroundColor: checked ? '#007bff' : '#ccc',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s ease',
+          border: 'none'
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '2px',
+            left: checked ? '22px' : '2px',
+            width: '20px',
+            height: '20px',
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            transition: 'left 0.2s ease',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          }}
+        />
+      </div>
+    </div>
+    <div style={{
+      fontSize: '11px',
+      color: '#666',
+      lineHeight: '1.4'
+    }}>
+      {description}
+    </div>
+  </div>
+);
 
 export function CompanyInfoProperties({ element, onChange, activeTab, setActiveTab }: CompanyInfoPropertiesProps) {
   const companyCurrentTab = activeTab[element.id] || 'fonctionnalites';
@@ -449,48 +457,6 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             label="Afficher le numéro TVA"
             description="Numéro TVA de l'entreprise"
           />
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de fond
-            </label>
-            <select
-              value={element.backgroundColor === 'transparent' ? 'none' : 'custom'}
-              onChange={(e) => {
-                if (e.target.value === 'none') {
-                  onChange(element.id, 'backgroundColor', 'transparent');
-                } else {
-                  // Si on passe de "aucun fond" à "couleur personnalisée", utiliser la valeur par défaut
-                  onChange(element.id, 'backgroundColor', element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor || '#ffffff');
-                }
-              }}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px',
-                marginBottom: '6px'
-              }}
-            >
-              <option value="custom">Couleur personnalisée</option>
-              <option value="none">Aucun fond</option>
-            </select>
-            {element.backgroundColor !== 'transparent' && (
-              <input
-                type="color"
-                value={element.backgroundColor || '#ffffff'}
-                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              />
-            )}
-          </div>
         </>
       )}
 
@@ -806,6 +772,48 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
               <option value="center">Centre</option>
               <option value="right">Droite</option>
             </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur de fond
+            </label>
+            <select
+              value={element.backgroundColor === 'transparent' ? 'none' : 'custom'}
+              onChange={(e) => {
+                if (e.target.value === 'none') {
+                  onChange(element.id, 'backgroundColor', 'transparent');
+                } else {
+                  // Si on passe de "aucun fond" à "couleur personnalisée", utiliser la valeur par défaut
+                  onChange(element.id, 'backgroundColor', element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor || '#ffffff');
+                }
+              }}
+              style={{
+                width: '100%',
+                height: '32px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px',
+                marginBottom: '6px'
+              }}
+            >
+              <option value="custom">Couleur personnalisée</option>
+              <option value="none">Aucun fond</option>
+            </select>
+            {element.backgroundColor !== 'transparent' && (
+              <input
+                type="color"
+                value={element.backgroundColor || '#ffffff'}
+                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              />
+            )}
           </div>
 
           {element.showBorders !== false && (
