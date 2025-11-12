@@ -405,75 +405,143 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Fonctionnalités */}
       {companyCurrentTab === 'fonctionnalites' && (
         <>
-          <Toggle
-            checked={element.showBackground !== false}
-            onChange={(checked) => onChange(element.id, 'showBackground', checked)}
-            label="Afficher le fond"
-            description="Affiche un fond coloré derrière les informations"
-          />
+          {/* Section Structure des informations */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Structure des informations
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showBackground !== false}
+                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                label="Afficher le fond"
+                description="Affiche un fond coloré derrière les informations"
+              />
 
-          <Toggle
-            checked={element.showBorders !== false}
-            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
-            label="Afficher les bordures"
-            description="Affiche les bordures autour des sections"
-          />
+              <Toggle
+                checked={element.showBorders !== false}
+                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+                label="Afficher les bordures"
+                description="Affiche les bordures autour des sections"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showCompanyName !== false}
-            onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
-            label="Afficher le nom de l'entreprise"
-            description="Nom de l'entreprise"
-          />
+          {/* Section Informations générales */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Informations générales
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showCompanyName !== false}
+                onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
+                label="Afficher le nom de l'entreprise"
+                description="Nom de l'entreprise"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showAddress !== false}
-            onChange={(checked) => onChange(element.id, 'showAddress', checked)}
-            label="Afficher l'adresse"
-            description="Adresse complète de l'entreprise"
-          />
+          {/* Section Coordonnées */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Coordonnées
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showAddress !== false}
+                onChange={(checked) => onChange(element.id, 'showAddress', checked)}
+                label="Afficher l'adresse"
+                description="Adresse complète de l'entreprise"
+              />
 
-          <Toggle
-            checked={element.showPhone !== false}
-            onChange={(checked) => onChange(element.id, 'showPhone', checked)}
-            label="Afficher le téléphone"
-            description="Numéro de téléphone"
-          />
+              <Toggle
+                checked={element.showPhone !== false}
+                onChange={(checked) => onChange(element.id, 'showPhone', checked)}
+                label="Afficher le téléphone"
+                description="Numéro de téléphone"
+              />
 
-          <Toggle
-            checked={element.showEmail !== false}
-            onChange={(checked) => onChange(element.id, 'showEmail', checked)}
-            label="Afficher l'email"
-            description="Adresse email de l'entreprise"
-          />
+              <Toggle
+                checked={element.showEmail !== false}
+                onChange={(checked) => onChange(element.id, 'showEmail', checked)}
+                label="Afficher l'email"
+                description="Adresse email de l'entreprise"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showSiret !== false}
-            onChange={(checked) => onChange(element.id, 'showSiret', checked)}
-            label="Afficher le numéro SIRET"
-            description="Numéro SIRET de l'entreprise"
-          />
+          {/* Section Informations légales */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Informations légales
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showSiret !== false}
+                onChange={(checked) => onChange(element.id, 'showSiret', checked)}
+                label="Afficher le numéro SIRET"
+                description="Numéro SIRET de l'entreprise"
+              />
 
-          <Toggle
-            checked={element.showVat !== false}
-            onChange={(checked) => onChange(element.id, 'showVat', checked)}
-            label="Afficher le numéro TVA"
-            description="Numéro TVA de l'entreprise"
-          />
+              <Toggle
+                checked={element.showVat !== false}
+                onChange={(checked) => onChange(element.id, 'showVat', checked)}
+                label="Afficher le numéro TVA"
+                description="Numéro TVA de l'entreprise"
+              />
 
-          <Toggle
-            checked={element.showRcs !== false}
-            onChange={(checked) => onChange(element.id, 'showRcs', checked)}
-            label="Afficher le RCS"
-            description="Registre du Commerce et des Sociétés"
-          />
+              <Toggle
+                checked={element.showRcs !== false}
+                onChange={(checked) => onChange(element.id, 'showRcs', checked)}
+                label="Afficher le RCS"
+                description="Registre du Commerce et des Sociétés"
+              />
 
-          <Toggle
-            checked={element.showCapital !== false}
-            onChange={(checked) => onChange(element.id, 'showCapital', checked)}
-            label="Afficher le capital social"
-            description="Montant du capital social de l'entreprise"
-          />
+              <Toggle
+                checked={element.showCapital !== false}
+                onChange={(checked) => onChange(element.id, 'showCapital', checked)}
+                label="Afficher le capital social"
+                description="Montant du capital social de l'entreprise"
+              />
+            </div>
+          </div>
         </>
       )}
 

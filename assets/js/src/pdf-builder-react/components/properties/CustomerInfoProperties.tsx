@@ -190,70 +190,136 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
       {/* Onglet Fonctionnalités */}
       {customerCurrentTab === 'fonctionnalites' && (
         <>
-          <Toggle
-            checked={element.showHeaders !== false}
-            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
-            label="Afficher les en-têtes"
-            description="Affiche les titres des sections"
-          />
+          {/* Section Structure de l'information */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Structure des informations
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showHeaders !== false}
+                onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+                label="Afficher les en-têtes"
+                description="Affiche les titres des sections"
+              />
 
-          <Toggle
-            checked={element.showBorders !== false}
-            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
-            label="Afficher les bordures"
-            description="Affiche les bordures autour des sections"
-          />
+              <Toggle
+                checked={element.showBorders !== false}
+                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+                label="Afficher les bordures"
+                description="Affiche les bordures autour des sections"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showName !== false}
-            onChange={(checked) => onChange(element.id, 'showName', checked)}
-            label="Afficher le nom"
-            description="Nom du client"
-          />
+          {/* Section Informations personnelles */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Informations personnelles
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showName !== false}
+                onChange={(checked) => onChange(element.id, 'showName', checked)}
+                label="Afficher le nom"
+                description="Nom du client"
+              />
 
-          <Toggle
-            checked={element.showFullName !== false}
-            onChange={(checked) => onChange(element.id, 'showFullName', checked)}
-            label="Afficher le nom complet"
-            description="Prénom et nom du client"
-          />
+              <Toggle
+                checked={element.showFullName !== false}
+                onChange={(checked) => onChange(element.id, 'showFullName', checked)}
+                label="Afficher le nom complet"
+                description="Prénom et nom du client"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showAddress !== false}
-            onChange={(checked) => onChange(element.id, 'showAddress', checked)}
-            label="Afficher l'adresse"
-            description="Adresse complète du client"
-          />
+          {/* Section Coordonnées */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Coordonnées
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showAddress !== false}
+                onChange={(checked) => onChange(element.id, 'showAddress', checked)}
+                label="Afficher l'adresse"
+                description="Adresse complète du client"
+              />
 
-          <Toggle
-            checked={element.showEmail !== false}
-            onChange={(checked) => onChange(element.id, 'showEmail', checked)}
-            label="Afficher l'email"
-            description="Adresse email du client"
-          />
+              <Toggle
+                checked={element.showEmail !== false}
+                onChange={(checked) => onChange(element.id, 'showEmail', checked)}
+                label="Afficher l'email"
+                description="Adresse email du client"
+              />
 
-          <Toggle
-            checked={element.showPhone !== false}
-            onChange={(checked) => onChange(element.id, 'showPhone', checked)}
-            label="Afficher le téléphone"
-            description="Numéro de téléphone du client"
-          />
+              <Toggle
+                checked={element.showPhone !== false}
+                onChange={(checked) => onChange(element.id, 'showPhone', checked)}
+                label="Afficher le téléphone"
+                description="Numéro de téléphone du client"
+              />
+            </div>
+          </div>
 
-          <Toggle
-            checked={element.showPaymentMethod !== false}
-            onChange={(checked) => onChange(element.id, 'showPaymentMethod', checked)}
-            label="Afficher le moyen de paiement"
-            description="Méthode de paiement utilisée"
-          />
+          {/* Section Informations de paiement */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Informations de paiement
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showPaymentMethod !== false}
+                onChange={(checked) => onChange(element.id, 'showPaymentMethod', checked)}
+                label="Afficher le moyen de paiement"
+                description="Méthode de paiement utilisée"
+              />
 
-          <Toggle
-            checked={element.showTransactionId !== false}
-            onChange={(checked) => onChange(element.id, 'showTransactionId', checked)}
-            label="Afficher l'ID de transaction"
-            description="Identifiant unique de la transaction"
-          />
-
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+              <Toggle
+                checked={element.showTransactionId !== false}
+                onChange={(checked) => onChange(element.id, 'showTransactionId', checked)}
+                label="Afficher l'ID de transaction"
+                description="Identifiant unique de la transaction"
+              />
+            </div>
+          </div>
         </>
       )}
 
