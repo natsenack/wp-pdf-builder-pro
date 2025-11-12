@@ -175,7 +175,6 @@ export const Header = memo(function Header({
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '500',
-    transition: 'all 0.2s ease',
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
@@ -186,8 +185,7 @@ export const Header = memo(function Header({
     ...buttonBaseStyles,
     backgroundColor: '#4CAF50',
     color: '#fff',
-    boxShadow: hoveredButton === 'save' ? '0 4px 12px rgba(76, 175, 80, 0.3)' : 'none',
-    transform: hoveredButton === 'save' ? 'translateY(-2px)' : 'translateY(0)'
+    boxShadow: hoveredButton === 'save' ? '0 4px 12px rgba(76, 175, 80, 0.3)' : 'none'
   };
 
   const secondaryButtonStyles = {
@@ -195,8 +193,7 @@ export const Header = memo(function Header({
     backgroundColor: '#fff',
     border: '1px solid #ddd',
     color: '#333',
-    boxShadow: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? '0 2px 8px rgba(0, 0, 0, 0.1)' : 'none',
-    transform: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? 'translateY(-1px)' : 'translateY(0)'
+    boxShadow: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? '0 2px 8px rgba(0, 0, 0, 0.1)' : 'none'
   };
 
   return (
@@ -220,7 +217,6 @@ export const Header = memo(function Header({
       right: isHeaderFixed ? '0' : 'auto',
       width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
       zIndex: 1000,
-      transition: 'all 0.3s ease, box-shadow 0.2s ease, border-radius 0.3s ease',
       boxSizing: 'border-box'
     }}>
       {/* Left Section - Title and Status */}
@@ -1043,7 +1039,6 @@ export const Header = memo(function Header({
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: '500',
-                  transition: 'all 0.2s ease',
                   opacity: copySuccess ? 0.7 : 1
                 }}
                 title="Copier le JSON"
@@ -1072,8 +1067,7 @@ export const Header = memo(function Header({
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  transition: 'all 0.2s ease'
+                  fontWeight: '500'
                 }}
                 title="Télécharger le JSON"
               >
@@ -1089,8 +1083,7 @@ export const Header = memo(function Header({
                   color: '#333',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  transition: 'all 0.2s ease'
+                  fontWeight: '500'
                 }}
               >
                 Fermer
@@ -1193,8 +1186,7 @@ export const Header = memo(function Header({
                       fontWeight: '500',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      transition: 'all 0.2s ease'
+                      gap: '6px'
                     }}
                   >
                     <span>{format.icon}</span>
@@ -1228,13 +1220,12 @@ export const Header = memo(function Header({
                   fontWeight: '500',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.2s ease'
+                  gap: '8px'
                 }}
               >
                 {isGeneratingPreview ? (
                   <>
-                    <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span>
+                    <span>⟳</span>
                     <span>Génération en cours...</span>
                   </>
                 ) : (
@@ -1297,12 +1288,6 @@ export const Header = memo(function Header({
         </div>
       )}
 
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 });
