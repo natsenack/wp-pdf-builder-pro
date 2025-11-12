@@ -67,6 +67,7 @@ export const Header = memo(function Header({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
@@ -139,15 +140,17 @@ export const Header = memo(function Header({
     setEditedSnapToGrid(snapToGrid);
   }, [snapToGrid]);
 
-  // Optimisation: mémoriser le handler de scroll (désactivé pour éviter les mouvements)
+  // Optimisation: mémoriser le handler de scroll
   const handleScroll = useCallback(() => {
-    // Fonctionnalité sticky désactivée pour éviter les mouvements du header
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    // Le header devient fixe après 100px de scroll
+    setIsHeaderFixed(scrollTop > 100);
   }, []);
 
-  // Effet pour gérer le scroll (désactivé)
+  // Effet pour gérer le scroll et rendre le header fixe
   useEffect(() => {
-    // window.addEventListener('scroll', handleScroll, { passive: true });
-    // return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
   // Effet pour fermer le dropdown des modèles prédéfinis quand on clique ailleurs
@@ -198,19 +201,21 @@ export const Header = memo(function Header({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '12px',
-      paddingLeft: '12px',
-      paddingRight: '12px',
+      padding: isHeaderFixed ? '16px' : '12px',
+      paddingLeft: isHeaderFixed ? '16px' : '12px',
+      paddingRight: isHeaderFixed ? '16px' : '12px',
       backgroundColor: '#ffffff',
       borderBottom: '2px solid #e0e0e0',
-      borderRadius: '0px',
-      boxShadow: 'none',
+      borderRadius: isHeaderFixed ? '0' : '0px',
+      boxShadow: isHeaderFixed
+        ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)'
+        : 'none',
       gap: '16px',
-      position: 'relative',
-      top: 'auto',
-      left: 'auto',
-      right: 'auto',
-      width: 'auto',
+      position: isHeaderFixed ? 'fixed' : 'relative',
+      top: isHeaderFixed ? '32px' : 'auto',
+      left: isHeaderFixed ? '160px' : 'auto',
+      right: isHeaderFixed ? '0' : 'auto',
+      width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
       zIndex: 1000,
       boxSizing: 'border-box'
     }}>
