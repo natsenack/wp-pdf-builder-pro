@@ -79,6 +79,11 @@ var pdfBuilderWizard = {
         this.navigateToStep(step);
     },
 
+    skipStep: function(step) {
+        // Passer l'étape sans validation ni sauvegarde
+        this.navigateToStep(step);
+    },
+
     navigateToStep: function(step) {
         var url = new URL(window.location);
         url.searchParams.set('step', step);

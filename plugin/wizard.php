@@ -229,32 +229,41 @@ class PDF_Builder_Installation_Wizard {
      * Étape de configuration entreprise
      */
     private function render_company_step() {
+        // Récupérer les informations WooCommerce disponibles
+        $company_info = $this->get_woocommerce_company_info();
+
         ?>
         <h2>Informations de l'entreprise</h2>
         <p>Configurez les informations de base de votre entreprise pour les PDF.</p>
+        <?php if (!empty($company_info)): ?>
+        <div class="notice notice-info">
+            <p><strong>ℹ️ Informations détectées automatiquement depuis WooCommerce :</strong></p>
+            <p>Ces champs ont été pré-remplis avec les données de votre boutique. Vous pouvez les modifier si nécessaire.</p>
+        </div>
+        <?php endif; ?>
 
         <form id="company-form">
             <table class="form-table">
                 <tr>
                     <th><label for="company_name">Nom de l'entreprise</label></th>
-                    <td><input type="text" id="company_name" name="company_name" class="regular-text" required></td>
+                    <td><input type="text" id="company_name" name="company_name" class="regular-text" value="<?php echo esc_attr($company_info['name'] ?? ''); ?>" required></td>
                 </tr>
                 <tr>
                     <th><label for="company_address">Adresse</label></th>
-                    <td><textarea id="company_address" name="company_address" rows="3" class="regular-text"></textarea></td>
+                    <td><textarea id="company_address" name="company_address" rows="3" class="regular-text"><?php echo esc_textarea($company_info['address'] ?? ''); ?></textarea></td>
                 </tr>
                 <tr>
                     <th><label for="company_phone">Téléphone</label></th>
-                    <td><input type="tel" id="company_phone" name="company_phone" class="regular-text"></td>
+                    <td><input type="tel" id="company_phone" name="company_phone" class="regular-text" value="<?php echo esc_attr($company_info['phone'] ?? ''); ?>"></td>
                 </tr>
                 <tr>
                     <th><label for="company_email">Email</label></th>
-                    <td><input type="email" id="company_email" name="company_email" class="regular-text"></td>
+                    <td><input type="email" id="company_email" name="company_email" class="regular-text" value="<?php echo esc_attr($company_info['email'] ?? ''); ?>"></td>
                 </tr>
                 <tr>
                     <th><label for="company_logo">Logo (URL)</label></th>
                     <td>
-                        <input type="url" id="company_logo" name="company_logo" class="regular-text">
+                        <input type="url" id="company_logo" name="company_logo" class="regular-text" value="<?php echo esc_attr($company_info['logo'] ?? ''); ?>">
                         <button type="button" class="button" id="upload-logo">Choisir un logo</button>
                     </td>
                 </tr>
@@ -344,6 +353,12 @@ class PDF_Builder_Installation_Wizard {
                 </button>
             <?php endif; ?>
 
+            <?php if ($current_step === 'company'): ?>
+                <button class="button button-secondary" onclick="pdfBuilderWizard.skipStep('<?php echo esc_attr($next_step); ?>')">
+                    Passer cette étape
+                </button>
+            <?php endif; ?>
+
             <?php if ($next_step): ?>
                 <button class="button button-primary" onclick="pdfBuilderWizard.nextStep('<?php echo esc_attr($next_step); ?>')">
                     Suivant
@@ -386,6 +401,49 @@ class PDF_Builder_Installation_Wizard {
     private function get_mysql_version() {
         global $wpdb;
         return $wpdb->get_var("SELECT VERSION()");
+    }
+
+    /**
+     * Récupérer les informations entreprise depuis WooCommerce
+     */
+    private function get_woocommerce_company_info() {
+        $info = array();
+
+        if (!class_exists('WooCommerce')) {
+            return $info;
+        }
+
+        // Nom de l'entreprise (nom de la boutique)
+        $info['name'] = get_option('woocommerce_store_name', '');
+
+        // Adresse de la boutique
+        $address_parts = array(
+            get_option('woocommerce_store_address', ''),
+            get_option('woocommerce_store_address_2', ''),
+            get_option('woocommerce_store_city', ''),
+            get_option('woocommerce_store_postcode', ''),
+            get_option('woocommerce_store_country', '')
+        );
+
+        // Filtrer les parties vides et construire l'adresse
+        $address_parts = array_filter($address_parts);
+        if (!empty($address_parts)) {
+            $info['address'] = implode("\n", $address_parts);
+        }
+
+        // Téléphone (si configuré dans WooCommerce)
+        $info['phone'] = get_option('woocommerce_store_phone', '');
+
+        // Email (email admin ou email de la boutique)
+        $info['email'] = get_option('woocommerce_email_from_address', '');
+        if (empty($info['email'])) {
+            $info['email'] = get_option('admin_email', '');
+        }
+
+        // Logo (si configuré dans WooCommerce)
+        $info['logo'] = get_option('woocommerce_store_logo', '');
+
+        return $info;
     }
 
     /**
