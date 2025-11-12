@@ -17,6 +17,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// DEBUG: Log si le plugin se charge pendant AJAX
+if (defined('DOING_AJAX') && DOING_AJAX) {
+    error_log('PDF Builder Pro: Plugin loading during AJAX request');
+}
+
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
@@ -164,6 +169,7 @@ function pdf_builder_init()
     }
 
     // Enregistrer le handler AJAX pour le wizard
+    error_log('PDF Builder Pro: Registering AJAX handler');
     add_action('wp_ajax_pdf_builder_wizard_step', function() {
         // Test simple pour vérifier que l'AJAX fonctionne
         error_log('PDF Builder Wizard: AJAX handler called from main plugin file');
