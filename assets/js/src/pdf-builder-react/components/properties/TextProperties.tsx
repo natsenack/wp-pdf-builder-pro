@@ -11,6 +11,8 @@ interface ExtendedElement extends Element {
   textAlign?: string;
   fontFamily?: string;
   fontSize?: number;
+  align?: string;
+  color?: string;
 }
 
 interface TextPropertiesProps {
@@ -124,7 +126,7 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
               Alignement horizontal
             </label>
             <select
-              value={element.textAlign || 'left'}
+              value={element.textAlign || element.align || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -194,14 +196,14 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Taille de police <span style={{ color: '#666', fontSize: '10px' }}>({element.fontSize || 12}px)</span>
+              Taille de police <span style={{ color: '#666', fontSize: '10px' }}>({element.fontSize || 16}px)</span>
             </label>
             <input
               type="number"
               min="6"
               max="72"
-              value={element.fontSize || 12}
-              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 12)}
+              value={element.fontSize || 16}
+              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 16)}
               style={{
                 width: '100%',
                 padding: '4px 8px',
@@ -271,7 +273,7 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
             </label>
             <input
               type="color"
-              value={element.textColor || '#000000'}
+              value={element.textColor || element.color || '#000000'}
               onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
               style={{
                 width: '100%',
