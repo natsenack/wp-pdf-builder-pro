@@ -356,11 +356,39 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   columns.forEach(col => col.width = col.width / totalWidth);
 
   // Calcul des positions X des colonnes
-  let currentX = 8;
+  let currentX = 8 + offsetX;
   columns.forEach(col => {
     col.x = currentX;
     currentX += col.width * (element.width - 16);
   });
+
+  // ✅ Calculer les offsets d'alignement horizontal et vertical
+  const horizontalAlign = props.textAlign || 'left';
+  const verticalAlign = props.verticalAlign || 'top';
+  
+  // Calculer la hauteur totale du tableau pour l'alignement vertical
+  const rowHeight = showDescription ? 50 : 35;
+  const headerHeight = showHeaders ? 35 : 0;
+  const productsCount = products.length;
+  const tableHeight = headerHeight + (productsCount * (rowHeight + 4)) + 20; // +20 pour les totaux
+  
+  // Offsets d'alignement
+  let offsetX = 0;
+  let offsetY = 0;
+  
+  // Alignement horizontal
+  if (horizontalAlign === 'center') {
+    offsetX = (element.width - (element.width - 16)) / 2; // Centrer dans la largeur disponible
+  } else if (horizontalAlign === 'right') {
+    offsetX = element.width - (element.width - 16); // Aligner à droite
+  }
+  
+  // Alignement vertical
+  if (verticalAlign === 'middle') {
+    offsetY = Math.max(0, (element.height - tableHeight) / 2);
+  } else if (verticalAlign === 'bottom') {
+    offsetY = Math.max(0, element.height - tableHeight);
+  }
 
   // Fond
   ctx.fillStyle = props.backgroundColor || '#ffffff';
@@ -379,17 +407,17 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   }
 
   ctx.textAlign = 'left';
-  let currentY = showHeaders ? 25 : 15;
+  let currentY = (showHeaders ? 25 : 15) + offsetY;
 
   // En-têtes avec style professionnel
   if (showHeaders) {
     ctx.fillStyle = props.headerBackgroundColor || '#f9fafb';
     // Utiliser roundedRect si borderRadius > 0, sinon fillRect normal
     if (borderRadius > 0) {
-      roundedRect(ctx, 1, 1, element.width - 2, 32, borderRadius);
+      roundedRect(ctx, 1 + offsetX, 1 + offsetY, element.width - 2, 32, borderRadius);
       ctx.fill();
     } else {
-      ctx.fillRect(1, 1, element.width - 2, 32);
+      ctx.fillRect(1 + offsetX, 1 + offsetY, element.width - 2, 32);
     }
 
     ctx.fillStyle = props.headerTextColor || '#374151';
@@ -401,24 +429,21 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
       const textX = col.align === 'right' ? col.x + col.width * (element.width - 16) - 4 :
                    col.align === 'center' ? col.x + (col.width * (element.width - 16)) / 2 :
                    col.x;
-      ctx.fillText(col.label, textX, 10); // Ajusté pour centrer dans la hauteur plus grande
+      ctx.fillText(col.label, textX, 10 + offsetY); // Ajusté pour centrer dans la hauteur plus grande
     });
 
     // Ligne de séparation sous les en-têtes
     ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(4, 34); // Ajusté pour la nouvelle hauteur
-    ctx.lineTo(element.width - 4, 34);
+    ctx.moveTo(4 + offsetX, 34 + offsetY); // Ajusté pour la nouvelle hauteur
+    ctx.lineTo(element.width - 4 + offsetX, 34 + offsetY);
     ctx.stroke();
 
-    currentY = 42; // Ajusté pour la nouvelle hauteur d'entête
+    currentY = 42 + offsetY; // Ajusté pour la nouvelle hauteur d'entête
   } else {
-    currentY = 15;
+    currentY = 15 + offsetY;
   }
-
-  // Calcul de la hauteur uniforme des lignes (augmentée)
-  const rowHeight = showDescription ? 50 : 35;
 
   // Produits avec alternance de couleurs
   ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
@@ -433,10 +458,10 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
       ctx.fillStyle = props.alternateRowColor || '#f9fafb';
       // Utiliser roundedRect si borderRadius > 0
       if (borderRadius > 0) {
-        roundedRect(ctx, 1, rowY, element.width - 2, rowHeight, borderRadius);
+        roundedRect(ctx, 1 + offsetX, rowY, element.width - 2, rowHeight, borderRadius);
         ctx.fill();
       } else {
-        ctx.fillRect(1, rowY, element.width - 2, rowHeight);
+        ctx.fillRect(1 + offsetX, rowY, element.width - 2, rowHeight);
       }
     }
 
@@ -496,9 +521,9 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   ctx.textAlign = 'left';
 
   const totalsY = currentY;
-  ctx.fillText('Sous-total:', element.width - 200, totalsY);
+  ctx.fillText('Sous-total:', element.width - 200 + offsetX, totalsY);
   ctx.textAlign = 'right';
-  ctx.fillText(`${subtotalWithOrderFees.toFixed(2)}${currency}`, element.width - 8, totalsY);
+  ctx.fillText(`${subtotalWithOrderFees.toFixed(2)}${currency}`, element.width - 8 + offsetX, totalsY);
 
   currentY += 18;
 
@@ -507,9 +532,9 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   if (totalDiscounts > 0) {
     ctx.textAlign = 'left';
     ctx.fillStyle = '#059669'; // Garder le vert pour la remise (couleur spéciale)
-    ctx.fillText('Coupon:', element.width - 200, currentY);
+    ctx.fillText('Coupon:', element.width - 200 + offsetX, currentY);
     ctx.textAlign = 'right';
-    ctx.fillText(`-${totalDiscounts.toFixed(2)}${currency}`, element.width - 8, currentY);
+    ctx.fillText(`-${totalDiscounts.toFixed(2)}${currency}`, element.width - 8 + offsetX, currentY);
     currentY += 18;
   }
 
@@ -517,9 +542,9 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   if (shippingCost > 0 && showShipping) {
     ctx.textAlign = 'left';
     ctx.fillStyle = textColor; // Utiliser la couleur du texte
-    ctx.fillText('Frais de port:', element.width - 200, currentY);
+    ctx.fillText('Frais de port:', element.width - 200 + offsetX, currentY);
     ctx.textAlign = 'right';
-    ctx.fillText(`${shippingCost.toFixed(2)}${currency}`, element.width - 8, currentY);
+    ctx.fillText(`${shippingCost.toFixed(2)}${currency}`, element.width - 8 + offsetX, currentY);
     currentY += 18;
   }
 
@@ -527,9 +552,9 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   if (taxAmount > 0 && showTax) {
     ctx.textAlign = 'left';
     ctx.fillStyle = textColor; // Utiliser la couleur du texte
-    ctx.fillText(`TVA (${taxRate}%):`, element.width - 200, currentY);
+    ctx.fillText(`TVA (${taxRate}%):`, element.width - 200 + offsetX, currentY);
     ctx.textAlign = 'right';
-    ctx.fillText(`${taxAmount.toFixed(2)}${currency}`, element.width - 8, currentY);
+    ctx.fillText(`${taxAmount.toFixed(2)}${currency}`, element.width - 8 + offsetX, currentY);
     currentY += 18;
   }
 
@@ -537,17 +562,17 @@ const drawProductTable = (ctx: CanvasRenderingContext2D, element: Element, state
   ctx.strokeStyle = textColor; // Utiliser la couleur du texte pour la ligne
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(element.width - 200, currentY - 5);
-  ctx.lineTo(element.width - 8, currentY - 5);
+  ctx.moveTo(element.width - 200 + offsetX, currentY - 5);
+  ctx.lineTo(element.width - 8 + offsetX, currentY - 5);
   ctx.stroke();
 
   currentY += 8; // Plus d'espace après la ligne de séparation
   ctx.font = `${fontStyle} bold ${fontSize + 2}px ${fontFamily}`;
   ctx.fillStyle = textColor; // Utiliser la couleur du texte pour le total
   ctx.textAlign = 'left';
-  ctx.fillText('TOTAL:', element.width - 200, currentY);
+  ctx.fillText('TOTAL:', element.width - 200 + offsetX, currentY);
   ctx.textAlign = 'right';
-  ctx.fillText(`${finalTotal.toFixed(2)}${currency}`, element.width - 8, currentY);
+  ctx.fillText(`${finalTotal.toFixed(2)}${currency}`, element.width - 8 + offsetX, currentY);
 };
 
 // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode

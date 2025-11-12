@@ -313,6 +313,7 @@ export interface ProductTableElementProperties {
   globalDiscount?: number;
   orderFees?: number;
   backgroundColor?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface DocumentTypeElementProperties {
