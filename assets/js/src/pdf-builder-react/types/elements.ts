@@ -398,6 +398,7 @@ export interface CompanyInfoElementProperties {
   showSiret?: boolean;
   showVat?: boolean;
   borderColor?: string;
+  borderWidth?: number;
   headerTextColor?: string;
   // Propriétés de données d'entreprise
   companyName?: string;

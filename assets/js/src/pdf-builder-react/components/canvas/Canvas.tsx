@@ -767,7 +767,7 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   // Appliquer les bordures si demandé
   if (showBorders) {
     ctx.strokeStyle = borderCol;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = props.borderWidth || 1;
     ctx.strokeRect(0, 0, element.width, element.height);
   }
 

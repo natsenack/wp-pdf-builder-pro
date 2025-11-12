@@ -804,23 +804,50 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur des bordures
-            </label>
-            <input
-              type="color"
-              value={element.borderColor || '#e5e7eb'}
-              onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          {element.showBorders !== false && (
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                Couleur des bordures
+              </label>
+              <input
+                type="color"
+                value={element.borderColor || '#e5e7eb'}
+                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+          )}
+
+          {element.showBorders !== false && (
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                Épaisseur de la bordure
+              </label>
+              <select
+                value={String(element.borderWidth || '1')}
+                onChange={(e) => onChange(element.id, 'borderWidth', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="0.5">Fin (0.5px)</option>
+                <option value="1">Normal (1px)</option>
+                <option value="1.5">Moyen (1.5px)</option>
+                <option value="2">Épais (2px)</option>
+                <option value="3">Très épais (3px)</option>
+              </select>
+            </div>
+          )}
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
