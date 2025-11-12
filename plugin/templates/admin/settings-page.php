@@ -717,7 +717,11 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                     ?></p>
                     <p style="margin: 5px 0;"><strong>Téléphone :</strong> <?php 
                         $phone = get_option('woocommerce_store_phone', '');
-                        echo esc_html($phone ?: '<em>Non configuré dans WooCommerce</em>');
+                        if ($phone) {
+                            echo esc_html($phone);
+                        } else {
+                            echo '<em>Non configuré dans WooCommerce</em> <a href="' . admin_url('admin.php?page=wc-settings&tab=general') . '" target="_blank" style="color: #007cba; text-decoration: none;">⚙️ Configurer</a>';
+                        }
                     ?></p>
                     <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
                     <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
