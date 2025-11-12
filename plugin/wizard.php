@@ -661,5 +661,16 @@ class PDF_Builder_Installation_Wizard {
     }
 }
 
+/**
+ * Handler AJAX global pour le wizard
+ */
+function pdf_builder_wizard_ajax_handler() {
+    $wizard = new PDF_Builder_Installation_Wizard();
+    $wizard->handle_ajax_step();
+}
+
+// Enregistrer le handler AJAX globalement
+add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_wizard_ajax_handler');
+
 // Initialiser le wizard
 new PDF_Builder_Installation_Wizard();
