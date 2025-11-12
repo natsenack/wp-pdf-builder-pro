@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CompanyInfoElement } from '../../types/elements';
 
 interface CompanyInfoPropertiesProps {
@@ -12,6 +12,19 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
   const companyCurrentTab = activeTab[element.id] || 'fonctionnalites';
   const setCompanyCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });
+  };
+
+  // État pour les accordéons de police
+  const [fontAccordions, setFontAccordions] = useState({
+    headerFont: true, // Accordéon du nom de l'entreprise ouvert par défaut
+    bodyFont: false   // Accordéon des informations fermé par défaut
+  });
+
+  const toggleAccordion = (accordion: 'headerFont' | 'bodyFont') => {
+    setFontAccordions(prev => ({
+      ...prev,
+      [accordion]: !prev[accordion]
+    }));
   };
 
   const companyThemes = [
@@ -478,12 +491,36 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          {/* Police du nom de l'entreprise - Uniquement si les en-têtes sont affichés */}
+          {/* Police du nom de l'entreprise - Accordéon */}
           {element.showHeaders !== false && (
-            <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-              <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-                Police du nom de l&apos;entreprise
-              </h4>
+            <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+              <div
+                onClick={() => toggleAccordion('headerFont')}
+                style={{
+                  padding: '12px',
+                  backgroundColor: '#f8f9fa',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderBottom: fontAccordions.headerFont ? '1px solid #e9ecef' : 'none'
+                }}
+              >
+                <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                  Police du nom de l&apos;entreprise
+                </h4>
+                <span style={{
+                  fontSize: '12px',
+                  color: '#6c757d',
+                  transform: fontAccordions.headerFont ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s ease'
+                }}>
+                  ▼
+                </span>
+              </div>
+
+              {fontAccordions.headerFont && (
+                <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
 
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -575,14 +612,40 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                 <option value="oblique">Oblique</option>
               </select>
             </div>
-          </div>
+                </div>
+              )}
+            </div>
           )}
 
-          {/* Police du corps du texte */}
-          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-              Police des informations
-            </h4>
+          {/* Police du corps du texte - Accordéon */}
+          <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              onClick={() => toggleAccordion('bodyFont')}
+              style={{
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: fontAccordions.bodyFont ? '1px solid #e9ecef' : 'none'
+              }}
+            >
+              <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Police des informations
+              </h4>
+              <span style={{
+                fontSize: '12px',
+                color: '#6c757d',
+                transform: fontAccordions.bodyFont ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
+            </div>
+
+            {fontAccordions.bodyFont && (
+              <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
 
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -674,6 +737,8 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                 <option value="oblique">Oblique</option>
               </select>
             </div>
+              </div>
+            )}
           </div>
 
           {/* Anciens contrôles de police (pour compatibilité) */}
