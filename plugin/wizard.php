@@ -662,56 +662,6 @@ class PDF_Builder_Installation_Wizard {
 }
 
 /**
- * Handler AJAX global pour le wizard
- */
-function pdf_builder_wizard_ajax_handler() {
-    try {
-        // Log pour debug
-        error_log('PDF Builder Wizard: Global AJAX handler called');
-        error_log('PDF Builder Wizard: POST data: ' . print_r($_POST, true));
-
-        check_ajax_referer('pdf_builder_wizard_nonce', 'nonce');
-
-        $step = sanitize_text_field($_POST['step']);
-        error_log('PDF Builder Wizard: Step = ' . $step);
-
-        $data = isset($_POST['data']) ? $_POST['data'] : array();
-        error_log('PDF Builder Wizard: Data = ' . print_r($data, true));
-
-        $response = array('success' => false);
-
-        switch ($step) {
-            case 'save_company':
-                $response = pdf_builder_save_company_data($data);
-                break;
-
-            case 'create_template':
-                $response = pdf_builder_create_default_template();
-                break;
-
-            case 'complete':
-                update_option('pdf_builder_installed', true);
-                $response = array('success' => true, 'message' => 'Installation terminée');
-                break;
-
-            default:
-                $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
-        }
-
-        error_log('PDF Builder Wizard: Response = ' . print_r($response, true));
-
-    } catch (Exception $e) {
-        error_log('PDF Builder Wizard: Exception caught: ' . $e->getMessage());
-        $response = array(
-            'success' => false,
-            'message' => 'Erreur serveur: ' . $e->getMessage()
-        );
-    }
-
-    wp_send_json($response);
-}
-
-/**
  * Sauvegarder les données entreprise (fonction standalone)
  */
 function pdf_builder_save_company_data($data) {
