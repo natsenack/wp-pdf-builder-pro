@@ -145,7 +145,7 @@ function pdf_builder_init()
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
-// Charger le bootstrap (version complète pour la production)
+    // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
@@ -155,6 +155,12 @@ function pdf_builder_init()
         } else {
         // Log si bootstrap n'existe pas
         }
+    }
+
+    // Charger l'assistant d'installation
+    $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
+    if (file_exists($wizard_path)) {
+        require_once $wizard_path;
     }
 
     // Hook AJAX pour test - version 2 - REMOVED FOR PRODUCTION

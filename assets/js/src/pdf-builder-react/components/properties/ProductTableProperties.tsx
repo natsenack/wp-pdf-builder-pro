@@ -817,7 +817,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               display: 'flex',
               flexDirection: 'column',
               gap: '6px',
-              maxHeight: '120px',
+              maxHeight: '150px',
               overflowY: 'auto',
               padding: '4px',
               border: '1px solid #e0e0e0',

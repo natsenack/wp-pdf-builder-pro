@@ -2,6 +2,10 @@ import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { Element } from '../types/elements';
 
+// Déclaration des APIs globales du navigateur
+declare const requestAnimationFrame: (callback: () => void) => number;
+declare const cancelAnimationFrame: (id: number) => void;
+
 interface ElementUpdates {
   x?: number;
   y?: number;
@@ -29,12 +33,82 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
 
+  // ✅ OPTIMISATION FLUIDITÉ: requestAnimationFrame pour synchroniser avec le refresh rate
+  const rafIdRef = useRef<number | null>(null);
+  const pendingDragUpdateRef = useRef<{ x: number; y: number } | null>(null);
+
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
+
+  // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de drag avec RAF
+  const performDragUpdate = useCallback(() => {
+    if (!pendingDragUpdateRef.current || !selectedElementRef.current) {
+      rafIdRef.current = null;
+      return;
+    }
+
+    const { x: newX, y: newY } = pendingDragUpdateRef.current;
+    const lastState = lastKnownStateRef.current;
+    const element = lastState.elements.find(el => el.id === selectedElementRef.current);
+
+    if (!element) {
+      rafIdRef.current = null;
+      return;
+    }
+
+    // S'assurer que l'élément reste dans les limites du canvas
+    const canvasWidthPx = canvasWidth;
+    const canvasHeightPx = canvasHeight;
+
+    // Clamp X position (laisser au moins 20px visible)
+    const minVisibleWidth = Math.min(50, element.width * 0.3);
+    let clampedX = newX;
+    if (clampedX < 0) clampedX = 0;
+    if (clampedX + minVisibleWidth > canvasWidthPx) clampedX = canvasWidthPx - minVisibleWidth;
+
+    // Clamp Y position (laisser au moins 20px visible)
+    const minVisibleHeight = Math.min(30, element.height * 0.3);
+    let clampedY = newY;
+    if (clampedY < 0) clampedY = 0;
+    if (clampedY + minVisibleHeight > canvasHeightPx) clampedY = canvasHeightPx - minVisibleHeight;
+
+    // ✅ CORRECTION 6: Améliorer la préservation des propriétés
+    const completeUpdates: Record<string, unknown> = { x: clampedX, y: clampedY };
+
+    // ✅ Préserver TOUTES les propriétés
+    const elementAsRecord = element as Record<string, unknown>;
+    Object.keys(elementAsRecord).forEach(key => {
+      if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
+        completeUpdates[key] = elementAsRecord[key];
+      }
+    });
+
+    // ✅ CRITICAL: Explicitement préserver ces propriétés critiques
+    if ('src' in elementAsRecord) {
+      completeUpdates.src = elementAsRecord.src;
+    }
+    if ('logoUrl' in elementAsRecord) {
+      completeUpdates.logoUrl = elementAsRecord.logoUrl;
+    }
+    if ('alignment' in elementAsRecord) {
+      completeUpdates.alignment = elementAsRecord.alignment;
+    }
+
+    dispatch({
+      type: 'UPDATE_ELEMENT',
+      payload: {
+        id: selectedElementRef.current,
+        updates: completeUpdates
+      }
+    });
+
+    pendingDragUpdateRef.current = null;
+    rafIdRef.current = null;
+  }, [dispatch, canvasWidth, canvasHeight]);
   
-  // ✅ CORRECTION 3: Throttling pour handleMouseMove - augmenté drastiquement à 100ms pour éviter resize trop rapide
+  // ✅ CORRECTION 3: Throttling pour handleMouseMove - optimisé pour fluidité maximale
   const lastMouseMoveTimeRef = useRef<number>(0);
-  const MOUSEMOVE_THROTTLE_MS = 100; // Augmenté de 16ms à 100ms pour simplifier et ralentir le système
+  const MOUSEMOVE_THROTTLE_MS = 8; // Réduit de 100ms à 8ms pour fluidité maximale (120Hz)
 
   // Fonction utilitaire pour détecter les poignées de redimensionnement
   // ✅ BUGFIX-018: Consistent margin for hit detection across all element types
@@ -333,11 +407,22 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // Gestionnaire de mouse up pour terminer le drag ou resize
   const handleMouseUp = useCallback(() => {
+    // Annuler tout RAF en cours et effectuer un dernier update si nécessaire
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+
+      // Effectuer un dernier update si il y en a un en attente
+      if (pendingDragUpdateRef.current) {
+        performDragUpdate();
+      }
+    }
+
     isDraggingRef.current = false;
     isResizingRef.current = false;
     resizeHandleRef.current = null;
     selectedElementRef.current = null;
-  }, []);
+  }, [performDragUpdate]);
 
   // Fonction pour obtenir le curseur de redimensionnement selon la poignée
   const getResizeCursor = (handle: string | null): string => {
@@ -476,80 +561,30 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     const rect = canvas.getBoundingClientRect();
     // Note: zoom est en pourcentage (100%), donc diviser par 100 pour obtenir le facteur d'échelle
-    // const zoomScale = state.canvas.zoom / 100;
-    
-    // Même calcul que handleMouseDown pour cohérence
+    const zoomScale = state.canvas.zoom / 100;
+
+    // Calcul correct des coordonnées avec zoom et pan
     const canvasRelativeX = event.clientX - rect.left;
     const canvasRelativeY = event.clientY - rect.top;
-    // ✅ DEBUG: Try without zoom/pan transformation
-    const x = canvasRelativeX; // (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-    const y = canvasRelativeY; // (canvasRelativeY - state.canvas.pan.y) / zoomScale;
-
-    // Mettre à jour le curseur
+    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;    // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
     updateCursor(cursor);
 
     if (isDraggingRef.current && selectedElementRef.current) {
-      // ✅ CORRECTION 5: Utiliser lastKnownStateRef pour éviter closure stale
-      const lastState = lastKnownStateRef.current;
-      const element = lastState.elements.find(el => el.id === selectedElementRef.current);
-      if (!element) {
-        return;
-      }
-
-      // dragStartRef now contains the INITIAL ELEMENT POSITION
-      // dragMouseStartRef contains the INITIAL MOUSE POSITION
-      // NEW position = initial element position + (current mouse - initial mouse)
+      // ✅ OPTIMISATION FLUIDITÉ: Calculer la nouvelle position
       const deltaX = x - dragMouseStartRef.current.x;
       const deltaY = y - dragMouseStartRef.current.y;
-      let newX = dragStartRef.current.x + deltaX;
-      let newY = dragStartRef.current.y + deltaY;
+      const newX = dragStartRef.current.x + deltaX;
+      const newY = dragStartRef.current.y + deltaY;
 
-      // S'assurer que l'élément reste dans les limites du canvas
-      const canvasWidthPx = canvasWidth;
-      const canvasHeightPx = canvasHeight;
+      // Stocker la position calculée pour l'update RAF
+      pendingDragUpdateRef.current = { x: newX, y: newY };
 
-      // Clamp X position (laisser au moins 20px visible)
-      const minVisibleWidth = Math.min(50, element.width * 0.3);
-      if (newX < 0) newX = 0;
-      if (newX + minVisibleWidth > canvasWidthPx) newX = canvasWidthPx - minVisibleWidth;
-
-      // Clamp Y position (laisser au moins 20px visible)
-      const minVisibleHeight = Math.min(30, element.height * 0.3);
-      if (newY < 0) newY = 0;
-      if (newY + minVisibleHeight > canvasHeightPx) newY = canvasHeightPx - minVisibleHeight;
-
-      // ✅ CORRECTION 6: Améliorer la préservation des propriétés
-      // Copier TOUS les champs de l'élément, même s'ils sont undefined
-      const completeUpdates: Record<string, unknown> = { x: newX, y: newY };
-      
-      // ✅ Préserver TOUTES les propriétés - utiliser Object.keys() au lieu de for...in
-      // pour être sûr de capturer TOUTES les propriétés (y compris src, logoUrl, etc.)
-      const elementAsRecord = element as Record<string, unknown>;
-      Object.keys(elementAsRecord).forEach(key => {
-        if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
-          completeUpdates[key] = elementAsRecord[key];
-        }
-      });
-      
-      // ✅ CRITICAL: Explicitement préserver ces propriétés critiques si elles existent
-      if ('src' in elementAsRecord) {
-        completeUpdates.src = elementAsRecord.src;
+      // Programmer l'update avec RAF si pas déjà programmé
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(performDragUpdate);
       }
-      if ('logoUrl' in elementAsRecord) {
-        completeUpdates.logoUrl = elementAsRecord.logoUrl;
-      }
-      if ('alignment' in elementAsRecord) {
-        completeUpdates.alignment = elementAsRecord.alignment;
-      }
-      
-      dispatch({
-        type: 'UPDATE_ELEMENT',
-        payload: {
-          id: selectedElementRef.current,
-          updates: completeUpdates
-        }
-      });
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
       // ✅ BALANCED: Preserve essential properties without overkill
       const lastState = lastKnownStateRef.current;
@@ -577,7 +612,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     }
-  }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, canvasWidth, canvasHeight, calculateResize]);
+  }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, calculateResize, state.canvas, performDragUpdate]);
 
   // Gestionnaire de clic droit pour afficher le menu contextuel
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {
