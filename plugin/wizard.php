@@ -28,6 +28,9 @@ class PDF_Builder_Installation_Wizard {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('wp_ajax_pdf_builder_wizard_step', array($this, 'handle_ajax_step'));
         add_action('admin_init', array($this, 'check_first_install'));
+
+        // Créer les tables nécessaires au premier chargement
+        $this->create_tables_if_needed();
     }
 
     /**
@@ -469,29 +472,88 @@ class PDF_Builder_Installation_Wizard {
     }
 
     /**
+     * Créer les tables nécessaires si elles n'existent pas
+     */
+    private function create_tables_if_needed() {
+        global $wpdb;
+
+        $charset_collate = $wpdb->get_charset_collate();
+
+        // Table des templates
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+            $sql_templates = "CREATE TABLE $table_templates (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                name varchar(255) NOT NULL,
+                template_data longtext NOT NULL,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) $charset_collate;";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql_templates);
+        }
+
+        // Table des éléments (si nécessaire pour le futur)
+        $table_elements = $wpdb->prefix . 'pdf_builder_elements';
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_elements'") != $table_elements) {
+            $sql_elements = "CREATE TABLE $table_elements (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                template_id mediumint(9) NOT NULL,
+                element_type varchar(50) NOT NULL,
+                element_data longtext NOT NULL,
+                position_x int(11) DEFAULT 0,
+                position_y int(11) DEFAULT 0,
+                width int(11) DEFAULT 0,
+                height int(11) DEFAULT 0,
+                z_index int(11) DEFAULT 0,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY template_id (template_id)
+            ) $charset_collate;";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql_elements);
+        }
+    }
+
+    /**
      * Gérer les requêtes AJAX
      */
     public function handle_ajax_step() {
-        check_ajax_referer('pdf_builder_wizard_nonce', 'nonce');
+        try {
+            check_ajax_referer('pdf_builder_wizard_nonce', 'nonce');
 
-        $step = sanitize_text_field($_POST['step']);
-        $data = isset($_POST['data']) ? $_POST['data'] : array();
+            $step = sanitize_text_field($_POST['step']);
+            $data = isset($_POST['data']) ? $_POST['data'] : array();
 
-        $response = array('success' => false);
+            $response = array('success' => false);
 
-        switch ($step) {
-            case 'save_company':
-                $response = $this->save_company_data($data);
-                break;
+            switch ($step) {
+                case 'save_company':
+                    $response = $this->save_company_data($data);
+                    break;
 
-            case 'create_template':
-                $response = $this->create_default_template();
-                break;
+                case 'create_template':
+                    $response = $this->create_default_template();
+                    break;
 
-            case 'complete':
-                update_option('pdf_builder_installed', true);
-                $response = array('success' => true);
-                break;
+                case 'complete':
+                    update_option('pdf_builder_installed', true);
+                    $response = array('success' => true, 'message' => 'Installation terminée');
+                    break;
+
+                default:
+                    $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
+            }
+
+        } catch (Exception $e) {
+            $response = array(
+                'success' => false,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            );
         }
 
         wp_send_json($response);
@@ -501,55 +563,81 @@ class PDF_Builder_Installation_Wizard {
      * Sauvegarder les données entreprise
      */
     private function save_company_data($data) {
-        $company_data = array(
-            'name' => sanitize_text_field($data['company_name']),
-            'address' => sanitize_textarea_field($data['company_address']),
-            'phone' => sanitize_text_field($data['company_phone']),
-            'email' => sanitize_email($data['company_email']),
-            'logo' => esc_url_raw($data['company_logo'])
-        );
+        try {
+            // Validation des données
+            if (empty($data['company_name'])) {
+                return array('success' => false, 'message' => 'Le nom de l\'entreprise est obligatoire');
+            }
 
-        update_option('pdf_builder_company_info', $company_data);
+            $company_data = array(
+                'name' => sanitize_text_field($data['company_name']),
+                'address' => sanitize_textarea_field($data['company_address'] ?? ''),
+                'phone' => sanitize_text_field($data['company_phone'] ?? ''),
+                'email' => sanitize_email($data['company_email'] ?? ''),
+                'logo' => esc_url_raw($data['company_logo'] ?? '')
+            );
 
-        return array('success' => true, 'message' => 'Informations entreprise sauvegardées');
+            // Sauvegarder dans les options WordPress
+            $result = update_option('pdf_builder_company_info', $company_data);
+
+            if ($result === false) {
+                return array('success' => false, 'message' => 'Erreur lors de la sauvegarde en base de données');
+            }
+
+            return array('success' => true, 'message' => 'Informations entreprise sauvegardées avec succès');
+
+        } catch (Exception $e) {
+            return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
     }
 
     /**
      * Créer le template par défaut
      */
     private function create_default_template() {
-        global $wpdb;
+        try {
+            global $wpdb;
 
-        $template_data = array(
-            'name' => 'Template par défaut',
-            'elements' => array(
-                array('type' => 'company_logo', 'x' => 20, 'y' => 20),
-                array('type' => 'company_info', 'x' => 20, 'y' => 80),
-                array('type' => 'customer_info', 'x' => 300, 'y' => 20),
-                array('type' => 'product_table', 'x' => 20, 'y' => 150),
-                array('type' => 'order_total', 'x' => 400, 'y' => 400)
-            ),
-            'settings' => array(
-                'width' => 595,
-                'height' => 842,
-                'margin_top' => 20,
-                'margin_bottom' => 20
-            )
-        );
+            // Vérifier si la table existe
+            $table_name = $wpdb->prefix . 'pdf_builder_templates';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+                return array('success' => false, 'message' => 'La table des templates n\'existe pas. Veuillez vérifier l\'installation du plugin.');
+            }
 
-        $result = $wpdb->insert(
-            $wpdb->prefix . 'pdf_builder_templates',
-            array(
-                'name' => $template_data['name'],
-                'template_data' => wp_json_encode($template_data)
-            ),
-            array('%s', '%s')
-        );
+            $template_data = array(
+                'name' => 'Template par défaut',
+                'elements' => array(
+                    array('type' => 'company_logo', 'x' => 20, 'y' => 20),
+                    array('type' => 'company_info', 'x' => 20, 'y' => 80),
+                    array('type' => 'customer_info', 'x' => 300, 'y' => 20),
+                    array('type' => 'product_table', 'x' => 20, 'y' => 150),
+                    array('type' => 'order_total', 'x' => 400, 'y' => 400)
+                ),
+                'settings' => array(
+                    'width' => 595,
+                    'height' => 842,
+                    'margin_top' => 20,
+                    'margin_bottom' => 20
+                )
+            );
 
-        if ($result) {
-            return array('success' => true, 'message' => 'Template par défaut créé');
-        } else {
-            return array('success' => false, 'message' => 'Erreur lors de la création du template');
+            $result = $wpdb->insert(
+                $table_name,
+                array(
+                    'name' => $template_data['name'],
+                    'template_data' => wp_json_encode($template_data)
+                ),
+                array('%s', '%s')
+            );
+
+            if ($result === false) {
+                return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $wpdb->last_error);
+            }
+
+            return array('success' => true, 'message' => 'Template par défaut créé avec succès');
+
+        } catch (Exception $e) {
+            return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $e->getMessage());
         }
     }
 }
