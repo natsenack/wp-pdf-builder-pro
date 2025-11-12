@@ -68,14 +68,15 @@ var pdfBuilderWizard = {
         // Sauvegarde des données si nécessaire
         this.saveCurrentStepData().done(function(response) {
             if (response.success) {
+                pdfBuilderWizard.showSuccess('Étape sauvegardée avec succès !');
                 pdfBuilderWizard.navigateToStep(step);
             } else {
-                pdfBuilderWizard.showError(response.message || 'Erreur lors de la sauvegarde');
+                pdfBuilderWizard.showError(response.message || 'Erreur lors de la sauvegarde des données.');
             }
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
         }).fail(function() {
-            pdfBuilderWizard.showError('Erreur de communication avec le serveur');
+            pdfBuilderWizard.showError('Erreur de communication avec le serveur. Vérifiez votre connexion internet.');
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
         });
@@ -110,9 +111,22 @@ var pdfBuilderWizard = {
     validateCompanyForm: function() {
         var companyName = jQuery('#company_name').val().trim();
         if (!companyName) {
-            this.showError('Le nom de l\'entreprise est obligatoire');
+            this.showError('Le nom de l\'entreprise est obligatoire pour continuer.');
             return false;
         }
+
+        var email = jQuery('#company_email').val().trim();
+        if (email && !this.isValidEmail(email)) {
+            this.showError('Veuillez saisir une adresse email valide.');
+            return false;
+        }
+
+        var logoUrl = jQuery('#company_logo').val().trim();
+        if (logoUrl && !this.isValidUrl(logoUrl)) {
+            this.showError('Veuillez saisir une URL valide pour le logo.');
+            return false;
+        }
+
         return true;
     },
 
@@ -224,17 +238,70 @@ var pdfBuilderWizard = {
         var previewImg = jQuery('#logo-preview-img');
 
         if (logoUrl && logoUrl.trim() !== '') {
-            previewImg.attr('src', logoUrl);
-            previewContainer.show();
+            // Vérifier si l'URL est valide avant d'afficher
+            if (this.isValidUrl(logoUrl)) {
+                previewImg.attr('src', logoUrl);
+                previewImg.off('error').on('error', function() {
+                    pdfBuilderWizard.showError('Impossible de charger l\'image. Vérifiez que l\'URL est accessible.');
+                    previewContainer.hide();
+                });
+                previewImg.off('load').on('load', function() {
+                    previewContainer.show();
+                });
+                previewContainer.show();
+            } else {
+                this.showError('URL du logo invalide. Veuillez saisir une URL complète (https://...).');
+                previewContainer.hide();
+            }
         } else {
             previewContainer.hide();
         }
+    },
+
+    showError: function(message) {
+        this.showMessage(message, 'error');
+    },
+
+    showSuccess: function(message) {
+        this.showMessage(message, 'success');
+    },
+
+    showInfo: function(message) {
+        this.showMessage(message, 'info');
+    },
+
+    showMessage: function(message, type) {
+        // Supprimer les messages existants
+        jQuery('.wizard-message').remove();
+
+        // Créer le message
+        var messageHtml = '<div class="wizard-message wizard-message-' + type + '">' +
+            '<span class="wizard-message-icon">' +
+                (type === 'error' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️') +
+            '</span>' +
+            '<span class="wizard-message-text">' + message + '</span>' +
+            '<button class="wizard-message-close" onclick="jQuery(this).parent().fadeOut()">&times;</button>' +
+            '</div>';
+
+        // Insérer le message en haut du contenu
+        jQuery('.wizard-content').prepend(messageHtml);
+
+        // Auto-hide après 5 secondes (sauf pour les erreurs)
+        if (type !== 'error') {
+            setTimeout(function() {
+                jQuery('.wizard-message').fadeOut();
+            }, 5000);
+        }
+
+        // Scroll vers le message
+        jQuery('.wizard-content')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     initLogoPreview: function() {
         var logoUrl = jQuery('#company_logo').val();
         if (logoUrl && logoUrl.trim() !== '') {
             this.updateLogoPreview(logoUrl);
+            this.showInfo('Logo détecté automatiquement depuis votre configuration WooCommerce.');
         }
     },
 
@@ -261,29 +328,19 @@ var pdfBuilderWizard = {
         jQuery('.wizard-loading').remove();
     },
 
-    showError: function(message) {
-        // Supprimer les erreurs précédentes
-        jQuery('.wizard-error').remove();
-
-        // Afficher la nouvelle erreur
-        jQuery('.wizard-content').prepend('<div class="wizard-error notice notice-error"><p>' + message + '</p></div>');
-
-        // Scroll vers le haut
-        jQuery('html, body').animate({scrollTop: 0}, 300);
+    isValidEmail: function(email) {
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     },
 
-    showSuccess: function(message) {
-        // Supprimer les messages précédents
-        jQuery('.wizard-message').remove();
-
-        // Afficher le message de succès
-        jQuery('.wizard-content').prepend('<div class="wizard-message notice notice-success"><p>' + message + '</p></div>');
-
-        // Auto-hide après 3 secondes
-        setTimeout(function() {
-            jQuery('.wizard-message').fadeOut();
-        }, 3000);
-    }
+    isValidUrl: function(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    },
 };
 
 // Initialisation
