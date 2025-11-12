@@ -219,14 +219,13 @@ export const Header = memo(function Header({
         ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)'
         : 'none',
       gap: '16px',
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      right: '0',
-      width: '100%',
+      position: isHeaderFixed ? 'fixed' : 'relative',
+      top: isHeaderFixed ? '32px' : 'auto',
+      left: isHeaderFixed ? '160px' : 'auto',
+      right: isHeaderFixed ? '0' : 'auto',
+      width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
       zIndex: 1000,
       boxSizing: 'border-box',
-      transform: isHeaderFixed ? 'translateY(32px)' : 'translateY(0px)',
       transition: 'all 0.25s ease-in-out'
     }}>
       {/* Left Section - Title and Status */}
