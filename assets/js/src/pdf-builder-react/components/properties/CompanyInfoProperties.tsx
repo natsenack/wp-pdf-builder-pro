@@ -786,18 +786,34 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Couleur de fond
             </label>
-            <input
-              type="color"
-              value={element.backgroundColor || '#ffffff'}
+            <select
+              value={element.backgroundColor || 'transparent'}
               onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
               style={{
                 width: '100%',
-                height: '32px',
+                padding: '6px 8px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                cursor: 'pointer'
+                fontSize: '12px',
+                backgroundColor: '#ffffff'
               }}
-            />
+            >
+              <option value="transparent">Aucun fond</option>
+              <option value="#ffffff">Blanc</option>
+              <option value="#f9fafb">Gris très clair</option>
+              <option value="#f3f4f6">Gris clair</option>
+              <option value="#e5e7eb">Gris moyen</option>
+              <option value="#d1d5db">Gris</option>
+              <option value="#9ca3af">Gris foncé</option>
+              <option value="#6b7280">Gris très foncé</option>
+              <option value="#374151">Gris anthracite</option>
+              <option value="#1f2937">Noir</option>
+              <option value="#3b82f6">Bleu</option>
+              <option value="#10b981">Vert</option>
+              <option value="#f59e0b">Orange</option>
+              <option value="#ef4444">Rouge</option>
+              <option value="#8b5cf6">Violet</option>
+            </select>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
