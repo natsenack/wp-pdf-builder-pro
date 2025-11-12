@@ -177,6 +177,16 @@ function pdf_builder_init()
         exit;
     });
 
+    // Test AJAX standard de WordPress
+    add_action('wp_ajax_nopriv_test_ajax', function() {
+        error_log('PDF Builder Pro: Standard AJAX test called');
+        wp_send_json(array('success' => true, 'message' => 'Standard AJAX works!'));
+    });
+    add_action('wp_ajax_test_ajax', function() {
+        error_log('PDF Builder Pro: Standard AJAX test called (logged in)');
+        wp_send_json(array('success' => true, 'message' => 'Standard AJAX works for logged in users!'));
+    });
+
     // Hook AJAX pour test - version 2 - REMOVED FOR PRODUCTION
     // add_action('wp_ajax_pdf_builder_auto_save_template', function () {
     //     die('Hook appelé v2');
