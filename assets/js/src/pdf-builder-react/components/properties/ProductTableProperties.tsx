@@ -814,16 +814,16 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </>
           )}
 
-          {/* Section Thèmes avec aperçus */}
+          {/* Section Thèmes avec aperçus compacts */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
               Thèmes prédéfinis
             </label>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '8px',
-              maxHeight: '200px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+              gap: '6px',
+              maxHeight: '120px',
               overflowY: 'auto',
               padding: '4px',
               border: '1px solid #e0e0e0',
@@ -837,7 +837,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #e5e7eb',
                       borderRadius: '2px',
                       backgroundColor: '#ffffff',
@@ -845,17 +845,17 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                       flexDirection: 'column',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      gap: '2px'
+                      gap: '1px'
                     }}>
                       <div style={{
-                        width: '85%',
-                        height: '3px',
+                        width: '90%',
+                        height: '2px',
                         backgroundColor: '#f9fafb',
                         borderRadius: '1px'
                       }}></div>
                       <div style={{
-                        width: '70%',
-                        height: '3px',
+                        width: '75%',
+                        height: '2px',
                         backgroundColor: '#ffffff',
                         borderRadius: '1px'
                       }}></div>
@@ -876,7 +876,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #cbd5e1',
                       borderRadius: '4px',
                       backgroundColor: '#f8fafc',
@@ -915,7 +915,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #c4b5fd',
                       borderRadius: '6px',
                       backgroundColor: '#fefefe',
@@ -954,7 +954,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #f3f4f6',
                       borderRadius: '0px',
                       backgroundColor: '#ffffff',
@@ -991,7 +991,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #374151',
                       borderRadius: '0px',
                       backgroundColor: '#ffffff',
@@ -1028,7 +1028,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #fed7aa',
                       borderRadius: '4px',
                       backgroundColor: '#fff7ed',
@@ -1067,7 +1067,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #bbf7d0',
                       borderRadius: '6px',
                       backgroundColor: '#f0fdf4',
@@ -1106,7 +1106,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #374151',
                       borderRadius: '4px',
                       backgroundColor: '#1f2937',
@@ -1145,7 +1145,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #0ea5e9',
                       borderRadius: '8px',
                       backgroundColor: '#f0f9ff',
@@ -1184,7 +1184,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #f97316',
                       borderRadius: '12px',
                       backgroundColor: '#fff7ed',
@@ -1223,7 +1223,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #22c55e',
                       borderRadius: '6px',
                       backgroundColor: '#f0fdf4',
@@ -1262,7 +1262,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #7c2d12',
                       borderRadius: '4px',
                       backgroundColor: '#fef2f2',
@@ -1301,7 +1301,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #d1d5db',
                       borderRadius: '2px',
                       backgroundColor: '#ffffff',
@@ -1338,7 +1338,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #6366f1',
                       borderRadius: '0px',
                       backgroundColor: '#f8fafc',
@@ -1375,7 +1375,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '2px solid #92400e',
                       borderRadius: '0px',
                       backgroundColor: '#fef3c7',
@@ -1414,7 +1414,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #be185d',
                       borderRadius: '10px',
                       backgroundColor: '#fdf2f8',
@@ -1453,7 +1453,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #059669',
                       borderRadius: '8px',
                       backgroundColor: '#ecfdf5',
@@ -1492,7 +1492,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #7c3aed',
                       borderRadius: '12px',
                       backgroundColor: '#faf5ff',
@@ -1531,7 +1531,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #6b7280',
                       borderRadius: '0px',
                       backgroundColor: '#f9fafb',
@@ -1568,7 +1568,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   preview: (
                     <div style={{
                       width: '100%',
-                      height: '35px',
+                      height: '20px',
                       border: '1px solid #f59e0b',
                       borderRadius: '16px',
                       backgroundColor: '#fffbeb',
@@ -1618,7 +1618,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                     cursor: 'pointer',
                     textAlign: 'center',
                     transition: 'all 0.2s ease',
-                    minHeight: '70px',
+                    minHeight: '50px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -1653,90 +1653,93 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur de fond
-            </label>
-            <input
-              type="color"
-              value={element.backgroundColor || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+          {/* Accordéon Couleurs */}
+          <Accordion title="Couleurs" defaultOpen={false}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur de fond
+              </label>
+              <input
+                type="color"
+                value={element.backgroundColor || '#ffffff'}
+                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Fond des en-têtes
-            </label>
-            <input
-              type="color"
-              value={element.headerBackgroundColor || '#f9fafb'}
-              onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Fond des en-têtes
+              </label>
+              <input
+                type="color"
+                value={element.headerBackgroundColor || '#f9fafb'}
+                onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur lignes alternées
-            </label>
-            <input
-              type="color"
-              value={element.alternateRowColor || '#f9fafb'}
-              onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur lignes alternées
+              </label>
+              <input
+                type="color"
+                value={element.alternateRowColor || '#f9fafb'}
+                onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur des bordures
-            </label>
-            <input
-              type="color"
-              value={element.borderColor || '#e5e7eb'}
-              onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur des bordures
+              </label>
+              <input
+                type="color"
+                value={element.borderColor || '#e5e7eb'}
+                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur du texte
-            </label>
-            <input
-              type="color"
-              value={element.textColor || '#111827'}
-              onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur du texte
+              </label>
+              <input
+                type="color"
+                value={element.textColor || '#111827'}
+                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
+          </Accordion>
 
         </>
       )}
