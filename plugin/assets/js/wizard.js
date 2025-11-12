@@ -11,6 +11,7 @@ var pdfBuilderWizard = {
     init: function() {
         this.bindEvents();
         this.updateNavigation();
+        this.initLogoPreview();
     },
 
     bindEvents: function() {
@@ -43,6 +44,11 @@ var pdfBuilderWizard = {
         jQuery('#company-form').on('submit', function(e) {
             e.preventDefault();
             self.saveCompanyData();
+        });
+
+        // Aperçu du logo
+        jQuery('#company_logo').on('input', function() {
+            self.updateLogoPreview(jQuery(this).val());
         });
     },
 
@@ -189,6 +195,7 @@ var pdfBuilderWizard = {
             mediaUploader.on('select', function() {
                 var attachment = mediaUploader.state().get('selection').first().toJSON();
                 jQuery('#company_logo').val(attachment.url);
+                pdfBuilderWizard.updateLogoPreview(attachment.url);
             });
 
             mediaUploader.open();
@@ -205,9 +212,29 @@ var pdfBuilderWizard = {
             uploadFrame.on('select', function() {
                 var attachment = uploadFrame.state().get('selection').first().toJSON();
                 jQuery('#company_logo').val(attachment.url);
+                pdfBuilderWizard.updateLogoPreview(attachment.url);
             });
 
             uploadFrame.open();
+        }
+    },
+
+    updateLogoPreview: function(logoUrl) {
+        var previewContainer = jQuery('#logo-preview');
+        var previewImg = jQuery('#logo-preview-img');
+
+        if (logoUrl && logoUrl.trim() !== '') {
+            previewImg.attr('src', logoUrl);
+            previewContainer.show();
+        } else {
+            previewContainer.hide();
+        }
+    },
+
+    initLogoPreview: function() {
+        var logoUrl = jQuery('#company_logo').val();
+        if (logoUrl && logoUrl.trim() !== '') {
+            this.updateLogoPreview(logoUrl);
         }
     },
 

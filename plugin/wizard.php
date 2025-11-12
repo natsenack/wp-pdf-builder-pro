@@ -265,6 +265,9 @@ class PDF_Builder_Installation_Wizard {
                     <td>
                         <input type="url" id="company_logo" name="company_logo" class="regular-text" value="<?php echo esc_attr($company_info['logo'] ?? ''); ?>">
                         <button type="button" class="button" id="upload-logo">Choisir un logo</button>
+                        <div id="logo-preview" class="logo-preview" style="margin-top: 10px; <?php echo empty($company_info['logo']) ? 'display: none;' : ''; ?>">
+                            <img id="logo-preview-img" src="<?php echo esc_url($company_info['logo'] ?? ''); ?>" alt="Aperçu du logo" style="max-width: 200px; max-height: 100px; border: 1px solid #ddd; padding: 5px; background: #fff;">
+                        </div>
                     </td>
                 </tr>
             </table>
