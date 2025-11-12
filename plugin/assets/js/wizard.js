@@ -56,6 +56,8 @@ var pdfBuilderWizard = {
 
     testAjax: function() {
         console.log('PDF Builder Wizard: Testing AJAX...');
+        console.log('PDF Builder Wizard: ajax_url =', pdfBuilderWizard.ajax_url);
+        console.log('PDF Builder Wizard: nonce =', pdfBuilderWizard.nonce);
         jQuery.ajax({
             url: pdfBuilderWizard.ajax_url,
             type: 'POST',

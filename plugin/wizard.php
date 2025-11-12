@@ -84,6 +84,8 @@ class PDF_Builder_Installation_Wizard {
                 'error' => 'Une erreur est survenue'
             )
         ));
+
+        error_log('PDF Builder Wizard: Localized script with ajax_url: ' . admin_url('admin-ajax.php'));
     }
 
     /**
