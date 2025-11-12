@@ -210,7 +210,12 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           />
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+        </>
+      )}
 
+      {/* Onglet Personnalisation */}
+      {customerCurrentTab === 'personnalisation' && (
+        <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Disposition
@@ -231,12 +236,9 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               <option value="compact">Compacte</option>
             </select>
           </div>
-        </>
-      )}
 
-      {/* Onglet Personnalisation */}
-      {customerCurrentTab === 'personnalisation' && (
-        <>
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
           {/* Section Thèmes pour Customer Info */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
