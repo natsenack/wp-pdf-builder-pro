@@ -803,7 +803,8 @@ function pdf_builder_create_default_template() {
 }
 
 // Enregistrer le handler AJAX globalement
-add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_wizard_ajax_handler');
+// REMOVED: Maintenant enregistré dans le fichier principal du plugin
+// add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_wizard_ajax_handler');
 
 // Initialiser le wizard
 new PDF_Builder_Installation_Wizard();

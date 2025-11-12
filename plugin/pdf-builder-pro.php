@@ -163,6 +163,9 @@ function pdf_builder_init()
         require_once $wizard_path;
     }
 
+    // Enregistrer le handler AJAX pour le wizard
+    add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_wizard_ajax_handler');
+
     // Hook AJAX pour test - version 2 - REMOVED FOR PRODUCTION
     // add_action('wp_ajax_pdf_builder_auto_save_template', function () {
     //     die('Hook appelé v2');
