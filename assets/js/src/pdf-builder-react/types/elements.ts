@@ -103,12 +103,6 @@ export interface ProductTableElement extends BaseElement {
   borderColor?: string;
   textColor?: string;
   verticalAlign?: string;
-  // Propriétés de police globales
-  globalFontSize?: number;
-  globalFontFamily?: string;
-  globalFontWeight?: string;
-  globalFontStyle?: string;
-  globalTextColor?: string;
   // Propriétés de police spécifiques à l'entête
   headerFontSize?: number;
   headerFontFamily?: string;

@@ -309,145 +309,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {/* Onglet Personnalisation */}
       {currentTab === 'personnalisation' && (
         <>
-          {/* Section Police globale */}
-          <div style={{ marginBottom: '20px', padding: '12px', backgroundColor: '#f0f8ff', borderRadius: '6px', border: '2px solid #007bff' }}>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#007bff',
-              marginBottom: '12px',
-              textAlign: 'center'
-            }}>
-              🎨 Police globale du tableau
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '12px'
-            }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Taille
-                </label>
-                <input
-                  type="number"
-                  min="8"
-                  max="24"
-                  value={element.globalFontSize || 11}
-                  onChange={(e) => onChange(element.id, 'globalFontSize', parseInt(e.target.value) || 11)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 6px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    fontSize: '11px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Police
-                </label>
-                <select
-                  value={element.globalFontFamily || 'Arial'}
-                  onChange={(e) => onChange(element.id, 'globalFontFamily', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 6px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    fontSize: '11px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Tahoma">Tahoma</option>
-                  <option value="Trebuchet MS">Trebuchet MS</option>
-                  <option value="Calibri">Calibri</option>
-                  <option value="Cambria">Cambria</option>
-                  <option value="Segoe UI">Segoe UI</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Épaisseur
-                </label>
-                <select
-                  value={element.globalFontWeight || 'normal'}
-                  onChange={(e) => onChange(element.id, 'globalFontWeight', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 6px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    fontSize: '11px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <option value="normal">Normal</option>
-                  <option value="bold">Gras</option>
-                  <option value="lighter">Fin</option>
-                  <option value="bolder">Très gras</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Style
-                </label>
-                <select
-                  value={element.globalFontStyle || 'normal'}
-                  onChange={(e) => onChange(element.id, 'globalFontStyle', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 6px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    fontSize: '11px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <option value="normal">Normal</option>
-                  <option value="italic">Italique</option>
-                  <option value="oblique">Oblique</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Couleur
-                </label>
-                <input
-                  type="color"
-                  value={element.globalTextColor || '#111827'}
-                  onChange={(e) => onChange(element.id, 'globalTextColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '28px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                  }}
-                />
-              </div>
-            </div>
-            <div style={{
-              fontSize: '10px',
-              color: '#666',
-              marginTop: '8px',
-              textAlign: 'center',
-              fontStyle: 'italic'
-            }}>
-              Ces paramètres s&apos;appliquent à tout le tableau. Vous pouvez les personnaliser par zone ci-dessous.
-            </div>
-          </div>
           {/* Section Thèmes avec aperçus */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
@@ -1473,7 +1334,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 type="number"
                 min="8"
                 max="24"
-                value={element.headerFontSize || element.globalFontSize || 12}
+                value={element.headerFontSize || 12}
                 onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 12)}
                 style={{
                   width: '100%',
@@ -1483,9 +1344,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   fontSize: '12px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontSize || 11}px
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1493,7 +1351,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Famille de police de l&apos;entête
               </label>
               <select
-                value={element.headerFontFamily || element.globalFontFamily || 'Arial'}
+                value={element.headerFontFamily || 'Arial'}
                 onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -1514,9 +1372,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="Cambria">Cambria</option>
                 <option value="Segoe UI">Segoe UI</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontFamily || 'Arial'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1524,7 +1379,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Épaisseur de police de l&apos;entête
               </label>
               <select
-                value={element.headerFontWeight || element.globalFontWeight || 'bold'}
+                value={element.headerFontWeight || 'bold'}
                 onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -1539,9 +1394,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="lighter">Fin (300)</option>
                 <option value="bolder">Très gras (900)</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontWeight || 'normal'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1549,7 +1401,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Style de police de l&apos;entête
               </label>
               <select
-                value={element.headerFontStyle || element.globalFontStyle || 'normal'}
+                value={element.headerFontStyle || 'normal'}
                 onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -1563,9 +1415,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="italic">Italique</option>
                 <option value="oblique">Oblique</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontStyle || 'normal'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1574,7 +1423,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="color"
-                value={element.headerTextColor || element.globalTextColor || '#374151'}
+                value={element.headerTextColor || '#374151'}
                 onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
                 style={{
                   width: '100%',
@@ -1583,9 +1432,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   borderRadius: '3px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalTextColor || '#111827'}
-              </div>
             </div>
           </Accordion>
 
@@ -1599,7 +1445,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 type="number"
                 min="8"
                 max="24"
-                value={element.rowFontSize || element.globalFontSize || 11}
+                value={element.rowFontSize || 11}
                 onChange={(e) => onChange(element.id, 'rowFontSize', parseInt(e.target.value) || 11)}
                 style={{
                   width: '100%',
@@ -1609,9 +1455,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   fontSize: '12px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontSize || 11}px
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1619,7 +1462,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Famille de police des lignes
               </label>
               <select
-                value={element.rowFontFamily || element.globalFontFamily || 'Arial'}
+                value={element.rowFontFamily || 'Arial'}
                 onChange={(e) => onChange(element.id, 'rowFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -1640,9 +1483,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="Cambria">Cambria</option>
                 <option value="Segoe UI">Segoe UI</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontFamily || 'Arial'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1650,7 +1490,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Épaisseur de police des lignes
               </label>
               <select
-                value={element.rowFontWeight || element.globalFontWeight || 'normal'}
+                value={element.rowFontWeight || 'normal'}
                 onChange={(e) => onChange(element.id, 'rowFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -1665,9 +1505,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="lighter">Fin (300)</option>
                 <option value="bolder">Très gras (900)</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontWeight || 'normal'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1675,7 +1512,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Style de police des lignes
               </label>
               <select
-                value={element.rowFontStyle || element.globalFontStyle || 'normal'}
+                value={element.rowFontStyle || 'normal'}
                 onChange={(e) => onChange(element.id, 'rowFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -1689,9 +1526,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="italic">Italique</option>
                 <option value="oblique">Oblique</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontStyle || 'normal'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1700,7 +1534,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="color"
-                value={element.rowTextColor || element.globalTextColor || '#111827'}
+                value={element.rowTextColor || '#111827'}
                 onChange={(e) => onChange(element.id, 'rowTextColor', e.target.value)}
                 style={{
                   width: '100%',
@@ -1709,9 +1543,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   borderRadius: '3px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalTextColor || '#111827'}
-              </div>
             </div>
           </Accordion>
 
@@ -1725,7 +1556,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 type="number"
                 min="8"
                 max="24"
-                value={element.totalFontSize || element.globalFontSize || 12}
+                value={element.totalFontSize || 12}
                 onChange={(e) => onChange(element.id, 'totalFontSize', parseInt(e.target.value) || 12)}
                 style={{
                   width: '100%',
@@ -1735,9 +1566,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   fontSize: '12px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontSize || 12}px
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1745,7 +1573,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Famille de police des totaux
               </label>
               <select
-                value={element.totalFontFamily || element.globalFontFamily || 'Arial'}
+                value={element.totalFontFamily || 'Arial'}
                 onChange={(e) => onChange(element.id, 'totalFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -1766,9 +1594,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="Cambria">Cambria</option>
                 <option value="Segoe UI">Segoe UI</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontFamily || 'Arial'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1776,7 +1601,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Épaisseur de police des totaux
               </label>
               <select
-                value={element.totalFontWeight || element.globalFontWeight || 'bold'}
+                value={element.totalFontWeight || 'bold'}
                 onChange={(e) => onChange(element.id, 'totalFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -1791,9 +1616,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="lighter">Fin (300)</option>
                 <option value="bolder">Très gras (900)</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontWeight || 'bold'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1801,7 +1623,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 Style de police des totaux
               </label>
               <select
-                value={element.totalFontStyle || element.globalFontStyle || 'normal'}
+                value={element.totalFontStyle || 'normal'}
                 onChange={(e) => onChange(element.id, 'totalFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -1815,9 +1637,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <option value="italic">Italique</option>
                 <option value="oblique">Oblique</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalFontStyle || 'normal'}
-              </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
@@ -1826,7 +1645,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               </label>
               <input
                 type="color"
-                value={element.totalTextColor || element.globalTextColor || '#111827'}
+                value={element.totalTextColor || '#111827'}
                 onChange={(e) => onChange(element.id, 'totalTextColor', e.target.value)}
                 style={{
                   width: '100%',
@@ -1835,9 +1654,6 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   borderRadius: '3px'
                 }}
               />
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                Défaut: {element.globalTextColor || '#111827'}
-              </div>
             </div>
           </Accordion>
         </>
