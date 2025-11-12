@@ -1101,8 +1101,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // ✅ STATE for image loading - force redraw when images load
   const [imageLoadCount, setImageLoadCount] = React.useState(0);
 
-  console.log(`🎨 [CANVAS] Canvas component render - state.elements.length: ${state.elements.length}, imageLoadCount: ${imageLoadCount}`);
-
   // Cache pour les images chargées
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
   
@@ -1217,11 +1215,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   }, []);
 
   const drawCompanyLogo = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
-    console.log(`�🚨🚨 DRAWCOMPANYLOGO FUNCTION EXECUTING - UNIQUE TEST LOG 🚨🚨🚨`);
-    console.log(`�🖼️ [LOGO] DRAWCOMPANYLOGO CALLED - element: ${element.id}, type: ${element.type}`);
+
+
     const props = element as ImageElementProperties;
     const logoUrl = props.src || props.logoUrl || '';
-    console.log(`🖼️ [LOGO] logoUrl extracted: "${logoUrl}"`);
+
 
     // ✅ FIX: If no logo URL, show a better placeholder
     if (!logoUrl) {
@@ -1248,7 +1246,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       let img = imageCache.current.get(logoUrl);
 
       if (!img) {
-        console.log(`🖼️ [LOGO] Creating new image for: ${logoUrl}`);
+
         img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
@@ -1261,12 +1259,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         // ✅ CRITICAL: Quand l'image se charge, redessiner le canvas
         img.onload = () => {
-          console.log(`✅ [LOGO] Image loaded successfully: ${logoUrl}`);
+
           // Incrémenter le counter pour forcer un redraw
           setImageLoadCount(prev => prev + 1);
         };
       } else {
-        console.log(`🖼️ [LOGO] Using cached image for: ${logoUrl}`);
+
       }
 
       // ✅ APPROCHE PLUS DIRECTE: Vérifier img.complete au rendu au lieu de compter sur onload
@@ -1274,10 +1272,10 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       const shouldRenderImage = logoUrl && logoUrl.trim() !== '';
 
       // DEBUG: Log detailed breakdown of shouldRenderImage condition
-      console.log(`🖼️ [LOGO] DEBUG shouldRenderImage: logoUrl=${!!logoUrl}, logoUrl.trim()=${logoUrl?.trim()}, img.src=${img.src}, img.src?=${!!img.src}, img.src !== ''=${img.src !== ''}`);
+
 
       // DEBUG: Log image state with more details
-      console.log(`🖼️ [LOGO] ${logoUrl}: complete=${img.complete}, natural=${img.naturalWidth}x${img.naturalHeight}, src=${img.src}, shouldRender=${shouldRenderImage}`);
+
 
       if (shouldRenderImage) {
         try {
@@ -1428,7 +1426,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           // Restaurer le contexte
           ctx.restore();
 
-          console.log(`✅ [LOGO] Image rendered successfully for: ${logoUrl}`);
+
         } catch (error) {
           console.error(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
           // En cas d'erreur, dessiner un placeholder
@@ -1686,7 +1684,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // ✅ BUGFIX-001/004: Memoize drawElement but pass state as parameter to avoid dependency cycle
   const drawElement = useCallback((ctx: CanvasRenderingContext2D, element: Element, currentState: BuilderState) => {
-    console.log(`🎨 [CANVAS] 🚨🚨🚨 DRAWELEMENT CALLED for ${element.type} 🚨🚨🚨`);
+
     // Vérifier si l'élément est visible
     if (element.visible === false) {
 
@@ -1728,7 +1726,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         drawCompanyInfo(ctx, element);
         break;
       case 'company_logo':
-        console.log(`🎨 [CANVAS] 🚨🚨🚨 DRAWING COMPANY_LOGO ELEMENT 🚨🚨🚨`);
+
         drawCompanyLogo(ctx, element);
         break;
       case 'order_number':
@@ -2215,8 +2213,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
-    console.log(`🎨 [CANVAS] renderCanvas called, elements count: ${state.elements.length}`);
-    console.log(`🎨 [CANVAS] 🚨🚨🚨 RENDERCANVAS EXECUTING 🚨🚨🚨`);
+
+
     const canvas = canvasRef.current;
     if (!canvas) {
 
@@ -2278,7 +2276,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Redessiner quand l'état change
   useEffect(() => {
-    console.log(`🔄 [CANVAS] useEffect triggered - state.elements.length: ${state.elements.length}, imageLoadCount: ${imageLoadCount}`);
+
     // ✅ BUGFIX: Include ALL essential visual properties in hash
     // This ensures canvas re-renders when ANY visual property changes
     let elementsHash = '';
@@ -2321,9 +2319,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     elementsHash += `;imageLoadCount:${imageLoadCount}`;
     
     // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
-    console.log(`🔄 [CANVAS] Checking hash - current: ${lastRenderedElementsRef.current?.substring(0, 50)}..., new: ${elementsHash?.substring(0, 50)}...`);
+
     if (lastRenderedElementsRef.current === elementsHash) {
-      console.log(`🔄 [CANVAS] Hash unchanged, skipping render`);
+
       return;
     }
     

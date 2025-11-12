@@ -153,7 +153,7 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 // Wrapper IIFE for immediate execution
 (function() {
   if (typeof window === 'undefined') {
-    console.error('❌ window is not available');
+
     return;
   }
 
@@ -164,7 +164,7 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
   if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
     // Silent success - editor is ready
   } else {
-    console.error('❌ PDF Builder React init failed');
+
   }
 }).call(window);
 

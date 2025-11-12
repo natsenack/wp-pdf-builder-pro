@@ -22,24 +22,7 @@ export function registerEditorInstance(instance: unknown) {
 /**
  * Charge un template dans l'éditeur
  */
-// @ts-expect-error - Debug logs, types not important for debugging
 export async function loadTemplate(templateData: any) {
-  console.log('[Global API] loadTemplate called with data:', templateData);
-  console.log('[Global API] Template data type:', typeof templateData);
-  console.log('[Global API] Template has elements:', templateData.elements ? 'YES' : 'NO');
-
-  if (templateData.elements) {
-    console.log('[Global API] Elements count:', templateData.elements.length);
-    // @ts-expect-error - Debug logs
-    templateData.elements.forEach((element, index) => {
-      console.log(`[Global API] Element ${index}:`, {
-        type: element.type,
-        contentAlign: element.contentAlign,
-        labelPosition: element.labelPosition,
-        id: element.id
-      });
-    });
-  }
 
   try {
     currentTemplate = templateData;
@@ -49,10 +32,8 @@ export async function loadTemplate(templateData: any) {
       detail: templateData
     });
 
-    console.log('[Global API] Dispatching pdfBuilderLoadTemplate event');
     document.dispatchEvent(event);
 
-    console.log('[Global API] Template loaded successfully');
     return true;
   } catch (error) {
     console.error('[Global API] Error loading template', error);

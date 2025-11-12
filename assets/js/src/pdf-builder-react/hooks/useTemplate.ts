@@ -117,23 +117,6 @@ export function useTemplate() {
 
         }
 
-        console.log('[useTemplate] LOAD - parsed elements count:', elements.length);
-
-        // 🔍 Log détaillé des éléments order_number chargés (même format que sauvegarde)
-        const loadedOrderNumberElements = elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
-        console.log('🔍 [TEMPLATE LOAD] Order number elements loaded:', loadedOrderNumberElements.length);
-        loadedOrderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
-          console.log(`🔍 [TEMPLATE LOAD] Order element ${index}:`, {
-            id: el.id,
-            contentAlign: el.contentAlign || 'NOT SET',
-            labelPosition: el.labelPosition || 'NOT SET',
-            showLabel: el.showLabel,
-            labelText: el.labelText || 'NOT SET',
-            allProperties: Object.keys(el)
-          });
-        });
-
-
         // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
         if (templateData.canvasWidth && templateData.canvasHeight) {
           canvasData = {

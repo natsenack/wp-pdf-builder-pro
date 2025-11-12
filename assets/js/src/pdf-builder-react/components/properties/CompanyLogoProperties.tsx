@@ -118,7 +118,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                   // Ouvrir la bibliothèque de médias WordPress
                   if (!window.wp?.media) {
                     const errorMsg = 'Bibliothèque de médias WordPress non disponible (wp_enqueue_media non appelé ?)';
-                    console.error('❌ [LOGO] ' + errorMsg);
+
                     alert(errorMsg + '\n\nSaisissez l\'URL manuellement.');
                     return;
                   }
@@ -150,7 +150,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                         const attachment = selection.first().toJSON();
 
                         if (!attachment || !attachment.url) {
-                          console.error('❌ [LOGO] Attachment invalide:', attachment);
+
                           alert('Erreur: L\'image sélectionnée n\'a pas d\'URL valide');
                           return;
                         }
@@ -166,14 +166,14 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                           onChange(element.id, 'height', attachment.height || 80);
                         }
                       } catch (error) {
-                        console.error('❌ [LOGO] Erreur dans select event:', error);
+
                         alert('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
                       }
                     });
 
                     mediaUploader.open();
                   } catch (error) {
-                    console.error('❌ [LOGO] Erreur lors de l\'ouverture de la bibliothèque:', error);
+
                     alert('Erreur: ' + (error instanceof Error ? error.message : 'Impossible d\'ouvrir la bibliothèque'));
                   }
                 }}

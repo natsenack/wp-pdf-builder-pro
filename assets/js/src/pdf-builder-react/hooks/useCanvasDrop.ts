@@ -52,7 +52,7 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
 
     // Validation des coordonnées
     if (canvasX < 0 || canvasY < 0 || canvasX > rect.width || canvasY > rect.height) {
-      console.warn('Drop position outside canvas bounds');
+
     }
 
     // Appliquer la transformation inverse (zoom/pan)
@@ -160,7 +160,7 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
       // }
 
     } catch (error) {
-      console.error('❌ [DROP] Drop failed:', error);
+
 
       // Notification d'erreur (optionnel - retiré pour éviter les erreurs de type)
       // if (window.pdfBuilder?.showNotification) {

@@ -69,19 +69,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     progress
   } = useAutoSave();
 
-  // Debug logs pour l'état du template
-  useEffect(() => {
-    console.log('[PDFBuilderContent] Template state changed:', {
-      templateName,
-      isNewTemplate,
-      isModified,
-      isSaving,
-      isLoading,
-      canvasWidth,
-      canvasHeight
-    });
-  }, [templateName, isNewTemplate, isModified, isSaving, isLoading, canvasWidth, canvasHeight]);
-
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
     const handleScroll = () => {

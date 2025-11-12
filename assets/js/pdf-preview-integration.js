@@ -12,19 +12,19 @@ function isDebugEnabled() {
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-        console.log(...args);
+
     }
 }
 
 function debugError(...args) {
     if (isDebugEnabled()) {
-        console.error(...args);
+
     }
 }
 
 function debugWarn(...args) {
     if (isDebugEnabled()) {
-        console.warn(...args);
+
     }
 }
 

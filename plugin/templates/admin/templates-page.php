@@ -501,7 +501,7 @@ function loadTemplateSettings(templateId) {
             document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
         } else {
             // Erreur - utiliser des valeurs par défaut
-            console.error('Erreur lors du chargement des paramètres:', response.data.message);
+
             document.getElementById('template-description-input').value = 'Description du template...';
             document.getElementById('template-public').checked = false;
             document.getElementById('template-paper-size').value = 'A4';
@@ -525,7 +525,7 @@ function loadTemplateSettings(templateId) {
             document.getElementById('template-category').addEventListener('change', updateTemplateTitle);
         }
     }).fail(function(xhr, status, error) {
-        console.error('Erreur AJAX lors du chargement des paramètres:', error);
+
         // Valeurs par défaut en cas d'erreur
         document.getElementById('template-description-input').value = 'Description du template...';
         document.getElementById('template-public').checked = false;

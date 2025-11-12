@@ -469,12 +469,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         })
       };
 
-      console.log('[BuilderContext] New state after LOAD_TEMPLATE:', {
-        elementsCount: newState.elements.length,
-        template: newState.template,
-        canvas: newState.canvas
-      });
-
       return newState;
     }
 

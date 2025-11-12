@@ -16,7 +16,7 @@ export function debugLog(...args: unknown[]) {
   // To enable debug logging: window.PDF_BUILDER_VERBOSE = true
   const isVerbose = typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).PDF_BUILDER_VERBOSE === true;
   if (isVerbose) {
-    console.log(...args);
+
   }
 }
 
@@ -24,15 +24,15 @@ export function debugLog(...args: unknown[]) {
 export function debugSave(...args: unknown[]) {
   // TEMPORAIRE : Toujours afficher les logs de sauvegarde pour le debug
   // To enable save debugging: window.PDF_BUILDER_DEBUG_SAVE = true
-  console.log('💾 [SAVE DEBUG]', ...args);
+
 }
 
 export function debugError(...args: unknown[]) {
   // Always show errors
-  console.error(...args);
+
 }
 
 export function debugWarn(...args: unknown[]) {
   // Always show warnings
-  console.warn(...args);
+
 }

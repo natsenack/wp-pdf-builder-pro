@@ -12,19 +12,19 @@ function isDebugEnabled() {
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-        console.log(...args);
+
     }
 }
 
 function debugError(...args) {
     if (isDebugEnabled()) {
-        console.error(...args);
+
     }
 }
 
 function debugWarn(...args) {
     if (isDebugEnabled()) {
-        console.warn(...args);
+
     }
 }
 
@@ -259,7 +259,7 @@ class PDFPreviewAPI {
                 }
             `;
             document.head.appendChild(styleSheet);
-            console.log('✅ PDF Preview modal CSS injectée - Centrage FLEX activé');
+
         }
         
         const modal = document.createElement('div');

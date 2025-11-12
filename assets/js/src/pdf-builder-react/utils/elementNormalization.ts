@@ -46,28 +46,6 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
       height: Number(element.height) || 100
     } as Element;
 
-    // LOG: Tracer les propriétés custom
-    const knownProps = new Set(['id', 'type', 'x', 'y', 'width', 'height', 'position', 'size', 'properties', 'style', 'content', 'src']);
-    const customProps = Object.keys(element).filter(key => !knownProps.has(key));
-    
-    if (customProps.length > 0) {
-      console.log(`✅ [NORMALIZE] Element ${normalized.id} has custom properties:`, customProps);
-      customProps.forEach(prop => {
-        console.log(`   - ${prop}: ${JSON.stringify(element[prop])}`);
-      });
-    }
-
-    // CRITICAL: Vérifier contentAlign et labelPosition spécifiquement
-    if (normalized.type === 'order_number') {
-      console.log(`🔍 [NORMALIZE] order_number element ${normalized.id}:`, {
-        hasContentAlign: 'contentAlign' in element,
-        contentAlignValue: element.contentAlign,
-        hasLabelPosition: 'labelPosition' in element,
-        labelPositionValue: element.labelPosition,
-        allKeys: Object.keys(element)
-      });
-    }
-
     return normalized;
   });
 }
