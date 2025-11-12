@@ -16,7 +16,7 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
 
   // État pour les accordéons de police
   const [fontAccordions, setFontAccordions] = useState({
-    headerFont: true, // Accordéon du nom de l'entreprise ouvert par défaut
+    headerFont: false, // Accordéon du nom de l'entreprise fermé par défaut
     bodyFont: false   // Accordéon des informations fermé par défaut
   });
 
