@@ -1,6 +1,58 @@
 import React, { useState } from 'react';
 import { CompanyInfoElement } from '../../types/elements';
 
+// Composant Toggle personnalisé
+interface ToggleProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label?: string;
+  description?: string;
+}
+
+function Toggle({ checked, onChange, label, description }: ToggleProps) {
+  return (
+    <div style={{ marginBottom: '12px' }}>
+      {label && (
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          {label}
+        </label>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div
+          onClick={() => onChange(!checked)}
+          style={{
+            width: '44px',
+            height: '24px',
+            borderRadius: '12px',
+            backgroundColor: checked ? '#007bff' : '#ccc',
+            cursor: 'pointer',
+            position: 'relative',
+            transition: 'background-color 0.2s ease',
+            border: '2px solid transparent'
+          }}
+        >
+          <div
+            style={{
+              width: '18px',
+              height: '18px',
+              borderRadius: '50%',
+              backgroundColor: 'white',
+              position: 'absolute',
+              top: '1px',
+              left: checked ? '21px' : '1px',
+              transition: 'left 0.2s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            }}
+          />
+        </div>
+        {description && (
+          <span style={{ fontSize: '11px', color: '#666' }}>{description}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface CompanyInfoPropertiesProps {
   element: CompanyInfoElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
@@ -342,109 +394,61 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Fonctionnalités */}
       {companyCurrentTab === 'fonctionnalites' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les en-têtes
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showHeaders !== false}
-              onChange={(e) => onChange(element.id, 'showHeaders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les titres des sections</span>
-          </div>
+          <Toggle
+            checked={element.showHeaders !== false}
+            onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+            label="Afficher les en-têtes"
+            description="Affiche les titres des sections"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher les bordures
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showBorders !== false}
-              onChange={(e) => onChange(element.id, 'showBorders', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Affiche les bordures autour des sections</span>
-          </div>
+          <Toggle
+            checked={element.showBorders !== false}
+            onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+            label="Afficher les bordures"
+            description="Affiche les bordures autour des sections"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le nom de l&apos;entreprise
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showCompanyName !== false}
-              onChange={(e) => onChange(element.id, 'showCompanyName', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Nom de l&apos;entreprise</span>
-          </div>
+          <Toggle
+            checked={element.showCompanyName !== false}
+            onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
+            label="Afficher le nom de l'entreprise"
+            description="Nom de l'entreprise"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l&apos;adresse
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showAddress !== false}
-              onChange={(e) => onChange(element.id, 'showAddress', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Adresse complète de l&apos;entreprise</span>
-          </div>
+          <Toggle
+            checked={element.showAddress !== false}
+            onChange={(checked) => onChange(element.id, 'showAddress', checked)}
+            label="Afficher l'adresse"
+            description="Adresse complète de l'entreprise"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le téléphone
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showPhone !== false}
-              onChange={(e) => onChange(element.id, 'showPhone', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Numéro de téléphone</span>
-          </div>
+          <Toggle
+            checked={element.showPhone !== false}
+            onChange={(checked) => onChange(element.id, 'showPhone', checked)}
+            label="Afficher le téléphone"
+            description="Numéro de téléphone"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher l&apos;email
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showEmail !== false}
-              onChange={(e) => onChange(element.id, 'showEmail', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Adresse email de l&apos;entreprise</span>
-          </div>
+          <Toggle
+            checked={element.showEmail !== false}
+            onChange={(checked) => onChange(element.id, 'showEmail', checked)}
+            label="Afficher l'email"
+            description="Adresse email de l'entreprise"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le numéro SIRET
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showSiret !== false}
-              onChange={(e) => onChange(element.id, 'showSiret', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Numéro SIRET de l&apos;entreprise</span>
-          </div>
+          <Toggle
+            checked={element.showSiret !== false}
+            onChange={(checked) => onChange(element.id, 'showSiret', checked)}
+            label="Afficher le numéro SIRET"
+            description="Numéro SIRET de l'entreprise"
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Afficher le numéro TVA
-            </label>
-            <input
-              type="checkbox"
-              checked={element.showTva !== false}
-              onChange={(e) => onChange(element.id, 'showTva', e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            <span style={{ fontSize: '11px', color: '#666' }}>Numéro TVA de l&apos;entreprise</span>
-          </div>
+          <Toggle
+            checked={element.showTva !== false}
+            onChange={(checked) => onChange(element.id, 'showTva', checked)}
+            label="Afficher le numéro TVA"
+            description="Numéro TVA de l'entreprise"
+          />
         </>
       )}
 
