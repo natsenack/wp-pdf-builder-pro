@@ -706,7 +706,7 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
                 <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
                 <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                    <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', '<em>Non défini</em>')); ?></p>
+                    <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
                     <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php 
                         $address = get_option('woocommerce_store_address', '');
                         $city = get_option('woocommerce_store_city', '');
@@ -715,7 +715,10 @@ style="background-color: #dc3232; border-color: #dc3232; color: white; font-weig
                         $full_address = array_filter([$address, $city, $postcode, $country]);
                         echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
                     ?></p>
-                    <p style="margin: 5px 0;"><strong>Téléphone :</strong> <?php echo esc_html(get_option('woocommerce_store_phone', '<em>Non défini</em>')); ?></p>
+                    <p style="margin: 5px 0;"><strong>Téléphone :</strong> <?php 
+                        $phone = get_option('woocommerce_store_phone', '');
+                        echo esc_html($phone ?: '<em>Non configuré dans WooCommerce</em>');
+                    ?></p>
                     <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
                     <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
                         ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
