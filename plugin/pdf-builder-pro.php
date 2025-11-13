@@ -561,19 +561,10 @@ function pdf_builder_handle_preview_ajax()
 }
 
 /**
- * Gérer les téléchargements PDF
+ * Charger le domaine de traduction
  */
-function pdf_builder_handle_pdf_downloads()
+function pdf_builder_load_textdomain()
 {
 
-    if (isset($_GET['pdf_download'])) {
-// Charger le bootstrap pour gérer le téléchargement
-        $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
-        if (file_exists($bootstrap_path)) {
-            require_once $bootstrap_path;
-            if (function_exists('pdf_builder_load_bootstrap')) {
-                pdf_builder_load_bootstrap();
-            }
-        }
-    }
+    load_plugin_textdomain('pdf-builder-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
