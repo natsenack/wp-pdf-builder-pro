@@ -3799,7 +3799,7 @@
             </p>
          </form>
         </div>
-        </div>
+
         <!-- Bouton de sauvegarde flottant global -->
         <div class="floating-save-container">
             <button type="button" id="global-save-btn" class="floating-save-btn">
