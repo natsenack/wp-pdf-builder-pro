@@ -26,7 +26,7 @@
     $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
         'xmlhttprequest';
 
-     // Debug: Log POST data for AJAX requests
+    // Debug: Log POST data for AJAX requests
     if ($is_ajax && !empty($_POST)) {
         error_log('AJAX POST data: ' . print_r($_POST, true));
     }
@@ -63,12 +63,12 @@
     $settings['license_test_mode'] = $license_test_mode;
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
-            error_log('ALL POST data received: ' . print_r($_POST, true));
-            error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
-        }
-        if (!empty($_POST)) {
+        error_log('ALL POST data received: ' . print_r($_POST, true));
+        error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
+    }
+    if (!empty($_POST)) {
 
-        } else {
+    } else {
 
     }
 
@@ -157,7 +157,7 @@
         isset($_POST['clear_cache']) &&
         (isset($_POST['pdf_builder_clear_cache_nonce_performance']) ||
         isset($_POST['pdf_builder_clear_cache_nonce_maintenance']))
-     ) {
+    ) {
         $nonce_verified = false;
         if (isset($_POST['pdf_builder_clear_cache_nonce_performance'])) {
             $nonce_verified = wp_verify_nonce($_POST['pdf_builder_clear_cache_nonce_performance'], 'pdf_builder_clear_cache_performance');
@@ -166,11 +166,11 @@
         }
 
         if ($nonce_verified) {
-     // Clear transients and cache
+    // Clear transients and cache
             delete_transient('pdf_builder_cache');
             delete_transient('pdf_builder_templates');
             delete_transient('pdf_builder_elements');
-     // Clear WP object cache if available
+    // Clear WP object cache if available
             if (function_exists('wp_cache_flush')) {
                 wp_cache_flush();
             }
@@ -290,7 +290,7 @@
                 'max_fps' => intval($_POST['max_fps'] ?? 60),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
-     // Save auto_save settings to canvas_settings (not general settings)
+    // Save auto_save settings to canvas_settings (not general settings)
             $canvas_settings_to_update = $canvas_settings;
             $canvas_settings_to_update['auto_save_enabled'] = isset($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1';
             $canvas_settings_to_update['auto_save_interval'] = intval($_POST['auto_save_interval'] ?? 30);
@@ -422,7 +422,7 @@
     if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
 
         if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_settings')) {
-     // NOTE: This section is now handled in the Templates tab form below (line 2846)
+    // NOTE: This section is now handled in the Templates tab form below (line 2846)
             // Keeping this comment to avoid confusion - code is handled in the proper form section
         }
     }
@@ -765,6 +765,7 @@
 
         </form>
     </div>
+
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
                 <input type="hidden" name="current_tab" value="licence">
@@ -792,7 +793,7 @@
 
                     // Traitement activation licence
                     if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
-                     // Mode DÉMO : Activation de clés réelles désactivée
+                    // Mode DÉMO : Activation de clés réelles désactivée
                         // Les clés premium réelles seront validées une fois le système de licence en production
                         wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
                                 <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
@@ -1096,7 +1097,7 @@
                         </div>
                     </div>
                         <?php
-                         elseif ($is_test_mode) :
+                    elseif ($is_test_mode) :
                         ?>
                     <!-- Mode TEST : Gestion de la clé de test -->
                     <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
@@ -3798,7 +3799,7 @@
             </p>
          </form>
         </div>
-
+        </div>
         <!-- Bouton de sauvegarde flottant global -->
         <div class="floating-save-container">
             <button type="button" id="global-save-btn" class="floating-save-btn">
@@ -3808,30 +3809,30 @@
         </div>
 
 </div>
-    <style>
-            /* Configuration des notifications Toastr */
-            .toast-top-right {
-                position: fixed;
-                top: 20px !important;
-                right: 20px !important;
-                z-index: 99999 !important;
-            }
+<style>
+        /* Configuration des notifications Toastr */
+        .toast-top-right {
+            position: fixed;
+            top: 20px !important;
+            right: 20px !important;
+            z-index: 99999 !important;
+        }
 
-            .toast {
-                animation: slideInRight 0.3s ease-out !important;
-            }
+        .toast {
+            animation: slideInRight 0.3s ease-out !important;
+        }
 
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(420px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(420px);
+                opacity: 0;
             }
-    </style>
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+</style>
 
     <script>
         // Script de diagnostic pour Toastr
@@ -3968,979 +3969,979 @@
     </script>
 
 
-    <style>
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
-            }
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: #2196F3;
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toggle-label {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .toggle-description {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-            padding-left: 60px;
-        }
-
-        .toggle-switch input:disabled ~ .toggle-slider {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .toggle-switch input:disabled ~ .toggle-label {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Bouton de sauvegarde flottant */
-        .floating-save-container {
-            position: fixed;
-            bottom: 40px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        .floating-save-btn {
-            background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 140px;
-            justify-content: center;
-        }
-
-        .floating-save-btn:hover {
-            background: linear-gradient(135deg, #005a87 0%, #004466 100%);
-            box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .floating-save-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
-        }
-
-        .floating-save-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .save-status {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .save-status.show {
+<style>
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
             opacity: 1;
         }
-
-        .save-status.success {
-            background: rgba(0, 128, 0, 0.9);
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
         }
+    }
 
-        .save-status.error {
-            background: rgba(220, 53, 69, 0.9);
-        }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
 
-        /* Masquer les boutons individuels des onglets */
-        .tab-content .submit {
-            display: none;
-        }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-        /* Exception pour les onglets qui utilisent des formulaires POST séparés */
-        #roles .submit,
-        #notifications .submit {
-            display: block;
-        }
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 24px;
+    }
 
-        /* Exception pour le bouton de test dans l'onglet notifications */
-        #notifications #test-notifications,
-        #notifications #test-smtp-connection {
-            display: inline-block !important;
-        }
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
 
-        /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
-        #roles #global-save-btn {
-            display: none !important;
-        }
+    input:checked + .toggle-slider {
+        background-color: #2196F3;
+    }
 
-        /* Classe pour masquer les onglets non actifs */
-        .hidden-tab {
-            display: none;
-        }
-    </style>
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
 
-    <?php
-        // Définir les paramètres canvas pour JavaScript
-        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
-    ?>
-    <script>
-        // Définir ajaxurl si pas déjà défini
-        if (typeof ajaxurl === 'undefined') {
-            ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-        }
-    </script>
-    <script>
-        // Script de définition des paramètres canvas - exécuté très tôt
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        // Définir pdfBuilderCanvasSettings globalement avant tout autre script
-        window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
-            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
-            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
-            'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
-            'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
-            'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
-            'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
-            'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
-            'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
-            'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
-            'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
-            'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
-            'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
-            'show_margins' => $canvas_settings_js['show_margins'] ?? false,
-            'show_grid' => $canvas_settings_js['show_grid'] ?? false,
-            'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
-            'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
-            'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? false,
-            'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? false,
-            'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
-            'show_guides' => $canvas_settings_js['show_guides'] ?? false,
-            'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
-            'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
-            'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
-            'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
-            'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? false,
-            'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? false,
-            'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? false,
-            'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
-            'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
-            'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? false,
-            'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
-            'multi_select' => $canvas_settings_js['multi_select'] ?? false,
-            'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
-            'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
-            'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
-            'compress_images' => $canvas_settings_js['compress_images'] ?? true,
-            'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
-            'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
-            'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
-            'pdf_author' => $canvas_settings_js['pdf_author'] ?? 'PDF Builder Pro',
-            'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
-            'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
-            'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
-            'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
-            'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
-            'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
-            'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
-            'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
-            'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
-            'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
-            'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
-            'redo_levels' => $canvas_settings_js['redo_levels'] ?? 50,
-            'enable_keyboard_shortcuts' => $canvas_settings_js['enable_keyboard_shortcuts'] ?? true,
-            'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
-            'show_fps' => $canvas_settings_js['show_fps'] ?? false
-        ]); ?>;
-    // NOTE: getDimensionsFromFormat function already defined above (line ~503), no need to duplicate it here
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gestion du bouton de sauvegarde global
-            function setupGlobalSaveButton() {
-                const globalSaveBtn = document.getElementById('global-save-btn');
-                const saveStatus = document.getElementById('save-status');
+    .toggle-label {
+        font-weight: 500;
+        color: #333;
+    }
 
-                console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
+    .toggle-description {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+        padding-left: 60px;
+    }
 
-                if (globalSaveBtn) {
-                    globalSaveBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
+    .toggle-switch input:disabled ~ .toggle-slider {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 
-                        // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
-                        const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
-                                        document.querySelector('.tab-content.active');
+    .toggle-switch input:disabled ~ .toggle-label {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 
-                        if (activeTab) {
-                            console.log('📑 Active tab ID:', activeTab.id);
+    /* Bouton de sauvegarde flottant */
+    .floating-save-container {
+        position: fixed;
+        bottom: 40px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
 
-                            // Trouver le formulaire dans l'onglet actif
-                            let form = activeTab.querySelector('form');
+    .floating-save-btn {
+        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 24px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 140px;
+        justify-content: center;
+    }
 
-                            // Si pas de formulaire direct, utiliser le formulaire global (fallback)
-                            if (!form) {
-                                form = document.getElementById('global-settings-form');
-                            }
+    .floating-save-btn:hover {
+        background: linear-gradient(135deg, #005a87 0%, #004466 100%);
+        box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
+        transform: translateY(-2px);
+    }
 
-                            if (form) {
-                                console.log('✅ Form found, submitting:', form.id || 'unnamed form');
+    .floating-save-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+    }
 
-                                // Afficher le statut de sauvegarde
-                                if (saveStatus) {
-                                    saveStatus.textContent = '💾 Sauvegarde en cours...';
-                                    saveStatus.style.color = '#007cba';
-                                }
+    .floating-save-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
 
-                                // Soumettre le formulaire de manière sécurisée
-                                if (typeof form.requestSubmit === 'function') {
-                                    form.requestSubmit();
-                                } else {
-                                    // Fallback pour les navigateurs plus anciens
-                                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                                    if (form.dispatchEvent(submitEvent)) {
-                                        form.submit();
-                                    }
-                                }
-                            } else {
-                                console.error('❌ No form found in active tab:', activeTab.id);
-                                if (saveStatus) {
-                                    saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
-                                    saveStatus.style.color = '#dc3232';
-                                }
-                            }
-                        } else {
-                            console.error('❌ No active tab found');
-                            if (saveStatus) {
-                                saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
-                                saveStatus.style.color = '#dc3232';
-                            }
+    .save-status {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    .save-status.show {
+        opacity: 1;
+    }
+
+    .save-status.success {
+        background: rgba(0, 128, 0, 0.9);
+    }
+
+    .save-status.error {
+        background: rgba(220, 53, 69, 0.9);
+    }
+
+    /* Masquer les boutons individuels des onglets */
+    .tab-content .submit {
+        display: none;
+    }
+
+    /* Exception pour les onglets qui utilisent des formulaires POST séparés */
+    #roles .submit,
+    #notifications .submit {
+        display: block;
+    }
+
+    /* Exception pour le bouton de test dans l'onglet notifications */
+    #notifications #test-notifications,
+    #notifications #test-smtp-connection {
+        display: inline-block !important;
+    }
+
+    /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
+    #roles #global-save-btn {
+        display: none !important;
+    }
+
+    /* Classe pour masquer les onglets non actifs */
+    .hidden-tab {
+        display: none;
+    }
+</style>
+
+<?php
+    // Définir les paramètres canvas pour JavaScript
+    $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+?>
+<script>
+    // Définir ajaxurl si pas déjà défini
+    if (typeof ajaxurl === 'undefined') {
+        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+    }
+</script>
+<script>
+    // Script de définition des paramètres canvas - exécuté très tôt
+
+    // Définir pdfBuilderCanvasSettings globalement avant tout autre script
+    window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
+        'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+        'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+        'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
+        'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
+        'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
+        'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
+        'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
+        'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
+        'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
+        'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
+        'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
+        'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
+        'show_margins' => $canvas_settings_js['show_margins'] ?? false,
+        'show_grid' => $canvas_settings_js['show_grid'] ?? false,
+        'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
+        'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
+        'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? false,
+        'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? false,
+        'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
+        'show_guides' => $canvas_settings_js['show_guides'] ?? false,
+        'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
+        'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
+        'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
+        'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
+        'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? false,
+        'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? false,
+        'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? false,
+        'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
+        'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
+        'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? false,
+        'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
+        'multi_select' => $canvas_settings_js['multi_select'] ?? false,
+        'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
+        'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
+        'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
+        'compress_images' => $canvas_settings_js['compress_images'] ?? true,
+        'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
+        'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
+        'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
+        'pdf_author' => $canvas_settings_js['pdf_author'] ?? 'PDF Builder Pro',
+        'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
+        'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
+        'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
+        'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
+        'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
+        'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
+        'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
+        'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
+        'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
+        'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
+        'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
+        'redo_levels' => $canvas_settings_js['redo_levels'] ?? 50,
+        'enable_keyboard_shortcuts' => $canvas_settings_js['enable_keyboard_shortcuts'] ?? true,
+        'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
+        'show_fps' => $canvas_settings_js['show_fps'] ?? false
+    ]); ?>;
+ // NOTE: getDimensionsFromFormat function already defined above (line ~503), no need to duplicate it here
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du bouton de sauvegarde global
+        function setupGlobalSaveButton() {
+            const globalSaveBtn = document.getElementById('global-save-btn');
+            const saveStatus = document.getElementById('save-status');
+
+            console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
+
+            if (globalSaveBtn) {
+                globalSaveBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
+                    const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
+                                    document.querySelector('.tab-content.active');
+
+                    if (activeTab) {
+                        console.log('📑 Active tab ID:', activeTab.id);
+
+                        // Trouver le formulaire dans l'onglet actif
+                        let form = activeTab.querySelector('form');
+
+                        // Si pas de formulaire direct, utiliser le formulaire global (fallback)
+                        if (!form) {
+                            form = document.getElementById('global-settings-form');
                         }
-                    });
-                }
 
-                // Gestion du bouton Vider le Cache
-                const clearCacheBtn = document.getElementById('clear-cache-btn');
-                if (clearCacheBtn) {
-                    clearCacheBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
+                        if (form) {
+                            console.log('✅ Form found, submitting:', form.id || 'unnamed form');
 
-                        if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
-                            // Afficher le statut
+                            // Afficher le statut de sauvegarde
                             if (saveStatus) {
-                                saveStatus.textContent = '🗑️ Vidage du cache...';
+                                saveStatus.textContent = '💾 Sauvegarde en cours...';
                                 saveStatus.style.color = '#007cba';
                             }
 
-                            // Faire une requête AJAX pour vider le cache
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_clear_cache');
-                            formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
-
-                            fetch(ajaxurl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    if (saveStatus) {
-                                        saveStatus.textContent = '✅ Cache vidé avec succès';
-                                        saveStatus.style.color = '#46b450';
-                                    }
-                                    setTimeout(() => {
-                                        if (saveStatus) saveStatus.classList.add('show');
-                                    }, 100);
-                                    setTimeout(() => {
-                                        if (saveStatus) {
-                                            saveStatus.classList.remove('show');
-                                            saveStatus.textContent = '';
-                                        }
-                                    }, 3000);
-                                } else {
-                                    if (saveStatus) {
-                                        saveStatus.textContent = '❌ Erreur lors du vidage du cache';
-                                        saveStatus.style.color = '#dc3232';
-                                    }
+                            // Soumettre le formulaire de manière sécurisée
+                            if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                            } else {
+                                // Fallback pour les navigateurs plus anciens
+                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                                if (form.dispatchEvent(submitEvent)) {
+                                    form.submit();
                                 }
-                            })
-                            .catch(error => {
-                                console.error('Erreur AJAX:', error);
+                            }
+                        } else {
+                            console.error('❌ No form found in active tab:', activeTab.id);
+                            if (saveStatus) {
+                                saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
+                                saveStatus.style.color = '#dc3232';
+                            }
+                        }
+                    } else {
+                        console.error('❌ No active tab found');
+                        if (saveStatus) {
+                            saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
+                            saveStatus.style.color = '#dc3232';
+                        }
+                    }
+                });
+            }
+
+            // Gestion du bouton Vider le Cache
+            const clearCacheBtn = document.getElementById('clear-cache-btn');
+            if (clearCacheBtn) {
+                clearCacheBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
+                        // Afficher le statut
+                        if (saveStatus) {
+                            saveStatus.textContent = '🗑️ Vidage du cache...';
+                            saveStatus.style.color = '#007cba';
+                        }
+
+                        // Faire une requête AJAX pour vider le cache
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_clear_cache');
+                        formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
+
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
                                 if (saveStatus) {
-                                    saveStatus.textContent = '❌ Erreur de connexion';
+                                    saveStatus.textContent = '✅ Cache vidé avec succès';
+                                    saveStatus.style.color = '#46b450';
+                                }
+                                setTimeout(() => {
+                                    if (saveStatus) saveStatus.classList.add('show');
+                                }, 100);
+                                setTimeout(() => {
+                                    if (saveStatus) {
+                                        saveStatus.classList.remove('show');
+                                        saveStatus.textContent = '';
+                                    }
+                                }, 3000);
+                            } else {
+                                if (saveStatus) {
+                                    saveStatus.textContent = '❌ Erreur lors du vidage du cache';
                                     saveStatus.style.color = '#dc3232';
                                 }
-                            });
-                        }
-                    });
-                }
-            }
-
-            // Démarrer la gestion du bouton global
-            setupGlobalSaveButton();
-        });
-    </script>
-
-    <script>
-            // Gestion de la navigation des onglets
-            function setupTabNavigation() {
-                // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
-                const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
-                const globalSaveBtn = document.getElementById('global-save-btn');
-                if (globalSaveBtn && initialActiveTab) {
-                    if (initialActiveTab.id === 'maintenance') {
-                        globalSaveBtn.style.display = 'none';
-                    } else {
-                        globalSaveBtn.style.display = '';
-                    }
-                }
-
-                const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
-                console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
-
-                tabLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-
-                        const targetTab = this.getAttribute('data-tab');
-
-                        // Masquer tous les onglets
-                        const allTabs = document.querySelectorAll('.tab-content');
-                        allTabs.forEach(tab => {
-                            tab.classList.add('hidden-tab');
-                        });
-
-                        // Désactiver tous les liens d'onglets
-                        document.querySelectorAll('.nav-tab').forEach(tabLink => {
-                            tabLink.classList.remove('nav-tab-active');
-                        });
-
-                        // Afficher l'onglet cible
-                        const targetTabContent = document.getElementById(targetTab);
-                        if (targetTabContent) {
-                            targetTabContent.classList.remove('hidden-tab');
-                        } else {
-                            console.error('❌ TAB NOT FOUND:', targetTab);
-                        }
-
-                        // Activer le lien d'onglet
-                        this.classList.add('nav-tab-active');
-
-                        // Gérer la visibilité du bouton de sauvegarde global
-                        const globalSaveBtn = document.getElementById('global-save-btn');
-                        if (globalSaveBtn) {
-                            if (targetTab === 'maintenance') {
-                                globalSaveBtn.style.display = 'none';
-                            } else {
-                                globalSaveBtn.style.display = '';
                             }
-                        }
-
-                        // Sauvegarder l'onglet actif dans localStorage
-                        localStorage.setItem('pdf_builder_active_tab', targetTab);
-                    });
-                });
-
-                // Restaurer l'onglet actif depuis localStorage
-                const savedTab = localStorage.getItem('pdf_builder_active_tab');
-                if (savedTab) {
-                    const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
-                    if (savedTabLink) {
-                        console.log('📑 RESTORING SAVED TAB:', savedTab);
-                        savedTabLink.click();
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX:', error);
+                            if (saveStatus) {
+                                saveStatus.textContent = '❌ Erreur de connexion';
+                                saveStatus.style.color = '#dc3232';
+                            }
+                        });
                     }
+                });
+            }
+        }
+
+        // Démarrer la gestion du bouton global
+        setupGlobalSaveButton();
+    });
+</script>
+
+<script>
+        // Gestion de la navigation des onglets
+        function setupTabNavigation() {
+            // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
+            const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
+            const globalSaveBtn = document.getElementById('global-save-btn');
+            if (globalSaveBtn && initialActiveTab) {
+                if (initialActiveTab.id === 'maintenance') {
+                    globalSaveBtn.style.display = 'none';
+                } else {
+                    globalSaveBtn.style.display = '';
                 }
             }
 
-            // Démarrer la navigation des onglets
-            setupTabNavigation();
+            const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+            console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
 
-            // Gestion du bouton toggle password
-            const togglePasswordBtn = document.getElementById('toggle_password');
-            const passwordInput = document.getElementById('developer_password');
-
-            if (togglePasswordBtn && passwordInput) {
-                togglePasswordBtn.addEventListener('click', function() {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        this.innerHTML = '🙈 Masquer';
-                        console.log('🔐 Password field shown');
-                    } else {
-                        passwordInput.type = 'password';
-                        this.innerHTML = '👁️ Afficher';
-                        console.log('🔐 Password field hidden');
-                    }
-                });
-            }
-
-            // Gestion du générateur de clé de licence
-            const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
-            const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
-            const licenseTestKeyInput = document.getElementById('license_test_key');
-            const licenseKeyStatus = document.getElementById('license_key_status');
-
-            if (generateLicenseKeyBtn) {
-                generateLicenseKeyBtn.addEventListener('click', function(e) {
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🔑 Generating license test key...');
 
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Génération...');
+                    const targetTab = this.getAttribute('data-tab');
 
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_generate_test_license_key',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
-                        },
-                        success: function(response) {
-                            console.log('✅ License key generated:', response);
-                            if (response.success && response.data.key) {
-                                licenseTestKeyInput.value = response.data.key;
-                                licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
-                                $btn.html('🔑 Régénérer');
-                                $btn.prop('disabled', false);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de générer la clé';
-                                licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                                $btn.html('🔑 Générer');
-                                $btn.prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                    // Masquer tous les onglets
+                    const allTabs = document.querySelectorAll('.tab-content');
+                    allTabs.forEach(tab => {
+                        tab.classList.add('hidden-tab');
+                    });
+
+                    // Désactiver tous les liens d'onglets
+                    document.querySelectorAll('.nav-tab').forEach(tabLink => {
+                        tabLink.classList.remove('nav-tab-active');
+                    });
+
+                    // Afficher l'onglet cible
+                    const targetTabContent = document.getElementById(targetTab);
+                    if (targetTabContent) {
+                        targetTabContent.classList.remove('hidden-tab');
+                    } else {
+                        console.error('❌ TAB NOT FOUND:', targetTab);
+                    }
+
+                    // Activer le lien d'onglet
+                    this.classList.add('nav-tab-active');
+
+                    // Gérer la visibilité du bouton de sauvegarde global
+                    const globalSaveBtn = document.getElementById('global-save-btn');
+                    if (globalSaveBtn) {
+                        if (targetTab === 'maintenance') {
+                            globalSaveBtn.style.display = 'none';
+                        } else {
+                            globalSaveBtn.style.display = '';
+                        }
+                    }
+
+                    // Sauvegarder l'onglet actif dans localStorage
+                    localStorage.setItem('pdf_builder_active_tab', targetTab);
+                });
+            });
+
+            // Restaurer l'onglet actif depuis localStorage
+            const savedTab = localStorage.getItem('pdf_builder_active_tab');
+            if (savedTab) {
+                const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
+                if (savedTabLink) {
+                    console.log('📑 RESTORING SAVED TAB:', savedTab);
+                    savedTabLink.click();
+                }
+            }
+        }
+
+        // Démarrer la navigation des onglets
+        setupTabNavigation();
+
+        // Gestion du bouton toggle password
+        const togglePasswordBtn = document.getElementById('toggle_password');
+        const passwordInput = document.getElementById('developer_password');
+
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.innerHTML = '🙈 Masquer';
+                    console.log('🔐 Password field shown');
+                } else {
+                    passwordInput.type = 'password';
+                    this.innerHTML = '👁️ Afficher';
+                    console.log('🔐 Password field hidden');
+                }
+            });
+        }
+
+        // Gestion du générateur de clé de licence
+        const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
+        const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
+        const licenseTestKeyInput = document.getElementById('license_test_key');
+        const licenseKeyStatus = document.getElementById('license_key_status');
+
+        if (generateLicenseKeyBtn) {
+            generateLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔑 Generating license test key...');
+
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Génération...');
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_generate_test_license_key',
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ License key generated:', response);
+                        if (response.success && response.data.key) {
+                            licenseTestKeyInput.value = response.data.key;
+                            licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
+                            $btn.html('🔑 Régénérer');
+                            $btn.prop('disabled', false);
+                        } else {
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de générer la clé';
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🔑 Générer');
                             $btn.prop('disabled', false);
                         }
-                    });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        $btn.html('🔑 Générer');
+                        $btn.prop('disabled', false);
+                    }
                 });
-            }
+            });
+        }
 
-            if (copyLicenseKeyBtn) {
-                copyLicenseKeyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (licenseTestKeyInput.value) {
-                        navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
-                            console.log('📋 License key copied to clipboard');
-                            licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
+        if (copyLicenseKeyBtn) {
+            copyLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (licenseTestKeyInput.value) {
+                    navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
+                        console.log('📋 License key copied to clipboard');
+                        licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
+                        setTimeout(function() {
+                            licenseKeyStatus.innerHTML = '';
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('❌ Copy failed:', err);
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Impossible de copier</span>';
+                    });
+                } else {
+                    licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Aucune clé à copier</span>';
+                }
+            });
+        }
+
+        // Gestion de la suppression de la clé de test
+        const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
+
+        if (deleteLicenseKeyBtn) {
+            deleteLicenseKeyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
+                    return;
+                }
+
+                console.log('🗑️ Deleting license test key...');
+
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Suppression...');
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_delete_test_license_key',
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ License key deleted:', response);
+                        if (response.success) {
+                            licenseTestKeyInput.value = '';
+                            licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
+
+                            // Masquer le bouton de suppression
+                            $btn.hide();
+
                             setTimeout(function() {
                                 licenseKeyStatus.innerHTML = '';
                             }, 3000);
-                        }).catch(function(err) {
-                            console.error('❌ Copy failed:', err);
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Impossible de copier</span>';
-                        });
-                    } else {
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Aucune clé à copier</span>';
-                    }
-                });
-            }
-
-            // Gestion de la suppression de la clé de test
-            const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
-
-            if (deleteLicenseKeyBtn) {
-                deleteLicenseKeyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
-                        return;
-                    }
-
-                    console.log('🗑️ Deleting license test key...');
-
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Suppression...');
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_delete_test_license_key',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
-                        },
-                        success: function(response) {
-                            console.log('✅ License key deleted:', response);
-                            if (response.success) {
-                                licenseTestKeyInput.value = '';
-                                licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
-
-                                // Masquer le bouton de suppression
-                                $btn.hide();
-
-                                setTimeout(function() {
-                                    licenseKeyStatus.innerHTML = '';
-                                }, 3000);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de supprimer la clé';
-                                console.error('❌ Delete failed:', errorMsg);
-                                licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                                $btn.html('🗑️ Supprimer');
-                                $btn.prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        } else {
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de supprimer la clé';
+                            console.error('❌ Delete failed:', errorMsg);
+                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
                             $btn.html('🗑️ Supprimer');
                             $btn.prop('disabled', false);
                         }
-                    });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        $btn.html('🗑️ Supprimer');
+                        $btn.prop('disabled', false);
+                    }
                 });
-            }
+            });
+        }
 
-            // Gestion du basculement du mode test de licence
-            const toggleTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
-            const testModeStatus = document.getElementById('license_test_mode_status');
-            const testModeCheckbox = document.getElementById('license_test_mode');
+        // Gestion du basculement du mode test de licence
+        const toggleTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
+        const testModeStatus = document.getElementById('license_test_mode_status');
+        const testModeCheckbox = document.getElementById('license_test_mode');
 
-            if (toggleTestModeBtn) {
-                toggleTestModeBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🎚️ Toggling license test mode...');
+        if (toggleTestModeBtn) {
+            toggleTestModeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🎚️ Toggling license test mode...');
 
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Basculement...');
+                const $btn = jQuery(this);
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Basculement...');
 
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_toggle_test_mode',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
-                        },
-                        success: function(response) {
-                            console.log('✅ Test mode toggled:', response);
-                            if (response.success) {
-                                const enabled = response.data.enabled;
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_toggle_test_mode',
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
+                    },
+                    success: function(response) {
+                        console.log('✅ Test mode toggled:', response);
+                        if (response.success) {
+                            const enabled = response.data.enabled;
 
-                                // Mettre à jour le statut
-                                if (enabled) {
-                                    testModeStatus.innerHTML = '✅ MODE TEST ACTIF';
-                                    testModeStatus.style.background = '#d4edda';
-                                    testModeStatus.style.color = '#155724';
-                                } else {
-                                    testModeStatus.innerHTML = '❌ Mode test inactif';
-                                    testModeStatus.style.background = '#f8d7da';
-                                    testModeStatus.style.color = '#721c24';
-                                }
-
-                                // Mettre à jour le checkbox caché
-                                if (testModeCheckbox) {
-                                    testModeCheckbox.checked = enabled;
-                                }
-
-                                $btn.html('🎚️ Basculer Mode Test');
-                                $btn.prop('disabled', false);
-
-                                console.log(response.data.message);
+                            // Mettre à jour le statut
+                            if (enabled) {
+                                testModeStatus.innerHTML = '✅ MODE TEST ACTIF';
+                                testModeStatus.style.background = '#d4edda';
+                                testModeStatus.style.color = '#155724';
                             } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
-                                console.error('❌ Toggle failed:', errorMsg);
-                                alert('⚠️ Erreur: ' + errorMsg);
-                                $btn.html('🎚️ Basculer Mode Test');
-                                $btn.prop('disabled', false);
+                                testModeStatus.innerHTML = '❌ Mode test inactif';
+                                testModeStatus.style.background = '#f8d7da';
+                                testModeStatus.style.color = '#721c24';
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
+
+                            // Mettre à jour le checkbox caché
+                            if (testModeCheckbox) {
+                                testModeCheckbox.checked = enabled;
                             }
-                            alert('⚠️ Erreur AJAX: ' + errorMsg);
+
+                            $btn.html('🎚️ Basculer Mode Test');
+                            $btn.prop('disabled', false);
+
+                            console.log(response.data.message);
+                        } else {
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
+                            console.error('❌ Toggle failed:', errorMsg);
+                            alert('⚠️ Erreur: ' + errorMsg);
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
                         }
-                    });
-                });
-            }
-
-            // Gestion du nettoyage complet de la licence
-            const cleanupBtn = document.getElementById('cleanup_license_btn');
-            if (cleanupBtn) {
-                cleanupBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Confirmation avant de nettoyer
-                    if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
-                        return;
-                    }
-
-                    console.log('🧹 Cleaning up license...');
-
-                    const $btn = jQuery(this);
-                    const cleanupStatus = document.getElementById('cleanup_status');
-                    const cleanupNonce = document.getElementById('cleanup_license_nonce');
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Nettoyage...');
-                    cleanupStatus.innerHTML = '';
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_cleanup_license',
-                            nonce: cleanupNonce ? cleanupNonce.value : ''
-                        },
-                        success: function(response) {
-                            console.log('✅ Cleanup successful:', response);
-                            $btn.html('🧹 Nettoyer complètement la licence');
-                            $btn.prop('disabled', false);
-
-                            if (response.success) {
-                                cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
-
-                                // Recharger la page après 2 secondes pour voir les changements
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 2000);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
-                                console.error('❌ Cleanup failed:', errorMsg);
-                                cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            alert('⚠️ Erreur AJAX: ' + errorMsg);
-                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
-                            $btn.html('🧹 Nettoyer complètement la licence');
-                            $btn.prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
                         }
-                    });
+                        alert('⚠️ Erreur AJAX: ' + errorMsg);
+                        $btn.html('🎚️ Basculer Mode Test');
+                        $btn.prop('disabled', false);
+                    }
                 });
-            }
+            });
+        }
 
-                    // Gestion du test du système de cache
-            jQuery(document).ready(function($) {
-                console.log("🔧 Cache test button ready");
-                const $btn = $("#test-cache-btn");
-                const $results = $("#cache-test-results");
-                const $output = $("#cache-test-output");
+        // Gestion du nettoyage complet de la licence
+        const cleanupBtn = document.getElementById('cleanup_license_btn');
+        if (cleanupBtn) {
+            cleanupBtn.addEventListener('click', function(e) {
+                e.preventDefault();
 
-                $btn.on("click", function(e) {
+                // Confirmation avant de nettoyer
+                if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
+                    return;
+                }
+
+                console.log('🧹 Cleaning up license...');
+
+                const $btn = jQuery(this);
+                const cleanupStatus = document.getElementById('cleanup_status');
+                const cleanupNonce = document.getElementById('cleanup_license_nonce');
+                $btn.prop('disabled', true);
+                $btn.html('⏳ Nettoyage...');
+                cleanupStatus.innerHTML = '';
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'pdf_builder_cleanup_license',
+                        nonce: cleanupNonce ? cleanupNonce.value : ''
+                    },
+                    success: function(response) {
+                        console.log('✅ Cleanup successful:', response);
+                        $btn.html('🧹 Nettoyer complètement la licence');
+                        $btn.prop('disabled', false);
+
+                        if (response.success) {
+                            cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
+
+                            // Recharger la page après 2 secondes pour voir les changements
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
+                            console.error('❌ Cleanup failed:', errorMsg);
+                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX error:', error);
+                        let errorMsg = error;
+                        if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                            errorMsg = xhr.responseJSON.data.message;
+                        }
+                        alert('⚠️ Erreur AJAX: ' + errorMsg);
+                        cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
+                        $btn.html('🧹 Nettoyer complètement la licence');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        }
+
+                // Gestion du test du système de cache
+        jQuery(document).ready(function($) {
+            console.log("🔧 Cache test button ready");
+            const $btn = $("#test-cache-btn");
+            const $results = $("#cache-test-results");
+            const $output = $("#cache-test-output");
+
+            $btn.on("click", function(e) {
+                e.preventDefault();
+                console.log("🖱️ Cache test button clicked");
+
+                $btn.prop("disabled", true).html("🔄 Test en cours...");
+                if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
+                if ($output.length) $output.hide();
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        action: "pdf_builder_simple_test"
+                    },
+                    timeout: 30000,
+                    success: function(response) {
+                        console.log("✅ AJAX success:", response);
+                        $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
+
+                        if (response.success) {
+                            if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
+                            if ($output.length) $output.html(response.data).show();
+                        } else {
+                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test échoué</span>');
+                            if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("❌ AJAX error:", status, error);
+                        $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
+
+                        if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
+                        if ($output.length) $output.html('<p>Erreur: ' + error + '</p>').show();
+                    }
+                });
+            });
+        });
+
+        // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
+        jQuery(document).ready(function($) {
+            console.log("🔧 Notification test buttons ready");
+
+            // Test SMTP Connection
+            const $testSmtpBtn = $("#test-smtp-connection");
+            if ($testSmtpBtn.length) {
+                $testSmtpBtn.on("click", function(e) {
                     e.preventDefault();
-                    console.log("🖱️ Cache test button clicked");
+                    console.log("🖱️ Test SMTP button clicked");
 
-                    $btn.prop("disabled", true).html("🔄 Test en cours...");
-                    if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
-                    if ($output.length) $output.hide();
+                    const originalText = $testSmtpBtn.html();
+                    $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
 
                     $.ajax({
                         url: ajaxurl,
                         type: "POST",
                         dataType: "json",
                         data: {
-                            action: "pdf_builder_simple_test"
+                            action: "pdf_builder_test_smtp_connection",
+                            nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
                         },
-                        timeout: 30000,
+                        timeout: 15000,
                         success: function(response) {
-                            console.log("✅ AJAX success:", response);
-                            $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
+                            console.log("✅ SMTP Test response:", response);
+                            $testSmtpBtn.prop("disabled", false).html(originalText);
 
                             if (response.success) {
-                                if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
-                                if ($output.length) $output.html(response.data).show();
+                                alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."));
                             } else {
-                                if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test échoué</span>');
-                                if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
+                                alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se connecter au serveur SMTP."));
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.error("❌ AJAX error:", status, error);
-                            $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
-
-                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
-                            if ($output.length) $output.html('<p>Erreur: ' + error + '</p>').show();
+                            console.error("❌ SMTP Test AJAX error:", status, error);
+                            $testSmtpBtn.prop("disabled", false).html(originalText);
+                            alert("⚠️ Erreur lors du test SMTP\n\nErreur: " + error);
                         }
                     });
                 });
-            });
-
-            // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
-            jQuery(document).ready(function($) {
-                console.log("🔧 Notification test buttons ready");
-
-                // Test SMTP Connection
-                const $testSmtpBtn = $("#test-smtp-connection");
-                if ($testSmtpBtn.length) {
-                    $testSmtpBtn.on("click", function(e) {
-                        e.preventDefault();
-                        console.log("🖱️ Test SMTP button clicked");
-
-                        const originalText = $testSmtpBtn.html();
-                        $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
-
-                        $.ajax({
-                            url: ajaxurl,
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                action: "pdf_builder_test_smtp_connection",
-                                nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
-                            },
-                            timeout: 15000,
-                            success: function(response) {
-                                console.log("✅ SMTP Test response:", response);
-                                $testSmtpBtn.prop("disabled", false).html(originalText);
-
-                                if (response.success) {
-                                    alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."));
-                                } else {
-                                    alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se connecter au serveur SMTP."));
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("❌ SMTP Test AJAX error:", status, error);
-                                $testSmtpBtn.prop("disabled", false).html(originalText);
-                                alert("⚠️ Erreur lors du test SMTP\n\nErreur: " + error);
-                            }
-                        });
-                    });
-                }
-
-                // Test Notifications
-                const $testNotifBtn = $("#test-notifications");
-                if ($testNotifBtn.length) {
-                    $testNotifBtn.on("click", function(e) {
-                        e.preventDefault();
-                        console.log("🖱️ Test Notifications button clicked");
-
-                        const originalText = $testNotifBtn.html();
-                        $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
-
-                        $.ajax({
-                            url: ajaxurl,
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                action: "pdf_builder_test_notifications",
-                                nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
-                            },
-                            timeout: 15000,
-                            success: function(response) {
-                                console.log("✅ Notification Test response:", response);
-                                $testNotifBtn.prop("disabled", false).html(originalText);
-
-                                if (response.success) {
-                                    alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."));
-                                } else {
-                                    alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer l'email de test."));
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("❌ Notification Test AJAX error:", status, error);
-                                $testNotifBtn.prop("disabled", false).html(originalText);
-                                alert("⚠️ Erreur lors du test de notification\n\nErreur: " + error);
-                            }
-                        });
-                    });
-                }
-            });
-
-            // Gestion dynamique des champs grille
-            jQuery('#show_grid').on('change', function() {
-                var isChecked = jQuery(this).is(':checked');
-                var $gridSizeInput = jQuery('#grid_size');
-                var $gridColorInput = jQuery('#grid_color');
-                var $gridSizeLabel = jQuery('label[for="grid_size"]');
-                var $gridColorLabel = jQuery('label[for="grid_color"]');
-
-                if (isChecked) {
-                    $gridSizeInput.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $gridColorInput.prop('disabled', false).css('opacity', '');
-                    $gridSizeLabel.css('color', '');
-                    $gridColorLabel.css('color', '');
-                } else {
-                    $gridSizeInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $gridColorInput.prop('disabled', true).css('opacity', '0.6');
-                    $gridSizeLabel.css('color', '#999');
-                    $gridColorLabel.css('color', '#999');
-                }
-            });
-
-            // Gestion dynamique des champs cache
-            jQuery('#cache_enabled').on('change', function() {
-                var isChecked = jQuery(this).is(':checked');
-                var $cacheTtlInput = jQuery('#cache_ttl');
-                var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
-
-                if (isChecked) {
-                    $cacheTtlInput.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $cacheTtlLabel.css('color', '');
-                } else {
-                    $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $cacheTtlLabel.css('color', '#999');
-                }
-            });
-
-            // Initialiser l'état des champs cache au chargement
-            jQuery(document).ready(function() {
-                var cacheEnabled = jQuery('#cache_enabled').is(':checked');
-                var $cacheTtlInput = jQuery('#cache_ttl');
-                var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
-
-                if (!cacheEnabled) {
-                    $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $cacheTtlLabel.css('color', '#999');
-                }
-            });
-
-            // Fonction pour mettre à jour l'état des marges
-            function updateMarginsState() {
-                var isChecked = jQuery('#show_margins').is(':checked');
-                var $marginInputs = jQuery('.margin-input');
-                var $marginLabels = jQuery('.margin-label');
-
-                if (isChecked) {
-                    $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $marginLabels.css('color', '');
-                    console.log('Marges activées');
-                } else {
-                    $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $marginLabels.css('color', '#999');
-                    console.log('Marges désactivées');
-                }
             }
 
-            // Gestion dynamique des champs marges - event listener
-            jQuery('#show_margins').on('change', function() {
-                console.log('Toggle marges changé:', jQuery(this).is(':checked'));
-                updateMarginsState();
-            });
+            // Test Notifications
+            const $testNotifBtn = $("#test-notifications");
+            if ($testNotifBtn.length) {
+                $testNotifBtn.on("click", function(e) {
+                    e.preventDefault();
+                    console.log("🖱️ Test Notifications button clicked");
 
-            // Initialiser l'état des champs marges au chargement
-            jQuery(document).ready(function() {
-                console.log('Document ready - initialisation des marges');
-                setTimeout(updateMarginsState, 100);
-            });
+                    const originalText = $testNotifBtn.html();
+                    $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
 
-            // Également initialiser après un délai pour être sûr que les éléments sont chargés
-            window.addEventListener('load', function() {
-                console.log('Window load - vérification des marges');
-                updateMarginsState();
-            });
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            action: "pdf_builder_test_notifications",
+                            nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
+                        },
+                        timeout: 15000,
+                        success: function(response) {
+                            console.log("✅ Notification Test response:", response);
+                            $testNotifBtn.prop("disabled", false).html(originalText);
 
-            // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
-            jQuery('#default_canvas_format, #default_canvas_orientation').on('change', function() {
-                var canvasFormat = jQuery('#default_canvas_format').val();
-                var canvasOrientation = jQuery('#default_canvas_orientation').val();
+                            if (response.success) {
+                                alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."));
+                            } else {
+                                alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer l'email de test."));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("❌ Notification Test AJAX error:", status, error);
+                            $testNotifBtn.prop("disabled", false).html(originalText);
+                            alert("⚠️ Erreur lors du test de notification\n\nErreur: " + error);
+                        }
+                    });
+                });
+            }
+        });
 
-                // Synchroniser le format PDF avec le format Canvas (seulement si c'est un format standard)
-                var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
-                if (standardFormats.includes(canvasFormat)) {
-                    jQuery('#default_format').val(canvasFormat);
-                    console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
-                }
+        // Gestion dynamique des champs grille
+        jQuery('#show_grid').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var $gridSizeInput = jQuery('#grid_size');
+            var $gridColorInput = jQuery('#grid_color');
+            var $gridSizeLabel = jQuery('label[for="grid_size"]');
+            var $gridColorLabel = jQuery('label[for="grid_color"]');
 
-                // Synchroniser l'orientation PDF avec l'orientation Canvas
-                jQuery('#default_orientation').val(canvasOrientation);
-                console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
-            });
+            if (isChecked) {
+                $gridSizeInput.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $gridColorInput.prop('disabled', false).css('opacity', '');
+                $gridSizeLabel.css('color', '');
+                $gridColorLabel.css('color', '');
+            } else {
+                $gridSizeInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $gridColorInput.prop('disabled', true).css('opacity', '0.6');
+                $gridSizeLabel.css('color', '#999');
+                $gridColorLabel.css('color', '#999');
+            }
+        });
 
-            // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
-            document.addEventListener('submit', function(e) {
-                if (e.target && e.target.querySelector('[name="submit_canvas"]')) {
-                    // Ajouter un délai pour permettre à WordPress de traiter la soumission
-                    setTimeout(function() {
-                        // Déclencher l'événement personnalisé pour notifier React
-                        window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
-                        console.log('Canvas settings updated event dispatched');
-                    }, 500);
-                }
-            });
-    </script>
+        // Gestion dynamique des champs cache
+        jQuery('#cache_enabled').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var $cacheTtlInput = jQuery('#cache_ttl');
+            var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
+
+            if (isChecked) {
+                $cacheTtlInput.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $cacheTtlLabel.css('color', '');
+            } else {
+                $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $cacheTtlLabel.css('color', '#999');
+            }
+        });
+
+        // Initialiser l'état des champs cache au chargement
+        jQuery(document).ready(function() {
+            var cacheEnabled = jQuery('#cache_enabled').is(':checked');
+            var $cacheTtlInput = jQuery('#cache_ttl');
+            var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
+
+            if (!cacheEnabled) {
+                $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $cacheTtlLabel.css('color', '#999');
+            }
+        });
+
+        // Fonction pour mettre à jour l'état des marges
+        function updateMarginsState() {
+            var isChecked = jQuery('#show_margins').is(':checked');
+            var $marginInputs = jQuery('.margin-input');
+            var $marginLabels = jQuery('.margin-label');
+
+            if (isChecked) {
+                $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
+                $marginLabels.css('color', '');
+                console.log('Marges activées');
+            } else {
+                $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
+                $marginLabels.css('color', '#999');
+                console.log('Marges désactivées');
+            }
+        }
+
+        // Gestion dynamique des champs marges - event listener
+        jQuery('#show_margins').on('change', function() {
+            console.log('Toggle marges changé:', jQuery(this).is(':checked'));
+            updateMarginsState();
+        });
+
+        // Initialiser l'état des champs marges au chargement
+        jQuery(document).ready(function() {
+            console.log('Document ready - initialisation des marges');
+            setTimeout(updateMarginsState, 100);
+        });
+
+        // Également initialiser après un délai pour être sûr que les éléments sont chargés
+        window.addEventListener('load', function() {
+            console.log('Window load - vérification des marges');
+            updateMarginsState();
+        });
+
+        // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
+        jQuery('#default_canvas_format, #default_canvas_orientation').on('change', function() {
+            var canvasFormat = jQuery('#default_canvas_format').val();
+            var canvasOrientation = jQuery('#default_canvas_orientation').val();
+
+            // Synchroniser le format PDF avec le format Canvas (seulement si c'est un format standard)
+            var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
+            if (standardFormats.includes(canvasFormat)) {
+                jQuery('#default_format').val(canvasFormat);
+                console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
+            }
+
+            // Synchroniser l'orientation PDF avec l'orientation Canvas
+            jQuery('#default_orientation').val(canvasOrientation);
+            console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
+        });
+
+        // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.querySelector('[name="submit_canvas"]')) {
+                // Ajouter un délai pour permettre à WordPress de traiter la soumission
+                setTimeout(function() {
+                    // Déclencher l'événement personnalisé pour notifier React
+                    window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
+                    console.log('Canvas settings updated event dispatched');
+                }, 500);
+            }
+        });
+</script>
 </div>
