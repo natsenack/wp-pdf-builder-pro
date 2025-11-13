@@ -438,18 +438,16 @@ class PdfBuilderAdmin
                     </div>
 
                     <div class="action-card">
-                        <h3>� Centre de Support</h3>
-                        <p>Documentation, tutoriels et assistance technique</p>
-                        <a href="https://github.com/nastenack/wp-pdf-builder-pro"
-                            target="_blank"
+                        <h3>🔍 Diagnostics & Santé Système</h3>
+                        <p>Vérifiez l'état de santé de votre installation et diagnostiquez les problèmes</p>
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-diagnostic'); ?>"
                             class="button button-secondary">
-                            📖 Documentation
+                            🔍 Diagnostic Base de Données
                         </a>
-                        <a href="https://github.com/nastenack/wp-pdf-builder-pro/issues"
-                            target="_blank"
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
                             class="button button-secondary"
                             style="margin-top: 8px;">
-                            🐛 Signaler un Bug
+                            ⚙️ Paramètres & Logs
                         </a>
                     </div>
                 </div>
