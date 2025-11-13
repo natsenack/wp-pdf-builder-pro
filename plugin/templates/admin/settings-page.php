@@ -840,88 +840,59 @@ Paramètres PDF</h3>
         </style>
         
         <script>
-        // Attendre que Toastr soit disponible
-        function waitForToastr(callback, maxAttempts = 50) {
-            let attempts = 0;
-            const checkToastr = setInterval(() => {
-                if (typeof toastr !== 'undefined') {
-                    clearInterval(checkToastr);
-                    callback();
-                } else if (++attempts >= maxAttempts) {
-                    clearInterval(checkToastr);
-                    console.warn('Toastr not available');
+        // Attendre que Toastr soit disponible puis attacher les événements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour attendre Toastr
+            function setupToastrNotifications() {
+                if (typeof toastr === 'undefined') {
+                    setTimeout(setupToastrNotifications, 100);
+                    return;
                 }
-            }, 100);
-        }
-        
-        waitForToastr(() => {
-            // Configurer toastr pour haut à droite
-            toastr.options = {
-                "positionClass": "toast-top-right",
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": true,
-                "progressBar": true,
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-            
-            // Bouton Test du cache
-            const testCacheBtn = document.getElementById('test-cache-btn');
-            if (testCacheBtn) {
-                testCacheBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    toastr.info('🔍 Test du cache en cours...', 'Test');
-                    setTimeout(() => {
-                        toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
-                    }, 1500);
-                });
+                
+                console.log('✅ Toastr is available, setting up notifications');
+                
+                // Bouton Test du cache
+                const testCacheBtn = document.getElementById('test-cache-btn');
+                if (testCacheBtn) {
+                    testCacheBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        toastr.info('🔍 Test du cache en cours...', 'Test');
+                        setTimeout(() => {
+                            toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
+                        }, 1500);
+                    });
+                }
+                
+                // Bouton Vider le cache
+                const clearCacheBtn = document.getElementById('clear-cache-general-btn');
+                if (clearCacheBtn) {
+                    clearCacheBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
+                        setTimeout(() => {
+                            toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
+                        }, 1500);
+                    });
+                }
+                
+                // Détecte la soumission du formulaire
+                const settingsForm = document.getElementById('global-settings-form');
+                if (settingsForm) {
+                    settingsForm.addEventListener('submit', function() {
+                        toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
+                    });
+                }
+                
+                // Bouton Enregistrer
+                const submitBtn = document.getElementById('general-submit-btn');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', function() {
+                        toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
+                    });
+                }
             }
             
-            // Bouton Vider le cache
-            const clearCacheBtn = document.getElementById('clear-cache-general-btn');
-            if (clearCacheBtn) {
-                clearCacheBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
-                    setTimeout(() => {
-                        toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
-                    }, 1500);
-                });
-            }
-            
-            // Détecte la soumission du formulaire
-            const settingsForm = document.getElementById('global-settings-form');
-            if (settingsForm) {
-                settingsForm.addEventListener('submit', function() {
-                    toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
-                    
-                    // Attendre un peu et vérifier si succès
-                    setTimeout(() => {
-                        const successMessages = document.querySelectorAll('[class*="notice-success"]');
-                        if (successMessages.length > 0) {
-                            const text = successMessages[0].textContent.trim();
-                            toastr.success('✓ ' + text, 'Succès');
-                        }
-                    }, 1500);
-                });
-            }
-            
-            // Bouton Enregistrer
-            const submitBtn = document.getElementById('general-submit-btn');
-            if (submitBtn) {
-                submitBtn.addEventListener('click', function() {
-                    toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
-                });
-            }
+            setupToastrNotifications();
         });
         </script>
         

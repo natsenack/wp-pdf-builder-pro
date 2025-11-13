@@ -1133,28 +1133,33 @@ class PdfBuilderAdmin
 // Toastr pour les notifications
         wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
         wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
-// Configuration de toastr
+// Configuration de toastr - APRÈS le chargement du script
         wp_add_inline_script('toastr', '
-            if (typeof toastr !== "undefined") {
-                toastr.options = {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": true,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "5000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                };
-            }
-        ');
+            document.addEventListener("DOMContentLoaded", function() {
+                if (typeof toastr !== "undefined") {
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": true,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+                    console.log("✅ Toastr configured successfully");
+                } else {
+                    console.warn("⚠️ Toastr not found when configuring");
+                }
+            });
+        ', 'after');
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
