@@ -198,26 +198,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 label="Afficher le fond"
                 description="Affiche un fond coloré derrière le numéro de commande"
               />
-
-              {element.showBackground !== false && (
-                <div style={{ marginBottom: '8px', marginLeft: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                    Couleur de fond
-                  </label>
-                  <input
-                    type="color"
-                    value={element.backgroundColor || '#e5e7eb'}
-                    onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '40px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      cursor: 'pointer'
-                    }}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
@@ -398,6 +378,29 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="italic">Italique</option>
             </select>
           </div>
+
+          {/* Section Couleur de fond - visible seulement si showBackground est activé */}
+          {element.showBackground !== false && (
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Couleur de fond
+                </label>
+                <input
+                  type="color"
+                  value={element.backgroundColor || '#e5e7eb'}
+                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </>
       )}
 

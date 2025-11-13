@@ -153,26 +153,6 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               label="Afficher le fond"
               description="Affiche un fond coloré derrière le texte"
             />
-
-            {element.showBackground !== false && (
-              <div style={{ marginTop: '12px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                  Couleur de fond
-                </label>
-                <input
-                  type="color"
-                  value={element.backgroundColor || '#e5e7eb'}
-                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '40px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}
-                />
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -267,6 +247,27 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               />
             </div>
           </div>
+
+          {/* Section Couleur de fond - visible seulement si showBackground est activé */}
+          {element.showBackground !== false && (
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
+                Couleur de fond
+              </h4>
+              <input
+                type="color"
+                value={element.backgroundColor || '#e5e7eb'}
+                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 
