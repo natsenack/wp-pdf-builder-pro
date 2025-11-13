@@ -1127,10 +1127,12 @@ class PdfBuilderAdmin
         add_action('shutdown', function() {
             if (ob_get_level() > 0) {
                 $content = ob_get_clean();
-                // Supprimer toutes les div de notifications WordPress
-                $content = preg_replace('/<div[^>]*class="[^"]*\b(notice|error|updated|update-nag|wp-notice|warning|success|info)\b[^"]*"[^>]*>.*?<\/div>/s', '', $content);
-                // Supprimer également les paragraphes de notifications
-                $content = preg_replace('/<p[^>]*class="[^"]*\b(notice|error|updated|update-nag|wp-notice|warning|success|info)\b[^"]*"[^>]*>.*?<\/p>/s', '', $content);
+                // Supprimer TOUTES les notifications WordPress et plugins tiers
+                // Regex plus inclusive pour capturer toutes les variations
+                $content = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/div>/s', '', $content);
+                $content = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/p>/s', '', $content);
+                // Supprimer également les div avec id contenant "setting-error"
+                $content = preg_replace('/<div[^>]*id="[^"]*setting-error[^"]*"[^>]*>.*?<\/div>/s', '', $content);
                 echo $content;
             }
         }, 999);
