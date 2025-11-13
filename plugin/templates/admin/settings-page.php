@@ -4307,24 +4307,20 @@
                                 // Créer FormData à partir du formulaire
                                 const formData = new FormData(form);
                                 
-                                // Ajouter l'action AJAX - utiliser l'action appropriée selon l'onglet
-                                let ajaxAction = 'pdf_builder_save_settings_page';
+                                // Utiliser toujours le gestionnaire générique pdf_builder_save_settings_page
+                                // qui accepte tous les paramètres indépendamment de l'onglet
+                                formData.append('action', 'pdf_builder_save_settings_page');
+                                
+                                // Récupérer le nonce du formulaire
+                                // Essayer d'abord le nonce spécifique, puis fallback au nonce générique
                                 let nonceName = 'pdf_builder_settings_nonce';
                                 
-                                // Mapper les onglets à leurs actions et nonces spécifiques
-                                if (activeTab.id === 'general') {
-                                    ajaxAction = 'pdf_builder_save_general_settings';
-                                    nonceName = 'pdf_builder_settings_nonce';
-                                } else if (activeTab.id === 'performance' || activeTab.id === 'maintenance') {
-                                    ajaxAction = 'pdf_builder_save_performance_settings';
+                                if (activeTab.id === 'performance' || activeTab.id === 'maintenance') {
                                     nonceName = 'pdf_builder_performance_nonce';
                                 } else if (activeTab.id === 'pdf') {
                                     nonceName = 'pdf_builder_pdf_nonce';
                                 }
                                 
-                                formData.append('action', ajaxAction);
-                                
-                                // Récupérer le nonce du formulaire
                                 const nonceField = form.querySelector(`input[name="${nonceName}"]`);
                                 if (nonceField) {
                                     // Renommer le champ du nonce à 'nonce' pour le gestionnaire AJAX

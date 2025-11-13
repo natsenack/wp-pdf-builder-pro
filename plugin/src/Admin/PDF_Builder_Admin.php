@@ -3497,16 +3497,34 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveSettingsPage()
     {
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+        // Vérification de sécurité - accepter plusieurs nonces possibles
+        $nonce = $_POST['nonce'] ?? '';
+        
+        // Essayer plusieurs actions de nonce possibles
+        $nonce_actions = [
+            'pdf_builder_settings',
+            'pdf_builder_performance_settings',
+            'pdf_builder_pdf_settings',
+            'pdf_builder_general_settings',
+        ];
+        
+        $nonce_valid = false;
+        foreach ($nonce_actions as $action) {
+            if (wp_verify_nonce($nonce, $action)) {
+                $nonce_valid = true;
+                break;
+            }
+        }
+        
+        if (!$nonce_valid) {
             wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
+            wp_die();
         }
 
         // Vérification des permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
+            wp_die();
         }
 
         // Récupération des paramètres depuis le formulaire
