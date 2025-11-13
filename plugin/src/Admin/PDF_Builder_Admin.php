@@ -6011,16 +6011,14 @@ class PdfBuilderAdmin
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_remove_temp')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+            return;
         }
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
         }
         $result = $this->performClearTempFiles();
-        if ($result['success']) {
-            wp_send_json_success($result);
-        } else {
-            wp_send_json_error($result);
-        }
+        wp_send_json($result);
     }
 
     /**
@@ -6030,9 +6028,11 @@ class PdfBuilderAdmin
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_optimize_db')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+            return;
         }
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
         }
         try {
             global $wpdb;
@@ -6046,9 +6046,9 @@ class PdfBuilderAdmin
                 $wpdb->query("OPTIMIZE TABLE {$table}");
                 $wpdb->query("REPAIR TABLE {$table}");
             }
-            wp_send_json_success(['message' => __('Base de données optimisée avec succès.', 'pdf-builder-pro')]);
+            wp_send_json(['success' => true, 'message' => __('Base de données optimisée avec succès.', 'pdf-builder-pro')]);
         } catch (Exception $e) {
-            wp_send_json_error(['message' => $e->getMessage()]);
+            wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -6059,16 +6059,14 @@ class PdfBuilderAdmin
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_repair_templates')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+            return;
         }
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
         }
         $result = $this->performRepairTemplates();
-        if ($result['success']) {
-            wp_send_json_success($result);
-        } else {
-            wp_send_json_error($result);
-        }
+        wp_send_json($result);
     }
 
     /**
@@ -6078,16 +6076,14 @@ class PdfBuilderAdmin
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_reset_settings')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+            return;
         }
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
         }
         $result = $this->performResetSettings();
-        if ($result['success']) {
-            wp_send_json_success($result);
-        } else {
-            wp_send_json_error($result);
-        }
+        wp_send_json($result);
     }
 
     /**
@@ -6097,9 +6093,11 @@ class PdfBuilderAdmin
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+            return;
         }
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
         }
         try {
             $checks = [];
@@ -6115,12 +6113,13 @@ class PdfBuilderAdmin
             $all_ok = array_filter($checks, function($v) {
                 return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
             });
-            wp_send_json_success([
+            wp_send_json([
+                'success' => true,
                 'message' => count($all_ok) === count($checks) ? __('Intégrité vérifiée - OK.', 'pdf-builder-pro') : __('Problèmes détectés.', 'pdf-builder-pro'),
                 'checks' => $checks
             ]);
         } catch (Exception $e) {
-            wp_send_json_error(['message' => $e->getMessage()]);
+            wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }
