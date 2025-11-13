@@ -217,7 +217,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               />
 
               {element.showLabel !== false && (
-                <div style={{ marginBottom: '12px' }}>
+                <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                     Texte du libellé
                   </label>
@@ -241,7 +241,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               )}
 
               {element.showLabel !== false && (
-                <div style={{ marginBottom: '12px' }}>
+                <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                     Position du libellé
                   </label>
@@ -263,30 +263,30 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   </select>
                 </div>
               )}
-            </div>
-          </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Alignement du contenu
-            </label>
-            <select
-              value={element.contentAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">Aligner à gauche</option>
-              <option value="center">Centrer</option>
-              <option value="right">Aligner à droite</option>
-            </select>
-            <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-              Positionne tout le contenu (libellé, numéro, date) dans l&apos;élément
+              <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Alignement du contenu
+                </label>
+                <select
+                  value={element.contentAlign || 'left'}
+                  onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '6px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="left">Aligner à gauche</option>
+                  <option value="center">Centrer</option>
+                  <option value="right">Aligner à droite</option>
+                </select>
+                <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                  Positionne tout le contenu (libellé, numéro, date) dans l&apos;élément
+                </div>
+              </div>
             </div>
           </div>
 
