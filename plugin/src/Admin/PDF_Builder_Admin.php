@@ -819,192 +819,85 @@ class PdfBuilderAdmin
                 }
 
                 .dashboard-guide {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    border: none;
-                    border-radius: 12px;
-                    padding: 30px;
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-                    color: white;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .dashboard-guide::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-                    opacity: 0.1;
-                    pointer-events: none;
-                }
-
-                .dashboard-guide h3 {
-                    color: white;
-                    margin: 0 0 25px 0;
-                    font-size: 24px;
-                    font-weight: 600;
-                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                    position: relative;
-                    z-index: 1;
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 25px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 }
 
                 .guide-steps {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                    gap: 25px;
-                    margin-top: 25px;
-                    position: relative;
-                    z-index: 1;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    margin-top: 20px;
+                    justify-content: flex-start;
                 }
 
                 .step {
-                    background: rgba(255, 255, 255, 0.15);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-radius: 10px;
-                    padding: 20px;
                     display: flex;
                     align-items: flex-start;
-                    transition: all 0.3s ease;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .step::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 4px;
-                    height: 100%;
-                    background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                }
-
-                .step:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-                    background: rgba(255, 255, 255, 0.25);
-                }
-
-                .step:hover::before {
-                    opacity: 1;
+                    min-width: 280px;
+                    flex: 1;
+                    max-width: 350px;
                 }
 
                 .step-number {
-                    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+                    background: #2271b1;
                     color: white;
-                    width: 40px;
-                    height: 40px;
+                    width: 30px;
+                    height: 30px;
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     font-weight: bold;
-                    font-size: 16px;
-                    margin-right: 18px;
+                    margin-right: 15px;
                     flex-shrink: 0;
-                    box-shadow: 0 4px 12px rgba(255,107,107,0.3);
-                    position: relative;
-                    z-index: 2;
                 }
 
                 .step-content h4 {
-                    margin: 0 0 8px 0;
-                    color: white;
-                    font-size: 16px;
-                    font-weight: 600;
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-                }
-
-                .step-content p {
-                    margin: 0;
-                    color: rgba(255, 255, 255, 0.9);
-                    font-size: 14px;
-                    line-height: 1.5;
+                    margin: 0 0 5px 0;
+                    color: #1d2327;
                 }
 
                 .step-content small {
                     display: block;
-                    color: rgba(255, 255, 255, 0.7);
+                    color: #888;
                     font-size: 12px;
-                    margin-top: 8px;
+                    margin-top: 5px;
                     font-style: italic;
-                    line-height: 1.4;
                 }
 
                 .guide-resources {
-                    margin-top: 35px;
-                    padding-top: 25px;
-                    border-top: 1px solid rgba(255, 255, 255, 0.3);
-                    position: relative;
-                    z-index: 1;
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e1e1e1;
                 }
 
                 .guide-resources h4 {
-                    margin: 0 0 18px 0;
-                    color: white;
-                    font-size: 18px;
-                    font-weight: 600;
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+                    margin: 0 0 15px 0;
+                    color: #1d2327;
+                    font-size: 16px;
                 }
 
                 .guide-resources ul {
                     margin: 0;
-                    padding-left: 0;
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 12px;
+                    padding-left: 20px;
                 }
 
                 .guide-resources li {
-                    margin-bottom: 0;
-                    color: rgba(255, 255, 255, 0.9);
+                    margin-bottom: 8px;
+                    color: #666;
                     font-size: 14px;
-                    display: flex;
-                    align-items: center;
-                    padding: 8px 0;
-                }
-
-                .guide-resources li::before {
-                    content: '📖';
-                    margin-right: 10px;
-                    font-size: 16px;
                 }
 
                 .guide-resources code {
-                    background: rgba(255, 255, 255, 0.2);
-                    color: white;
-                    padding: 3px 8px;
-                    border-radius: 4px;
-                    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+                    background: #f1f1f1;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-family: monospace;
                     font-size: 12px;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                }
-
-                /* Responsive */
-                @media (max-width: 768px) {
-                    .dashboard-guide {
-                        padding: 20px;
-                        margin: 0 10px;
-                    }
-
-                    .guide-steps {
-                        grid-template-columns: 1fr;
-                        gap: 15px;
-                    }
-
-                    .guide-resources ul {
-                        grid-template-columns: 1fr;
-                    }
-
-                    .step {
-                        padding: 15px;
-                    }
                 }
 
                 /* Styles pour la section fonctionnalités */
