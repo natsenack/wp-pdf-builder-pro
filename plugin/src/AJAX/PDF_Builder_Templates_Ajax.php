@@ -145,7 +145,7 @@ class PdfBuilderTemplatesAjax
     public function loadPredefinedIntoEditor()
     {
         try {
-// Vérification des permissions
+            // Vérification des permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
@@ -177,29 +177,43 @@ class PdfBuilderTemplatesAjax
             $template_data = [
                 'name' => $predefined_data['name'] ?? 'Template depuis modèle prédéfini',
                 'elements' => $predefined_data['elements'],
+                'canvasWidth' => $predefined_data['canvasWidth'] ?? 794,
+                'canvasHeight' => $predefined_data['canvasHeight'] ?? 1123,
                 'canvas_settings' => [
-                    'width' => 595, // A4 width in points
-                    'height' => 842, // A4 height in points
+                    'width' => $predefined_data['canvasWidth'] ?? 794,
+                    'height' => $predefined_data['canvasHeight'] ?? 1123,
                     'background_color' => $predefined_data['canvas_settings']['background_color'] ?? '#ffffff'
                 ],
-                'version' => '1.0',
-                'last_modified' => current_time('mysql')
+                'version' => $predefined_data['version'] ?? '1.0',
+                'last_modified' => current_time('mysql'),
+                'is_from_predefined' => true,
+                'predefined_slug' => $template_slug
             ];
-// Mettre à jour le template ID 1 dans la base de données
+
+            // Créer un NOUVEAU template au lieu de mettre à jour l'ID 1
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $result = $wpdb->update($table_templates, [
-                    'name' => $template_data['name'],
-                    'template_data' => wp_json_encode($template_data),
-                    'updated_at' => current_time('mysql')
-                ], ['id' => 1], ['%s', '%s', '%s'], ['%d']);
+            
+            $result = $wpdb->insert($table_templates, [
+                'name' => $template_data['name'],
+                'template_data' => wp_json_encode($template_data),
+                'status' => 'draft',
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql'),
+                'author_id' => get_current_user_id()
+            ]);
+
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la mise à jour du template');
+                wp_send_json_error('Erreur lors de la création du template');
             }
+
+            // Récupérer l'ID du template créé
+            $template_id = $wpdb->insert_id;
 
             wp_send_json_success([
                 'message' => 'Modèle prédéfini chargé avec succès',
-                'redirect_url' => admin_url('admin.php?page=pdf-builder-react-editor')
+                'template_id' => $template_id,
+                'redirect_url' => admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id)
             ]);
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement du modèle prédéfini: ' . $e->getMessage());
