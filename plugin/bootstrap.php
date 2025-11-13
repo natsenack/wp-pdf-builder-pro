@@ -914,6 +914,13 @@ function pdf_builder_ensure_admin_menu() {
 
         // Fonction callback pour la page documents
         function pdf_builder_documents_page_callback() {
+            // Vérifier l'accès via Role_Manager si disponible
+            if (class_exists('WP_PDF_Builder_Pro\Security\Role_Manager')) {
+                \WP_PDF_Builder_Pro\Security\Role_Manager::check_and_block_access();
+            } elseif (!current_user_can('manage_options')) {
+                wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            }
+
             if (!is_user_logged_in()) {
                 wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
             }
