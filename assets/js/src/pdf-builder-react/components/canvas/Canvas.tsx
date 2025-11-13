@@ -921,8 +921,11 @@ const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element, state:
   //   }
   // };
 
-  ctx.fillStyle = props.backgroundColor || 'transparent';
-  ctx.fillRect(0, 0, element.width, element.height);
+  // Appliquer le fond seulement si showBackground est activé
+  if (props.showBackground !== false) {
+    ctx.fillStyle = props.backgroundColor || '#e5e7eb';
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = '#000000';
 
@@ -1076,8 +1079,11 @@ const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element, state
   const textAlign = props.textAlign || 'left';
   const textColor = props.textColor || '#000000';
 
-  ctx.fillStyle = props.backgroundColor || 'transparent';
-  ctx.fillRect(0, 0, element.width, element.height);
+  // Appliquer le fond seulement si showBackground est activé
+  if (props.showBackground !== false) {
+    ctx.fillStyle = props.backgroundColor || '#e5e7eb';
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
@@ -1491,7 +1497,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
-    const props = element as TextElementProperties;
+    const props = element as DynamicTextElementProperties;
     const text = props.text || 'Texte personnalisable';
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
@@ -1499,8 +1505,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const fontStyle = props.fontStyle || 'normal';
     const autoWrap = props.autoWrap !== false; // Par défaut activé
 
-    ctx.fillStyle = props.backgroundColor || 'transparent';
-    ctx.fillRect(0, 0, element.width, element.height);
+    // Appliquer le fond seulement si showBackground est activé
+    if (props.showBackground !== false) {
+      ctx.fillStyle = props.backgroundColor || '#e5e7eb';
+      ctx.fillRect(0, 0, element.width, element.height);
+    }
 
     ctx.fillStyle = '#000000';
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
@@ -1634,8 +1643,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const bgColor = normalizeColor(props.backgroundColor || currentTheme.backgroundColor);
     const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
 
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, element.width, element.height);
+    // Appliquer le fond seulement si showBackground est activé
+    if (props.showBackground !== false) {
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, element.width, element.height);
+    }
 
     ctx.fillStyle = txtColor;
 

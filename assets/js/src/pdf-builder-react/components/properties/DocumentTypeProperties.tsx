@@ -1,6 +1,66 @@
 import React from 'react';
 import { DocumentTypeElement } from '../../types/elements';
 
+// Composant Toggle personnalisé
+const Toggle = ({ checked, onChange, label, description }: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+  description: string;
+}) => (
+  <div style={{ marginBottom: '12px' }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '6px'
+    }}>
+      <label style={{
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#333',
+        flex: 1
+      }}>
+        {label}
+      </label>
+      <div
+        onClick={() => onChange(!checked)}
+        style={{
+          position: 'relative',
+          width: '44px',
+          height: '24px',
+          backgroundColor: checked ? '#007bff' : '#ccc',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s ease',
+          border: 'none'
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '2px',
+            left: checked ? '22px' : '2px',
+            width: '20px',
+            height: '20px',
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            transition: 'left 0.2s ease',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          }}
+        />
+      </div>
+    </div>
+    <div style={{
+      fontSize: '11px',
+      color: '#666',
+      lineHeight: '1.4'
+    }}>
+      {description}
+    </div>
+  </div>
+);
+
 interface DocumentTypePropertiesProps {
   element: DocumentTypeElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
@@ -173,6 +233,39 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
                 }}
               />
             </div>
+          </div>
+
+          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
+              Fond et Bordures
+            </h4>
+
+            <Toggle
+              checked={element.showBackground !== false}
+              onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+              label="Afficher le fond"
+              description="Affiche un fond coloré derrière le texte"
+            />
+
+            {element.showBackground !== false && (
+              <div style={{ marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
+                  Couleur de fond
+                </label>
+                <input
+                  type="color"
+                  value={element.backgroundColor || '#e5e7eb'}
+                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

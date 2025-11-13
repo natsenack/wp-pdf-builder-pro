@@ -82,6 +82,8 @@ export interface DynamicTextElement extends BaseElement {
   textDecoration?: string;
   fontWeight?: string;
   fontStyle?: string;
+  backgroundColor?: string;
+  showBackground?: boolean;
 }
 
 export interface ProductTableElement extends BaseElement {
@@ -345,6 +347,7 @@ export interface DocumentTypeElementProperties {
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
   backgroundColor?: string;
+  showBackground?: boolean;
   documentType?: string;
 }
 
@@ -463,6 +466,7 @@ export interface OrderNumberElementProperties {
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
   backgroundColor?: string;
+  showBackground?: boolean;
   prefix?: string;
   suffix?: string;
   padding?: number;
@@ -502,6 +506,7 @@ export interface MentionsElementProperties {
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
   backgroundColor?: string;
+  showBackground?: boolean;
   content?: string;
   autoWrap?: boolean;
   lineHeight?: number;
