@@ -594,8 +594,10 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
   const showTransactionId = props.showTransactionId !== false;
 
   // Fond
-  ctx.fillStyle = props.backgroundColor || '#ffffff';
-  ctx.fillRect(0, 0, element.width, element.height);
+  if (props.showBackground !== false) {
+    ctx.fillStyle = props.backgroundColor || '#ffffff';
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
 
   // Bordures
   if (showBorders) {
