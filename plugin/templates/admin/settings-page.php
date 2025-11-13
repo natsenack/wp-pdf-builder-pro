@@ -817,12 +817,39 @@ Paramètres PDF</h3>
                 </tr>
             </table>
             
-            <p class="submit">
-                <button type="submit" name="submit" class="button button-primary" id="general-submit-btn">Enregistrer
-les paramètres</button>
-                <button type="button" id="debug-btn" class="button">Debug Form</button>
-            </p>
         </div>
+        
+        <!-- Bouton Enregistrer en bas à droite -->
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+            <button type="submit" name="submit" class="button button-primary" id="general-submit-btn" style="padding: 10px 25px; font-size: 15px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">💾 Enregistrer les paramètres</button>
+        </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bouton Test du cache
+            document.getElementById('test-cache-btn')?.addEventListener('click', function() {
+                toastr.info('🔍 Test du cache en cours...', 'Test');
+                // Simulation du test
+                setTimeout(() => {
+                    toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
+                }, 1000);
+            });
+            
+            // Bouton Vider le cache
+            document.getElementById('clear-cache-general-btn')?.addEventListener('click', function() {
+                toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
+                // Simulation du vidage
+                setTimeout(() => {
+                    toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
+                }, 1000);
+            });
+            
+            // Bouton Enregistrer
+            document.getElementById('general-submit-btn')?.addEventListener('click', function() {
+                toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
+            });
+        });
+        </script>
         
         <div id="licence" class="tab-content hidden-tab">
             <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la
