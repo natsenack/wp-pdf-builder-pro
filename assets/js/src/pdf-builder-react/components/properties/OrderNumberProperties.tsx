@@ -241,7 +241,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               )}
 
               {element.showLabel !== false && (
-                <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
+                <div style={{ marginBottom: '12px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                     Position du libellé
                   </label>
