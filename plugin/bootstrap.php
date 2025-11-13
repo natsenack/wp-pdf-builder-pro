@@ -28,25 +28,65 @@ if (is_admin()) {
     $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
     
     if (in_array($current_page, $pdf_builder_pages)) {
-        // Supprimer TOUS les hooks de notifications AVANT qu'ils ne s'exécutent
+        // Utiliser un hook TRÈS TARDIF pour supprimer les notifications
+        // Cela permet au PDF Builder de s'initialiser d'abord
         add_action('admin_init', function() {
-            remove_all_actions('admin_notices');
-            remove_all_actions('all_admin_notices');
-            remove_all_actions('network_admin_notices');
-            remove_all_actions('user_admin_notices');
-        }, 0);
+            // Supprimer les actions admin_notices sauf celles du PDF Builder
+            global $wp_filter;
+            
+            if (isset($wp_filter['admin_notices'])) {
+                foreach ($wp_filter['admin_notices']->callbacks as $priority => $callbacks) {
+                    foreach ($callbacks as $hook_name => $data) {
+                        $callback = $data['function'];
+                        
+                        // Vérifier si c'est du PDF Builder
+                        $is_pdf_builder = false;
+                        if (is_array($callback) && is_object($callback[0])) {
+                            $class = get_class($callback[0]);
+                            if (strpos($class, 'PDF_Builder') !== false) {
+                                $is_pdf_builder = true;
+                            }
+                        }
+                        
+                        // Supprimer si ce n'est pas du PDF Builder
+                        if (!$is_pdf_builder) {
+                            remove_action('admin_notices', $callback, $priority);
+                        }
+                    }
+                }
+            }
+            
+            // Même chose pour all_admin_notices
+            if (isset($wp_filter['all_admin_notices'])) {
+                foreach ($wp_filter['all_admin_notices']->callbacks as $priority => $callbacks) {
+                    foreach ($callbacks as $hook_name => $data) {
+                        $callback = $data['function'];
+                        
+                        $is_pdf_builder = false;
+                        if (is_array($callback) && is_object($callback[0])) {
+                            $class = get_class($callback[0]);
+                            if (strpos($class, 'PDF_Builder') !== false) {
+                                $is_pdf_builder = true;
+                            }
+                        }
+                        
+                        if (!$is_pdf_builder) {
+                            remove_action('all_admin_notices', $callback, $priority);
+                        }
+                    }
+                }
+            }
+        }, 999);
         
-        // Filtrer les settings_errors pour retourner un tableau vide
-        add_filter('wp_settings_errors', '__return_empty_array', 0);
-        
-        // Output buffering ultra-précoce
-        ob_start(function($buffer) {
-            // Supprimer les notifications du HTML
-            $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
-            $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
-            $buffer = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated)[^"]*"[^>]*>.*?<\/p>/is', '', $buffer);
-            return $buffer;
-        });
+        // Output buffering comme filet de secours
+        add_action('admin_head', function() {
+            ob_start(function($buffer) {
+                // Supprimer les notifications qui ne viennent pas du PDF Builder
+                $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
+                $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*(?!.*pdf-builder)>.*?<\/div>/is', '', $buffer);
+                return $buffer;
+            });
+        }, 999);
     }
 }
 
