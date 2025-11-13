@@ -438,16 +438,16 @@ class PdfBuilderAdmin
                     </div>
 
                     <div class="action-card">
-                        <h3>🔍 Diagnostics & Santé Système</h3>
-                        <p>Vérifiez l'état de santé de votre installation et diagnostiquez les problèmes</p>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-diagnostic'); ?>"
+                        <h3>📝 Modèles Prédéfinis</h3>
+                        <p>Découvrez et utilisez des modèles PDF prêts à l'emploi pour vos besoins courants</p>
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>"
                             class="button button-secondary">
-                            🔍 Diagnostic Base de Données
+                            📝 Voir les Modèles
                         </a>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
                             class="button button-secondary"
                             style="margin-top: 8px;">
-                            ⚙️ Paramètres & Logs
+                            ➕ Créer un Template
                         </a>
                     </div>
                 </div>
