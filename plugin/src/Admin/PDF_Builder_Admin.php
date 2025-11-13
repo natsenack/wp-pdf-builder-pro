@@ -6009,7 +6009,7 @@ class PdfBuilderAdmin
      */
     public function ajax_remove_temp_files()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_remove_temp')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
         }
         if (!current_user_can('manage_options')) {
@@ -6028,7 +6028,7 @@ class PdfBuilderAdmin
      */
     public function ajax_optimize_db()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_optimize_db')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
         }
         if (!current_user_can('manage_options')) {
@@ -6057,7 +6057,7 @@ class PdfBuilderAdmin
      */
     public function ajax_repair_templates()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_repair_templates')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
         }
         if (!current_user_can('manage_options')) {
@@ -6076,7 +6076,7 @@ class PdfBuilderAdmin
      */
     public function ajax_reset_settings()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_reset_settings')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
         }
         if (!current_user_can('manage_options')) {
@@ -6095,7 +6095,7 @@ class PdfBuilderAdmin
      */
     public function ajax_check_integrity()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
         }
         if (!current_user_can('manage_options')) {
