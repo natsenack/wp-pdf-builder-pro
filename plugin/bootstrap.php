@@ -538,6 +538,11 @@ function pdf_builder_load_bootstrap()
             }
         }
 
+        // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
+        $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
+
+        error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', pdf_ajax_allowed: ' . ($is_admin_or_pdf_ajax ? 'true' : 'false'));
+
         if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             error_log('PDF Builder: PdfBuilderAdmin class exists, creating instance');
             try {
