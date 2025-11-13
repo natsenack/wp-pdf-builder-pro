@@ -520,15 +520,34 @@ function pdf_builder_load_bootstrap()
             error_log('PDF Builder: Core initialized');
         }
 
-        // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
-        $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
+        // DEBUG: Vérifier si la classe existe avant de l'utiliser
+        $class_exists = class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin');
+        error_log('PDF Builder: Class PDF_Builder\Admin\PdfBuilderAdmin exists: ' . ($class_exists ? 'YES' : 'NO'));
 
-        error_log('PDF Builder: Checking admin initialization - is_admin: ' . (is_admin() ? 'true' : 'false') . ', is_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', pdf_ajax_allowed: ' . ($is_admin_or_pdf_ajax ? 'true' : 'false'));
+        if (!$class_exists) {
+            // Essayer de charger manuellement la classe
+            $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+            error_log('PDF Builder: Trying to load admin file: ' . $admin_file);
+            if (file_exists($admin_file)) {
+                error_log('PDF Builder: Admin file exists, requiring it...');
+                require_once $admin_file;
+                $class_exists_after = class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin');
+                error_log('PDF Builder: Class exists after manual load: ' . ($class_exists_after ? 'YES' : 'NO'));
+            } else {
+                error_log('PDF Builder: Admin file does not exist: ' . $admin_file);
+            }
+        }
 
         if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
             error_log('PDF Builder: PdfBuilderAdmin class exists, creating instance');
-            $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
-            error_log('PDF Builder: Admin class loaded successfully');
+            try {
+                $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
+                error_log('PDF Builder: Admin class loaded successfully');
+            } catch (Exception $e) {
+                error_log('PDF Builder: Error creating PdfBuilderAdmin instance: ' . $e->getMessage());
+                // Fallback en cas d'erreur
+                add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+            }
         } elseif (wp_doing_ajax()) {
             error_log('PDF Builder: Skipping admin load during non-PDF AJAX call');
         } else {

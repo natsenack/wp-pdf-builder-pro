@@ -612,7 +612,9 @@ class PdfBuilderAdmin
 
             <style>
                 .pdf-builder-dashboard {
-                    max-width: 1200px;
+                    width: 100%;
+                    padding: 0 20px;
+                    box-sizing: border-box;
                 }
 
                 .dashboard-header {
