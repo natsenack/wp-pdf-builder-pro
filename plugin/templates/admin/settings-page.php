@@ -3183,11 +3183,11 @@
                     </button>
                 </form>
 
-                <button type="button" class="button button-secondary" onclick="alert('Suppression de fichiers temporaires...');" style="width: 100%;">
+                <button type="button" id="remove-temp-files-btn" class="button button-secondary" style="width: 100%;">
                     📁 Supprimer Fichiers Temp
                 </button>
 
-                <button type="button" class="button button-secondary" onclick="alert('Optimisation base de données...');" style="width: 100%;">
+                <button type="button" id="optimize-db-btn" class="button button-secondary" style="width: 100%;">
                     ⚡ Optimiser BD
                 </button>
             </div>
@@ -3196,17 +3196,15 @@
             <p>Réparez les templates corrompus et les paramètres invalides.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <button type="button" class="button button-secondary" onclick="alert('Réparation des templates en cours...');" style="width: 100%;">
+                <button type="button" id="repair-templates-btn" class="button button-secondary" style="width: 100%;">
                     ✅ Réparer Templates
                 </button>
 
-                <button type="button" class="button button-warning"
-                        onclick="if(confirm('Réinitialiser tous les paramètres ? Cette action est irréversible.')) { alert('Réinitialisation...'); }"
-                        style="width: 100%;">
+                <button type="button" id="reset-settings-btn" class="button button-warning" style="width: 100%;">
                     ⚠️ Réinitialiser Paramètres
                 </button>
 
-                <button type="button" class="button button-secondary" onclick="alert('Validation de l\'intégrité en cours...');" style="width: 100%;">
+                <button type="button" id="check-integrity-btn" class="button button-secondary" style="width: 100%;">
                     🔍 Vérifier Intégrité
                 </button>
             </div>
@@ -4482,6 +4480,175 @@
                                 }
                             });
                         }
+                    });
+                }
+
+                // ===== BOUTON SUPPRIMER FICHIERS TEMP =====
+                const removeTempFilesBtn = document.getElementById('remove-temp-files-btn');
+                if (removeTempFilesBtn) {
+                    removeTempFilesBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (confirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?')) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.info('📁 Suppression des fichiers temporaires...', 'Suppression');
+                            }
+                            
+                            const formData = new FormData();
+                            formData.append('action', 'pdf_builder_remove_temp_files');
+                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
+                            
+                            fetch(ajaxurl, { method: 'POST', body: formData })
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (typeof toastr !== 'undefined') {
+                                        if (data.success) {
+                                            toastr.success('✅ ' + data.message, 'Succès');
+                                        } else {
+                                            toastr.error('❌ ' + data.message, 'Erreur');
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    if (typeof toastr !== 'undefined') {
+                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                // ===== BOUTON OPTIMISER BD =====
+                const optimizeDbBtn = document.getElementById('optimize-db-btn');
+                if (optimizeDbBtn) {
+                    optimizeDbBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (confirm('Êtes-vous sûr de vouloir optimiser la base de données ?')) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.info('⚡ Optimisation de la base de données...', 'Optimisation');
+                            }
+                            
+                            const formData = new FormData();
+                            formData.append('action', 'pdf_builder_optimize_db');
+                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
+                            
+                            fetch(ajaxurl, { method: 'POST', body: formData })
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (typeof toastr !== 'undefined') {
+                                        if (data.success) {
+                                            toastr.success('✅ ' + data.message, 'Succès');
+                                        } else {
+                                            toastr.error('❌ ' + data.message, 'Erreur');
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    if (typeof toastr !== 'undefined') {
+                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                // ===== BOUTON RÉPARER TEMPLATES =====
+                const repairTemplatesBtn = document.getElementById('repair-templates-btn');
+                if (repairTemplatesBtn) {
+                    repairTemplatesBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (confirm('Êtes-vous sûr de vouloir réparer les templates ?')) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.info('✅ Réparation des templates en cours...', 'Réparation');
+                            }
+                            
+                            const formData = new FormData();
+                            formData.append('action', 'pdf_builder_repair_templates');
+                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
+                            
+                            fetch(ajaxurl, { method: 'POST', body: formData })
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (typeof toastr !== 'undefined') {
+                                        if (data.success) {
+                                            toastr.success('✅ ' + data.message, 'Succès');
+                                        } else {
+                                            toastr.error('❌ ' + data.message, 'Erreur');
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    if (typeof toastr !== 'undefined') {
+                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                // ===== BOUTON RÉINITIALISER PARAMÈTRES =====
+                const resetSettingsBtn = document.getElementById('reset-settings-btn');
+                if (resetSettingsBtn) {
+                    resetSettingsBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.warning('⚠️ Réinitialisation des paramètres en cours...', 'Attention');
+                            }
+                            
+                            const formData = new FormData();
+                            formData.append('action', 'pdf_builder_reset_settings');
+                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
+                            
+                            fetch(ajaxurl, { method: 'POST', body: formData })
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (typeof toastr !== 'undefined') {
+                                        if (data.success) {
+                                            toastr.success('✅ ' + data.message, 'Succès');
+                                            setTimeout(() => location.reload(), 2000);
+                                        } else {
+                                            toastr.error('❌ ' + data.message, 'Erreur');
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    if (typeof toastr !== 'undefined') {
+                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                // ===== BOUTON VÉRIFIER INTÉGRITÉ =====
+                const checkIntegrityBtn = document.getElementById('check-integrity-btn');
+                if (checkIntegrityBtn) {
+                    checkIntegrityBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info('🔍 Vérification de l\'intégrité en cours...', 'Vérification');
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_check_integrity');
+                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
+                        
+                        fetch(ajaxurl, { method: 'POST', body: formData })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (typeof toastr !== 'undefined') {
+                                    if (data.success) {
+                                        toastr.success('✅ ' + data.message, 'Succès');
+                                    } else {
+                                        toastr.error('❌ ' + data.message, 'Erreur');
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                }
+                            });
                     });
                 }
             }
