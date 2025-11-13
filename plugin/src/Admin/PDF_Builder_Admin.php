@@ -438,12 +438,12 @@ class PdfBuilderAdmin
                     </div>
 
                     <div class="action-card">
-                        <h3>📝 Modèles Prédéfinis</h3>
-                        <p>Découvrez et utilisez des modèles PDF prêts à l'emploi pour vos besoins courants</p>
+                        <h3>⚙️ Paramètres & Configuration</h3>
+                        <p>Configurez les paramètres avancés, polices, qualité d'impression et options WooCommerce</p>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>"
+                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
                                 class="button button-secondary">
-                                📝 Voir les Modèles
+                                ⚙️ Paramètres Avancés
                             </a>
                             <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
                                 class="button button-secondary">
