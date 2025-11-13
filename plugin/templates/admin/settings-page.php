@@ -845,17 +845,40 @@ Paramètres PDF</h3>
             // Fonction pour attendre Toastr
             function setupToastrNotifications() {
                 if (typeof toastr === 'undefined') {
+                    console.log('⏳ Toastr not yet loaded, retrying...');
                     setTimeout(setupToastrNotifications, 100);
                     return;
                 }
                 
-                console.log('✅ Toastr is available, setting up notifications');
+                console.log('✅ Toastr is available, configuring and setting up notifications');
+                
+                // Configurer toastr
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+                
+                console.log('✅ Toastr configured with positionClass:', toastr.options.positionClass);
                 
                 // Bouton Test du cache
                 const testCacheBtn = document.getElementById('test-cache-btn');
                 if (testCacheBtn) {
                     testCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        console.log('🔍 Test cache button clicked');
                         toastr.info('🔍 Test du cache en cours...', 'Test');
                         setTimeout(() => {
                             toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
@@ -868,6 +891,7 @@ Paramètres PDF</h3>
                 if (clearCacheBtn) {
                     clearCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        console.log('🗑️ Clear cache button clicked');
                         toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
                         setTimeout(() => {
                             toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
@@ -879,6 +903,7 @@ Paramètres PDF</h3>
                 const settingsForm = document.getElementById('global-settings-form');
                 if (settingsForm) {
                     settingsForm.addEventListener('submit', function() {
+                        console.log('💾 Settings form submitted');
                         toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
                     });
                 }
@@ -887,9 +912,12 @@ Paramètres PDF</h3>
                 const submitBtn = document.getElementById('general-submit-btn');
                 if (submitBtn) {
                     submitBtn.addEventListener('click', function() {
+                        console.log('💾 Save button clicked');
                         toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
                     });
                 }
+                
+                console.log('✅ All event listeners attached successfully');
             }
             
             setupToastrNotifications();

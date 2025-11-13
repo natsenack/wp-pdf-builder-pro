@@ -1133,56 +1133,6 @@ class PdfBuilderAdmin
 // Toastr pour les notifications
         wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
         wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
-
-// Configuration de toastr - Script global en footer
-        wp_enqueue_script('toastr-config', '', [], '1.0', true);
-        wp_add_inline_script('toastr-config', '
-            (function() {
-                console.log("🔍 Toastr config script loaded");
-                
-                function configureToastr() {
-                    if (typeof toastr !== "undefined") {
-                        console.log("✅ Toastr found! Configuring...");
-                        toastr.options = {
-                            "closeButton": true,
-                            "debug": false,
-                            "newestOnTop": true,
-                            "progressBar": true,
-                            "positionClass": "toast-top-right",
-                            "preventDuplicates": false,
-                            "onclick": null,
-                            "showDuration": "300",
-                            "hideDuration": "1000",
-                            "timeOut": "5000",
-                            "extendedTimeOut": "1000",
-                            "showEasing": "swing",
-                            "hideEasing": "linear",
-                            "showMethod": "fadeIn",
-                            "hideMethod": "fadeOut"
-                        };
-                        console.log("✅ Toastr configured successfully");
-                        return true;
-                    } else {
-                        console.warn("⚠️ Toastr not found yet");
-                        return false;
-                    }
-                }
-                
-                // Essayer immédiatement
-                if (!configureToastr()) {
-                    // Si pas dispo, retry toutes les 100ms pendant 5 secondes
-                    let attempts = 0;
-                    const interval = setInterval(function() {
-                        if (configureToastr() || ++attempts > 50) {
-                            clearInterval(interval);
-                            if (attempts > 50) {
-                                console.error("❌ Toastr never loaded!");
-                            }
-                        }
-                    }, 100);
-                }
-            })();
-        ', 'after');
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
