@@ -629,17 +629,14 @@ if ($is_ajax) {
         </a>
     </div>
     
-    <!-- Formulaire global pour tous les onglets -->
-    <form method="post" id="global-settings-form">
-        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-        <input type="hidden" name="submit" value="1">
-        
-        <div id="general" class="tab-content">
+    <div id="general" class="tab-content">
+        <form method="post" id="general-form" action="">
+            <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+            <input type="hidden" name="submit" value="1">
+            
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir
 les onglets Performance et Sécurité.</p>
-            <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
-            <input type="hidden" name="submit" value="1">
             
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
             <table class="form-table">
@@ -974,10 +971,14 @@ Paramètres PDF</h3>
         </script>
         
         <div id="licence" class="tab-content hidden-tab">
-            <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la
+            <form method="post" id="licence-form" action="">
+                <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                <input type="hidden" name="current_tab" value="licence">
+                
+                <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la
 Licence</h2>
-            
-            <?php
+                
+                <?php
             $license_status = get_option('pdf_builder_license_status', 'free');
             $license_key = get_option('pdf_builder_license_key', '');
             $license_expires = get_option('pdf_builder_license_expires', '');
@@ -1755,8 +1756,8 @@ rgba(0,102,204,0.3)';">
                             💾 Enregistrer
                         </button>
                     </div>
-                </form>
-            </div>
+            </form>
+            </form>
         </div>
         
         <div id="performance" class="tab-content hidden-tab">
@@ -4298,7 +4299,6 @@ paramètres développeur</button>
             </p>
             </form>
         </div>
-    </form>
 
 <style>
     @keyframes pulse {
