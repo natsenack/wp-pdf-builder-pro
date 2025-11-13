@@ -1118,8 +1118,15 @@ class PdfBuilderAdmin
         remove_all_actions('admin_head');
         remove_all_actions('admin_footer');
 
-        // Solution radicale : supprimer TOUTES les notifications HTML
-        // Le PDF Builder utilise Toastr pour ses propres notifications
+        // DÉSACTIVER COMPLETEMENT le système de notifications WordPress
+        add_filter('admin_notices', '__return_empty_string', 999);
+        add_filter('all_admin_notices', '__return_empty_string', 999);
+        add_filter('wp_admin_notices', '__return_empty_string', 999);
+
+        // Désactiver également settings_errors qui peuvent contourner admin_notices
+        add_filter('wp_settings_errors', '__return_empty_array', 999);
+
+        // Solution de secours : output buffering radical
         add_action('admin_head', function() {
             ob_start();
         }, 1);
@@ -1127,11 +1134,9 @@ class PdfBuilderAdmin
         add_action('shutdown', function() {
             if (ob_get_level() > 0) {
                 $content = ob_get_clean();
-                // Supprimer TOUTES les notifications WordPress et plugins tiers
-                // Regex plus inclusive pour capturer toutes les variations
+                // Nettoyage final de tout ce qui pourrait être passé à travers
                 $content = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/div>/s', '', $content);
                 $content = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/p>/s', '', $content);
-                // Supprimer également les div avec id contenant "setting-error"
                 $content = preg_replace('/<div[^>]*id="[^"]*setting-error[^"]*"[^>]*>.*?<\/div>/s', '', $content);
                 echo $content;
             }
