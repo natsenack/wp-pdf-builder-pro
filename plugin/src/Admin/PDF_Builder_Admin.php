@@ -5319,8 +5319,9 @@ class PdfBuilderAdmin
 
         // ========== PROPRIÉTÉS DE FOND ET BORDURES ==========
 
-        // Couleur de fond avec opacité
-        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && !empty($element['backgroundColor'])) {
+        // Couleur de fond avec opacité - seulement si showBackground est activé
+        if (isset($element['showBackground']) && $element['showBackground'] &&
+            isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && !empty($element['backgroundColor'])) {
             $bg_color = $element['backgroundColor'];
 // Appliquer l'opacité si elle existe
             if (isset($element['backgroundOpacity']) && $element['backgroundOpacity'] > 0 && $element['backgroundOpacity'] < 1) {

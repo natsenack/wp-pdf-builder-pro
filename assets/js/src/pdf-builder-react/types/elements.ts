@@ -570,6 +570,7 @@ export interface CustomerInfoElement extends BaseElement {
   type: 'customer-info';
   // Propriétés d'affichage
   showHeaders?: boolean;
+  showBackground?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
   showAddress?: boolean;

@@ -73,7 +73,8 @@ function pdf_builder_get_element_inline_styles($element)
         case 'product_table':
         case 'company_info':
         case 'customer_info':
-            if (isset($properties['backgroundColor'])) {
+            // Vérifier si l'affichage du fond est activé
+            if (isset($properties['showBackground']) && $properties['showBackground'] && isset($properties['backgroundColor'])) {
                 $styles['background-color'] = $properties['backgroundColor'];
             }
             if (isset($properties['borderColor']) && isset($properties['borderWidth'])) {

@@ -213,6 +213,13 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               />
 
               <Toggle
+                checked={element.showBackground !== false}
+                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                label="Afficher le fond"
+                description="Affiche un fond coloré derrière les informations"
+              />
+
+              <Toggle
                 checked={element.showBorders !== false}
                 onChange={(checked) => onChange(element.id, 'showBorders', checked)}
                 label="Afficher les bordures"
@@ -925,22 +932,24 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               />
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur de fond
-              </label>
-              <input
-                type="color"
-                value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
-                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
+            {element.showBackground !== false && (
+              <div style={{ marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  Couleur de fond
+                </label>
+                <input
+                  type="color"
+                  value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
+                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px'
+                  }}
+                />
+              </div>
+            )}
 
             <div style={{ marginBottom: '0' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
