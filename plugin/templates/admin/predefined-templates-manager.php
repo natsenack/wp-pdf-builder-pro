@@ -165,6 +165,12 @@ class PDF_Builder_Predefined_Templates_Manager
     private function isDeveloperAuthenticated()
     {
         $settings = get_option('pdf_builder_settings', []);
+        
+        // Bypass pour développement/test : les admins peuvent accéder sans authentification
+        if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
+            return true;
+        }
+        
         if (empty($settings['developer_enabled'])) {
             return false;
         }
