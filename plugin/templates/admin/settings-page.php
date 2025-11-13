@@ -108,8 +108,6 @@
                 'log_file_size' => intval($_POST['log_file_size'] ?? 10),
                 'log_retention' => intval($_POST['log_retention'] ?? 30),
                 'license_test_mode' => isset($_POST['license_test_mode']),
-                'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
-                'enable_profiling' => isset($_POST['enable_profiling']),
                 'force_https' => isset($_POST['force_https']),
             ];
             $new_settings = array_merge($settings, $to_save);
@@ -251,8 +249,6 @@
                 'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
                 'log_file_size' => intval($_POST['log_file_size'] ?? 10),
                 'log_retention' => intval($_POST['log_retention'] ?? 30),
-                'disable_hooks' => sanitize_text_field($_POST['disable_hooks'] ?? ''),
-                'enable_profiling' => isset($_POST['enable_profiling']),
                 'force_https' => isset($_POST['force_https']),
                 'license_test_mode' => isset($_POST['license_test_mode']),
             ];
@@ -3521,26 +3517,6 @@
             <h3 class="section-title">Optimisations Avancées</h3>
 
             <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="disable_hooks">Désactiver Hooks</label></th>
-                    <td>
-                        <input type="text" id="disable_hooks" name="disable_hooks" placeholder="hook1,hook2,hook3" style="width: 100%; max-width: 400px;" />
-                        <p class="description">Hooks WordPress à désactiver (séparés par virgule). Utile pour déboguer les conflits</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="enable_profiling">Profiling PHP</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="enable_profiling" name="enable_profiling" value="1" <?php echo isset($settings['enable_profiling']) && $settings['enable_profiling'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Profiling actif</span>
-                        </div>
-                        <div class="toggle-description">Active le profiling PHP (impact sur les performances). Générerdes rapports xdebug</div>
-                    </td>
-                </tr>
                 <tr>
                     <th scope="row"><label for="force_https">Forcer HTTPS API</label></th>
                     <td>

@@ -3555,7 +3555,7 @@ class PdfBuilderAdmin
                 $checkbox_fields = [
                     'developer_enabled', 'developer_password', 'debug_php_errors', 'debug_javascript', 
                     'debug_javascript_verbose', 'debug_ajax', 'debug_performance', 'debug_database',
-                    'enable_profiling', 'force_https', 'license_test_mode'
+                    'force_https', 'license_test_mode'
                 ];
                 
                 if (in_array($key, $checkbox_fields)) {
