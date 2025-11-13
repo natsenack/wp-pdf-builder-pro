@@ -4076,14 +4076,14 @@
             font-size: 14px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-            transition: background 0.3s ease, outline 0.2s ease;
+            transition: all 0s !important;
             display: flex;
             align-items: center;
             gap: 8px;
             min-width: 140px;
             justify-content: center;
-            outline: 2px solid transparent;
-            outline-offset: 2px;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .floating-save-btn:hover {
@@ -4091,7 +4091,7 @@
         }
 
         .floating-save-btn:active {
-            outline: 2px solid rgba(0, 124, 186, 0.6);
+            background: linear-gradient(135deg, #004466 0%, #003344 100%);
         }
 
         .floating-save-btn:disabled {
