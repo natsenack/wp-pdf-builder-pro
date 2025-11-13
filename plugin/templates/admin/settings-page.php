@@ -609,7 +609,7 @@
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
                 <input type="hidden" name="submit" value="1">
 
-                <h2>Paramètres Généraux</h2>
+                <h3 class="section-title">Paramètres Généraux</h3>
                 <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
                 <h3 class="section-title">📋 Cache</h3>
                 <table class="form-table">
