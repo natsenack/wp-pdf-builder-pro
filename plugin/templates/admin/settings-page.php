@@ -24,7 +24,8 @@
 
     // Check if this is an AJAX request
     $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
-    'xmlhttprequest';
+        'xmlhttprequest';
+
     // Debug: Log POST data for AJAX requests
     if ($is_ajax && !empty($_POST)) {
         error_log('AJAX POST data: ' . print_r($_POST, true));
@@ -33,8 +34,8 @@
     // For AJAX requests, only process POST data and exit - don't show HTML
     if ($is_ajax && !empty($_POST)) {
         // Process the request and exit - the processing code below will handle it
-            // This ensures no HTML is output for AJAX requests
-            return;
+        // This ensures no HTML is output for AJAX requests
+        return;
         // Exit early for AJAX POST requests to prevent HTML output
     }
 
