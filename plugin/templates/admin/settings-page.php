@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     /**
      * PDF Builder Pro - Settings Page
@@ -3343,6 +3343,7 @@
                 </tr>
              </table>
 
+            <div id="dev-license-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">🔐 Test de Licence</h3>
 
             <table class="form-table">
@@ -3396,7 +3397,9 @@
                     </td>
                 </tr>
             </table>
+            </div>
 
+            <div id="dev-debug-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">�🔍 Paramètres de Debug</h3>
 
             <table class="form-table">
@@ -3479,7 +3482,9 @@
                     </td>
                 </tr>
             </table>
+            </div>
 
+            <div id="dev-logs-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Fichiers Logs</h3>
 
             <table class="form-table">
@@ -3511,6 +3516,7 @@
                     </td>
                 </tr>
             </table>
+            </div>
 
             <h3 class="section-title">Optimisations Avancées</h3>
 
@@ -5113,4 +5119,36 @@
                     }, 500);
                 }
             });
+
+            // ============================================================
+            // Gestion du Mode Développeur - Affiche/cache les sections
+            // ============================================================
+            jQuery(document).ready(function() {
+                const developerCheckbox = jQuery('#developer_enabled');
+                const licenseSectionDiv = jQuery('#dev-license-section');
+                const debugSectionDiv = jQuery('#dev-debug-section');
+                const logsSectionDiv = jQuery('#dev-logs-section');
+
+                // Fonction pour mettre à jour la visibilité
+                function updateDeveloperSectionsVisibility() {
+                    const isDeveloperEnabled = developerCheckbox.is(':checked');
+                    const displayStyle = isDeveloperEnabled ? 'block' : 'none';
+
+                    licenseSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    debugSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    logsSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                }
+
+                // Ajouter l'event listener au checkbox
+                developerCheckbox.on('change', function() {
+                    updateDeveloperSectionsVisibility();
+                });
+            });
     </script>
+
