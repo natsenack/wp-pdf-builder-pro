@@ -65,7 +65,7 @@ class PDF_Builder_Installation_Wizard {
 
         // Page cachée pour les requêtes AJAX
         add_submenu_page(
-            null, // Pas dans le menu
+            'pdf-builder-wizard', // Sous-menu du wizard
             'PDF Builder AJAX Handler',
             'PDF Builder AJAX Handler',
             'manage_options',
@@ -78,17 +78,21 @@ class PDF_Builder_Installation_Wizard {
      * Gérer les requêtes AJAX via page admin
      */
     public function handle_ajax_request() {
+        error_log('PDF Builder Wizard: handle_ajax_request called');
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder Wizard: Access denied');
             wp_die('Accès refusé');
         }
 
-        // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_wizard_nonce')) {
+        $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+
+        // Vérifier le nonce (sauf pour le test AJAX)
+        if ($action !== 'pdf_builder_test_ajax' && (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_wizard_nonce'))) {
+            error_log('PDF Builder Wizard: Invalid nonce');
             wp_send_json(array('success' => false, 'message' => 'Nonce invalide'));
         }
 
-        $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
         $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
         $data = isset($_POST['data']) ? $_POST['data'] : array();
 
