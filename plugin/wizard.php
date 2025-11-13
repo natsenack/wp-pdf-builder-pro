@@ -39,9 +39,13 @@ class PDF_Builder_Installation_Wizard {
      * Vérifier si c'est une première installation
      */
     public function check_first_install() {
-        if (!get_option('pdf_builder_installed') && current_user_can('manage_options')) {
+        $installed = get_option('pdf_builder_installed');
+        error_log('PDF Builder Wizard: check_first_install - pdf_builder_installed = ' . ($installed ? 'true' : 'false'));
+        
+        if (!$installed && current_user_can('manage_options')) {
             // Rediriger vers le wizard si première installation
             if (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-wizard') {
+                error_log('PDF Builder Wizard: Redirecting to wizard');
                 wp_redirect(admin_url('admin.php?page=pdf-builder-wizard'));
                 exit;
             }
@@ -625,6 +629,7 @@ class PDF_Builder_Installation_Wizard {
 
                 case 'complete':
                     update_option('pdf_builder_installed', true);
+                    error_log('PDF Builder Wizard: Setting pdf_builder_installed option to true');
                     $response = array('success' => true, 'message' => 'Installation terminée');
                     break;
 
