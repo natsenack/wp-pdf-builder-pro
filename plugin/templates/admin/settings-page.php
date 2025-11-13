@@ -3211,30 +3211,6 @@
                 </button>
             </div>
 
-            <h3 class="section-title">🐛 Outils de Développement</h3>
-            <p>Outils pour les développeurs et le débogage avancé.</p>
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label>Console de Debug</label></th>
-                    <td>
-                        <button type="button" class="button button-secondary" onclick="alert('Ouverture de la console...');">
-                            🖥️ Ouvrir Console
-                        </button>
-                        <p class="description">Affiche les logs JavaScript avec emojis (🚀, ✅, ❌, ⚠️)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Logs Debug</label></th>
-                    <td>
-                        <button type="button" class="button button-secondary" onclick="alert('Vider les logs debug...');">
-                            🗑️ Vider Logs
-                        </button>
-                        <p class="description">Supprime tous les logs de débogation accumulés</p>
-                    </td>
-                </tr>
-            </table>
-
             <h3 class="section-title">📊 Informations Système</h3>
             <table class="form-table">
                 <tr>
