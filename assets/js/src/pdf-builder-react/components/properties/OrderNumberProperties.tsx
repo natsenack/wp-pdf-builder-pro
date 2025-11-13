@@ -194,45 +194,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Alignement du contenu
-            </label>
-            <select
-              value={element.contentAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">Aligner à gauche</option>
-              <option value="center">Centrer</option>
-              <option value="right">Aligner à droite</option>
-            </select>
-            <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-              Positionne tout le contenu (libellé, numéro, date) dans l&apos;élément
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
-              ℹ️ Information
-            </div>
-            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.4' }}>
-              Le numéro de commande est automatiquement récupéré depuis WooCommerce.
-              Le format et la numérotation sont gérés par votre configuration WooCommerce.
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Onglet Personnalisation */}
-      {currentTab === 'personnalisation' && (
-        <>
           {/* Section Libellé personnalisé */}
           <div style={{ marginBottom: '16px' }}>
             <div style={{
@@ -329,6 +290,21 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
           </div>
 
+          <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
+              ℹ️ Information
+            </div>
+            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.4' }}>
+              Le numéro de commande est automatiquement récupéré depuis WooCommerce.
+              Le format et la numérotation sont gérés par votre configuration WooCommerce.
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Onglet Personnalisation */}
+      {currentTab === 'personnalisation' && (
+        <>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
               Taille du texte
