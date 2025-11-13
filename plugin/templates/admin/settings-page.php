@@ -3297,49 +3297,6 @@
                 </tr>
             </table>
 
-            <!-- Section Logs & Diagnostics -->
-            <h3 class="section-title">📋 Logs & Diagnostics</h3>
-
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th style="width: 25%;">Type</th>
-                        <th style="width: 50%;">Description</th>
-                        <th style="width: 25%; text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Erreurs PHP</strong></td>
-                        <td>Errors et Warnings PHP du plugin</td>
-                        <td style="text-align: center;">
-                            <button type="button" class="button button-small" onclick="alert('Affichage des logs...');">Voir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Génération PDF</strong></td>
-                        <td>Logs des opérations de génération PDF</td>
-                        <td style="text-align: center;">
-                            <button type="button" class="button button-small" onclick="alert('Affichage des logs...');">Voir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Événements</strong></td>
-                        <td>Événements système importants</td>
-                        <td style="text-align: center;">
-                            <button type="button" class="button button-small" onclick="alert('Affichage des logs...');">Voir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Détails Requis</strong></td>
-                        <td>Toutes les requêtes traitées</td>
-                        <td style="text-align: center;">
-                            <button type="button" class="button button-small" onclick="alert('Affichage des logs...');">Voir</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
             <!-- Avertissements de maintenance -->
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #856404;">⚠️ Avant la Maintenance</h3>
