@@ -657,7 +657,7 @@
 
                 <h3 class="section-title">🏢 Informations Entreprise</h3>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+                <div style="padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
                 <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                     <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
@@ -1529,7 +1529,7 @@
 
             <!-- Section Nettoyage -->
             <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
-                <h3>Nettoyage & Maintenance</h3>
+                <h3 class="section-title">Nettoyage & Maintenance</h3>
                 <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
 
                 <button type="button" id="clear-cache-btn" class="button button-secondary">
@@ -1732,7 +1732,7 @@
             </table>
 
             <!-- Section Sécurité avancée -->
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">30px;">
+            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
                 <h3>🔒 Sécurité Avancée</h3>
                 <ul style="margin: 0; padding-left: 20px;">
                     <li>✓ Sanitization de toutes les entrées utilisateur</li>
@@ -1744,7 +1744,7 @@
             </div>
 
             <!-- Conseils de sécurité -->
-            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px;">20px;">
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px;">
                 <h3 style="margin-top: 0; color: #856404;">💡 Conseils Sécurité</h3>
                 <ul style="margin: 0; padding-left: 20px; color: #856404;">
                     <li><strong>Production :</strong> Désactivez le mode debug et mettez "Error" en log level</li>
