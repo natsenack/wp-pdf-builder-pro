@@ -152,7 +152,7 @@ class PDF_Builder_Installation_Wizard {
             )
         ));
 
-        error_log('PDF Builder Wizard: Localized script with ajax_url: ' . admin_url('admin-ajax.php'));
+        error_log('PDF Builder Wizard: Localized script with adminUrl: ' . admin_url('admin.php?page=pdf-builder-pro'));
     }
 
     /**

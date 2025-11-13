@@ -219,7 +219,16 @@ var pdfBuilderWizard = {
 
     finish: function() {
         // Rediriger vers la page principale du plugin
-        window.location.href = pdfBuilderWizard.adminUrl;
+        console.log('PDF Builder Wizard: finish() called');
+        console.log('PDF Builder Wizard: pdfBuilderWizard =', typeof pdfBuilderWizard !== 'undefined' ? pdfBuilderWizard : 'undefined');
+        
+        if (typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.adminUrl) {
+            console.log('PDF Builder Wizard: redirecting to', pdfBuilderWizard.adminUrl);
+            window.location.href = pdfBuilderWizard.adminUrl;
+        } else {
+            console.error('PDF Builder Wizard: adminUrl not available, redirecting to admin dashboard');
+            window.location.href = '/wp-admin/';
+        }
     },
 
     openMediaUploader: function() {
