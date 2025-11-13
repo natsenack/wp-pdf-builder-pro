@@ -19,7 +19,6 @@ if (!defined('ABSPATH')) {
 
 // DEBUG: Log si le plugin se charge pendant AJAX
 if (defined('DOING_AJAX') && DOING_AJAX) {
-    error_log('PDF Builder Pro: Plugin loading during AJAX request');
 }
 
 // Définir les constantes du plugin
@@ -122,46 +121,36 @@ add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
-    error_log('PDF Builder Pro: Registering AJAX handlers on init hook');
-
     // Wizard supprimé - handlers désactivés
     // // Test AJAX
     // add_action('wp_ajax_test_ajax', function() {
-    //     error_log('PDF Builder Pro: test_ajax handler called');
+    //
     //     wp_send_json(['success' => true, 'message' => 'AJAX works']);
     // });
 
     // // Wizard steps
     // add_action('wp_ajax_pdf_builder_wizard_step', function() {
-    //     error_log('PDF Builder Pro: wizard_step handler called');
+    //
     //     pdf_builder_handle_admin_post_ajax();
     // });
 
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
-
-    error_log('PDF Builder Pro: AJAX handlers registered successfully');
 }
 
 /**
  * Handler pour admin_post AJAX (fallback)
  */
 function pdf_builder_handle_admin_post_ajax() {
-    error_log('PDF Builder Pro: admin_post AJAX handler called');
-
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder Pro: Access denied');
         wp_die('Accès refusé');
     }
 
     $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
     $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
     $data = isset($_POST['data']) ? $_POST['data'] : array();
-
-    error_log('PDF Builder Pro: admin_post AJAX - action: ' . $action . ', step: ' . $step);
-
     $response = array('success' => false);
 
     if ($action === 'pdf_builder_wizard_step') {
@@ -186,8 +175,6 @@ function pdf_builder_handle_admin_post_ajax() {
         $response = array('success' => true, 'message' => 'admin_post AJAX works!');
     }
 
-    error_log('PDF Builder Pro: admin_post response: ' . print_r($response, true));
-
     wp_send_json($response);
 }
 
@@ -195,8 +182,6 @@ function pdf_builder_handle_admin_post_ajax() {
  * Sauvegarder les données entreprise via AJAX
  */
 function pdf_builder_ajax_save_company_data($data) {
-    error_log('PDF Builder Pro: Saving company data: ' . print_r($data, true));
-
     try {
         // Décoder les données JSON si nécessaire
         if (is_string($data)) {
@@ -223,13 +208,9 @@ function pdf_builder_ajax_save_company_data($data) {
         if (!empty($data['company_logo'])) {
             update_option('pdf_builder_company_logo', esc_url_raw($data['company_logo']));
         }
-
-        error_log('PDF Builder Pro: Company data saved successfully');
-
         return array('success' => true, 'message' => 'Données entreprise sauvegardées');
 
     } catch (Exception $e) {
-        error_log('PDF Builder Pro: Error saving company data: ' . $e->getMessage());
         return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
 }
@@ -238,8 +219,6 @@ function pdf_builder_ajax_save_company_data($data) {
  * Créer un template par défaut via AJAX
  */
 function pdf_builder_ajax_create_template() {
-    error_log('PDF Builder Pro: Creating default template');
-
     try {
         // Créer un template par défaut simple
         $template_data = array(
@@ -270,16 +249,11 @@ function pdf_builder_ajax_create_template() {
         );
 
         if ($wpdb->last_error) {
-            error_log('PDF Builder Pro: Database error: ' . $wpdb->last_error);
             return array('success' => false, 'message' => 'Erreur base de données: ' . $wpdb->last_error);
         }
-
-        error_log('PDF Builder Pro: Default template created successfully');
-
         return array('success' => true, 'message' => 'Template par défaut créé');
 
     } catch (Exception $e) {
-        error_log('PDF Builder Pro: Error creating template: ' . $e->getMessage());
         return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $e->getMessage());
     }
 }
@@ -457,3 +431,4 @@ function pdf_builder_handle_pdf_downloads()
         }
     }
 }
+

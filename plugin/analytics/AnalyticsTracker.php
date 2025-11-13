@@ -29,7 +29,6 @@ class AnalyticsTracker implements AnalyticsInterface
     public function trackError(string $error_type, string $message, array $context = []): void
     {
         // ✅ ANALYTICS DÉSACTIVÉ - les transients ne sont plus utilisés
-        error_log("WP PDF Builder Pro Error [{$error_type}]: {$message}");
     }
 
     public function getMetrics(string $metric_type, array $filters = []): array

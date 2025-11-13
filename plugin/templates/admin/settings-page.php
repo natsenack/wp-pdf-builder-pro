@@ -12,24 +12,16 @@
     // Function to send AJAX response
     function send_ajax_response($success, $message = '', $data = [])
     {
-
-        error_log('AJAX: send_ajax_response called with success=' . ($success ? 'true' : 'false') . ', message=' . $message);
         $response = json_encode(array_merge([
             'success' => $success,
             'message' => $message
         ], $data));
-        error_log('AJAX: JSON response: ' . $response);
         wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
     }
 
     // Check if this is an AJAX request
     $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
         'xmlhttprequest';
-
-    // Debug: Log POST data for AJAX requests
-    if ($is_ajax && !empty($_POST)) {
-        error_log('AJAX POST data: ' . print_r($_POST, true));
-    }
 
     // For AJAX requests, only process POST data and exit - don't show HTML
     if ($is_ajax && !empty($_POST)) {
@@ -1446,7 +1438,7 @@
                     <th scope="row"><label for="auto_save_interval">Intervalle Auto-save (secondes)</label></th>
                     <td>
                         <input type="number" id="auto_save_interval" name="auto_save_interval" value="<?php echo intval($canvas_settings['auto_save_interval'] ?? 30); ?>"
-                               min="10" max="300" step="10" />
+                               min="10" max="300" step="10" <?php echo (!($canvas_settings['auto_save_enabled'] ?? false)) ? 'disabled' : ''; ?> />
                         <p class="description">Intervalle entre chaque sauvegarde automatique</p>
                     </td>
                 </tr>
@@ -3835,41 +3827,14 @@
     </style>
 
     <script>
-        // Script de diagnostic pour Toastr
-        console.log('=== TOASTR DIAGNOSTIC ===');
-        console.log('typeof window.toastr:', typeof window.toastr);
-        console.log('typeof toastr:', typeof toastr);
-        console.log('window keys with toast:', Object.keys(window).filter(k => k.toLowerCase().includes('toast')));
-
-        // Vérifier si jQuery est chargé
-        console.log('typeof jQuery:', typeof jQuery);
-        console.log('typeof $:', typeof $);
-
-        // Vérifier les scripts chargés
-        const scripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
-        console.log('Scripts with "toastr":', scripts.filter(s => s.includes('toastr')));
-        console.log('Scripts with "jquery":', scripts.filter(s => s.includes('jquery')));
-
-        // Vérifier les stylesheets chargés
-        const links = Array.from(document.querySelectorAll('link[href]')).map(l => l.href);
-        console.log('Stylesheets with "toastr":', links.filter(l => l.includes('toastr')));
-
-        console.log('=== FIN DIAGNOSTIC ===');
-    </script>
-
-    <script>
         // Attendre que Toastr soit disponible puis attacher les événements
         document.addEventListener('DOMContentLoaded', function() {
             // Fonction pour attendre Toastr
             function setupToastrNotifications() {
                 if (typeof toastr === 'undefined') {
-                    console.log('⏳ Toastr not yet loaded, retrying...');
                     setTimeout(setupToastrNotifications, 100);
                     return;
                 }
-
-                console.log('✅ Toastr is available, configuring and setting up notifications');
-
                 // Configurer toastr
                 toastr.options = {
                     "closeButton": true,
@@ -3888,15 +3853,11 @@
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 };
-
-                console.log('✅ Toastr configured with positionClass:', toastr.options.positionClass);
-
                 // Bouton Test du cache
                 const testCacheBtn = document.getElementById('test-cache-btn');
                 if (testCacheBtn) {
                     testCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🔍 Test cache button clicked');
                         toastr.info('🔍 Test du cache en cours...', 'Test');
                         setTimeout(() => {
                             toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
@@ -3909,7 +3870,6 @@
                 if (clearCacheBtn) {
                     clearCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🗑️ Clear cache button clicked');
                         toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
                         setTimeout(() => {
                             toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
@@ -3922,8 +3882,6 @@
                 if (settingsForm) {
                     settingsForm.addEventListener('submit', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement de la page
-                        console.log('💾 Settings form submitted (AJAX mode)');
-
                         // Afficher la notification de sauvegarde
                         toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
 
@@ -3936,7 +3894,6 @@
                             body: formData
                         })
                         .then(response => {
-                            console.log('✅ Form submitted successfully');
                             toastr.success('✅ Paramètres enregistrés avec succès !', 'Succès');
                         })
                         .catch(error => {
@@ -3951,8 +3908,6 @@
                 if (submitBtn) {
                     submitBtn.addEventListener('click', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement
-                        console.log('💾 Save button clicked');
-
                         // Déclencher la soumission du formulaire
                         const settingsForm = document.getElementById('global-settings-form');
                         if (settingsForm) {
@@ -3960,8 +3915,6 @@
                         }
                     });
                 }
-
-                console.log('✅ All event listeners attached successfully');
             }
 
             setupToastrNotifications();
@@ -4052,6 +4005,18 @@
         .toggle-switch input:disabled ~ .toggle-label {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Inputs désactivés */
+        input[type="number"]:disabled,
+        input[type="text"]:disabled,
+        input[type="email"]:disabled,
+        select:disabled,
+        textarea:disabled {
+            background-color: #f5f5f5 !important;
+            color: #999 !important;
+            cursor: not-allowed !important;
+            border-color: #ddd !important;
         }
 
         /* Bouton de sauvegarde flottant */
@@ -4262,9 +4227,6 @@
             function setupGlobalSaveButton() {
                 const globalSaveBtn = document.getElementById('global-save-btn');
                 const saveStatus = document.getElementById('save-status');
-
-                console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
-
                 if (globalSaveBtn) {
                     // Bloquer le mouvement du bouton
                     globalSaveBtn.addEventListener('mousedown', function(e) {
@@ -4292,8 +4254,6 @@
                     // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES (AMÉLIORÉ) =====
                     const setupFormTracking = () => {
                         const forms = document.querySelectorAll('form[id], form');
-                        console.log('📝 Setting up form tracking for', forms.length, 'form(s)');
-                        
                         forms.forEach((form, formIndex) => {
                             // Récupérer les valeurs initiales de tous les inputs
                             const initialState = {};
@@ -4306,9 +4266,6 @@
                                     initialState[input.name] = input.value;
                                 }
                             });
-                            
-                            console.log(`📋 Form #${formIndex} initial state saved:`, Object.keys(initialState).length, 'fields');
-                            
                             // Debounce pour éviter trop d'appels
                             let debounceTimer = null;
                             const markAsModified = () => {
@@ -4333,7 +4290,6 @@
                                     const hasChanged = initialState[this.name] !== currentValue;
                                     
                                     if (hasChanged) {
-                                        console.log('🔄 Modification detected in:', this.name);
                                         markAsModified();
                                     }
                                 });
@@ -4355,6 +4311,31 @@
                     // Appliquer le tracking
                     setupFormTracking();
                     
+                    // ===== GESTION DU CHAMP AUTO-SAVE INTERVAL =====
+                    const autoSaveEnabledCheckbox = document.getElementById('auto_save_enabled');
+                    const autoSaveIntervalInput = document.getElementById('auto_save_interval');
+                    
+                    if (autoSaveEnabledCheckbox && autoSaveIntervalInput) {
+                        // Fonction pour mettre à jour l'état du champ interval
+                        const updateAutoSaveIntervalState = () => {
+                            if (autoSaveEnabledCheckbox.checked) {
+                                autoSaveIntervalInput.disabled = false;
+                                autoSaveIntervalInput.style.opacity = '1';
+                                autoSaveIntervalInput.style.cursor = 'auto';
+                            } else {
+                                autoSaveIntervalInput.disabled = true;
+                                autoSaveIntervalInput.style.opacity = '0.6';
+                                autoSaveIntervalInput.style.cursor = 'not-allowed';
+                            }
+                        };
+                        
+                        // Appliquer l'état initial
+                        updateAutoSaveIntervalState();
+                        
+                        // Ajouter un listener au checkbox pour mettre à jour l'état en temps réel
+                        autoSaveEnabledCheckbox.addEventListener('change', updateAutoSaveIntervalState);
+                    }
+                    
                     // ===== AVERTISSEMENT AVANT DE QUITTER =====
                     window.addEventListener('beforeunload', function(e) {
                         if (hasUnsavedChanges && !globalSaveBtn.disabled) {
@@ -4372,8 +4353,6 @@
                                         document.querySelector('.tab-content.active');
 
                         if (activeTab) {
-                            console.log('📑 Active tab ID:', activeTab.id);
-
                             // Trouver le formulaire dans l'onglet actif
                             let form = activeTab.querySelector('form');
 
@@ -4383,8 +4362,6 @@
                             }
 
                             if (form) {
-                                console.log('✅ Form found, submitting via AJAX:', form.id || 'unnamed form');
-
                                 // Afficher notification via Toastr
                                 if (typeof toastr !== 'undefined') {
                                     toastr.info('💾 Sauvegarde en cours...', 'Sauvegarde');
@@ -4412,15 +4389,12 @@
                                     // Renommer le champ du nonce à 'nonce' pour le gestionnaire AJAX
                                     formData.delete(nonceName);
                                     formData.append('nonce', nonceField.value);
-                                    console.log('✅ Nonce trouvé et renommé de', nonceName, 'à nonce:', nonceField.value);
                                 } else {
                                     console.warn('⚠️ Nonce field non trouvé:', nonceName);
                                 }
 
                                 // Log des données qui vont être envoyées (pour debug)
-                                console.log('📤 FormData à envoyer:');
                                 for (let [key, value] of formData.entries()) {
-                                    console.log('  -', key, ':', value);
                                 }
 
                                 // Faire la requête AJAX
@@ -4438,8 +4412,6 @@
                                     }));
                                 })
                                 .then(({status, ok, contentType, body}) => {
-                                    console.log('📥 Response received:', status, contentType, body.substring(0, 200));
-                                    
                                     // Vérifier si c'est du JSON valide
                                     if (!contentType || !contentType.includes('application/json')) {
                                         throw new Error(`Réponse non-JSON du serveur (Status: ${status}). Contenu: ${body.substring(0, 500)}`);
@@ -4457,8 +4429,6 @@
                                     }
                                 })
                                 .then(data => {
-                                    console.log('✅ AJAX Response:', data);
-                                    
                                     if (data.success) {
                                         if (typeof toastr !== 'undefined') {
                                             toastr.success('✅ Paramètres sauvegardés avec succès !', 'Succès');
@@ -4474,8 +4444,6 @@
                                         globalSaveBtn.disabled = true;
                                         globalSaveBtn.dataset.hasModifications = 'false';
                                         globalSaveBtn.removeAttribute('title');
-                                        
-                                        console.log('✅ State reinitialized, save button disabled, hasUnsavedChanges set to false');
                                     } else {
                                         if (typeof toastr !== 'undefined') {
                                             toastr.error('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'Erreur');
@@ -4580,8 +4548,6 @@
                 }
 
                 const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
-                console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
-
                 tabLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -4630,7 +4596,6 @@
                 if (savedTab) {
                     const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
                     if (savedTabLink) {
-                        console.log('📑 RESTORING SAVED TAB:', savedTab);
                         savedTabLink.click();
                     }
                 }
@@ -4648,11 +4613,9 @@
                     if (passwordInput.type === 'password') {
                         passwordInput.type = 'text';
                         this.innerHTML = '🙈 Masquer';
-                        console.log('🔐 Password field shown');
                     } else {
                         passwordInput.type = 'password';
                         this.innerHTML = '👁️ Afficher';
-                        console.log('🔐 Password field hidden');
                     }
                 });
             }
@@ -4666,8 +4629,6 @@
             if (generateLicenseKeyBtn) {
                 generateLicenseKeyBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🔑 Generating license test key...');
-
                     const $btn = jQuery(this);
                     $btn.prop('disabled', true);
                     $btn.html('⏳ Génération...');
@@ -4681,7 +4642,6 @@
                             nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
                         },
                         success: function(response) {
-                            console.log('✅ License key generated:', response);
                             if (response.success && response.data.key) {
                                 licenseTestKeyInput.value = response.data.key;
                                 licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
@@ -4713,7 +4673,6 @@
                     e.preventDefault();
                     if (licenseTestKeyInput.value) {
                         navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
-                            console.log('📋 License key copied to clipboard');
                             licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
                             setTimeout(function() {
                                 licenseKeyStatus.innerHTML = '';
@@ -4738,9 +4697,6 @@
                     if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
                         return;
                     }
-
-                    console.log('🗑️ Deleting license test key...');
-
                     const $btn = jQuery(this);
                     $btn.prop('disabled', true);
                     $btn.html('⏳ Suppression...');
@@ -4754,7 +4710,6 @@
                             nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
                         },
                         success: function(response) {
-                            console.log('✅ License key deleted:', response);
                             if (response.success) {
                                 licenseTestKeyInput.value = '';
                                 licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
@@ -4795,8 +4750,6 @@
             if (toggleTestModeBtn) {
                 toggleTestModeBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🎚️ Toggling license test mode...');
-
                     const $btn = jQuery(this);
                     $btn.prop('disabled', true);
                     $btn.html('⏳ Basculement...');
@@ -4810,7 +4763,6 @@
                             nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
                         },
                         success: function(response) {
-                            console.log('✅ Test mode toggled:', response);
                             if (response.success) {
                                 const enabled = response.data.enabled;
 
@@ -4832,8 +4784,6 @@
 
                                 $btn.html('🎚️ Basculer Mode Test');
                                 $btn.prop('disabled', false);
-
-                                console.log(response.data.message);
                             } else {
                                 const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
                                 console.error('❌ Toggle failed:', errorMsg);
@@ -4866,9 +4816,6 @@
                     if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
                         return;
                     }
-
-                    console.log('🧹 Cleaning up license...');
-
                     const $btn = jQuery(this);
                     const cleanupStatus = document.getElementById('cleanup_status');
                     const cleanupNonce = document.getElementById('cleanup_license_nonce');
@@ -4885,7 +4832,6 @@
                             nonce: cleanupNonce ? cleanupNonce.value : ''
                         },
                         success: function(response) {
-                            console.log('✅ Cleanup successful:', response);
                             $btn.html('🧹 Nettoyer complètement la licence');
                             $btn.prop('disabled', false);
 
@@ -4919,15 +4865,12 @@
 
                     // Gestion du test du système de cache
             jQuery(document).ready(function($) {
-                console.log("🔧 Cache test button ready");
                 const $btn = $("#test-cache-btn");
                 const $results = $("#cache-test-results");
                 const $output = $("#cache-test-output");
 
                 $btn.on("click", function(e) {
                     e.preventDefault();
-                    console.log("🖱️ Cache test button clicked");
-
                     $btn.prop("disabled", true).html("🔄 Test en cours...");
                     if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
                     if ($output.length) $output.hide();
@@ -4941,7 +4884,6 @@
                         },
                         timeout: 30000,
                         success: function(response) {
-                            console.log("✅ AJAX success:", response);
                             $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
 
                             if (response.success) {
@@ -4965,15 +4907,11 @@
 
             // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
             jQuery(document).ready(function($) {
-                console.log("🔧 Notification test buttons ready");
-
                 // Test SMTP Connection
                 const $testSmtpBtn = $("#test-smtp-connection");
                 if ($testSmtpBtn.length) {
                     $testSmtpBtn.on("click", function(e) {
                         e.preventDefault();
-                        console.log("🖱️ Test SMTP button clicked");
-
                         const originalText = $testSmtpBtn.html();
                         $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
 
@@ -4987,7 +4925,6 @@
                             },
                             timeout: 15000,
                             success: function(response) {
-                                console.log("✅ SMTP Test response:", response);
                                 $testSmtpBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
@@ -5010,8 +4947,6 @@
                 if ($testNotifBtn.length) {
                     $testNotifBtn.on("click", function(e) {
                         e.preventDefault();
-                        console.log("🖱️ Test Notifications button clicked");
-
                         const originalText = $testNotifBtn.html();
                         $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
 
@@ -5025,7 +4960,6 @@
                             },
                             timeout: 15000,
                             success: function(response) {
-                                console.log("✅ Notification Test response:", response);
                                 $testNotifBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
@@ -5101,29 +5035,24 @@
                 if (isChecked) {
                     $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
                     $marginLabels.css('color', '');
-                    console.log('Marges activées');
                 } else {
                     $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
                     $marginLabels.css('color', '#999');
-                    console.log('Marges désactivées');
                 }
             }
 
             // Gestion dynamique des champs marges - event listener
             jQuery('#show_margins').on('change', function() {
-                console.log('Toggle marges changé:', jQuery(this).is(':checked'));
                 updateMarginsState();
             });
 
             // Initialiser l'état des champs marges au chargement
             jQuery(document).ready(function() {
-                console.log('Document ready - initialisation des marges');
                 setTimeout(updateMarginsState, 100);
             });
 
             // Également initialiser après un délai pour être sûr que les éléments sont chargés
             window.addEventListener('load', function() {
-                console.log('Window load - vérification des marges');
                 updateMarginsState();
             });
 
@@ -5136,12 +5065,10 @@
                 var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
                 if (standardFormats.includes(canvasFormat)) {
                     jQuery('#default_format').val(canvasFormat);
-                    console.log('Format PDF synchronisé avec le format Canvas:', canvasFormat);
                 }
 
                 // Synchroniser l'orientation PDF avec l'orientation Canvas
                 jQuery('#default_orientation').val(canvasOrientation);
-                console.log('Orientation PDF synchronisée avec l\'orientation Canvas:', canvasOrientation);
             });
 
             // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
@@ -5151,7 +5078,6 @@
                     setTimeout(function() {
                         // Déclencher l'événement personnalisé pour notifier React
                         window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
-                        console.log('Canvas settings updated event dispatched');
                     }, 500);
                 }
             });
