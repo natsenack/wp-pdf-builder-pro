@@ -1720,7 +1720,6 @@
                 <button type="submit" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
             </p>
          </form>
-         </form>
         </div>
 
         <div id="pdf" class="tab-content hidden-tab">
