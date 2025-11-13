@@ -918,26 +918,28 @@ function pdf_builder_ensure_admin_menu() {
                 wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
             }
 
-            pdf_builder_load_core_when_needed();
+            // Charger les fichiers nécessaires
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
 
-            // Debug: vérifier si la classe existe
+            // Vérifier si la classe existe
             if (!class_exists('PDF_Builder\Core\PdfBuilderCore')) {
-                wp_die(__('Erreur: Classe PDF_Builder_Core non trouvée.', 'pdf-builder-pro'));
+                wp_die(__('Erreur: Classe PDF_Builder_Core non trouvée. Vérifiez que tous les fichiers sont présents.', 'pdf-builder-pro'));
             }
 
             try {
                 $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
+
+                // Vérifier si la méthode existe
+                if (!method_exists($core, 'render_documents_page')) {
+                    wp_die(__('Erreur: Méthode render_documents_page non trouvée dans la classe core.', 'pdf-builder-pro'));
+                }
+
                 global $pdf_builder_core;
                 $pdf_builder_core = $core;
 
-                // Debug: vérifier si la méthode existe
-                if (!method_exists($core, 'render_documents_page')) {
-                    wp_die(__('Erreur: Méthode render_documents_page non trouvée.', 'pdf-builder-pro'));
-                }
-
                 $core->render_documents_page();
             } catch (Exception $e) {
-                wp_die(__('Erreur lors du chargement de la page: ', 'pdf-builder-pro') . $e->getMessage());
+                wp_die(__('Erreur lors du chargement de la page documents: ', 'pdf-builder-pro') . $e->getMessage());
             }
         }
 
