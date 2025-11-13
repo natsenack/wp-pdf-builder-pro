@@ -1585,8 +1585,8 @@
                             </div>
 
                             <!-- Save Button -->
-                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc; display: flex; align-items: flex-end;">
-                                <button type="submit" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: 700; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 100%; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,102,204,0.3);"
+                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc; display: flex; justify-content: flex-end;">
+                                <button type="submit" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: 700; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,102,204,0.3);"
                                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0,102,204,0.4)';"
                                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 8px rgba(0,102,204,0.3)';">
                                     💾 Enregistrer
