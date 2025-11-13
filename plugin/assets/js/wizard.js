@@ -70,7 +70,7 @@ var pdfBuilderWizard = {
         }
         
         jQuery.ajax({
-            url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
+            url: ajaxurl, // Utiliser l'URL AJAX standard de WordPress
             type: 'POST',
             data: ajaxData,
             success: function(response) {
@@ -189,8 +189,8 @@ var pdfBuilderWizard = {
 
         console.log('PDF Builder Wizard: Sending data:', data);
 
-        return jQuery.ajax({
-            url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
+        jQuery.ajax({
+            url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -203,7 +203,7 @@ var pdfBuilderWizard = {
 
     createTemplate: function() {
         return jQuery.ajax({
-            url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
+            url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -215,7 +215,7 @@ var pdfBuilderWizard = {
 
     completeSetup: function() {
         return jQuery.ajax({
-            url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
+            url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',

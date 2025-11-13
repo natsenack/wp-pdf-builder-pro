@@ -148,7 +148,7 @@ class PDF_Builder_Installation_Wizard {
         
         // Localiser le script AVANT de l'enregistrer
         $localization_data = array(
-            'ajax_url' => admin_url('admin.php?action=pdf_builder_ajax'),
+            'ajax_url' => admin_url('admin-ajax.php'),
             'adminUrl' => admin_url('admin.php?page=pdf-builder-pro'),
             'nonce' => wp_create_nonce('pdf_builder_wizard_nonce'),
             'strings' => array(
