@@ -4297,24 +4297,68 @@
                             }
 
                             if (form) {
-                                console.log('✅ Form found, submitting:', form.id || 'unnamed form');
+                                console.log('✅ Form found, submitting via AJAX:', form.id || 'unnamed form');
 
                                 // Afficher le statut de sauvegarde
                                 if (saveStatus) {
                                     saveStatus.textContent = '💾 Sauvegarde en cours...';
                                     saveStatus.style.color = '#007cba';
+                                    saveStatus.classList.add('show');
                                 }
 
-                                // Soumettre le formulaire de manière sécurisée
-                                if (typeof form.requestSubmit === 'function') {
-                                    form.requestSubmit();
-                                } else {
-                                    // Fallback pour les navigateurs plus anciens
-                                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                                    if (form.dispatchEvent(submitEvent)) {
-                                        form.submit();
-                                    }
+                                // Créer FormData à partir du formulaire
+                                const formData = new FormData(form);
+                                
+                                // Ajouter l'action AJAX - utiliser l'action appropriée selon l'onglet
+                                let ajaxAction = 'pdf_builder_save_settings_page';
+                                
+                                // Mapper les onglets à leurs actions spécifiques si disponible
+                                if (activeTab.id === 'general') {
+                                    ajaxAction = 'pdf_builder_save_general_settings';
+                                } else if (activeTab.id === 'performance' || activeTab.id === 'maintenance') {
+                                    ajaxAction = 'pdf_builder_save_performance_settings';
                                 }
+                                
+                                formData.append('action', ajaxAction);
+
+                                // Faire la requête AJAX
+                                fetch(ajaxurl, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log('✅ AJAX Response:', data);
+                                    
+                                    if (data.success) {
+                                        if (saveStatus) {
+                                            saveStatus.textContent = '✅ Paramètres sauvegardés avec succès !';
+                                            saveStatus.style.color = '#28a745';
+                                            saveStatus.classList.add('success');
+                                        }
+                                        
+                                        // Masquer le message après 3 secondes
+                                        setTimeout(() => {
+                                            if (saveStatus) {
+                                                saveStatus.classList.remove('show', 'success');
+                                            }
+                                        }, 3000);
+                                    } else {
+                                        if (saveStatus) {
+                                            saveStatus.textContent = '❌ Erreur: ' + (data.message || 'Erreur inconnue');
+                                            saveStatus.style.color = '#dc3232';
+                                            saveStatus.classList.add('error');
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('❌ AJAX Error:', error);
+                                    if (saveStatus) {
+                                        saveStatus.textContent = '❌ Erreur de connexion';
+                                        saveStatus.style.color = '#dc3232';
+                                        saveStatus.classList.add('error');
+                                    }
+                                });
                             } else {
                                 console.error('❌ No form found in active tab:', activeTab.id);
                                 if (saveStatus) {
