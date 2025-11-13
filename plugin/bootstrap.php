@@ -78,12 +78,28 @@ if (is_admin()) {
             }
         }, 999);
         
-        // Output buffering comme filet de secours
+        // Output buffering comme filet de secours pour les notifications qui passent quand même
         add_action('admin_head', function() {
             ob_start(function($buffer) {
                 // Supprimer les notifications qui ne viennent pas du PDF Builder
-                $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
-                $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*(?!.*pdf-builder)>.*?<\/div>/is', '', $buffer);
+                // Mais GARDER les notifications du PDF Builder
+                $buffer = preg_replace_callback('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', function($matches) {
+                    // Vérifier si c'est du PDF Builder
+                    if (strpos($matches[0], 'pdf-builder') !== false || strpos($matches[0], 'pdf_builder') !== false) {
+                        return $matches[0]; // Garder
+                    }
+                    return ''; // Supprimer
+                }, $buffer);
+                
+                // Supprimer les notifications non-PDF-Builder
+                $buffer = preg_replace_callback('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*>.*?<\/div>/is', function($matches) {
+                    // Vérifier si c'est du PDF Builder
+                    if (strpos($matches[0], 'pdf-builder') !== false || strpos($matches[0], 'pdf_builder') !== false) {
+                        return $matches[0]; // Garder
+                    }
+                    return ''; // Supprimer
+                }, $buffer);
+                
                 return $buffer;
             });
         }, 999);
