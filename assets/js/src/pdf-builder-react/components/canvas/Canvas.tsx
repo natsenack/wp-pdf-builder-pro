@@ -723,6 +723,7 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
   const textAlign = 'left'; // Forcer alignement à gauche pour company_info
   const theme = (props.theme || 'corporate') as keyof typeof themes;
   const showBackground = props.showBackground !== false; // Par défaut true
+  console.log('CompanyInfo showBackground:', props.showBackground, 'evaluated to:', showBackground);
   const showBorders = props.showBorders !== false; // Par défaut true
   const showCompanyName = props.showCompanyName !== false; // Par défaut true
   const showAddress = props.showAddress !== false; // Par défaut true
@@ -777,8 +778,11 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   // Appliquer le fond si demandé
   if (showBackground) {
+    console.log('Applying background for company_info with color:', bgColor);
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, element.width, element.height);
+  } else {
+    console.log('Not applying background for company_info');
   }
 
   // Appliquer les bordures si demandé
