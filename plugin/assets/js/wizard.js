@@ -60,7 +60,7 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
         console.log('PDF Builder Wizard: nonce =', pdfBuilderWizard.nonce);
         jQuery.ajax({
-            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?page=pdf-builder-ajax') : '/wp-admin/admin.php?page=pdf-builder-ajax'),
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?action=pdf_builder_ajax') : '/wp-admin/admin.php?action=pdf_builder_ajax'),
             type: 'POST',
             data: {
                 action: 'pdf_builder_test_ajax'
@@ -182,7 +182,7 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: Sending data:', data);
 
         return jQuery.ajax({
-            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (ajaxurl ? ajaxurl.replace('admin-ajax.php', 'admin.php?page=pdf-builder-ajax') : '/wp-admin/admin.php?page=pdf-builder-ajax'),
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (ajaxurl ? ajaxurl.replace('admin-ajax.php', 'admin.php?action=pdf_builder_ajax') : '/wp-admin/admin.php?action=pdf_builder_ajax'),
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -195,7 +195,7 @@ var pdfBuilderWizard = {
 
     createTemplate: function() {
         return jQuery.ajax({
-            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?page=pdf-builder-ajax') : '/wp-admin/admin.php?page=pdf-builder-ajax'),
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?action=pdf_builder_ajax') : '/wp-admin/admin.php?action=pdf_builder_ajax'),
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -207,7 +207,7 @@ var pdfBuilderWizard = {
 
     completeSetup: function() {
         return jQuery.ajax({
-            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?page=pdf-builder-ajax') : '/wp-admin/admin.php?page=pdf-builder-ajax'),
+            url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl.replace('admin-ajax.php', 'admin.php?action=pdf_builder_ajax') : '/wp-admin/admin.php?action=pdf_builder_ajax'),
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
