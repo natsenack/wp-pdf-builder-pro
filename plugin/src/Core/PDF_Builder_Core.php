@@ -351,6 +351,79 @@ class PdfBuilderCore
     }
 
     /**
+     * Page des documents récents
+     */
+    public function render_documents_page()
+    {
+        global $wpdb;
+
+        // Récupérer les logs récents depuis la base de données
+        $table_name = $wpdb->prefix . 'pdf_builder_logs';
+        $recent_logs = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table_name}
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                 ORDER BY created_at DESC
+                 LIMIT 50"
+            )
+        );
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('📄 Documents Récents', 'pdf-builder-pro'); ?></h1>
+            <p><?php _e('Consultez les logs de génération PDF récents.', 'pdf-builder-pro'); ?></p>
+
+            <?php if (empty($recent_logs)): ?>
+                <div class="notice notice-info">
+                    <p><?php _e('Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.', 'pdf-builder-pro'); ?></p>
+                </div>
+            <?php else: ?>
+                <div class="recent-documents-container">
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Date', 'pdf-builder-pro'); ?></th>
+                                <th><?php _e('Message', 'pdf-builder-pro'); ?></th>
+                                <th><?php _e('Actions', 'pdf-builder-pro'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recent_logs as $log): ?>
+                                <tr>
+                                    <td><?php echo esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($log->created_at))); ?></td>
+                                    <td><?php echo esc_html($log->log_message); ?></td>
+                                    <td>
+                                        <button class="button button-small"
+                                                onclick="alert('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>')">
+                                            📄 <?php _e('Détails', 'pdf-builder-pro'); ?>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <style>
+                    .recent-documents-container {
+                        margin-top: 20px;
+                    }
+                </style>
+            <?php endif; ?>
+
+            <div class="recent-documents-info" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007cba;">
+                <h3><?php _e('ℹ️ Informations', 'pdf-builder-pro'); ?></h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><?php _e('Cette page affiche les logs de génération PDF des 30 derniers jours.', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('La fonctionnalité complète de téléchargement sera bientôt disponible.', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('Pour consulter vos PDF générés, vérifiez le dossier de téléchargement de votre navigateur.', 'pdf-builder-pro'); ?></li>
+                </ul>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
      * Page des paramètres
      */
     public function settingsPage()
