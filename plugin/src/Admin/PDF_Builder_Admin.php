@@ -3700,58 +3700,60 @@ class PdfBuilderAdmin
     /**
      * AJAX handler for saving performance settings only
      */
+    /**
+     * AJAX handler for saving performance settings only
+     */
     public function ajaxSavePerformanceSettings()
     {
-        // Log pour debug
-        error_log('🔴 ajaxSavePerformanceSettings called');
-        error_log('POST data: ' . print_r($_POST, true));
-        
-        // Vérification de sécurité
-        $nonce = $_POST['nonce'] ?? '';
-        error_log('Nonce reçu: ' . $nonce);
-        error_log('Vérification nonce avec action: pdf_builder_performance_settings');
-        
-        if (!wp_verify_nonce($nonce, 'pdf_builder_performance_settings')) {
-            error_log('❌ Nonce invalide!');
-            wp_send_json_error(['message' => 'Nonce invalide']);
+        // Vérifier que c'est bien une requête AJAX
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
+            wp_send_json_error(['message' => 'Not an AJAX request']);
             return;
+        }
+
+        // Vérification de sécurité
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_performance_settings')) {
+            wp_send_json_error(['message' => 'Nonce invalide ou manquant']);
+            wp_die();
         }
 
         // Vérification des permissions
         if (!current_user_can('manage_options')) {
-            error_log('❌ Permissions insuffisantes');
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
+            wp_die();
         }
 
-        try {
-            // Récupération des paramètres de performance seulement
-            $performance_settings = [
-                'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-                'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-                'compress_images' => isset($_POST['compress_images']),
-                'image_quality' => intval($_POST['image_quality'] ?? 85),
-                'optimize_for_web' => isset($_POST['optimize_for_web']),
-                'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
-                'limit_fps' => isset($_POST['limit_fps']),
-                'max_fps' => intval($_POST['max_fps'] ?? 60),
-            ];
+        // Récupération des paramètres de performance seulement
+        $performance_settings = [
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']) ? 1 : 0,
+            'auto_save_interval' => isset($_POST['auto_save_interval']) ? intval($_POST['auto_save_interval']) : 30,
+            'compress_images' => isset($_POST['compress_images']) ? 1 : 0,
+            'image_quality' => isset($_POST['image_quality']) ? intval($_POST['image_quality']) : 85,
+            'optimize_for_web' => isset($_POST['optimize_for_web']) ? 1 : 0,
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']) ? 1 : 0,
+            'limit_fps' => isset($_POST['limit_fps']) ? 1 : 0,
+            'max_fps' => isset($_POST['max_fps']) ? intval($_POST['max_fps']) : 60,
+        ];
 
-            error_log('Performance settings à sauvegarder: ' . print_r($performance_settings, true));
-
-            // Sauvegarde des paramètres de performance
-            $settings = get_option('pdf_builder_settings', []);
-            foreach ($performance_settings as $key => $value) {
-                $settings[$key] = $value;
-            }
-            update_option('pdf_builder_settings', $settings);
-
-            error_log('✅ Paramètres sauvegardés avec succès');
-            wp_send_json_success(['message' => 'Paramètres de performance sauvegardés avec succès !']);
-        } catch (Exception $e) {
-            error_log('❌ Exception: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+        // Sauvegarde des paramètres de performance
+        $settings = get_option('pdf_builder_settings', []);
+        if (!is_array($settings)) {
+            $settings = [];
         }
+        
+        foreach ($performance_settings as $key => $value) {
+            $settings[$key] = $value;
+        }
+        
+        $updated = update_option('pdf_builder_settings', $settings);
+
+        wp_send_json_success([
+            'message' => 'Paramètres de performance sauvegardés avec succès !',
+            'updated' => $updated
+        ]);
+        wp_die();
     }
 
     /**
