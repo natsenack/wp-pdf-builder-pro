@@ -489,6 +489,12 @@ class PdfBuilderAdmin
                                 <li>Performance optimisée</li>
                                 <li>Navigation intuitive</li>
                                 <li>API Preview intégrée</li>
+                                <li>Chargement et initialisation améliorés</li>
+                                <li>Paramètres Canvas étendus</li>
+                                <li>Grille d'aimantation</li>
+                                <li>Guides et marges de sécurité</li>
+                                <li>Zoom et navigation avancés</li>
+                                <li>Multi-sélection et manipulation</li>
                             </ul>
                         </div>
 
@@ -503,6 +509,8 @@ class PdfBuilderAdmin
                                 <li>Code-barres et QR codes</li>
                                 <li>Éléments WooCommerce</li>
                                 <li>Variables dynamiques</li>
+                                <li>Charts et graphiques</li>
+                                <li>Signatures numériques</li>
                             </ul>
                         </div>
 
@@ -517,6 +525,9 @@ class PdfBuilderAdmin
                                 <li>Historique des versions</li>
                                 <li>Partage d'équipe</li>
                                 <li>Sauvegarde automatique</li>
+                                <li>Validation JSON automatique</li>
+                                <li>Réparation données corrompues</li>
+                                <li>Stabilité sauvegarde améliorée</li>
                             </ul>
                         </div>
 
@@ -587,6 +598,41 @@ class PdfBuilderAdmin
                                 <li>Responsive design optimisé</li>
                                 <li>Thème sombre/clair adaptable</li>
                                 <li>Notifications contextuelles</li>
+                                <li>Performance AJAX - Requêtes plus rapides et fiables</li>
+                                <li>Health checks automatiques</li>
+                                <li>Monitoring intégré et logs détaillés</li>
+                                <li>Fallbacks visuels en cas d'erreur</li>
+                                <li>Messages d'erreur informatifs</li>
+                            </ul>
+                        </div>
+
+                        <!-- Sécurité et Performance -->
+                        <div class="feature-category">
+                            <h4>🔒 Sécurité & Performance</h4>
+                            <ul>
+                                <li>Validation stricte des données</li>
+                                <li>Protection CSRF et nonces</li>
+                                <li>Sanitisation automatique</li>
+                                <li>Cache optimisé</li>
+                                <li>Compression GZIP</li>
+                                <li>Monitoring des ressources</li>
+                                <li>Logs de sécurité détaillés</li>
+                                <li>Fail-safe initialization</li>
+                                <li>Error boundaries React</li>
+                                <li>Memory leaks prevention</li>
+                            </ul>
+                        </div>
+
+                        <!-- Intégration WooCommerce -->
+                        <div class="feature-category">
+                            <h4>🛒 WooCommerce</h4>
+                            <ul>
+                                <li>Variables de commande intégrées</li>
+                                <li>Aperçu dans metabox commande</li>
+                                <li>Endpoint AJAX pour données</li>
+                                <li>Remplacement automatique des variables</li>
+                                <li>Templates spécialisés (Facture, Devis, Reçu)</li>
+                                <li>Intégration transparente</li>
                             </ul>
                         </div>
 
