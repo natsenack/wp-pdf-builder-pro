@@ -363,10 +363,12 @@ function pdf_builder_init()
         }
     }
 
-    // Charger l'assistant d'installation
-    $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
-    if (file_exists($wizard_path)) {
-        require_once $wizard_path;
+    // Charger l'assistant d'installation seulement dans l'admin
+    if (is_admin()) {
+        $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
+        if (file_exists($wizard_path)) {
+            require_once $wizard_path;
+        }
     }
 
     // Enregistrer les handlers AJAX dès le début
