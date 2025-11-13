@@ -49,7 +49,7 @@
 
     // Debug: Page loaded
     if (defined('WP_DEBUG') && WP_DEBUG) {
-    // Logs removed for clarity
+
     }
 
     // Initialize
@@ -66,9 +66,9 @@
         error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
     }
     if (!empty($_POST)) {
-    // Logs removed for clarity
+
     } else {
-    // Logs removed for clarity
+
     }
 
     // Process form
@@ -77,11 +77,11 @@
             error_log('AJAX: Matched condition 1 - submit + pdf_builder_settings_nonce');
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
-        // Logs removed for clarity
+
         }
         if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-            // Logs removed for clarity
+
             }
             // Check for max_input_vars limit
             $max_input_vars = ini_get('max_input_vars');
@@ -123,13 +123,13 @@
             // Check if settings actually changed - use serialize for deep comparison
             $settings_changed = serialize($new_settings) !== serialize($settings);
             if (defined('WP_DEBUG') && WP_DEBUG) {
-            // Logs removed for clarity
+
             }
 
             $result = update_option('pdf_builder_settings', $new_settings);
             try {
                     // Debug: Always log the result for troubleshooting
-                        // Logs removed for clarity
+
 
                         // Simplified success logic: if no exception was thrown, consider it successful
                         if ($is_ajax) {
@@ -138,7 +138,7 @@
                             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
                         }
                     } catch (Exception $e) {
-            // Logs removed for clarity
+
                 if ($is_ajax) {
                     send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres: ' . $e->getMessage());
                 } else {
@@ -263,22 +263,22 @@
                 'force_https' => isset($_POST['force_https']),
                 'license_test_mode' => isset($_POST['license_test_mode']),
             ];
-        // Logs removed for clarity
+
             $result = update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
         // Sauvegarder aussi l'état du mode test dans une option séparée pour le handler de licence
             update_option('pdf_builder_license_test_mode_enabled', isset($_POST['license_test_mode']));
-        // Logs removed for clarity
+
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
             $settings = get_option('pdf_builder_settings', []);
-        // Logs removed for clarity
+
         } else {
-        // Logs removed for clarity
+
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
         }
     }
 
     if (isset($_POST['submit_performance']) && isset($_POST['pdf_builder_performance_nonce'])) {
-    // Logs removed for clarity
+
         if (wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance_settings')) {
             $performance_settings = [
                 'compress_images' => isset($_POST['compress_images']),
@@ -306,7 +306,7 @@
     }
 
     if (isset($_POST['submit_pdf']) && isset($_POST['pdf_builder_pdf_nonce'])) {
-    // Logs removed for clarity
+
         if (wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf_settings')) {
             $pdf_settings = [
                 'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
@@ -329,7 +329,7 @@
     }
 
     if (isset($_POST['submit_security']) && isset($_POST['pdf_builder_securite_nonce'])) {
-    // Logs removed for clarity
+
         if (wp_verify_nonce($_POST['pdf_builder_securite_nonce'], 'pdf_builder_settings')) {
             $security_settings = [
                 'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
@@ -419,7 +419,7 @@
     }
 
     if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
-    // Logs removed for clarity
+
         if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_settings')) {
     // NOTE: This section is now handled in the Templates tab form below (line 2846)
             // Keeping this comment to avoid confusion - code is handled in the proper form section
@@ -427,7 +427,7 @@
     }
 
     if (isset($_POST['submit_maintenance']) && isset($_POST['pdf_builder_settings_nonce'])) {
-    // Logs removed for clarity
+
         if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
             $maintenance_settings = [
                 // Les paramètres de maintenance sont principalement des actions, pas des sauvegardes de config
@@ -438,7 +438,7 @@
             $settings = get_option('pdf_builder_settings', []);
         }
     }
-?>  
+?>
 <script>
     // Script de définition des paramètres canvas - exécuté très tôt
 
@@ -541,7 +541,7 @@
 
     // ✅ PDF_BUILDER_VERBOSE initialized in PDF_Builder_Admin.php via wp_add_inline_script()
 
-    // Logs removed for clarity
+
 </script>
 <?php
     // If this is an AJAX request that wasn't handled above, return error
@@ -551,11 +551,11 @@
 ?>
 <div class="wrap">
     <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
-    
+
     <?php foreach ($notices as $notice) {
         echo $notice;
     } ?>
-    
+
     <div class="nav-tab-wrapper wp-clearfix">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
             <span class="tab-icon">⚙️</span>
@@ -602,65 +602,65 @@
             <span class="tab-text">Développeur</span>
         </a>
     </div>
-    
+
         <div id="general" class="tab-content">
         <form method="post" id="general-form" action="">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         <input type="hidden" name="submit" value="1">
-        
+
         <h2>Paramètres Généraux</h2>
         <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
         <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
         <table class="form-table">
-        <tr>
-        <th scope="row"><label for="cache_enabled">Cache activé</label></th>
-        <td>
-        <div class="toggle-container">
-        <label class="toggle-switch">
-        <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?> />
-        <span class="toggle-slider"></span>
-        </label>
-        <span class="toggle-label">Activer le cache</span>
-        </div>
-        <div class="toggle-description">Améliore les performances en mettant en cache les données</div>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-        <td>
-        <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
-        <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row">Test du système</th>
-        <td>
-        <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
-        🧪 Tester l'intégration du cache
-        </button>
-        <span id="cache-test-results" style="margin-left: 10px;"></span>
-        <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; border-radius: 4px; color: #155724;"></div>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row">Vider le cache</th>
-        <td>
-        <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
-        🗑️ Vider tout le cache
-        </button>
-        <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
-        <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
-        </td>
-        </tr>
+            <tr>
+                <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                <td>
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?> />
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Activer le cache</span>
+                    </div>
+                    <div class="toggle-description">Améliore les performances en mettant en cache les données</div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                <td>
+                    <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
+                    <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Test du système</th>
+                <td>
+                    <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
+                        🧪 Tester l'intégration du cache
+                    </button>
+                    <span id="cache-test-results" style="margin-left: 10px;"></span>
+                    <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; border-radius: 4px; color: #155724;"></div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Vider le cache</th>
+                <td>
+                    <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
+                        🗑️ Vider tout le cache
+                    </button>
+                    <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
+                    <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
+                </td>
+            </tr>
         </table>
-        
+
         <h3 style="margin-top: 30px; border-bottom: 2px solid #28a745; padding-bottom: 10px; color: #28a745;">🏢 Informations Entreprise</h3>
-        
+
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
         <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
         <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
         <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
-        <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php 
+        <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
         $address = get_option('woocommerce_store_address', '');
         $city = get_option('woocommerce_store_city', '');
         $postcode = get_option('woocommerce_store_postcode', '');
@@ -673,98 +673,98 @@
         ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
         </p>
         </div>
-        
+
         <h4 style="color: #dc3545;">📝 Informations à saisir manuellement</h4>
         <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
         Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
         </p>
-        
+
         <table class="form-table" style="background: white; padding: 15px; border-radius: 6px;">
-        <tr>
-        <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
-        <td>
-        <input type="text" id="company_phone_manual" name="company_phone_manual" 
-        value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>" 
-        placeholder="+33 1 23 45 67 89" />
-        <p class="description">Téléphone de l'entreprise</p>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
-        <td>
-        <input type="text" id="company_siret" name="company_siret" 
-        value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>" 
-        placeholder="123 456 789 00012" />
-        <p class="description">Numéro SIRET de l'entreprise</p>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="company_vat">Numéro TVA</label></th>
-        <td>
-        <input type="text" id="company_vat" name="company_vat" 
-        value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>" 
-        placeholder="FR 12 345 678 901" />
-        <p class="description">Numéro de TVA intracommunautaire</p>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="company_rcs">RCS</label></th>
-        <td>
-        <input type="text" id="company_rcs" name="company_rcs" 
-        value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>" 
-        placeholder="Lyon B 123 456 789" />
-        <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="company_capital">Capital social</label></th>
-        <td>
-        <input type="text" id="company_capital" name="company_capital" 
-        value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>" 
-        placeholder="10 000 €" />
-        <p class="description">Montant du capital social de l'entreprise</p>
-        </td>
-        </tr>
+            <tr>
+                <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
+                <td>
+                    <input type="text" id="company_phone_manual" name="company_phone_manual"
+                        value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>"
+                        placeholder="+33 1 23 45 67 89" />
+                    <p class="description">Téléphone de l'entreprise</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
+                <td>
+                    <input type="text" id="company_siret" name="company_siret"
+                        value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>"
+                        placeholder="123 456 789 00012" />
+                    <p class="description">Numéro SIRET de l'entreprise</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="company_vat">Numéro TVA</label></th>
+                <td>
+                    <input type="text" id="company_vat" name="company_vat"
+                        value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>"
+                        placeholder="FR 12 345 678 901" />
+                    <p class="description">Numéro de TVA intracommunautaire</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="company_rcs">RCS</label></th>
+                <td>
+                    <input type="text" id="company_rcs" name="company_rcs"
+                        value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>"
+                        placeholder="Lyon B 123 456 789" />
+                    <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="company_capital">Capital social</label></th>
+                <td>
+                    <input type="text" id="company_capital" name="company_capital"
+                        value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>"
+                        placeholder="10 000 €" />
+                    <p class="description">Montant du capital social de l'entreprise</p>
+                </td>
+            </tr>
         </table>
         </div>
-        
+
         <h3 style="margin-top: 30px; border-bottom: 2px solid #007cba; padding-bottom: 10px; color: #007cba;">📄 Paramètres PDF</h3>
         <table class="form-table">
-        <tr>
-        <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
-        <td>
-        <select id="pdf_quality" name="pdf_quality">
-        <option value="low" <?php selected($settings['pdf_quality'] ?? 'high', 'low'); ?>>Faible (fichiers plus petits)</option>
-        <option value="medium" <?php selected($settings['pdf_quality'] ?? 'high', 'medium'); ?>>Moyen</option>
-        <option value="high" <?php selected($settings['pdf_quality'] ?? 'high', 'high'); ?>>Élevée (meilleure qualité)</option>
-        </select>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="default_format">Format PDF par défaut</label></th>
-        <td>
-        <select id="default_format" name="default_format">
-        <option value="A4" <?php selected($settings['default_format'] ?? 'A4', 'A4'); ?>>A4</option>
-        <option value="A3" <?php selected($settings['default_format'] ?? 'A4', 'A3'); ?>>A3</option>
-        <option value="Letter" <?php selected($settings['default_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
-        <option value="Legal" <?php selected($settings['default_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
-        </select>
-        </td>
-        </tr>
-        <tr>
-        <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
-        <td>
-        <select id="default_orientation" name="default_orientation">
-        <option value="portrait" <?php selected($settings['default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-        <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
-        </select>
-        </td>
-        </tr>
+            <tr>
+                <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
+                <td>
+                    <select id="pdf_quality" name="pdf_quality">
+                        <option value="low" <?php selected($settings['pdf_quality'] ?? 'high', 'low'); ?>>Faible (fichiers plus petits)</option>
+                        <option value="medium" <?php selected($settings['pdf_quality'] ?? 'high', 'medium'); ?>>Moyen</option>
+                        <option value="high" <?php selected($settings['pdf_quality'] ?? 'high', 'high'); ?>>Élevée (meilleure qualité)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="default_format">Format PDF par défaut</label></th>
+                <td>
+                    <select id="default_format" name="default_format">
+                        <option value="A4" <?php selected($settings['default_format'] ?? 'A4', 'A4'); ?>>A4</option>
+                        <option value="A3" <?php selected($settings['default_format'] ?? 'A4', 'A3'); ?>>A3</option>
+                        <option value="Letter" <?php selected($settings['default_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
+                        <option value="Legal" <?php selected($settings['default_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
+                <td>
+                    <select id="default_orientation" name="default_orientation">
+                        <option value="portrait" <?php selected($settings['default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
+                        <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
+                    </select>
+                </td>
+            </tr>
         </table>
-        
+
         </form>
     </div>
-        
+
         <!-- Bouton de sauvegarde flottant global -->
         <div class="floating-save-container">
             <button type="button" id="global-save-btn" class="floating-save-btn">
@@ -772,7 +772,7 @@
             </button>
             <div class="save-status" id="save-status"></div>
         </div>
-        
+
 </div>
 <style>
         /* Configuration des notifications Toastr */
@@ -782,11 +782,11 @@
             right: 20px !important;
             z-index: 99999 !important;
         }
-        
+
         .toast {
             animation: slideInRight 0.3s ease-out !important;
         }
-        
+
         @keyframes slideInRight {
             from {
                 transform: translateX(420px);
@@ -798,27 +798,27 @@
             }
         }
 </style>
-        
+
     <script>
         // Script de diagnostic pour Toastr
         console.log('=== TOASTR DIAGNOSTIC ===');
         console.log('typeof window.toastr:', typeof window.toastr);
         console.log('typeof toastr:', typeof toastr);
         console.log('window keys with toast:', Object.keys(window).filter(k => k.toLowerCase().includes('toast')));
-        
+
         // Vérifier si jQuery est chargé
         console.log('typeof jQuery:', typeof jQuery);
         console.log('typeof $:', typeof $);
-        
+
         // Vérifier les scripts chargés
         const scripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
         console.log('Scripts with "toastr":', scripts.filter(s => s.includes('toastr')));
         console.log('Scripts with "jquery":', scripts.filter(s => s.includes('jquery')));
-        
+
         // Vérifier les stylesheets chargés
         const links = Array.from(document.querySelectorAll('link[href]')).map(l => l.href);
         console.log('Stylesheets with "toastr":', links.filter(l => l.includes('toastr')));
-        
+
         console.log('=== FIN DIAGNOSTIC ===');
     </script>
 
@@ -832,9 +832,9 @@
                     setTimeout(setupToastrNotifications, 100);
                     return;
                 }
-                
+
                 console.log('✅ Toastr is available, configuring and setting up notifications');
-                
+
                 // Configurer toastr
                 toastr.options = {
                     "closeButton": true,
@@ -853,9 +853,9 @@
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 };
-                
+
                 console.log('✅ Toastr configured with positionClass:', toastr.options.positionClass);
-                
+
                 // Bouton Test du cache
                 const testCacheBtn = document.getElementById('test-cache-btn');
                 if (testCacheBtn) {
@@ -868,7 +868,7 @@
                         }, 1500);
                     });
                 }
-                
+
                 // Bouton Vider le cache
                 const clearCacheBtn = document.getElementById('clear-cache-general-btn');
                 if (clearCacheBtn) {
@@ -881,20 +881,20 @@
                         }, 1500);
                     });
                 }
-                
+
                 // Détecte la soumission du formulaire - EMPÊCHE LE RELOAD
                 const settingsForm = document.getElementById('global-settings-form');
                 if (settingsForm) {
                     settingsForm.addEventListener('submit', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement de la page
                         console.log('💾 Settings form submitted (AJAX mode)');
-                        
+
                         // Afficher la notification de sauvegarde
                         toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
-                        
+
                         // Récupérer les données du formulaire
                         const formData = new FormData(settingsForm);
-                        
+
                         // Envoyer en AJAX
                         fetch(settingsForm.action || window.location.href, {
                             method: 'POST',
@@ -910,14 +910,14 @@
                         });
                     });
                 }
-                
+
                 // Bouton Enregistrer
                 const submitBtn = document.getElementById('general-submit-btn');
                 if (submitBtn) {
                     submitBtn.addEventListener('click', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement
                         console.log('💾 Save button clicked');
-                        
+
                         // Déclencher la soumission du formulaire
                         const settingsForm = document.getElementById('global-settings-form');
                         if (settingsForm) {
@@ -925,19 +925,19 @@
                         }
                     });
                 }
-                
+
                 console.log('✅ All event listeners attached successfully');
             }
-            
+
             setupToastrNotifications();
         });
     </script>
-        
+
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
-                <input type="hidden" name="current_tab" value="licence">   
+                <input type="hidden" name="current_tab" value="licence">
                     <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
-                        
+
                 <?php
                     $license_status = get_option('pdf_builder_license_status', 'free');
                     $license_key = get_option('pdf_builder_license_key', '');
@@ -977,7 +977,7 @@
 
                     // Traitement désactivation licence
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
-                    // Logs removed for clarity
+
                         if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                             delete_option('pdf_builder_license_key');
                             delete_option('pdf_builder_license_expires');
@@ -1009,11 +1009,11 @@
                         }
                     }
                 ?>
-                    
+
                     <!-- Statut de la licence -->
                 <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <h3 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h3>
-                        
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
                             <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
@@ -1025,7 +1025,7 @@
                                     <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
                                 </div>
                             </div>
-                            
+
                             <!-- Carte Mode Test (si applicable) -->
                             <?php if (!empty($test_key)) :
                                 ?>
@@ -1040,7 +1040,7 @@
                             </div>
                                 <?php
                             endif; ?>
-                            
+
                             <!-- Carte Date d'expiration -->
                             <?php if ($is_premium && $license_expires) :
                                 ?>
@@ -1065,7 +1065,7 @@
                                 <?php
                             endif; ?>
                         </div>
-                        
+
                     <?php
                         // Bannière d'alerte si expiration dans moins de 30 jours
                         if ($is_premium && !empty($license_expires)) {
@@ -1091,7 +1091,7 @@
                             }
                         }
                         ?>
-                        
+
                         <!-- Détails de la clé -->
                         <?php if ($is_premium || !empty($test_key)) :
                             ?>
@@ -1119,7 +1119,7 @@
                                         </code>
                                     </td>
                                 </tr>
-                                
+
                                 <?php if ($is_premium && $license_key) :
                                     ?>
                                 <tr style="border-bottom: 2px solid #cce5ff;">
@@ -1138,7 +1138,7 @@
                                 </tr>
                                     <?php
                                 endif; ?>
-                                
+
                                 <?php if (!empty($test_key)) :
                                     ?>
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -1179,7 +1179,7 @@
                                     endif; ?>
                                     <?php
                                 endif; ?>
-                                
+
                                 <?php if ($is_premium && $license_activated_at) :
                                     ?>
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -1190,7 +1190,7 @@
                                 </tr>
                                     <?php
                                 endif; ?>
-                                
+
                                 <tr>
                                     <td style="padding: 8px 0; font-weight: 500;">Statut :</td>
                                     <td style="padding: 8px 0;">
@@ -1205,7 +1205,7 @@
                                         ?>
                                     </td>
                                 </tr>
-                                
+
                                 <?php if ($is_premium && !empty($license_expires)) :
                                     ?>
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -1235,7 +1235,7 @@
                             <?php
                         endif; ?>
                 </div>
-                    
+
                     <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
                     <?php if (!$is_premium) :
                         ?>
@@ -1248,7 +1248,7 @@
                                 <p style="margin: 0; color: #856404; font-size: 15px; line-height: 1.5;">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
                             </div>
                         </div>
-                        
+
                         <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
                             <strong>✓ Comment tester :</strong>
                             <ol style="margin: 10px 0 0 0; padding-left: 20px;">
@@ -1258,7 +1258,7 @@
                                 <li>Toutes les fonctionnalités premium seront disponibles</li>
                             </ol>
                         </div>
-                        
+
                         <div style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
                             <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
                         </div>
@@ -1275,7 +1275,7 @@
                                 <p style="margin: 0; color: #856404;">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
                             </div>
                         </div>
-                        
+
                         <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
                             <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
                         </div>
@@ -1292,7 +1292,7 @@
                                 <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gerer votre licence ci-dessous.</p>
                             </div>
                         </div>
-                        
+
                         <!-- Avertissements et informations -->
                         <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Savoir :</strong>
@@ -1303,7 +1303,7 @@
                                 <li style="margin: 6px 0;">Une cle ne peut etre active que sur <strong>un seul site a la fois</strong></li>
                             </ul>
                         </div>
-                        
+
                         <form method="post">
                             <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
                             <p class="submit" style="margin-top: 20px;">
@@ -1313,16 +1313,16 @@
                                 </button>
                             </p>
                         </form>
-                        
+
                         <div style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
                             <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
                         </div>
                     </div>
-                    
+
                         <?php
                     endif; ?>
-                    
+
                     <!-- Modal de confirmation pour désactivation -->
                     <div id="deactivate_modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
                         <div style="background: white; border-radius: 12px; padding: 40px; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
@@ -1344,21 +1344,21 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 <script>
                     function showDeactivateModal() {
                         document.getElementById('deactivate_modal').style.display = 'flex';
                         return false;
                     }
-                    
+
                     function closeDeactivateModal() {
                         document.getElementById('deactivate_modal').style.display = 'none';
                     }
-                    
+
                     function submitDeactivateForm() {
                         document.getElementById('deactivate_form').submit();
                     }
-                    
+
                     // Fermer la modale si on clique en dehors
                     document.addEventListener('click', function(event) {
                         var modal = document.getElementById('deactivate_modal');
@@ -1375,23 +1375,23 @@
                                 e.preventDefault();
                                 var resultsSpan = document.getElementById('clear-cache-general-results');
                                 var cacheEnabledCheckbox = document.getElementById('cache_enabled');
-                                
+
                                 // ✅ Vérifie si le cache est activé
                                 if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
                                     resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
                                     resultsSpan.style.color = '#ff9800';
                                     return;
                                 }
-                                
+
                                 clearCacheBtn.disabled = true;
                                 clearCacheBtn.textContent = '⏳ Vérification...';
                                 resultsSpan.textContent = '';
-                                
+
                                 // ✅ Appel AJAX pour vider le cache
                                 var formData = new FormData();
                                 formData.append('action', 'pdf_builder_clear_cache');
                                 formData.append('security', '<?php echo wp_create_nonce('pdf_builder_clear_cache_performance'); ?>');
-                                
+
                                 fetch(ajaxurl, {
                                     method: 'POST',
                                     body: formData
@@ -1402,7 +1402,7 @@
                                 .then(function(data) {
                                     clearCacheBtn.disabled = false;
                                     clearCacheBtn.textContent = '🗑️ Vider tout le cache';
-                                    
+
                                     if (data.success) {
                                         resultsSpan.textContent = '✅ Cache vidé avec succès!';
                                         resultsSpan.style.color = '#28a745';
@@ -1422,7 +1422,7 @@
                         }
                     });
                 </script>
-                    
+
                     <!-- Informations utiles -->
                     <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
                         <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
@@ -1432,19 +1432,19 @@
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Site actuel</div>
                                 <code style="background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; font-family: monospace; color: #fff; display: block; word-break: break-all; font-size: 12px;"><?php echo esc_html(home_url()); ?></code>
                             </div>
-                            
+
                             <!-- Plan actif -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Plan actif</div>
                                 <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius:  4px; font-weight: bold; font-size: 13px; display: inline-block;"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
                             </div>
-                            
+
                             <!-- Version du plugin -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Version du plugin</div>
                                 <div style="font-size: 14px; font-weight: bold;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></div>
                             </div>
-                            
+
                             <?php if ($is_premium) :
                                 ?>
                             <!-- Support Premium -->
@@ -1452,7 +1452,7 @@
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Support</div>
                                 <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Contact Support Premium →</a>
                             </div>
-                            
+
                             <!-- Documentation -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Documentation</div>
@@ -1462,7 +1462,7 @@
                             endif; ?>
                         </div>
                     </div>
-                    
+
                     <!-- Comparaison des fonctionnalités -->
                     <div style="margin-top: 40px;">
                         <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalites</h3>
@@ -1539,21 +1539,21 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Section Notifications par Email -->
                     <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
                         <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                             📧 Notifications par Email
                         </h3>
-                        
+
                         <p style="color: #003d7a; margin: 0 0 25px 0; line-height: 1.6; font-size: 14px;">
                             Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
                         </p>
-                        
+
                         <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
                             <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
                             <input type="hidden" name="pdf_builder_save_notifications" value="1">
-                            
+
                             <!-- Toggle Notifications -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
                                 <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; color: #003d7a;">
@@ -1567,7 +1567,7 @@
                                     </span>
                                 </label>
                             </div>
-                            
+
                             <!-- Email Input -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
                                 <label for="notification_email" style="display: block; font-weight: 600; color: #003d7a; margin-bottom: 10px; font-size: 14px;">
@@ -1582,7 +1582,7 @@
                                     Défaut : adresse administrateur du site
                                 </p>
                             </div>
-                            
+
                             <!-- Save Button -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc; display: flex; align-items: flex-end;">
                                 <button type="submit" style="background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); border: none; color: white; font-weight: 700; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 100%; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,102,204,0.3);"
@@ -1593,9 +1593,9 @@
                             </div>
             </form>
         </div>
-        
+
         </form>
-        
+
         <div id="performance" class="tab-content hidden-tab">
          <form method="post" id="performance-form" action="">
                 <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
@@ -1609,7 +1609,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="auto_save_enabled" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1" 
+                                <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1"
                                        <?php checked($canvas_settings['auto_save_enabled'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1631,7 +1631,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="compress_images" name="compress_images" value="1" 
+                                <input type="checkbox" id="compress_images" name="compress_images" value="1"
                                        <?php checked($settings['compress_images'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1656,7 +1656,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1" 
+                                <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1"
                                        <?php checked($settings['optimize_for_web'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1684,7 +1684,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="limit_fps" name="limit_fps" value="1" 
+                                <input type="checkbox" id="limit_fps" name="limit_fps" value="1"
                                        <?php checked($settings['limit_fps'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1702,34 +1702,34 @@
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Section Nettoyage -->
             <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
                 <h3>Nettoyage & Maintenance</h3>
                 <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
-                
+
                 <button type="button" id="clear-cache-btn" class="button button-secondary">
                     🗑️ Vider le Cache
                 </button>
-                
+
                 <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px;">
                     <p style="margin: 0;"><strong>💡 Conseil :</strong> Videz le cache si vous rencontrez des problèmes de génération PDF ou si les changements n'apparaissent pas.</p>
                 </div>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
             </p>
          </form>
         </div>
-        
+
         <div id="pdf" class="tab-content hidden-tab">
             <form method="post" id="pdf-form" action="">
                 <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
                 <input type="hidden" name="current_tab" value="pdf">
                 <input type="hidden" name="submit_pdf" value="1">
                 <h2>Paramètres PDF</h2>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
             <table class="form-table">
                 <tr>
@@ -1754,7 +1754,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Métadonnées & Contenu</h3>
             <table class="form-table">
                 <tr>
@@ -1778,7 +1778,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="include_metadata" name="include_metadata" value="1" 
+                                <input type="checkbox" id="include_metadata" name="include_metadata" value="1"
                                        <?php checked($settings['include_metadata'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1788,7 +1788,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Optimisation & Compression</h3>
             <table class="form-table">
                 <tr>
@@ -1796,7 +1796,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1" 
+                                <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1"
                                        <?php checked($settings['embed_fonts'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1810,7 +1810,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="auto_crop" name="auto_crop" value="1" 
+                                <input type="checkbox" id="auto_crop" name="auto_crop" value="1"
                                        <?php checked($settings['auto_crop'] ?? false); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -1828,7 +1828,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Aide & Conseils -->
             <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
                 <h3>💡 Conseils d'Optimisation</h3>
@@ -1838,27 +1838,27 @@
                     <li><strong>Pour email :</strong> Utilisez la qualité "Basse" + Optimiser pour le web + Recadrage auto</li>
                 </ul>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_pdf" class="button button-primary">Enregistrer les paramètres PDF</button>
             </p>
             </form>
         </div>
-        
+
         <div id="securite" class="tab-content hidden-tab">
             <h2>Paramètres de Sécurité</h2>
             <p style="color: #666;">Configurations de sécurité et limites système. Pour le debug et logging, voir l'onglet Développeur.</p>
-            
+
          <form method="post" id="securite-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_securite_nonce'); ?>
                 <input type="hidden" name="submit_security" value="1">
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚙️ Limites & Protections Système</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="max_template_size">Taille Max Template (octets)</label></th>
                     <td>
-                        <input type="number" id="max_template_size" name="max_template_size" 
+                        <input type="number" id="max_template_size" name="max_template_size"
                                value="<?php echo intval($settings['max_template_size'] ?? 52428800); ?>" min="1048576" step="1048576" />
                         <p class="description">Maximum: ~<?php echo number_format(intval($settings['max_template_size'] ?? 52428800) / 1048576); ?> MB (défaut: 50 MB)</p>
                     </td>
@@ -1866,7 +1866,7 @@
                 <tr>
                     <th scope="row"><label for="max_execution_time">Temps Max d'Exécution (secondes)</label></th>
                     <td>
-                        <input type="number" id="max_execution_time" name="max_execution_time" 
+                        <input type="number" id="max_execution_time" name="max_execution_time"
                                value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="1" max="3600"/>
                         <p class="description">Temps avant timeout pour la génération PDF (défaut: 300 secondes)</p>
                     </td>
@@ -1874,14 +1874,14 @@
                 <tr>
                     <th scope="row"><label for="memory_limit">Limite Mémoire</label></th>
                     <td>
-                        <input type="text" id="memory_limit" name="memory_limit" 
-                               value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>" 
+                        <input type="text" id="memory_limit" name="memory_limit"
+                               value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>"
                                placeholder="256M" />
                         <p class="description">Format: 256M, 512M, 1G. Doit être ≥ taille max template (défaut: 256M)</p>
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Protections</h3>
             <table class="form-table">
                 <tr>
@@ -1906,7 +1906,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Section Sécurité avancée -->
             <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">30px;">
                 <h3>🔒 Sécurité Avancée</h3>
@@ -1918,7 +1918,7 @@
                     <li>✓ Logs sécurisés des actions critiques</li>
                 </ul>
             </div>
-            
+
             <!-- Conseils de sécurité -->
             <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px;">20px;">
                 <h3 style="margin-top: 0; color: #856404;">💡 Conseils Sécurité</h3>
@@ -1929,51 +1929,42 @@
                     <li><strong>Sauvegardes :</strong> Effectuez des sauvegardes régulières</li>
                 </ul>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_security" class="button button-primary">Enregistrer les paramètres de sécurité</button>
             </p>
          </form>
         </div>
-        
+
         <div id="roles" class="tab-content hidden-tab">
             <h2>Gestion des Rôles et Permissions</h2>
-            
+
             <!-- Message de confirmation que l'onglet est chargé -->
             <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
                 ✅ Onglet Rôles chargé - Bouton de sauvegarde visible ci-dessous
             </div>
-            
+
             <?php
             // Traitement de la sauvegarde des rôles autorisés
          if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
-            // Logs removed for clarity
-                // Logs removed for clarity
-                // Logs removed for clarity
+
 
                 if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
-            // Logs removed for clarity
-
                     $allowed_roles = isset($_POST['pdf_builder_allowed_roles'])
                         ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
                         : [];
-            // Logs removed for clarity
 
                     if (empty($allowed_roles)) {
                         $allowed_roles = ['administrator'];
-            // Au minimum l'admin
-                        // Logs removed for clarity
+                        // Au minimum l'admin
                     }
 
                     update_option('pdf_builder_allowed_roles', $allowed_roles);
-            // Logs removed for clarity
-
                     $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Rôles autorisés mis à jour avec succès.</p></div>';
                 } else {
-                // Logs removed for clarity
                     $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité (nonce invalide).</p></div>';
                 }
-         }
+            }
 
             global $wp_roles;
             $all_roles = $wp_roles->roles;
@@ -1992,12 +1983,12 @@
                 'customer' => 'Client WooCommerce',
             ];
             ?>
-            
+
             <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
-            
+
             <form method="post">
                 <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
-                
+
                 <!-- Boutons de contrôle rapide -->
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                     <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
@@ -2013,7 +2004,7 @@
                         Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
                     </span>
                 </div>
-                
+
                 <!-- Bouton de sauvegarde en haut -->
                 <div style="margin-bottom: 20px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
                     <p class="submit" style="margin: 0;">
@@ -2025,7 +2016,7 @@
                         </span>
                     </p>
                 </div>
-                
+
                 <!-- Boutons toggle pour les rôles -->
                 <div class="roles-toggle-list">
                     <?php foreach ($all_roles as $role_key => $role) :
@@ -2048,10 +2039,10 @@
                                 <div class="role-key"><?php echo esc_html($role_key); ?></div>
                             </div>
                             <div class="toggle-switch">
-                                <input type="checkbox" 
+                                <input type="checkbox"
                                        id="role_<?php echo esc_attr($role_key); ?>"
-                                       name="pdf_builder_allowed_roles[]" 
-                                       value="<?php echo esc_attr($role_key); ?>" 
+                                       name="pdf_builder_allowed_roles[]"
+                                       value="<?php echo esc_attr($role_key); ?>"
                                        <?php checked($is_selected); ?>
                                        <?php echo $is_admin ? 'disabled' : ''; ?> />
                                 <label for="role_<?php echo esc_attr($role_key); ?>" class="toggle-slider"></label>
@@ -2060,12 +2051,12 @@
                         <?php
                     endforeach; ?>
                 </div>
-                
+
                 <style>
                     .roles-toggle-list {
                         max-width: 600px;
                     }
-                    
+
                     .role-toggle-item {
                         display: flex;
                         align-items: center;
@@ -2077,21 +2068,21 @@
                         border-radius: 8px;
                         transition: all 0.2s ease;
                     }
-                    
+
                     .role-toggle-item:hover {
                         background: #e9ecef;
                         border-color: #dee2e6;
                     }
-                    
+
                     .role-toggle-item.admin-role {
                         background: #fce4ec;
                         border-color: #f8bbd9;
                     }
-                    
+
                     .role-info {
                         flex: 1;
                     }
-                    
+
                     .role-name {
                         font-weight: 600;
                         font-size: 15px;
@@ -2101,7 +2092,7 @@
                         align-items: center;
                         gap: 8px;
                     }
-                    
+
                     .admin-badge {
                         font-size: 12px;
                         color: #d63384;
@@ -2110,31 +2101,31 @@
                         padding: 2px 6px;
                         border-radius: 4px;
                     }
-                    
+
                     .role-description {
                         font-size: 13px;
                         color: #666;
                         margin-bottom: 2px;
                     }
-                    
+
                     .role-key {
                         font-size: 11px;
                         color: #999;
                         font-family: monospace;
                     }
-                    
+
                     .toggle-switch {
                         position: relative;
                         width: 50px;
                         height: 24px;
                     }
-                    
+
                     .toggle-switch input {
                         opacity: 0;
                         width: 0;
                         height: 0;
                     }
-                    
+
                     .toggle-slider {
                         position: absolute;
                         cursor: pointer;
@@ -2146,7 +2137,7 @@
                         transition: 0.3s;
                         border-radius: 24px;
                     }
-                    
+
                     .toggle-slider:before {
                         position: absolute;
                         content: "";
@@ -2159,35 +2150,35 @@
                         border-radius: 50%;
                         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                     }
-                    
+
                     input:checked + .toggle-slider {
                         background-color: #2271b1;
                     }
-                    
+
                     input:checked + .toggle-slider:before {
                         transform: translateX(26px);
                     }
-                    
+
                     .toggle-switch input:disabled + .toggle-slider {
                         background-color: #d63384;
                         cursor: not-allowed;
                         opacity: 0.7;
                     }
-                    
+
                     .toggle-switch input:disabled:checked + .toggle-slider {
                         background-color: #d63384;
                     }
-                    
+
                     /* Animation au survol */
                     .toggle-slider:hover {
                         box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
                     }
-                    
+
                     input:checked + .toggle-slider:hover {
                         box-shadow: 0 0 8px rgba(34, 113, 177, 0.5);
                     }
                 </style>
-                
+
                 <!-- Bouton de sauvegarde en bas aussi -->
                 <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
                     <p class="submit" style="margin: 0;">
@@ -2199,53 +2190,53 @@
                         </span>
                     </p>
                 </div>
-                
+
             </form>
-            
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     // Empêcher l'interférence AJAX avec le formulaire des rôles
                     const rolesForm = document.querySelector('#roles form');
                     if (rolesForm) {
                         // Log pour déboguer
-                        // Logs removed for clarity
-                        
+
+
                         rolesForm.addEventListener('submit', function(e) {
-                            // Logs removed for clarity
-                            
+
+
                             // Laisser le formulaire se soumettre normalement (POST)
-                            // Logs removed for clarity
+
                         });
-                        
+
                         // Empêcher tout autre event listener AJAX
                         rolesForm.addEventListener('click', function(e) {
                             if (e.target.type === 'submit') {
-                                // Logs removed for clarity
+
                             }
                         }, true); // useCapture = true
                     } else {
                         console.error('❌ Roles form not found!');
                     }
-                    
+
                     const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
                     const selectedCount = document.getElementById('selected-count');
                     const selectAllBtn = document.getElementById('select-all-roles');
                     const selectCommonBtn = document.getElementById('select-common-roles');
                     const selectNoneBtn = document.getElementById('select-none-roles');
-                    
+
                     // Fonction pour mettre à jour le compteur
                     function updateSelectedCount() {
                         const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
                         if (selectedCount) {
                             selectedCount.textContent = checkedBoxes.length;
-                            // Logs removed for clarity
+
                         }
                     }
-                    
+
                     // Bouton Sélectionner Tout
                     if (selectAllBtn) {
                         selectAllBtn.addEventListener('click', function() {
-                            // Logs removed for clarity
+
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = true;
@@ -2254,11 +2245,11 @@
                             updateSelectedCount();
                         });
                     }
-                    
+
                     // Bouton Rôles Courants
                     if (selectCommonBtn) {
                         selectCommonBtn.addEventListener('click', function() {
-                            // Logs removed for clarity
+
                             const commonRoles = ['administrator', 'editor', 'shop_manager'];
                             roleToggles.forEach(function(checkbox) {
                                 const isCommon = commonRoles.includes(checkbox.value);
@@ -2269,11 +2260,11 @@
                             updateSelectedCount();
                         });
                     }
-                    
+
                     // Bouton Désélectionner Tout
                     if (selectNoneBtn) {
                         selectNoneBtn.addEventListener('click', function() {
-                            // Logs removed for clarity
+
                             roleToggles.forEach(function(checkbox) {
                                 if (!checkbox.disabled) {
                                     checkbox.checked = false;
@@ -2282,21 +2273,21 @@
                             updateSelectedCount();
                         });
                     }
-                    
+
                     // Mettre à jour le compteur quand un toggle change
                     roleToggles.forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                            // Logs removed for clarity
+
                             updateSelectedCount();
                         });
                     });
-                    
+
                     // Initialiser le compteur
                     updateSelectedCount();
-                    // Logs removed for clarity
+
                 });
             </script>
-            
+
             <!-- Permissions incluses -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #003d66;">🔐 Permissions Incluses</h3>
@@ -2309,7 +2300,7 @@
                     <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
                 </ul>
             </div>
-            
+
             <!-- Avertissement important -->
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">margin-top: 20px;">
                 <h3 style="margin-top: 0; color: #856404;">⚠️ Informations Importantes</h3>
@@ -2319,7 +2310,7 @@
                     <li>Minimum requis : au moins un rôle sélectionné</li>
                 </ul>
             </div>
-            
+
             <!-- Conseils d'utilisation -->
             <div style="background: #f0f0f0; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 20px;">
                 <h3 style="margin-top: 0;">💡 Conseils d'Utilisation</h3>
@@ -2330,7 +2321,7 @@
                     <li><strong>Sécurité :</strong> Limitez l'accès aux rôles les moins permissifs nécessaires</li>
                 </ul>
             </div>
-            
+
             <!-- Tableau de référence des rôles -->
             <div style="margin-top: 30px;">
                 <h3>📋 Référence des Rôles WordPress</h3>
@@ -2377,18 +2368,18 @@
                 </table>
             </div>
         </div>
-        
+
         <div id="notifications" class="tab-content hidden-tab">
             <h2>Paramètres de Notifications</h2>
-            
+
             <form method="post" id="notifications-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_notifications_nonce'); ?>
                 <input type="hidden" name="submit_notifications" value="1">
-            
+
             <?php
             // Traitement de la sauvegarde des notifications
             if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
-         // Logs removed for clarity
+
                 if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_settings')) {
                     $notification_settings = [
                         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
@@ -2410,9 +2401,9 @@
             $admin_email = get_option('pdf_builder_admin_email', get_option('admin_email'));
             $notification_level = get_option('pdf_builder_notification_log_level', 'error');
             ?>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Notifications par Email</h3>
-            
+
             <table class="form-table">
                     <tr>
                         <th scope="row"><label for="email_notifications_enabled">Notifications Email</label></th>
@@ -2448,9 +2439,9 @@
                         </td>
                     </tr>
             </table>
-                
+
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Événements de Notification</h3>
-                
+
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="notification_on_generation">Génération PDF</label></th>
@@ -2495,17 +2486,17 @@
                         </td>
                     </tr>
                 </table>
-                
+
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Configuration SMTP</h3>
                 <p class="description" style="margin-bottom: 15px;">Configurez un serveur SMTP pour l'envoi des notifications par email</p>
-                
+
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="smtp_enabled">Activer SMTP</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="smtp_enabled" name="smtp_enabled" value="1" 
+                                    <input type="checkbox" id="smtp_enabled" name="smtp_enabled" value="1"
                                            <?php checked(get_option('pdf_builder_smtp_enabled')); ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -2517,7 +2508,7 @@
                     <tr>
                         <th scope="row"><label for="smtp_host">Serveur SMTP</label></th>
                         <td>
-                            <input type="text" id="smtp_host" name="smtp_host" 
+                            <input type="text" id="smtp_host" name="smtp_host"
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_host', 'smtp.gmail.com')); ?>"
                                    class="regular-text" placeholder="smtp.gmail.com" />
                             <p class="description">Adresse du serveur SMTP (ex: smtp.gmail.com, smtp.mailgun.org)</p>
@@ -2526,8 +2517,8 @@
                     <tr>
                         <th scope="row"><label for="smtp_port">Port SMTP</label></th>
                         <td>
-                            <input type="number" id="smtp_port" name="smtp_port" 
-                                   value="<?php echo intval(get_option('pdf_builder_smtp_port', 587)); ?>" 
+                            <input type="number" id="smtp_port" name="smtp_port"
+                                   value="<?php echo intval(get_option('pdf_builder_smtp_port', 587)); ?>"
                                    min="1" max="65535" class="small-text" />
                             <p class="description">Port du serveur SMTP (587 pour TLS, 465 pour SSL, 25 pour non-chiffré)</p>
                         </td>
@@ -2548,7 +2539,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="smtp_auth" name="smtp_auth" value="1" 
+                                    <input type="checkbox" id="smtp_auth" name="smtp_auth" value="1"
                                            <?php checked(get_option('pdf_builder_smtp_auth', true)); ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -2560,8 +2551,8 @@
                     <tr>
                         <th scope="row"><label for="smtp_username">Nom d'utilisateur</label></th>
                         <td>
-                            <input type="text" id="smtp_username" name="smtp_username" 
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_username')); ?>" 
+                            <input type="text" id="smtp_username" name="smtp_username"
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_username')); ?>"
                                    class="regular-text" placeholder="votre-email@gmail.com" autocomplete="username" />
                             <p class="description">Nom d'utilisateur pour l'authentification SMTP</p>
                         </td>
@@ -2569,8 +2560,8 @@
                     <tr>
                         <th scope="row"><label for="smtp_password">Mot de passe</label></th>
                         <td>
-                            <input type="password" id="smtp_password" name="smtp_password" 
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_password')); ?>" 
+                            <input type="password" id="smtp_password" name="smtp_password"
+                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_password')); ?>"
                                    class="regular-text" placeholder="••••••••" autocomplete="current-password" />
                             <p class="description">Mot de passe pour l'authentification SMTP</p>
                         </td>
@@ -2578,7 +2569,7 @@
                     <tr>
                         <th scope="row"><label for="smtp_from_email">Email expéditeur</label></th>
                         <td>
-                            <input type="email" id="smtp_from_email" name="smtp_from_email" 
+                            <input type="email" id="smtp_from_email" name="smtp_from_email"
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_email', get_option('admin_email'))); ?>"
                                    class="regular-text" autocomplete="email" />
                             <p class="description">Adresse email utilisée comme expéditeur (From)</p>
@@ -2587,14 +2578,14 @@
                     <tr>
                         <th scope="row"><label for="smtp_from_name">Nom expéditeur</label></th>
                         <td>
-                            <input type="text" id="smtp_from_name" name="smtp_from_name" 
+                            <input type="text" id="smtp_from_name" name="smtp_from_name"
                                    value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_name', get_bloginfo('name'))); ?>"
                                    class="regular-text" autocomplete="name" />
                             <p class="description">Nom affiché comme expéditeur</p>
                         </td>
                     </tr>
                 </table>
-                
+
                 <p class="submit">
                     <button type="button" id="test-smtp-connection" class="button button-secondary">
                         🔗 Tester la Connexion SMTP
@@ -2603,7 +2594,7 @@
                         🧪 Tester les Notifications
                     </button>
                 </p>
-            
+
             <!-- Informations sur les notifications -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #003d66;">📧 Informations sur les Notifications</h3>
@@ -2614,7 +2605,7 @@
                     <li>Les logs de notification sont conservés pendant 30 jours</li>
                 </ul>
             </div>
-            
+
             <!-- Exemples de notifications -->
             <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top:20px;">
                 <h3 style="margin-top: 0;">💡 Exemples de Notifications</h3>
@@ -2622,7 +2613,7 @@
                 <p><strong>Avertissement :</strong> "Large template detected: file size 45MB, consider optimizing"</p>
                 <p><strong>Info :</strong> "Successfully generated 150 PDFs in batch process (12.5s)"</p>
             </div>
-            
+
             <!-- Tableau des types de notifications -->
             <div style="margin-top: 30px;">
                 <h3>📋 Types de Notifications</h3>
@@ -2687,20 +2678,20 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_notifications" class="button button-primary">Enregistrer les paramètres de notifications</button>
             </p>
             </form>
         </div>
-        
+
         <div id="canvas" class="tab-content hidden-tab">
             <h2>Paramètres Canvas</h2>
-            
+
          <form method="post" id="canvas-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_canvas_nonce'); ?>
                 <input type="hidden" name="submit_canvas" value="1">
-            
+
             <?php
             // Récupérer les paramètres canvas depuis les options WordPress
             $canvas_settings = get_option('pdf_builder_canvas_settings', []);
@@ -2763,7 +2754,7 @@
                 'show_fps' => false
             ], $canvas_settings);
             ?>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Dimensions par Défaut</h3>
             <table class="form-table">
                 <tr>
@@ -2795,13 +2786,13 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Fond & Couleurs</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="canvas_background_color">Couleur Fond Canvas</label></th>
                     <td>
-                        <input type="color" id="canvas_background_color" name="canvas_background_color" 
+                        <input type="color" id="canvas_background_color" name="canvas_background_color"
                                value="<?php echo esc_attr($canvas_settings['canvas_background_color'] ?? '#ffffff'); ?>" />
                         <p class="description">Couleur de fond du canvas</p>
                     </td>
@@ -2809,13 +2800,13 @@
                 <tr>
                     <th scope="row"><label for="container_background_color">Couleur Fond Conteneur</label></th>
                     <td>
-                        <input type="color" id="container_background_color" name="container_background_color" 
+                        <input type="color" id="container_background_color" name="container_background_color"
                                value="<?php echo esc_attr($canvas_settings['container_background_color'] ?? '#f8f9fa'); ?>" />
                         <p class="description">Couleur de fond autour du canvas</p>
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Marges</h3>
             <table class="form-table">
                 <tr>
@@ -2824,7 +2815,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="show_margins" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="show_margins" name="show_margins" value="1" 
+                                <input type="checkbox" id="show_margins" name="show_margins" value="1"
                                        <?php checked($canvas_settings['show_margins']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -2861,7 +2852,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Grille & Aimants</h3>
             <table class="form-table">
                 <tr>
@@ -2870,7 +2861,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="show_grid" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="show_grid" name="show_grid" value="1" 
+                                <input type="checkbox" id="show_grid" name="show_grid" value="1"
                                        <?php checked($canvas_settings['show_grid']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -2884,7 +2875,7 @@
                         echo 'style="color: #999;"';
                                                            } ?>>Taille Grille (px)</label></th>
                     <td>
-                        <input type="number" id="grid_size" name="grid_size" 
+                        <input type="number" id="grid_size" name="grid_size"
                                value="<?php echo intval($canvas_settings['grid_size'] ?? 10); ?>" min="5" max="100"
                                <?php if (!$canvas_settings['show_grid']) {
                                     echo 'disabled style="background-color: #f0f0f0; color: #999;"';
@@ -2896,7 +2887,7 @@
                         echo 'style="color: #999;"';
                                                             } ?>>Couleur Grille</label></th>
                     <td>
-                        <input type="color" id="grid_color" name="grid_color" 
+                        <input type="color" id="grid_color" name="grid_color"
                                value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>"
                                <?php if (!$canvas_settings['show_grid']) {
                                     echo 'disabled style="opacity: 0.6;"';
@@ -2909,7 +2900,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="snap_to_grid" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1" 
+                                <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1"
                                        <?php checked($canvas_settings['snap_to_grid']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -2924,7 +2915,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="snap_to_elements" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1" 
+                                <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1"
                                        <?php checked($canvas_settings['snap_to_elements']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -2936,7 +2927,7 @@
                 <tr>
                     <th scope="row"><label for="snap_tolerance">Tolérance Aimantation (px)</label></th>
                     <td>
-                        <input type="number" id="snap_tolerance" name="snap_tolerance" 
+                        <input type="number" id="snap_tolerance" name="snap_tolerance"
                                value="<?php echo intval($canvas_settings['snap_tolerance'] ?? 5); ?>" min="1" max="50" />
                         <p class="description">Distance avant accrochage magnétique</p>
                     </td>
@@ -2947,7 +2938,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="show_guides" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="show_guides" name="show_guides" value="1" 
+                                <input type="checkbox" id="show_guides" name="show_guides" value="1"
                                        <?php checked($canvas_settings['show_guides']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -2957,20 +2948,20 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Zoom & Navigation</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="default_zoom">Zoom par Défaut (%)</label></th>
                     <td>
-                        <input type="number" id="default_zoom" name="default_zoom" 
+                        <input type="number" id="default_zoom" name="default_zoom"
                                value="<?php echo intval($canvas_settings['default_zoom'] ?? 100); ?>" min="10" max="500" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="zoom_step">Pas du Zoom (%)</label></th>
                     <td>
-                        <input type="number" id="zoom_step" name="zoom_step" 
+                        <input type="number" id="zoom_step" name="zoom_step"
                                value="<?php echo intval($canvas_settings['zoom_step'] ?? 25); ?>" min="5" max="100" />
                         <p class="description">Incrément lors du zoom avant/arrière</p>
                     </td>
@@ -2978,14 +2969,14 @@
                 <tr>
                     <th scope="row"><label for="min_zoom">Zoom Minimum (%)</label></th>
                     <td>
-                        <input type="number" id="min_zoom" name="min_zoom" 
+                        <input type="number" id="min_zoom" name="min_zoom"
                                value="<?php echo intval($canvas_settings['min_zoom'] ?? 10); ?>" min="1" max="100" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="max_zoom">Zoom Maximum (%)</label></th>
                     <td>
-                        <input type="number" id="max_zoom" name="max_zoom" 
+                        <input type="number" id="max_zoom" name="max_zoom"
                                value="<?php echo intval($canvas_settings['max_zoom'] ?? 500); ?>" min="100" max="2000" />
                     </td>
                 </tr>
@@ -2995,7 +2986,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="zoom_with_wheel" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1" 
+                                <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1"
                                        <?php checked($canvas_settings['zoom_with_wheel']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3010,7 +3001,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="pan_with_mouse" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1" 
+                                <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1"
                                        <?php checked($canvas_settings['pan_with_mouse']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3020,7 +3011,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Sélection & Manipulation</h3>
             <table class="form-table">
                 <tr>
@@ -3029,7 +3020,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="show_resize_handles" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1" 
+                                <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1"
                                        <?php checked($canvas_settings['show_resize_handles']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3041,7 +3032,7 @@
                 <tr>
                     <th scope="row"><label for="handle_size">Taille Poignée (px)</label></th>
                     <td>
-                        <input type="number" id="handle_size" name="handle_size" 
+                        <input type="number" id="handle_size" name="handle_size"
                                value="<?php echo intval($canvas_settings['handle_size'] ?? 8); ?>" min="4" max="20" />
                     </td>
                 </tr>
@@ -3051,7 +3042,7 @@
                         <div class="toggle-container">
                             <input type="hidden" name="enable_rotation" value="0" />
                             <label class="toggle-switch">
-                                <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1" 
+                                <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1"
                                        <?php checked($canvas_settings['enable_rotation']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3063,7 +3054,7 @@
                 <tr>
                     <th scope="row"><label for="rotation_step">Pas Rotation (degrés)</label></th>
                     <td>
-                        <input type="number" id="rotation_step" name="rotation_step" 
+                        <input type="number" id="rotation_step" name="rotation_step"
                                value="<?php echo intval($canvas_settings['rotation_step'] ?? 15); ?>" min="1" max="90" />
                     </td>
                 </tr>
@@ -3072,7 +3063,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="multi_select" name="multi_select" value="1" 
+                                <input type="checkbox" id="multi_select" name="multi_select" value="1"
                                        <?php checked($canvas_settings['multi_select']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3086,7 +3077,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1" 
+                                <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1"
                                        <?php checked($canvas_settings['copy_paste_enabled']); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -3096,13 +3087,13 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Undo/Redo & Auto-save</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="undo_levels">Niveaux Undo</label></th>
                     <td>
-                        <input type="number" id="undo_levels" name="undo_levels" 
+                        <input type="number" id="undo_levels" name="undo_levels"
                                value="<?php echo intval($canvas_settings['undo_levels'] ?? 50); ?>" min="1" max="500" />
                         <p class="description">Nombre d'actions à mémoriser pour annuler</p>
                     </td>
@@ -3110,20 +3101,20 @@
                 <tr>
                     <th scope="row"><label for="redo_levels">Niveaux Redo</label></th>
                     <td>
-                        <input type="number" id="redo_levels" name="redo_levels" 
+                        <input type="number" id="redo_levels" name="redo_levels"
                                value="<?php echo intval($canvas_settings['redo_levels'] ?? 50); ?>" min="1" max="500" />
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="auto_save_versions">Versions Auto-save</label></th>
                     <td>
-                        <input type="number" id="auto_save_versions" name="auto_save_versions" 
+                        <input type="number" id="auto_save_versions" name="auto_save_versions"
                                value="<?php echo intval($canvas_settings['auto_save_versions'] ?? 10); ?>" min="1" max="100" />
                         <p class="description">Nombre de versions à conserver</p>
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Conseils Canvas -->
             <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0;">💡 Conseils Canvas</h3>
@@ -3134,25 +3125,25 @@
                     <li><strong>Sécurité :</strong> Les versions auto-save permettent de récupérer en cas de crash</li>
                 </ul>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_canvas" class="button button-primary">Enregistrer les paramètres Canvas</button>
             </p>
          </form>
         </div>
-        
+
         <div id="templates" class="tab-content hidden-tab">
             <style>
                 #templates #global-save-btn { display: none !important; }
             </style>
             <h2>Assignation des Templates</h2>
-            
+
             <p style="margin-bottom: 20px;">Assignez automatiquement des templates aux différents statuts de commande WooCommerce.</p>
-            
+
             <?php
             // Traitement de la sauvegarde
             if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
-         // Logs removed for clarity
+
                 if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
                     $template_mappings = [];
                     if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
@@ -3195,13 +3186,13 @@
                 'order' => 'ASC'
             ]);
             ?>
-            
+
             <form method="post" id="templates-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_templates_nonce'); ?>
                 <input type="hidden" name="submit_templates" value="1">
-                
+
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Mappage des Statuts aux Templates</h3>
-                
+
                 <table class="form-table">
                     <?php foreach ($order_statuses as $status_key => $status_name) :
                         $display_status = str_replace('wc-', '', $status_key);
@@ -3215,12 +3206,12 @@
                                 </label>
                             </th>
                             <td>
-                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]" 
+                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($display_status); ?>" class="regular-text">
                                     <option value="">-- Utiliser le template par défaut --</option>
                                     <?php foreach ($templates as $template) :
                                         ?>
-                                        <option value="<?php echo intval($template->ID); ?>" 
+                                        <option value="<?php echo intval($template->ID); ?>"
                                                 <?php selected($selected_template, $template->ID); ?>>
                                             <?php echo esc_html($template->post_title ?: '(Sans titre)'); ?>
                                         </option>
@@ -3235,14 +3226,14 @@
                         <?php
                     endforeach; ?>
                 </table>
-                
+
                 <p class="submit">
                     <button type="submit" name="submit_templates" class="button button-primary">
                         Sauvegarder les Assignations
                     </button>
                 </p>
             </form>
-            
+
             <!-- Info WooCommerce -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #003d66;">📦 Intégration WooCommerce</h3>
@@ -3254,7 +3245,7 @@
                     <li>Laissez vide pour utiliser le template par défaut</li>
                 </ul>
             </div>
-            
+
             <!-- Tableau récapitulatif -->
             <div style="margin-top: 30px;">
                 <h3>📋 Vue d'ensemble des Assignations</h3>
@@ -3286,7 +3277,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Conseils d'utilisation -->
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
                 <h3 style="margin-top: 0; color: #856404;">💡 Conseils d'Utilisation</h3>
@@ -3299,13 +3290,13 @@
                 </ul>
             </div>
         </div>
-        
+
         <div id="maintenance" class="tab-content hidden-tab">
             <h2>Actions de Maintenance</h2>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
             <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
-            
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <form method="post" style="display: inline;">
                     <?php wp_nonce_field('pdf_builder_clear_cache_maintenance', 'pdf_builder_clear_cache_nonce_maintenance'); ?>
@@ -3313,38 +3304,38 @@
                         🗑️ Vider le Cache
                     </button>
                 </form>
-                
+
                 <button type="button" class="button button-secondary" onclick="alert('Suppression de fichiers temporaires...');" style="width: 100%;">
                     📁 Supprimer Fichiers Temp
                 </button>
-                
+
                 <button type="button" class="button button-secondary" onclick="alert('Optimisation base de données...');" style="width: 100%;">
                     ⚡ Optimiser BD
                 </button>
             </div>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔧 Réparation & Réinitialisation</h3>
             <p>Réparez les templates corrompus et les paramètres invalides.</p>
-            
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <button type="button" class="button button-secondary" onclick="alert('Réparation des templates en cours...');" style="width: 100%;">
                     ✅ Réparer Templates
                 </button>
-                
-                <button type="button" class="button button-warning" 
+
+                <button type="button" class="button button-warning"
                         onclick="if(confirm('Réinitialiser tous les paramètres ? Cette action est irréversible.')) { alert('Réinitialisation...'); }"
                         style="width: 100%;">
                     ⚠️ Réinitialiser Paramètres
                 </button>
-                
+
                 <button type="button" class="button button-secondary" onclick="alert('Validation de l\'intégrité en cours...');" style="width: 100%;">
                     🔍 Vérifier Intégrité
                 </button>
             </div>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🐛 Outils de Développement</h3>
             <p>Outils pour les développeurs et le débogage avancé.</p>
-            
+
             <table class="form-table">
                 <tr>
                     <th scope="row"><label>Console de Debug</label></th>
@@ -3365,7 +3356,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📊 Informations Système</h3>
             <table class="form-table">
                 <tr>
@@ -3427,10 +3418,10 @@
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Section Logs & Diagnostics -->
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Logs & Diagnostics</h3>
-            
+
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
@@ -3470,7 +3461,7 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <!-- Avertissements de maintenance -->
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #856404;">⚠️ Avant la Maintenance</h3>
@@ -3481,7 +3472,7 @@
                     <li>✓ N'utilisez pas "Réinitialiser" sans raison importante</li>
                 </ul>
             </div>
-            
+
             <!-- Conseils performance -->
             <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 20px;">
                 <h3 style="margin-top: 0; color: #003d66;">💡 Conseils Performance</h3>
@@ -3494,17 +3485,17 @@
                 </ul>
             </div>
         </div>
-        
+
         <div id="developpeur" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
-            
+
          <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
-                
+
                 <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
-                
+
              <table class="form-table">
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
@@ -3525,7 +3516,7 @@
                         <!-- Champ username caché pour l'accessibilité -->
                         <input type="text" autocomplete="username" style="display: none;" />
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="password" id="developer_password" name="developer_password" 
+                            <input type="password" id="developer_password" name="developer_password"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
                                    value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
@@ -3542,9 +3533,9 @@
                     </td>
                 </tr>
              </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Test de Licence</h3>
-            
+
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
@@ -3596,9 +3587,9 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">�🔍 Paramètres de Debug</h3>
-            
+
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
@@ -3679,9 +3670,9 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📝 Fichiers Logs</h3>
-            
+
             <table class="form-table">
                 <tr>
                   <th scope="row"><label for="log_level">Niveau de Log</label></th>
@@ -3711,9 +3702,9 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🚀 Optimisations Avancées</h3>
-            
+
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="disable_hooks">Désactiver Hooks</label></th>
@@ -3749,9 +3740,9 @@
                     </td>
                 </tr>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Visualiseur de Logs Temps Réel</h3>
-            
+
             <div style="margin-bottom: 15px;">
                 <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
                 <button type="button" id="clear_logs_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Logs</button>
@@ -3763,16 +3754,16 @@
                     <option value="debug">Debug</option>
                 </select>
             </div>
-            
+
             <div id="logs_container" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4;">
                 <div id="logs_content" style="white-space: pre-wrap;">
                     <!-- Logs will be loaded here -->
                     <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
                 </div>
             </div>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧪 Outils de Développement</h3>
-            
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <button type="button" id="reload_cache_btn" class="button button-secondary">
                     🔄 Recharger Cache
@@ -3793,9 +3784,9 @@
                     ℹ️ Info Système
                 </button>
             </div>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⌨️ Raccourcis Clavier Développeur</h3>
-            
+
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
@@ -3830,9 +3821,9 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🎨 Console Code</h3>
-            
+
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="test_code">Code Test</label></th>
@@ -3847,10 +3838,10 @@
                     </td>
                 </tr>
             </table>
-            
+
             <!-- Tableau de références des hooks disponibles -->
             <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🎣 Hooks Disponibles</h3>
-            
+
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
@@ -3892,7 +3883,7 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <!-- Avertissement production -->
             <div style="background: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #c62828;">🚨 Avertissement Production</h3>
@@ -3904,7 +3895,7 @@
                     <li>✓ Utilisez des mots de passe forts pour protéger les outils dev</li>
                 </ul>
             </div>
-            
+
             <!-- Conseils développement -->
             <div style="background: #f3e5f5; border-left: 4px solid #7b1fa2; border-radius: 4px; padding: 20px; margin-top: 20px;">
                 <h3 style="margin-top: 0; color: #4a148c;">💻 Conseils Développement</h3>
@@ -3916,7 +3907,7 @@
                     <li>Testez avec les différents niveaux de log</li>
                 </ul>
             </div>
-            
+
             <p class="submit">
                 <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
             </p>
@@ -3934,7 +3925,7 @@
             opacity: 0.8;
         }
     }
-    
+
     .toggle-switch {
         position: relative;
         display: inline-block;
@@ -4084,19 +4075,19 @@
     .tab-content .submit {
         display: none;
     }
-    
+
     /* Exception pour les onglets qui utilisent des formulaires POST séparés */
     #roles .submit,
     #notifications .submit {
         display: block;
     }
-    
+
     /* Exception pour le bouton de test dans l'onglet notifications */
     #notifications #test-notifications,
     #notifications #test-smtp-connection {
         display: inline-block !important;
     }
-    
+
     /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
     #roles #global-save-btn {
         display: none !important;
@@ -4187,37 +4178,37 @@
         function setupGlobalSaveButton() {
             const globalSaveBtn = document.getElementById('global-save-btn');
             const saveStatus = document.getElementById('save-status');
-            
+
             console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
-            
+
             if (globalSaveBtn) {
                 globalSaveBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
                     const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
                                     document.querySelector('.tab-content.active');
-                    
+
                     if (activeTab) {
                         console.log('📑 Active tab ID:', activeTab.id);
-                        
+
                         // Trouver le formulaire dans l'onglet actif
                         let form = activeTab.querySelector('form');
-                        
+
                         // Si pas de formulaire direct, utiliser le formulaire global (fallback)
                         if (!form) {
                             form = document.getElementById('global-settings-form');
                         }
-                        
+
                         if (form) {
                             console.log('✅ Form found, submitting:', form.id || 'unnamed form');
-                            
+
                             // Afficher le statut de sauvegarde
                             if (saveStatus) {
                                 saveStatus.textContent = '💾 Sauvegarde en cours...';
                                 saveStatus.style.color = '#007cba';
                             }
-                            
+
                             // Soumettre le formulaire de manière sécurisée
                             if (typeof form.requestSubmit === 'function') {
                                 form.requestSubmit();
@@ -4244,25 +4235,25 @@
                     }
                 });
             }
-            
+
             // Gestion du bouton Vider le Cache
             const clearCacheBtn = document.getElementById('clear-cache-btn');
             if (clearCacheBtn) {
                 clearCacheBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
                         // Afficher le statut
                         if (saveStatus) {
                             saveStatus.textContent = '🗑️ Vidage du cache...';
                             saveStatus.style.color = '#007cba';
                         }
-                        
+
                         // Faire une requête AJAX pour vider le cache
                         const formData = new FormData();
                         formData.append('action', 'pdf_builder_clear_cache');
                         formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
-                        
+
                         fetch(ajaxurl, {
                             method: 'POST',
                             body: formData
@@ -4301,7 +4292,7 @@
                 });
             }
         }
-        
+
         // Démarrer la gestion du bouton global
         setupGlobalSaveButton();
     });
@@ -4320,27 +4311,27 @@
                     globalSaveBtn.style.display = '';
                 }
             }
-            
+
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
             console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
-            
+
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     const targetTab = this.getAttribute('data-tab');
-                    
+
                     // Masquer tous les onglets
                     const allTabs = document.querySelectorAll('.tab-content');
                     allTabs.forEach(tab => {
                         tab.classList.add('hidden-tab');
                     });
-                    
+
                     // Désactiver tous les liens d'onglets
                     document.querySelectorAll('.nav-tab').forEach(tabLink => {
                         tabLink.classList.remove('nav-tab-active');
                     });
-                    
+
                     // Afficher l'onglet cible
                     const targetTabContent = document.getElementById(targetTab);
                     if (targetTabContent) {
@@ -4348,10 +4339,10 @@
                     } else {
                         console.error('❌ TAB NOT FOUND:', targetTab);
                     }
-                    
+
                     // Activer le lien d'onglet
                     this.classList.add('nav-tab-active');
-                    
+
                     // Gérer la visibilité du bouton de sauvegarde global
                     const globalSaveBtn = document.getElementById('global-save-btn');
                     if (globalSaveBtn) {
@@ -4361,12 +4352,12 @@
                             globalSaveBtn.style.display = '';
                         }
                     }
-                    
+
                     // Sauvegarder l'onglet actif dans localStorage
                     localStorage.setItem('pdf_builder_active_tab', targetTab);
                 });
             });
-            
+
             // Restaurer l'onglet actif depuis localStorage
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
@@ -4377,14 +4368,14 @@
                 }
             }
         }
-        
+
         // Démarrer la navigation des onglets
         setupTabNavigation();
-        
+
         // Gestion du bouton toggle password
         const togglePasswordBtn = document.getElementById('toggle_password');
         const passwordInput = document.getElementById('developer_password');
-        
+
         if (togglePasswordBtn && passwordInput) {
             togglePasswordBtn.addEventListener('click', function() {
                 if (passwordInput.type === 'password') {
@@ -4409,11 +4400,11 @@
             generateLicenseKeyBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔑 Generating license test key...');
-                
+
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
                 $btn.html('⏳ Génération...');
-                
+
                 jQuery.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -4476,17 +4467,17 @@
         if (deleteLicenseKeyBtn) {
             deleteLicenseKeyBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
                     return;
                 }
-                
+
                 console.log('🗑️ Deleting license test key...');
-                
+
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
                 $btn.html('⏳ Suppression...');
-                
+
                 jQuery.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -4500,10 +4491,10 @@
                         if (response.success) {
                             licenseTestKeyInput.value = '';
                             licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
-                            
+
                             // Masquer le bouton de suppression
                             $btn.hide();
-                            
+
                             setTimeout(function() {
                                 licenseKeyStatus.innerHTML = '';
                             }, 3000);
@@ -4538,11 +4529,11 @@
             toggleTestModeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🎚️ Toggling license test mode...');
-                
+
                 const $btn = jQuery(this);
                 $btn.prop('disabled', true);
                 $btn.html('⏳ Basculement...');
-                
+
                 jQuery.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -4555,7 +4546,7 @@
                         console.log('✅ Test mode toggled:', response);
                         if (response.success) {
                             const enabled = response.data.enabled;
-                            
+
                             // Mettre à jour le statut
                             if (enabled) {
                                 testModeStatus.innerHTML = '✅ MODE TEST ACTIF';
@@ -4566,15 +4557,15 @@
                                 testModeStatus.style.background = '#f8d7da';
                                 testModeStatus.style.color = '#721c24';
                             }
-                            
+
                             // Mettre à jour le checkbox caché
                             if (testModeCheckbox) {
                                 testModeCheckbox.checked = enabled;
                             }
-                            
+
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
-                            
+
                             console.log(response.data.message);
                         } else {
                             const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
@@ -4603,21 +4594,21 @@
         if (cleanupBtn) {
             cleanupBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 // Confirmation avant de nettoyer
                 if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
                     return;
                 }
-                
+
                 console.log('🧹 Cleaning up license...');
-                
+
                 const $btn = jQuery(this);
                 const cleanupStatus = document.getElementById('cleanup_status');
                 const cleanupNonce = document.getElementById('cleanup_license_nonce');
                 $btn.prop('disabled', true);
                 $btn.html('⏳ Nettoyage...');
                 cleanupStatus.innerHTML = '';
-                
+
                 jQuery.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -4630,10 +4621,10 @@
                         console.log('✅ Cleanup successful:', response);
                         $btn.html('🧹 Nettoyer complètement la licence');
                         $btn.prop('disabled', false);
-                        
+
                         if (response.success) {
                             cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
-                            
+
                             // Recharger la page après 2 secondes pour voir les changements
                             setTimeout(function() {
                                 location.reload();
@@ -4665,15 +4656,15 @@
             const $btn = $("#test-cache-btn");
             const $results = $("#cache-test-results");
             const $output = $("#cache-test-output");
-            
+
             $btn.on("click", function(e) {
                 e.preventDefault();
                 console.log("🖱️ Cache test button clicked");
-                
+
                 $btn.prop("disabled", true).html("🔄 Test en cours...");
                 if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
                 if ($output.length) $output.hide();
-                
+
                 $.ajax({
                     url: ajaxurl,
                     type: "POST",
@@ -4685,7 +4676,7 @@
                     success: function(response) {
                         console.log("✅ AJAX success:", response);
                         $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
-                        
+
                         if (response.success) {
                             if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
                             if ($output.length) $output.html(response.data).show();
@@ -4697,7 +4688,7 @@
                     error: function(xhr, status, error) {
                         console.error("❌ AJAX error:", status, error);
                         $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
-                        
+
                         if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
                         if ($output.length) $output.html('<p>Erreur: ' + error + '</p>').show();
                     }
