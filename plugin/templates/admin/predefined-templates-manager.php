@@ -165,18 +165,25 @@ class PDF_Builder_Predefined_Templates_Manager
     private function isDeveloperAuthenticated()
     {
         $settings = get_option('pdf_builder_settings', []);
-        
-        // Bypass pour développement/test : les admins peuvent accéder sans authentification
-        if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
-            return true;
-        }
-        
         if (empty($settings['developer_enabled'])) {
             return false;
         }
-        // Vérifier la session développeur
-        $session_key = 'pdf_builder_developer_auth_' . session_id();
-        return isset($_SESSION[$session_key]) && $_SESSION[$session_key] === true;
+        // Vérifier l'authentification développeur stockée en option
+        $user_id = get_current_user_id();
+        $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
+        $auth_data = get_option($dev_auth_key, []);
+        
+        // Vérifier si l'authentification a expiré (1 heure)
+        if (!empty($auth_data['timestamp']) && (time() - $auth_data['timestamp']) < 3600) {
+            return true;
+        }
+        
+        // Nettoyer si expiré
+        if (!empty($auth_data)) {
+            delete_option($dev_auth_key);
+        }
+        
+        return false;
     }
     /**
      * AJAX - Authentification développeur
@@ -193,13 +200,14 @@ class PDF_Builder_Predefined_Templates_Manager
             if (empty($password) || $password !== $stored_password) {
                 wp_send_json_error('Mot de passe incorrect');
             }
-            // Démarrer la session si nécessaire
-            if (!session_id()) {
-                session_start();
-            }
-            // Authentifier pour cette session
-            $session_key = 'pdf_builder_developer_auth_' . session_id();
-            $_SESSION[$session_key] = true;
+            // Sauvegarder l'authentification en option WordPress
+            $user_id = get_current_user_id();
+            $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
+            $auth_data = [
+                'authenticated' => true,
+                'timestamp' => time()
+            ];
+            update_option($dev_auth_key, $auth_data);
             wp_send_json_success(['message' => 'Authentification réussie']);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -211,10 +219,9 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxDeveloperLogout()
     {
         try {
-            if (session_id()) {
-                $session_key = 'pdf_builder_developer_auth_' . session_id();
-                unset($_SESSION[$session_key]);
-            }
+            $user_id = get_current_user_id();
+            $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
+            delete_option($dev_auth_key);
             wp_send_json_success(['message' => 'Déconnexion réussie']);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
