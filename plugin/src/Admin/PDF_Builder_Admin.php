@@ -3497,6 +3497,10 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveSettingsPage()
     {
+        // Logging basique
+        $log_file = dirname(dirname(dirname(__FILE__))) . '/debug.log';
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ajaxSaveSettingsPage called\n", FILE_APPEND);
+        
         // Vérification très simple et directe
         if (empty($_POST['nonce'])) {
             http_response_code(400);
@@ -3517,6 +3521,7 @@ class PdfBuilderAdmin
         }
         
         if (!$valid) {
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Nonce invalide\n", FILE_APPEND);
             http_response_code(403);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => false, 'message' => 'Nonce invalide']);
@@ -3525,6 +3530,7 @@ class PdfBuilderAdmin
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Permissions insuffisantes\n", FILE_APPEND);
             http_response_code(403);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => false, 'message' => 'Permissions insuffisantes']);
@@ -3550,7 +3556,8 @@ class PdfBuilderAdmin
         }
 
         // Sauvegarder
-        update_option('pdf_builder_settings', $settings);
+        $result = update_option('pdf_builder_settings', $settings);
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Paramètres sauvegardés: " . ($result ? 'OK' : 'FAILED') . "\n", FILE_APPEND);
 
         // Répondre en JSON
         http_response_code(200);
