@@ -309,11 +309,8 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {/* Onglet Personnalisation */}
       {currentTab === 'personnalisation' && (
         <>
-          {/* Section Police globale */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
-              Police globale du tableau
-            </label>
+          {/* Accordéon Police globale du tableau */}
+          <Accordion title="Police globale du tableau" defaultOpen={true}>
             <div style={{
               display: 'flex',
               flexDirection: 'column',
@@ -423,7 +420,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             }}>
               Ces paramètres s&apos;appliquent à tout le tableau. Vous pouvez les personnaliser par zone ci-dessous.
             </div>
-          </div>
+          </Accordion>
 
           {/* Accordéons Police par zone - seulement si !globalFontEnabled */}
           {!element.globalFontEnabled && (
