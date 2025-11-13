@@ -922,21 +922,47 @@ Paramètres PDF</h3>
                     });
                 }
                 
-                // Détecte la soumission du formulaire
+                // Détecte la soumission du formulaire - EMPÊCHE LE RELOAD
                 const settingsForm = document.getElementById('global-settings-form');
                 if (settingsForm) {
-                    settingsForm.addEventListener('submit', function() {
-                        console.log('💾 Settings form submitted');
+                    settingsForm.addEventListener('submit', function(e) {
+                        e.preventDefault(); // ✅ Empêche le rechargement de la page
+                        console.log('💾 Settings form submitted (AJAX mode)');
+                        
+                        // Afficher la notification de sauvegarde
                         toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
+                        
+                        // Récupérer les données du formulaire
+                        const formData = new FormData(settingsForm);
+                        
+                        // Envoyer en AJAX
+                        fetch(settingsForm.action || window.location.href, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            console.log('✅ Form submitted successfully');
+                            toastr.success('✅ Paramètres enregistrés avec succès !', 'Succès');
+                        })
+                        .catch(error => {
+                            console.error('❌ Error submitting form:', error);
+                            toastr.error('❌ Erreur lors de l\'enregistrement', 'Erreur');
+                        });
                     });
                 }
                 
                 // Bouton Enregistrer
                 const submitBtn = document.getElementById('general-submit-btn');
                 if (submitBtn) {
-                    submitBtn.addEventListener('click', function() {
+                    submitBtn.addEventListener('click', function(e) {
+                        e.preventDefault(); // ✅ Empêche le rechargement
                         console.log('💾 Save button clicked');
-                        toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
+                        
+                        // Déclencher la soumission du formulaire
+                        const settingsForm = document.getElementById('global-settings-form');
+                        if (settingsForm) {
+                            settingsForm.dispatchEvent(new Event('submit'));
+                        }
                     });
                 }
                 
