@@ -1522,7 +1522,7 @@
                     <td>
                         <input type="number" id="max_fps" name="max_fps" value="<?php echo intval($settings['max_fps'] ?? 60); ?>"
                                min="15" max="240" />
-                        <p class="description">Images par seconde maximales (15-240 FPS)</p>
+                        <p class="description">Images par seconde maximales (15-240 FPS)</p> 
                     </td>
                 </tr>
             </table>
