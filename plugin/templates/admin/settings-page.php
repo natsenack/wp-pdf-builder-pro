@@ -4087,11 +4087,9 @@
         .floating-save-btn:hover {
             background: linear-gradient(135deg, #005a87 0%, #004466 100%);
             box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
-            transform: translateY(-2px);
         }
 
         .floating-save-btn:active {
-            transform: translateY(0);
             box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
         }
 
