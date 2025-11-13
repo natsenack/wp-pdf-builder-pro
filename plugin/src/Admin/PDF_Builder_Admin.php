@@ -508,16 +508,6 @@ class PdfBuilderAdmin
                             </div>
                         </div>
                     </div>
-
-                    <div class="guide-resources">
-                        <h4>📚 Ressources supplémentaires</h4>
-                        <ul>
-                            <li><strong>📖 Documentation :</strong> Guides détaillés dans <code>docs/user/</code></li>
-                            <li><strong>🎥 Tutoriels :</strong> Vidéos et exemples pratiques</li>
-                            <li><strong>❓ FAQ :</strong> Questions fréquemment posées</li>
-                            <li><strong>🆘 Support :</strong> Contactez-nous pour assistance</li>
-                        </ul>
-                    </div>
                 </div>
 
                 <!-- Fonctionnalités complètes -->
@@ -869,37 +859,6 @@ class PdfBuilderAdmin
                     font-size: 12px;
                     margin-top: 5px;
                     font-style: italic;
-                }
-
-                .guide-resources {
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #e1e1e1;
-                }
-
-                .guide-resources h4 {
-                    margin: 0 0 15px 0;
-                    color: #1d2327;
-                    font-size: 16px;
-                }
-
-                .guide-resources ul {
-                    margin: 0;
-                    padding-left: 20px;
-                }
-
-                .guide-resources li {
-                    margin-bottom: 8px;
-                    color: #666;
-                    font-size: 14px;
-                }
-
-                .guide-resources code {
-                    background: #f1f1f1;
-                    padding: 2px 6px;
-                    border-radius: 3px;
-                    font-family: monospace;
-                    font-size: 12px;
                 }
 
                 /* Styles pour la section fonctionnalités */
