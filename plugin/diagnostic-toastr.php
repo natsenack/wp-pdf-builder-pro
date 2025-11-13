@@ -3,7 +3,7 @@
  * Diagnostic - Vérifier les fichiers Toastr sur le serveur
  */
 
-$plugin_dir = wp_normalize_path(dirname(__FILE__));
+$plugin_dir = dirname(__FILE__);
 $assets_dir = $plugin_dir . '/assets';
 
 echo "=== DIAGNOSTIC TOASTR ===\n\n";
@@ -37,6 +37,20 @@ if (is_dir($assets_dir)) {
             echo "  - " . $file . (is_dir($assets_dir . '/' . $file) ? '/' : '') . "\n";
         }
     }
+}
+
+// Vérifier CSS et JS spécifiquement
+echo "\n📋 Vérification des fichiers Toastr:\n";
+if (file_exists($css_file)) {
+    echo "✅ CSS Toastr: " . filesize($css_file) . " bytes\n";
+} else {
+    echo "❌ CSS Toastr: MANQUANT\n";
+}
+
+if (file_exists($js_file)) {
+    echo "✅ JS Toastr: " . filesize($js_file) . " bytes\n";
+} else {
+    echo "❌ JS Toastr: MANQUANT\n";
 }
 
 echo "\n=== FIN DIAGNOSTIC ===\n";
