@@ -440,16 +440,10 @@ class PdfBuilderAdmin
                     <div class="action-card">
                         <h3>⚙️ Paramètres & Configuration</h3>
                         <p>Configurez les paramètres avancés, polices, qualité d'impression et options WooCommerce</p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
-                                class="button button-secondary">
-                                ⚙️ Paramètres Avancés
-                            </a>
-                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
-                                class="button button-secondary">
-                                ➕ Créer un Template
-                            </a>
-                        </div>
+                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
+                            class="button button-secondary">
+                            ➕ Créer un Template
+                        </a>
                     </div>
                 </div>
 
