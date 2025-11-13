@@ -828,18 +828,20 @@ class PdfBuilderAdmin
 
                 .guide-steps {
                     display: flex;
-                    flex-wrap: wrap;
-                    gap: 20px;
+                    flex-wrap: nowrap;
+                    gap: 15px;
                     margin-top: 20px;
                     justify-content: flex-start;
+                    overflow-x: auto;
+                    padding-bottom: 10px;
                 }
 
                 .step {
                     display: flex;
                     align-items: flex-start;
-                    min-width: 280px;
-                    flex: 1;
-                    max-width: 350px;
+                    min-width: 200px;
+                    flex: 0 0 auto;
+                    max-width: 250px;
                 }
 
                 .step-number {
