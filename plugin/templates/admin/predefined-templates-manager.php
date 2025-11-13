@@ -614,8 +614,13 @@ class PDF_Builder_Predefined_Templates_Manager
                     <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
                     <div class="form-row">
                         <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
-                        <input type="password" id="developer-password" name="password" required
-                               placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" />
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="developer-password" name="password" required
+                                   placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" style="flex: 1; padding-right: 40px;" />
+                            <button type="button" id="toggle-password-visibility" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 18px; padding: 0;">
+                                👁️
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="button button-primary">
                         🔓 <?php _e('Se connecter', 'pdf-builder-pro'); ?>
@@ -626,6 +631,21 @@ class PDF_Builder_Predefined_Templates_Manager
         </div>
         <script>
         jQuery(document).ready(function($) {
+            // Toggle afficher/masquer le mot de passe
+            $('#toggle-password-visibility').on('click', function(e) {
+                e.preventDefault();
+                const passwordInput = $('#developer-password');
+                const isPassword = passwordInput.attr('type') === 'password';
+                
+                if (isPassword) {
+                    passwordInput.attr('type', 'text');
+                    $(this).text('🙈');
+                } else {
+                    passwordInput.attr('type', 'password');
+                    $(this).text('👁️');
+                }
+            });
+
             $('#developer-login-form').on('submit', function(e) {
                 e.preventDefault();
                 const password = $('#developer-password').val();
