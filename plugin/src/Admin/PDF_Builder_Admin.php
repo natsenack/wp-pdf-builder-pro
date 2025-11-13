@@ -440,15 +440,16 @@ class PdfBuilderAdmin
                     <div class="action-card">
                         <h3>📝 Modèles Prédéfinis</h3>
                         <p>Découvrez et utilisez des modèles PDF prêts à l'emploi pour vos besoins courants</p>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>"
-                            class="button button-secondary">
-                            📝 Voir les Modèles
-                        </a>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
-                            class="button button-secondary"
-                            style="margin-top: 8px;">
-                            ➕ Créer un Template
-                        </a>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>"
+                                class="button button-secondary">
+                                📝 Voir les Modèles
+                            </a>
+                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
+                                class="button button-secondary">
+                                ➕ Créer un Template
+                            </a>
+                        </div>
                     </div>
                 </div>
 
