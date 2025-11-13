@@ -57,9 +57,9 @@ class PDF_Builder_Predefined_Templates_Manager
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
         
         // Scripts personnalisés
-        wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PLUGIN_URL . 'templates/admin/js/predefined-templates.js', ['jquery', 'codemirror'], '1.0.0', true);
+        wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'js/predefined-templates.js', ['jquery', 'codemirror'], '1.0.0', true);
         // Styles personnalisés
-        wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PLUGIN_URL . 'templates/admin/css/predefined-templates.css', [], '1.0.0');
+        wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'css/predefined-templates.css', [], '1.0.0');
         // Localize script
         wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
