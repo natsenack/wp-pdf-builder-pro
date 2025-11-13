@@ -972,7 +972,6 @@ Paramètres PDF</h3>
         
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
-                <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
                 <input type="hidden" name="current_tab" value="licence">
                 
                 <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la
