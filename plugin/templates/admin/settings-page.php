@@ -4076,14 +4076,18 @@
             font-size: 14px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-            transition: all 0s !important;
+            transition: none !important;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             min-width: 140px;
-            justify-content: center;
+            height: 44px;
+            line-height: 1;
             user-select: none;
             -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .floating-save-btn:hover {
