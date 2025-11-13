@@ -1110,6 +1110,10 @@ class PdfBuilderAdmin
             return;
         }
 
+        // Masquer les notifications WordPress et des autres plugins sur nos pages
+        remove_all_actions('admin_notices');
+        remove_all_actions('all_admin_notices');
+
         // Charger les scripts
         $this->loadAdminScripts($hook);
     }
