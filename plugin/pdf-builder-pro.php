@@ -257,6 +257,7 @@ function pdf_builder_init()
     // Enregistrer le handler AJAX pour le wizard
     error_log('PDF Builder Pro: Registering AJAX handler');
     add_action('wp_ajax_pdf_builder_wizard_step', function() {
+        error_log('PDF Builder Wizard: AJAX handler called from main plugin file');
         try {
             // Log pour debug
             error_log('PDF Builder Wizard: AJAX handler called from main plugin file');
@@ -306,11 +307,11 @@ function pdf_builder_init()
     });
 
     // Test AJAX standard de WordPress
-    add_action('wp_ajax_nopriv_test_ajax', function() {
+    add_action('wp_ajax_nopriv_pdf_builder_test_ajax', function() {
         error_log('PDF Builder Pro: Standard AJAX test called');
         wp_send_json(array('success' => true, 'message' => 'Standard AJAX works!'));
     });
-    add_action('wp_ajax_test_ajax', function() {
+    add_action('wp_ajax_pdf_builder_test_ajax', function() {
         error_log('PDF Builder Pro: Standard AJAX test called (logged in)');
         wp_send_json(array('success' => true, 'message' => 'Standard AJAX works for logged in users!'));
     });

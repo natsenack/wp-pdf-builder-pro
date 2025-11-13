@@ -63,7 +63,7 @@ var pdfBuilderWizard = {
             url: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.ajax_url ? pdfBuilderWizard.ajax_url : ajaxurl,
             type: 'POST',
             data: {
-                action: 'test_ajax'
+                action: 'pdf_builder_test_ajax'
             },
             success: function(response) {
                 console.log('PDF Builder Wizard: AJAX test successful:', response);
