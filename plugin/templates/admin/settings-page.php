@@ -766,14 +766,6 @@
         </form>
     </div>
 
-        <!-- Bouton de sauvegarde flottant global -->
-        <div class="floating-save-container">
-            <button type="button" id="global-save-btn" class="floating-save-btn">
-                💾 Enregistrer
-            </button>
-            <div class="save-status" id="save-status"></div>
-        </div>
-
 </div>
 <style>
         /* Configuration des notifications Toastr */
@@ -3134,9 +3126,6 @@
         </div>
 
         <div id="templates" class="tab-content hidden-tab">
-            <style>
-                #templates #global-save-btn { display: none !important; }
-            </style>
             <h2>Assignation des Templates</h2>
 
             <p style="margin-bottom: 20px;">Assignez automatiquement des templates aux différents statuts de commande WooCommerce.</p>
@@ -4003,7 +3992,7 @@
     /* Bouton de sauvegarde flottant */
     .floating-save-container {
         position: fixed;
-        top: 40px;
+        bottom: 40px;
         right: 20px;
         z-index: 1000;
         display: flex;
@@ -4089,11 +4078,6 @@
         display: inline-block !important;
     }
 
-    /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
-    #roles #global-save-btn {
-        display: none !important;
-    }
-
     /* Classe pour masquer les onglets non actifs */
     .hidden-tab {
         display: none;
@@ -4173,146 +4157,10 @@
     ]); ?>;
  // NOTE: getDimensionsFromFormat function already defined above (line ~503), no need to duplicate it here
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Gestion du bouton de sauvegarde global
-        function setupGlobalSaveButton() {
-            const globalSaveBtn = document.getElementById('global-save-btn');
-            const saveStatus = document.getElementById('save-status');
-
-            console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
-
-            if (globalSaveBtn) {
-                globalSaveBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
-                    const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
-                                    document.querySelector('.tab-content.active');
-
-                    if (activeTab) {
-                        console.log('📑 Active tab ID:', activeTab.id);
-
-                        // Trouver le formulaire dans l'onglet actif
-                        let form = activeTab.querySelector('form');
-
-                        // Si pas de formulaire direct, utiliser le formulaire global (fallback)
-                        if (!form) {
-                            form = document.getElementById('global-settings-form');
-                        }
-
-                        if (form) {
-                            console.log('✅ Form found, submitting:', form.id || 'unnamed form');
-
-                            // Afficher le statut de sauvegarde
-                            if (saveStatus) {
-                                saveStatus.textContent = '💾 Sauvegarde en cours...';
-                                saveStatus.style.color = '#007cba';
-                            }
-
-                            // Soumettre le formulaire de manière sécurisée
-                            if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                            } else {
-                                // Fallback pour les navigateurs plus anciens
-                                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                                if (form.dispatchEvent(submitEvent)) {
-                                    form.submit();
-                                }
-                            }
-                        } else {
-                            console.error('❌ No form found in active tab:', activeTab.id);
-                            if (saveStatus) {
-                                saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
-                                saveStatus.style.color = '#dc3232';
-                            }
-                        }
-                    } else {
-                        console.error('❌ No active tab found');
-                        if (saveStatus) {
-                            saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
-                            saveStatus.style.color = '#dc3232';
-                        }
-                    }
-                });
-            }
-
-            // Gestion du bouton Vider le Cache
-            const clearCacheBtn = document.getElementById('clear-cache-btn');
-            if (clearCacheBtn) {
-                clearCacheBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
-                        // Afficher le statut
-                        if (saveStatus) {
-                            saveStatus.textContent = '🗑️ Vidage du cache...';
-                            saveStatus.style.color = '#007cba';
-                        }
-
-                        // Faire une requête AJAX pour vider le cache
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_clear_cache');
-                        formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
-
-                        fetch(ajaxurl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                if (saveStatus) {
-                                    saveStatus.textContent = '✅ Cache vidé avec succès';
-                                    saveStatus.style.color = '#46b450';
-                                }
-                                setTimeout(() => {
-                                    if (saveStatus) saveStatus.classList.add('show');
-                                }, 100);
-                                setTimeout(() => {
-                                    if (saveStatus) {
-                                        saveStatus.classList.remove('show');
-                                        saveStatus.textContent = '';
-                                    }
-                                }, 3000);
-                            } else {
-                                if (saveStatus) {
-                                    saveStatus.textContent = '❌ Erreur lors du vidage du cache';
-                                    saveStatus.style.color = '#dc3232';
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur AJAX:', error);
-                            if (saveStatus) {
-                                saveStatus.textContent = '❌ Erreur de connexion';
-                                saveStatus.style.color = '#dc3232';
-                            }
-                        });
-                    }
-                });
-            }
-        }
-
-        // Démarrer la gestion du bouton global
-        setupGlobalSaveButton();
-    });
-</script>
 
 <script>
         // Gestion de la navigation des onglets
         function setupTabNavigation() {
-            // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
-            const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
-            const globalSaveBtn = document.getElementById('global-save-btn');
-            if (globalSaveBtn && initialActiveTab) {
-                if (initialActiveTab.id === 'maintenance') {
-                    globalSaveBtn.style.display = 'none';
-                } else {
-                    globalSaveBtn.style.display = '';
-                }
-            }
-
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
             console.log('🔍 SETUP TAB NAVIGATION - Found tab links:', tabLinks.length);
 
@@ -4343,16 +4191,6 @@
 
                     // Activer le lien d'onglet
                     this.classList.add('nav-tab-active');
-
-                    // Gérer la visibilité du bouton de sauvegarde global
-                    const globalSaveBtn = document.getElementById('global-save-btn');
-                    if (globalSaveBtn) {
-                        if (targetTab === 'maintenance') {
-                            globalSaveBtn.style.display = 'none';
-                        } else {
-                            globalSaveBtn.style.display = '';
-                        }
-                    }
 
                     // Sauvegarder l'onglet actif dans localStorage
                     localStorage.setItem('pdf_builder_active_tab', targetTab);
