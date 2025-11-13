@@ -3497,72 +3497,68 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveSettingsPage()
     {
-        // Initialiser la réponse
-        $response = [];
-        $http_code = 200;
+        // Vérification très simple et directe
+        if (empty($_POST['nonce'])) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => 'Nonce manquant']);
+            wp_die();
+        }
+
+        // Vérifier le nonce avec les actions possibles
+        $nonce = $_POST['nonce'];
+        $valid = false;
         
-        try {
-            // Vérification de sécurité - accepter plusieurs nonces possibles
-            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
-            
-            // Essayer plusieurs actions de nonce possibles
-            $nonce_actions = [
-                'pdf_builder_settings',
-                'pdf_builder_performance_settings',
-                'pdf_builder_pdf_settings',
-                'pdf_builder_general_settings',
-            ];
-            
-            $nonce_valid = false;
-            foreach ($nonce_actions as $action) {
-                if (wp_verify_nonce($nonce, $action)) {
-                    $nonce_valid = true;
-                    break;
-                }
-            }
-            
-            if (!$nonce_valid) {
-                throw new Exception('Nonce invalide');
-            }
-
-            // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                throw new Exception('Permissions insuffisantes');
-            }
-
-            // Récupération des paramètres depuis le formulaire
-            $settings = [];
-            // Paramètres de debug et performance
-            $settings['debug_mode'] = isset($_POST['debug_mode']);
-            $settings['cache_enabled'] = isset($_POST['cache_enabled']);
-            $settings['cache_ttl'] = intval($_POST['cache_ttl'] ?? 3600);
-            $settings['max_execution_time'] = intval($_POST['max_execution_time'] ?? 300);
-            $settings['memory_limit'] = sanitize_text_field($_POST['memory_limit'] ?? '256M');
-            $settings['pdf_quality'] = sanitize_text_field($_POST['pdf_quality'] ?? 'high');
-            // Paramètres de format
-            $settings['default_format'] = sanitize_text_field($_POST['default_format'] ?? 'A4');
-            $settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
-
-            // Sauvegarde des paramètres
-            update_option('pdf_builder_settings', $settings);
-            
-            $response = [
-                'success' => true,
-                'message' => 'Paramètres sauvegardés avec succès'
-            ];
-            
-        } catch (Exception $e) {
-            $response = [
-                'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage()
-            ];
-            $http_code = 400;
+        if (wp_verify_nonce($nonce, 'pdf_builder_settings') ||
+            wp_verify_nonce($nonce, 'pdf_builder_performance_settings') ||
+            wp_verify_nonce($nonce, 'pdf_builder_pdf_settings') ||
+            wp_verify_nonce($nonce, 'pdf_builder_general_settings')) {
+            $valid = true;
         }
         
-        // Envoyer la réponse JSON directement
+        if (!$valid) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => 'Nonce invalide']);
+            wp_die();
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => 'Permissions insuffisantes']);
+            wp_die();
+        }
+
+        // Sauvegarder les paramètres simples
+        $settings = get_option('pdf_builder_settings', []);
+        if (!is_array($settings)) {
+            $settings = [];
+        }
+
+        // Mettre à jour les paramètres de base reçus
+        foreach ($_POST as $key => $value) {
+            if ($key !== 'action' && $key !== 'nonce' && $key !== '_wp_http_referer') {
+                // Sanitize basic values
+                if (is_array($value)) {
+                    $settings[$key] = array_map('sanitize_text_field', $value);
+                } else {
+                    $settings[$key] = sanitize_text_field($value);
+                }
+            }
+        }
+
+        // Sauvegarder
+        update_option('pdf_builder_settings', $settings);
+
+        // Répondre en JSON
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
-        http_response_code($http_code);
-        echo json_encode($response);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Paramètres sauvegardés avec succès'
+        ]);
         wp_die();
     }
 
