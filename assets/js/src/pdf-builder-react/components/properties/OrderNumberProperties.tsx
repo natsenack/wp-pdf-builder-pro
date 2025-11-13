@@ -162,13 +162,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
-                checked={true}
-                onChange={() => {}} // Désactivé, toujours affiché
-                label="Afficher le numéro de commande"
-                description="Toujours affiché"
-              />
-
-              <Toggle
                 checked={element.showDate !== false}
                 onChange={(checked) => onChange(element.id, 'showDate', checked)}
                 label="Afficher la date"
