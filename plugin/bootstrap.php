@@ -11,6 +11,46 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // ============================================================================
+// ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
+// ============================================================================
+// Cette approche très tôt supprime les notifications AVANT qu'elles ne s'affichent
+if (is_admin()) {
+    // Vérifier que nous sommes sur une page PDF Builder
+    $pdf_builder_pages = [
+        'pdf-builder-pro',
+        'pdf-builder-templates',
+        'pdf-builder-react-editor',
+        'pdf-builder-settings',
+        'pdf-builder-developer',
+        'pdf-builder-predefined-templates'
+    ];
+    
+    $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+    
+    if (in_array($current_page, $pdf_builder_pages)) {
+        // Supprimer TOUS les hooks de notifications AVANT qu'ils ne s'exécutent
+        add_action('admin_init', function() {
+            remove_all_actions('admin_notices');
+            remove_all_actions('all_admin_notices');
+            remove_all_actions('network_admin_notices');
+            remove_all_actions('user_admin_notices');
+        }, 0);
+        
+        // Filtrer les settings_errors pour retourner un tableau vide
+        add_filter('wp_settings_errors', '__return_empty_array', 0);
+        
+        // Output buffering ultra-précoce
+        ob_start(function($buffer) {
+            // Supprimer les notifications du HTML
+            $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
+            $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*>.*?<\/div>/is', '', $buffer);
+            $buffer = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated)[^"]*"[^>]*>.*?<\/p>/is', '', $buffer);
+            return $buffer;
+        });
+    }
+}
+
+// ============================================================================
 // ✅ CACHE DÉSACTIVÉ - Force désactiver le cache pour la cohérence des données
 // ============================================================================
 add_action('plugins_loaded', function() {
