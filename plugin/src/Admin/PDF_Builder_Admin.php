@@ -3702,38 +3702,56 @@ class PdfBuilderAdmin
      */
     public function ajaxSavePerformanceSettings()
     {
+        // Log pour debug
+        error_log('🔴 ajaxSavePerformanceSettings called');
+        error_log('POST data: ' . print_r($_POST, true));
+        
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_performance_settings')) {
+        $nonce = $_POST['nonce'] ?? '';
+        error_log('Nonce reçu: ' . $nonce);
+        error_log('Vérification nonce avec action: pdf_builder_performance_settings');
+        
+        if (!wp_verify_nonce($nonce, 'pdf_builder_performance_settings')) {
+            error_log('❌ Nonce invalide!');
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
         // Vérification des permissions
         if (!current_user_can('manage_options')) {
+            error_log('❌ Permissions insuffisantes');
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
             return;
         }
 
-        // Récupération des paramètres de performance seulement
-        $performance_settings = [
-            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-            'compress_images' => isset($_POST['compress_images']),
-            'image_quality' => intval($_POST['image_quality'] ?? 85),
-            'optimize_for_web' => isset($_POST['optimize_for_web']),
-            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
-            'limit_fps' => isset($_POST['limit_fps']),
-            'max_fps' => intval($_POST['max_fps'] ?? 60),
-        ];
+        try {
+            // Récupération des paramètres de performance seulement
+            $performance_settings = [
+                'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+                'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+                'compress_images' => isset($_POST['compress_images']),
+                'image_quality' => intval($_POST['image_quality'] ?? 85),
+                'optimize_for_web' => isset($_POST['optimize_for_web']),
+                'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+                'limit_fps' => isset($_POST['limit_fps']),
+                'max_fps' => intval($_POST['max_fps'] ?? 60),
+            ];
 
-        // Sauvegarde des paramètres de performance
-        $settings = get_option('pdf_builder_settings', []);
-        foreach ($performance_settings as $key => $value) {
-            $settings[$key] = $value;
+            error_log('Performance settings à sauvegarder: ' . print_r($performance_settings, true));
+
+            // Sauvegarde des paramètres de performance
+            $settings = get_option('pdf_builder_settings', []);
+            foreach ($performance_settings as $key => $value) {
+                $settings[$key] = $value;
+            }
+            update_option('pdf_builder_settings', $settings);
+
+            error_log('✅ Paramètres sauvegardés avec succès');
+            wp_send_json_success(['message' => 'Paramètres de performance sauvegardés avec succès !']);
+        } catch (Exception $e) {
+            error_log('❌ Exception: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
-        update_option('pdf_builder_settings', $settings);
-
-        wp_send_json_success(['message' => 'Paramètres de performance sauvegardés avec succès !']);
     }
 
     /**
