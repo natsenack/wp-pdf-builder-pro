@@ -127,7 +127,7 @@ class PDF_Builder_Installation_Wizard {
      * Charger les scripts et styles
      */
     public function enqueue_scripts($hook) {
-        error_log('PDF Builder Wizard: enqueue_scripts called with hook: ' . $hook);
+        error_log('PDF Builder Wizard: enqueue_scripts called with hook: ' . $hook . ', REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
         error_log('PDF Builder Wizard: _GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
 
         // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard ou pdf-builder-pro
