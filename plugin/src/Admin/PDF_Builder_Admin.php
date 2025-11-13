@@ -872,13 +872,6 @@ class PdfBuilderAdmin
     public function settingsPage()
     {
         $this->checkAdminPermissions();
-// Charger le fichier de configuration si nécessaire
-        if (!defined('PDF_BUILDER_VERSION')) {
-            $config_file = plugin_dir_path(dirname(__FILE__)) . 'config.php';
-            if (file_exists($config_file)) {
-                include_once $config_file;
-            }
-        }
 
         ?>
         <div class="wrap">
@@ -5873,9 +5866,7 @@ class PdfBuilderAdmin
      */
     private function getPluginVersion()
     {
-        // Lire directement depuis le header du plugin principal
-        $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
-        return $plugin_data['Version'] ?: '1.1.0';
+        return pdf_builder_get_version();
     }
 }
 

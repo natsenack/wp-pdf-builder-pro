@@ -26,7 +26,7 @@ if (defined('DOING_AJAX') && DOING_AJAX) {
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 // PDF_BUILDER_PLUGIN_URL sera défini dans constants.php avec plugins_url()
-define('PDF_BUILDER_VERSION', '1.1.0');
+// PDF_BUILDER_VERSION sera défini dans constants.php
 // Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
 error_reporting(error_reporting() & ~E_DEPRECATED);
 // Hook d'activation
@@ -71,7 +71,7 @@ function pdf_builder_activate()
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
-    update_option('pdf_builder_version', '1.1.0');
+    update_option('pdf_builder_version', pdf_builder_get_version());
 
     // Vérifier et créer les tables manquantes pour les mises à jour
     pdf_builder_check_tables();

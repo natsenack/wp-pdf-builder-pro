@@ -10,13 +10,37 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Plugin version
+// Plugin capabilities
+if (!defined('PDF_BUILDER_ADMIN_CAPABILITY')) {
+    define('PDF_BUILDER_ADMIN_CAPABILITY', 'manage_options');
+}
+
+// Plugin version management
 if (!defined('PDF_BUILDER_VERSION')) {
     define('PDF_BUILDER_VERSION', '1.1.0');
 }
 
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
     define('PDF_BUILDER_PRO_VERSION', '1.1.0');
+}
+
+/**
+ * Get the plugin version from header
+ * This ensures version consistency across the plugin
+ */
+function pdf_builder_get_version() {
+    static $version = null;
+
+    if ($version === null) {
+        if (defined('PDF_BUILDER_PLUGIN_FILE') && file_exists(PDF_BUILDER_PLUGIN_FILE)) {
+            $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
+            $version = $plugin_data['Version'] ?: PDF_BUILDER_PRO_VERSION;
+        } else {
+            $version = PDF_BUILDER_PRO_VERSION;
+        }
+    }
+
+    return $version;
 }
 
 // Plugin paths
