@@ -454,24 +454,69 @@ class PdfBuilderAdmin
                         <div class="step">
                             <span class="step-number">1</span>
                             <div class="step-content">
-                                <h4>Créez votre premier template</h4>
-                                <p>Utilisez l'éditeur React pour concevoir votre modèle PDF</p>
+                                <h4>🛠️ Configuration initiale</h4>
+                                <p>Vérifiez la version Pro/Gratuite et les statistiques de votre installation</p>
+                                <small>💡 La page d'accueil affiche automatiquement votre version et les métriques en temps réel</small>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">2</span>
                             <div class="step-content">
-                                <h4>Ajoutez vos données</h4>
-                                <p>Importez vos informations depuis WooCommerce ou saisissez-les manuellement</p>
+                                <h4>📋 Créez votre premier template</h4>
+                                <p>Allez dans "Templates PDF" → "Créer un nouveau template"</p>
+                                <small>💡 Utilisez l'éditeur React avec Canvas avancé, grille d'aimantation et guides</small>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">3</span>
                             <div class="step-content">
-                                <h4>Exportez votre PDF</h4>
-                                <p>Générez et téléchargez votre document professionnel</p>
+                                <h4>🎨 Concevez votre PDF</h4>
+                                <p>Ajoutez des éléments : texte, images, formes, code-barres, variables WooCommerce</p>
+                                <small>💡 Les propriétés sont organisées en accordéons pour une meilleure ergonomie</small>
                             </div>
                         </div>
+                        <div class="step">
+                            <span class="step-number">4</span>
+                            <div class="step-content">
+                                <h4>🛒 Intégrez WooCommerce</h4>
+                                <p>Utilisez les variables dynamiques : {{order_number}}, {{customer_name}}, etc.</p>
+                                <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">5</span>
+                            <div class="step-content">
+                                <h4>⚙️ Configurez les paramètres avancés</h4>
+                                <p>Ajustez les marges, la qualité d'impression, la compression PDF</p>
+                                <small>💡 Paramètres Canvas complets : dimensions, orientation, grille, zoom</small>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">6</span>
+                            <div class="step-content">
+                                <h4>📤 Générez et testez</h4>
+                                <p>Prévisualisez votre PDF et ajustez si nécessaire</p>
+                                <small>💡 Utilisez l'API Preview intégrée pour des aperçus haute qualité</small>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">7</span>
+                            <div class="step-content">
+                                <h4>🔄 Automatisez (optionnel)</h4>
+                                <p>Configurez des workflows automatisés pour la génération en masse</p>
+                                <small>💡 Idéal pour factures, devis, reçus WooCommerce</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="guide-resources">
+                        <h4>📚 Ressources supplémentaires</h4>
+                        <ul>
+                            <li><strong>📖 Documentation :</strong> Guides détaillés dans <code>docs/user/</code></li>
+                            <li><strong>🎥 Tutoriels :</strong> Vidéos et exemples pratiques</li>
+                            <li><strong>❓ FAQ :</strong> Questions fréquemment posées</li>
+                            <li><strong>🆘 Support :</strong> Contactez-nous pour assistance</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -812,10 +857,43 @@ class PdfBuilderAdmin
                     color: #1d2327;
                 }
 
-                .step-content p {
+                .step-content small {
+                    display: block;
+                    color: #888;
+                    font-size: 12px;
+                    margin-top: 5px;
+                    font-style: italic;
+                }
+
+                .guide-resources {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e1e1e1;
+                }
+
+                .guide-resources h4 {
+                    margin: 0 0 15px 0;
+                    color: #1d2327;
+                    font-size: 16px;
+                }
+
+                .guide-resources ul {
                     margin: 0;
+                    padding-left: 20px;
+                }
+
+                .guide-resources li {
+                    margin-bottom: 8px;
                     color: #666;
                     font-size: 14px;
+                }
+
+                .guide-resources code {
+                    background: #f1f1f1;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-family: monospace;
+                    font-size: 12px;
                 }
 
                 /* Styles pour la section fonctionnalités */
