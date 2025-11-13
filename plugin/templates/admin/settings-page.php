@@ -4510,34 +4510,21 @@
                         });
                 };
 
-                // Helper pour confirm asynchrone (non-bloquant)
-                const asyncConfirm = (message, callback) => {
-                    setTimeout(() => {
-                        if (confirm(message)) {
-                            callback();
-                        }
-                    }, 0);
-                };
-
                 // ===== BOUTON SUPPRIMER FICHIERS TEMP =====
                 const removeTempFilesBtn = document.getElementById('remove-temp-files-btn');
                 if (removeTempFilesBtn) {
                     removeTempFilesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        asyncConfirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?', () => {
-                            if (typeof toastr !== 'undefined') toastr.info('📁 Suppression...', 'En cours');
-                            sendMaintenanceAjax('pdf_builder_remove_temp_files', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
-                        });
+                        if (typeof toastr !== 'undefined') toastr.info('📁 Suppression...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_remove_temp_files', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
                     });
                 }                // ===== BOUTON OPTIMISER BD =====
                 const optimizeDbBtn = document.getElementById('optimize-db-btn');
                 if (optimizeDbBtn) {
                     optimizeDbBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        asyncConfirm('Êtes-vous sûr de vouloir optimiser la base de données ?', () => {
-                            if (typeof toastr !== 'undefined') toastr.info('⚡ Optimisation...', 'En cours');
-                            sendMaintenanceAjax('pdf_builder_optimize_db', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
-                        });
+                        if (typeof toastr !== 'undefined') toastr.info('⚡ Optimisation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_optimize_db', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
                     });
                 }
 
@@ -4546,10 +4533,8 @@
                 if (repairTemplatesBtn) {
                     repairTemplatesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        asyncConfirm('Êtes-vous sûr de vouloir réparer les templates ?', () => {
-                            if (typeof toastr !== 'undefined') toastr.info('✅ Réparation...', 'En cours');
-                            sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
-                        });
+                        if (typeof toastr !== 'undefined') toastr.info('✅ Réparation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
                     });
                 }
 
@@ -4558,10 +4543,9 @@
                 if (resetSettingsBtn) {
                     resetSettingsBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        asyncConfirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !', () => {
-                            if (typeof toastr !== 'undefined') toastr.warning('⚠️ Réinitialisation...', 'En cours');
-                            sendMaintenanceAjax('pdf_builder_reset_settings', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
-                        });
+                        if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) return;
+                        if (typeof toastr !== 'undefined') toastr.warning('⚠️ Réinitialisation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_reset_settings', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
                     });
                 }
 
