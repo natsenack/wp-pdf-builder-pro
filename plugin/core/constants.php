@@ -34,13 +34,43 @@ function pdf_builder_get_version() {
     if ($version === null) {
         if (defined('PDF_BUILDER_PLUGIN_FILE') && file_exists(PDF_BUILDER_PLUGIN_FILE)) {
             $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
-            $version = $plugin_data['Version'] ?: PDF_BUILDER_PRO_VERSION;
+            $version = $plugin_data['Version'] ?: pdf_builder_get_current_version();
         } else {
-            $version = PDF_BUILDER_PRO_VERSION;
+            $version = pdf_builder_get_current_version();
         }
     }
 
     return $version;
+}
+
+/**
+ * Get the current version based on license status
+ * Returns PRO version if license is active, FREE version otherwise
+ */
+function pdf_builder_get_current_version() {
+    if (pdf_builder_is_pro_license_active()) {
+        return PDF_BUILDER_PRO_VERSION;
+    } else {
+        return PDF_BUILDER_VERSION;
+    }
+}
+
+/**
+ * Check if PRO license is active
+ */
+function pdf_builder_is_pro_license_active() {
+    // Check for license activation option
+    $license_active = get_option('pdf_builder_pro_license_active', false);
+
+    // Also check for license manager if it exists
+    if (class_exists('PDF_Builder_License_Manager')) {
+        $license_manager = PDF_Builder_License_Manager::get_instance();
+        if (method_exists($license_manager, 'is_license_active')) {
+            return $license_manager->is_license_active();
+        }
+    }
+
+    return (bool) $license_active;
 }
 
 // Plugin paths
