@@ -3514,6 +3514,7 @@
             </table>
             </div>
 
+            <div id="dev-optimizations-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Optimisations Avancées</h3>
 
             <table class="form-table">
@@ -3531,6 +3532,7 @@
                     </td>
                 </tr>
             </table>
+            </div>
 
             <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
@@ -5130,6 +5132,7 @@
                 const shortcutsSectionDiv = jQuery('#dev-shortcuts-section');
                 const consoleSectionDiv = jQuery('#dev-console-section');
                 const hooksSectionDiv = jQuery('#dev-hooks-section');
+                const optimizationsSectionDiv = jQuery('#dev-optimizations-section');
                 const developerPasswordField = jQuery('#developer_password');
                 const developerPasswordToggle = jQuery('#toggle_password');
 
@@ -5160,6 +5163,9 @@
                         jQuery(this).css('display', displayStyle);
                     });
                     hooksSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    optimizationsSectionDiv.fadeToggle(200, function() {
                         jQuery(this).css('display', displayStyle);
                     });
 
