@@ -4067,35 +4067,40 @@
         }
 
         .floating-save-btn {
-            background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
+            background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
+            border: none !important;
+            border-radius: 50px !important;
+            padding: 12px 24px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3) !important;
             transition: none !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 140px;
-            height: 44px;
-            line-height: 1;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            min-width: 140px !important;
+            height: 44px !important;
+            line-height: 1 !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
         }
 
         .floating-save-btn:hover {
-            background: linear-gradient(135deg, #005a87 0%, #004466 100%);
+            background: linear-gradient(135deg, #005a87 0%, #004466 100%) !important;
         }
 
         .floating-save-btn:active {
-            background: linear-gradient(135deg, #004466 0%, #003344 100%);
+            background: linear-gradient(135deg, #004466 0%, #003344 100%) !important;
         }
 
         .floating-save-btn:disabled {
@@ -4254,6 +4259,25 @@
                 console.log('🔘 SETUP GLOBAL SAVE BUTTON - Button found:', globalSaveBtn);
 
                 if (globalSaveBtn) {
+                    // Bloquer le mouvement du bouton
+                    globalSaveBtn.addEventListener('mousedown', function(e) {
+                        // Sauvegarder la position initiale
+                        const rect = globalSaveBtn.getBoundingClientRect();
+                        const startX = rect.left;
+                        const startY = rect.top;
+                        
+                        // Forcer la position pendant le clic
+                        globalSaveBtn.style.position = 'fixed !important';
+                        globalSaveBtn.style.left = startX + 'px !important';
+                        globalSaveBtn.style.top = startY + 'px !important';
+                        
+                        setTimeout(() => {
+                            globalSaveBtn.style.position = '';
+                            globalSaveBtn.style.left = '';
+                            globalSaveBtn.style.top = '';
+                        }, 100);
+                    });
+
                     globalSaveBtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
