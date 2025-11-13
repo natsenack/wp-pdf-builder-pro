@@ -3497,186 +3497,73 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveSettingsPage()
     {
-        // Vérification de sécurité - accepter plusieurs nonces possibles
-        $nonce = $_POST['nonce'] ?? '';
+        // Initialiser la réponse
+        $response = [];
+        $http_code = 200;
         
-        // Essayer plusieurs actions de nonce possibles
-        $nonce_actions = [
-            'pdf_builder_settings',
-            'pdf_builder_performance_settings',
-            'pdf_builder_pdf_settings',
-            'pdf_builder_general_settings',
-        ];
-        
-        $nonce_valid = false;
-        foreach ($nonce_actions as $action) {
-            if (wp_verify_nonce($nonce, $action)) {
-                $nonce_valid = true;
-                break;
+        try {
+            // Vérification de sécurité - accepter plusieurs nonces possibles
+            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            
+            // Essayer plusieurs actions de nonce possibles
+            $nonce_actions = [
+                'pdf_builder_settings',
+                'pdf_builder_performance_settings',
+                'pdf_builder_pdf_settings',
+                'pdf_builder_general_settings',
+            ];
+            
+            $nonce_valid = false;
+            foreach ($nonce_actions as $action) {
+                if (wp_verify_nonce($nonce, $action)) {
+                    $nonce_valid = true;
+                    break;
+                }
             }
+            
+            if (!$nonce_valid) {
+                throw new Exception('Nonce invalide');
+            }
+
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                throw new Exception('Permissions insuffisantes');
+            }
+
+            // Récupération des paramètres depuis le formulaire
+            $settings = [];
+            // Paramètres de debug et performance
+            $settings['debug_mode'] = isset($_POST['debug_mode']);
+            $settings['cache_enabled'] = isset($_POST['cache_enabled']);
+            $settings['cache_ttl'] = intval($_POST['cache_ttl'] ?? 3600);
+            $settings['max_execution_time'] = intval($_POST['max_execution_time'] ?? 300);
+            $settings['memory_limit'] = sanitize_text_field($_POST['memory_limit'] ?? '256M');
+            $settings['pdf_quality'] = sanitize_text_field($_POST['pdf_quality'] ?? 'high');
+            // Paramètres de format
+            $settings['default_format'] = sanitize_text_field($_POST['default_format'] ?? 'A4');
+            $settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
+
+            // Sauvegarde des paramètres
+            update_option('pdf_builder_settings', $settings);
+            
+            $response = [
+                'success' => true,
+                'message' => 'Paramètres sauvegardés avec succès'
+            ];
+            
+        } catch (Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => 'Erreur: ' . $e->getMessage()
+            ];
+            $http_code = 400;
         }
         
-        if (!$nonce_valid) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            wp_die();
-        }
-
-        // Vérification des permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            wp_die();
-        }
-
-        // Récupération des paramètres depuis le formulaire
-        $settings = [];
-// Paramètres de debug et performance
-        $settings['debug_mode'] = isset($_POST['debug_mode']);
-        $settings['cache_enabled'] = isset($_POST['cache_enabled']);
-        $settings['cache_ttl'] = intval($_POST['cache_ttl'] ?? 3600);
-        $settings['max_execution_time'] = intval($_POST['max_execution_time'] ?? 300);
-        $settings['memory_limit'] = sanitize_text_field($_POST['memory_limit'] ?? '256M');
-        $settings['pdf_quality'] = sanitize_text_field($_POST['pdf_quality'] ?? 'high');
-// Paramètres de format
-        $settings['default_format'] = sanitize_text_field($_POST['default_format'] ?? 'A4');
-        $settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
-// Paramètres des bordures du canvas (anciens paramètres - conservés pour compatibilité)
-        $settings['canvas_element_borders_enabled'] = isset($_POST['canvas_element_borders_enabled']);
-        $settings['canvas_border_width'] = intval($_POST['canvas_border_width'] ?? 1);
-        $settings['canvas_border_color'] = sanitize_hex_color($_POST['canvas_border_color'] ?? '#007cba');
-        $settings['canvas_border_spacing'] = intval($_POST['canvas_border_spacing'] ?? 2);
-        $settings['canvas_resize_handles_enabled'] = isset($_POST['canvas_resize_handles_enabled']);
-        $settings['canvas_handle_size'] = intval($_POST['canvas_handle_size'] ?? 8);
-        $settings['canvas_handle_color'] = sanitize_hex_color($_POST['canvas_handle_color'] ?? '#007cba');
-        $settings['canvas_handle_hover_color'] = sanitize_hex_color($_POST['canvas_handle_hover_color'] ?? '#005a87');
-
-// Collecte des paramètres Canvas séparés pour utilisation du manager
-        $canvas_settings = [];
-        // Général
-        $canvas_settings['default_canvas_width'] = intval($_POST['default_canvas_width'] ?? 794);
-        $canvas_settings['default_canvas_height'] = intval($_POST['default_canvas_height'] ?? 1123);
-        $canvas_settings['default_canvas_unit'] = sanitize_text_field($_POST['default_canvas_unit'] ?? 'px');
-        $canvas_settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
-        $canvas_settings['canvas_background_color'] = sanitize_hex_color($_POST['canvas_background_color'] ?? '#ffffff');
-        $canvas_settings['canvas_show_transparency'] = isset($_POST['canvas_show_transparency']);
-        $canvas_settings['container_background_color'] = sanitize_hex_color($_POST['container_background_color'] ?? '#f8f9fa');
-        $canvas_settings['container_show_transparency'] = isset($_POST['container_show_transparency']);
-// Marges de sécurité
-        $canvas_settings['margin_top'] = intval($_POST['margin_top'] ?? 28);
-        $canvas_settings['margin_right'] = intval($_POST['margin_right'] ?? 28);
-        $canvas_settings['margin_bottom'] = intval($_POST['margin_bottom'] ?? 10);
-        $canvas_settings['margin_left'] = intval($_POST['margin_left'] ?? 10);
-        $canvas_settings['show_margins'] = isset($_POST['show_margins']);
-// Grille & Aimants
-        $canvas_settings['show_grid'] = isset($_POST['show_grid']);
-        $canvas_settings['grid_size'] = intval($_POST['grid_size'] ?? 10);
-        $canvas_settings['grid_color'] = sanitize_hex_color($_POST['grid_color'] ?? '#e0e0e0');
-        $canvas_settings['grid_opacity'] = intval($_POST['grid_opacity'] ?? 30);
-        $canvas_settings['snap_to_grid'] = isset($_POST['snap_to_grid']);
-        $canvas_settings['snap_to_elements'] = isset($_POST['snap_to_elements']);
-        $canvas_settings['snap_to_margins'] = isset($_POST['snap_to_margins']);
-        $canvas_settings['snap_tolerance'] = intval($_POST['snap_tolerance'] ?? 5);
-        $canvas_settings['show_guides'] = isset($_POST['show_guides']);
-        $canvas_settings['lock_guides'] = isset($_POST['lock_guides']);
-// Zoom & Navigation
-        $canvas_settings['default_zoom'] = intval($_POST['default_zoom'] ?? 100);
-        $canvas_settings['min_zoom'] = intval($_POST['min_zoom'] ?? 10);
-        $canvas_settings['max_zoom'] = intval($_POST['max_zoom'] ?? 500);
-        $canvas_settings['zoom_step'] = intval($_POST['zoom_step'] ?? 25);
-        $canvas_settings['pan_with_mouse'] = isset($_POST['pan_with_mouse']);
-        $canvas_settings['smooth_zoom'] = isset($_POST['smooth_zoom']);
-        $canvas_settings['show_zoom_indicator'] = isset($_POST['show_zoom_indicator']);
-        $canvas_settings['zoom_with_wheel'] = isset($_POST['zoom_with_wheel']);
-        $canvas_settings['zoom_to_selection'] = isset($_POST['zoom_to_selection']);
-// Sélection & Manipulation
-        $canvas_settings['show_resize_handles'] = isset($_POST['show_resize_handles']);
-        $canvas_settings['handle_size'] = intval($_POST['handle_size'] ?? 8);
-        $canvas_settings['handle_color'] = sanitize_hex_color($_POST['handle_color'] ?? '#007cba');
-        $canvas_settings['enable_rotation'] = isset($_POST['enable_rotation']);
-        $canvas_settings['rotation_step'] = intval($_POST['rotation_step'] ?? 15);
-        $canvas_settings['rotation_snap'] = isset($_POST['rotation_snap']);
-        $canvas_settings['multi_select'] = isset($_POST['multi_select']);
-        $canvas_settings['select_all_shortcut'] = isset($_POST['select_all_shortcut']);
-        $canvas_settings['show_selection_bounds'] = isset($_POST['show_selection_bounds']);
-        $canvas_settings['copy_paste_enabled'] = isset($_POST['copy_paste_enabled']);
-        $canvas_settings['duplicate_on_drag'] = isset($_POST['duplicate_on_drag']);
-// Export & Qualité
-        $canvas_settings['export_quality'] = sanitize_text_field($_POST['export_quality'] ?? 'print');
-        $canvas_settings['export_format'] = sanitize_text_field($_POST['export_format'] ?? 'pdf');
-        $canvas_settings['compress_images'] = isset($_POST['compress_images']);
-        $canvas_settings['image_quality'] = intval($_POST['image_quality'] ?? 85);
-        $canvas_settings['max_image_size'] = intval($_POST['max_image_size'] ?? 2048);
-        $canvas_settings['include_metadata'] = isset($_POST['include_metadata']);
-        $canvas_settings['pdf_author'] = sanitize_text_field($_POST['pdf_author'] ?? get_bloginfo('name'));
-        $canvas_settings['pdf_subject'] = sanitize_text_field($_POST['pdf_subject'] ?? '');
-        $canvas_settings['auto_crop'] = isset($_POST['auto_crop']);
-        $canvas_settings['embed_fonts'] = isset($_POST['embed_fonts']);
-        $canvas_settings['optimize_for_web'] = isset($_POST['optimize_for_web']);
-// Avancé
-        $canvas_settings['enable_hardware_acceleration'] = isset($_POST['enable_hardware_acceleration']);
-        $canvas_settings['limit_fps'] = isset($_POST['limit_fps']);
-        $canvas_settings['max_fps'] = intval($_POST['max_fps'] ?? 60);
-        $canvas_settings['auto_save_enabled'] = isset($_POST['auto_save_enabled']);
-        $canvas_settings['auto_save_interval'] = intval($_POST['auto_save_interval'] ?? 30);
-        $canvas_settings['auto_save_versions'] = intval($_POST['auto_save_versions'] ?? 10);
-        $canvas_settings['undo_levels'] = intval($_POST['undo_levels'] ?? 50);
-        $canvas_settings['redo_levels'] = intval($_POST['redo_levels'] ?? 50);
-        $canvas_settings['enable_keyboard_shortcuts'] = isset($_POST['enable_keyboard_shortcuts']);
-        $canvas_settings['debug_mode'] = isset($_POST['debug_mode']);
-        $canvas_settings['show_fps'] = isset($_POST['show_fps']);
-// Paramètres de notifications
-        $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
-        $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
-// Paramètres développeur
-        $settings['developer_enabled'] = isset($_POST['pdf_builder_settings']['developer_enabled']);
-        $settings['developer_password'] = sanitize_text_field($_POST['pdf_builder_settings']['developer_password'] ?? '');
-// Paramètres des rôles autorisés avec validation améliorée
-        $new_allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? array_map(function ($role) {
-
-                return sanitize_text_field($role);
-        }, (array) $_POST['pdf_builder_allowed_roles']) : [];
-// Validation : s'assurer qu'au moins un rôle est sélectionné
-        if (empty($new_allowed_roles)) {
-            wp_send_json_error(['message' => __('Erreur: Vous devez sélectionner au moins un rôle pour éviter de bloquer complètement l\'accès à PDF Builder Pro.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        // Validation : s'assurer que seuls des rôles valides sont sélectionnés
-        global $wp_roles;
-        $valid_roles = array_keys($wp_roles->roles);
-        $invalid_roles = array_diff($new_allowed_roles, $valid_roles);
-        if (!empty($invalid_roles)) {
-            wp_send_json_error(['message' => sprintf(__('Erreur: Les rôles suivants ne sont pas valides: %s', 'pdf-builder-pro'), implode(', ', $invalid_roles))]);
-            return;
-        }
-
-        $settings['allowed_roles'] = $new_allowed_roles;
-// Récupérer les anciens rôles pour le logging
-        $old_allowed_roles = get_option('pdf_builder_allowed_roles', []);
-// Sauvegarde des paramètres généraux
-        update_option('pdf_builder_settings', $settings);
-// Sauvegarde des paramètres Canvas via le manager dédié
-        if (class_exists('PDF_Builder_Canvas_Manager')) {
-            $canvas_manager = \PDF_Builder_Canvas_Manager::get_instance();
-            $canvas_manager->save_canvas_settings($canvas_settings);
-        }
-// Sauvegarde individuelle de tous les paramètres non-canvas pour la compatibilité
-        foreach ($settings as $key => $value) {
-            if ($key !== 'allowed_roles') {
-            // Les rôles sont sauvegardés séparément
-                update_option('pdf_builder_' . $key, $value);
-            }
-        }
-
-        // Sauvegarde séparée pour la compatibilité avec l'ancien système
-        update_option('pdf_builder_allowed_roles', $settings['allowed_roles']);
-// Logging des changements de permissions
-        if ($old_allowed_roles !== $new_allowed_roles) {
-            $this->logRolePermissionsChange($old_allowed_roles, $new_allowed_roles);
-// Invalider le cache des permissions pour tous les utilisateurs
-            $this->clearPermissionsCache();
-        }
-
-        wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
+        // Envoyer la réponse JSON directement
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code($http_code);
+        echo json_encode($response);
+        wp_die();
     }
 
     /**
