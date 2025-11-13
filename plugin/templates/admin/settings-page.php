@@ -1595,8 +1595,6 @@
             </form>
         </div>
 
-        </form>
-
         <div id="performance" class="tab-content hidden-tab">
          <form method="post" id="performance-form" action="">
                 <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
@@ -1721,6 +1719,7 @@
             <p class="submit">
                 <button type="submit" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
             </p>
+         </form>
          </form>
         </div>
 
