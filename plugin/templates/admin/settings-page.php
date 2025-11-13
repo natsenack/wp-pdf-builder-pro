@@ -2674,6 +2674,68 @@
             <p class="submit">
                 <button type="submit" name="submit_notifications" class="button button-primary">Enregistrer les paramètres de notifications</button>
             </p>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const emailNotificationsToggle = document.getElementById('email_notifications_enabled');
+                const dependentToggles = [
+                    'notification_on_generation',
+                    'notification_on_error',
+                    'notification_on_deletion',
+                    'smtp_enabled',
+                    'smtp_auth'
+                ];
+                const dependentFields = [
+                    'admin_email',
+                    'notification_log_level',
+                    'smtp_host',
+                    'smtp_port',
+                    'smtp_encryption',
+                    'smtp_username',
+                    'smtp_password',
+                    'smtp_from_email',
+                    'smtp_from_name'
+                ];
+
+                function updateDependentControls() {
+                    const isEnabled = emailNotificationsToggle.checked;
+
+                    // Désactiver/activer les toggles dépendants
+                    dependentToggles.forEach(function(toggleId) {
+                        const toggle = document.getElementById(toggleId);
+                        if (toggle) {
+                            toggle.disabled = !isEnabled;
+                            if (!isEnabled) {
+                                toggle.checked = false;
+                            }
+                        }
+                    });
+
+                    // Désactiver/activer les champs de texte dépendants
+                    dependentFields.forEach(function(fieldId) {
+                        const field = document.getElementById(fieldId);
+                        if (field) {
+                            field.disabled = !isEnabled;
+                        }
+                    });
+
+                    // Désactiver/activer les boutons de test
+                    const testButtons = ['test-smtp-connection', 'test-notifications'];
+                    testButtons.forEach(function(buttonId) {
+                        const button = document.getElementById(buttonId);
+                        if (button) {
+                            button.disabled = !isEnabled;
+                        }
+                    });
+                }
+
+                // Appliquer l'état initial
+                updateDependentControls();
+
+                // Écouter les changements
+                emailNotificationsToggle.addEventListener('change', updateDependentControls);
+            });
+            </script>
             </form>
         </div>
 
