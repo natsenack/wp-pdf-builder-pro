@@ -1114,6 +1114,15 @@ class PdfBuilderAdmin
         remove_all_actions('admin_notices');
         remove_all_actions('all_admin_notices');
 
+        // Utiliser output buffering pour supprimer complètement les notifications
+        add_action('admin_notices', function() {
+            ob_start();
+        }, 1);
+
+        add_action('admin_notices', function() {
+            ob_end_clean();
+        }, 999);
+
         // Charger les scripts
         $this->loadAdminScripts($hook);
     }

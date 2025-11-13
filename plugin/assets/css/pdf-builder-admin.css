@@ -147,32 +147,6 @@ body.toplevel_page_wp-pdf-builder-pro .notice-error,
 body.toplevel_page_wp-pdf-builder-pro .notice-success,
 body.toplevel_page_wp-pdf-builder-pro .updated,
 body.toplevel_page_wp-pdf-builder-pro .update-nag,
-body.toplevel_page_wp-pdf-builder-pro .error,
-body.toplevel_page_wp-pdf-builder-pro .wp-notice,
-body.toplevel_page_wp-pdf-builder-pro .notice-dismissible,
-body.toplevel_page_wp-pdf-builder-pro .is-dismissible {
-  display: none !important;
-}
-
-/* Masquer également sur les pages d'édition/post où le PDF Builder peut être chargé */
-body.post-type-page .notice,
-body.post-type-post .notice,
-body.post-type-product .notice,
-body.post-type-page .notice-info,
-body.post-type-post .notice-info,
-body.post-type-product .notice-info,
-body.post-type-page .notice-warning,
-body.post-type-post .notice-warning,
-body.post-type-product .notice-warning,
-body.post-type-page .notice-error,
-body.post-type-post .notice-error,
-body.post-type-product .notice-error,
-body.post-type-page .notice-success,
-body.post-type-post .notice-success,
-body.post-type-product .notice-success {
-  display: none !important;
-}
-
 /* Masquer spécifiquement dans les metaboxes du PDF Builder */
 #wp-pdf-builder-pro-metabox .notice,
 #wp-pdf-builder-pro-metabox .notice-info,
