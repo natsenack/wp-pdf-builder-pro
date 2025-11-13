@@ -56,9 +56,9 @@ var pdfBuilderWizard = {
 
     testAjax: function() {
         console.log('PDF Builder Wizard: Testing AJAX...');
-        console.log('PDF Builder Wizard: ajax_url =', pdfBuilderWizard.ajax_url);
+        console.log('PDF Builder Wizard: ajax_url =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.ajax_url : 'undefined');
         console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
-        console.log('PDF Builder Wizard: nonce =', pdfBuilderWizard.nonce);
+        console.log('PDF Builder Wizard: nonce =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.nonce : 'undefined');
         jQuery.ajax({
             url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
             type: 'POST',
@@ -188,7 +188,7 @@ var pdfBuilderWizard = {
                 action: 'pdf_builder_wizard_step',
                 step: 'save_company',
                 data: data,
-                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
+                nonce: typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.nonce ? pdfBuilderWizardData.nonce : ''
             }
         });
     },
@@ -200,7 +200,7 @@ var pdfBuilderWizard = {
             data: {
                 action: 'pdf_builder_wizard_step',
                 step: 'create_template',
-                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
+                nonce: typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.nonce ? pdfBuilderWizardData.nonce : ''
             }
         });
     },
@@ -212,7 +212,7 @@ var pdfBuilderWizard = {
             data: {
                 action: 'pdf_builder_wizard_step',
                 step: 'complete',
-                nonce: typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.nonce ? pdfBuilderWizard.nonce : ''
+                nonce: typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.nonce ? pdfBuilderWizardData.nonce : ''
             }
         });
     },
@@ -220,11 +220,11 @@ var pdfBuilderWizard = {
     finish: function() {
         // Rediriger vers la page principale du plugin
         console.log('PDF Builder Wizard: finish() called');
-        console.log('PDF Builder Wizard: pdfBuilderWizard =', typeof pdfBuilderWizard !== 'undefined' ? pdfBuilderWizard : 'undefined');
+        console.log('PDF Builder Wizard: pdfBuilderWizardData =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData : 'undefined');
         
-        if (typeof pdfBuilderWizard !== 'undefined' && pdfBuilderWizard.adminUrl) {
-            console.log('PDF Builder Wizard: redirecting to', pdfBuilderWizard.adminUrl);
-            window.location.href = pdfBuilderWizard.adminUrl;
+        if (typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.adminUrl) {
+            console.log('PDF Builder Wizard: redirecting to', pdfBuilderWizardData.adminUrl);
+            window.location.href = pdfBuilderWizardData.adminUrl;
         } else {
             console.error('PDF Builder Wizard: adminUrl not available, redirecting to admin dashboard');
             window.location.href = '/wp-admin/';

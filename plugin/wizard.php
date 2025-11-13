@@ -137,9 +137,9 @@ class PDF_Builder_Installation_Wizard {
         error_log('PDF Builder Wizard: Loading scripts for wizard page');
 
         wp_enqueue_style('pdf-builder-wizard', plugins_url('assets/css/wizard.css', PDF_BUILDER_PLUGIN_FILE), array(), PDF_BUILDER_VERSION);
-        wp_enqueue_script('pdf-builder-wizard', plugins_url('assets/js/wizard.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), PDF_BUILDER_VERSION, true);
-
-        wp_localize_script('pdf-builder-wizard', 'pdfBuilderWizard', array(
+        
+        // Localiser le script AVANT de l'enregistrer
+        $localization_data = array(
             'ajax_url' => admin_url('admin.php?action=pdf_builder_ajax'),
             'adminUrl' => admin_url('admin.php?page=pdf-builder-pro'),
             'nonce' => wp_create_nonce('pdf_builder_wizard_nonce'),
@@ -150,7 +150,14 @@ class PDF_Builder_Installation_Wizard {
                 'loading' => 'Chargement...',
                 'error' => 'Une erreur est survenue'
             )
-        ));
+        );
+        
+        wp_localize_script('pdf-builder-wizard', 'pdfBuilderWizardData', $localization_data);
+        
+        wp_enqueue_script('pdf-builder-wizard', plugins_url('assets/js/wizard.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), PDF_BUILDER_VERSION, true);
+        
+        error_log('PDF Builder Wizard: Localized script with adminUrl: ' . $localization_data['adminUrl']);
+        error_log('PDF Builder Wizard: Localization data: ' . json_encode($localization_data));
 
         error_log('PDF Builder Wizard: Localized script with adminUrl: ' . admin_url('admin.php?page=pdf-builder-pro'));
     }
