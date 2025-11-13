@@ -963,7 +963,78 @@ class PdfBuilderAdmin
                 .new-feature-item strong {
                     color: #856404;
                 }
+
+                /* Drag scrolling pour le guide */
+                .guide-steps {
+                    cursor: grab;
+                    user-select: none;
+                }
+
+                .guide-steps:active {
+                    cursor: grabbing;
+                }
+
+                .guide-steps.dragging {
+                    scroll-behavior: auto;
+                }
             </style>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const guideSteps = document.querySelector('.guide-steps');
+                    if (!guideSteps) return;
+
+                    let isDown = false;
+                    let startX;
+                    let scrollLeft;
+
+                    guideSteps.addEventListener('mousedown', (e) => {
+                        isDown = true;
+                        guideSteps.classList.add('dragging');
+                        startX = e.pageX - guideSteps.offsetLeft;
+                        scrollLeft = guideSteps.scrollLeft;
+                        guideSteps.style.cursor = 'grabbing';
+                    });
+
+                    guideSteps.addEventListener('mouseleave', () => {
+                        isDown = false;
+                        guideSteps.classList.remove('dragging');
+                        guideSteps.style.cursor = 'grab';
+                    });
+
+                    guideSteps.addEventListener('mouseup', () => {
+                        isDown = false;
+                        guideSteps.classList.remove('dragging');
+                        guideSteps.style.cursor = 'grab';
+                    });
+
+                    guideSteps.addEventListener('mousemove', (e) => {
+                        if (!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - guideSteps.offsetLeft;
+                        const walk = (x - startX) * 2; // Vitesse de scroll
+                        guideSteps.scrollLeft = scrollLeft - walk;
+                    });
+
+                    // Support tactile pour mobile
+                    guideSteps.addEventListener('touchstart', (e) => {
+                        isDown = true;
+                        startX = e.touches[0].pageX - guideSteps.offsetLeft;
+                        scrollLeft = guideSteps.scrollLeft;
+                    });
+
+                    guideSteps.addEventListener('touchend', () => {
+                        isDown = false;
+                    });
+
+                    guideSteps.addEventListener('touchmove', (e) => {
+                        if (!isDown) return;
+                        const x = e.touches[0].pageX - guideSteps.offsetLeft;
+                        const walk = (x - startX) * 2;
+                        guideSteps.scrollLeft = scrollLeft - walk;
+                    });
+                });
+            </script>
         </div>
         <?php
     }
