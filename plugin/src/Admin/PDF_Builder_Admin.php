@@ -1133,6 +1133,37 @@ class PdfBuilderAdmin
 // Toastr pour les notifications - IMPORTANT: les fichiers CSS et JS doivent être présents dans assets/
         wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
         wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', false);
+
+// Configuration de Toastr immédiatement après son enregistrement
+        wp_add_inline_script('toastr', '
+        console.log("🔍 Toastr initialization script running");
+        (function() {
+            // Configuration de Toastr
+            if (typeof toastr !== "undefined") {
+                console.log("✅ Toastr object found immediately");
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+                console.log("✅ Toastr configured on page load");
+            } else {
+                console.warn("⚠️ Toastr not found immediately, will try on DOMContentLoaded");
+            }
+        })();
+        ', 'after');
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
         // Charger uniquement le bundle Vanilla JS qui contient tout
         $script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
