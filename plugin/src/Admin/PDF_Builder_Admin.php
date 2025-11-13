@@ -1126,21 +1126,27 @@ class PdfBuilderAdmin
         // Désactiver également settings_errors qui peuvent contourner admin_notices
         add_filter('wp_settings_errors', '__return_empty_array', 999);
 
-        // Solution de secours : output buffering radical
+        // APPROCHE MAXIMUM RADICALE : Output buffering à la fin du rendu
         add_action('admin_head', function() {
             ob_start();
-        }, 1);
+        }, 0);
 
-        add_action('shutdown', function() {
+        add_action('admin_footer', function() {
+            // Ne pas utiliser shutdown, on traite ici même
+        }, 999999);
+
+        add_action('wp_footer', function() {
             if (ob_get_level() > 0) {
-                $content = ob_get_clean();
-                // Nettoyage final de tout ce qui pourrait être passé à travers
-                $content = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/div>/s', '', $content);
-                $content = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/p>/s', '', $content);
-                $content = preg_replace('/<div[^>]*id="[^"]*setting-error[^"]*"[^>]*>.*?<\/div>/s', '', $content);
-                echo $content;
+                $buffer = ob_get_clean();
+                // Supprimer TOUTES les notifications peu importe leur format
+                $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
+                $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
+                $buffer = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/p>/s', '', $buffer);
+                // Supprimer aussi les divs avec alert ou message
+                $buffer = preg_replace('/<div[^>]*class="[^"]*\b(alert|message|notification)\b[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
+                echo $buffer;
             }
-        }, 999);
+        }, 0);
 
         // Charger les scripts
         $this->loadAdminScripts($hook);
