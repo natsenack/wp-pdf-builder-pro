@@ -2,21 +2,38 @@
 /* This file is intentionally minimal as styles are inline in metaboxes */
 
 /* ========== TOASTR NOTIFICATIONS STYLING ========== */
-/* Repositionner Toastr notifications en haut à droite avec z-index élevé */
+/* Force Toastr notifications en haut à droite */
+.toast-top-right {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 99999 !important;
+  width: auto !important;
+  max-width: 400px !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
 #toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 99999;
-  width: auto;
-  max-width: 400px;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 99999 !important;
+  width: auto !important;
+  max-width: 400px !important;
+  left: auto !important;
+  bottom: auto !important;
 }
 
 #toast-container > .toast {
-  margin-bottom: 15px;
+  margin-bottom: 15px !important;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideInRight 0.3s ease-out;
+}
+
+.toast {
+  animation: slideInRight 0.3s ease-out !important;
 }
 
 @keyframes slideInRight {
