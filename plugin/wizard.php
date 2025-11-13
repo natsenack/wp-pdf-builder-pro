@@ -139,7 +139,7 @@ class PDF_Builder_Installation_Wizard {
 
         wp_localize_script('pdf-builder-wizard', 'pdfBuilderWizard', array(
             'ajax_url' => admin_url('admin.php?action=pdf_builder_ajax'),
-            'admin_url' => admin_url('admin.php?page=pdf-builder'),
+            'adminUrl' => admin_url('admin.php?page=pdf-builder'),
             'nonce' => wp_create_nonce('pdf_builder_wizard_nonce'),
             'strings' => array(
                 'next' => 'Suivant',
