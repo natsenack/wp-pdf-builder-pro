@@ -237,8 +237,8 @@
     // - submit_security now uses pdf_builder_securite_nonce
     // - submit_canvas now uses pdf_builder_canvas_nonce
 
-    if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_settings_nonce'])) {
-        if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+    if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
+        if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
             $dev_settings = [
                 'developer_enabled' => isset($_POST['developer_enabled']),
                 'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
@@ -3300,7 +3300,7 @@
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
          <form method="post" id="developpeur-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
                 <h3 class="section-title">🔐 Contrôle d'Accès</h3>
@@ -4344,6 +4344,8 @@
                                     nonceName = 'pdf_builder_performance_nonce';
                                 } else if (activeTab.id === 'pdf') {
                                     nonceName = 'pdf_builder_pdf_nonce';
+                                } else if (activeTab.id === 'developpeur') {
+                                    nonceName = 'pdf_builder_developpeur_nonce';
                                 }
                                 
                                 const nonceField = form.querySelector(`input[name="${nonceName}"]`);
