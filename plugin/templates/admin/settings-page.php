@@ -4299,11 +4299,9 @@
                             if (form) {
                                 console.log('✅ Form found, submitting via AJAX:', form.id || 'unnamed form');
 
-                                // Afficher le statut de sauvegarde
-                                if (saveStatus) {
-                                    saveStatus.textContent = '💾 Sauvegarde en cours...';
-                                    saveStatus.style.color = '#007cba';
-                                    saveStatus.classList.add('show');
+                                // Afficher notification via Toastr
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.info('💾 Sauvegarde en cours...', 'Sauvegarde');
                                 }
 
                                 // Créer FormData à partir du formulaire
@@ -4311,66 +4309,78 @@
                                 
                                 // Ajouter l'action AJAX - utiliser l'action appropriée selon l'onglet
                                 let ajaxAction = 'pdf_builder_save_settings_page';
+                                let nonceName = 'pdf_builder_settings_nonce';
                                 
-                                // Mapper les onglets à leurs actions spécifiques si disponible
+                                // Mapper les onglets à leurs actions et nonces spécifiques
                                 if (activeTab.id === 'general') {
                                     ajaxAction = 'pdf_builder_save_general_settings';
+                                    nonceName = 'pdf_builder_settings_nonce';
                                 } else if (activeTab.id === 'performance' || activeTab.id === 'maintenance') {
                                     ajaxAction = 'pdf_builder_save_performance_settings';
+                                    nonceName = 'pdf_builder_performance_nonce';
+                                } else if (activeTab.id === 'pdf') {
+                                    nonceName = 'pdf_builder_pdf_nonce';
                                 }
                                 
                                 formData.append('action', ajaxAction);
+                                
+                                // S'assurer que le nonce est dans les données
+                                // Si pas trouvé dans FormData, le chercher dans la page
+                                if (!formData.has('nonce')) {
+                                    const nonceField = form.querySelector(`input[name="${nonceName}"]`);
+                                    if (nonceField) {
+                                        formData.set('nonce', nonceField.value);
+                                        console.log('✅ Nonce trouvé et ajouté:', nonceName, nonceField.value);
+                                    } else {
+                                        console.warn('⚠️ Nonce field non trouvé:', nonceName);
+                                    }
+                                }
 
                                 // Faire la requête AJAX
                                 fetch(ajaxurl, {
                                     method: 'POST',
                                     body: formData
                                 })
-                                .then(response => response.json())
+                                .then(response => {
+                                    // Vérifier si la réponse est du JSON valide
+                                    const contentType = response.headers.get('content-type');
+                                    if (!contentType || !contentType.includes('application/json')) {
+                                        throw new Error('Réponse non-JSON du serveur. Status: ' + response.status);
+                                    }
+                                    if (!response.ok) {
+                                        throw new Error('Erreur HTTP ' + response.status);
+                                    }
+                                    return response.json();
+                                })
                                 .then(data => {
                                     console.log('✅ AJAX Response:', data);
                                     
                                     if (data.success) {
-                                        if (saveStatus) {
-                                            saveStatus.textContent = '✅ Paramètres sauvegardés avec succès !';
-                                            saveStatus.style.color = '#28a745';
-                                            saveStatus.classList.add('success');
+                                        if (typeof toastr !== 'undefined') {
+                                            toastr.success('✅ Paramètres sauvegardés avec succès !', 'Succès');
                                         }
-                                        
-                                        // Masquer le message après 3 secondes
-                                        setTimeout(() => {
-                                            if (saveStatus) {
-                                                saveStatus.classList.remove('show', 'success');
-                                            }
-                                        }, 3000);
                                     } else {
-                                        if (saveStatus) {
-                                            saveStatus.textContent = '❌ Erreur: ' + (data.message || 'Erreur inconnue');
-                                            saveStatus.style.color = '#dc3232';
-                                            saveStatus.classList.add('error');
+                                        if (typeof toastr !== 'undefined') {
+                                            toastr.error('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'Erreur');
                                         }
                                     }
                                 })
                                 .catch(error => {
                                     console.error('❌ AJAX Error:', error);
-                                    if (saveStatus) {
-                                        saveStatus.textContent = '❌ Erreur de connexion';
-                                        saveStatus.style.color = '#dc3232';
-                                        saveStatus.classList.add('error');
+                                    if (typeof toastr !== 'undefined') {
+                                        toastr.error('❌ Erreur de connexion: ' + error.message, 'Erreur');
                                     }
                                 });
                             } else {
                                 console.error('❌ No form found in active tab:', activeTab.id);
-                                if (saveStatus) {
-                                    saveStatus.textContent = '❌ Erreur: Aucun formulaire trouvé';
-                                    saveStatus.style.color = '#dc3232';
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('❌ Aucun formulaire trouvé', 'Erreur');
                                 }
                             }
                         } else {
                             console.error('❌ No active tab found');
-                            if (saveStatus) {
-                                saveStatus.textContent = '❌ Erreur: Aucun onglet actif';
-                                saveStatus.style.color = '#dc3232';
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('❌ Aucun onglet actif', 'Erreur');
                             }
                         }
                     });
