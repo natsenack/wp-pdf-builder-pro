@@ -1126,26 +1126,18 @@ class PdfBuilderAdmin
         // Désactiver également settings_errors qui peuvent contourner admin_notices
         add_filter('wp_settings_errors', '__return_empty_array', 999);
 
-        // APPROCHE MAXIMUM RADICALE : Output buffering à la fin du rendu
+        // APPROCHE FINALE : Output buffering avec callback qui nettoie le HTML
         add_action('admin_head', function() {
-            ob_start();
-        }, 0);
-
-        add_action('admin_footer', function() {
-            // Ne pas utiliser shutdown, on traite ici même
-        }, 999999);
-
-        add_action('wp_footer', function() {
-            if (ob_get_level() > 0) {
-                $buffer = ob_get_clean();
-                // Supprimer TOUTES les notifications peu importe leur format
+            ob_start(function($buffer) {
+                // Supprimer TOUTES les notifications HTML peu importe leur origine
                 $buffer = preg_replace('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
                 $buffer = preg_replace('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
                 $buffer = preg_replace('/<p[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice|warning|success|info|settings-error)[^"]*"[^>]*>.*?<\/p>/s', '', $buffer);
-                // Supprimer aussi les divs avec alert ou message
                 $buffer = preg_replace('/<div[^>]*class="[^"]*\b(alert|message|notification)\b[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
-                echo $buffer;
-            }
+                // Supprimer également les sections avec id contenant "notice"
+                $buffer = preg_replace('/<div[^>]*id="[^"]*notice[^"]*"[^>]*>.*?<\/div>/s', '', $buffer);
+                return $buffer;
+            });
         }, 0);
 
         // Charger les scripts
