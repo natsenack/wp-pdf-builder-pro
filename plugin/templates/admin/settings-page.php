@@ -3802,6 +3802,9 @@
 
         <!-- Bouton de sauvegarde flottant global -->
         <div class="floating-save-container">
+            <button type="button" id="global-cancel-btn" class="floating-cancel-btn" style="display: none;">
+                ↺ Annuler
+            </button>
             <button type="button" id="global-save-btn" class="floating-save-btn">
                 💾 Enregistrer
             </button>
@@ -4117,6 +4120,45 @@
             transform: none;
         }
 
+        /* Bouton Annuler */
+        .floating-cancel-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+            border: none !important;
+            border-radius: 50px !important;
+            padding: 12px 24px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+            transition: none !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            min-width: 140px !important;
+            height: 44px !important;
+            line-height: 1 !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+            margin-right: 8px !important;
+        }
+
+        .floating-cancel-btn:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%) !important;
+        }
+
+        .floating-cancel-btn:active {
+            background: linear-gradient(135deg, #bd2130 0%, #a71d2a 100%) !important;
+        }
+
         .save-status {
             background: rgba(0, 0, 0, 0.8);
             color: white;
@@ -4287,8 +4329,9 @@
 
                     // ===== INITIALISER LE BOUTON COMME DÉSACTIVÉ =====
                     globalSaveBtn.disabled = true;
+                    let hasUnsavedChanges = false;
 
-                    // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES =====
+                    // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES (AMÉLIORÉ) =====
                     const setupFormTracking = () => {
                         const forms = document.querySelectorAll('form[id], form');
                         console.log('📝 Setting up form tracking for', forms.length, 'form(s)');
@@ -4308,6 +4351,28 @@
                             
                             console.log(`📋 Form #${formIndex} initial state saved:`, Object.keys(initialState).length, 'fields');
                             
+                            // Debounce pour éviter trop d'appels
+                            let debounceTimer = null;
+                            const markAsModified = () => {
+                                clearTimeout(debounceTimer);
+                                debounceTimer = setTimeout(() => {
+                                    hasUnsavedChanges = true;
+                                    globalSaveBtn.disabled = false;
+                                    
+                                    // Afficher le bouton Annuler
+                                    const globalCancelBtn = document.getElementById('global-cancel-btn');
+                                    if (globalCancelBtn) {
+                                        globalCancelBtn.style.display = 'flex';
+                                    }
+                                    
+                                    // Ajouter un badge visuel au bouton
+                                    if (!globalSaveBtn.dataset.hasModifications) {
+                                        globalSaveBtn.dataset.hasModifications = 'true';
+                                        globalSaveBtn.setAttribute('title', '✏️ Modifications non sauvegardées');
+                                    }
+                                }, 300);
+                            };
+                            
                             // Ajouter des listeners change à tous les inputs
                             formInputs.forEach(input => {
                                 input.addEventListener('change', function() {
@@ -4316,16 +4381,36 @@
                                     const hasChanged = initialState[this.name] !== currentValue;
                                     
                                     if (hasChanged) {
-                                        console.log('🔄 Modification detected in:', this.name, 'Enable save button');
-                                        globalSaveBtn.disabled = false;
+                                        console.log('🔄 Modification detected in:', this.name);
+                                        markAsModified();
                                     }
                                 });
+                                
+                                // Ajouter listeners input pour les champs texte (en temps réel avec debounce)
+                                if (input.type === 'text' || input.type === 'email' || input.type === 'number' || input.tagName === 'TEXTAREA') {
+                                    input.addEventListener('input', function() {
+                                        const currentValue = this.value;
+                                        const hasChanged = initialState[this.name] !== currentValue;
+                                        if (hasChanged) {
+                                            markAsModified();
+                                        }
+                                    });
+                                }
                             });
                         });
                     };
                     
                     // Appliquer le tracking
                     setupFormTracking();
+                    
+                    // ===== AVERTISSEMENT AVANT DE QUITTER =====
+                    window.addEventListener('beforeunload', function(e) {
+                        if (hasUnsavedChanges && !globalSaveBtn.disabled) {
+                            e.preventDefault();
+                            e.returnValue = '⚠️ Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter ?';
+                            return e.returnValue;
+                        }
+                    });
 
                     globalSaveBtn.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -4428,11 +4513,23 @@
                                         }
                                         
                                         // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
+                                        hasUnsavedChanges = false;
+                                        
                                         // Réactualiser l'état initial de tous les inputs pour tracker les futures modifications
                                         setupFormTracking();
-                                        // Réinitialiser le bouton comme désactivé
+                                        
+                                        // Réinitialiser le bouton Enregistrer comme désactivé
                                         globalSaveBtn.disabled = true;
-                                        console.log('🔄 State reinitialized, save button disabled');
+                                        globalSaveBtn.dataset.hasModifications = 'false';
+                                        globalSaveBtn.removeAttribute('title');
+                                        
+                                        // Masquer le bouton Annuler
+                                        const globalCancelBtn = document.getElementById('global-cancel-btn');
+                                        if (globalCancelBtn) {
+                                            globalCancelBtn.style.display = 'none';
+                                        }
+                                        
+                                        console.log('✅ State reinitialized, save button disabled, cancel button hidden, hasUnsavedChanges set to false');
                                     } else {
                                         if (typeof toastr !== 'undefined') {
                                             toastr.error('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'Erreur');
@@ -4457,6 +4554,48 @@
                                 toastr.error('❌ Aucun onglet actif', 'Erreur');
                             }
                         }
+                    });
+                }
+
+                // ===== GESTION DU BOUTON ANNULER LES MODIFICATIONS =====
+                const globalCancelBtn = document.getElementById('global-cancel-btn');
+                if (globalCancelBtn) {
+                    globalCancelBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        console.log('🔄 Cancel button clicked - resetting form values');
+                        
+                        // Afficher la notification
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info('↺ Modifications annulées', 'Annulation');
+                        }
+                        
+                        // Réinitialiser les valeurs de tous les formulaires
+                        const forms = document.querySelectorAll('form[id], form');
+                        forms.forEach((form) => {
+                            const formInputs = form.querySelectorAll('input, select, textarea');
+                            formInputs.forEach(input => {
+                                // Restaurer la valeur initiale via l'attribut data ou la valeur par défaut
+                                if (input.defaultValue !== undefined) {
+                                    input.value = input.defaultValue;
+                                }
+                                if (input.defaultChecked !== undefined) {
+                                    input.checked = input.defaultChecked;
+                                }
+                                // Déclencher le change event pour mettre à jour les UI
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            });
+                        });
+                        
+                        // Réinitialiser l'état
+                        hasUnsavedChanges = false;
+                        setupFormTracking();
+                        globalSaveBtn.disabled = true;
+                        globalCancelBtn.style.display = 'none';
+                        globalSaveBtn.dataset.hasModifications = 'false';
+                        globalSaveBtn.removeAttribute('title');
+                        
+                        console.log('✅ Form reset complete');
                     });
                 }
 
