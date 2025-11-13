@@ -30,12 +30,18 @@ class PDF_Builder_Predefined_Templates_Manager
         add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajaxDeveloperLogout']);
     }
     /**
-     * Ajouter le menu admin - DÉSACTIVÉ car l'éditeur unique gère maintenant les modèles prédéfinis
+     * Ajouter le menu admin pour les modèles prédéfinis
      */
     public function addAdminMenu()
     {
-        // DÉSACTIVÉ - Les modèles prédéfinis sont maintenant gérés dans l'éditeur unique
-        return;
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Modèles Prédéfinis', 'pdf-builder-pro'),
+            __('Modèles Prédéfinis', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-predefined-templates',
+            [$this, 'renderAdminPage']
+        );
     }
     /**
      * Enqueue scripts et styles pour la page admin
