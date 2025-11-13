@@ -1513,7 +1513,7 @@
                     <th scope="row"><label for="max_fps">FPS Maximum</label></th>
                     <td>
                         <input type="number" id="max_fps" name="max_fps" value="<?php echo intval($settings['max_fps'] ?? 60); ?>"
-                               min="15" max="240" />
+                               min="15" max="240" <?php echo !($settings['limit_fps'] ?? false) ? 'disabled' : ''; ?> />
                         <p class="description">Images par seconde maximales (15-240 FPS)</p> 
                     </td>
                 </tr>
@@ -4334,6 +4334,31 @@
                         
                         // Ajouter un listener au checkbox pour mettre à jour l'état en temps réel
                         autoSaveEnabledCheckbox.addEventListener('change', updateAutoSaveIntervalState);
+                    }
+                    
+                    // ===== GESTION DU CHAMP FPS MAXIMUM =====
+                    const limitFpsCheckbox = document.getElementById('limit_fps');
+                    const maxFpsInput = document.getElementById('max_fps');
+                    
+                    if (limitFpsCheckbox && maxFpsInput) {
+                        // Fonction pour mettre à jour l'état du champ max_fps
+                        const updateMaxFpsState = () => {
+                            if (limitFpsCheckbox.checked) {
+                                maxFpsInput.disabled = false;
+                                maxFpsInput.style.opacity = '1';
+                                maxFpsInput.style.cursor = 'auto';
+                            } else {
+                                maxFpsInput.disabled = true;
+                                maxFpsInput.style.opacity = '0.6';
+                                maxFpsInput.style.cursor = 'not-allowed';
+                            }
+                        };
+                        
+                        // Appliquer l'état initial
+                        updateMaxFpsState();
+                        
+                        // Ajouter un listener au checkbox pour mettre à jour l'état en temps réel
+                        limitFpsCheckbox.addEventListener('change', updateMaxFpsState);
                     }
                     
                     // ===== AVERTISSEMENT AVANT DE QUITTER =====
