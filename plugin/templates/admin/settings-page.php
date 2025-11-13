@@ -611,7 +611,7 @@
 
                 <h2>Paramètres Généraux</h2>
                 <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
-                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Cache</h3>
+                <h3 class="section-title">📋 Cache</h3>
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="cache_enabled">Cache activé</label></th>
@@ -655,7 +655,7 @@
                     </tr>
                 </table>
 
-                <h3 style="margin-top: 30px; border-bottom: 2px solid #28a745; padding-bottom: 10px; color: #28a745;">🏢 Informations Entreprise</h3>
+                <h3 class="section-title">🏢 Informations Entreprise</h3>
 
                 <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
                 <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
@@ -729,7 +729,7 @@
                     </table>
                 </div>
 
-                <h3 style="margin-top: 30px; border-bottom: 2px solid #007cba; padding-bottom: 10px; color: #007cba;">📄 Paramètres PDF</h3>
+                <h3 class="section-title">📄 Paramètres PDF</h3>
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
@@ -1554,7 +1554,7 @@
                 <input type="hidden" name="submit_pdf" value="1">
                 <h2>Paramètres PDF</h2>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Qualité & Export</h3>
+            <h3 class="section-title">Qualité & Export</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="export_quality">Qualité d'Export</label></th>
@@ -1579,7 +1579,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Métadonnées & Contenu</h3>
+            <h3 class="section-title">Métadonnées & Contenu</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="pdf_author">Auteur du PDF</label></th>
@@ -1613,7 +1613,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Optimisation & Compression</h3>
+            <h3 class="section-title">Optimisation & Compression</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="embed_fonts">Intégrer les Polices</label></th>
@@ -1677,7 +1677,7 @@
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_securite_nonce'); ?>
                 <input type="hidden" name="submit_security" value="1">
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⚙️ Limites & Protections Système</h3>
+            <h3 class="section-title">⚙️ Limites & Protections Système</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="max_template_size">Taille Max Template (octets)</label></th>
@@ -1706,7 +1706,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Protections</h3>
+            <h3 class="section-title">🔐 Protections</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label>Nonces WordPress</label></th>
@@ -2226,7 +2226,7 @@
             $notification_level = get_option('pdf_builder_notification_log_level', 'error');
             ?>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Notifications par Email</h3>
+            <h3 class="section-title">Notifications par Email</h3>
 
             <table class="form-table">
                     <tr>
@@ -2264,7 +2264,7 @@
                     </tr>
             </table>
 
-                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Événements de Notification</h3>
+                <h3 class="section-title">Événements de Notification</h3>
 
                 <table class="form-table">
                     <tr>
@@ -2311,7 +2311,7 @@
                     </tr>
                 </table>
 
-                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Configuration SMTP</h3>
+                <h3 class="section-title">Configuration SMTP</h3>
                 <p class="description" style="margin-bottom: 15px;">Configurez un serveur SMTP pour l'envoi des notifications par email</p>
 
                 <table class="form-table">
@@ -2641,7 +2641,7 @@
             ], $canvas_settings);
             ?>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Dimensions par Défaut</h3>
+            <h3 class="section-title">Dimensions par Défaut</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="default_canvas_format">Format Canvas par défaut</label></th>
@@ -2673,7 +2673,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Fond & Couleurs</h3>
+            <h3 class="section-title">Fond & Couleurs</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="canvas_background_color">Couleur Fond Canvas</label></th>
@@ -2693,7 +2693,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Marges</h3>
+            <h3 class="section-title">Marges</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="show_margins">Activer les marges</label></th>
@@ -2739,7 +2739,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Grille & Aimants</h3>
+            <h3 class="section-title">Grille & Aimants</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="show_grid">Activer la grille</label></th>
@@ -2835,7 +2835,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Zoom & Navigation</h3>
+            <h3 class="section-title">Zoom & Navigation</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="default_zoom">Zoom par Défaut (%)</label></th>
@@ -2898,7 +2898,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Sélection & Manipulation</h3>
+            <h3 class="section-title">Sélection & Manipulation</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="show_resize_handles">Activer les poignées</label></th>
@@ -2974,7 +2974,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Undo/Redo & Auto-save</h3>
+            <h3 class="section-title">Undo/Redo & Auto-save</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row"><label for="undo_levels">Niveaux Undo</label></th>
@@ -3077,7 +3077,7 @@
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_templates_nonce'); ?>
                 <input type="hidden" name="submit_templates" value="1">
 
-                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">Mappage des Statuts aux Templates</h3>
+                <h3 class="section-title">Mappage des Statuts aux Templates</h3>
 
                 <table class="form-table">
                     <?php foreach ($order_statuses as $status_key => $status_name) :
@@ -3180,7 +3180,7 @@
         <div id="maintenance" class="tab-content hidden-tab">
             <h2>Actions de Maintenance</h2>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧹 Nettoyage des Données</h3>
+            <h3 class="section-title">🧹 Nettoyage des Données</h3>
             <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
@@ -3200,7 +3200,7 @@
                 </button>
             </div>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔧 Réparation & Réinitialisation</h3>
+            <h3 class="section-title">🔧 Réparation & Réinitialisation</h3>
             <p>Réparez les templates corrompus et les paramètres invalides.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
@@ -3219,7 +3219,7 @@
                 </button>
             </div>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🐛 Outils de Développement</h3>
+            <h3 class="section-title">🐛 Outils de Développement</h3>
             <p>Outils pour les développeurs et le débogage avancé.</p>
 
             <table class="form-table">
@@ -3243,7 +3243,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📊 Informations Système</h3>
+            <h3 class="section-title">📊 Informations Système</h3>
             <table class="form-table">
                 <tr>
                     <th scope="row">Version du Plugin</th>
@@ -3306,7 +3306,7 @@
             </table>
 
             <!-- Section Logs & Diagnostics -->
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Logs & Diagnostics</h3>
+            <h3 class="section-title">📋 Logs & Diagnostics</h3>
 
             <table class="wp-list-table widefat fixed striped">
                 <thead>
@@ -3380,7 +3380,7 @@
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
-                <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Contrôle d'Accès</h3>
+                <h3 class="section-title">🔐 Contrôle d'Accès</h3>
 
              <table class="form-table">
                 <tr>
@@ -3420,7 +3420,7 @@
                 </tr>
              </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🔐 Test de Licence</h3>
+            <h3 class="section-title">🔐 Test de Licence</h3>
 
             <table class="form-table">
                 <tr>
@@ -3557,7 +3557,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📝 Fichiers Logs</h3>
+            <h3 class="section-title">Fichiers Logs</h3>
 
             <table class="form-table">
                 <tr>
@@ -3589,7 +3589,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🚀 Optimisations Avancées</h3>
+            <h3 class="section-title">Optimisations Avancées</h3>
 
             <table class="form-table">
                 <tr>
@@ -3627,7 +3627,7 @@
                 </tr>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">📋 Visualiseur de Logs Temps Réel</h3>
+            <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
 
             <div style="margin-bottom: 15px;">
                 <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
@@ -3648,7 +3648,7 @@
                 </div>
             </div>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🧪 Outils de Développement</h3>
+            <h3 class="section-title">Outils de Développement</h3>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <button type="button" id="reload_cache_btn" class="button button-secondary">
@@ -3671,7 +3671,7 @@
                 </button>
             </div>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">⌨️ Raccourcis Clavier Développeur</h3>
+            <h3 class="section-title">Raccourcis Clavier Développeur</h3>
 
             <table class="wp-list-table widefat fixed striped">
                 <thead>
@@ -3708,7 +3708,7 @@
                 </tbody>
             </table>
 
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🎨 Console Code</h3>
+            <h3 class="section-title">Console Code</h3>
 
             <table class="form-table">
                 <tr>
@@ -3726,7 +3726,7 @@
             </table>
 
             <!-- Tableau de références des hooks disponibles -->
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">🎣 Hooks Disponibles</h3>
+            <h3 class="section-title">Hooks Disponibles</h3>
 
             <table class="wp-list-table widefat fixed striped">
                 <thead>
@@ -4146,6 +4146,20 @@
         /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
         #roles #global-save-btn {
             display: none !important;
+        }
+
+        /* Style pour les sections h3 */
+        .section-title {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-left: 4px solid #007cba;
+            border-radius: 8px;
+            padding: 15px 20px !important;
+            margin: 30px 0 20px 0 !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            color: #003d66 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-bottom: none !important;
         }
 
         /* Classe pour masquer les onglets non actifs */
