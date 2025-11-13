@@ -438,11 +438,18 @@ class PdfBuilderAdmin
                     </div>
 
                     <div class="action-card">
-                        <h3>📄 Documents Récents</h3>
-                        <p>Consultez et téléchargez vos PDF générés récemment</p>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-documents'); ?>"
+                        <h3>� Centre de Support</h3>
+                        <p>Documentation, tutoriels et assistance technique</p>
+                        <a href="https://github.com/nastenack/wp-pdf-builder-pro"
+                            target="_blank"
                             class="button button-secondary">
-                            Voir les Documents
+                            📖 Documentation
+                        </a>
+                        <a href="https://github.com/nastenack/wp-pdf-builder-pro/issues"
+                            target="_blank"
+                            class="button button-secondary"
+                            style="margin-top: 8px;">
+                            🐛 Signaler un Bug
                         </a>
                     </div>
                 </div>

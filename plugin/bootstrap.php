@@ -912,51 +912,6 @@ function pdf_builder_ensure_admin_menu() {
             $core->render_templates_page();
         }
 
-        // Fonction callback pour la page documents
-        function pdf_builder_documents_page_callback() {
-            // DIAGNOSTIC TEMPORAIRE - permettre l'accès à tous les utilisateurs connectés
-            if (!is_user_logged_in()) {
-                wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-            }
-
-            // Log détaillé pour diagnostic
-            $user = wp_get_current_user();
-            error_log('PDF Builder Documents Access - User ID: ' . $user->ID);
-            error_log('PDF Builder Documents Access - User roles: ' . implode(', ', $user->roles));
-            error_log('PDF Builder Documents Access - User login: ' . $user->user_login);
-
-            // Pour l'instant, permettre l'accès à TOUS les utilisateurs connectés (diagnostic)
-            // TODO: Remettre les vraies permissions après diagnostic
-
-            // Charger les fichiers nécessaires
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
-
-            // Vérifier si la classe existe
-            if (!class_exists('PDF_Builder\Core\PdfBuilderCore')) {
-                error_log('PDF Builder Documents Access - ERROR: Core class not found');
-                wp_die(__('Erreur: Classe PDF_Builder_Core non trouvée. Vérifiez que tous les fichiers sont présents.', 'pdf-builder-pro'));
-            }
-
-            try {
-                $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
-
-                // Vérifier si la méthode existe
-                if (!method_exists($core, 'render_documents_page')) {
-                    error_log('PDF Builder Documents Access - ERROR: render_documents_page method not found');
-                    wp_die(__('Erreur: Méthode render_documents_page non trouvée dans la classe core.', 'pdf-builder-pro'));
-                }
-
-                global $pdf_builder_core;
-                $pdf_builder_core = $core;
-
-                error_log('PDF Builder Documents Access - SUCCESS: Page loading');
-                $core->render_documents_page();
-            } catch (Exception $e) {
-                error_log('PDF Builder Documents Access - ERROR: Exception - ' . $e->getMessage());
-                wp_die(__('Erreur lors du chargement de la page documents: ', 'pdf-builder-pro') . $e->getMessage());
-            }
-        }
-
         // Fonction callback pour la page settings
         function pdf_builder_settings_page_callback() {
             if (!is_user_logged_in()) {
@@ -1034,15 +989,6 @@ function pdf_builder_ensure_admin_menu() {
             'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
             'pdf-builder-templates',
             'pdf_builder_templates_page_callback'
-        );
-
-        add_submenu_page(
-            'pdf-builder-main',
-            'Documents',
-            'Documents',
-            'manage_options',  // Capacité WordPress (sera vérifiée par Role_Manager)
-            'pdf-builder-documents',
-            'pdf_builder_documents_page_callback'
         );
 
         add_submenu_page(
