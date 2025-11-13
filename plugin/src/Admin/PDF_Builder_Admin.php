@@ -1114,13 +1114,29 @@ class PdfBuilderAdmin
         remove_all_actions('admin_notices');
         remove_all_actions('all_admin_notices');
 
-        // Utiliser output buffering pour supprimer complètement les notifications
-        add_action('admin_notices', function() {
+        // Supprimer également les autres hooks de notifications
+        remove_all_actions('admin_head');
+        remove_all_actions('admin_footer');
+
+        // Utiliser output buffering global pour supprimer toutes les notifications
+        add_action('admin_head', function() {
             ob_start();
         }, 1);
 
-        add_action('admin_notices', function() {
-            ob_end_clean();
+        add_action('admin_footer', function() {
+            $content = ob_get_clean();
+            // Supprimer seulement les notifications WordPress et des autres plugins
+            // Garder les notifications du PDF Builder (qui utilisent toastr)
+            $content = preg_replace_callback('/<div[^>]*class="([^"]*)".*?<\/div>/s', function($matches) {
+                $classes = $matches[1];
+                // Supprimer seulement si c'est une notification WordPress standard
+                if (preg_match('/\b(notice|error|updated|update-nag|wp-notice)\b/', $classes) &&
+                    !preg_match('/\b(pdf-builder|toastr)\b/', $classes)) {
+                    return '';
+                }
+                return $matches[0];
+            }, $content);
+            echo $content;
         }, 999);
 
         // Charger les scripts
