@@ -4324,16 +4324,21 @@
                                 
                                 formData.append('action', ajaxAction);
                                 
-                                // S'assurer que le nonce est dans les données
-                                // Si pas trouvé dans FormData, le chercher dans la page
-                                if (!formData.has('nonce')) {
-                                    const nonceField = form.querySelector(`input[name="${nonceName}"]`);
-                                    if (nonceField) {
-                                        formData.set('nonce', nonceField.value);
-                                        console.log('✅ Nonce trouvé et ajouté:', nonceName, nonceField.value);
-                                    } else {
-                                        console.warn('⚠️ Nonce field non trouvé:', nonceName);
-                                    }
+                                // Récupérer le nonce du formulaire
+                                const nonceField = form.querySelector(`input[name="${nonceName}"]`);
+                                if (nonceField) {
+                                    // Renommer le champ du nonce à 'nonce' pour le gestionnaire AJAX
+                                    formData.delete(nonceName);
+                                    formData.append('nonce', nonceField.value);
+                                    console.log('✅ Nonce trouvé et renommé de', nonceName, 'à nonce:', nonceField.value);
+                                } else {
+                                    console.warn('⚠️ Nonce field non trouvé:', nonceName);
+                                }
+
+                                // Log des données qui vont être envoyées (pour debug)
+                                console.log('📤 FormData à envoyer:');
+                                for (let [key, value] of formData.entries()) {
+                                    console.log('  -', key, ':', value);
                                 }
 
                                 // Faire la requête AJAX
@@ -4342,15 +4347,32 @@
                                     body: formData
                                 })
                                 .then(response => {
-                                    // Vérifier si la réponse est du JSON valide
-                                    const contentType = response.headers.get('content-type');
+                                    // Toujours récupérer le texte pour pouvoir l'afficher en cas d'erreur
+                                    return response.text().then(text => ({
+                                        status: response.status,
+                                        ok: response.ok,
+                                        contentType: response.headers.get('content-type'),
+                                        body: text
+                                    }));
+                                })
+                                .then(({status, ok, contentType, body}) => {
+                                    console.log('📥 Response received:', status, contentType, body.substring(0, 200));
+                                    
+                                    // Vérifier si c'est du JSON valide
                                     if (!contentType || !contentType.includes('application/json')) {
-                                        throw new Error('Réponse non-JSON du serveur. Status: ' + response.status);
+                                        throw new Error(`Réponse non-JSON du serveur (Status: ${status}). Contenu: ${body.substring(0, 500)}`);
                                     }
-                                    if (!response.ok) {
-                                        throw new Error('Erreur HTTP ' + response.status);
+                                    
+                                    if (!ok) {
+                                        throw new Error(`Erreur HTTP ${status}: ${body.substring(0, 500)}`);
                                     }
-                                    return response.json();
+                                    
+                                    // Parser le JSON
+                                    try {
+                                        return JSON.parse(body);
+                                    } catch (e) {
+                                        throw new Error(`Erreur JSON invalid: ${e.message}. Contenu: ${body.substring(0, 500)}`);
+                                    }
                                 })
                                 .then(data => {
                                     console.log('✅ AJAX Response:', data);
@@ -4368,7 +4390,7 @@
                                 .catch(error => {
                                     console.error('❌ AJAX Error:', error);
                                     if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ Erreur de connexion: ' + error.message, 'Erreur');
+                                        toastr.error('❌ ' + error.message, 'Erreur');
                                     }
                                 });
                             } else {
