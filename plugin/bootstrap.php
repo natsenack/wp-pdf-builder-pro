@@ -914,11 +914,22 @@ function pdf_builder_ensure_admin_menu() {
 
         // Fonction callback pour la page documents
         function pdf_builder_documents_page_callback() {
+            // Debug: log des permissions
+            error_log('PDF Builder Debug - Documents Page Access:');
+            error_log('User ID: ' . get_current_user_id());
+            error_log('User roles: ' . print_r(wp_get_current_user()->roles, true));
+            error_log('Has manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
+
             // Vérifier l'accès via Role_Manager si disponible
             if (class_exists('WP_PDF_Builder_Pro\Security\Role_Manager')) {
+                error_log('Role_Manager found, checking access...');
                 \WP_PDF_Builder_Pro\Security\Role_Manager::check_and_block_access();
+                error_log('Role_Manager check passed');
             } elseif (!current_user_can('manage_options')) {
+                error_log('No Role_Manager and no manage_options - blocking access');
                 wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            } else {
+                error_log('Access granted via manage_options');
             }
 
             if (!is_user_logged_in()) {
