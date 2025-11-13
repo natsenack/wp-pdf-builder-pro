@@ -3556,6 +3556,7 @@
                 </tr>
             </table>
 
+            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
 
             <div style="margin-bottom: 15px;">
@@ -3576,7 +3577,9 @@
                     <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
                 </div>
             </div>
+            </div>
 
+            <div id="dev-tools-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Outils de Développement</h3>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -3599,7 +3602,9 @@
                     ℹ️ Info Système
                 </button>
             </div>
+            </div>
 
+            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Raccourcis Clavier Développeur</h3>
 
             <table class="wp-list-table widefat fixed striped">
@@ -3636,7 +3641,9 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
 
+            <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Console Code</h3>
 
             <table class="form-table">
@@ -3653,7 +3660,9 @@
                     </td>
                 </tr>
             </table>
+            </div>
 
+            <div id="dev-hooks-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <!-- Tableau de références des hooks disponibles -->
             <h3 class="section-title">Hooks Disponibles</h3>
 
@@ -3698,6 +3707,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
 
             <!-- Avertissement production -->
             <div style="background: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 20px; margin-top: 30px;">
@@ -5139,6 +5149,13 @@
                 const licenseSectionDiv = jQuery('#dev-license-section');
                 const debugSectionDiv = jQuery('#dev-debug-section');
                 const logsSectionDiv = jQuery('#dev-logs-section');
+                const logsViewerSectionDiv = jQuery('#dev-logs-viewer-section');
+                const toolsSectionDiv = jQuery('#dev-tools-section');
+                const shortcutsSectionDiv = jQuery('#dev-shortcuts-section');
+                const consoleSectionDiv = jQuery('#dev-console-section');
+                const hooksSectionDiv = jQuery('#dev-hooks-section');
+                const developerPasswordField = jQuery('#developer_password');
+                const developerPasswordToggle = jQuery('#toggle_password');
 
                 // Fonction pour mettre à jour la visibilité
                 function updateDeveloperSectionsVisibility() {
@@ -5154,12 +5171,39 @@
                     logsSectionDiv.fadeToggle(200, function() {
                         jQuery(this).css('display', displayStyle);
                     });
+                    logsViewerSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    toolsSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    shortcutsSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    consoleSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+                    hooksSectionDiv.fadeToggle(200, function() {
+                        jQuery(this).css('display', displayStyle);
+                    });
+
+                    // Griser/dégriser le champ mot de passe développeur
+                    if (isDeveloperEnabled) {
+                        developerPasswordField.prop('disabled', false).css('opacity', '1');
+                        developerPasswordToggle.prop('disabled', false).css('opacity', '1');
+                    } else {
+                        developerPasswordField.prop('disabled', true).css('opacity', '0.5');
+                        developerPasswordToggle.prop('disabled', true).css('opacity', '0.5');
+                    }
                 }
 
                 // Ajouter l'event listener au checkbox
                 developerCheckbox.on('change', function() {
                     updateDeveloperSectionsVisibility();
                 });
+
+                // Initialiser l'état au chargement de la page
+                updateDeveloperSectionsVisibility();
             });
     </script>
 
