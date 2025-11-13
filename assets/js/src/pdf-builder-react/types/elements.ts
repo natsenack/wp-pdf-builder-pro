@@ -381,6 +381,7 @@ export interface CustomerInfoElementProperties {
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
+  showBackground?: boolean;
   // Propriétés de style
   borderColor?: string;
   headerTextColor?: string;

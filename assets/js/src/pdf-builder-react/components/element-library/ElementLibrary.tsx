@@ -135,6 +135,7 @@ const WOOCOMMERCE_ELEMENTS = [
       shadowOffsetX: 0,
       shadowOffsetY: 0,
       shadowBlur: 0,
+      showBackground: true,
       visible: true
     }
   },
