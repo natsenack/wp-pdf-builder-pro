@@ -52,6 +52,7 @@ class PDF_Builder_Installation_Wizard {
      * Ajouter la page du wizard dans l'admin
      */
     public function add_wizard_page() {
+        // Page principale du wizard
         add_menu_page(
             'Installation PDF Builder',
             'PDF Builder Wizard',
@@ -61,6 +62,63 @@ class PDF_Builder_Installation_Wizard {
             'dashicons-admin-tools',
             2
         );
+
+        // Page cachée pour les requêtes AJAX
+        add_submenu_page(
+            null, // Pas dans le menu
+            'PDF Builder AJAX Handler',
+            'PDF Builder AJAX Handler',
+            'manage_options',
+            'pdf-builder-ajax',
+            array($this, 'handle_ajax_request')
+        );
+    }
+
+    /**
+     * Gérer les requêtes AJAX via page admin
+     */
+    public function handle_ajax_request() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_die('Accès refusé');
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_wizard_nonce')) {
+            wp_send_json(array('success' => false, 'message' => 'Nonce invalide'));
+        }
+
+        $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+        $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
+        $data = isset($_POST['data']) ? $_POST['data'] : array();
+
+        error_log('PDF Builder Wizard: AJAX request via admin page - action: ' . $action . ', step: ' . $step);
+
+        $response = array('success' => false);
+
+        if ($action === 'pdf_builder_wizard_step') {
+            switch ($step) {
+                case 'save_company':
+                    $response = $this->save_company_data($data);
+                    break;
+
+                case 'create_template':
+                    $response = $this->create_template();
+                    break;
+
+                case 'complete':
+                    update_option('pdf_builder_installed', true);
+                    $response = array('success' => true, 'message' => 'Installation terminée');
+                    break;
+
+                default:
+                    $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
+            }
+        } elseif ($action === 'pdf_builder_test_ajax') {
+            $response = array('success' => true, 'message' => 'AJAX via admin page works!');
+        }
+
+        wp_send_json($response);
     }
 
     /**
@@ -82,7 +140,7 @@ class PDF_Builder_Installation_Wizard {
         wp_enqueue_script('pdf-builder-wizard', plugins_url('assets/js/wizard.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), PDF_BUILDER_VERSION, true);
 
         wp_localize_script('pdf-builder-wizard', 'pdfBuilderWizard', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
+            'ajax_url' => admin_url('admin.php?page=pdf-builder-ajax'),
             'admin_url' => admin_url('admin.php?page=pdf-builder'),
             'nonce' => wp_create_nonce('pdf_builder_wizard_nonce'),
             'strings' => array(
