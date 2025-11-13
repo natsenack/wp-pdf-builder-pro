@@ -428,7 +428,7 @@ function pdf_builder_add_asset_cache_headers()
 add_action('init', 'pdf_builder_handle_pdf_downloads');
 // Charger le plugin pour les requêtes AJAX
 add_action('init', function() {
-    if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_ajax' && $_SERVER['REQUEST_METHOD'] === 'POST' && is_admin()) {
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_ajax' && $_SERVER['REQUEST_METHOD'] === 'POST' && basename($_SERVER['SCRIPT_NAME']) === 'admin.php') {
         pdf_builder_handle_admin_post_ajax();
         exit;
     }
