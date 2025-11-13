@@ -4332,6 +4332,15 @@
                                 // Créer FormData à partir du formulaire
                                 const formData = new FormData(form);
                                 
+                                // S'assurer que toutes les checkboxes sont incluses (même non cochées)
+                                const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
+                                allCheckboxes.forEach(checkbox => {
+                                    if (!formData.has(checkbox.name)) {
+                                        // Checkbox non cochée, l'ajouter avec valeur '0'
+                                        formData.append(checkbox.name, '0');
+                                    }
+                                });
+                                
                                 // Utiliser toujours le gestionnaire générique pdf_builder_save_settings_page
                                 // qui accepte tous les paramètres indépendamment de l'onglet
                                 formData.append('action', 'pdf_builder_save_settings_page');

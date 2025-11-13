@@ -3520,7 +3520,8 @@ class PdfBuilderAdmin
         if (wp_verify_nonce($nonce, 'pdf_builder_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_performance_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_pdf_settings') ||
-            wp_verify_nonce($nonce, 'pdf_builder_general_settings')) {
+            wp_verify_nonce($nonce, 'pdf_builder_general_settings') ||
+            wp_verify_nonce($nonce, 'pdf_builder_developpeur_nonce')) {
             $valid = true;
         }
         
@@ -3550,11 +3551,23 @@ class PdfBuilderAdmin
         // Mettre à jour les paramètres de base reçus
         foreach ($_POST as $key => $value) {
             if ($key !== 'action' && $key !== 'nonce' && $key !== '_wp_http_referer') {
-                // Sanitize basic values
-                if (is_array($value)) {
-                    $settings[$key] = array_map('sanitize_text_field', $value);
+                // Liste des paramètres qui sont des checkboxes
+                $checkbox_fields = [
+                    'developer_enabled', 'developer_password', 'debug_php_errors', 'debug_javascript', 
+                    'debug_javascript_verbose', 'debug_ajax', 'debug_performance', 'debug_database',
+                    'enable_profiling', 'force_https', 'license_test_mode'
+                ];
+                
+                if (in_array($key, $checkbox_fields)) {
+                    // Pour les checkboxes, convertir en boolean
+                    $settings[$key] = ($value === '1' || $value === 'on' || $value === 'true');
                 } else {
-                    $settings[$key] = sanitize_text_field($value);
+                    // Sanitize basic values
+                    if (is_array($value)) {
+                        $settings[$key] = array_map('sanitize_text_field', $value);
+                    } else {
+                        $settings[$key] = sanitize_text_field($value);
+                    }
                 }
             }
         }
