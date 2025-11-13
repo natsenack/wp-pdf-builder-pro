@@ -1118,25 +1118,21 @@ class PdfBuilderAdmin
         remove_all_actions('admin_head');
         remove_all_actions('admin_footer');
 
-        // Utiliser output buffering global pour supprimer toutes les notifications
+        // Solution radicale : supprimer TOUTES les notifications HTML
+        // Le PDF Builder utilise Toastr pour ses propres notifications
         add_action('admin_head', function() {
             ob_start();
         }, 1);
 
-        add_action('admin_footer', function() {
-            $content = ob_get_clean();
-            // Supprimer seulement les notifications WordPress et des autres plugins
-            // Garder les notifications du PDF Builder (qui utilisent toastr)
-            $content = preg_replace_callback('/<div[^>]*class="([^"]*)".*?<\/div>/s', function($matches) {
-                $classes = $matches[1];
-                // Supprimer seulement si c'est une notification WordPress standard
-                if (preg_match('/\b(notice|error|updated|update-nag|wp-notice)\b/', $classes) &&
-                    !preg_match('/\b(pdf-builder|toastr)\b/', $classes)) {
-                    return '';
-                }
-                return $matches[0];
-            }, $content);
-            echo $content;
+        add_action('shutdown', function() {
+            if (ob_get_level() > 0) {
+                $content = ob_get_clean();
+                // Supprimer toutes les div de notifications WordPress
+                $content = preg_replace('/<div[^>]*class="[^"]*\b(notice|error|updated|update-nag|wp-notice|warning|success|info)\b[^"]*"[^>]*>.*?<\/div>/s', '', $content);
+                // Supprimer également les paragraphes de notifications
+                $content = preg_replace('/<p[^>]*class="[^"]*\b(notice|error|updated|update-nag|wp-notice|warning|success|info)\b[^"]*"[^>]*>.*?<\/p>/s', '', $content);
+                echo $content;
+            }
         }, 999);
 
         // Charger les scripts
