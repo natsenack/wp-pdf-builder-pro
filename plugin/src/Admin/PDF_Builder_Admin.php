@@ -1094,6 +1094,9 @@ class PdfBuilderAdmin
      */
     public function enqueueAdminScripts($hook)
     {
+        // DEBUG: Log le hook reçu
+        error_log('PDF_Builder_Admin::enqueueAdminScripts called with hook: ' . $hook);
+        
         // Charger seulement sur nos pages admin (diagnostic/test retirés)
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
@@ -1107,12 +1110,11 @@ class PdfBuilderAdmin
 
         // Vérification des hooks
         if (!in_array($hook, $allowed_hooks)) {
+            error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
             return;
         }
-
-        // Masquer les notifications WordPress et des autres plugins sur nos pages
-        remove_all_actions('admin_notices');
-        remove_all_actions('all_admin_notices');
+        
+        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading assets for ' . $hook);
 
         // Charger les scripts
         $this->loadAdminScripts($hook);
