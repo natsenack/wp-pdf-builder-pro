@@ -1098,13 +1098,15 @@ class PdfBuilderAdmin
         error_log('PDF_Builder_Admin::enqueueAdminScripts called with hook: ' . $hook);
         
         // Charger seulement sur nos pages admin (diagnostic/test retirés)
+        // Note: WordPress remplace les tirets par des underscores dans les hooks
+        // Exemple: slug 'pdf-builder-settings' devient hook 'pdf-builder_page_pdf-builder-settings'
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
-            'pdf-builder-pro_page_pdf-builder-templates',
-            'pdf-builder-pro_page_pdf-builder-react-editor', // Éditeur React
-            'pdf-builder-pro_page_pdf-builder-settings',
-            'pdf-builder-pro_page_pdf-builder-developer',
-            'pdf-builder-pro_page_pdf-builder-predefined-templates', // Gestion des modèles prédéfinis
+            'pdf-builder_page_pdf-builder-templates',
+            'pdf-builder_page_pdf-builder-react-editor', // Éditeur React
+            'pdf-builder_page_pdf-builder-settings',      // ✅ FIXÉ: un underscore après pdf-builder, pas pdf-builder-pro
+            'pdf-builder_page_pdf-builder-developer',
+            'pdf-builder_page_pdf-builder-predefined-templates', // Gestion des modèles prédéfinis
             'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
         ];
 
