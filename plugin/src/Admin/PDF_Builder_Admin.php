@@ -576,36 +576,57 @@ class PdfBuilderAdmin
                             </ul>
                         </div>
 
-                        <!-- Sécurité et Performance -->
+                        <!-- Interface Utilisateur Améliorée -->
                         <div class="feature-category">
-                            <h4>🔒 Sécurité & Performance</h4>
+                            <h4>🎨 Interface Utilisateur</h4>
                             <ul>
-                                <li>Validation des données</li>
-                                <li>Protection CSRF</li>
-                                <li>Sanitisation automatique</li>
-                                <li>Cache optimisé</li>
-                                <li>Compression GZIP</li>
-                                <li>Monitoring des ressources</li>
-                                <li>Logs de sécurité</li>
+                                <li>Accordéons organisés pour les propriétés</li>
+                                <li>Page d'accueil pleine largeur</li>
+                                <li>Statistiques dynamiques en temps réel</li>
+                                <li>Navigation intuitive et moderne</li>
+                                <li>Responsive design optimisé</li>
+                                <li>Thème sombre/clair adaptable</li>
+                                <li>Notifications contextuelles</li>
                             </ul>
                         </div>
-                    </div>
+
+                        <!-- Gestion des Versions -->
+                        <div class="feature-category">
+                            <h4>📦 Gestion des Versions</h4>
+                            <ul>
+                                <li>Version Pro avec fonctionnalités complètes</li>
+                                <li>Version Gratuite avec fonctionnalités de base</li>
+                                <li>Détection automatique de licence</li>
+                                <li>Mise à jour transparente</li>
+                                <li>Compatibilité ascendante</li>
+                                <li>Historique des versions</li>
+                                <li>Support multi-versions</li>
+                            </ul>
+                        </div>
 
                     <!-- Nouvelles fonctionnalités -->
                     <div class="new-features">
-                        <h4>🆕 Nouvelles fonctionnalités (v1.0.2)</h4>
+                        <h4>🆕 Nouvelles fonctionnalités (v1.1.0)</h4>
                         <div class="new-features-list">
                             <div class="new-feature-item">
-                                <span class="feature-badge">NOUVEAU</span>
-                                <strong>API Preview 1.4</strong> - Génération d'aperçus en temps réel
+                                <span class="feature-badge">INTERFACE</span>
+                                <strong>Accordéons organisés</strong> - Police globale du tableau maintenant dans un accordéon pliable
                             </div>
                             <div class="new-feature-item">
-                                <span class="feature-badge">CORRIGÉ</span>
-                                <strong>Éditeur React</strong> - Chargement et initialisation améliorés
+                                <span class="feature-badge">VERSION</span>
+                                <strong>Gestion des versions</strong> - Système pro/gratuit avec détection automatique de licence
                             </div>
                             <div class="new-feature-item">
-                                <span class="feature-badge">OPTIMISÉ</span>
-                                <strong>Performance AJAX</strong> - Requêtes plus rapides et fiables
+                                <span class="feature-badge">STATS</span>
+                                <strong>Statistiques dynamiques</strong> - Comptage en temps réel des templates et documents
+                            </div>
+                            <div class="new-feature-item">
+                                <span class="feature-badge">UI</span>
+                                <strong>Page d'accueil optimisée</strong> - Pleine largeur et informations de version
+                            </div>
+                            <div class="new-feature-item">
+                                <span class="feature-badge">PERF</span>
+                                <strong>Synchronisation des versions</strong> - Gestion centralisée et cohérente des numéros de version
                             </div>
                         </div>
                     </div>
