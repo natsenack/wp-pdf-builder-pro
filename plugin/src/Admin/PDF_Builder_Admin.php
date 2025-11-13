@@ -820,7 +820,8 @@ class PdfBuilderAdmin
 
                 .dashboard-guide {
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    border-radius: 16px;
+                    border: none;
+                    border-radius: 12px;
                     padding: 30px;
                     box-shadow: 0 8px 32px rgba(0,0,0,0.1);
                     color: white;
@@ -835,8 +836,8 @@ class PdfBuilderAdmin
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-                    opacity: 0.3;
+                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+                    opacity: 0.1;
                     pointer-events: none;
                 }
 
@@ -853,8 +854,8 @@ class PdfBuilderAdmin
                 .guide-steps {
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                    gap: 20px;
-                    margin-top: 20px;
+                    gap: 25px;
+                    margin-top: 25px;
                     position: relative;
                     z-index: 1;
                 }
@@ -863,7 +864,7 @@ class PdfBuilderAdmin
                     background: rgba(255, 255, 255, 0.15);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-radius: 12px;
+                    border-radius: 10px;
                     padding: 20px;
                     display: flex;
                     align-items: flex-start;
@@ -886,7 +887,7 @@ class PdfBuilderAdmin
 
                 .step:hover {
                     transform: translateY(-5px);
-                    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+                    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
                     background: rgba(255, 255, 255, 0.25);
                 }
 
@@ -905,9 +906,9 @@ class PdfBuilderAdmin
                     justify-content: center;
                     font-weight: bold;
                     font-size: 16px;
-                    margin-right: 15px;
+                    margin-right: 18px;
                     flex-shrink: 0;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    box-shadow: 0 4px 12px rgba(255,107,107,0.3);
                     position: relative;
                     z-index: 2;
                 }
@@ -917,14 +918,14 @@ class PdfBuilderAdmin
                     color: white;
                     font-size: 16px;
                     font-weight: 600;
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
                 }
 
                 .step-content p {
                     margin: 0;
                     color: rgba(255, 255, 255, 0.9);
                     font-size: 14px;
-                    line-height: 1.4;
+                    line-height: 1.5;
                 }
 
                 .step-content small {
@@ -933,7 +934,7 @@ class PdfBuilderAdmin
                     font-size: 12px;
                     margin-top: 8px;
                     font-style: italic;
-                    line-height: 1.3;
+                    line-height: 1.4;
                 }
 
                 .guide-resources {
@@ -949,7 +950,7 @@ class PdfBuilderAdmin
                     color: white;
                     font-size: 18px;
                     font-weight: 600;
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
                 }
 
                 .guide-resources ul {
@@ -964,26 +965,46 @@ class PdfBuilderAdmin
                     margin-bottom: 0;
                     color: rgba(255, 255, 255, 0.9);
                     font-size: 14px;
-                    padding: 8px 12px;
-                    background: rgba(255, 255, 255, 0.1);
-                    border-radius: 8px;
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 0;
                 }
 
-                .guide-resources li:hover {
-                    background: rgba(255, 255, 255, 0.2);
-                    transform: translateX(5px);
+                .guide-resources li::before {
+                    content: '📖';
+                    margin-right: 10px;
+                    font-size: 16px;
                 }
 
                 .guide-resources code {
-                    background: rgba(0, 0, 0, 0.3);
-                    padding: 2px 8px;
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    padding: 3px 8px;
                     border-radius: 4px;
                     font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
                     font-size: 12px;
-                    color: #e6f3ff;
                     border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                /* Responsive */
+                @media (max-width: 768px) {
+                    .dashboard-guide {
+                        padding: 20px;
+                        margin: 0 10px;
+                    }
+
+                    .guide-steps {
+                        grid-template-columns: 1fr;
+                        gap: 15px;
+                    }
+
+                    .guide-resources ul {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .step {
+                        padding: 15px;
+                    }
                 }
 
                 /* Styles pour la section fonctionnalités */
