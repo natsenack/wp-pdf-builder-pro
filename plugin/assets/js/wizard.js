@@ -189,7 +189,7 @@ var pdfBuilderWizard = {
 
         console.log('PDF Builder Wizard: Sending data:', data);
 
-        jQuery.ajax({
+        return jQuery.ajax({
             url: ajaxurl,
             type: 'POST',
             data: {
