@@ -1756,7 +1756,6 @@ rgba(0,102,204,0.3)';">
                         </button>
                     </div>
             </form>
-            </form>
         </div>
         
         <div id="performance" class="tab-content hidden-tab">
