@@ -3495,7 +3495,7 @@ class PdfBuilderAdmin
     /**
      * AJAX - Sauvegarder les paramètres de la page des paramètres
      */
-    public function ajaxSaveSettingsPage()
+    public function ajax_save_settings_page()
     {
         // Logging basique
         $log_file = dirname(dirname(dirname(__FILE__))) . '/debug.log';
