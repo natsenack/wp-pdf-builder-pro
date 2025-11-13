@@ -56,13 +56,10 @@ class PDF_Builder_Predefined_Templates_Manager
         wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
         
-        // Déterminer l'URL du plugin
-        $plugin_dir_url = plugin_dir_url(dirname(__FILE__, 3) . '/pdf-builder-pro.php');
-        
         // Scripts personnalisés
-        wp_enqueue_script('pdf-builder-predefined-templates', $plugin_dir_url . 'templates/admin/js/predefined-templates.js', ['jquery', 'codemirror'], '1.0.0', true);
+        wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PLUGIN_URL . 'templates/admin/js/predefined-templates.js', ['jquery', 'codemirror'], '1.0.0', true);
         // Styles personnalisés
-        wp_enqueue_style('pdf-builder-predefined-templates', $plugin_dir_url . 'templates/admin/css/predefined-templates.css', [], '1.0.0');
+        wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PLUGIN_URL . 'templates/admin/css/predefined-templates.css', [], '1.0.0');
         // Localize script
         wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
