@@ -840,6 +840,29 @@ Paramètres PDF</h3>
         </style>
         
         <script>
+        // Script de diagnostic pour Toastr
+        console.log('=== TOASTR DIAGNOSTIC ===');
+        console.log('typeof window.toastr:', typeof window.toastr);
+        console.log('typeof toastr:', typeof toastr);
+        console.log('window keys with toast:', Object.keys(window).filter(k => k.toLowerCase().includes('toast')));
+        
+        // Vérifier si jQuery est chargé
+        console.log('typeof jQuery:', typeof jQuery);
+        console.log('typeof $:', typeof $);
+        
+        // Vérifier les scripts chargés
+        const scripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
+        console.log('Scripts with "toastr":', scripts.filter(s => s.includes('toastr')));
+        console.log('Scripts with "jquery":', scripts.filter(s => s.includes('jquery')));
+        
+        // Vérifier les stylesheets chargés
+        const links = Array.from(document.querySelectorAll('link[href]')).map(l => l.href);
+        console.log('Stylesheets with "toastr":', links.filter(l => l.includes('toastr')));
+        
+        console.log('=== FIN DIAGNOSTIC ===');
+        </script>
+
+        <script>
         // Attendre que Toastr soit disponible puis attacher les événements
         document.addEventListener('DOMContentLoaded', function() {
             // Fonction pour attendre Toastr
