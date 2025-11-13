@@ -1130,7 +1130,7 @@ class PdfBuilderAdmin
         $nonce_fix_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js';
 // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
-// Toastr pour les notifications
+// Toastr pour les notifications - IMPORTANT: les fichiers CSS et JS doivent être présents dans assets/
         wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
         wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
