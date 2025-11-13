@@ -4076,21 +4076,22 @@
             font-size: 14px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, outline 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
             min-width: 140px;
             justify-content: center;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
         }
 
         .floating-save-btn:hover {
             background: linear-gradient(135deg, #005a87 0%, #004466 100%);
-            box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
         }
 
         .floating-save-btn:active {
-            box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+            outline: 2px solid rgba(0, 124, 186, 0.6);
         }
 
         .floating-save-btn:disabled {
