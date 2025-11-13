@@ -5825,18 +5825,39 @@ class PdfBuilderAdmin
         // Nombre total de documents générés (logs)
         $table_logs = $wpdb->prefix . 'pdf_builder_logs';
         $documents_count = 0;
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
-            $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'");
-        }
-
-        // Documents générés aujourd'hui
-        $today = date('Y-m-d');
         $today_count = 0;
+
         if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
-            $today_count = $wpdb->get_var($wpdb->prepare(
-                "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
-                $today
-            ));
+            // Vérifier si la colonne log_message existe
+            $columns = $wpdb->get_results("DESCRIBE $table_logs");
+            $has_log_message = false;
+            foreach ($columns as $column) {
+                if ($column->Field === 'log_message') {
+                    $has_log_message = true;
+                    break;
+                }
+            }
+
+            if ($has_log_message) {
+                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'");
+
+                // Documents générés aujourd'hui
+                $today = date('Y-m-d');
+                $today_count = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
+                    $today
+                ));
+            } else {
+                // Si la colonne n'existe pas, compter tous les logs
+                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs");
+
+                // Documents d'aujourd'hui
+                $today = date('Y-m-d');
+                $today_count = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s",
+                    $today
+                ));
+            }
         }
 
         return [
