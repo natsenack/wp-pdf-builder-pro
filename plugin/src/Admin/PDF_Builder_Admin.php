@@ -604,6 +604,8 @@ class PdfBuilderAdmin
                             </ul>
                         </div>
 
+                    </div>
+
                     <!-- Nouvelles fonctionnalités -->
                     <div class="new-features">
                         <h4>🆕 Nouvelles fonctionnalités (v1.1.0)</h4>
@@ -630,7 +632,6 @@ class PdfBuilderAdmin
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
 
             <style>
