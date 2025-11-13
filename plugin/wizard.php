@@ -126,8 +126,10 @@ class PDF_Builder_Installation_Wizard {
         error_log('PDF Builder Wizard: enqueue_scripts called with hook: ' . $hook);
         error_log('PDF Builder Wizard: _GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
 
-        // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard
-        if (strpos($hook, 'pdf-builder-wizard') === false && (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-wizard')) {
+        // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard ou pdf-builder-pro
+        if (strpos($hook, 'pdf-builder-wizard') === false && 
+            strpos($hook, 'pdf-builder-pro') === false && 
+            (!isset($_GET['page']) || ($_GET['page'] !== 'pdf-builder-wizard' && $_GET['page'] !== 'pdf-builder-pro'))) {
             error_log('PDF Builder Wizard: Not loading scripts - condition not met');
             return;
         }
@@ -139,7 +141,7 @@ class PDF_Builder_Installation_Wizard {
 
         wp_localize_script('pdf-builder-wizard', 'pdfBuilderWizard', array(
             'ajax_url' => admin_url('admin.php?action=pdf_builder_ajax'),
-            'adminUrl' => admin_url('admin.php?page=pdf-builder'),
+            'adminUrl' => admin_url('admin.php?page=pdf-builder-pro'),
             'nonce' => wp_create_nonce('pdf_builder_wizard_nonce'),
             'strings' => array(
                 'next' => 'Suivant',
