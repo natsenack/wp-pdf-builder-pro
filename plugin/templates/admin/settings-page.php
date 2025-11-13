@@ -884,12 +884,35 @@ Paramètres PDF</h3>
                 }
             });
             
-            // Bouton Enregistrer
+            // Détecte la soumission du formulaire
+            const settingsForm = document.getElementById('global-settings-form');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', function() {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
+                    }
+                });
+            }
+            
+            // Bouton Enregistrer - affiche aussi une notification
             document.getElementById('general-submit-btn')?.addEventListener('click', function() {
                 if (typeof toastr !== 'undefined') {
                     toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
                 }
             });
+            
+            // Vérifier s'il y a un message de succès visible (notification WordPress du plugin)
+            // et afficher aussi une notification Toastr
+            const successMessages = document.querySelectorAll('[class*="notice-success"]');
+            if (successMessages.length > 0 && typeof toastr !== 'undefined') {
+                successMessages.forEach(msg => {
+                    const text = msg.textContent.trim();
+                    if (text.includes('enregistr') || text.includes('Enregistr')) {
+                        // Afficher aussi une notification Toastr pour synchroniser
+                        toastr.success('✓ ' + text, 'Succès');
+                    }
+                });
+            }
         });
         </script>
         
