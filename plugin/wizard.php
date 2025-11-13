@@ -39,6 +39,9 @@ class PDF_Builder_Installation_Wizard {
      * Vérifier si c'est une première installation
      */
     public function check_first_install() {
+        // Wizard désactivé - vérification supprimée
+        return;
+        
         $installed = get_option('pdf_builder_installed');
         error_log('PDF Builder Wizard: check_first_install - pdf_builder_installed = ' . ($installed ? 'true' : 'false'));
         

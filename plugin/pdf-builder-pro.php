@@ -124,17 +124,18 @@ add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
 function pdf_builder_register_ajax_handlers() {
     error_log('PDF Builder Pro: Registering AJAX handlers on init hook');
 
-    // Test AJAX
-    add_action('wp_ajax_test_ajax', function() {
-        error_log('PDF Builder Pro: test_ajax handler called');
-        wp_send_json(['success' => true, 'message' => 'AJAX works']);
-    });
+    // Wizard supprimé - handlers désactivés
+    // // Test AJAX
+    // add_action('wp_ajax_test_ajax', function() {
+    //     error_log('PDF Builder Pro: test_ajax handler called');
+    //     wp_send_json(['success' => true, 'message' => 'AJAX works']);
+    // });
 
-    // Wizard steps
-    add_action('wp_ajax_pdf_builder_wizard_step', function() {
-        error_log('PDF Builder Pro: wizard_step handler called');
-        pdf_builder_handle_admin_post_ajax();
-    });
+    // // Wizard steps
+    // add_action('wp_ajax_pdf_builder_wizard_step', function() {
+    //     error_log('PDF Builder Pro: wizard_step handler called');
+    //     pdf_builder_handle_admin_post_ajax();
+    // });
 
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
@@ -318,13 +319,13 @@ function pdf_builder_init()
         }
     }
 
-    // Charger l'assistant d'installation dans l'admin ou pendant les requêtes AJAX
-    if (is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
-        $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
-        if (file_exists($wizard_path)) {
-            require_once $wizard_path;
-        }
-    }
+    // Wizard supprimé - trop de problèmes non résolvables
+    // if (is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
+    //     $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
+    //     if (file_exists($wizard_path)) {
+    //         require_once $wizard_path;
+    //     }
+    // }
 
     // Enregistrer les handlers AJAX au hook init
     add_action('init', 'pdf_builder_register_ajax_handlers');
