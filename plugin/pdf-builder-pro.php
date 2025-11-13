@@ -428,7 +428,9 @@ function pdf_builder_add_asset_cache_headers()
 add_action('init', 'pdf_builder_handle_pdf_downloads');
 // Charger le plugin pour les requêtes AJAX
 add_action('init', function() {
+    error_log('PDF Builder Pro: init hook called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD'] . ', SCRIPT_NAME: ' . $_SERVER['SCRIPT_NAME'] . ', action: ' . (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'not set'));
     if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_ajax' && $_SERVER['REQUEST_METHOD'] === 'POST' && basename($_SERVER['SCRIPT_NAME']) === 'admin.php') {
+        error_log('PDF Builder Pro: Condition met, calling handler');
         pdf_builder_handle_admin_post_ajax();
         exit;
     }
