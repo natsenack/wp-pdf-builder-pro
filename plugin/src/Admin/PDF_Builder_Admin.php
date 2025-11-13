@@ -379,6 +379,7 @@ class PdfBuilderAdmin
 
         // Récupérer les vraies statistiques
         $stats = $this->getDashboardStats();
+        $plugin_version = $this->getPluginVersion();
         ?>
         <div class="wrap">
             <div class="pdf-builder-dashboard">
@@ -386,7 +387,7 @@ class PdfBuilderAdmin
                     <h1>📄 PDF Builder Pro</h1>
                     <p class="dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
                     <div class="dashboard-meta">
-                        <span class="version-info">Version <?php echo PDF_BUILDER_PRO_VERSION; ?></span>
+                        <span class="version-info">Version <?php echo esc_html($plugin_version); ?></span>
                         <span class="last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
                     </div>
                 </div>
@@ -5865,6 +5866,16 @@ class PdfBuilderAdmin
             'documents' => (int) $documents_count,
             'today' => (int) $today_count
         ];
+    }
+
+    /**
+     * Récupère la version du plugin depuis le header
+     */
+    private function getPluginVersion()
+    {
+        // Lire directement depuis le header du plugin principal
+        $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
+        return $plugin_data['Version'] ?: '1.1.0';
     }
 }
 
