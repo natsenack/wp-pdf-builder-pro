@@ -173,6 +173,10 @@ function pdf_builder_register_ajax_handlers() {
         wp_send_json($response);
     });
 
+    // Handler pour admin_post (fallback quand admin-ajax.php ne fonctionne pas)
+    add_action('admin_post_pdf_builder_ajax', 'pdf_builder_handle_admin_post_ajax');
+    add_action('admin_post_nopriv_pdf_builder_ajax', 'pdf_builder_handle_admin_post_ajax');
+
     // Test AJAX standard de WordPress
     add_action('wp_ajax_nopriv_pdf_builder_test_ajax', function() {
         error_log('PDF Builder Pro: Standard AJAX test called');
@@ -185,12 +189,143 @@ function pdf_builder_register_ajax_handlers() {
 }
 
 /**
- * Charger le domaine de traduction
+ * Handler pour admin_post AJAX (fallback)
  */
-function pdf_builder_load_textdomain()
-{
+function pdf_builder_handle_admin_post_ajax() {
+    error_log('PDF Builder Pro: admin_post AJAX handler called');
 
-    load_plugin_textdomain('pdf-builder-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        error_log('PDF Builder Pro: Access denied');
+        wp_die('Accès refusé');
+    }
+
+    $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+    $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
+    $data = isset($_POST['data']) ? $_POST['data'] : array();
+
+    error_log('PDF Builder Pro: admin_post AJAX - action: ' . $action . ', step: ' . $step);
+
+    $response = array('success' => false);
+
+    if ($action === 'pdf_builder_wizard_step') {
+        switch ($step) {
+            case 'save_company':
+                $response = pdf_builder_ajax_save_company_data($data);
+                break;
+
+            case 'create_template':
+                $response = pdf_builder_ajax_create_template();
+                break;
+
+            case 'complete':
+                update_option('pdf_builder_installed', true);
+                $response = array('success' => true, 'message' => 'Installation terminée');
+                break;
+
+            default:
+                $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
+        }
+    } elseif ($action === 'pdf_builder_test_ajax') {
+        $response = array('success' => true, 'message' => 'admin_post AJAX works!');
+    }
+
+    error_log('PDF Builder Pro: admin_post response: ' . print_r($response, true));
+
+    wp_send_json($response);
+}
+
+/**
+ * Sauvegarder les données entreprise via AJAX
+ */
+function pdf_builder_ajax_save_company_data($data) {
+    error_log('PDF Builder Pro: Saving company data: ' . print_r($data, true));
+
+    try {
+        // Décoder les données JSON si nécessaire
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return array('success' => false, 'message' => 'Données JSON invalides');
+            }
+        }
+
+        // Validation des données
+        $required_fields = array('company_name', 'company_address', 'company_phone', 'company_email');
+        foreach ($required_fields as $field) {
+            if (empty($data[$field])) {
+                return array('success' => false, 'message' => 'Champ requis manquant: ' . $field);
+            }
+        }
+
+        // Sauvegarder les options
+        update_option('pdf_builder_company_name', sanitize_text_field($data['company_name']));
+        update_option('pdf_builder_company_address', sanitize_textarea_field($data['company_address']));
+        update_option('pdf_builder_company_phone', sanitize_text_field($data['company_phone']));
+        update_option('pdf_builder_company_email', sanitize_email($data['company_email']));
+
+        if (!empty($data['company_logo'])) {
+            update_option('pdf_builder_company_logo', esc_url_raw($data['company_logo']));
+        }
+
+        error_log('PDF Builder Pro: Company data saved successfully');
+
+        return array('success' => true, 'message' => 'Données entreprise sauvegardées');
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Pro: Error saving company data: ' . $e->getMessage());
+        return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Créer un template par défaut via AJAX
+ */
+function pdf_builder_ajax_create_template() {
+    error_log('PDF Builder Pro: Creating default template');
+
+    try {
+        // Créer un template par défaut simple
+        $template_data = array(
+            'name' => 'Template par défaut',
+            'elements' => array(
+                array(
+                    'type' => 'text',
+                    'content' => 'FACTURE',
+                    'x' => 50,
+                    'y' => 50,
+                    'font_size' => 24,
+                    'font_weight' => 'bold'
+                )
+            )
+        );
+
+        // Sauvegarder le template
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $wpdb->insert(
+            $table_templates,
+            array(
+                'name' => $template_data['name'],
+                'template_data' => json_encode($template_data)
+            ),
+            array('%s', '%s')
+        );
+
+        if ($wpdb->last_error) {
+            error_log('PDF Builder Pro: Database error: ' . $wpdb->last_error);
+            return array('success' => false, 'message' => 'Erreur base de données: ' . $wpdb->last_error);
+        }
+
+        error_log('PDF Builder Pro: Default template created successfully');
+
+        return array('success' => true, 'message' => 'Template par défaut créé');
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Pro: Error creating template: ' . $e->getMessage());
+        return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $e->getMessage());
+    }
 }
 
 /**

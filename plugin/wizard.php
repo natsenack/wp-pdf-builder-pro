@@ -65,9 +65,7 @@ class PDF_Builder_Installation_Wizard {
         );
 
         error_log('PDF Builder Wizard: Adding AJAX page');
-        // Handler pour les requêtes AJAX via admin_post
-        add_action('admin_post_pdf_builder_ajax', array($this, 'handle_ajax_request'));
-        add_action('admin_post_nopriv_pdf_builder_ajax', array($this, 'handle_ajax_request'));
+        // Handler admin_post déplacé vers le fichier principal du plugin
     }
 
     /**
