@@ -4483,73 +4483,50 @@
                     });
                 }
 
+                // Fonction helper pour les requêtes AJAX de maintenance (non-bloquante)
+                const sendMaintenanceAjax = (action, nonce) => {
+                    const formData = new FormData();
+                    formData.append('action', action);
+                    formData.append('nonce', nonce);
+                    
+                    fetch(ajaxurl, { method: 'POST', body: formData })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (typeof toastr !== 'undefined') {
+                                if (data.success) {
+                                    toastr.success('✅ ' + data.message, 'Succès');
+                                    if (action === 'pdf_builder_reset_settings') {
+                                        setTimeout(() => location.reload(), 2000);
+                                    }
+                                } else {
+                                    toastr.error('❌ ' + data.message, 'Erreur');
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                            }
+                        });
+                };
+
                 // ===== BOUTON SUPPRIMER FICHIERS TEMP =====
                 const removeTempFilesBtn = document.getElementById('remove-temp-files-btn');
                 if (removeTempFilesBtn) {
                     removeTempFilesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (!confirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?')) {
-                            return;
-                        }
-                        if (typeof toastr !== 'undefined') {
-                            toastr.info('📁 Suppression des fichiers temporaires...', 'Suppression');
-                        }
-                        
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_remove_temp_files');
-                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
-                        
-                        fetch(ajaxurl, { method: 'POST', body: formData })
-                            .then(r => r.json())
-                            .then(data => {
-                                if (typeof toastr !== 'undefined') {
-                                    if (data.success) {
-                                        toastr.success('✅ ' + data.message, 'Succès');
-                                    } else {
-                                        toastr.error('❌ ' + data.message, 'Erreur');
-                                    }
-                                }
-                            })
-                                .catch(error => {
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                    }
-                                });
+                        if (!confirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?')) return;
+                        if (typeof toastr !== 'undefined') toastr.info('📁 Suppression...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_remove_temp_files', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
                     });
-                }
-
-                // ===== BOUTON OPTIMISER BD =====
+                }                // ===== BOUTON OPTIMISER BD =====
                 const optimizeDbBtn = document.getElementById('optimize-db-btn');
                 if (optimizeDbBtn) {
                     optimizeDbBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (!confirm('Êtes-vous sûr de vouloir optimiser la base de données ?')) {
-                            return;
-                        }
-                        if (typeof toastr !== 'undefined') {
-                            toastr.info('⚡ Optimisation de la base de données...', 'Optimisation');
-                        }
-                        
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_optimize_db');
-                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
-                        
-                        fetch(ajaxurl, { method: 'POST', body: formData })
-                            .then(r => r.json())
-                            .then(data => {
-                                if (typeof toastr !== 'undefined') {
-                                    if (data.success) {
-                                        toastr.success('✅ ' + data.message, 'Succès');
-                                    } else {
-                                        toastr.error('❌ ' + data.message, 'Erreur');
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                }
-                            });
+                        if (!confirm('Êtes-vous sûr de vouloir optimiser la base de données ?')) return;
+                        if (typeof toastr !== 'undefined') toastr.info('⚡ Optimisation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_optimize_db', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
                     });
                 }
 
@@ -4558,33 +4535,9 @@
                 if (repairTemplatesBtn) {
                     repairTemplatesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (!confirm('Êtes-vous sûr de vouloir réparer les templates ?')) {
-                            return;
-                        }
-                        if (typeof toastr !== 'undefined') {
-                            toastr.info('✅ Réparation des templates en cours...', 'Réparation');
-                        }
-                        
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_repair_templates');
-                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
-                        
-                        fetch(ajaxurl, { method: 'POST', body: formData })
-                            .then(r => r.json())
-                            .then(data => {
-                                if (typeof toastr !== 'undefined') {
-                                    if (data.success) {
-                                        toastr.success('✅ ' + data.message, 'Succès');
-                                    } else {
-                                        toastr.error('❌ ' + data.message, 'Erreur');
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                }
-                            });
+                        if (!confirm('Êtes-vous sûr de vouloir réparer les templates ?')) return;
+                        if (typeof toastr !== 'undefined') toastr.info('✅ Réparation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
                     });
                 }
 
@@ -4593,34 +4546,9 @@
                 if (resetSettingsBtn) {
                     resetSettingsBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) {
-                            return;
-                        }
-                        if (typeof toastr !== 'undefined') {
-                            toastr.warning('⚠️ Réinitialisation des paramètres en cours...', 'Attention');
-                        }
-                        
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_reset_settings');
-                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
-                        
-                        fetch(ajaxurl, { method: 'POST', body: formData })
-                            .then(r => r.json())
-                            .then(data => {
-                                if (typeof toastr !== 'undefined') {
-                                    if (data.success) {
-                                        toastr.success('✅ ' + data.message, 'Succès');
-                                        setTimeout(() => location.reload(), 2000);
-                                    } else {
-                                        toastr.error('❌ ' + data.message, 'Erreur');
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                }
-                            });
+                        if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) return;
+                        if (typeof toastr !== 'undefined') toastr.warning('⚠️ Réinitialisation...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_reset_settings', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
                     });
                 }
 
@@ -4629,30 +4557,8 @@
                 if (checkIntegrityBtn) {
                     checkIntegrityBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (typeof toastr !== 'undefined') {
-                            toastr.info('🔍 Vérification de l\'intégrité en cours...', 'Vérification');
-                        }
-                        
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_check_integrity');
-                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
-                        
-                        fetch(ajaxurl, { method: 'POST', body: formData })
-                            .then(r => r.json())
-                            .then(data => {
-                                if (typeof toastr !== 'undefined') {
-                                    if (data.success) {
-                                        toastr.success('✅ ' + data.message, 'Succès');
-                                    } else {
-                                        toastr.error('❌ ' + data.message, 'Erreur');
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                }
-                            });
+                        if (typeof toastr !== 'undefined') toastr.info('🔍 Vérification...', 'En cours');
+                        sendMaintenanceAjax('pdf_builder_check_integrity', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
                     });
                 }
             }
