@@ -138,8 +138,6 @@ function pdf_builder_register_ajax_handlers() {
             $data = isset($_POST['data']) ? $_POST['data'] : array();
             error_log('PDF Builder Wizard: Data = ' . print_r($data, true));
 
-            $response = array('success' => false);
-
             switch ($step) {
                 case 'save_company':
                     // Fonction inline pour éviter les dépendances
@@ -178,13 +176,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('admin_post_nopriv_pdf_builder_ajax', 'pdf_builder_handle_admin_post_ajax');
 
     // Test AJAX standard de WordPress
-    add_action('wp_ajax_nopriv_pdf_builder_test_ajax', function() {
+    add_action('wp_ajax_pdf_builder_test_ajax', function() {
         error_log('PDF Builder Pro: Standard AJAX test called');
         wp_send_json(array('success' => true, 'message' => 'Standard AJAX works!'));
-    });
-    add_action('wp_ajax_pdf_builder_test_ajax', function() {
-        error_log('PDF Builder Pro: Standard AJAX test called (logged in)');
-        wp_send_json(array('success' => true, 'message' => 'Standard AJAX works for logged in users!'));
     });
 }
 
@@ -428,12 +422,12 @@ function pdf_builder_add_asset_cache_headers()
 
 // Gérer les téléchargements PDF en frontend
 add_action('init', 'pdf_builder_handle_pdf_downloads');
-// AJAX handlers
+// AJAX handlers - Nettoyé pour éviter les conflits
 add_action('wp_ajax_test_ajax', function() {
+    error_log('PDF Builder Pro: AJAX test called');
     wp_send_json(['success' => true, 'message' => 'AJAX works']);
 });
 add_action('wp_ajax_pdf_builder_wizard_step', 'pdf_builder_handle_admin_post_ajax');
-add_action('admin_init', 'pdf_builder_load_for_ajax');
 add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
