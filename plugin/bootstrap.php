@@ -935,7 +935,7 @@ function pdf_builder_ensure_admin_menu() {
             // Le gestionnaire est auto-instancié, on appelle juste sa méthode de rendu
             if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
                 $manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
-                $manager->render_admin_page();
+                $manager->renderAdminPage();
             } else {
                 echo '<div class="wrap"><h1>Erreur</h1><p>Le gestionnaire de modèles prédéfinis n\'est pas '
                     . 'disponible.</p></div>';
