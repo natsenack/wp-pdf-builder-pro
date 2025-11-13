@@ -365,9 +365,6 @@ class PdfBuilderAdmin
         // Éditeur React unique
         add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
 
-        // Diagnostic Database
-        add_submenu_page('pdf-builder-pro', __('Diagnostic Base de Données', 'pdf-builder-pro'), __('🔍 Diagnostic DB', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-diagnostic', [$this, 'diagnosticPage']);
-
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 
@@ -5672,104 +5669,6 @@ class PdfBuilderAdmin
             margin: 0 auto 20px;
         }
         </style>
-        <?php
-    }
-
-    /**
-     * Page de diagnostic de base de données
-     */
-    public function diagnosticPage()
-    {
-        $this->checkAdminPermissions();
-
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        // Get template with ID 2
-        $template = $wpdb->get_row(
-            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", 2),
-            ARRAY_A
-        );
-
-        ?>
-        <div class="wrap">
-            <h1>PDF Builder Database Diagnostic</h1>
-            <h2>Template ID 2</h2>
-
-            <?php if (!$template): ?>
-                <p style="color: red;">Template ID 2 not found in database!</p>
-                <p><a href="<?php echo admin_url('admin.php?page=pdf-builder-pro'); ?>" class="button">Retour au menu principal</a></p>
-                <?php return; ?>
-            <?php endif; ?>
-
-            <p><strong>Template Name:</strong> <?php echo esc_html($template['name']); ?></p>
-            <p><strong>Created:</strong> <?php echo esc_html($template['created_at']); ?></p>
-            <p><strong>Updated:</strong> <?php echo esc_html($template['updated_at']); ?></p>
-            <p><strong>Data Length:</strong> <?php echo strlen($template['template_data']); ?> characters</p>
-
-            <?php
-            // Check for specific properties
-            $raw_data = $template['template_data'];
-            $has_contentAlign = strpos($raw_data, 'contentAlign') !== false;
-            $has_labelPosition = strpos($raw_data, 'labelPosition') !== false;
-            ?>
-
-            <h3>Property Check</h3>
-            <p><strong>Contains 'contentAlign':</strong> <span style="color: <?php echo $has_contentAlign ? 'green' : 'red'; ?>;"><?php echo $has_contentAlign ? 'YES' : 'NO'; ?></span></p>
-            <p><strong>Contains 'labelPosition':</strong> <span style="color: <?php echo $has_labelPosition ? 'green' : 'red'; ?>;"><?php echo $has_labelPosition ? 'YES' : 'NO'; ?></span></p>
-
-            <?php
-            // Decode and analyze
-            $data = json_decode($raw_data, true);
-            if ($data === null):
-            ?>
-                <p style="color: red;">JSON decode failed: <?php echo json_last_error_msg(); ?></p>
-            <?php else: ?>
-
-                <h3>Decoded Data Structure</h3>
-                <p><strong>Has 'elements' key:</strong> <?php echo isset($data['elements']) ? 'YES' : 'NO'; ?></p>
-                <p><strong>Elements count:</strong> <?php echo isset($data['elements']) ? count($data['elements']) : 'N/A'; ?></p>
-
-                <?php if (isset($data['elements'])): ?>
-                    <h3>Order Number Elements</h3>
-                    <?php
-                    $order_elements = array_filter($data['elements'], function($el) {
-                        return isset($el['type']) && $el['type'] === 'order_number';
-                    });
-                    ?>
-
-                    <p><strong>Order number elements found:</strong> <?php echo count($order_elements); ?></p>
-
-                    <?php foreach ($order_elements as $index => $element): ?>
-                        <h4>Order Element <?php echo ($index + 1); ?></h4>
-                        <p><strong>ID:</strong> <?php echo isset($element['id']) ? $element['id'] : 'N/A'; ?></p>
-                        <p><strong>contentAlign:</strong> <span style="color: <?php echo isset($element['contentAlign']) ? 'green' : 'red'; ?>;"><?php echo isset($element['contentAlign']) ? $element['contentAlign'] : 'MISSING'; ?></span></p>
-                        <p><strong>labelPosition:</strong> <span style="color: <?php echo isset($element['labelPosition']) ? 'green' : 'red'; ?>;"><?php echo isset($element['labelPosition']) ? $element['labelPosition'] : 'MISSING'; ?></span></p>
-
-                        <h5>All Properties:</h5>
-                        <pre style="background: #f5f5f5; padding: 10px; overflow: auto; max-height: 200px;">
-                        <?php foreach ($element as $key => $value): ?>
-                            <?php echo htmlspecialchars($key) . ": " . htmlspecialchars(json_encode($value)) . "\n"; ?>
-                        <?php endforeach; ?>
-                        </pre>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-
-            <?php endif; ?>
-
-            <h3>Raw JSON Data</h3>
-            <details>
-                <summary>Click to expand raw JSON (first 1000 characters)</summary>
-                <pre style="background: #f5f5f5; padding: 10px; overflow: auto; max-height: 400px;">
-                <?php echo htmlspecialchars(substr($raw_data, 0, 1000)); ?>
-                <?php if (strlen($raw_data) > 1000): ?>
-                    <?php echo "\n\n[... " . (strlen($raw_data) - 1000) . " more characters ...]"; ?>
-                <?php endif; ?>
-                </pre>
-            </details>
-
-            <p><a href="<?php echo admin_url('admin.php?page=pdf-builder-pro'); ?>" class="button">Retour au menu principal</a></p>
-        </div>
         <?php
     }
 
