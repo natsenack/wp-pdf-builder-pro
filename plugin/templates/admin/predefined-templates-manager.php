@@ -610,6 +610,8 @@ class PDF_Builder_Predefined_Templates_Manager
                     <?php _e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
                 </p>
                 <form id="developer-login-form" class="developer-login-form">
+                    <!-- Champ username caché pour l'accessibilité des gestionnaires de mots de passe -->
+                    <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
                     <div class="form-row">
                         <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
                         <input type="password" id="developer-password" name="password" required
