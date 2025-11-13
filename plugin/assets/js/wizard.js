@@ -59,12 +59,20 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: ajax_url =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.ajax_url : 'undefined');
         console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
         console.log('PDF Builder Wizard: nonce =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.nonce : 'undefined');
+        
+        var ajaxData = {
+            action: 'test_ajax'
+        };
+        
+        // Ajouter le nonce si disponible
+        if (typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.nonce) {
+            ajaxData.nonce = pdfBuilderWizardData.nonce;
+        }
+        
         jQuery.ajax({
             url: '/wp-content/plugins/wp-pdf-builder-pro/ajax-handler.php',
             type: 'POST',
-            data: {
-                action: 'test_ajax'
-            },
+            data: ajaxData,
             success: function(response) {
                 console.log('PDF Builder Wizard: AJAX test successful:', response);
             },

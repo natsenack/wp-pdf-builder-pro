@@ -363,8 +363,8 @@ function pdf_builder_init()
         }
     }
 
-    // Charger l'assistant d'installation seulement dans l'admin
-    if (is_admin()) {
+    // Charger l'assistant d'installation dans l'admin ou pendant les requêtes AJAX
+    if (is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
         $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
         if (file_exists($wizard_path)) {
             require_once $wizard_path;

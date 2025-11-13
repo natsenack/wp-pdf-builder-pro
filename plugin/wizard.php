@@ -85,11 +85,11 @@ class PDF_Builder_Installation_Wizard {
 
         $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
 
-        // Vérifier le nonce (désactivé pour test)
-        // if ($action !== 'pdf_builder_test_ajax' && (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_wizard_nonce'))) {
-        //     error_log('PDF Builder Wizard: Invalid nonce');
-        //     wp_send_json(array('success' => false, 'message' => 'Nonce invalide'));
-        // }
+        // Vérifier le nonce
+        if ($action !== 'test_ajax' && (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_wizard_nonce'))) {
+            error_log('PDF Builder Wizard: Invalid nonce');
+            wp_send_json(array('success' => false, 'message' => 'Nonce invalide'));
+        }
 
         $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
         $data = isset($_POST['data']) ? $_POST['data'] : array();
@@ -130,10 +130,14 @@ class PDF_Builder_Installation_Wizard {
         error_log('PDF Builder Wizard: enqueue_scripts called with hook: ' . $hook . ', REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
         error_log('PDF Builder Wizard: _GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
 
-        // Charger sur la page du wizard ou toute page admin contenant pdf-builder-wizard ou pdf-builder-pro
+        // Charger sur la page du wizard, la page principale du plugin, ou pendant les requêtes AJAX admin
+        $is_ajax_request = defined('DOING_AJAX') && DOING_AJAX;
+        $is_admin_page = isset($_GET['page']) && ($_GET['page'] === 'pdf-builder-wizard' || $_GET['page'] === 'pdf-builder-pro');
+        
         if (strpos($hook, 'pdf-builder-wizard') === false && 
             strpos($hook, 'pdf-builder-pro') === false && 
-            (!isset($_GET['page']) || ($_GET['page'] !== 'pdf-builder-wizard' && $_GET['page'] !== 'pdf-builder-pro'))) {
+            !$is_ajax_request && 
+            !$is_admin_page) {
             error_log('PDF Builder Wizard: Not loading scripts - condition not met');
             return;
         }
