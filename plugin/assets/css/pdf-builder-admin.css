@@ -1,53 +1,33 @@
 /* PDF Builder Pro Admin Styles */
 /* This file is intentionally minimal as styles are inline in metaboxes */
 
-/* ============================================================================ */
-/* TOASTR FLOATING NOTIFICATIONS - Top Right Position */
-/* ============================================================================ */
-.toast-container {
-  position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  left: auto !important;
-  bottom: auto !important;
-  width: auto !important;
+/* ========== TOASTR NOTIFICATIONS STYLING ========== */
+/* Repositionner Toastr notifications en haut à droite avec z-index élevé */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  width: auto;
   max-width: 400px;
-  z-index: 99999 !important;
 }
 
-.toast {
+#toast-container > .toast {
   margin-bottom: 15px;
-  padding: 12px 15px;
-  background-color: #323232;
-  border-radius: 4px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-  color: white;
-  font-size: 14px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideInRight 0.3s ease-out;
 }
 
 @keyframes slideInRight {
   from {
-    transform: translateX(400px);
+    transform: translateX(420px);
     opacity: 0;
   }
   to {
     transform: translateX(0);
     opacity: 1;
   }
-}
-
-.toast:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.toast-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.toast-message {
-  font-size: 13px;
 }
 
 /* PDF Preview Modal Styles */

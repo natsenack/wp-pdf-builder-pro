@@ -634,20 +634,10 @@ if ($is_ajax) {
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         <input type="hidden" name="submit" value="1">
         
-        <!-- Bouton de sauvegarde flottant -->
-        <div id="floating-save-button" class="floating-save-container">
-            <button type="submit" name="submit_global" id="global-save-btn" class="button button-primary
-floating-save-btn"  style="padding:5px;">
-                💾 Enregistrer
-            </button>
-            <div class="save-status" id="save-status"></div>
-        </div>
-        
         <div id="general" class="tab-content">
             <h2>Paramètres Généraux</h2>
             <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir
 les onglets Performance et Sécurité.</p>
-            
             <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
             <input type="hidden" name="submit" value="1">
             
@@ -819,29 +809,86 @@ Paramètres PDF</h3>
             
         </div>
         
+        <!-- Bouton Enregistrer en bas à droite -->
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+            <button type="submit" name="submit" class="button button-primary" id="general-submit-btn" style="padding: 10px 25px; font-size: 15px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">💾 Enregistrer les paramètres</button>
+        </div>
+        
+        <style>
+        /* Configuration des notifications Toastr */
+        .toast-top-right {
+            position: fixed;
+            top: 20px !important;
+            right: 20px !important;
+            z-index: 99999 !important;
+        }
+        
+        .toast {
+            animation: slideInRight 0.3s ease-out !important;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(420px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        </style>
+        
         <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Configurer toastr pour haut à droite
+            if (typeof toastr !== 'undefined') {
+                toastr.options = {
+                    "positionClass": "toast-top-right",
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+            }
+            
             // Bouton Test du cache
-            document.getElementById('test-cache-btn')?.addEventListener('click', function() {
-                toastr.info('🔍 Test du cache en cours...', 'Test');
-                // Simulation du test
-                setTimeout(() => {
-                    toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
-                }, 1000);
+            document.getElementById('test-cache-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('🔍 Test du cache en cours...', 'Test');
+                    setTimeout(() => {
+                        toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
+                    }, 1500);
+                }
             });
             
             // Bouton Vider le cache
-            document.getElementById('clear-cache-general-btn')?.addEventListener('click', function() {
-                toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
-                // Simulation du vidage
-                setTimeout(() => {
-                    toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
-                }, 1000);
+            document.getElementById('clear-cache-general-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
+                    setTimeout(() => {
+                        toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
+                    }, 1500);
+                }
             });
             
             // Bouton Enregistrer
             document.getElementById('general-submit-btn')?.addEventListener('click', function() {
-                toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('💾 Enregistrement en cours...', 'Sauvegarde');
+                }
             });
         });
         </script>
