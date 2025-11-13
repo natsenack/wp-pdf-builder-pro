@@ -4095,11 +4095,18 @@
             left: 0 !important;
         }
 
-        .floating-save-btn:hover {
+        .floating-save-btn:hover:not(:disabled) {
             background: linear-gradient(135deg, #005a87 0%, #004466 100%) !important;
         }
 
-        .floating-save-btn:active {
+        .floating-save-btn:disabled {
+            background: linear-gradient(135deg, #cccccc 0%, #999999 100%) !important;
+            cursor: not-allowed !important;
+            opacity: 0.6 !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .floating-save-btn:active:not(:disabled) {
             background: linear-gradient(135deg, #004466 0%, #003344 100%) !important;
         }
 
@@ -4278,6 +4285,48 @@
                         }, 100);
                     });
 
+                    // ===== INITIALISER LE BOUTON COMME DÉSACTIVÉ =====
+                    globalSaveBtn.disabled = true;
+
+                    // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES =====
+                    const setupFormTracking = () => {
+                        const forms = document.querySelectorAll('form[id], form');
+                        console.log('📝 Setting up form tracking for', forms.length, 'form(s)');
+                        
+                        forms.forEach((form, formIndex) => {
+                            // Récupérer les valeurs initiales de tous les inputs
+                            const initialState = {};
+                            const formInputs = form.querySelectorAll('input, select, textarea');
+                            
+                            formInputs.forEach(input => {
+                                if (input.type === 'checkbox' || input.type === 'radio') {
+                                    initialState[input.name] = input.checked;
+                                } else {
+                                    initialState[input.name] = input.value;
+                                }
+                            });
+                            
+                            console.log(`📋 Form #${formIndex} initial state saved:`, Object.keys(initialState).length, 'fields');
+                            
+                            // Ajouter des listeners change à tous les inputs
+                            formInputs.forEach(input => {
+                                input.addEventListener('change', function() {
+                                    // Vérifier si une valeur a réellement changé
+                                    const currentValue = (this.type === 'checkbox' || this.type === 'radio') ? this.checked : this.value;
+                                    const hasChanged = initialState[this.name] !== currentValue;
+                                    
+                                    if (hasChanged) {
+                                        console.log('🔄 Modification detected in:', this.name, 'Enable save button');
+                                        globalSaveBtn.disabled = false;
+                                    }
+                                });
+                            });
+                        });
+                    };
+                    
+                    // Appliquer le tracking
+                    setupFormTracking();
+
                     globalSaveBtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
@@ -4377,6 +4426,13 @@
                                         if (typeof toastr !== 'undefined') {
                                             toastr.success('✅ Paramètres sauvegardés avec succès !', 'Succès');
                                         }
+                                        
+                                        // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
+                                        // Réactualiser l'état initial de tous les inputs pour tracker les futures modifications
+                                        setupFormTracking();
+                                        // Réinitialiser le bouton comme désactivé
+                                        globalSaveBtn.disabled = true;
+                                        console.log('🔄 State reinitialized, save button disabled');
                                     } else {
                                         if (typeof toastr !== 'undefined') {
                                             toastr.error('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'Erreur');
