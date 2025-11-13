@@ -4488,32 +4488,33 @@
                 if (removeTempFilesBtn) {
                     removeTempFilesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (confirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?')) {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.info('📁 Suppression des fichiers temporaires...', 'Suppression');
-                            }
-                            
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_remove_temp_files');
-                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
-                            
-                            fetch(ajaxurl, { method: 'POST', body: formData })
-                                .then(r => r.json())
-                                .then(data => {
-                                    if (typeof toastr !== 'undefined') {
-                                        if (data.success) {
-                                            toastr.success('✅ ' + data.message, 'Succès');
-                                        } else {
-                                            toastr.error('❌ ' + data.message, 'Erreur');
-                                        }
+                        if (!confirm('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?')) {
+                            return;
+                        }
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info('📁 Suppression des fichiers temporaires...', 'Suppression');
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_remove_temp_files');
+                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
+                        
+                        fetch(ajaxurl, { method: 'POST', body: formData })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (typeof toastr !== 'undefined') {
+                                    if (data.success) {
+                                        toastr.success('✅ ' + data.message, 'Succès');
+                                    } else {
+                                        toastr.error('❌ ' + data.message, 'Erreur');
                                     }
-                                })
+                                }
+                            })
                                 .catch(error => {
                                     if (typeof toastr !== 'undefined') {
                                         toastr.error('❌ Erreur: ' + error.message, 'Erreur');
                                     }
                                 });
-                        }
                     });
                 }
 
@@ -4522,32 +4523,33 @@
                 if (optimizeDbBtn) {
                     optimizeDbBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (confirm('Êtes-vous sûr de vouloir optimiser la base de données ?')) {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.info('⚡ Optimisation de la base de données...', 'Optimisation');
-                            }
-                            
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_optimize_db');
-                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
-                            
-                            fetch(ajaxurl, { method: 'POST', body: formData })
-                                .then(r => r.json())
-                                .then(data => {
-                                    if (typeof toastr !== 'undefined') {
-                                        if (data.success) {
-                                            toastr.success('✅ ' + data.message, 'Succès');
-                                        } else {
-                                            toastr.error('❌ ' + data.message, 'Erreur');
-                                        }
-                                    }
-                                })
-                                .catch(error => {
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                    }
-                                });
+                        if (!confirm('Êtes-vous sûr de vouloir optimiser la base de données ?')) {
+                            return;
                         }
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info('⚡ Optimisation de la base de données...', 'Optimisation');
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_optimize_db');
+                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
+                        
+                        fetch(ajaxurl, { method: 'POST', body: formData })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (typeof toastr !== 'undefined') {
+                                    if (data.success) {
+                                        toastr.success('✅ ' + data.message, 'Succès');
+                                    } else {
+                                        toastr.error('❌ ' + data.message, 'Erreur');
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                }
+                            });
                     });
                 }
 
@@ -4556,32 +4558,33 @@
                 if (repairTemplatesBtn) {
                     repairTemplatesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (confirm('Êtes-vous sûr de vouloir réparer les templates ?')) {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.info('✅ Réparation des templates en cours...', 'Réparation');
-                            }
-                            
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_repair_templates');
-                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
-                            
-                            fetch(ajaxurl, { method: 'POST', body: formData })
-                                .then(r => r.json())
-                                .then(data => {
-                                    if (typeof toastr !== 'undefined') {
-                                        if (data.success) {
-                                            toastr.success('✅ ' + data.message, 'Succès');
-                                        } else {
-                                            toastr.error('❌ ' + data.message, 'Erreur');
-                                        }
-                                    }
-                                })
-                                .catch(error => {
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                    }
-                                });
+                        if (!confirm('Êtes-vous sûr de vouloir réparer les templates ?')) {
+                            return;
                         }
+                        if (typeof toastr !== 'undefined') {
+                            toastr.info('✅ Réparation des templates en cours...', 'Réparation');
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_repair_templates');
+                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
+                        
+                        fetch(ajaxurl, { method: 'POST', body: formData })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (typeof toastr !== 'undefined') {
+                                    if (data.success) {
+                                        toastr.success('✅ ' + data.message, 'Succès');
+                                    } else {
+                                        toastr.error('❌ ' + data.message, 'Erreur');
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                }
+                            });
                     });
                 }
 
@@ -4590,33 +4593,34 @@
                 if (resetSettingsBtn) {
                     resetSettingsBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.warning('⚠️ Réinitialisation des paramètres en cours...', 'Attention');
-                            }
-                            
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_reset_settings');
-                            formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
-                            
-                            fetch(ajaxurl, { method: 'POST', body: formData })
-                                .then(r => r.json())
-                                .then(data => {
-                                    if (typeof toastr !== 'undefined') {
-                                        if (data.success) {
-                                            toastr.success('✅ ' + data.message, 'Succès');
-                                            setTimeout(() => location.reload(), 2000);
-                                        } else {
-                                            toastr.error('❌ ' + data.message, 'Erreur');
-                                        }
-                                    }
-                                })
-                                .catch(error => {
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                                    }
-                                });
+                        if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) {
+                            return;
                         }
+                        if (typeof toastr !== 'undefined') {
+                            toastr.warning('⚠️ Réinitialisation des paramètres en cours...', 'Attention');
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_reset_settings');
+                        formData.append('nonce', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
+                        
+                        fetch(ajaxurl, { method: 'POST', body: formData })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (typeof toastr !== 'undefined') {
+                                    if (data.success) {
+                                        toastr.success('✅ ' + data.message, 'Succès');
+                                        setTimeout(() => location.reload(), 2000);
+                                    } else {
+                                        toastr.error('❌ ' + data.message, 'Erreur');
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('❌ Erreur: ' + error.message, 'Erreur');
+                                }
+                            });
                     });
                 }
 
