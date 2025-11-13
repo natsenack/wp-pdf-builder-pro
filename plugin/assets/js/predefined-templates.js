@@ -190,8 +190,8 @@
                     showErrorMessage(response.data.message || pdfBuilderPredefined.strings.loadError);
                 }
             },
-            error: function(xhr, status, error) {
-                // console.error('AJAX error:', status, error, xhr.responseText);
+            error: function() {
+                // console.error('AJAX error');
                 hideLoadingState();
                 showErrorMessage(pdfBuilderPredefined.strings.loadError);
             }
