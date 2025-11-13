@@ -703,6 +703,50 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               <option value="double">Double ligne</option>
             </select>
           </div>
+
+          {/* Section Affichage du fond */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Affichage du fond
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showBackground !== false}
+                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                label="Afficher le fond"
+                description="Affiche un fond coloré derrière les mentions"
+              />
+
+              {element.showBackground !== false && (
+                <div style={{ marginBottom: '8px', marginLeft: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                    Couleur de fond
+                  </label>
+                  <input
+                    type="color"
+                    value={element.backgroundColor || '#e5e7eb'}
+                    onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: '40px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         </>
       )}
 
