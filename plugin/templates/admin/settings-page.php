@@ -819,11 +819,6 @@ Paramètres PDF</h3>
             
         </div>
         
-        <!-- Bouton Enregistrer en bas à droite -->
-        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
-            <button type="submit" name="submit" class="button button-primary" id="general-submit-btn" style="padding: 10px 25px; font-size: 15px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">💾 Enregistrer les paramètres</button>
-        </div>
-        
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Bouton Test du cache
