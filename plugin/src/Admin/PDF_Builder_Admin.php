@@ -376,18 +376,19 @@ class PdfBuilderAdmin
     public function adminPage()
     {
         $this->checkAdminPermissions();
-// Statistiques de base (simulées pour l'instant)
-        $stats = [
-            'templates' => 5, // À remplacer par une vraie requête
-            'documents' => 23,
-            'today' => 3
-        ];
+
+        // Récupérer les vraies statistiques
+        $stats = $this->getDashboardStats();
         ?>
         <div class="wrap">
             <div class="pdf-builder-dashboard">
                 <div class="dashboard-header">
                     <h1>📄 PDF Builder Pro</h1>
                     <p class="dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
+                    <div class="dashboard-meta">
+                        <span class="version-info">Version <?php echo PDF_BUILDER_PRO_VERSION; ?></span>
+                        <span class="last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
+                    </div>
                 </div>
 
                 <!-- Statistiques rapides -->
@@ -395,21 +396,21 @@ class PdfBuilderAdmin
                     <div class="stat-card">
                         <div class="stat-icon">📋</div>
                         <div class="stat-content">
-                            <div class="stat-number"><?php echo $stats['templates']; ?></div>
+                            <div class="stat-number"><?php echo number_format($stats['templates']); ?></div>
                             <div class="stat-label">Templates</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">📄</div>
                         <div class="stat-content">
-                            <div class="stat-number"><?php echo $stats['documents']; ?></div>
+                            <div class="stat-number"><?php echo number_format($stats['documents']); ?></div>
                             <div class="stat-label">Documents générés</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">📈</div>
                         <div class="stat-content">
-                            <div class="stat-number"><?php echo $stats['today']; ?></div>
+                            <div class="stat-number"><?php echo number_format($stats['today']); ?></div>
                             <div class="stat-label">Aujourd'hui</div>
                         </div>
                     </div>
@@ -617,9 +618,21 @@ class PdfBuilderAdmin
                     box-sizing: border-box;
                 }
 
-                .dashboard-header {
-                    text-align: center;
-                    margin-bottom: 30px;
+                .dashboard-meta {
+                    display: flex;
+                    gap: 20px;
+                    margin-top: 10px;
+                    font-size: 14px;
+                    color: #666;
+                }
+
+                .version-info {
+                    color: #2271b1;
+                    font-weight: 500;
+                }
+
+                .last-update {
+                    color: #666;
                 }
 
                 .dashboard-subtitle {
@@ -5796,6 +5809,41 @@ class PdfBuilderAdmin
         }
 
         return $default_template;
+    }
+
+    /**
+     * Récupère les statistiques pour le tableau de bord
+     */
+    private function getDashboardStats()
+    {
+        global $wpdb;
+
+        // Nombre de templates
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        $templates_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_templates");
+
+        // Nombre total de documents générés (logs)
+        $table_logs = $wpdb->prefix . 'pdf_builder_logs';
+        $documents_count = 0;
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
+            $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'");
+        }
+
+        // Documents générés aujourd'hui
+        $today = date('Y-m-d');
+        $today_count = 0;
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
+            $today_count = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
+                $today
+            ));
+        }
+
+        return [
+            'templates' => (int) $templates_count,
+            'documents' => (int) $documents_count,
+            'today' => (int) $today_count
+        ];
     }
 }
 
