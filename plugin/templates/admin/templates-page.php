@@ -33,6 +33,11 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
+// DEBUG temporaire : Afficher les valeurs pour vérifier
+if (current_user_can('manage_options')) {
+    echo '<!-- DEBUG TEMPLATES: count=' . esc_html($templates_count) . ' can_create=' . ($user_can_create ? 'TRUE' : 'FALSE') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
+}
+
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
