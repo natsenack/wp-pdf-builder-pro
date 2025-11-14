@@ -613,6 +613,69 @@ class PDF_Builder_Predefined_Templates_Manager
                 </div>
             </div>
         </div>
+        <!-- Modale de première utilisation -->
+        <div id="first-use-modal" class="pdf-builder-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; padding: 20px;">
+                        <h2><?php _e('Bienvenue dans la Galerie de Modèles Prédéfinis !', 'pdf-builder-pro'); ?></h2>
+                        <p><?php _e('Découvrez comment créer et gérer vos modèles de documents PDF personnalisés.', 'pdf-builder-pro'); ?></p>
+                        <div style="margin: 30px 0;">
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3><?php _e('🚀 Pour commencer :', 'pdf-builder-pro'); ?></h3>
+                                <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+                                    <li><?php _e('Cliquez sur "➕ Nouveau Modèle" pour créer votre premier modèle', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Importez un JSON depuis l\'éditeur de templates', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Générez des aperçus pour visualiser vos modèles', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Organisez vos modèles par catégories', 'pdf-builder-pro'); ?></li>
+                                </ul>
+                            </div>
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                                <p style="margin: 0; color: #1565c0;">
+                                    <strong><?php _e('💡 Conseil :', 'pdf-builder-pro'); ?></strong> <?php _e('Commencez par explorer les modèles existants ou créez-en un nouveau pour vos factures et devis.', 'pdf-builder-pro'); ?>
+                                </p>
+                            </div>
+                        </div>
+                        <button id="start-exploring-btn" class="button button-primary" style="font-size: 16px; padding: 12px 24px;">
+                            <?php _e('🎯 Commencer l\'exploration', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+        // Vérifier si c'est la première visite
+        $user_id = get_current_user_id();
+        $has_visited = get_user_meta($user_id, 'pdf_builder_templates_first_visit', true);
+        if (empty($has_visited)) {
+            // Marquer comme visité et afficher la modale
+            update_user_meta($user_id, 'pdf_builder_templates_first_visit', '1');
+            ?>
+            <script>
+            jQuery(document).ready(function($) {
+                // Afficher la modale de première utilisation
+                $('#first-use-modal').fadeIn();
+                
+                // Fermer la modale
+                $('#first-use-modal .close-modal, #start-exploring-btn').on('click', function() {
+                    $('#first-use-modal').fadeOut();
+                });
+                
+                // Fermer en cliquant en dehors
+                $('#first-use-modal').on('click', function(e) {
+                    if (e.target === this) {
+                        $(this).fadeOut();
+                    }
+                });
+            });
+            </script>
+            <?php
+        }
+        ?>
         <?php
     }
     /**
