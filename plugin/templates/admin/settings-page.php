@@ -5646,6 +5646,7 @@
 
                             response.data.backups.forEach(function(backup) {
                                 const decodedFilename = atob(backup.filename); // Decode base64
+                                console.log('Original encoded:', backup.filename, 'Decoded:', decodedFilename);
                                 htmlParts.push(
                                     '<tr>',
                                     '<td style="padding: 12px;"><strong>' + decodedFilename + '</strong></td>',
@@ -5732,6 +5733,7 @@
                 // Supprimer une sauvegarde
                 jQuery(document).off('click', '.delete-backup-btn').on('click', '.delete-backup-btn', function() {
                     const filename = jQuery(this).val();
+                    console.log('Delete button clicked, filename:', filename);
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
                         jQuery.ajax({
