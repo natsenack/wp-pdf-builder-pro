@@ -674,6 +674,23 @@ class PDF_Builder_Predefined_Templates_Manager
                 console.log('Modal element:', $("#first-visit-modal"));
                 $("#first-visit-modal").fadeIn();
                 console.log('Modal affiché');
+
+                // Gestionnaire pour fermer le modal et marquer la visite comme terminée
+                $(document).on('click', '#first-visit-modal .close-modal, #first-visit-modal #start-exploring-btn', function() {
+                    $('#first-visit-modal').fadeOut();
+                    // Marquer la première visite comme terminée
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        data: {
+                            action: "pdf_builder_mark_first_visit_complete",
+                            nonce: '<?php echo wp_create_nonce('pdf_builder_templates'); ?>'
+                        },
+                        success: function(response) {
+                            console.log('Première visite marquée comme terminée');
+                        }
+                    });
+                });
             });
             </script>
             <?php

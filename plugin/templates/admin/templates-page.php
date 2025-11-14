@@ -1121,8 +1121,8 @@ document.addEventListener('keydown', function(e) {
 <?php if ($show_first_visit_modal) : ?>
 <script>
 jQuery(document).ready(function($) {
-    // Ouvrir automatiquement le modal de galerie à la première visite
-    $('#open-template-gallery').trigger('click');
+    // Rediriger vers la page des modèles prédéfinis où le modal existant s'ouvrira
+    window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
 });
 </script>
 <?php endif; ?>
@@ -1132,26 +1132,7 @@ jQuery(document).ready(function($) {
     // Gestionnaire pour le bouton "Parcourir les Modèles"
     $('#open-template-gallery').on('click', function(e) {
         e.preventDefault();
-        
-        // Afficher le modal existant
-        $('#template-gallery-modal').fadeIn();
-    });
-    
-    // Gestionnaire pour fermer le modal
-    $(document).on('click', '#template-gallery-modal .close-modal, #template-gallery-modal #start-exploring-btn', function() {
-        $('#template-gallery-modal').fadeOut();
-        // Marquer la première visite comme terminée
-        $.ajax({
-            url: ajaxurl,
-            type: "POST",
-            data: {
-                action: "pdf_builder_mark_first_visit_complete",
-                nonce: pdfBuilderTemplatesNonce
-            },
-            success: function(response) {
-                console.log('Première visite marquée comme terminée');
-            }
-        });
+        window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
     });
 });
 </script>
