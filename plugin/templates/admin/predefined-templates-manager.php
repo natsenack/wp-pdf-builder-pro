@@ -148,14 +148,14 @@ class PDF_Builder_Predefined_Templates_Manager
                 });
                 // Afficher la modale de première utilisation si nécessaire
                 if (pdfBuilderPredefined.showFirstModal) {
-                    $('#first-use-modal').show();
+                    $(\'#first-use-modal\').show();
                 }
                 // Gestion de la fermeture des modales
-                $('.close-modal').on('click', function() {
-                    $(this).closest('.pdf-builder-modal').hide();
+                $(\'.close-modal\').on(\'click\', function() {
+                    $(this).closest(\'.pdf-builder-modal\').hide();
                 });
                 // Fermer la modale en cliquant en dehors
-                $('.pdf-builder-modal').on('click', function(e) {
+                $(\'.pdf-builder-modal\').on(\'click\', function(e) {
                     if (e.target === this) {
                         $(this).hide();
                     }
