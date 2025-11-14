@@ -438,6 +438,11 @@ function pdf_builder_load_bootstrap()
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
 
+    // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
+    if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
+        new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+    }
+
     // Vérification que les classes essentielles sont chargées
     if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
         $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();

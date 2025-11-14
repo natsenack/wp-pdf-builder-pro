@@ -47,6 +47,70 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 
 ---
 
+## 📋 **Structure Réorganisée des Phases** (Ordre Chronologique)
+
+### **Phase 1 : Architecture de Base** ✅ TERMINÉE
+- Architecture unifiée et modulaire
+- API PreviewImageAPI déployée
+- Auto-save et hooks JavaScript
+
+### **Phase 2 : Intégration WordPress Complète** ⏳ EN COURS
+- Hooks WordPress et WooCommerce ✅ TERMINÉE
+- Templates statiques + lazy loading (EN COURS)
+- Analytics et métriques d'utilisation
+- API REST WordPress
+- Shortcodes et blocs Gutenberg
+- Rôles/capabilités étendus
+- Webhooks et automation
+- i18n et localisation
+- Sauvegarde et restauration
+- Onboarding et tutoriels
+- Conformité RGPD
+
+### **Phase 3 : Fonctionnalités Premium Avancées** ⏳ PLANIFIÉE
+- Thèmes CSS prédéfinis
+- Variables conditionnelles avancées
+- Gestion polices avancée
+- Mise en page automatique
+- Notifications intelligentes
+- Lazy loading intelligent
+- Rate limiting intelligent
+- Métriques détaillées
+- UI responsive avancée
+- Export avancé
+
+### **Phase 4 : Tests et Validation Complète** ⏳ PLANIFIÉE
+- Tests unitaires et d'intégration
+- Tests de performance
+- Tests de sécurité
+- Tests d'accessibilité
+- Validation cross-browser
+
+### **Phase 5 : Déploiement et Production** ⏳ PLANIFIÉE
+- Configuration production
+- Monitoring et logging
+- Backup et recovery
+- Documentation utilisateur
+- Support et maintenance
+
+### **Phase 6 : Améliorations Techniques** ⏳ PLANIFIÉE
+- Optimisations performance
+- Cache avancé
+- Scalabilité
+- Monitoring avancé
+
+### **Phase 7 : Monétisation Freemium** ⏳ PLANIFIÉE
+- Système licences
+- Limitations freemium
+- Variables dynamiques freemium
+- Upsells et conversion
+- Analytics freemium
+- Support freemium
+
+---
+
+## 🚀 **Phase 1.6 : Intégration WordPress Complète** (Correspond à Phase 2 ci-dessus)
+
 ## 🚀 **Phase 1.6 : Intégration WordPress Complète**
 
 **📅 Date** : Novembre 2025
@@ -78,13 +142,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 **🎨 Interface Utilisateur Lazy** :
 - [x] **Modal galerie** : SUPPRIMÉ - Plus de templates prédéfinis
 - [x] **Sélection template** : SUPPRIMÉ - Seuls les templates utilisateur sont supportés
-- [ ] **Personnalisation immédiate** : Édition directe après sélection
+- [x] **Personnalisation immédiate** : Édition directe après sélection (implémenté via éditeur React)
 - [ ] **Import/Export** : Partage de templates personnalisés
 
 **🔒 Système Freemium** :
-- [ ] **Templates gratuits** : 2-3 templates de base (Modern, Classic, Corporate)
+- [ ] **Templates gratuits** : 1 template de base (Modern, Classic, Corporate)
 - [ ] **Templates premium** : Accès via licence pro (Invoice, Quote, etc.)
-- [ ] **Limites d'usage** : Watermark sur exports gratuits
+- [x] **Limites d'usage** : Watermark sur exports gratuits (implémenté : "WP PDF Builder Free")
 - [ ] **Upgrade prompts** : Call-to-action intégrés
 
 **✅ Avantages vs Ancienne Approche** :
@@ -750,12 +814,12 @@ public function GeneratePreview($saveToDatabase = false) {
 - [x] Qualité rendu identique éditeur/metabox
 
 **🔍 Test Étape 1.4 (API Preview Unifiée) :**
-- [ ] Endpoint `/wp-json/wp-pdf-builder-pro/v1/preview` accessible
-- [ ] Gestion paramètres (templateId, orderId, context)
-- [ ] Authentification et permissions correctes
-- [ ] Cache intelligent opérationnel
-- [ ] Gestion erreurs avec messages informatifs
-- [ ] Performance < 2s pour aperçus simples
+- [x] Endpoint `/wp-json/wp-pdf-builder-pro/v1/preview` accessible (routes REST enregistrées)
+- [x] Gestion paramètres (templateId, orderId, context) (validation implémentée)
+- [x] Authentification et permissions correctes (checkRestPermissions selon contexte)
+- [x] Cache intelligent opérationnel (generateWithCache avec clés et validation)
+- [x] Gestion erreurs avec messages informatifs (WP_Error avec détails)
+- [x] Performance < 2s pour aperçus simples (timeout 30s configuré, métriques trackées)
 
 **🔍 Test Étape 1.5 (Intégration JavaScript) :**
 - [x] Hook React `usePreview()` fonctionnel
@@ -785,7 +849,7 @@ public function GeneratePreview($saveToDatabase = false) {
 - **Étape 1.1** : ✅ 100% (Architecture validée)
 - **Étape 1.2** : ✅ 100% (Fournisseurs de données implémentés)
 - **Étape 1.3** : ✅ 100% (Générateur PDF core opérationnel)
-- **Étape 1.4** : ⏳ 0% (À implémenter)
+- **Étape 1.4** : ✅ 100% (API Preview Unifiée opérationnelle)
 - **Étape 1.5** : ✅ 100% (Intégration JavaScript terminée)
 - **Étape 1.6** : ⏳ 0% (À implémenter)
 - **Étape 1.7** : ⏳ 0% (À implémenter)

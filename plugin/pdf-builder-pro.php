@@ -267,12 +267,12 @@ function pdf_builder_handle_preview_ajax()
 
     // Charger le bootstrap
     pdf_builder_load_for_ajax();
-// Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
-    // Maintenant, appelons directement la méthode generate_preview si PreviewImageAPI existe
+    // Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
+    // Maintenant, appelons directement la méthode generatePreview si PreviewImageAPI existe
     if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
-// Créer une nouvelle instance et appeler generate_preview directement
+        // Créer une nouvelle instance et appeler generatePreview directement
         $api = new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
-        $api->generate_preview();
+        $api->generatePreview();
     } else {
     // Fallback: envoyer une erreur JSON
         header('Content-Type: application/json; charset=UTF-8', true);
