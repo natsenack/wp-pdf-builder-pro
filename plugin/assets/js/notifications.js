@@ -53,8 +53,8 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
             }
         }
 
-        showToast(message, type = 'success', duration = 4000) {
-            console.log('🔍 PDFBuilderNotifications.showToast called:', message, type, duration);
+        showToast(message, type = 'success', duration = 6000) {
+            console.log('🔍 showToast called:', message, 'duration:', duration);
 
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
@@ -66,6 +66,7 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 </div>
             `);
 
+            console.log('🔍 Toast created, appending to container');
             this.toastContainer.append(toast);
 
             // Animation d'entrée
@@ -77,9 +78,12 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 'transform': 'translateX(0)'
             }, 300);
 
+            console.log('🔍 Animation started, setting timeout for', duration, 'ms');
+
             // Auto-dismiss
             if (duration > 0) {
                 setTimeout(() => {
+                    console.log('🔍 Auto-dismiss timeout triggered for toast:', toastId);
                     this.dismissNotification(toast);
                 }, duration);
             }
@@ -106,10 +110,12 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
         }
 
         dismissNotification($notification) {
+            console.log('🔍 dismissNotification called');
             $notification.animate({
                 'opacity': '0',
                 'transform': 'translateX(100%)'
             }, 300, function() {
+                console.log('🔍 Animation complete, removing element');
                 $(this).remove();
             });
         }
