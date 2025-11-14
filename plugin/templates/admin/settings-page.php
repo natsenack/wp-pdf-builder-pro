@@ -5651,8 +5651,8 @@
                                     '<td style="padding: 12px;">' + backup.size_human + '</td>',
                                     '<td style="padding: 12px;">' + backup.modified_human + '</td>',
                                     '<td style="padding: 12px;">',
-                                    '<button class="button button-small restore-backup-btn" data-backup-filename="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
-                                    '<button class="button button-small button-link-delete delete-backup-btn" data-backup-filename="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small restore-backup-btn" value="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small button-link-delete delete-backup-btn" value="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
                                     '</td>',
                                     '</tr>'
                                 );
@@ -5698,7 +5698,7 @@
             function attachBackupEvents() {
                 // Restaurer une sauvegarde spécifique
                 jQuery('.restore-backup-btn').off('click').on('click', function() {
-                    const filename = jQuery(this).attr('data-backup-filename');
+                    const filename = jQuery(this).val();
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
                         // Simuler la restauration en utilisant le filename
@@ -5730,7 +5730,7 @@
 
                 // Supprimer une sauvegarde
                 jQuery(document).off('click', '.delete-backup-btn').on('click', '.delete-backup-btn', function() {
-                    const filename = jQuery(this).attr('data-backup-filename');
+                    const filename = jQuery(this).val();
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
                         jQuery.ajax({
