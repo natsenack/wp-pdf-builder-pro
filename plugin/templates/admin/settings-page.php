@@ -2253,49 +2253,57 @@
                     // Bouton Sélectionner Tout
                     if (selectAllBtn) {
                         selectAllBtn.addEventListener('click', function() {
-
-                            roleToggles.forEach(function(checkbox) {
+                            const togglesLength = roleToggles.length;
+                            for (let i = 0; i < togglesLength; i++) {
+                                const checkbox = roleToggles[i];
                                 if (!checkbox.disabled) {
                                     checkbox.checked = true;
                                 }
-                            });
-                            updateSelectedCount();
+                            }
+                            // Différer la mise à jour du compteur pour éviter les violations de performance
+                            requestAnimationFrame(updateSelectedCount);
                         });
                     }
 
                     // Bouton Rôles Courants
                     if (selectCommonBtn) {
                         selectCommonBtn.addEventListener('click', function() {
-
                             const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                            roleToggles.forEach(function(checkbox) {
+                            const togglesLength = roleToggles.length;
+                            for (let i = 0; i < togglesLength; i++) {
+                                const checkbox = roleToggles[i];
                                 const isCommon = commonRoles.includes(checkbox.value);
                                 if (!checkbox.disabled) {
                                     checkbox.checked = isCommon;
                                 }
-                            });
-                            updateSelectedCount();
+                            }
+                            // Différer la mise à jour du compteur pour éviter les violations de performance
+                            requestAnimationFrame(updateSelectedCount);
                         });
                     }
 
                     // Bouton Désélectionner Tout
                     if (selectNoneBtn) {
                         selectNoneBtn.addEventListener('click', function() {
-
-                            roleToggles.forEach(function(checkbox) {
+                            const togglesLength = roleToggles.length;
+                            for (let i = 0; i < togglesLength; i++) {
+                                const checkbox = roleToggles[i];
                                 if (!checkbox.disabled) {
                                     checkbox.checked = false;
                                 }
-                            });
-                            updateSelectedCount();
+                            }
+                            // Différer la mise à jour du compteur pour éviter les violations de performance
+                            requestAnimationFrame(updateSelectedCount);
                         });
                     }
 
-                    // Mettre à jour le compteur quand un toggle change
+                    // Mettre à jour le compteur quand un toggle change (avec debounce pour éviter les appels trop fréquents)
+                    let updateTimeout;
                     roleToggles.forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-
-                            updateSelectedCount();
+                            // Debounce les appels pour éviter les violations de performance
+                            clearTimeout(updateTimeout);
+                            updateTimeout = setTimeout(updateSelectedCount, 10);
                         });
                     });
 
@@ -4612,15 +4620,19 @@
 
                                 // Créer FormData à partir du formulaire
                                 const formData = new FormData(form);
-                                
-                                // S'assurer que toutes les checkboxes sont incluses (même non cochées)
+
+                                // Optimiser l'ajout des checkboxes non cochées - utiliser une approche plus efficace
                                 const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
-                                allCheckboxes.forEach(checkbox => {
+                                const checkboxesLength = allCheckboxes.length;
+
+                                // Utiliser une boucle for classique pour de meilleures performances
+                                for (let i = 0; i < checkboxesLength; i++) {
+                                    const checkbox = allCheckboxes[i];
                                     if (!formData.has(checkbox.name)) {
                                         // Checkbox non cochée, l'ajouter avec valeur '0'
                                         formData.append(checkbox.name, '0');
                                     }
-                                });
+                                }
                                 
                                 // Utiliser toujours le gestionnaire générique pdf_builder_save_settings_page
                                 // qui accepte tous les paramètres indépendamment de l'onglet
@@ -4647,10 +4659,6 @@
                                     console.warn('⚠️ Nonce field non trouvé:', nonceName);
                                 }
 
-                                // Log des données qui vont être envoyées (pour debug)
-                                for (let [key, value] of formData.entries()) {
-                                }
-
                                 // Faire la requête AJAX
                                 fetch(ajaxurl, {
                                     method: 'POST',
@@ -4670,11 +4678,11 @@
                                     if (!contentType || !contentType.includes('application/json')) {
                                         throw new Error(`Réponse non-JSON du serveur (Status: ${status}). Contenu: ${body.substring(0, 500)}`);
                                     }
-                                    
+
                                     if (!ok) {
                                         throw new Error(`Erreur HTTP ${status}: ${body.substring(0, 500)}`);
                                     }
-                                    
+
                                     // Parser le JSON
                                     try {
                                         return JSON.parse(body);
@@ -4685,17 +4693,20 @@
                                 .then(data => {
                                     if (data.success) {
                                         PDF_Builder_Notification_Manager.show_toast('✅ Paramètres sauvegardés avec succès !', 'success');
-                                        
+
                                         // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
                                         hasUnsavedChanges = false;
-                                        
-                                        // Réactualiser l'état initial de tous les inputs pour tracker les futures modifications
-                                        setupFormTracking();
-                                        
-                                        // Réinitialiser le bouton Enregistrer comme désactivé
-                                        globalSaveBtn.disabled = true;
-                                        globalSaveBtn.dataset.hasModifications = 'false';
-                                        globalSaveBtn.removeAttribute('title');
+
+                                        // Différer les opérations non critiques pour éviter les violations de performance
+                                        requestAnimationFrame(() => {
+                                            // Réactualiser l'état initial de tous les inputs pour tracker les futures modifications
+                                            setupFormTracking();
+
+                                            // Réinitialiser le bouton Enregistrer comme désactivé
+                                            globalSaveBtn.disabled = true;
+                                            globalSaveBtn.dataset.hasModifications = 'false';
+                                            globalSaveBtn.removeAttribute('title');
+                                        });
                                     } else {
                                         PDF_Builder_Notification_Manager.show_toast('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
                                     }

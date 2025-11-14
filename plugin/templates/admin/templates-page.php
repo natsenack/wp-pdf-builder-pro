@@ -821,9 +821,12 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
 
 // Fonction pour afficher un message de succès temporaire
 function showSuccessMessage(message) {
-    // Supprimer les anciens messages
+    // Supprimer les anciens messages - optimisation : utiliser une boucle for au lieu de forEach
     const existingMessages = document.querySelectorAll('.pdf-builder-message');
-    existingMessages.forEach(msg => msg.remove());
+    const messagesLength = existingMessages.length;
+    for (let i = 0; i < messagesLength; i++) {
+        existingMessages[i].remove();
+    }
 
     // Créer le nouveau message
     const messageDiv = document.createElement('div');
@@ -835,15 +838,7 @@ function showSuccessMessage(message) {
         background: #28a745;
         color: white;
         padding: 12px 20px;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        -ms-border-radius: 4px;
-        -o-border-radius: 4px;
         border-radius: 4px;
-        -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        -o-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         z-index: 100;
         font-weight: bold;
@@ -855,7 +850,7 @@ function showSuccessMessage(message) {
 
     // Faire disparaître le message après 3 secondes
     setTimeout(() => {
-        messageDiv.style.transition = '-webkit-transition: opacity 0.5s; -moz-transition: opacity 0.5s; -o-transition: opacity 0.5s; transition: opacity 0.5s';
+        messageDiv.style.transition = 'opacity 0.5s';
         messageDiv.style.opacity = '0';
         setTimeout(() => messageDiv.remove(), 500);
     }, 3000);
@@ -907,24 +902,31 @@ function showErrorMessage(message) {
 function filterTemplates(filterType) {
     const cards = document.querySelectorAll('.template-card');
     const filterButtons = document.querySelectorAll('.filter-btn');
-    
-    // Mettre à jour les boutons actifs
-    filterButtons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-filter') === filterType) {
-            btn.classList.add('active');
+
+    // Utiliser requestAnimationFrame pour différer les opérations non critiques
+    requestAnimationFrame(() => {
+        // Mettre à jour les boutons actifs - utiliser boucle for pour de meilleures performances
+        const buttonsLength = filterButtons.length;
+        for (let i = 0; i < buttonsLength; i++) {
+            const btn = filterButtons[i];
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-filter') === filterType) {
+                btn.classList.add('active');
+            }
         }
-    });
-    
-    // Filtrer les cartes
-    cards.forEach(card => {
-        if (filterType === 'all') {
-            card.style.display = 'block';
-        } else {
-            if (card.classList.contains('template-type-' + filterType)) {
+
+        // Filtrer les cartes - utiliser boucle for pour de meilleures performances
+        const cardsLength = cards.length;
+        for (let i = 0; i < cardsLength; i++) {
+            const card = cards[i];
+            if (filterType === 'all') {
                 card.style.display = 'block';
             } else {
-                card.style.display = 'none';
+                if (card.classList.contains('template-type-' + filterType)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
             }
         }
     });
