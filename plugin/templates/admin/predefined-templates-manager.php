@@ -343,6 +343,9 @@ class PDF_Builder_Predefined_Templates_Manager
         
         // Vérifier si c'est la première visite pour afficher le modal
         $show_first_visit_modal = $this->isFirstVisit();
+
+        // DEBUG: Forcer l'affichage du modal pour test
+        $show_first_visit_modal = true;
         
         ?>
         <style>
