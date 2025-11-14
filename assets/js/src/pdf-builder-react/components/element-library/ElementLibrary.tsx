@@ -405,7 +405,17 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
       height: '100%',
       backgroundColor: '#f8f9fa',
       borderRight: '1px solid #e9ecef',
+      display: '-webkit-box',
+      display: '-webkit-flex',
+      display: '-moz-box',
+      display: '-ms-flexbox',
       display: 'flex',
+      WebkitBoxOrient: 'vertical',
+      WebkitBoxDirection: 'normal',
+      WebkitFlexDirection: 'column',
+      MozBoxOrient: 'vertical',
+      MozBoxDirection: 'normal',
+      msFlexDirection: 'column',
       flexDirection: 'column',
       overflow: 'hidden'
     }}>
@@ -439,7 +449,12 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
         padding: '8px'
       }}>
         <div style={{
+          display: '-webkit-grid',
+          display: '-moz-grid',
+          display: '-ms-grid',
           display: 'grid',
+          WebkitGap: '8px',
+          MozGap: '8px',
           gap: '8px'
         }}>
           {WOOCOMMERCE_ELEMENTS.map((element) => (
@@ -453,21 +468,46 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
                 padding: '12px',
                 backgroundColor: '#ffffff',
                 border: '1px solid #dee2e6',
+                WebkitBorderRadius: '6px',
+                MozBorderRadius: '6px',
+                msBorderRadius: '6px',
+                OBorderRadius: '6px',
                 borderRadius: '6px',
                 cursor: 'grab',
+                WebkitTransition: 'all 0.2s ease',
+                MozTransition: 'all 0.2s ease',
+                OTransition: 'all 0.2s ease',
                 transition: 'all 0.2s ease',
+                display: '-webkit-box',
+                display: '-webkit-flex',
+                display: '-moz-box',
+                display: '-ms-flexbox',
                 display: 'flex',
+                WebkitBoxAlign: 'center',
+                WebkitAlignItems: 'center',
+                MozBoxAlign: 'center',
+                msFlexAlign: 'center',
                 alignItems: 'center',
+                WebkitGap: '12px',
+                MozGap: '12px',
                 gap: '12px',
                 userSelect: 'none'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#007acc';
+                e.currentTarget.style.WebkitBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.MozBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.msBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.OBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
                 e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
                 e.currentTarget.style.cursor = 'grabbing';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = '#dee2e6';
+                e.currentTarget.style.WebkitBoxShadow = 'none';
+                e.currentTarget.style.MozBoxShadow = 'none';
+                e.currentTarget.style.msBoxShadow = 'none';
+                e.currentTarget.style.OBoxShadow = 'none';
                 e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.cursor = 'grab';
               }}
@@ -477,10 +517,26 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
                 fontSize: '20px',
                 width: '32px',
                 height: '32px',
+                display: '-webkit-box',
+                display: '-webkit-flex',
+                display: '-moz-box',
+                display: '-ms-flexbox',
                 display: 'flex',
+                WebkitBoxAlign: 'center',
+                WebkitAlignItems: 'center',
+                MozBoxAlign: 'center',
+                msFlexAlign: 'center',
                 alignItems: 'center',
+                WebkitBoxPack: 'center',
+                WebkitJustifyContent: 'center',
+                MozBoxPack: 'center',
+                msFlexPack: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#f8f9fa',
+                WebkitBorderRadius: '4px',
+                MozBorderRadius: '4px',
+                msBorderRadius: '4px',
+                OBorderRadius: '4px',
                 borderRadius: '4px'
               }}>
                 {element.icon}
