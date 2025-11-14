@@ -64,7 +64,7 @@ class PDF_Builder_Predefined_Templates_Manager
         $user_id = get_current_user_id();
         $first_visit = get_user_meta($user_id, 'pdf_builder_templates_first_visit', true);
         if (!$first_visit) {
-            update_user_meta($user_id, 'pdf_builder_templates_first_visit', '1');
+            // update_user_meta($user_id, 'pdf_builder_templates_first_visit', '1'); // Commenté pour test
             $show_first_modal = true;
         } else {
             $show_first_modal = false;
