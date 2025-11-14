@@ -5764,10 +5764,10 @@
 
             // Charger la liste au chargement de l'onglet sauvegarde
             jQuery(document).on('click', 'a[data-tab="sauvegarde"]', function() {
-                // Defer everything to avoid blocking the click handler
+                // Defer significantly to avoid performance violation
                 setTimeout(function() {
                     loadBackupsList();
-                }, 0);
+                }, 500);
             });
 
             // Charger automatiquement la liste si l'onglet sauvegarde est actif au chargement
@@ -5778,7 +5778,7 @@
                     jQuery('#sauvegarde').hasClass('tab-content') && !jQuery('#sauvegarde').hasClass('hidden-tab')) {
                     setTimeout(function() {
                         loadBackupsList();
-                    }, 200);
+                    }, 500);
                 }
             });
 
