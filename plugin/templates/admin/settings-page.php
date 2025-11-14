@@ -4119,38 +4119,26 @@
                 // Boutons de test des notifications
                 const testSuccessBtn = document.getElementById('test-notifications-success');
                 if (testSuccessBtn) {
-                    console.log('🔍 Test button found: test-notifications-success');
                     testSuccessBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🔍 Test success button clicked');
-                        console.log('🔍 PDF_Builder_Notification_Manager available:', typeof PDF_Builder_Notification_Manager);
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                             PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
                         } else {
-                            console.error('🔍 PDF_Builder_Notification_Manager is not defined');
                             alert('PDF_Builder_Notification_Manager is not available');
                         }
                     });
-                } else {
-                    console.log('🔍 Test button NOT found: test-notifications-success');
                 }
 
                 const testErrorBtn = document.getElementById('test-notifications-error');
                 if (testErrorBtn) {
-                    console.log('🔍 Test button found: test-notifications-error');
                     testErrorBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🔍 Test error button clicked');
-                        console.log('🔍 PDF_Builder_Notification_Manager available:', typeof PDF_Builder_Notification_Manager);
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                             PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
                         } else {
-                            console.error('🔍 PDF_Builder_Notification_Manager is not defined');
                             alert('PDF_Builder_Notification_Manager is not available');
                         }
                     });
-                } else {
-                    console.log('🔍 Test button NOT found: test-notifications-error');
                 }
 
                 const testWarningBtn = document.getElementById('test-notifications-warning');
