@@ -5617,7 +5617,10 @@
             function loadBackupsList() {
                 const container = jQuery('#backups-container');
 
-                container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
+                // Defer DOM manipulation to avoid blocking
+                setTimeout(function() {
+                    container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
+                }, 0);
 
                 jQuery.ajax({
                     url: ajaxurl,
@@ -5628,29 +5631,33 @@
                     },
                     success: function(response) {
                         if (response.success && response.data.backups.length > 0) {
-                            let html = '<div class="backups-table" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">';
-                            html += '<table class="wp-list-table widefat fixed striped" style="margin: 0; border: none;">';
-                            html += '<thead><tr>';
-                            html += '<th style="padding: 12px;"><?php _e('Nom du fichier', 'pdf-builder-pro'); ?></th>';
-                            html += '<th style="padding: 12px;"><?php _e('Taille', 'pdf-builder-pro'); ?></th>';
-                            html += '<th style="padding: 12px;"><?php _e('Date', 'pdf-builder-pro'); ?></th>';
-                            html += '<th style="padding: 12px;"><?php _e('Actions', 'pdf-builder-pro'); ?></th>';
-                            html += '</tr></thead><tbody>';
+                            let htmlParts = [
+                                '<div class="backups-table" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">',
+                                '<table class="wp-list-table widefat fixed striped" style="margin: 0; border: none;">',
+                                '<thead><tr>',
+                                '<th style="padding: 12px;"><?php _e('Nom du fichier', 'pdf-builder-pro'); ?></th>',
+                                '<th style="padding: 12px;"><?php _e('Taille', 'pdf-builder-pro'); ?></th>',
+                                '<th style="padding: 12px;"><?php _e('Date', 'pdf-builder-pro'); ?></th>',
+                                '<th style="padding: 12px;"><?php _e('Actions', 'pdf-builder-pro'); ?></th>',
+                                '</tr></thead><tbody>'
+                            ];
 
                             response.data.backups.forEach(function(backup) {
-                                html += '<tr>';
-                                html += '<td style="padding: 12px;"><strong>' + backup.filename + '</strong></td>';
-                                html += '<td style="padding: 12px;">' + backup.size_human + '</td>';
-                                html += '<td style="padding: 12px;">' + backup.modified_human + '</td>';
-                                html += '<td style="padding: 12px;">';
-                                html += '<button class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>';
-                                html += '<button class="button button-small button-link-delete delete-backup-btn" data-filename="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>';
-                                html += '</td>';
-                                html += '</tr>';
+                                htmlParts.push(
+                                    '<tr>',
+                                    '<td style="padding: 12px;"><strong>' + backup.filename + '</strong></td>',
+                                    '<td style="padding: 12px;">' + backup.size_human + '</td>',
+                                    '<td style="padding: 12px;">' + backup.modified_human + '</td>',
+                                    '<td style="padding: 12px;">',
+                                    '<button class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small button-link-delete delete-backup-btn" data-filename="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
+                                    '</td>',
+                                    '</tr>'
+                                );
                             });
 
-                            html += '</tbody></table></div>';
-                            container.html(html);
+                            htmlParts.push('</tbody></table></div>');
+                            container.html(htmlParts.join(''));
 
                             // Attacher les événements
                             attachBackupEvents();
