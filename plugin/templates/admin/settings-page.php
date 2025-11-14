@@ -5738,5 +5738,20 @@
                     loadBackupsList();
                 }, 100);
             });
+
+            // Masquer le bouton "Enregistrer" global dans l'onglet sauvegarde
+            jQuery(document).on('click', 'a[data-tab="sauvegarde"]', function() {
+                jQuery('.floating-save-container').hide();
+            });
+
+            // Réafficher le bouton "Enregistrer" global quand on quitte l'onglet sauvegarde
+            jQuery(document).on('click', 'a[data-tab]:not([data-tab="sauvegarde"])', function() {
+                jQuery('.floating-save-container').show();
+            });
+
+            // Masquer initialement si on est sur l'onglet sauvegarde au chargement
+            if (window.location.hash === '#sauvegarde' || jQuery('.nav-tab-active').data('tab') === 'sauvegarde') {
+                jQuery('.floating-save-container').hide();
+            }
     </script>
 
