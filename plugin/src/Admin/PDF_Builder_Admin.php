@@ -265,8 +265,8 @@ class PdfBuilderAdmin
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
-        add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajax_save_general_settings']);
-        add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajax_save_performance_settings']);
+        // add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajax_save_general_settings']); // Fonction inexistante
+        // add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajax_save_performance_settings']); // Fonction inexistante
         // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
         add_action('wp_ajax_pdf_builder_migrate_templates_to_posts', [$this, 'ajax_migrate_templates_to_posts']);

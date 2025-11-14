@@ -143,12 +143,12 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - [x] **Modal galerie** : SUPPRIMÉ - Plus de templates prédéfinis
 - [x] **Sélection template** : SUPPRIMÉ - Seuls les templates utilisateur sont supportés
 - [x] **Personnalisation immédiate** : Édition directe après sélection (implémenté via éditeur React)
-- [ ] **Import/Export** : Partage de templates personnalisés
+- [ ] **Import/Export** : REPORTÉ - Préparé pour v2.0 (partage de templates personnalisés)
 
 **🔒 Système Freemium** :
 - [ ] **Templates gratuits** : 1 template de base (Modern, Classic, Corporate)
 - [ ] **Templates premium** : Accès via licence pro (Invoice, Quote, etc.)
-- [x] **Limites d'usage** : Watermark sur exports gratuits (implémenté : "WP PDF Builder Free")
+- [ ] **Limites d'usage** : Watermark sur exports gratuits (implémenté : "WP PDF Builder Free")
 - [ ] **Upgrade prompts** : Call-to-action intégrés
 
 **✅ Avantages vs Ancienne Approche** :
@@ -2049,6 +2049,42 @@ Après analyse approfondie du plugin WooCommerce PDF Invoice Builder, voici les 
 - [ ] Tracking funnel conversion
 - [ ] Métriques engagement
 - [ ] Optimisation taux conversion
+
+---
+
+## 🚀 **Fonctionnalités Reportées - Futures Versions**
+
+**📋 Fonctionnalités préparées mais reportées pour optimiser le développement v1.0**
+
+### **📤 Import/Export de Templates** (Reporté en v2.0)
+**Statut** : ⏳ **PRÉPARÉ** - Architecture conçue, implémentation différée
+**Priorité** : 🟡 **RECOMMANDÉ** - Utile pour utilisateurs avancés
+**Objectif** : Permettre partage et sauvegarde de templates personnalisés
+
+**🔧 Architecture Préparée** :
+- ✅ **API REST** : Endpoints `/wp-json/wp-pdf-builder-pro/v1/import` et `/export`
+- ✅ **Validation** : Sanitisation, compatibilité inter-plugins, migrations
+- ✅ **Sécurité** : Rate limiting, permissions, validation schémas
+- ✅ **UI/UX** : Modals import/export, prévisualisation, rapports erreurs
+- ✅ **Documentation** : Spécifications complètes, guides utilisateur
+
+**🎯 Avantages Stratégiques du Report** :
+- **Focus v1.0** : Priorité aux fonctionnalités core (freemium, templates de base)
+- **Complexité maîtrisée** : Évite les risques de compatibilité pour le lancement
+- **Itération rapide** : Permet lancement plus rapide avec fonctionnalités essentielles
+- **Feedback utilisateurs** : Validation du produit avant ajouts avancés
+
+**📅 Planning Prévisionnel** :
+- **v1.1** (Q1 2026) : Import/export basique (JSON uniquement)
+- **v1.5** (Q2 2026) : Compatibilité inter-plugins
+- **v2.0** (Q3 2026) : Marketplace et partage communautaire
+
+**💡 Alternative Immédiate** :
+- **Duplication templates** : Fonction native WordPress pour usage basique
+- **Sauvegarde manuelle** : Export base de données pour migrations
+- **Templates partagés** : Via email/transfert fichiers pour cas spécifiques
+
+**📝 Note** : Fonctionnalité retirée de l'étape 1.6.2 pour optimiser le scope v1.0
 
 ---
 

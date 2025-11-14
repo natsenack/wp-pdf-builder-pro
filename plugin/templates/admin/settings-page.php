@@ -1177,7 +1177,13 @@
                     }
 
                     function submitDeactivateForm() {
-                        document.getElementById('deactivate_form').submit();
+                        var form = document.getElementById('deactivate_form');
+                        if (form) {
+                            form.submit();
+                        } else {
+                            console.error('Deactivate form not found');
+                            alert('Erreur: Formulaire de désactivation introuvable');
+                        }
                     }
 
                     // Fermer la modale si on clique en dehors
