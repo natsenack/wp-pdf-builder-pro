@@ -5791,6 +5791,32 @@
                             loadBackupsList();
                         }, 0);
                     }
+
+                    // Masquer le bouton "Enregistrer" global dans l'onglet sauvegarde via MutationObserver
+                    const saveContainer = jQuery('.floating-save-container');
+                    if (saveContainer.length) {
+                        const saveObserver = new MutationObserver(function(mutations) {
+                            mutations.forEach(function(mutation) {
+                                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                                    const isVisible = !backupTab.hasClass('hidden-tab');
+                                    if (isVisible) {
+                                        saveContainer.hide();
+                                    } else {
+                                        saveContainer.show();
+                                    }
+                                }
+                            });
+                        });
+                        saveObserver.observe(backupTab[0], {
+                            attributes: true,
+                            attributeFilter: ['class']
+                        });
+
+                        // Masquer initialement si sur l'onglet sauvegarde
+                        if (!backupTab.hasClass('hidden-tab')) {
+                            saveContainer.hide();
+                        }
+                    }
                 }
             });
 
@@ -5808,32 +5834,6 @@
                 // Simuler un clic sur le bouton principal de création de sauvegarde
                 jQuery('#create-backup-btn').trigger('click');
             });
-
-            // Masquer le bouton "Enregistrer" global dans l'onglet sauvegarde via MutationObserver
-            const saveContainer = jQuery('.floating-save-container');
-            if (saveContainer.length && backupTab.length) {
-                const saveObserver = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                            const isVisible = !backupTab.hasClass('hidden-tab');
-                            if (isVisible) {
-                                saveContainer.hide();
-                            } else {
-                                saveContainer.show();
-                            }
-                        }
-                    });
-                });
-                saveObserver.observe(backupTab[0], {
-                    attributes: true,
-                    attributeFilter: ['class']
-                });
-
-                // Masquer initialement si sur l'onglet sauvegarde
-                if (!backupTab.hasClass('hidden-tab')) {
-                    saveContainer.hide();
-                }
-            }
 
             // Masquer initialement si on est sur l'onglet sauvegarde au chargement
             if (window.location.hash === '#sauvegarde' || jQuery('.nav-tab-active').data('tab') === 'sauvegarde') {
