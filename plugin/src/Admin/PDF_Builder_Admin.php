@@ -347,8 +347,8 @@ class PdfBuilderAdmin
      */
     public function addAdminMenu()
     {
-        // Menu principal avec icône distinctive
-        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 65);
+        // Menu principal avec icône distinctive - position remontée
+        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
 
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
