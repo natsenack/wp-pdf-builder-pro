@@ -129,7 +129,7 @@ class Role_Manager
      */
     public static function checkAndBlockAccess()
     {
-        if (!current_user_can('manage_options') && !self::userCanAccessPdfBuilder()) {
+        if (!self::userCanAccessPdfBuilder()) {
             wp_die(
                 __('Vous n\'avez pas la permission d\'accéder à cette page.', 'pdf-builder-pro'),
                 __('Accès refusé', 'pdf-builder-pro'),
@@ -153,9 +153,8 @@ class Role_Manager
      */
     public static function getRequiredCapability()
     {
-        // Retourner 'manage_options' pour la compatibilité simple
-        // Mais le filtre 'user_has_cap' vérifiera les rôles autorisés
-        return 'manage_options';
+        // Retourner 'pdf_builder_access' pour respecter les rôles configurés
+        return 'pdf_builder_access';
     }
 
     /**

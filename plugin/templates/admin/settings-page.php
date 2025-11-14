@@ -31,7 +31,7 @@
         // Exit early for AJAX POST requests to prevent HTML output
     }
 
-    if (!is_user_logged_in() || !current_user_can('manage_options')) {
+    if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) {
         wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
     }
 
