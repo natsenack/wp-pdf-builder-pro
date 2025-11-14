@@ -8,6 +8,14 @@ if (!defined('ABSPATH')) {
  * Gestion des templates PDF
  */
 
+// Inclure TemplateDefaults si pas déjà chargé
+if (!class_exists('PDF_Builder\TemplateDefaults')) {
+    $template_defaults_path = plugin_dir_path(dirname(__FILE__)) . 'core/TemplateDefaults.php';
+    if (file_exists($template_defaults_path)) {
+        require_once $template_defaults_path;
+    }
+}
+
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
