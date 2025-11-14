@@ -145,6 +145,34 @@ add_action('wp_ajax_pdf_builder_auto_save_template', function() {
     pdf_builder_register_essential_ajax_hooks();
 }, 1);
 
+// Test AJAX simple pour l'intégration du cache
+add_action('wp_ajax_pdf_builder_simple_test', function() {
+    try {
+        // Vérifier que WordPress est chargé
+        if (!function_exists('wp_send_json_success')) {
+            throw new Exception('wp_send_json_success function not available');
+        }
+
+        wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+    } catch (Exception $e) {
+        error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
+        wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
+    }
+});
+add_action('wp_ajax_nopriv_pdf_builder_simple_test', function() {
+    try {
+        // Vérifier que WordPress est chargé
+        if (!function_exists('wp_send_json_success')) {
+            throw new Exception('wp_send_json_success function not available');
+        }
+
+        wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+    } catch (Exception $e) {
+        error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
+        wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
+    }
+});
+
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
 if (!isset($_SERVER['HTTP_B701CD7'])) {
     $_SERVER['HTTP_B701CD7'] = '';
