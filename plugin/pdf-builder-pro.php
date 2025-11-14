@@ -121,19 +121,6 @@ add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
-    // Wizard supprimé - handlers désactivés
-    // // Test AJAX
-    // add_action('wp_ajax_test_ajax', function() {
-    //
-    //     wp_send_json(['success' => true, 'message' => 'AJAX works']);
-    // });
-
-    // // Wizard steps
-    // add_action('wp_ajax_pdf_builder_wizard_step', function() {
-    //
-    //     pdf_builder_handle_admin_post_ajax();
-    // });
-
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
@@ -149,113 +136,14 @@ function pdf_builder_handle_admin_post_ajax() {
     }
 
     $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
-    $step = isset($_POST['step']) ? sanitize_text_field($_POST['step']) : '';
     $data = isset($_POST['data']) ? $_POST['data'] : array();
     $response = array('success' => false);
 
-    if ($action === 'pdf_builder_wizard_step') {
-        switch ($step) {
-            case 'save_company':
-                $response = pdf_builder_ajax_save_company_data($data);
-                break;
-
-            case 'create_template':
-                $response = pdf_builder_ajax_create_template();
-                break;
-
-            case 'complete':
-                update_option('pdf_builder_installed', true);
-                $response = array('success' => true, 'message' => 'Installation terminée');
-                break;
-
-            default:
-                $response = array('success' => false, 'message' => 'Étape inconnue: ' . $step);
-        }
-    } elseif ($action === 'pdf_builder_test_ajax') {
+    if ($action === 'pdf_builder_test_ajax') {
         $response = array('success' => true, 'message' => 'admin_post AJAX works!');
     }
 
     wp_send_json($response);
-}
-
-/**
- * Sauvegarder les données entreprise via AJAX
- */
-function pdf_builder_ajax_save_company_data($data) {
-    try {
-        // Décoder les données JSON si nécessaire
-        if (is_string($data)) {
-            $data = json_decode($data, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return array('success' => false, 'message' => 'Données JSON invalides');
-            }
-        }
-
-        // Validation des données
-        $required_fields = array('company_name', 'company_address', 'company_phone', 'company_email');
-        foreach ($required_fields as $field) {
-            if (empty($data[$field])) {
-                return array('success' => false, 'message' => 'Champ requis manquant: ' . $field);
-            }
-        }
-
-        // Sauvegarder les options
-        update_option('pdf_builder_company_name', sanitize_text_field($data['company_name']));
-        update_option('pdf_builder_company_address', sanitize_textarea_field($data['company_address']));
-        update_option('pdf_builder_company_phone', sanitize_text_field($data['company_phone']));
-        update_option('pdf_builder_company_email', sanitize_email($data['company_email']));
-
-        if (!empty($data['company_logo'])) {
-            update_option('pdf_builder_company_logo', esc_url_raw($data['company_logo']));
-        }
-        return array('success' => true, 'message' => 'Données entreprise sauvegardées');
-
-    } catch (Exception $e) {
-        return array('success' => false, 'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage());
-    }
-}
-
-/**
- * Créer un template par défaut via AJAX
- */
-function pdf_builder_ajax_create_template() {
-    try {
-        // Créer un template par défaut simple
-        $template_data = array(
-            'name' => 'Template par défaut',
-            'elements' => array(
-                array(
-                    'type' => 'text',
-                    'content' => 'FACTURE',
-                    'x' => 50,
-                    'y' => 50,
-                    'font_size' => 24,
-                    'font_weight' => 'bold'
-                )
-            )
-        );
-
-        // Sauvegarder le template
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        $wpdb->insert(
-            $table_templates,
-            array(
-                'name' => $template_data['name'],
-                'template_data' => json_encode($template_data)
-            ),
-            array('%s', '%s')
-        );
-
-        if ($wpdb->last_error) {
-            return array('success' => false, 'message' => 'Erreur base de données: ' . $wpdb->last_error);
-        }
-        return array('success' => true, 'message' => 'Template par défaut créé');
-
-    } catch (Exception $e) {
-        return array('success' => false, 'message' => 'Erreur lors de la création du template: ' . $e->getMessage());
-    }
 }
 
 /**
@@ -292,14 +180,6 @@ function pdf_builder_init()
         // Log si bootstrap n'existe pas
         }
     }
-
-    // Wizard supprimé - trop de problèmes non résolvables
-    // if (is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
-    //     $wizard_path = plugin_dir_path(__FILE__) . 'wizard.php';
-    //     if (file_exists($wizard_path)) {
-    //         require_once $wizard_path;
-    //     }
-    // }
 
     // Enregistrer les handlers AJAX au hook init
     add_action('init', 'pdf_builder_register_ajax_handlers');
