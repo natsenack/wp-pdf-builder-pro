@@ -754,19 +754,27 @@ class PdfBuilderBackupRestoreManager
     public function ajaxListBackups()
     {
         try {
+            error_log('PDF Builder: ajaxListBackups called');
+
             check_ajax_referer('pdf_builder_backup', 'nonce');
+            error_log('PDF Builder: nonce verified');
 
             if (!current_user_can('manage_options')) {
+                error_log('PDF Builder: insufficient permissions');
                 wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
                 return;
             }
+            error_log('PDF Builder: permissions OK');
 
             $backups = $this->listBackups();
+            error_log('PDF Builder: backups loaded, count: ' . count($backups));
 
             wp_send_json_success(['backups' => $backups]);
+            error_log('PDF Builder: response sent');
 
         } catch (Exception $e) {
-            error_log('PDF Builder: Erreur AJAX listBackups: ' . $e->getMessage());
+            error_log('PDF Builder: Exception in ajaxListBackups: ' . $e->getMessage());
+            error_log('PDF Builder: Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
         }
     }
