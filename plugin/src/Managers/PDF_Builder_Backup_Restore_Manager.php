@@ -555,10 +555,14 @@ class PdfBuilderBackupRestoreManager
      */
     public function deleteBackup($filename)
     {
+        error_log('PDF Builder: deleteBackup called with: ' . $filename);
+
         try {
             $filepath = $this->backup_dir . $filename;
+            error_log('PDF Builder: filepath: ' . $filepath);
 
             if (!file_exists($filepath)) {
+                error_log('PDF Builder: file does not exist, returning success');
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
@@ -566,14 +570,17 @@ class PdfBuilderBackupRestoreManager
             }
 
             if (unlink($filepath)) {
+                error_log('PDF Builder: unlink success');
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
                 ];
             } else {
+                error_log('PDF Builder: unlink failed');
                 throw new \Exception(__('Erreur lors de la suppression du fichier.', 'pdf-builder-pro'));
             }
         } catch (\Exception $e) {
+            error_log('PDF Builder: deleteBackup exception: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -762,27 +769,19 @@ class PdfBuilderBackupRestoreManager
     public function ajaxListBackups()
     {
         try {
-            error_log('PDF Builder: ajaxListBackups called');
-
             check_ajax_referer('pdf_builder_backup', 'nonce');
-            error_log('PDF Builder: nonce verified');
 
             if (!current_user_can('manage_options')) {
-                error_log('PDF Builder: insufficient permissions');
                 wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
                 return;
             }
-            error_log('PDF Builder: permissions OK');
 
             $backups = $this->listBackups();
-            error_log('PDF Builder: backups loaded, count: ' . count($backups));
 
             wp_send_json_success(['backups' => $backups]);
-            error_log('PDF Builder: response sent');
 
         } catch (\Exception $e) {
             error_log('PDF Builder: Exception in ajaxListBackups: ' . $e->getMessage());
-            error_log('PDF Builder: Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
         }
     }
@@ -792,6 +791,8 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxDeleteBackup()
     {
+        error_log('PDF Builder: ajaxDeleteBackup called');
+
         check_ajax_referer('pdf_builder_backup', 'nonce');
 
         if (!current_user_can('manage_options')) {
@@ -799,12 +800,14 @@ class PdfBuilderBackupRestoreManager
         }
 
         $filename = sanitize_file_name($_POST['filename'] ?? '');
+        error_log('PDF Builder: filename to delete: ' . $filename);
 
         if (empty($filename)) {
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
         }
 
         $result = $this->deleteBackup($filename);
+        error_log('PDF Builder: delete result: ' . ($result['success'] ? 'success' : 'error') . ' - ' . $result['message']);
 
         if ($result['success']) {
             wp_send_json_success(['message' => $result['message']]);
