@@ -244,7 +244,7 @@ class PdfBuilderBackupRestoreManager
                 'description' => $template['description'],
                 'data' => json_decode($template['data'], true),
                 'user_id' => $template['user_id'],
-                'is_premium' => $template['is_premium'],
+                'is_premium' => $template['is_premium'] ?? false,
                 'created_at' => $template['created_at'],
                 'updated_at' => $template['updated_at'],
                 'metadata' => json_decode($template['metadata'] ?? '{}', true)
@@ -435,7 +435,7 @@ class PdfBuilderBackupRestoreManager
         }
 
         $zip_filepath = $filepath . '.zip';
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
 
         if ($zip->open($zip_filepath, ZipArchive::CREATE) === true) {
             $zip->addFile($filepath, basename($filepath));
@@ -458,7 +458,7 @@ class PdfBuilderBackupRestoreManager
             return null;
         }
 
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         $extract_path = sys_get_temp_dir() . '/pdf-builder-restore-' . uniqid();
 
         if ($zip->open($zip_filepath) === true) {
