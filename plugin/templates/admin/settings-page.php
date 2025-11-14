@@ -5701,8 +5701,12 @@
                 // Restaurer une sauvegarde spécifique
                 jQuery('.restore-backup-btn').off('click').on('click', function() {
                     const filename = jQuery(this).val();
+                    const $button = jQuery(this);
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
+                        // Désactiver le bouton et montrer l'indicateur de chargement
+                        $button.prop('disabled', true).html('⏳ <?php _e('Restauration...', 'pdf-builder-pro'); ?>');
+
                         // Simuler la restauration en utilisant le filename
                         jQuery.ajax({
                             url: ajaxurl,
@@ -5714,16 +5718,40 @@
                                 overwrite: '1'
                             },
                             success: function(response) {
+                                // Réactiver le bouton
+                                $button.prop('disabled', false).html('🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?>');
+
                                 if (response.success) {
-                                    showBackupNotification('<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                                    // Construire un message détaillé sur ce qui a été restauré
+                                    let message = '<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>';
+                                    if (response.data && response.data.results) {
+                                        const results = response.data.results;
+                                        let details = [];
+                                        if (results.templates && results.templates.imported > 0) {
+                                            details.push(results.templates.imported + ' <?php _e('templates restaurés', 'pdf-builder-pro'); ?>');
+                                        }
+                                        if (results.settings && results.settings.updated > 0) {
+                                            details.push(results.settings.updated + ' <?php _e('paramètres restaurés', 'pdf-builder-pro'); ?>');
+                                        }
+                                        if (results.user_data) {
+                                            details.push('<?php _e('données utilisateur restaurées', 'pdf-builder-pro'); ?>');
+                                        }
+                                        if (details.length > 0) {
+                                            message += ' (' + details.join(', ') + ')';
+                                        }
+                                    }
+
+                                    showBackupNotification(message, 'success');
                                     setTimeout(function() {
                                         location.reload();
-                                    }, 2000);
+                                    }, 3000); // Augmenter le délai pour laisser le temps de lire le message
                                 } else {
                                     showBackupNotification(response.data.message || '<?php _e('Erreur lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
                                 }
                             },
                             error: function() {
+                                // Réactiver le bouton en cas d'erreur
+                                $button.prop('disabled', false).html('🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?>');
                                 showBackupNotification('<?php _e('Erreur AJAX lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
                             }
                         });
