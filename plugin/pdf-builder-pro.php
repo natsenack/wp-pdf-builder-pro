@@ -133,6 +133,18 @@ function pdf_builder_update_table_schema() {
         $wpdb->query("ALTER TABLE `$table_templates` ADD KEY is_default (is_default)");
     }
     
+    // Vérifier et ajouter la colonne is_premium
+    $is_premium_exists = $wpdb->get_results("SHOW COLUMNS FROM `$table_templates` LIKE 'is_premium'");
+    if (empty($is_premium_exists)) {
+        $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN is_premium tinyint(1) NOT NULL DEFAULT 0");
+    }
+    
+    // Vérifier et ajouter la colonne metadata
+    $metadata_exists = $wpdb->get_results("SHOW COLUMNS FROM `$table_templates` LIKE 'metadata'");
+    if (empty($metadata_exists)) {
+        $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN metadata longtext");
+    }
+    
     // Mettre à jour les templates existants pour leur assigner un user_id par défaut
     // Pour les templates sans user_id ou avec user_id = 0, on les assigne à l'utilisateur actuel
     // (en production, il faudrait une logique plus sophistiquée)

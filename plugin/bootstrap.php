@@ -229,7 +229,6 @@ function pdf_builder_load_core()
         'PDF_Builder_Feature_Manager.php',
         'PDF_Builder_License_Manager.php',
         'PDF_Builder_Logger.php',
-        'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_PDF_Generator.php',
         'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Settings_Manager.php',
@@ -242,6 +241,17 @@ function pdf_builder_load_core()
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
         if (file_exists($manager_path)) {
             require_once $manager_path;
+        }
+    }
+
+    // Charger les utilitaires essentiels depuis src/utilities/
+    $utilities = array(
+        'PDF_Builder_Notification_Manager.php'
+    );
+    foreach ($utilities as $utility) {
+        $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
+        if (file_exists($utility_path)) {
+            require_once $utility_path;
         }
     }
 
