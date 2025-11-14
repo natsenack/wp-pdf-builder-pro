@@ -56,6 +56,12 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
         showToast(message, type = 'success', duration = 4000) {
             console.log('🔍 PDFBuilderNotifications.showToast called:', message, type, duration);
 
+            // Vérifier que le container existe
+            if (!this.toastContainer || this.toastContainer.length === 0) {
+                console.error('🔍 PDFBuilderNotifications: No toast container found!');
+                return null;
+            }
+
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
             const toast = $(`
@@ -66,7 +72,13 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 </div>
             `);
 
+            console.log('🔍 PDFBuilderNotifications: Created toast element:', toast);
+            console.log('🔍 PDFBuilderNotifications: Toast container before append:', this.toastContainer);
+
             this.toastContainer.append(toast);
+
+            console.log('🔍 PDFBuilderNotifications: Toast appended to container');
+            console.log('🔍 PDFBuilderNotifications: Container HTML after append:', this.toastContainer.html());
 
             // Animation d'entrée
             toast.css({
@@ -76,6 +88,8 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 'opacity': '1',
                 'transform': 'translateX(0)'
             }, 300);
+
+            console.log('🔍 PDFBuilderNotifications: Animation started for toast:', toastId);
 
             // Auto-dismiss
             if (duration > 0) {
@@ -143,10 +157,15 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
     window.PDF_Builder_Notification_Manager = {
         show_toast: function(message, type, duration) {
             console.log('🔍 PDF_Builder_Notification_Manager.show_toast called:', message, type, duration);
+            console.log('🔍 PDF_Builder_Notification_Manager: window.pdfBuilderNotifications exists:', !!window.pdfBuilderNotifications);
+            console.log('🔍 PDF_Builder_Notification_Manager: showToast method exists:', !!(window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast));
             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
-                return window.pdfBuilderNotifications.showToast(message, type, duration);
+                const result = window.pdfBuilderNotifications.showToast(message, type, duration);
+                console.log('🔍 PDF_Builder_Notification_Manager.show_toast: result =', result);
+                return result;
             } else {
                 console.error('🔍 PDF_Builder_Notification_Manager: pdfBuilderNotifications not available');
+                console.error('🔍 PDF_Builder_Notification_Manager: window.pdfBuilderNotifications =', window.pdfBuilderNotifications);
             }
         },
         show_inline: function(message, type, target) {
