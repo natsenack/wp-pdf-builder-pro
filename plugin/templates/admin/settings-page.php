@@ -5698,7 +5698,7 @@
             function attachBackupEvents() {
                 // Restaurer une sauvegarde spécifique
                 jQuery('.restore-backup-btn').off('click').on('click', function() {
-                    const filename = jQuery(this).data('filename');
+                    const filename = jQuery(this).attr('data-filename');
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
                         // Simuler la restauration en utilisant le filename
@@ -5730,7 +5730,7 @@
 
                 // Supprimer une sauvegarde
                 jQuery(document).off('click', '.delete-backup-btn').on('click', '.delete-backup-btn', function() {
-                    const filename = jQuery(this).data('filename');
+                    const filename = jQuery(this).attr('data-filename');
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
                         jQuery.ajax({
