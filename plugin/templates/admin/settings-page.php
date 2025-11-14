@@ -5773,9 +5773,8 @@
                                 const isActive = jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active');
                                 if (isVisible && isActive && !backupTab.data('backups-loaded')) {
                                     backupTab.data('backups-loaded', true);
-                                    setTimeout(function() {
-                                        loadBackupsList();
-                                    }, 100);
+                                    // Use postMessage to break execution chain
+                                    window.postMessage('pdf-builder-load-backups-observer', '*');
                                 }
                             }
                         });
@@ -5790,8 +5789,17 @@
                         backupTab.data('backups-loaded', true);
                         setTimeout(function() {
                             loadBackupsList();
-                        }, 100);
+                        }, 0);
                     }
+                }
+            });
+
+            // Listen for the message to load backups
+            window.addEventListener('message', function(event) {
+                if (event.data === 'pdf-builder-load-backups-observer') {
+                    setTimeout(function() {
+                        loadBackupsList();
+                    }, 0);
                 }
             });
 
