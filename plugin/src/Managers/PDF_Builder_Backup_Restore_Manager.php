@@ -557,8 +557,11 @@ class PdfBuilderBackupRestoreManager
             error_log('PDF Builder: filepath: ' . $filepath);
 
             if (!file_exists($filepath)) {
-                error_log('PDF Builder: file does not exist');
-                throw new \Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
+                error_log('PDF Builder: file does not exist, returning success');
+                return [
+                    'success' => true,
+                    'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
+                ];
             }
 
             if (unlink($filepath)) {
@@ -792,6 +795,7 @@ class PdfBuilderBackupRestoreManager
     public function ajaxDeleteBackup()
     {
         error_log('PDF Builder: ajaxDeleteBackup called');
+        error_log('PDF Builder: backup_dir: ' . $this->backup_dir);
 
         check_ajax_referer('pdf_builder_backup', 'nonce');
 
