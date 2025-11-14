@@ -1146,6 +1146,17 @@
                                     <?php
                                 endif; ?>
 
+                                <!-- Section de test des notifications -->
+                                <tr style="border-bottom: 2px solid #e5e5e5;">
+                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Test Notifications :</td>
+                                    <td style="padding: 8px 0;">
+                                        <button type="button" id="test-notifications-success" class="button button-small" style="margin-right: 5px; background: #28a745; color: white; border: none;">✅ Test Succès</button>
+                                        <button type="button" id="test-notifications-error" class="button button-small" style="margin-right: 5px; background: #dc3545; color: white; border: none;">❌ Test Erreur</button>
+                                        <button type="button" id="test-notifications-warning" class="button button-small" style="margin-right: 5px; background: #ffc107; color: black; border: none;">⚠️ Test Avertissement</button>
+                                        <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
+                                    </td>
+                                </tr>
+
                                 <?php if ($is_premium && $license_activated_at) :
                                     ?>
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -4102,6 +4113,39 @@
                         setTimeout(() => {
                             PDF_Builder_Notification_Manager.show_toast('✓ Cache vidé avec succès !', 'success');
                         }, 1500);
+                    });
+                }
+
+                // Boutons de test des notifications
+                const testSuccessBtn = document.getElementById('test-notifications-success');
+                if (testSuccessBtn) {
+                    testSuccessBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+                    });
+                }
+
+                const testErrorBtn = document.getElementById('test-notifications-error');
+                if (testErrorBtn) {
+                    testErrorBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+                    });
+                }
+
+                const testWarningBtn = document.getElementById('test-notifications-warning');
+                if (testWarningBtn) {
+                    testWarningBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
+                    });
+                }
+
+                const testInfoBtn = document.getElementById('test-notifications-info');
+                if (testInfoBtn) {
+                    testInfoBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
                     });
                 }
 
