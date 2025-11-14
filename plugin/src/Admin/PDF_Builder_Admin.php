@@ -3575,16 +3575,14 @@ class PdfBuilderAdmin
         
         // Vérification très simple et directe
         if (empty($_POST['nonce'])) {
-            http_response_code(400);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'message' => 'Nonce manquant']);
-            wp_die();
+            wp_send_json_error(['message' => 'Nonce manquant']);
+            return;
         }
 
         // Vérifier le nonce avec les actions possibles
         $nonce = $_POST['nonce'];
         $valid = false;
-        
+
         if (wp_verify_nonce($nonce, 'pdf_builder_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_performance_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_pdf_settings') ||
@@ -3592,22 +3590,16 @@ class PdfBuilderAdmin
             wp_verify_nonce($nonce, 'pdf_builder_developpeur_nonce')) {
             $valid = true;
         }
-        
+
         if (!$valid) {
-            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Nonce invalide\n", FILE_APPEND);
-            http_response_code(403);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'message' => 'Nonce invalide']);
-            wp_die();
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
         }
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
-            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Permissions insuffisantes\n", FILE_APPEND);
-            http_response_code(403);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'message' => 'Permissions insuffisantes']);
-            wp_die();
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
         }
 
         // Sauvegarder les paramètres simples
@@ -3642,16 +3634,9 @@ class PdfBuilderAdmin
 
         // Sauvegarder
         $result = update_option('pdf_builder_settings', $settings);
-        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Paramètres sauvegardés: " . ($result ? 'OK' : 'FAILED') . "\n", FILE_APPEND);
 
         // Répondre en JSON
-        http_response_code(200);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode([
-            'success' => true,
-            'message' => 'Paramètres sauvegardés avec succès'
-        ]);
-        wp_die();
+        wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès']);
     }
 
     /**
