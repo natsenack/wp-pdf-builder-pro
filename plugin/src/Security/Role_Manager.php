@@ -35,9 +35,10 @@ class Role_Manager
     {
         // Vérifier la capacité spécifique 'pdf_builder_access'
         if ($cap === 'pdf_builder_access' || (isset($args[0]) && $args[0] === 'pdf_builder_access')) {
-// Les administrateurs ont toujours accès
+            // Les administrateurs ont toujours accès
             if (isset($allcaps['manage_options'])) {
-                return true;
+                $allcaps['pdf_builder_access'] = true;
+                return $allcaps;
             }
 
             // Vérifier si le rôle de l'utilisateur est autorisé
@@ -45,13 +46,15 @@ class Role_Manager
             $user_roles = isset($user->roles) ? $user->roles : [];
             foreach ($user_roles as $role) {
                 if (in_array($role, $allowed_roles)) {
-        // L'utilisateur a un rôle autorisé
-                    return true;
+                    // L'utilisateur a un rôle autorisé
+                    $allcaps['pdf_builder_access'] = true;
+                    return $allcaps;
                 }
             }
 
             // Pas accès
-            return false;
+            $allcaps['pdf_builder_access'] = false;
+            return $allcaps;
         }
 
         return $allcaps;
