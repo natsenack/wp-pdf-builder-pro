@@ -550,22 +550,29 @@ class PdfBuilderBackupRestoreManager
      */
     public function deleteBackup($filename)
     {
+        error_log('PDF Builder: deleteBackup called with: ' . $filename);
+
         try {
             $filepath = $this->backup_dir . $filename;
+            error_log('PDF Builder: filepath: ' . $filepath);
 
             if (!file_exists($filepath)) {
+                error_log('PDF Builder: file does not exist');
                 throw new \Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
             }
 
             if (unlink($filepath)) {
+                error_log('PDF Builder: unlink success');
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
                 ];
             } else {
+                error_log('PDF Builder: unlink failed');
                 throw new \Exception(__('Erreur lors de la suppression du fichier.', 'pdf-builder-pro'));
             }
         } catch (\Exception $e) {
+            error_log('PDF Builder: deleteBackup exception: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -784,23 +791,30 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxDeleteBackup()
     {
+        error_log('PDF Builder: ajaxDeleteBackup called');
+
         check_ajax_referer('pdf_builder_backup', 'nonce');
 
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder: permissions failed');
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $filename = sanitize_file_name($_POST['filename'] ?? '');
+        error_log('PDF Builder: filename: ' . $filename);
 
         if (empty($filename)) {
+            error_log('PDF Builder: filename empty');
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
         }
 
         $result = $this->deleteBackup($filename);
 
         if ($result['success']) {
+            error_log('PDF Builder: delete success');
             wp_send_json_success(['message' => $result['message']]);
         } else {
+            error_log('PDF Builder: delete error: ' . $result['message']);
             wp_send_json_error(['message' => $result['message']]);
         }
     }
