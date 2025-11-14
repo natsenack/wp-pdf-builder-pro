@@ -322,17 +322,17 @@ class PdfBuilderAdmin
         // Hook AJAX pour toggle debug mode principal
         add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']);
 
-        // Test notifications handler
-        add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
-        // Test SMTP connection handler
-        add_action('wp_ajax_pdf_builder_test_smtp_connection', [$this, 'ajax_test_smtp_connection']);
+        // Test notifications handler - REMOVED: handled in settings-page.php
+        // add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
+        // Test SMTP connection handler - REMOVED: handled in settings-page.php
+        // add_action('wp_ajax_pdf_builder_test_smtp_connection', [$this, 'ajax_test_smtp_connection']);
 
-        // Maintenance actions AJAX
-        add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'ajax_remove_temp_files']);
-        add_action('wp_ajax_pdf_builder_optimize_db', [$this, 'ajax_optimize_db']);
-        add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'ajax_repair_templates']);
-        add_action('wp_ajax_pdf_builder_reset_settings', [$this, 'ajax_reset_settings']);
-        add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajax_check_integrity']);
+        // Maintenance actions AJAX - REMOVED: handled in settings-page.php
+        // add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'ajax_remove_temp_files']);
+        // add_action('wp_ajax_pdf_builder_optimize_db', [$this, 'ajax_optimize_db']);
+        // add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'ajax_repair_templates']);
+        // add_action('wp_ajax_pdf_builder_reset_settings', [$this, 'ajax_reset_settings']);
+        // add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajax_check_integrity']);
 
         // Template limits check for freemium
         add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajax_check_template_limit']);

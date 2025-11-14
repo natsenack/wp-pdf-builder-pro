@@ -48,20 +48,20 @@ class LicenseTestHandler
     public function init()
     {
         // AJAX handler pour générer une clé de test
-        add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_key']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_key']);
+        add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
+        add_action('wp_ajax_nopriv_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
 // AJAX handler pour valider une clé de test
-        add_action('wp_ajax_pdf_builder_validate_test_license_key', [$this, 'handle_validate_test_key']);
-        add_action('wp_ajax_nopriv_pdf_builder_validate_test_license_key', [$this, 'handle_validate_test_key']);
+        add_action('wp_ajax_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
+        add_action('wp_ajax_nopriv_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
 // AJAX handler pour basculer le mode test
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
         add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
 // AJAX handler pour supprimer la clé de test
-        add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
-        add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
+        add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
+        add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
 // AJAX handler pour nettoyer complètement la licence
-        add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
-        add_action('wp_ajax_nopriv_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
+        add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
+        add_action('wp_ajax_nopriv_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
     }
 
     /**
