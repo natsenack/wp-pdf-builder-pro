@@ -2,6 +2,9 @@
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
+// Import du diagnostic de compatibilité
+import '../browser-compatibility.js';
+
 // Import des composants React
 import React from 'react';
 import ReactDOM from 'react-dom/client';
