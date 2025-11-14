@@ -172,29 +172,27 @@ class PdfBuilderAdmin
      */
     private function checkAdminPermissions()
     {
-        // ✅ Cache DÉSACTIVÉ - toujours vérifier les permissions fraîches
-        // Pas de transient pour les permissions d'admin
+        // ✅ Vérifier la capacité manage_options (nécessaire pour les menus admin)
+        if (current_user_can('manage_options')) {
+            return true;
+        }
 
-        // Récupérer les rôles autorisés depuis les options
+        // ✅ Fallback: vérifier les rôles autorisés depuis les options
         $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
-// S'assurer que c'est un tableau
         if (!is_array($allowed_roles)) {
             $allowed_roles = ['administrator'];
         }
 
-        // Vérifier si l'utilisateur a un des rôles autorisés
         $user = wp_get_current_user();
         $user_roles = $user ? $user->roles : [];
-        $has_access = false;
+        
         foreach ($user_roles as $role) {
             if (in_array($role, $allowed_roles)) {
-                $has_access = true;
-                break;
+                return true;
             }
         }
 
-        // ✅ Cache DÉSACTIVÉ - retourner directement sans transient
-        return $has_access;
+        return false;
     }
 
     /**
