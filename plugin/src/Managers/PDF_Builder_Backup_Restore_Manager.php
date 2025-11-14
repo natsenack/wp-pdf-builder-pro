@@ -128,10 +128,10 @@ class PdfBuilderBackupRestoreManager
                     'size' => filesize($filepath)
                 ];
             } else {
-                throw new Exception(__('Erreur lors de l\'écriture du fichier de sauvegarde.', 'pdf-builder-pro'));
+                throw new \Exception(__('Erreur lors de l\'écriture du fichier de sauvegarde.', 'pdf-builder-pro'));
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -152,14 +152,14 @@ class PdfBuilderBackupRestoreManager
             $filepath = $this->backup_dir . $filename;
 
             if (!file_exists($filepath)) {
-                throw new Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
+                throw new \Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
             }
 
             // Décompresser si nécessaire
             if (pathinfo($filepath, PATHINFO_EXTENSION) === 'zip') {
                 $json_filepath = $this->decompressBackup($filepath);
                 if (!$json_filepath) {
-                    throw new Exception(__('Erreur lors de la décompression du fichier.', 'pdf-builder-pro'));
+                    throw new \Exception(__('Erreur lors de la décompression du fichier.', 'pdf-builder-pro'));
                 }
                 $filepath = $json_filepath;
             }
@@ -167,17 +167,17 @@ class PdfBuilderBackupRestoreManager
             // Lire le fichier
             $content = file_get_contents($filepath);
             if (!$content) {
-                throw new Exception(__('Erreur lors de la lecture du fichier de sauvegarde.', 'pdf-builder-pro'));
+                throw new \Exception(__('Erreur lors de la lecture du fichier de sauvegarde.', 'pdf-builder-pro'));
             }
 
             $backup_data = json_decode($content, true);
             if (!$backup_data || !isset($backup_data['version'])) {
-                throw new Exception(__('Format de sauvegarde invalide.', 'pdf-builder-pro'));
+                throw new \Exception(__('Format de sauvegarde invalide.', 'pdf-builder-pro'));
             }
 
             // Valider la version
             if (version_compare($backup_data['version'], self::BACKUP_VERSION, '>')) {
-                throw new Exception(__('Version de sauvegarde incompatible.', 'pdf-builder-pro'));
+                throw new \Exception(__('Version de sauvegarde incompatible.', 'pdf-builder-pro'));
             }
 
             $results = [];
@@ -211,7 +211,7 @@ class PdfBuilderBackupRestoreManager
                 'results' => $results
             ];
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -367,7 +367,7 @@ class PdfBuilderBackupRestoreManager
 
                 $imported++;
 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $errors[] = sprintf(
                     __('Erreur lors de l\'import du template "%s": %s', 'pdf-builder-pro'),
                     $template_data['name'],
@@ -534,7 +534,7 @@ class PdfBuilderBackupRestoreManager
                 return $b['modified'] - $a['modified'];
             });
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('PDF Builder: Exception dans listBackups(): ' . $e->getMessage());
             return $backups;
         }
@@ -554,7 +554,7 @@ class PdfBuilderBackupRestoreManager
             $filepath = $this->backup_dir . $filename;
 
             if (!file_exists($filepath)) {
-                throw new Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
+                throw new \Exception(__('Fichier de sauvegarde introuvable.', 'pdf-builder-pro'));
             }
 
             if (unlink($filepath)) {
@@ -563,9 +563,9 @@ class PdfBuilderBackupRestoreManager
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
                 ];
             } else {
-                throw new Exception(__('Erreur lors de la suppression du fichier.', 'pdf-builder-pro'));
+                throw new \Exception(__('Erreur lors de la suppression du fichier.', 'pdf-builder-pro'));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -772,7 +772,7 @@ class PdfBuilderBackupRestoreManager
             wp_send_json_success(['backups' => $backups]);
             error_log('PDF Builder: response sent');
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('PDF Builder: Exception in ajaxListBackups: ' . $e->getMessage());
             error_log('PDF Builder: Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
