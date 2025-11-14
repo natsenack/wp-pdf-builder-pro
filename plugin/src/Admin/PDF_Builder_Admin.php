@@ -243,11 +243,13 @@ class PdfBuilderAdmin
         $license_key = get_option('pdf_builder_license_key', '');
         $test_key = get_option('pdf_builder_license_test_key', '');
 
+        // Déboguer pour voir les valeurs
+        // error_log('DEBUG is_premium: status=' . $license_status . ' has_key=' . (!empty($license_key) ? 'yes' : 'no') . ' has_test_key=' . (!empty($test_key) ? 'yes' : 'no'));
+
         // is_premium si vraie licence OU si clé de test existe
         $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
 
-        // Utilise le filtre existant pour permettre la personnalisation
-        return apply_filters('pdf_builder_is_premium', $is_premium);
+        return $is_premium;
     }
 
     /**
