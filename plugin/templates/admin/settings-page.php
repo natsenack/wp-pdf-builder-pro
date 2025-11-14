@@ -3396,7 +3396,7 @@
             </div>
 
             <div id="dev-debug-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 style="margin-top: 30px; border-bottom: 1px solid #e5e5e5; padding-bottom: 10px;">�🔍 Paramètres de Debug</h3>
+            <h3 class="section-title">🔍 Paramètres de Debug</h3>
 
             <table class="form-table">
                 <tr>
