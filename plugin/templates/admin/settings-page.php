@@ -5764,10 +5764,17 @@
 
             // Charger la liste au chargement de l'onglet sauvegarde
             jQuery(document).on('click', 'a[data-tab="sauvegarde"]', function() {
-                // Defer significantly to avoid performance violation
-                setTimeout(function() {
-                    loadBackupsList();
-                }, 500);
+                // Use postMessage to completely break the execution chain
+                window.postMessage('pdf-builder-load-backups', '*');
+            });
+
+            // Listen for the message to load backups
+            window.addEventListener('message', function(event) {
+                if (event.data === 'pdf-builder-load-backups') {
+                    setTimeout(function() {
+                        loadBackupsList();
+                    }, 100);
+                }
             });
 
             // Charger automatiquement la liste si l'onglet sauvegarde est actif au chargement
@@ -5776,9 +5783,7 @@
                 if (jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active') ||
                     window.location.hash === '#sauvegarde' ||
                     jQuery('#sauvegarde').hasClass('tab-content') && !jQuery('#sauvegarde').hasClass('hidden-tab')) {
-                    setTimeout(function() {
-                        loadBackupsList();
-                    }, 500);
+                    window.postMessage('pdf-builder-load-backups', '*');
                 }
             });
 
