@@ -88,7 +88,7 @@ class PdfBuilderSettingsManager
     private function saveSettings()
     {
         // Rôles autorisés
-        $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
+        $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator', 'editor', 'shop_manager'];
         update_option('pdf_builder_allowed_roles', $allowed_roles);
 
         // Informations société (seulement les champs non disponibles dans WooCommerce/WordPress)

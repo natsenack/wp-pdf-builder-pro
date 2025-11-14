@@ -176,10 +176,10 @@ class PdfBuilderAdmin
         // Pas de transient pour les permissions d'admin
 
         // Récupérer les rôles autorisés depuis les options
-        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
 // S'assurer que c'est un tableau
         if (!is_array($allowed_roles)) {
-            $allowed_roles = ['administrator'];
+            $allowed_roles = ['administrator', 'editor', 'shop_manager'];
         }
 
         // Vérifier si l'utilisateur a un des rôles autorisés
