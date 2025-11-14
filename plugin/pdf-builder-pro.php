@@ -120,29 +120,17 @@ function pdf_builder_update_table_schema() {
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
     
     // Vérifier et ajouter la colonne user_id
-    $user_id_exists = $wpdb->get_results($wpdb->prepare(
-        "SHOW COLUMNS FROM %s LIKE 'user_id'", $table_templates
-    ));
+    $user_id_exists = $wpdb->get_results("SHOW COLUMNS FROM `$table_templates` LIKE 'user_id'");
     if (empty($user_id_exists)) {
-        $wpdb->query($wpdb->prepare(
-            "ALTER TABLE %s ADD COLUMN user_id bigint(20) unsigned NOT NULL DEFAULT 0", $table_templates
-        ));
-        $wpdb->query($wpdb->prepare(
-            "ALTER TABLE %s ADD KEY user_id (user_id)", $table_templates
-        ));
+        $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN user_id bigint(20) unsigned NOT NULL DEFAULT 0");
+        $wpdb->query("ALTER TABLE `$table_templates` ADD KEY user_id (user_id)");
     }
     
     // Vérifier et ajouter la colonne is_default
-    $is_default_exists = $wpdb->get_results($wpdb->prepare(
-        "SHOW COLUMNS FROM %s LIKE 'is_default'", $table_templates
-    ));
+    $is_default_exists = $wpdb->get_results("SHOW COLUMNS FROM `$table_templates` LIKE 'is_default'");
     if (empty($is_default_exists)) {
-        $wpdb->query($wpdb->prepare(
-            "ALTER TABLE %s ADD COLUMN is_default tinyint(1) NOT NULL DEFAULT 0", $table_templates
-        ));
-        $wpdb->query($wpdb->prepare(
-            "ALTER TABLE %s ADD KEY is_default (is_default)", $table_templates
-        ));
+        $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN is_default tinyint(1) NOT NULL DEFAULT 0");
+        $wpdb->query("ALTER TABLE `$table_templates` ADD KEY is_default (is_default)");
     }
 }
 
