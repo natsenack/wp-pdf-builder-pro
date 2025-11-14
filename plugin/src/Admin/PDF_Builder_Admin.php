@@ -239,7 +239,7 @@ class PdfBuilderAdmin
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
         // Inclure le gestionnaire de modèles prédéfinis
-        include_once plugin_dir_path(dirname(__FILE__)) . '../templates/admin/predefined-templates-manager.php';
+        include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
 
         // Instancier le gestionnaire de modèles prédéfinis
         // new PDF_Builder_Predefined_Templates_Manager();
@@ -1062,7 +1062,7 @@ class PdfBuilderAdmin
         ?>
         <div class="wrap">
         <?php
-        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/settings-page.php';
+        include plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-page.php';
         ?>
         </div>
         <?php
