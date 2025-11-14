@@ -24,6 +24,46 @@ var pdfBuilderTemplatesNonce = '<?php echo esc_js($templates_nonce); ?>';
 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 </script>
 
+<style>
+/* Styles pour les modals */
+.pdf-builder-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+.modal-header h3 { margin: 0; }
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+.modal-body { padding: 20px; }
+</style>
+
 <div class="wrap">
     <h1><?php _e('[DOC] Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
 
