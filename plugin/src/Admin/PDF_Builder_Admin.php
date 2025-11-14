@@ -206,33 +206,29 @@ class PdfBuilderAdmin
             return true; // Pas de limitation pour premium
         }
 
-        // Compter templates existants de l'utilisateur
-        $user_id = get_current_user_id();
-        $templates_count = self::count_user_templates($user_id);
+        // Compter templates globaux disponibles
+        $templates_count = self::count_user_templates();
 
-        // Limite : 1 template gratuit
+        // Limite : 1 template gratuit (mais comme c'est global, cette logique peut être à revoir)
         return $templates_count < 1;
     }
 
     /**
-     * Compte le nombre de templates créés par un utilisateur
+     * Compte le nombre de templates disponibles globalement
      *
-     * @param int $user_id
      * @return int
      */
-    public static function count_user_templates($user_id) {
+    public static function count_user_templates($user_id = null) {
         global $wpdb;
 
-        // Compter depuis la table custom pdf_builder_templates (comme l'affichage)
+        // Compter depuis la table custom pdf_builder_templates (templates globaux)
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        // Récupérer le nombre de templates pour cet utilisateur
-        // Inclure les templates avec user_id = $user_id OU user_id IS NULL/0 (pour compatibilité)
+        // Récupérer le nombre total de templates globaux (user_id = 0 ou NULL)
         // ET exclure les templates par défaut (is_default = 1)
-        $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM `$table_templates` WHERE (user_id = %d OR user_id IS NULL OR user_id = 0) AND (is_default IS NULL OR is_default = 0)",
-            $user_id
-        ));
+        $count = $wpdb->get_var(
+            "SELECT COUNT(*) FROM `$table_templates` WHERE (user_id IS NULL OR user_id = 0) AND (is_default IS NULL OR is_default = 0)"
+        );
 
         return (int)$count;
     }    /**
@@ -6130,7 +6126,7 @@ class PdfBuilderAdmin
 
         wp_send_json_success([
             'can_create' => $can_create,
-            'current_count' => self::count_user_templates(get_current_user_id()),
+            'current_count' => self::count_user_templates(),
             'limit' => 1
         ]);
     }
