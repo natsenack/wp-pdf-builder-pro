@@ -238,8 +238,16 @@ class PdfBuilderAdmin
      * @return bool
      */
     public static function is_premium_user() {
-        // Utilise le filtre existant pour la vérification licence
-        return apply_filters('pdf_builder_is_premium', false);
+        // Vérifier le statut de la licence
+        $license_status = get_option('pdf_builder_license_status', 'free');
+        $license_key = get_option('pdf_builder_license_key', '');
+        $test_key = get_option('pdf_builder_license_test_key', '');
+
+        // is_premium si vraie licence OU si clé de test existe
+        $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
+
+        // Utilise le filtre existant pour permettre la personnalisation
+        return apply_filters('pdf_builder_is_premium', $is_premium);
     }
 
     /**
