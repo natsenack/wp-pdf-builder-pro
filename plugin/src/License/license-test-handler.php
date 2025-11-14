@@ -54,8 +54,8 @@ class LicenseTestHandler
         add_action('wp_ajax_pdf_builder_validate_test_license_key', [$this, 'handle_validate_test_key']);
         add_action('wp_ajax_nopriv_pdf_builder_validate_test_license_key', [$this, 'handle_validate_test_key']);
 // AJAX handler pour basculer le mode test
-        add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
-        add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
+        add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
+        add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
 // AJAX handler pour supprimer la clé de test
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);
         add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_key']);

@@ -430,6 +430,10 @@ function pdf_builder_load_bootstrap()
     // CHARGER LE HANDLER DE TEST DE LICENCE
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
+        // Instancier le handler pour enregistrer les hooks AJAX
+        if (class_exists('PDF_Builder_Pro\\License\\LicenseTestHandler')) {
+            new \PDF_Builder_Pro\License\LicenseTestHandler();
+        }
     }
 
     // CHARGER LE HANDLER D'EXPIRATION DE LICENCE
