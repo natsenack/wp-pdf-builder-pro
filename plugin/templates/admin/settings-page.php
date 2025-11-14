@@ -23,6 +23,24 @@
     $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
         'xmlhttprequest';
 
+    // Handle AJAX clear cache request BEFORE the early exit
+    if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
+        if (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance')) {
+            // Clear transients and cache
+            delete_transient('pdf_builder_cache');
+            delete_transient('pdf_builder_templates');
+            delete_transient('pdf_builder_elements');
+            // Clear WP object cache if available
+            if (function_exists('wp_cache_flush')) {
+                wp_cache_flush();
+            }
+
+            send_ajax_response(true, 'Cache vidé avec succès.');
+        } else {
+            send_ajax_response(false, 'Erreur de sécurité.');
+        }
+    }
+
     // For AJAX requests, only process POST data and exit - don't show HTML
     if ($is_ajax && !empty($_POST)) {
         // Process the request and exit - the processing code below will handle it
@@ -173,23 +191,7 @@
         }
     }
 
-    // Handle AJAX clear cache request
-    if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
-        if (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance')) {
-        // Clear transients and cache
-            delete_transient('pdf_builder_cache');
-            delete_transient('pdf_builder_templates');
-            delete_transient('pdf_builder_elements');
-        // Clear WP object cache if available
-            if (function_exists('wp_cache_flush')) {
-                wp_cache_flush();
-            }
 
-            send_ajax_response(true, 'Cache vidé avec succès.');
-        } else {
-            send_ajax_response(false, 'Erreur de sécurité.');
-        }
-    }
     if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         if ($is_ajax) {
             error_log('AJAX: Matched condition 2 - submit + pdf_builder_general_nonce');
