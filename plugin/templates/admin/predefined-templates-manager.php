@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Predefined_Templates_Manager
 {
     private $templates_dir;
-    private $show_first_modal = false;
     public function __construct()
     {
         $this->templates_dir = plugin_dir_path(dirname(__FILE__)) . 'predefined/';
@@ -29,6 +28,7 @@ class PDF_Builder_Predefined_Templates_Manager
 // Paramètres développeur
         add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajaxDeveloperAuth']);
         add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajaxDeveloperLogout']);
+        add_action('wp_ajax_pdf_builder_mark_first_visit_complete', [$this, 'ajaxMarkFirstVisitComplete']);
     }
     /**
      * Ajouter le menu admin pour les modèles prédéfinis
@@ -60,15 +60,6 @@ class PDF_Builder_Predefined_Templates_Manager
         if ($hook !== 'pdf-builder_page_pdf-builder-predefined-templates') {
             return;
         }
-        // Vérifier si c'est la première visite
-        $user_id = get_current_user_id();
-        $first_visit = get_user_meta($user_id, 'pdf_builder_templates_first_visit', true);
-        if (!$first_visit) {
-            // update_user_meta($user_id, 'pdf_builder_templates_first_visit', '1'); // Commenté pour test
-            $show_first_modal = true;
-        } else {
-            $show_first_modal = false;
-        }
         wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);
         wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
@@ -81,7 +72,6 @@ class PDF_Builder_Predefined_Templates_Manager
         wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
-            'showFirstModal' => $show_first_modal,
             'strings' => [
                 'confirmDelete' => __('Êtes-vous sûr de vouloir supprimer ce modèle ?', 'pdf-builder-pro'),
                 'saveSuccess' => __('Modèle sauvegardé avec succès !', 'pdf-builder-pro'),
@@ -146,19 +136,23 @@ class PDF_Builder_Predefined_Templates_Manager
                         });
                     }
                 });
-                // Afficher la modale de première utilisation si nécessaire
-                if (pdfBuilderPredefined.showFirstModal) {
-                    $(\'#first-use-modal\').show();
-                }
-                // Gestion de la fermeture des modales
-                $(\'.close-modal\').on(\'click\', function() {
-                    $(this).closest(\'.pdf-builder-modal\').hide();
-                });
-                // Fermer la modale en cliquant en dehors
-                $(\'.pdf-builder-modal\').on(\'click\', function(e) {
-                    if (e.target === this) {
-                        $(this).hide();
-                    }
+                
+                // Gestion du modal de première visite
+                <?php if ($show_first_visit_modal) : ?>
+                $("#first-visit-modal").fadeIn();
+                <?php endif; ?>
+                
+                // Fermeture des modals
+                $(".close-modal, #start-exploring-btn").on("click", function() {
+                    $("#first-visit-modal").fadeOut();
+                    // Marquer la première visite comme terminée
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        data: {
+                            action: "pdf_builder_mark_first_visit_complete"
+                        }
+                    });
                 });
             });
         ');
@@ -310,27 +304,42 @@ class PDF_Builder_Predefined_Templates_Manager
         }
     }
     /**
-     * AJAX - Déconnexion développeur
+     * AJAX - Marquer la première visite comme terminée
      */
-    public function ajaxDeveloperLogout()
+    public function ajaxMarkFirstVisitComplete()
     {
         try {
-            $user_id = get_current_user_id();
-            $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
-            delete_option($dev_auth_key);
-            wp_send_json_success(['message' => 'Déconnexion réussie']);
+            $this->markFirstVisitComplete();
+            wp_send_json_success(['message' => 'Première visite marquée comme terminée']);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
+    }
+    /**
+     * Vérifier si c'est la première visite de l'utilisateur sur la page des templates
+     */
+    private function isFirstVisit()
+    {
+        $user_id = get_current_user_id();
+        $meta_key = 'pdf_builder_templates_first_visit';
+        $has_visited = get_user_meta($user_id, $meta_key, true);
+        return empty($has_visited);
+    }
+
+    /**
+     * Marquer que l'utilisateur a vu le modal de première visite
+     */
+    private function markFirstVisitComplete()
+    {
+        $user_id = get_current_user_id();
+        $meta_key = 'pdf_builder_templates_first_visit';
+        update_user_meta($user_id, $meta_key, '1');
     }
     /**
      * Rendre la page admin
      */
     public function renderAdminPage()
     {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
-        }
         // Vérifier l'authentification développeur
         $settings = get_option('pdf_builder_settings', []);
         if (empty($settings['developer_enabled'])) {
@@ -349,6 +358,10 @@ class PDF_Builder_Predefined_Templates_Manager
             return;
         }
         $templates = $this->getPredefinedTemplates();
+        
+        // Vérifier si c'est la première visite pour afficher le modal
+        $show_first_visit_modal = $this->isFirstVisit();
+        
         ?>
         <style>
         /* Styles de base inline pour la page des modèles prédéfinis */
@@ -626,6 +639,66 @@ class PDF_Builder_Predefined_Templates_Manager
                 </div>
             </div>
         </div>
+        <!-- Modale de première visite -->
+        <div id="first-visit-modal" class="pdf-builder-modal" style="display: none;">
+            <div class="modal-content" style="max-width: 900px;">
+                <div class="modal-header">
+                    <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h4><?php _e('Bienvenue dans la Galerie de Modèles Prédéfinis !', 'pdf-builder-pro'); ?></h4>
+                        <p><?php _e('Découvrez nos modèles prêts à l\'emploi pour créer vos documents PDF professionnels.', 'pdf-builder-pro'); ?></p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <!-- Modèle Facture -->
+                        <div class="template-showcase" style="border: 2px solid #007cba; border-radius: 8px; padding: 15px; background: #f8f9ff;">
+                            <div style="text-align: center; margin-bottom: 10px;">
+                                <span style="font-size: 2em;">🧾</span>
+                            </div>
+                            <h4 style="margin: 0 0 5px 0; color: #007cba;">Facture Moderne</h4>
+                            <p style="margin: 0; font-size: 13px; color: #666;">Modèle professionnel avec en-tête, tableau des produits et mentions légales.</p>
+                        </div>
+                        
+                        <!-- Modèle Devis -->
+                        <div class="template-showcase" style="border: 2px solid #28a745; border-radius: 8px; padding: 15px; background: #f8fff8;">
+                            <div style="text-align: center; margin-bottom: 10px;">
+                                <span style="font-size: 2em;">📋</span>
+                            </div>
+                            <h4 style="margin: 0 0 5px 0; color: #28a745;">Devis Complet</h4>
+                            <p style="margin: 0; font-size: 13px; color: #666;">Présentation claire des prestations avec conditions et validité.</p>
+                        </div>
+                        
+                        <!-- Modèle Personnalisé -->
+                        <div class="template-showcase" style="border: 2px solid #ffc107; border-radius: 8px; padding: 15px; background: #fffef8;">
+                            <div style="text-align: center; margin-bottom: 10px;">
+                                <span style="font-size: 2em;">🎨</span>
+                            </div>
+                            <h4 style="margin: 0 0 5px 0; color: #ffc107;">Modèle Personnalisé</h4>
+                            <p style="margin: 0; font-size: 13px; color: #666;">Créez votre propre modèle adapté à vos besoins spécifiques.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #e8f4fd; border: 1px solid #007cba; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #007cba;">💡 Comment utiliser les modèles :</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #333;">
+                            <li><strong>Parcourir :</strong> Explorez la galerie ci-dessous pour voir tous les modèles disponibles</li>
+                            <li><strong>Modifier :</strong> Cliquez sur "Éditer" pour personnaliser un modèle existant</li>
+                            <li><strong>Créer :</strong> Utilisez "Nouveau Modèle" pour partir d'une base vierge</li>
+                            <li><strong>Exporter :</strong> Sauvegardez vos créations pour les réutiliser</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button id="start-exploring-btn" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 30px;">
+                            🚀 <?php _e('Commencer l\'exploration', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Modale d'aperçu -->
         <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
             <div class="modal-content">
@@ -635,26 +708,6 @@ class PDF_Builder_Predefined_Templates_Manager
                 </div>
                 <div class="modal-body">
                     <div id="preview-container"></div>
-                </div>
-            </div>
-        </div>
-        <!-- Modale première utilisation -->
-        <div id="first-use-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p><?php _e('Bienvenue dans la galerie des modèles prédéfinis !', 'pdf-builder-pro'); ?></p>
-                    <p><?php _e('Ici, vous pouvez créer, modifier et gérer vos modèles de PDF personnalisés.', 'pdf-builder-pro'); ?></p>
-                    <ul>
-                        <li><?php _e('📝 Créez de nouveaux modèles avec l\'éditeur intégré', 'pdf-builder-pro'); ?></li>
-                        <li><?php _e('🎨 Générez des aperçus pour visualiser vos créations', 'pdf-builder-pro'); ?></li>
-                        <li><?php _e('💾 Sauvegardez vos modèles pour les réutiliser', 'pdf-builder-pro'); ?></li>
-                        <li><?php _e('📤 Exportez vos modèles vers l\'éditeur principal', 'pdf-builder-pro'); ?></li>
-                    </ul>
-                    <p><?php _e('Commencez par créer votre premier modèle !', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
         </div>
