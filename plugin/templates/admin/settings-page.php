@@ -2142,6 +2142,58 @@
                     input:checked + .toggle-slider:hover {
                         box-shadow: 0 0 8px rgba(34, 113, 177, 0.5);
                     }
+
+                    /* Styles pour les notifications de sauvegarde */
+                    .backup-notification {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 8px 12px;
+                        margin-bottom: 8px;
+                        border-radius: 6px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        font-size: 13px;
+                        font-weight: 500;
+                        max-width: 350px;
+                        backdrop-filter: blur(10px);
+                        border: 1px solid rgba(255,255,255,0.2);
+                    }
+
+                    .backup-notification-success {
+                        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+                        color: #155724;
+                        border-color: #c3e6cb;
+                    }
+
+                    .backup-notification-error {
+                        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+                        color: #721c24;
+                        border-color: #f5c6cb;
+                    }
+
+                    .backup-notification-icon {
+                        font-size: 14px;
+                        flex-shrink: 0;
+                    }
+
+                    .backup-notification-message {
+                        flex: 1;
+                        line-height: 1.4;
+                    }
+
+                    .backup-notification-close {
+                        cursor: pointer;
+                        font-size: 16px;
+                        font-weight: bold;
+                        opacity: 0.7;
+                        transition: opacity 0.2s;
+                        flex-shrink: 0;
+                        margin-left: 4px;
+                    }
+
+                    .backup-notification-close:hover {
+                        opacity: 1;
+                    }
                 </style>
 
                 <!-- Bouton de sauvegarde en bas aussi -->
@@ -5455,22 +5507,54 @@
 
             // Fonction pour afficher les notifications
             function showBackupNotification(message, type = 'success') {
-                const notification = jQuery('<div class="notice notice-' + type + ' is-dismissible"><p>' + message + '</p></div>');
-                jQuery('.wrap h1').after(notification);
+                // Créer une notification plus petite et discrète
+                const notification = jQuery('<div class="backup-notification backup-notification-' + type + '">' +
+                    '<span class="backup-notification-icon">' + (type === 'success' ? '✅' : '❌') + '</span>' +
+                    '<span class="backup-notification-message">' + message + '</span>' +
+                    '<span class="backup-notification-close">×</span>' +
+                    '</div>');
 
-                // Auto-dismiss after 5 seconds
-                setTimeout(function() {
-                    notification.fadeOut(function() {
-                        jQuery(this).remove();
-                    });
-                }, 5000);
+                // Ajouter au conteneur de notifications ou créer un conteneur dédié
+                let container = jQuery('#backup-notifications-container');
+                if (container.length === 0) {
+                    container = jQuery('<div id="backup-notifications-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000;"></div>');
+                    jQuery('body').append(container);
+                }
 
-                // Dismissible functionality
-                notification.find('.notice-dismiss').on('click', function() {
-                    notification.fadeOut(function() {
-                        jQuery(this).remove();
-                    });
+                container.append(notification);
+
+                // Animation d'entrée
+                notification.css({
+                    'opacity': '0',
+                    'transform': 'translateX(100%)'
+                }).animate({
+                    'opacity': '1',
+                    'transform': 'translateX(0)'
+                }, 300);
+
+                // Auto-dismiss après 4 secondes
+                const dismissTimer = setTimeout(function() {
+                    dismissNotification(notification);
+                }, 4000);
+
+                // Fermeture manuelle
+                notification.find('.backup-notification-close').on('click', function() {
+                    clearTimeout(dismissTimer);
+                    dismissNotification(notification);
                 });
+
+                function dismissNotification(notif) {
+                    notif.animate({
+                        'opacity': '0',
+                        'transform': 'translateX(100%)'
+                    }, 300, function() {
+                        notif.remove();
+                        // Supprimer le conteneur s'il est vide
+                        if (container.children().length === 0) {
+                            container.remove();
+                        }
+                    });
+                }
             }
 
             // Créer une sauvegarde
