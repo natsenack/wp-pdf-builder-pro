@@ -391,7 +391,9 @@ class PdfBuilderAdmin
      */
     public function adminPage()
     {
-        $this->checkAdminPermissions();
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
         // Récupérer les vraies statistiques
         $stats = $this->getDashboardStats();
@@ -1060,7 +1062,9 @@ class PdfBuilderAdmin
      */
     public function templatesPage()
     {
-        $this->checkAdminPermissions();
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
         include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/templates-page.php';
     }
 
@@ -1069,7 +1073,9 @@ class PdfBuilderAdmin
      */
     public function settingsPage()
     {
-        $this->checkAdminPermissions();
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
         ?>
         <div class="wrap">
@@ -1093,7 +1099,9 @@ class PdfBuilderAdmin
      */
     public function react_editor_page()
     {
-        $this->checkAdminPermissions();
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
         
         // Charger le core si nécessaire
         if (!function_exists('pdf_builder_load_core')) {
@@ -5448,7 +5456,9 @@ class PdfBuilderAdmin
      */
     public function reactEditorPage()
     {
-        $this->checkAdminPermissions();
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
         // Get template ID and type from URL parameters
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
