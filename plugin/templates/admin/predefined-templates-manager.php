@@ -199,35 +199,25 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxDeveloperAuth()
     {
         try {
-            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST START =====');
-            
             // Vérifier les permissions
             if (!current_user_can('pdf_builder_access')) {
-                error_log('[PDF Builder Dev Auth] Permission check failed');
                 wp_send_json_error('Permissions insuffisantes');
             }
-            error_log('[PDF Builder Dev Auth] Permission check passed');
 
             // Vérifier le nonce
             if (!isset($_POST['nonce'])) {
-                error_log('[PDF Builder Dev Auth] Nonce not provided');
                 wp_send_json_error('Nonce manquant');
             }
             
             if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
-                error_log('[PDF Builder Dev Auth] Nonce verification failed');
                 wp_send_json_error('Vérification de sécurité échouée');
             }
-            error_log('[PDF Builder Dev Auth] Nonce verification passed');
 
             $settings = get_option('pdf_builder_settings', []);
-            error_log('[PDF Builder Dev Auth] Settings retrieved: ' . print_r($settings, true));
             
             if (empty($settings['developer_enabled'])) {
-                error_log('[PDF Builder Dev Auth] Developer mode not enabled');
                 wp_send_json_error('Mode développeur désactivé');
             }
-            error_log('[PDF Builder Dev Auth] Developer mode is enabled');
 
             // Récupérer et sanitizer le mot de passe
             $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
@@ -236,35 +226,19 @@ class PDF_Builder_Predefined_Templates_Manager
             // Fallback: si aucun mot de passe n'est stocké, utiliser une clé par défaut
             if (empty($stored_password)) {
                 $default_password = '03T17h#20X!20@02_@31/?';
-                error_log('[PDF Builder Dev Auth] No stored password, using default key');
                 $stored_password = $default_password;
             }
 
-            // Debug: log DÉTAILLÉ pour troubleshooting
-            error_log('[PDF Builder Dev Auth] Password received: ' . strlen($password) . ' chars');
-            error_log('[PDF Builder Dev Auth] Password received (raw): ' . var_export($password, true));
-            error_log('[PDF Builder Dev Auth] Password received (bytes): ' . bin2hex($password));
-            
-            error_log('[PDF Builder Dev Auth] Password stored: ' . strlen($stored_password) . ' chars');
-            error_log('[PDF Builder Dev Auth] Password stored (raw): ' . var_export($stored_password, true));
-            error_log('[PDF Builder Dev Auth] Password stored (bytes): ' . bin2hex($stored_password));
-
             // Vérifier le mot de passe (comparaison stricte)
             if (empty($password)) {
-                error_log('[PDF Builder Dev Auth] Password is empty');
                 wp_send_json_error('Veuillez entrer un mot de passe');
             }
 
             // Comparaison avec trim() pour enlever les espaces
             $password_trimmed = trim($password);
             $stored_password_trimmed = trim($stored_password);
-            
-            error_log('[PDF Builder Dev Auth] Password trimmed: ' . var_export($password_trimmed, true));
-            error_log('[PDF Builder Dev Auth] Stored trimmed: ' . var_export($stored_password_trimmed, true));
 
             if ($password_trimmed !== $stored_password_trimmed) {
-                error_log('[PDF Builder Dev Auth] Passwords do not match after trim');
-                error_log('[PDF Builder Dev Auth] Comparison: "' . $password_trimmed . '" !== "' . $stored_password_trimmed . '"');
                 wp_send_json_error('Mot de passe incorrect');
             }
 
@@ -276,12 +250,8 @@ class PDF_Builder_Predefined_Templates_Manager
                 'timestamp' => time()
             ];
             update_option($dev_auth_key, $auth_data);
-            error_log('[PDF Builder Dev Auth] User ' . $user_id . ' authenticated successfully');
-            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (SUCCESS) =====');
             wp_send_json_success(['message' => 'Authentification réussie']);
         } catch (Exception $e) {
-            error_log('[PDF Builder Dev Auth] Exception: ' . $e->getMessage());
-            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (EXCEPTION) =====');
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
@@ -697,7 +667,6 @@ class PDF_Builder_Predefined_Templates_Manager
 
         // Script pour afficher le modal de première visite
         if ($show_first_visit_modal) {
-            error_log('PDF Builder: Ajout du script JavaScript pour le modal');
             ?>
             <script>
             jQuery(document).ready(function($) {
@@ -708,8 +677,6 @@ class PDF_Builder_Predefined_Templates_Manager
             });
             </script>
             <?php
-        } else {
-            error_log('PDF Builder: Script JavaScript NON ajouté - show_first_visit_modal = false');
         }
     }
     /**
@@ -1048,7 +1015,6 @@ class PDF_Builder_Predefined_Templates_Manager
                 if (!rename($old_file_path, $new_file_path)) {
                     wp_send_json_error('Erreur lors du renommage du fichier');
                 }
-                error_log('PDF Builder: Template renamed from ' . $old_slug . ' to ' . $slug);
             }
             // Sauvegarde dans le fichier
             $file_path = $this->templates_dir . $slug . '.json';
@@ -1080,17 +1046,12 @@ class PDF_Builder_Predefined_Templates_Manager
             if (empty($slug)) {
                 wp_send_json_error('Slug du modèle manquant');
             }
-            error_log('PDF Builder: Loading template with slug: ' . $slug);
-            error_log('PDF Builder: Templates dir: ' . $this->templates_dir);
             $template = $this->loadTemplateFromFile($slug);
             if (!$template) {
-                error_log('PDF Builder: Template not found for slug: ' . $slug);
                 wp_send_json_error('Modèle non trouvé');
             }
-            error_log('PDF Builder: Template loaded successfully: ' . $slug);
             wp_send_json_success($template);
         } catch (Exception $e) {
-            error_log('PDF Builder: Error loading template: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }

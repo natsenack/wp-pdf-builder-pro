@@ -16,7 +16,6 @@ $user_id = get_current_user_id();
 $meta_key = 'pdf_builder_templates_first_visit';
 $has_visited = get_user_meta($user_id, $meta_key, true);
 $show_first_visit_modal = empty($has_visited);
-error_log('PDF Builder: templates-page.php - show_first_visit_modal = ' . ($show_first_visit_modal ? 'true' : 'false'));
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->

@@ -7,8 +7,6 @@
 
 namespace PDF_Builder\Admin;
 
-error_log('PDF Builder: PDF_Builder_Admin.php file loaded');
-
 // Importer les types/classes
 use Exception;
 use Error;
@@ -1110,9 +1108,6 @@ class PdfBuilderAdmin
      */
     public function enqueueAdminScripts($hook)
     {
-        // DEBUG: Log le hook reçu
-        error_log('PDF_Builder_Admin::enqueueAdminScripts called with hook: ' . $hook);
-        
         // Charger seulement sur nos pages admin (diagnostic/test retirés)
         // Note: WordPress remplace les tirets par des underscores dans les hooks
         // Exemple: slug 'pdf-builder-settings' devient hook 'pdf-builder_page_pdf-builder-settings'
@@ -1128,12 +1123,9 @@ class PdfBuilderAdmin
 
         // Vérification des hooks
         if (!in_array($hook, $allowed_hooks)) {
-            error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
             return;
         }
         
-        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading assets for ' . $hook);
-
         // Charger les scripts
         $this->loadAdminScripts($hook);
     }
