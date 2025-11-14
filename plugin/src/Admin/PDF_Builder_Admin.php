@@ -357,13 +357,13 @@ class PdfBuilderAdmin
             'pdf-builder-pro',
             __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
             __('🏠 Accueil', 'pdf-builder-pro'),
-            'pdf_builder_access',
+            'manage_options',
             'pdf-builder-pro', // Même slug que le menu principal
             [$this, 'adminPage']
         );
 
         // Éditeur React unique (accessible via lien direct, masqué du menu)
-        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
         
         // Masquer le menu de l'éditeur React avec CSS et JavaScript
         add_action('admin_enqueue_scripts', function() {
@@ -378,10 +378,10 @@ class PdfBuilderAdmin
         });
 
         // Gestion des templates
-        add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-templates', [$this, 'templatesPage']);
+        add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 
         // Paramètres et configuration
-        add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-settings', [$this, 'settings_page']);
+        add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
     }
 
 

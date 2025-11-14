@@ -45,7 +45,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 'pdf-builder-pro',
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
-                'pdf_builder_access',
+                'manage_options',
                 'pdf-builder-predefined-templates',
                 [$this, 'renderAdminPage']
             );
