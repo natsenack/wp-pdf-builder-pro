@@ -137,7 +137,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     }
                 });
                 
-                // Gestion du modal de première visite - AFFICHAGE FORCE POUR TEST
+                // Gestion du modal de première visite
                 console.log("Tentative d'affichage du modal de première visite");
                 console.log("Modal element:", $("#first-visit-modal"));
                 $("#first-visit-modal").fadeIn();
