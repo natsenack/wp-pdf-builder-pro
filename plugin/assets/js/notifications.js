@@ -18,17 +18,12 @@
         }
 
         createToastContainer() {
-            console.log('NOTIFICATION: Creating toast container');
             if (!$('#pdf-builder-toast-container').length) {
                 this.toastContainer = $('<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>');
                 $('body').append(this.toastContainer);
-                console.log('NOTIFICATION: Container created and appended to body');
-                console.log('NOTIFICATION: Container in DOM:', $('#pdf-builder-toast-container').length);
             } else {
                 this.toastContainer = $('#pdf-builder-toast-container');
-                console.log('NOTIFICATION: Using existing container');
             }
-            console.log('NOTIFICATION: Container element:', this.toastContainer[0]);
         }
 
         bindEvents() {
@@ -52,13 +47,7 @@
         }
 
         showToast(message, type = 'success', duration = 6000) {
-            console.log('NOTIFICATION: ===== showToast called =====');
-            console.log('NOTIFICATION: Message:', message);
-            console.log('NOTIFICATION: Type:', type);
-            console.log('NOTIFICATION: Duration:', duration);
-
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            console.log('NOTIFICATION: Generated ID:', toastId);
 
             const toast = $(`
                 <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}" style="pointer-events: auto;">
@@ -68,89 +57,53 @@
                 </div>
             `);
 
-            console.log('NOTIFICATION: Toast HTML created:', toast.prop('outerHTML'));
-            console.log('NOTIFICATION: Toast has classes:', toast.hasClass('pdf-builder-notification'), toast.hasClass(`pdf-builder-notification-${type}`));
-
             if (!this.toastContainer || this.toastContainer.length === 0) {
                 this.createToastContainer();
             }
 
             this.toastContainer.append(toast);
 
-            // Vérifier immédiatement après ajout
-            console.log('NOTIFICATION: Toast added to DOM');
-            console.log('NOTIFICATION: Initial toast style before animation:', {
-                display: toast.css('display'),
-                opacity: toast.css('opacity'),
-                transform: toast.css('transform'),
-                visibility: toast.css('visibility')
-            });
-
             // Animation d'entrée avec CSS transitions
-            console.log('NOTIFICATION: Starting CSS transition animation');
-            toast[0].style.opacity = '0';
-            toast[0].style.transform = 'translateX(100%)';
+            // L'état initial est déjà défini en CSS (opacity: 0, transform: translateX(100%))
 
             // Forcer un reflow pour que les styles soient appliqués
             toast[0].offsetHeight;
 
-            toast[0].style.transition = 'all 0.3s ease';
+            // Déclencher l'animation en changeant les propriétés
             toast[0].style.opacity = '1';
             toast[0].style.transform = 'translateX(0)';
 
             // Attendre la fin de l'animation
             setTimeout(() => {
-                console.log('NOTIFICATION: CSS animation completed');
+                // Animation terminée
             }, 300);
 
             let dismissTimeout;
 
             // Fonction pour démarrer le timer d'auto-dismiss
             const startDismissTimer = () => {
-                console.log('NOTIFICATION: startDismissTimer called for:', toastId);
-                if (dismissTimeout) {
-                    console.log('NOTIFICATION: Clearing existing timeout');
-                    clearTimeout(dismissTimeout);
-                }
-                console.log('NOTIFICATION: Setting timeout for', duration, 'ms');
+                if (dismissTimeout) clearTimeout(dismissTimeout);
                 dismissTimeout = setTimeout(() => {
-                    console.log('NOTIFICATION: Timeout expired, dismissing:', toastId);
                     this.dismissNotification(toast);
                 }, duration);
-                console.log('NOTIFICATION: Timeout set:', dismissTimeout);
             };
 
             // Fonction pour arrêter le timer
             const stopDismissTimer = () => {
-                console.log('NOTIFICATION: stopDismissTimer called for:', toastId);
                 if (dismissTimeout) {
-                    console.log('NOTIFICATION: Clearing timeout:', dismissTimeout);
                     clearTimeout(dismissTimeout);
                     dismissTimeout = null;
-                    console.log('NOTIFICATION: Timeout cleared');
-                } else {
-                    console.log('NOTIFICATION: No timeout to clear');
                 }
             };
 
             // Démarrer le timer initial
             if (duration > 0) {
-                console.log('NOTIFICATION: Starting timer with duration:', duration);
                 startDismissTimer();
-            } else {
-                console.log('NOTIFICATION: No timer (duration = 0)');
             }
 
             // Gérer les événements souris pour pause/reprise
-            console.log('NOTIFICATION: Setting up mouse events');
-            toast.on('mouseenter', function() {
-                console.log('NOTIFICATION: Mouse enter - stopping timer');
-                stopDismissTimer();
-            });
-            toast.on('mouseleave', function() {
-                console.log('NOTIFICATION: Mouse leave - starting timer');
-                startDismissTimer();
-            });
+            toast.on('mouseenter', stopDismissTimer);
+            toast.on('mouseleave', startDismissTimer);
 
             return toastId;
         }
@@ -174,15 +127,11 @@
         }
 
         dismissNotification($notification) {
-            console.log('NOTIFICATION: dismissNotification called for:', $notification.attr('id'));
-
             // Animation de sortie avec CSS transitions
-            $notification[0].style.transition = 'all 0.3s ease';
             $notification[0].style.opacity = '0';
             $notification[0].style.transform = 'translateX(100%)';
 
             setTimeout(() => {
-                console.log('NOTIFICATION: CSS dismiss animation complete, removing element');
                 $notification.remove();
             }, 300);
         }

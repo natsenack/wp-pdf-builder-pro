@@ -31,6 +31,9 @@
     transition: all 0.3s ease;
     pointer-events: auto;
     background: rgba(255, 255, 255, 0.95);
+    /* État initial pour l'animation */
+    opacity: 0;
+    transform: translateX(100%);
 }
 
 .pdf-builder-notification-success {
