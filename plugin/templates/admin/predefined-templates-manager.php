@@ -87,12 +87,12 @@ class PDF_Builder_Predefined_Templates_Manager
             jQuery(document).ready(function($) {
                 // Vérifier si des paramètres URL sont présents pour création automatique
                 const urlParams = new URLSearchParams(window.location.search);
-                const slug = urlParams.get("slug");
-                const name = urlParams.get("name");
-                const category = urlParams.get("category");
-                const description = urlParams.get("description");
-                const icon = urlParams.get("icon");
-                const json = urlParams.get("json");
+                const slug = urlParams.get(\'slug\');
+                const name = urlParams.get(\'name\');
+                const category = urlParams.get(\'category\');
+                const description = urlParams.get(\'description\');
+                const icon = urlParams.get(\'icon\');
+                const json = urlParams.get(\'json\');
                 if (slug && name && category && json) {
                     // Remplir automatiquement le formulaire
                     $("#template-slug").val(slug);
@@ -109,13 +109,13 @@ class PDF_Builder_Predefined_Templates_Manager
                             $("#save-template-btn").trigger("click");
                         }, 500);
                     } catch (e) {
-                        PDF_Builder_Notification_Manager.show_toast('Erreur lors du décodage du JSON depuis l\'URL: ' + e.message, 'error');
+                        PDF_Builder_Notification_Manager.show_toast(\'Erreur lors du décodage du JSON depuis l\\\'URL: \' + e.message, \'error\');
                     }
                 }
                 // Gestion de la déconnexion développeur
-                $("#developer-logout-btn").on("click", function(e) {
+                $(\'#developer-logout-btn\').on(\'click\', function(e) {
                     e.preventDefault();
-                    if (confirm("Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?")) {
+                    if (confirm(\'Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?\')) {
                         $.ajax({
                             url: ajaxurl,
                             type: "POST",
@@ -126,11 +126,11 @@ class PDF_Builder_Predefined_Templates_Manager
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    PDF_Builder_Notification_Manager.show_toast('Erreur de déconnexion', 'error');
+                                    PDF_Builder_Notification_Manager.show_toast(\'Erreur de déconnexion\', \'error\');
                                 }
                             },
                             error: function() {
-                                PDF_Builder_Notification_Manager.show_toast('Erreur de déconnexion', 'error');
+                                PDF_Builder_Notification_Manager.show_toast(\'Erreur de déconnexion\', \'error\');
                             }
                         });
                     }
