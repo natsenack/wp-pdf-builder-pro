@@ -516,9 +516,7 @@ function pdf_builder_register_essential_ajax_hooks()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
     }
 
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
-    }
+    // PDF_Builder_Admin.php déjà chargé plus haut
 
     // Créer une instance du template manager pour les handlers AJAX
     $template_manager = null;

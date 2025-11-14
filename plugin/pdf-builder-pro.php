@@ -70,7 +70,7 @@ function pdf_builder_activate()
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
-    update_option('pdf_builder_version', pdf_builder_get_version());
+    update_option('pdf_builder_version', '1.1.0');
 
     // Vérifier et créer les tables manquantes pour les mises à jour
     pdf_builder_check_tables();
