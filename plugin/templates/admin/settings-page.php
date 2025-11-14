@@ -921,13 +921,10 @@
                                 <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
                                 <?php if ($is_premium) :
                                     ?>
-                                <form method="post" style="display: inline;" id="deactivate_form">
-                                    <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                                    <button type="button" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
-                                            onclick="showDeactivateModal()">
-                                        Désactiver
-                                    </button>
-                                </form>
+                                <button type="button" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
+                                        onclick="showDeactivateModal()">
+                                    Désactiver
+                                </button>
                                     <?php
                                 endif; ?>
                             </div>
@@ -1156,14 +1153,18 @@
                                 <li style="margin: 8px 0;">✓ Vous pourrez l'utiliser sur un autre site</li>
                                 <li style="margin: 8px 0;">✓ La licence restera valide jusqu'à son expiration</li>
                             </ul>
-                            <div style="display: flex; gap: 12px; margin-top: 30px;">
-                                <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
-                                    Annuler
-                                </button>
-                                <button type="button" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="submitDeactivateForm()">
-                                    Désactiver
-                                </button>
-                            </div>
+                            <form method="post" id="deactivate_form_modal" style="display: inline;">
+                                <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                                <input type="hidden" name="deactivate_license" value="1">
+                                <div style="display: flex; gap: 12px; margin-top: 30px;">
+                                    <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                                        Annuler
+                                    </button>
+                                    <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                                        Désactiver
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -1181,27 +1182,6 @@
                         var modal = document.getElementById('deactivate_modal');
                         if (modal) {
                             modal.style.display = 'none';
-                        }
-                    }
-
-                    function submitDeactivateForm() {
-                        console.log('submitDeactivateForm called');
-                        var form = document.getElementById('deactivate_form');
-                        console.log('Form element:', form);
-                        if (form) {
-                            console.log('Form found, submitting...');
-                            // Ajouter le champ pour indiquer la désactivation
-                            var input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = 'deactivate_license';
-                            input.value = '1';
-                            form.appendChild(input);
-                            form.submit();
-                        } else {
-                            console.error('Deactivate form not found');
-                            console.log('All forms on page:', document.forms);
-                            console.log('Element with id deactivate_form:', document.getElementById('deactivate_form'));
-                            alert('Erreur: Formulaire de désactivation introuvable. Veuillez rafraîchir la page.');
                         }
                     }
 
