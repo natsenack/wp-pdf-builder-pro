@@ -78,6 +78,8 @@
             console.log('DEBUG: Toast container exists:', this.toastContainer.length > 0);
             this.toastContainer.append(toast);
             console.log('DEBUG: Toast appended to container');
+            console.log('DEBUG: Toast HTML:', toast.prop('outerHTML'));
+            console.log('DEBUG: Container HTML after append:', this.toastContainer.html());
 
             // Animation d'entrée
             console.log('DEBUG: Starting entrance animation');
@@ -87,7 +89,13 @@
             }).animate({
                 'opacity': '1',
                 'transform': 'translateX(0)'
-            }, 300);
+            }, 300, function() {
+                console.log('DEBUG: Entrance animation completed for toast:', toastId);
+                // Vérifier la visibilité après l'animation
+                console.log('DEBUG: Toast visibility after animation - display:', toast.css('display'), 'opacity:', toast.css('opacity'), 'visibility:', toast.css('visibility'));
+                console.log('DEBUG: Toast position - top:', toast.css('top'), 'right:', toast.css('right'), 'z-index:', toast.css('z-index'));
+                console.log('DEBUG: Container position - top:', toast.parent().css('top'), 'right:', toast.parent().css('right'), 'z-index:', toast.parent().css('z-index'));
+            });
             console.log('DEBUG: Entrance animation started');
 
             let dismissTimeout;
