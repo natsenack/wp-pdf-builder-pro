@@ -54,7 +54,6 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
         }
 
         showToast(message, type = 'success', duration = 6000) {
-            console.log('🔍 showToast called:', message, 'duration:', duration);
 
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
@@ -66,7 +65,6 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 </div>
             `);
 
-            console.log('🔍 Toast created, appending to container');
             this.toastContainer.append(toast);
 
             // Animation d'entrée
@@ -78,15 +76,32 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
                 'transform': 'translateX(0)'
             }, 300);
 
-            console.log('🔍 Animation started, setting timeout for', duration, 'ms');
+            let dismissTimeout;
 
-            // Auto-dismiss
-            if (duration > 0) {
-                setTimeout(() => {
-                    console.log('🔍 Auto-dismiss timeout triggered for toast:', toastId);
+            // Fonction pour démarrer le timer d'auto-dismiss
+            const startDismissTimer = () => {
+                if (dismissTimeout) clearTimeout(dismissTimeout);
+                dismissTimeout = setTimeout(() => {
                     this.dismissNotification(toast);
                 }, duration);
+            };
+
+            // Fonction pour arrêter le timer
+            const stopDismissTimer = () => {
+                if (dismissTimeout) {
+                    clearTimeout(dismissTimeout);
+                    dismissTimeout = null;
+                }
+            };
+
+            // Démarrer le timer initial
+            if (duration > 0) {
+                startDismissTimer();
             }
+
+            // Gérer les événements souris pour pause/reprise
+            toast.on('mouseenter', stopDismissTimer);
+            toast.on('mouseleave', startDismissTimer);
 
             return toastId;
         }
@@ -110,12 +125,12 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
         }
 
         dismissNotification($notification) {
-            console.log('🔍 dismissNotification called');
+            // Nettoyer les event listeners et timers
+            $notification.off('mouseenter mouseleave');
             $notification.animate({
                 'opacity': '0',
                 'transform': 'translateX(100%)'
             }, 300, function() {
-                console.log('🔍 Animation complete, removing element');
                 $(this).remove();
             });
         }
