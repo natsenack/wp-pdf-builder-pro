@@ -5617,18 +5617,18 @@
             function loadBackupsList() {
                 const container = jQuery('#backups-container');
 
-                // Defer DOM manipulation to avoid blocking
-                setTimeout(function() {
-                    container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
-                }, 0);
+                // Show loading immediately
+                container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
 
-                jQuery.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_list_backups',
-                        nonce: jQuery('#backup_nonce').val()
-                    },
+                // Defer AJAX call to next tick
+                setTimeout(function() {
+                    jQuery.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_list_backups',
+                            nonce: jQuery('#backup_nonce').val()
+                        },
                     success: function(response) {
                         if (response.success && response.data.backups.length > 0) {
                             let htmlParts = [
@@ -5688,6 +5688,7 @@
                         container.html('<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 48px; margin-bottom: 15px;">❌</div><p><?php _e('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro'); ?></p></div>');
                     }
                 });
+                }, 0); // Close setTimeout
             }
 
             // Attacher les événements pour les boutons de sauvegarde
