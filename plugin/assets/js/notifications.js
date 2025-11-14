@@ -127,17 +127,23 @@
         window.pdfBuilderNotifications = new PDFBuilderNotifications();
     });
 
-    // API globale pour un accès facile
-    window.pdfBuilderNotifications = {
-        showToast: function(message, type, duration) {
+    // API globale compatible avec le code PHP
+    window.PDF_Builder_Notification_Manager = {
+        show_toast: function(message, type, duration) {
             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
                 return window.pdfBuilderNotifications.showToast(message, type, duration);
             }
         },
-        showInline: function(message, type, target) {
+        show_inline: function(message, type, target) {
             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showInline) {
                 return window.pdfBuilderNotifications.showInline(message, type, target);
             }
+        },
+        add_toast: function(message, type, duration) {
+            return this.show_toast(message, type, duration);
+        },
+        add_inline: function(message, type, target) {
+            return this.show_inline(message, type, target);
         }
     };
 
