@@ -5758,6 +5758,18 @@
                 }, 100);
             });
 
+            // Charger automatiquement la liste si l'onglet sauvegarde est actif au chargement
+            jQuery(document).ready(function() {
+                // Vérifier si l'onglet sauvegarde est actif
+                if (jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active') ||
+                    window.location.hash === '#sauvegarde' ||
+                    jQuery('#sauvegarde').hasClass('tab-content') && !jQuery('#sauvegarde').hasClass('hidden-tab')) {
+                    setTimeout(function() {
+                        loadBackupsList();
+                    }, 200);
+                }
+            });
+
             // Gestionnaire pour le bouton "Créer ma première sauvegarde"
             jQuery(document).on('click', '#create-first-backup-btn', function() {
                 // Simuler un clic sur le bouton principal de création de sauvegarde
