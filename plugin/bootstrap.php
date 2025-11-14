@@ -222,6 +222,7 @@ function pdf_builder_load_core()
 
     // Charger les managers essentiels depuis src/Managers/
     $managers = array(
+        'PDF_Builder_Backup_Restore_Manager.php',
         'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Canvas_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
@@ -461,9 +462,23 @@ function pdf_builder_load_bootstrap()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php';
     }
 
+    // CHARGER ET INITIALISER LA LOCALISATION AVANCÉE
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php';
+        // Initialiser l'instance
+        \WP_PDF_Builder_Pro\Src\PdfBuilderAdvancedLocalization::getInstance();
+    }
+
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE CANVAS
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php';
+    }
+
+    // CHARGER ET INITIALISER LE GESTIONNAIRE DE SAUVEGARDE/RESTAURATION
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
+        // Initialiser l'instance
+        \WP_PDF_Builder_Pro\Managers\PdfBuilderBackupRestoreManager::getInstance();
     }
 
     // ENREGISTRER LES HANDLERS AJAX POUR LE CANVAS

@@ -152,8 +152,8 @@ class PDF_Builder_WooCommerce_Integration
         if (!$order) {
             echo '<div style="padding: 20px; text-align: center; color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px;">
                     <div style="font-size: 48px; margin-bottom: 10px;">❌</div>
-                    <strong>Commande invalide</strong><br>
-                    <small>ID commande: ' . esc_html($order_id) . '</small>
+                    <strong>' . __('Commande invalide', 'pdf-builder-pro') . '</strong><br>
+                    <small>' . __('ID commande:', 'pdf-builder-pro') . ' ' . esc_html($order_id) . '</small>
                   </div>';
             return;
         }
@@ -240,18 +240,18 @@ class PDF_Builder_WooCommerce_Integration
         <div class="pdf-meta-box">
             <div class="pdf-template-section">
                 <div class="pdf-template-title">
-                    📄 Template: <?php echo esc_html($selected_template ? $selected_template['name'] : 'Aucun template disponible'); ?>
+                    📄 <?php echo __('Template:', 'pdf-builder-pro'); ?> <?php echo esc_html($selected_template ? $selected_template['name'] : __('Aucun template disponible', 'pdf-builder-pro')); ?>
                 </div>
                 <div style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
-                    Statut: <strong><?php echo esc_html($status_label); ?></strong> |
-                    Type détecté: <strong><?php echo esc_html($document_type_label); ?></strong> |
-                    Source: <em><?php echo esc_html($template_source); ?></em>
+                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong> |
+                    <?php echo __('Type détecté:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($document_type_label); ?></strong> |
+                    <?php echo __('Source:', 'pdf-builder-pro'); ?> <em><?php echo esc_html($template_source); ?></em>
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <?php if ($selected_template) : ?>
                     <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
-                        📄 Générer PDF
+                        📄 <?php echo __('Générer PDF', 'pdf-builder-pro'); ?>
                     </button>
                     <?php endif; ?>
                 </div>

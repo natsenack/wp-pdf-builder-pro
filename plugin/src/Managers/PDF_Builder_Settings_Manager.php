@@ -47,7 +47,7 @@ class PdfBuilderSettingsManager
 
         if (isset($_POST['save_settings']) && wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
             $this->save_settings();
-            echo '<div class="notice notice-success"><p>Paramètres sauvegardés avec succès.</p></div>';
+            echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
         }
 
         include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/settings-page.php';

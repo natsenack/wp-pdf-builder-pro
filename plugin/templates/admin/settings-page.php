@@ -730,6 +730,10 @@
             <span class="tab-icon">🔧</span>
             <span class="tab-text">Maintenance</span>
         </a>
+        <a href="#sauvegarde" class="nav-tab" data-tab="sauvegarde">
+            <span class="tab-icon">💾</span>
+            <span class="tab-text">Sauvegarde</span>
+        </a>
         <a href="#developpeur" class="nav-tab" data-tab="developpeur">
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
@@ -3440,6 +3444,114 @@
             </div>
         </div>
 
+        <div id="sauvegarde" class="tab-content hidden-tab">
+            <h2><?php _e('Sauvegarde & Restauration', 'pdf-builder-pro'); ?></h2>
+            <p style="color: #666;"><?php _e('Créez des sauvegardes de vos templates et restaurez-les en cas de besoin.', 'pdf-builder-pro'); ?></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+
+                <!-- Créer une sauvegarde -->
+                <div class="backup-section" style="background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef;">
+                    <h3 style="margin-top: 0; color: #495057;">💾 <?php _e('Créer une sauvegarde', 'pdf-builder-pro'); ?></h3>
+
+                    <form id="backup-form" method="post">
+                        <?php wp_nonce_field('pdf_builder_backup', 'backup_nonce'); ?>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                <input type="checkbox" id="backup_compress" checked>
+                                <?php _e('Compresser la sauvegarde (ZIP)', 'pdf-builder-pro'); ?>
+                            </label>
+                            <small style="color: #6c757d;"><?php _e('Réduit la taille du fichier de sauvegarde', 'pdf-builder-pro'); ?></small>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                <input type="checkbox" id="backup_exclude_settings" checked>
+                                <?php _e('Exclure les paramètres', 'pdf-builder-pro'); ?>
+                            </label>
+                            <small style="color: #6c757d;"><?php _e('Ne sauvegarde pas les paramètres du plugin', 'pdf-builder-pro'); ?></small>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                <input type="checkbox" id="backup_exclude_user_data" checked>
+                                <?php _e('Exclure les données utilisateur', 'pdf-builder-pro'); ?>
+                            </label>
+                            <small style="color: #6c757d;"><?php _e('Ne sauvegarde pas les métadonnées utilisateur', 'pdf-builder-pro'); ?></small>
+                        </div>
+
+                        <button type="button" id="create-backup-btn" class="button button-primary" style="padding: 10px 20px;">
+                            💾 <?php _e('Créer la sauvegarde', 'pdf-builder-pro'); ?>
+                        </button>
+
+                        <div id="backup-progress" style="display: none; margin-top: 15px;">
+                            <div class="progress-bar" style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
+                                <div class="progress-fill" style="height: 100%; background: #007cba; width: 0%; transition: width 0.3s ease;"></div>
+                            </div>
+                            <p style="margin: 10px 0 0 0; color: #666;"><?php _e('Création de la sauvegarde en cours...', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Restaurer une sauvegarde -->
+                <div class="restore-section" style="background: #fff3cd; padding: 25px; border-radius: 8px; border: 1px solid #ffeaa7;">
+                    <h3 style="margin-top: 0; color: #856404;">🔄 <?php _e('Restaurer une sauvegarde', 'pdf-builder-pro'); ?></h3>
+                    <p style="color: #856404; margin-bottom: 20px;">⚠️ <?php _e('Attention : Cette action est irréversible. Assurez-vous d\'avoir une sauvegarde.', 'pdf-builder-pro'); ?></p>
+
+                    <form id="restore-form" method="post" enctype="multipart/form-data">
+                        <?php wp_nonce_field('pdf_builder_backup', 'restore_nonce'); ?>
+
+                        <div style="margin-bottom: 20px;">
+                            <label for="backup_file" style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                <?php _e('Fichier de sauvegarde', 'pdf-builder-pro'); ?>
+                            </label>
+                            <input type="file" id="backup_file" name="backup_file" accept=".json,.zip" required
+                                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <small style="color: #6c757d;"><?php _e('Formats acceptés : .json, .zip', 'pdf-builder-pro'); ?></small>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                                <input type="checkbox" id="restore_overwrite">
+                                <?php _e('Écraser les templates existants', 'pdf-builder-pro'); ?>
+                            </label>
+                            <small style="color: #6c757d;"><?php _e('Remplace les templates ayant le même nom', 'pdf-builder-pro'); ?></small>
+                        </div>
+
+                        <button type="button" id="restore-backup-btn" class="button button-secondary" style="padding: 10px 20px; background: #856404; border-color: #856404;">
+                            🔄 <?php _e('Restaurer la sauvegarde', 'pdf-builder-pro'); ?>
+                        </button>
+
+                        <div id="restore-progress" style="display: none; margin-top: 15px;">
+                            <div class="progress-bar" style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
+                                <div class="progress-fill" style="height: 100%; background: #856404; width: 0%; transition: width 0.3s ease;"></div>
+                            </div>
+                            <p style="margin: 10px 0 0 0; color: #856404;"><?php _e('Restauration en cours...', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Liste des sauvegardes existantes -->
+            <div class="backups-list" style="margin-top: 40px;">
+                <h3><?php _e('Sauvegardes existantes', 'pdf-builder-pro'); ?></h3>
+
+                <div id="backups-container">
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                        <p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="button" id="refresh-backups-btn" class="button button-secondary">
+                        🔄 <?php _e('Actualiser la liste', 'pdf-builder-pro'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="developpeur" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -5335,6 +5447,296 @@
 
                 // Initialiser l'état au chargement de la page
                 updateDeveloperSectionsVisibility();
+            });
+
+            // ===========================================
+            // JAVASCRIPT POUR LA SAUVEGARDE/RESTAURATION
+            // ===========================================
+
+            // Fonction pour afficher les notifications
+            function showBackupNotification(message, type = 'success') {
+                const notification = jQuery('<div class="notice notice-' + type + ' is-dismissible"><p>' + message + '</p></div>');
+                jQuery('.wrap h1').after(notification);
+
+                // Auto-dismiss after 5 seconds
+                setTimeout(function() {
+                    notification.fadeOut(function() {
+                        jQuery(this).remove();
+                    });
+                }, 5000);
+
+                // Dismissible functionality
+                notification.find('.notice-dismiss').on('click', function() {
+                    notification.fadeOut(function() {
+                        jQuery(this).remove();
+                    });
+                });
+            }
+
+            // Créer une sauvegarde
+            jQuery('#create-backup-btn').on('click', function() {
+                const button = jQuery(this);
+                const progress = jQuery('#backup-progress');
+                const progressFill = progress.find('.progress-fill');
+                const originalText = button.html();
+
+                // Désactiver le bouton
+                button.prop('disabled', true).html('<?php _e('Création en cours...', 'pdf-builder-pro'); ?>');
+
+                // Afficher la progression
+                progress.show();
+                progressFill.css('width', '30%');
+
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_create_backup');
+                formData.append('nonce', jQuery('#backup_nonce').val());
+                formData.append('compress', jQuery('#backup_compress').is(':checked') ? '1' : '0');
+                formData.append('exclude_settings', jQuery('#backup_exclude_settings').is(':checked') ? '1' : '0');
+                formData.append('exclude_user_data', jQuery('#backup_exclude_user_data').is(':checked') ? '1' : '0');
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        progressFill.css('width', '100%');
+
+                        setTimeout(function() {
+                            progress.hide();
+                            progressFill.css('width', '0%');
+
+                            if (response.success) {
+                                showBackupNotification(
+                                    '<?php _e('Sauvegarde créée avec succès !', 'pdf-builder-pro'); ?><br>' +
+                                    '<?php _e('Fichier :', 'pdf-builder-pro'); ?> ' + response.data.filename + '<br>' +
+                                    '<?php _e('Taille :', 'pdf-builder-pro'); ?> ' + response.data.size_human,
+                                    'success'
+                                );
+
+                                // Actualiser la liste des sauvegardes
+                                loadBackupsList();
+                            } else {
+                                showBackupNotification(response.data.message || '<?php _e('Erreur lors de la création de la sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
+                            }
+
+                            // Réactiver le bouton
+                            button.prop('disabled', false).html(originalText);
+                        }, 1000);
+                    },
+                    error: function() {
+                        progress.hide();
+                        progressFill.css('width', '0%');
+                        showBackupNotification('<?php _e('Erreur AJAX lors de la création de la sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
+                        button.prop('disabled', false).html(originalText);
+                    }
+                });
+            });
+
+            // Restaurer une sauvegarde
+            jQuery('#restore-backup-btn').on('click', function() {
+                const button = jQuery(this);
+                const progress = jQuery('#restore-progress');
+                const progressFill = progress.find('.progress-fill');
+                const originalText = button.html();
+                const fileInput = jQuery('#backup_file');
+
+                if (!fileInput[0].files[0]) {
+                    showBackupNotification('<?php _e('Veuillez sélectionner un fichier de sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
+                    return;
+                }
+
+                // Confirmation
+                if (!confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
+                    return;
+                }
+
+                // Désactiver le bouton
+                button.prop('disabled', true).html('<?php _e('Restauration en cours...', 'pdf-builder-pro'); ?>');
+
+                // Afficher la progression
+                progress.show();
+                progressFill.css('width', '20%');
+
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_import_templates');
+                formData.append('nonce', jQuery('#restore_nonce').val());
+                formData.append('backup_file', fileInput[0].files[0]);
+                formData.append('overwrite', jQuery('#restore_overwrite').is(':checked') ? '1' : '0');
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        progressFill.css('width', '100%');
+
+                        setTimeout(function() {
+                            progress.hide();
+                            progressFill.css('width', '0%');
+
+                            if (response.success) {
+                                let message = '<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>';
+                                if (response.data.results && response.data.results.templates) {
+                                    const results = response.data.results.templates;
+                                    message += '<br><?php _e('Templates :', 'pdf-builder-pro'); ?> ' +
+                                              results.imported + ' <?php _e('importés', 'pdf-builder-pro'); ?>, ' +
+                                              results.skipped + ' <?php _e('ignorés', 'pdf-builder-pro'); ?>';
+                                }
+
+                                showBackupNotification(message, 'success');
+
+                                // Vider le champ fichier
+                                fileInput.val('');
+
+                                // Recharger la page après un délai pour voir les changements
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                showBackupNotification(response.data.message || '<?php _e('Erreur lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
+                            }
+
+                            // Réactiver le bouton
+                            button.prop('disabled', false).html(originalText);
+                        }, 1000);
+                    },
+                    error: function() {
+                        progress.hide();
+                        progressFill.css('width', '0%');
+                        showBackupNotification('<?php _e('Erreur AJAX lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
+                        button.prop('disabled', false).html(originalText);
+                    }
+                });
+            });
+
+            // Charger la liste des sauvegardes
+            function loadBackupsList() {
+                const container = jQuery('#backups-container');
+
+                container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
+
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_list_backups',
+                        nonce: jQuery('#backup_nonce').val()
+                    },
+                    success: function(response) {
+                        if (response.success && response.data.backups.length > 0) {
+                            let html = '<div class="backups-table" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">';
+                            html += '<table class="wp-list-table widefat fixed striped" style="margin: 0; border: none;">';
+                            html += '<thead><tr>';
+                            html += '<th style="padding: 12px;"><?php _e('Nom du fichier', 'pdf-builder-pro'); ?></th>';
+                            html += '<th style="padding: 12px;"><?php _e('Taille', 'pdf-builder-pro'); ?></th>';
+                            html += '<th style="padding: 12px;"><?php _e('Date', 'pdf-builder-pro'); ?></th>';
+                            html += '<th style="padding: 12px;"><?php _e('Actions', 'pdf-builder-pro'); ?></th>';
+                            html += '</tr></thead><tbody>';
+
+                            response.data.backups.forEach(function(backup) {
+                                html += '<tr>';
+                                html += '<td style="padding: 12px;"><strong>' + backup.filename + '</strong></td>';
+                                html += '<td style="padding: 12px;">' + backup.size_human + '</td>';
+                                html += '<td style="padding: 12px;">' + backup.modified_human + '</td>';
+                                html += '<td style="padding: 12px;">';
+                                html += '<button class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>';
+                                html += '<button class="button button-small button-link-delete delete-backup-btn" data-filename="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>';
+                                html += '</td>';
+                                html += '</tr>';
+                            });
+
+                            html += '</tbody></table></div>';
+                            container.html(html);
+
+                            // Attacher les événements
+                            attachBackupEvents();
+                        } else {
+                            container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 48px; margin-bottom: 15px;">📁</div><p><?php _e('Aucune sauvegarde trouvée.', 'pdf-builder-pro'); ?></p></div>');
+                        }
+                    },
+                    error: function() {
+                        container.html('<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 48px; margin-bottom: 15px;">❌</div><p><?php _e('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro'); ?></p></div>');
+                    }
+                });
+            }
+
+            // Attacher les événements pour les boutons de sauvegarde
+            function attachBackupEvents() {
+                // Restaurer une sauvegarde spécifique
+                jQuery('.restore-backup-btn').off('click').on('click', function() {
+                    const filename = jQuery(this).data('filename');
+
+                    if (confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
+                        // Simuler la restauration en utilisant le filename
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_restore_backup',
+                                nonce: jQuery('#restore_nonce').val(),
+                                filename: filename,
+                                overwrite: '1'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    showBackupNotification('<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    showBackupNotification(response.data.message || '<?php _e('Erreur lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
+                                }
+                            },
+                            error: function() {
+                                showBackupNotification('<?php _e('Erreur AJAX lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
+                            }
+                        });
+                    }
+                });
+
+                // Supprimer une sauvegarde
+                jQuery('.delete-backup-btn').off('click').on('click', function() {
+                    const filename = jQuery(this).data('filename');
+
+                    if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_delete_backup',
+                                nonce: jQuery('#backup_nonce').val(),
+                                filename: filename
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    showBackupNotification('<?php _e('Sauvegarde supprimée avec succès.', 'pdf-builder-pro'); ?>', 'success');
+                                    loadBackupsList(); // Recharger la liste
+                                } else {
+                                    showBackupNotification(response.data.message || '<?php _e('Erreur lors de la suppression.', 'pdf-builder-pro'); ?>', 'error');
+                                }
+                            },
+                            error: function() {
+                                showBackupNotification('<?php _e('Erreur AJAX lors de la suppression.', 'pdf-builder-pro'); ?>', 'error');
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Actualiser la liste des sauvegardes
+            jQuery('#refresh-backups-btn').on('click', function() {
+                loadBackupsList();
+            });
+
+            // Charger la liste au chargement de l'onglet sauvegarde
+            jQuery(document).on('click', 'a[data-tab="sauvegarde"]', function() {
+                setTimeout(function() {
+                    loadBackupsList();
+                }, 100);
             });
     </script>
 

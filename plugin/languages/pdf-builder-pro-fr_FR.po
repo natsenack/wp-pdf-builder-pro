@@ -1,395 +1,2339 @@
+# Translation file for PDF Builder Pro
 # Copyright (C) 2025 PDF Builder Pro
 # This file is distributed under the same license as the PDF Builder Pro package.
 msgid ""
 msgstr ""
-"Project-Id-Version: PDF Builder Pro - WooCommerce Integration\n"
-"Report-Msgid-Bugs-To: https://github.com/your-repo/pdf-builder-pro/issues\n"
-"POT-Creation-Date: 2025-01-05 12:00+0000\n"
-"PO-Revision-Date: 2025-10-05 12:00+0000\n"
-"Last-Translator: PDF Builder Pro Team <team@pdfbuilderpro.com>\n"
-"Language-Team: French <fr@li.org>\n"
-"Language: fr\n"
+"Project-Id-Version: PDF Builder Pro\n"
+"Report-Msgid-Bugs-To: https://github.com/natsenack/wp-pdf-builder-pro\n"
+"POT-Creation-Date: 2025-11-14 20:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# WooCommerce Integration - General
-msgid "PDF Builder Pro nécessite WooCommerce pour fonctionner. Veuillez installer et activer WooCommerce."
-msgstr "PDF Builder Pro nécessite WooCommerce pour fonctionner. Veuillez installer et activer WooCommerce."
 
-msgid "Actions PDF Builder"
-msgstr "Actions PDF Builder"
+#: Generated automatically
+msgid "Templates"
+msgstr ""
 
-msgid "Générer des documents PDF"
-msgstr "Générer des documents PDF"
+#: Generated automatically
+msgid "Vous devez être connecté."
+msgstr ""
 
-msgid "Personnaliser avec PDF Builder"
-msgstr "Personnaliser avec PDF Builder"
+#: Generated automatically
+msgid "Erreur de sécurité : nonce invalide."
+msgstr ""
 
-# Template Types
-msgid "Facture"
-msgstr "Facture"
+#: Generated automatically
+msgid "Permission refusée."
+msgstr ""
 
-msgid "Devis"
-msgstr "Devis"
+#: Generated automatically
+msgid "ID du template manquant ou invalide."
+msgstr ""
 
-msgid "Reçu"
-msgstr "Reçu"
+#: Generated automatically
+msgid "Template non trouvé."
+msgstr ""
 
-msgid "Bon de livraison"
-msgstr "Bon de livraison"
+#: Generated automatically
+msgid "Erreur lors du décodage des données du template."
+msgstr ""
 
-# Settings Page
-msgid "PDF Builder Pro - Paramètres WooCommerce"
-msgstr "PDF Builder Pro - Paramètres WooCommerce"
+#: Generated automatically
+msgid "Format de données du template invalide."
+msgstr ""
 
-msgid "Paramètres généraux"
-msgstr "Paramètres généraux"
+#: Generated automatically
+msgid "Données du template incomplètes."
+msgstr ""
 
-msgid "Configurez l'intégration entre PDF Builder Pro et WooCommerce."
-msgstr "Configurez l'intégration entre PDF Builder Pro et WooCommerce."
+#: Generated automatically
+msgid "Templates\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Activer l'intégration WooCommerce"
-msgstr "Activer l'intégration WooCommerce"
+#: Generated automatically
+msgid "Vous devez être connecté.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Génération automatique"
-msgstr "Génération automatique"
+#: Generated automatically
+msgid "Erreur de sécurité : nonce invalide.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Générer automatiquement les factures"
-msgstr "Générer automatiquement les factures"
+#: Generated automatically
+msgid "Permission refusée.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Statuts de commande déclenchant la génération automatique:"
-msgstr "Statuts de commande déclenchant la génération automatique:"
+#: Generated automatically
+msgid "ID du template manquant ou invalide.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Pièces jointes aux emails"
-msgstr "Pièces jointes aux emails"
+#: Generated automatically
+msgid "Template non trouvé.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Templates par défaut"
-msgstr "Templates par défaut"
+#: Generated automatically
+msgid "Erreur lors du décodage des données du template.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Définissez les templates à utiliser pour chaque type de document WooCommerce."
-msgstr "Définissez les templates à utiliser pour chaque type de document WooCommerce."
+#: Generated automatically
+msgid "Format de données du template invalide.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Templates WooCommerce"
-msgstr "Templates WooCommerce"
+#: Generated automatically
+msgid "Données du template incomplètes.\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Informations entreprise"
-msgstr "Informations entreprise"
+#: Generated automatically
+msgid "Permissions insuffisantes"
+msgstr ""
 
-msgid "Informations de votre entreprise utilisées dans les PDFs."
-msgstr "Informations de votre entreprise utilisées dans les PDFs."
+#: Generated automatically
+msgid "Nonce de sécurité invalide"
+msgstr ""
 
-msgid "Informations de l'entreprise"
-msgstr "Informations de l'entreprise"
+#: Generated automatically
+msgid "Paramètres du canvas récupérés avec succès"
+msgstr ""
 
-msgid "Nom de l'entreprise"
-msgstr "Nom de l'entreprise"
+#: Generated automatically
+msgid "Erreur: %s"
+msgstr ""
 
-msgid "Adresse"
-msgstr "Adresse"
+#: Generated automatically
+msgid "Aucun paramètre à sauvegarder"
+msgstr ""
 
-msgid "Téléphone"
-msgstr "Téléphone"
+#: Generated automatically
+msgid "Paramètres du canvas sauvegardés avec succès"
+msgstr ""
 
-msgid "Email"
-msgstr "Email"
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde des paramètres"
+msgstr ""
 
-msgid "Numéro de TVA/SIRET"
-msgstr "Numéro de TVA/SIRET"
+#: Generated automatically
+msgid "Action non confirmée"
+msgstr ""
 
-msgid "URL du logo"
-msgstr "URL du logo"
+#: Generated automatically
+msgid "Paramètres du canvas réinitialisés aux valeurs par défaut"
+msgstr ""
 
-msgid "Sélectionner un template..."
-msgstr "Sélectionner un template..."
+#: Generated automatically
+msgid "Permissions insuffisantes\', \'pdf-builder-pro"
+msgstr ""
 
-# JavaScript Messages
-msgid "Génération..."
-msgstr "Génération..."
+#: Generated automatically
+msgid "Nonce de sécurité invalide\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Télécharger PDF"
-msgstr "Télécharger PDF"
+#: Generated automatically
+msgid "Paramètres du canvas récupérés avec succès\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Erreur lors de la génération du PDF."
-msgstr "Erreur lors de la génération du PDF."
+#: Generated automatically
+msgid "Erreur: %s\', \'pdf-builder-pro"
+msgstr ""
 
-msgid "Erreur de communication avec le serveur."
-msgstr "Erreur de communication avec le serveur."
+#: Generated automatically
+msgid "Aucun paramètre à sauvegarder\', \'pdf-builder-pro"
+msgstr ""
 
+#: Generated automatically
+msgid "Paramètres du canvas sauvegardés avec succès\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde des paramètres\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Action non confirmée\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres du canvas réinitialisés aux valeurs par défaut\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Template PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter un Nouveau Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditer le Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Voir le Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Rechercher Templates"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template trouvé"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template dans la corbeille"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter un template PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier le template"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau template"
+msgstr ""
+
+#: Generated automatically
+msgid "Voir le template"
+msgstr ""
+
+#: Generated automatically
+msgid "Rechercher des templates"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro - Gestionnaire de PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder"
+msgstr ""
+
+#: Generated automatically
+msgid "Accueil - PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🏠 Accueil"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "🎨 Éditeur PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates PDF - PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "📋 Templates"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres - PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "⚙️ Paramètres"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires pour accéder à cette page."
+msgstr ""
+
+#: Generated automatically
+msgid "Chargement..."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur"
+msgstr ""
+
+#: Generated automatically
+msgid "Succès"
+msgstr ""
+
+#: Generated automatically
 msgid "Êtes-vous sûr de vouloir supprimer ce template ?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce template ?"
-
-msgid "Erreur lors de la suppression:"
-msgstr "Erreur lors de la suppression:"
-
-msgid "PDF généré avec succès."
-msgstr "PDF généré avec succès."
-
-msgid "Aucune commande sélectionnée."
-msgstr "Aucune commande sélectionnée."
-
-msgid "Traitement en masse..."
-msgstr "Traitement en masse..."
-
-msgid "Traitement terminé."
-msgstr "Traitement terminé."
-
-msgid "Confirmer l'action en masse"
-msgstr "Confirmer l'action en masse"
-
-# Email Types
-msgid "Facture client"
-msgstr "Facture client"
-
-msgid "Commande terminée"
-msgstr "Commande terminée"
-
-msgid "Commande en cours"
-msgstr "Commande en cours"
-
-msgid "Note client"
-msgstr "Note client"
-
-msgid "Remboursement commande"
-msgstr "Remboursement commande"
-
-# Order Data Variables
-msgid "Numéro de commande"
-msgstr "Numéro de commande"
-
-msgid "Date de commande"
-msgstr "Date de commande"
-
-msgid "Total commande"
-msgstr "Total commande"
-
-msgid "Sous-total"
-msgstr "Sous-total"
-
-msgid "TVA"
-msgstr "TVA"
-
-msgid "Frais de port"
-msgstr "Frais de port"
-
-msgid "Remise"
-msgstr "Remise"
-
-msgid "Méthode de paiement"
-msgstr "Méthode de paiement"
-
-msgid "Statut de la commande"
-msgstr "Statut de la commande"
-
-# Customer Data
-msgid "Prénom (facturation)"
 msgstr ""
 
-msgid "Nom (facturation)"
+#: Generated automatically
+msgid "Dupliquer ce template ?"
 msgstr ""
 
-msgid "Entreprise (facturation)"
+#: Generated automatically
+msgid "Nonce invalide."
 msgstr ""
 
-msgid "Adresse 1 (facturation)"
-msgstr ""
-
-msgid "Adresse 2 (facturation)"
-msgstr ""
-
-msgid "Ville (facturation)"
-msgstr ""
-
-msgid "État/Région (facturation)"
-msgstr ""
-
-msgid "Code postal (facturation)"
-msgstr ""
-
-msgid "Pays (facturation)"
-msgstr ""
-
-msgid "Email (facturation)"
-msgstr ""
-
-msgid "Téléphone (facturation)"
-msgstr ""
-
-# Shipping Data
-msgid "Prénom (livraison)"
-msgstr ""
-
-msgid "Nom (livraison)"
-msgstr ""
-
-msgid "Entreprise (livraison)"
-msgstr ""
-
-msgid "Adresse 1 (livraison)"
-msgstr ""
-
-msgid "Adresse 2 (livraison)"
-msgstr ""
-
-msgid "Ville (livraison)"
-msgstr ""
-
-msgid "État/Région (livraison)"
-msgstr ""
-
-msgid "Code postal (livraison)"
-msgstr ""
-
-msgid "Pays (livraison)"
-msgstr ""
-
-# Company Data
-msgid "Nom de l'entreprise"
-msgstr ""
-
-msgid "Adresse de l'entreprise"
-msgstr ""
-
-msgid "Téléphone de l'entreprise"
-msgstr ""
-
-msgid "Email de l'entreprise"
-msgstr ""
-
-msgid "Numéro TVA/SIRET"
-msgstr ""
-
-msgid "URL du logo entreprise"
-msgstr ""
-
-# Order Items
-msgid "Articles de la commande"
-msgstr ""
-
-msgid "Nom de l'article"
-msgstr ""
-
-msgid "Quantité"
-msgstr ""
-
-msgid "Prix"
-msgstr ""
-
-msgid "Total"
-msgstr ""
-
-msgid "SKU"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-# Order Notes
-msgid "Notes de commande"
-msgstr ""
-
-# PDF Generation
-msgid "Génération du PDF en cours..."
-msgstr ""
-
-msgid "PDF généré avec succès"
-msgstr ""
-
-msgid "Erreur lors de la génération du PDF"
-msgstr ""
-
-msgid "Téléchargement du PDF..."
-msgstr ""
-
-# Bulk Actions
-msgid "Générer des factures en masse"
-msgstr ""
-
-msgid "Traitement de %d commandes..."
-msgstr ""
-
-msgid "Progression: %1$d sur %2$d (%3$d%%)"
-msgstr ""
-
-msgid "Traitement en masse terminé avec succès"
-msgstr ""
-
-# Permissions
-msgid "Vous n'avez pas les permissions suffisantes pour accéder à cette page."
-msgstr ""
-
-msgid "Sécurité : Nonce invalide."
-msgstr ""
-
+#: Generated automatically
 msgid "Permissions insuffisantes."
 msgstr ""
 
-# File Operations
-msgid "Erreur lors de la création du répertoire PDF"
+#: Generated automatically
+msgid "Base de données vérifiée avec succès."
 msgstr ""
 
-msgid "Erreur lors de la sauvegarde du fichier PDF"
+#: Generated automatically
+msgid "Tables de base de données créées/réparées avec succès."
 msgstr ""
 
-msgid "PDF non trouvé"
+#: Generated automatically
+msgid "Fonction de création des tables non trouvée."
 msgstr ""
 
-# API Responses
-msgid "Commande non trouvée"
+#: Generated automatically
+msgid "Fichier repair-database.sql introuvable."
 msgstr ""
 
-msgid "Template non trouvé"
+#: Generated automatically
+msgid "Impossible de lire le fichier SQL."
 msgstr ""
 
-msgid "Type de template invalide"
+#: Generated automatically
+msgid "Script SQL exécuté avec succès ! %d instructions réussies."
 msgstr ""
 
-msgid "Génération PDF réussie"
+#: Generated automatically
+msgid "Script SQL partiellement exécuté. %d réussites, %d erreurs."
 msgstr ""
 
-msgid "Échec de la génération PDF"
+#: Generated automatically
+msgid "Cache vidé avec succès."
 msgstr ""
 
-# Shortcode
-msgid "ID de commande requis"
+#: Generated automatically
+msgid "Nonce invalide"
 msgstr ""
 
-msgid "Commande introuvable"
+#: Generated automatically
+msgid "ID du template et nom requis"
 msgstr ""
 
-# Metabox
-msgid "Ouvrir dans PDF Builder"
+#: Generated automatically
+msgid "Template introuvable"
 msgstr ""
 
-msgid "Voir le PDF généré"
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde: "
 msgstr ""
 
-msgid "Régénérer le PDF"
+#: Generated automatically
+msgid "Paramètres sauvegardés avec succès"
 msgstr ""
 
-# Admin Notices
-msgid "PDF Builder Pro - WooCommerce activé"
+#: Generated automatically
+msgid "Action de maintenance inconnue."
 msgstr ""
 
-msgid "L'intégration WooCommerce a été activée avec succès."
+#: Generated automatically
+msgid "Erreur lors de l\'exécution de l\'action de maintenance."
 msgstr ""
 
-msgid "PDF Builder Pro - Configuration requise"
+#: Generated automatically
+msgid "Cache vidé avec succès. %d fichiers supprimés, %s libérés."
 msgstr ""
 
-msgid "Veuillez configurer les paramètres WooCommerce pour une intégration optimale."
+#: Generated automatically
+msgid "Fichiers temporaires nettoyés. %d fichiers supprimés, %s libérés."
 msgstr ""
 
-# Debug Messages
-msgid "Template chargé:"
+#: Generated automatically
+msgid "Templates réparés. %d templates corrompus supprimés."
 msgstr ""
 
-msgid "Variables injectées:"
+#: Generated automatically
+msgid "Paramètres réinitialisés avec succès. %d options supprimées."
 msgstr ""
 
-msgid "PDF généré:"
+#: Generated automatically
+msgid "Facture"
 msgstr ""
 
-msgid "Erreur PDF:"
+#: Generated automatically
+msgid "Devis"
+msgstr ""
+
+#: Generated automatically
+msgid "Commande"
+msgstr ""
+
+#: Generated automatically
+msgid "Contrat"
+msgstr ""
+
+#: Generated automatically
+msgid "Bon de livraison"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug activé"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug désactivé"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug principal activé"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug principal désactivé"
+msgstr ""
+
+#: Generated automatically
+msgid "Email de test envoyé avec succès"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de l\'envoi de l\'email de test"
+msgstr ""
+
+#: Generated automatically
+msgid "Gestionnaire de notifications non disponible"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du test : "
+msgstr ""
+
+#: Generated automatically
+msgid "SMTP n\'est pas activé"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres SMTP incomplets"
+msgstr ""
+
+#: Generated automatically
+msgid "Serveur SMTP ne répond pas correctement. Réponse: "
+msgstr ""
+
+#: Generated automatically
+msgid "Commande EHLO rejetée par le serveur SMTP"
+msgstr ""
+
+#: Generated automatically
+msgid "Le serveur SMTP ne supporte pas STARTTLS, vérifiez le port / chiffrement."
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de la négociation STARTTLS. Réponse: "
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de l\'activation du chiffrement TLS (STARTTLS). Vérifiez la configuration OpenSSL/port."
+msgstr ""
+
+#: Generated automatically
+msgid "Authentification SMTP non supportée par le serveur. Réponse: "
+msgstr ""
+
+#: Generated automatically
+msgid "Nom d\'utilisateur SMTP invalide. Réponse: "
+msgstr ""
+
+#: Generated automatically
+msgid "Mot de passe SMTP invalide. Réponse: "
+msgstr ""
+
+#: Generated automatically
+msgid "Connexion et authentification SMTP réussies"
+msgstr ""
+
+#: Generated automatically
+msgid "Impossible de se connecter au serveur SMTP : "
+msgstr ""
+
+#: Generated automatically
+msgid "Chargement de l\'éditeur React..."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du chargement"
+msgstr ""
+
+#: Generated automatically
+msgid "Base de données optimisée avec succès."
+msgstr ""
+
+#: Generated automatically
+msgid "Intégrité vérifiée - OK."
+msgstr ""
+
+#: Generated automatically
+msgid "Problèmes détectés."
+msgstr ""
+
+#: Generated automatically
+msgid "Templates PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter un Nouveau Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditer le Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Voir le Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Rechercher Templates\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template trouvé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template dans la corbeille\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Ajouter un template PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier le template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Voir le template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Rechercher des templates\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro - Gestionnaire de PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Accueil - PDF Builder Pro\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🏠 Accueil\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🎨 Éditeur PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates PDF - PDF Builder Pro\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "📋 Templates\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres - PDF Builder Pro\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "⚙️ Paramètres\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires pour accéder à cette page.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Chargement...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Succès\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Êtes-vous sûr de vouloir supprimer ce template ?\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Dupliquer ce template ?\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nonce invalide.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Permissions insuffisantes.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Base de données vérifiée avec succès.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Tables de base de données créées/réparées avec succès.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Fonction de création des tables non trouvée.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Fichier repair-database.sql introuvable.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Impossible de lire le fichier SQL.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Script SQL exécuté avec succès ! %d instructions réussies.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Script SQL partiellement exécuté. %d réussites, %d erreurs.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Cache vidé avec succès.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nonce invalide\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "ID du template et nom requis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template introuvable\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres sauvegardés avec succès\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Action de maintenance inconnue.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de l\'exécution de l\'action de maintenance.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Cache vidé avec succès. %d fichiers supprimés, %s libérés.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Fichiers temporaires nettoyés. %d fichiers supprimés, %s libérés.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates réparés. %d templates corrompus supprimés.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres réinitialisés avec succès. %d options supprimées.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Facture\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Commande\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Contrat\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bon de livraison\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug activé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug désactivé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug principal activé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mode debug principal désactivé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Email de test envoyé avec succès\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de l\'envoi de l\'email de test\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Gestionnaire de notifications non disponible\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du test : \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "SMTP n\'est pas activé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres SMTP incomplets\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Serveur SMTP ne répond pas correctement. Réponse: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Commande EHLO rejetée par le serveur SMTP\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Le serveur SMTP ne supporte pas STARTTLS, vérifiez le port / chiffrement.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de la négociation STARTTLS. Réponse: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec de l\'activation du chiffrement TLS (STARTTLS). Vérifiez la configuration OpenSSL/port.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Authentification SMTP non supportée par le serveur. Réponse: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nom d\'utilisateur SMTP invalide. Réponse: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mot de passe SMTP invalide. Réponse: \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Connexion et authentification SMTP réussies\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Impossible de se connecter au serveur SMTP : \', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Chargement de l\'éditeur React...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du chargement\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Base de données optimisée avec succès.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Intégrité vérifiée - OK.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Problèmes détectés.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Initialisation de l\'éditeur React..."
+msgstr ""
+
+#: Generated automatically
+msgid "Initialisation de l\'éditeur React...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Settings"
+msgstr ""
+
+#: Generated automatically
+msgid "Main Settings"
+msgstr ""
+
+#: Generated automatically
+msgid "Fonctionnalité de téléchargement à implémenter"
+msgstr ""
+
+#: Generated automatically
+msgid "Configure PDF Builder Pro settings."
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres sauvegardés avec succès."
+msgstr ""
+
+#: Generated automatically
+msgid "Editing template #%d"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Settings\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Main Settings\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Fonctionnalité de téléchargement à implémenter\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Configure PDF Builder Pro settings.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paramètres sauvegardés avec succès.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Editing template #%d\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Welcome to PDF Builder Pro - Professional PDF creation made easy."
+msgstr ""
+
+#: Generated automatically
+msgid "Quick Start"
+msgstr ""
+
+#: Generated automatically
+msgid "Create your first PDF template in minutes."
+msgstr ""
+
+#: Generated automatically
+msgid "Create Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Documentation"
+msgstr ""
+
+#: Generated automatically
+msgid "Learn how to use all features."
+msgstr ""
+
+#: Generated automatically
+msgid "View Docs"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Templates"
+msgstr ""
+
+#: Generated automatically
+msgid "Manage your PDF templates."
+msgstr ""
+
+#: Generated automatically
+msgid "Loading PDF Builder..."
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder React Editor"
+msgstr ""
+
+#: Generated automatically
+msgid "Advanced PDF template editor with React interface."
+msgstr ""
+
+#: Generated automatically
+msgid "Loading React Editor..."
+msgstr ""
+
+#: Generated automatically
+msgid "📄 Documents Récents"
+msgstr ""
+
+#: Generated automatically
+msgid "Consultez les logs de génération PDF récents."
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates."
+msgstr ""
+
+#: Generated automatically
+msgid "Date"
+msgstr ""
+
+#: Generated automatically
+msgid "Message"
+msgstr ""
+
+#: Generated automatically
+msgid "Actions"
+msgstr ""
+
+#: Generated automatically
+msgid "Détails"
+msgstr ""
+
+#: Generated automatically
+msgid "ℹ️ Informations"
+msgstr ""
+
+#: Generated automatically
+msgid "Cette page affiche les logs de génération PDF des 30 derniers jours."
+msgstr ""
+
+#: Generated automatically
+msgid "La fonctionnalité complète de téléchargement sera bientôt disponible."
+msgstr ""
+
+#: Generated automatically
+msgid "Pour consulter vos PDF générés, vérifiez le dossier de téléchargement de votre navigateur."
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Settings"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro requires PHP 7.4 or higher."
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro requires WordPress 5.0 or higher."
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder - React Editor"
+msgstr ""
+
+#: Generated automatically
+msgid "Create a new PDF template"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading PDF Builder React Editor..."
+msgstr ""
+
+#: Generated automatically
+msgid "Welcome to PDF Builder Pro - Professional PDF creation made easy.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Quick Start\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Create your first PDF template in minutes.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Create Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Documentation\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Learn how to use all features.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "View Docs\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Templates\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Manage your PDF templates.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading PDF Builder...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder React Editor\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Advanced PDF template editor with React interface.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading React Editor...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "📄 Documents Récents\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Consultez les logs de génération PDF récents.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Date\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Message\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Actions\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Détails\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "ℹ️ Informations\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Cette page affiche les logs de génération PDF des 30 derniers jours.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "La fonctionnalité complète de téléchargement sera bientôt disponible.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Pour consulter vos PDF générés, vérifiez le dossier de téléchargement de votre navigateur.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Settings\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro requires PHP 7.4 or higher.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro requires WordPress 5.0 or higher.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder - React Editor\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Create a new PDF template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading PDF Builder React Editor...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: PDF généré avec succès - Commande #%s"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn PDF a été généré avec succès.nnDétails :n- Commande : #%sn- Template : %sn- Date : %snnCordialement,nL\'équipe PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Erreur de génération PDF - Commande #%s"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUne erreur s\'est produite lors de la génération d\'un PDF.nnDétails :n- Commande : #%sn- Erreur : %sn- Date : %snnVeuillez vérifier les logs pour plus d\'informations.nnCordialement,nL\'équipe PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Template supprimé"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn template a été supprimé.nnDétails :n- Template : %s (ID: %s)n- Supprimé par : %sn- Date : %snnCordialement,nL\'équipe PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Avertissement de performance"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn avertissement de performance a été détecté.nnDétails :n- Message : %sn- Date : %snnVeuillez vérifier les paramètres de performance.nnCordialement,nL\'équipe PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Test de notification"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnCeci est un email de test du système de notifications PDF Builder Pro.nnSi vous recevez cet email, les notifications fonctionnent correctement.nnDétails :n- Date : %sn- Site : %snnCordialement,nL\'équipe PDF Builder Pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: PDF généré avec succès - Commande #%s\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn PDF a été généré avec succès.nnDétails :n- Commande : #%sn- Template : %sn- Date : %snnCordialement,nL\'équipe PDF Builder Pro\", \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Erreur de génération PDF - Commande #%s\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUne erreur s\'est produite lors de la génération d\'un PDF.nnDétails :n- Commande : #%sn- Erreur : %sn- Date : %snnVeuillez vérifier les logs pour plus d\'informations.nnCordialement,nL\'équipe PDF Builder Pro\", \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Template supprimé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn template a été supprimé.nnDétails :n- Template : %s (ID: %s)n- Supprimé par : %sn- Date : %snnCordialement,nL\'équipe PDF Builder Pro\", \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Avertissement de performance\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnUn avertissement de performance a été détecté.nnDétails :n- Message : %sn- Date : %snnVeuillez vérifier les paramètres de performance.nnCordialement,nL\'équipe PDF Builder Pro\", \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "PDF Builder Pro: Test de notification\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bonjour,nnCeci est un email de test du système de notifications PDF Builder Pro.nnSi vous recevez cet email, les notifications fonctionnent correctement.nnDétails :n- Date : %sn- Site : %snnCordialement,nL\'équipe PDF Builder Pro\", \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires.\'));
+        }
+
+        if (isset($_POST[\'save_settings\']) && wp_verify_nonce($_POST[\'pdf_builder_settings_nonce\'], \'pdf_builder_settings\')) {
+            $this->save_settings();
+            echo \'<div class=\"notice notice-success\"><p>\' . __(\'Paramètres sauvegardés avec succès."
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires."
+msgstr ""
+
+#: Generated automatically
+msgid "En attente"
+msgstr ""
+
+#: Generated automatically
+msgid "En cours"
+msgstr ""
+
+#: Generated automatically
+msgid "Terminée"
+msgstr ""
+
+#: Generated automatically
+msgid "Annulée"
+msgstr ""
+
+#: Generated automatically
+msgid "Remboursée"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec"
+msgstr ""
+
+#: Generated automatically
+msgid "Estimation"
+msgstr ""
+
+#: Generated automatically
+msgid "Paiement partiel"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis envoyé"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis accepté"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis rejeté"
+msgstr ""
+
+#: Generated automatically
+msgid "Statut personnalisé"
+msgstr ""
+
+#: Generated automatically
+msgid "En attente d\'expédition"
+msgstr ""
+
+#: Generated automatically
+msgid "Expédié"
+msgstr ""
+
+#: Generated automatically
+msgid "Livré"
+msgstr ""
+
+#: Generated automatically
+msgid "En rupture de stock"
+msgstr ""
+
+#: Generated automatically
+msgid "Pré-commandé"
+msgstr ""
+
+#: Generated automatically
+msgid "Contesté"
+msgstr ""
+
+#: Generated automatically
+msgid "En attente\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "En cours\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Terminée\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Annulée\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Remboursée\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Échec\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Estimation\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Paiement partiel\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis envoyé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis accepté\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Devis rejeté\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Statut personnalisé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "En attente d\'expédition\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Expédié\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Livré\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "En rupture de stock\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Pré-commandé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Contesté\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires.\'));
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . \'pdf_builder_templates\';
+
+        // Récupérer tous les templates
+        $templates = $wpdb->get_results(\"SELECT * FROM $table_templates ORDER BY updated_at DESC\", ARRAY_A);
+
+        include plugin_dir_path(dirname(__FILE__)) . \'../../templates/admin/templates-page.php\';
+    }
+
+    /**
+     * AJAX - Sauvegarder un template
+     */
+    public function ajaxSaveTemplateV3()
+    {
+        try {
+            // Log pour debug
+            error_log(\'PDF Builder: ajaxSaveTemplateV3 called - REQUEST_METHOD: \' . $_SERVER[\'REQUEST_METHOD\']);
+            // Write to uploads directory for guaranteed access
+            $upload_dir = wp_upload_dir();
+            $log_file = $upload_dir[\'basedir\'] . \'/debug_pdf_save.log\';
+            file_put_contents($log_file, date(\'Y-m-d H:i:s\') . \' SAVE START - REQUEST: \' . print_r($_REQUEST, true) . \"n\", FILE_APPEND);
+            file_put_contents($log_file, date(\'Y-m-d H:i:s\') . \' POST data keys: \' . implode("
+msgstr ""
+
+#: Generated automatically
+msgid "Unknown"
+msgstr ""
+
+#: Generated automatically
+msgid "Customer"
+msgstr ""
+
+#: Generated automatically
+msgid "Unknown\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Customer\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Commande invalide"
+msgstr ""
+
+#: Generated automatically
+msgid "ID commande:"
+msgstr ""
+
+#: Generated automatically
+msgid "Template:"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template disponible"
+msgstr ""
+
+#: Generated automatically
+msgid "Statut:"
+msgstr ""
+
+#: Generated automatically
+msgid "Type détecté:"
+msgstr ""
+
+#: Generated automatically
+msgid "Source:"
+msgstr ""
+
+#: Generated automatically
+msgid "Générer PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Commande invalide\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "ID commande:\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template:\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun template disponible\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Statut:\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Type détecté:\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Source:\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Générer PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading...\', PDF_BUILDER_TEXT_DOMAIN),
+            \'error\' => __(\'An error occurred\', PDF_BUILDER_TEXT_DOMAIN),
+            \'success\' => __(\'Success\', PDF_BUILDER_TEXT_DOMAIN),
+            \'cancel\' => __(\'Cancel\', PDF_BUILDER_TEXT_DOMAIN),
+            \'save\' => __(\'Save\', PDF_BUILDER_TEXT_DOMAIN),
+            \'delete\' => __(\'Delete\', PDF_BUILDER_TEXT_DOMAIN),
+            \'edit\' => __(\'Edit\', PDF_BUILDER_TEXT_DOMAIN),
+            \'view\' => __(\'View\', PDF_BUILDER_TEXT_DOMAIN),
+            \'download\' => __(\'Download\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes spécifiques au PDF
+            \'generating_pdf\' => __(\'Generating PDF...\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_generated\' => __(\'PDF generated successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_generation_failed\' => __(\'PDF generation failed\', PDF_BUILDER_TEXT_DOMAIN),
+            \'download_pdf\' => __(\'Download PDF\', PDF_BUILDER_TEXT_DOMAIN),
+            \'view_pdf\' => __(\'View PDF\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_not_found\' => __(\'PDF not found\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les templates
+            \'template_saved\' => __(\'Template saved successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_deleted\' => __(\'Template deleted successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_not_found\' => __(\'Template not found\', PDF_BUILDER_TEXT_DOMAIN),
+            \'invalid_template\' => __(\'Invalid template\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_name_required\' => __(\'Template name is required\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour l\'éditeur
+            \'add_element\' => __(\'Add Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'remove_element\' => __(\'Remove Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'duplicate_element\' => __(\'Duplicate Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'move_element\' => __(\'Move Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'element_properties\' => __(\'Element Properties\', PDF_BUILDER_TEXT_DOMAIN),
+            \'text_element\' => __(\'Text Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'image_element\' => __(\'Image Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'shape_element\' => __(\'Shape Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'barcode_element\' => __(\'Barcode Element\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les propriétés
+            \'font_family\' => __(\'Font Family\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_size\' => __(\'Font Size\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_color\' => __(\'Font Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_weight\' => __(\'Font Weight\', PDF_BUILDER_TEXT_DOMAIN),
+            \'text_align\' => __(\'Text Align\', PDF_BUILDER_TEXT_DOMAIN),
+            \'position\' => __(\'Position\', PDF_BUILDER_TEXT_DOMAIN),
+            \'size\' => __(\'Size\', PDF_BUILDER_TEXT_DOMAIN),
+            \'width\' => __(\'Width\', PDF_BUILDER_TEXT_DOMAIN),
+            \'height\' => __(\'Height\', PDF_BUILDER_TEXT_DOMAIN),
+            \'background_color\' => __(\'Background Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border\' => __(\'Border\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_width\' => __(\'Border Width\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_color\' => __(\'Border Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_style\' => __(\'Border Style\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les erreurs
+            \'permission_denied\' => __(\'Permission denied\', PDF_BUILDER_TEXT_DOMAIN),
+            \'invalid_request\' => __(\'Invalid request\', PDF_BUILDER_TEXT_DOMAIN),
+            \'server_error\' => __(\'Server error\', PDF_BUILDER_TEXT_DOMAIN),
+            \'network_error\' => __(\'Network error\', PDF_BUILDER_TEXT_DOMAIN),
+            \'timeout_error\' => __(\'Request timeout\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les confirmations
+            \'confirm_delete\' => __(\'Are you sure you want to delete this item?\', PDF_BUILDER_TEXT_DOMAIN),
+            \'confirm_save\' => __(\'Do you want to save your changes?\', PDF_BUILDER_TEXT_DOMAIN),
+            \'unsaved_changes\' => __(\'You have unsaved changes. Are you sure you want to leave?\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour l\'administration
+            \'settings_saved\' => __(\'Settings saved successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'settings_reset\' => __(\'Settings reset to defaults\', PDF_BUILDER_TEXT_DOMAIN),
+            \'cache_cleared\' => __(\'Cache cleared successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'logs_cleared\' => __(\'Logs cleared successfully\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les dates
+            \'today\' => __(\'Today\', PDF_BUILDER_TEXT_DOMAIN),
+            \'yesterday\' => __(\'Yesterday\', PDF_BUILDER_TEXT_DOMAIN),
+            \'date_format\' => __(\'Y-m-d H:i:s\', PDF_BUILDER_TEXT_DOMAIN),
+            \'short_date_format\' => __(\'Y-m-d\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les unités
+            \'pixels\' => __(\'pixels\', PDF_BUILDER_TEXT_DOMAIN),
+            \'millimeters\' => __(\'millimeters\', PDF_BUILDER_TEXT_DOMAIN),
+            \'inches\' => __(\'inches\', PDF_BUILDER_TEXT_DOMAIN),
+            \'points\' => __(\'points\', PDF_BUILDER_TEXT_DOMAIN),
+        );
+// Filtrer les chaînes pour permettre la personnalisation
+        $this->strings = apply_filters(\'pdf_builder_i18n_strings\', $this->strings);
+    }
+
+    /**
+     * Localiser les scripts frontend
+     */
+    public function localizeScripts()
+    {
+        if (did_action(\'wp_enqueue_scripts\')) {
+            wp_localize_script(\'pdf-builder-frontend"
+msgstr ""
+
+#: Generated automatically
+msgid "Loading...\', PDF_BUILDER_TEXT_DOMAIN),
+            \'error\' => __(\'An error occurred\', PDF_BUILDER_TEXT_DOMAIN),
+            \'success\' => __(\'Success\', PDF_BUILDER_TEXT_DOMAIN),
+            \'cancel\' => __(\'Cancel\', PDF_BUILDER_TEXT_DOMAIN),
+            \'save\' => __(\'Save\', PDF_BUILDER_TEXT_DOMAIN),
+            \'delete\' => __(\'Delete\', PDF_BUILDER_TEXT_DOMAIN),
+            \'edit\' => __(\'Edit\', PDF_BUILDER_TEXT_DOMAIN),
+            \'view\' => __(\'View\', PDF_BUILDER_TEXT_DOMAIN),
+            \'download\' => __(\'Download\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes spécifiques au PDF
+            \'generating_pdf\' => __(\'Generating PDF...\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_generated\' => __(\'PDF generated successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_generation_failed\' => __(\'PDF generation failed\', PDF_BUILDER_TEXT_DOMAIN),
+            \'download_pdf\' => __(\'Download PDF\', PDF_BUILDER_TEXT_DOMAIN),
+            \'view_pdf\' => __(\'View PDF\', PDF_BUILDER_TEXT_DOMAIN),
+            \'pdf_not_found\' => __(\'PDF not found\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les templates
+            \'template_saved\' => __(\'Template saved successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_deleted\' => __(\'Template deleted successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_not_found\' => __(\'Template not found\', PDF_BUILDER_TEXT_DOMAIN),
+            \'invalid_template\' => __(\'Invalid template\', PDF_BUILDER_TEXT_DOMAIN),
+            \'template_name_required\' => __(\'Template name is required\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour l\'éditeur
+            \'add_element\' => __(\'Add Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'remove_element\' => __(\'Remove Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'duplicate_element\' => __(\'Duplicate Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'move_element\' => __(\'Move Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'element_properties\' => __(\'Element Properties\', PDF_BUILDER_TEXT_DOMAIN),
+            \'text_element\' => __(\'Text Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'image_element\' => __(\'Image Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'shape_element\' => __(\'Shape Element\', PDF_BUILDER_TEXT_DOMAIN),
+            \'barcode_element\' => __(\'Barcode Element\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les propriétés
+            \'font_family\' => __(\'Font Family\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_size\' => __(\'Font Size\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_color\' => __(\'Font Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'font_weight\' => __(\'Font Weight\', PDF_BUILDER_TEXT_DOMAIN),
+            \'text_align\' => __(\'Text Align\', PDF_BUILDER_TEXT_DOMAIN),
+            \'position\' => __(\'Position\', PDF_BUILDER_TEXT_DOMAIN),
+            \'size\' => __(\'Size\', PDF_BUILDER_TEXT_DOMAIN),
+            \'width\' => __(\'Width\', PDF_BUILDER_TEXT_DOMAIN),
+            \'height\' => __(\'Height\', PDF_BUILDER_TEXT_DOMAIN),
+            \'background_color\' => __(\'Background Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border\' => __(\'Border\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_width\' => __(\'Border Width\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_color\' => __(\'Border Color\', PDF_BUILDER_TEXT_DOMAIN),
+            \'border_style\' => __(\'Border Style\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les erreurs
+            \'permission_denied\' => __(\'Permission denied\', PDF_BUILDER_TEXT_DOMAIN),
+            \'invalid_request\' => __(\'Invalid request\', PDF_BUILDER_TEXT_DOMAIN),
+            \'server_error\' => __(\'Server error\', PDF_BUILDER_TEXT_DOMAIN),
+            \'network_error\' => __(\'Network error\', PDF_BUILDER_TEXT_DOMAIN),
+            \'timeout_error\' => __(\'Request timeout\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les confirmations
+            \'confirm_delete\' => __(\'Are you sure you want to delete this item?\', PDF_BUILDER_TEXT_DOMAIN),
+            \'confirm_save\' => __(\'Do you want to save your changes?\', PDF_BUILDER_TEXT_DOMAIN),
+            \'unsaved_changes\' => __(\'You have unsaved changes. Are you sure you want to leave?\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour l\'administration
+            \'settings_saved\' => __(\'Settings saved successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'settings_reset\' => __(\'Settings reset to defaults\', PDF_BUILDER_TEXT_DOMAIN),
+            \'cache_cleared\' => __(\'Cache cleared successfully\', PDF_BUILDER_TEXT_DOMAIN),
+            \'logs_cleared\' => __(\'Logs cleared successfully\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les dates
+            \'today\' => __(\'Today\', PDF_BUILDER_TEXT_DOMAIN),
+            \'yesterday\' => __(\'Yesterday\', PDF_BUILDER_TEXT_DOMAIN),
+            \'date_format\' => __(\'Y-m-d H:i:s\', PDF_BUILDER_TEXT_DOMAIN),
+            \'short_date_format\' => __(\'Y-m-d\', PDF_BUILDER_TEXT_DOMAIN),
+
+            // Chaînes pour les unités
+            \'pixels\' => __(\'pixels\', PDF_BUILDER_TEXT_DOMAIN),
+            \'millimeters\' => __(\'millimeters\', PDF_BUILDER_TEXT_DOMAIN),
+            \'inches\' => __(\'inches\', PDF_BUILDER_TEXT_DOMAIN),
+            \'points\' => __(\'points\', PDF_BUILDER_TEXT_DOMAIN),
+        );
+// Filtrer les chaînes pour permettre la personnalisation
+        $this->strings = apply_filters(\'pdf_builder_i18n_strings\', $this->strings);
+    }
+
+    /**
+     * Localiser les scripts frontend
+     */
+    public function localizeScripts()
+    {
+        if (did_action(\'wp_enqueue_scripts"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas la permission d\'accéder à cette page."
+msgstr ""
+
+#: Generated automatically
+msgid "Accès refusé"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas la permission d\'accéder à cette page.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Accès refusé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires pour accéder à cette page.\'));
+    }
+
+    // Récupérer le template_id depuis l\'URL
+    $template_id = isset($_GET[\'template\']) ? sanitize_text_field($_GET[\'template\']) : \'\';
+// Si un template est spécifié, charger son contenu JSON et rediriger vers l\'éditeur React
+    if (!empty($template_id)) {
+// SYSTÈME BUILTIN SUPPRIMÉ - Redirection directe vers l\'éditeur normal
+        $redirect_url = admin_url(\'admin.php?page=pdf-builder-react-editor\');
+        wp_redirect($redirect_url);
+        exit;
+    }
+
+    // Sinon, afficher la liste des templates avec possibilité d\'ouvrir l\'éditeur visuel
+    pdf_builder_builtin_templates_list_page();
+}
+
+/**
+ * Page de liste des templates builtin avec liens vers l\'éditeur visuel
+ */
+function pdf_builder_builtin_templates_list_page()
+{
+
+    // Enqueue les scripts et styles nécessaires
+    wp_enqueue_script(\'pdf-builder-builtin-editor\', plugins_url(\'assets/js/builtin-editor.js\', PDF_BUILDER_PLUGIN_FILE), array(\'jquery\'), \'1.0.0\', true);
+    wp_enqueue_style(\'pdf-builder-builtin-editor\', plugins_url(\'assets/css/builtin-editor.css\', PDF_BUILDER_PLUGIN_FILE), array(), \'1.0.0\');
+// Localiser le script
+    wp_localize_script(\'pdf-builder-builtin-editor"
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegarder"
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegarde..."
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegardé !"
+msgstr ""
+
+#: Generated automatically
+msgid "JSON invalide"
+msgstr ""
+
+#: Generated automatically
+msgid "Template créé avec succès"
+msgstr ""
+
+#: Generated automatically
+msgid "Template supprimé"
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegarder\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegarde...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Sauvegardé !\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "JSON invalide\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template créé avec succès\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template supprimé\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur de Templates Prédéfinis"
+msgstr ""
+
+#: Generated automatically
+msgid "Sélectionnez un template pour l\'éditer visuellement avec l\'éditeur React."
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Nouveau Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates Disponibles"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier les paramètres"
+msgstr ""
+
+#: Generated automatically
+msgid "Supprimer le template"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditer"
+msgstr ""
+
+#: Generated automatically
+msgid "Nom du template"
+msgstr ""
+
+#: Generated automatically
+msgid "Description"
+msgstr ""
+
+#: Generated automatically
+msgid "Catégorie"
+msgstr ""
+
+#: Generated automatically
+msgid "Général"
+msgstr ""
+
+#: Generated automatically
+msgid "Entreprise"
+msgstr ""
+
+#: Generated automatically
+msgid "Annuler"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier les Paramètres"
+msgstr ""
+
+#: Generated automatically
+msgid "Mettre à jour"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur de Templates Prédéfinis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Sélectionnez un template pour l\'éditer visuellement avec l\'éditeur React.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Nouveau Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Templates Disponibles\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier les paramètres\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Supprimer le template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditer\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nom du template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Description\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Catégorie\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Général\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Entreprise\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Annuler\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modifier les Paramètres\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mettre à jour\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèles Prédéfinis"
+msgstr ""
+
+#: Generated automatically
+msgid "Êtes-vous sûr de vouloir supprimer ce modèle ?"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèle sauvegardé avec succès !"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèle supprimé avec succès !"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du chargement du modèle."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la suppression."
+msgstr ""
+
+#: Generated automatically
+msgid "JSON invalide. Veuillez vérifier la syntaxe."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la génération de l\'aperçu."
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions nécessaires.\'));
+        }
+        // Vérifier l\'authentification développeur
+        $settings = get_option(\'pdf_builder_settings\', []);
+        if (empty($settings[\'developer_enabled\'])) {
+            ?>
+            <div class=\"wrap\">
+                <h1><?php _e(\'🔒 Accès Restreint"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèles Prédéfinis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Êtes-vous sûr de vouloir supprimer ce modèle ?\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèle sauvegardé avec succès !\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Modèle supprimé avec succès !\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors du chargement du modèle.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la sauvegarde.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la suppression.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "JSON invalide. Veuillez vérifier la syntaxe.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur lors de la génération de l\'aperçu.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🔒 Accès Restreint"
+msgstr ""
+
+#: Generated automatically
+msgid "Le mode développeur n\'est pas activé. Allez dans <strong>PDF Builder → ⚙️ Paramètres → Mode Développeur</strong> pour l\'activer."
+msgstr ""
+
+#: Generated automatically
+msgid "📝 Gestion des Modèles Prédéfinis"
+msgstr ""
+
+#: Generated automatically
+msgid "Déconnexion Développeur"
+msgstr ""
+
+#: Generated automatically
+msgid "🎨 Galerie de Modèles Prédéfinis"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau Modèle"
+msgstr ""
+
+#: Generated automatically
+msgid "Actualiser"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun modèle prédéfini trouvé."
+msgstr ""
+
+#: Generated automatically
+msgid "Cliquez sur \"Nouveau Modèle\" pour créer votre premier modèle."
+msgstr ""
+
+#: Generated automatically
+msgid "Supprimer"
+msgstr ""
+
+#: Generated automatically
+msgid "📄 Voir le JSON"
+msgstr ""
+
+#: Generated automatically
+msgid "Régénérer Aperçu"
+msgstr ""
+
+#: Generated automatically
+msgid "Générer Aperçu"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur de Modèle"
+msgstr ""
+
+#: Generated automatically
+msgid "Slug du modèle"
+msgstr ""
+
+#: Generated automatically
+msgid "Identifiant unique (lettres minuscules, tirets)"
+msgstr ""
+
+#: Generated automatically
+msgid "Nom du modèle"
+msgstr ""
+
+#: Generated automatically
+msgid "Bon de commande"
+msgstr ""
+
+#: Generated automatically
+msgid "Newsletter"
+msgstr ""
+
+#: Generated automatically
+msgid "Autre"
+msgstr ""
+
+#: Generated automatically
+msgid "Icône (emoji)"
+msgstr ""
+
+#: Generated automatically
+msgid "Configuration JSON"
+msgstr ""
+
+#: Generated automatically
+msgid "Collez ici le JSON exporté depuis l\'éditeur de templates"
+msgstr ""
+
+#: Generated automatically
+msgid "Fermer"
+msgstr ""
+
+#: Generated automatically
+msgid "Valider JSON"
+msgstr ""
+
+#: Generated automatically
+msgid "Aperçu du Modèle"
+msgstr ""
+
+#: Generated automatically
+msgid "🔐 Accès Développeur"
+msgstr ""
+
+#: Generated automatically
+msgid "Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer."
+msgstr ""
+
+#: Generated automatically
+msgid "Mot de passe développeur"
+msgstr ""
+
+#: Generated automatically
+msgid "Entrez le mot de passe..."
+msgstr ""
+
+#: Generated automatically
+msgid "Se connecter"
+msgstr ""
+
+#: Generated automatically
+msgid "Connexion..."
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur de connexion"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur de connexion au serveur"
+msgstr ""
+
+#: Generated automatically
+msgid "🔒 Accès Restreint\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Le mode développeur n\'est pas activé. Allez dans <strong>PDF Builder → ⚙️ Paramètres → Mode Développeur</strong> pour l\'activer.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "📝 Gestion des Modèles Prédéfinis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Déconnexion Développeur\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🎨 Galerie de Modèles Prédéfinis\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nouveau Modèle\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Actualiser\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aucun modèle prédéfini trouvé.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Cliquez sur \"Nouveau Modèle\" pour créer votre premier modèle.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Supprimer\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "📄 Voir le JSON\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Régénérer Aperçu\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Générer Aperçu\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Éditeur de Modèle\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Slug du modèle\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Identifiant unique (lettres minuscules, tirets)\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Nom du modèle\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Bon de commande\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Newsletter\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Autre\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Icône (emoji)\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Configuration JSON\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Collez ici le JSON exporté depuis l\'éditeur de templates\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Fermer\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Valider JSON\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Aperçu du Modèle\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "🔐 Accès Développeur\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Mot de passe développeur\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Entrez le mot de passe...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Se connecter\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Connexion...\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur de connexion\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Erreur de connexion au serveur\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions suffisantes pour accéder à cette page."
+msgstr ""
+
+#: Generated automatically
+msgid "Vous n\'avez pas les permissions suffisantes pour accéder à cette page.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "⚙️ PDF Builder Pro Settings"
+msgstr ""
+
+#: Generated automatically
+msgid "⚙️ PDF Builder Pro Settings\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !"
+msgstr ""
+
+#: Generated automatically
+msgid "Template principal introuvable. Veuillez contacter l\'administrateur."
+msgstr ""
+
+#: Generated automatically
+msgid "Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Template principal introuvable. Veuillez contacter l\'administrateur.\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "[DOC] Gestion des Templates PDF"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Template (Premium)"
+msgstr ""
+
+#: Generated automatically
+msgid "Parcourir les Modèles"
+msgstr ""
+
+#: Generated automatically
+msgid "Limite de Templates Atteinte"
+msgstr ""
+
+#: Generated automatically
+msgid "Passer en Premium - 69€ à vie"
+msgstr ""
+
+#: Generated automatically
+msgid "Créez Votre Premier Template"
+msgstr ""
+
+#: Generated automatically
+msgid "Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !"
+msgstr ""
+
+#: Generated automatically
+msgid "Créez votre premier template pour commencer à concevoir des PDF personnalisés."
+msgstr ""
+
+#: Generated automatically
+msgid "[DOC] Gestion des Templates PDF\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créer un Template (Premium)\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Parcourir les Modèles\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Limite de Templates Atteinte\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Passer en Premium - 69€ à vie\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créez Votre Premier Template\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !\', \'pdf-builder-pro"
+msgstr ""
+
+#: Generated automatically
+msgid "Créez votre premier template pour commencer à concevoir des PDF personnalisés.\', \'pdf-builder-pro"
 msgstr ""
