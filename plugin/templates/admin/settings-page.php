@@ -5645,14 +5645,15 @@
                             ];
 
                             response.data.backups.forEach(function(backup) {
+                                const decodedFilename = atob(backup.filename); // Decode base64
                                 htmlParts.push(
                                     '<tr>',
-                                    '<td style="padding: 12px;"><strong>' + backup.filename + '</strong></td>',
+                                    '<td style="padding: 12px;"><strong>' + decodedFilename + '</strong></td>',
                                     '<td style="padding: 12px;">' + backup.size_human + '</td>',
                                     '<td style="padding: 12px;">' + backup.modified_human + '</td>',
                                     '<td style="padding: 12px;">',
-                                    '<button class="button button-small restore-backup-btn" value="' + backup.filename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
-                                    '<button class="button button-small button-link-delete delete-backup-btn" value="' + backup.filename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small restore-backup-btn" value="' + decodedFilename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small button-link-delete delete-backup-btn" value="' + decodedFilename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
                                     '</td>',
                                     '</tr>'
                                 );

@@ -524,7 +524,8 @@ class PdfBuilderBackupRestoreManager
                 }
 
                 $backups[] = [
-                    'filename' => $filename,
+                    'filename' => base64_encode($filename),
+                    'filename_raw' => $filename, // Keep raw for debugging
                     'filepath' => $file,
                     'size' => $size,
                     'size_human' => size_format($size),
