@@ -5655,7 +5655,26 @@
                             // Attacher les événements
                             attachBackupEvents();
                         } else {
-                            container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 48px; margin-bottom: 15px;">📁</div><p><?php _e('Aucune sauvegarde trouvée.', 'pdf-builder-pro'); ?></p></div>');
+                            container.html(`
+                                <div style="text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px dashed #dee2e6; border-radius: 12px; margin: 20px 0;">
+                                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.7;">📦</div>
+                                    <h3 style="color: #495057; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                                        <?php _e('Aucune sauvegarde trouvée', 'pdf-builder-pro'); ?>
+                                    </h3>
+                                    <p style="color: #6c757d; margin: 0 0 25px 0; font-size: 14px; line-height: 1.5;">
+                                        <?php _e('Vous n\'avez pas encore créé de sauvegarde. Créez votre première sauvegarde pour protéger vos templates.', 'pdf-builder-pro'); ?>
+                                    </p>
+                                    <button type="button" id="create-first-backup-btn" class="button button-primary" style="padding: 12px 24px; font-size: 14px; font-weight: 500; background: #007cba; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
+                                        <span style="margin-right: 8px;">💾</span>
+                                        <?php _e('Créer ma première sauvegarde', 'pdf-builder-pro'); ?>
+                                    </button>
+                                    <div style="margin-top: 15px;">
+                                        <small style="color: #adb5bd; font-size: 12px;">
+                                            <?php _e('Recommandé : sauvegardez régulièrement vos templates importants', 'pdf-builder-pro'); ?>
+                                        </small>
+                                    </div>
+                                </div>
+                            `);
                         }
                     },
                     error: function() {
@@ -5737,6 +5756,12 @@
                 setTimeout(function() {
                     loadBackupsList();
                 }, 100);
+            });
+
+            // Gestionnaire pour le bouton "Créer ma première sauvegarde"
+            jQuery(document).on('click', '#create-first-backup-btn', function() {
+                // Simuler un clic sur le bouton principal de création de sauvegarde
+                jQuery('#create-backup-btn').trigger('click');
             });
 
             // Masquer le bouton "Enregistrer" global dans l'onglet sauvegarde
