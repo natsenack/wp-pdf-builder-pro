@@ -83,7 +83,7 @@ var pdfBuilderAjax = {
             <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
                 📊 Templates créés: <strong><?php echo $templates_count; ?></strong>
                 <?php if (!$is_premium): ?>
-                    (limite: 2)
+                    (limite: 1)
                 <?php else: ?>
                     (illimité)
                 <?php endif; ?>
@@ -91,7 +91,7 @@ var pdfBuilderAjax = {
         </div>
 
         <!-- Message limitation freemium -->
-        <?php if (!$is_premium && $templates_count >= 2): ?>
+        <?php if (!$is_premium && $templates_count >= 1): ?>
             <div class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
