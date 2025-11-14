@@ -198,20 +198,35 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxDeveloperAuth()
     {
         try {
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST START =====');
+            
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
+                error_log('[PDF Builder Dev Auth] Permission check failed');
                 wp_send_json_error('Permissions insuffisantes');
             }
+            error_log('[PDF Builder Dev Auth] Permission check passed');
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+            if (!isset($_POST['nonce'])) {
+                error_log('[PDF Builder Dev Auth] Nonce not provided');
+                wp_send_json_error('Nonce manquant');
+            }
+            
+            if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+                error_log('[PDF Builder Dev Auth] Nonce verification failed');
                 wp_send_json_error('Vérification de sécurité échouée');
             }
+            error_log('[PDF Builder Dev Auth] Nonce verification passed');
 
             $settings = get_option('pdf_builder_settings', []);
+            error_log('[PDF Builder Dev Auth] Settings retrieved: ' . print_r($settings, true));
+            
             if (empty($settings['developer_enabled'])) {
+                error_log('[PDF Builder Dev Auth] Developer mode not enabled');
                 wp_send_json_error('Mode développeur désactivé');
             }
+            error_log('[PDF Builder Dev Auth] Developer mode is enabled');
 
             // Récupérer et sanitizer le mot de passe
             $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
@@ -224,17 +239,31 @@ class PDF_Builder_Predefined_Templates_Manager
                 $stored_password = $default_password;
             }
 
-            // Debug: log pour troubleshooting
-            error_log('[PDF Builder Dev Auth] Password received: ' . strlen($password) . ' chars, value: ' . $password);
-            error_log('[PDF Builder Dev Auth] Password stored: ' . strlen($stored_password) . ' chars, value: ' . $stored_password);
+            // Debug: log DÉTAILLÉ pour troubleshooting
+            error_log('[PDF Builder Dev Auth] Password received: ' . strlen($password) . ' chars');
+            error_log('[PDF Builder Dev Auth] Password received (raw): ' . var_export($password, true));
+            error_log('[PDF Builder Dev Auth] Password received (bytes): ' . bin2hex($password));
+            
+            error_log('[PDF Builder Dev Auth] Password stored: ' . strlen($stored_password) . ' chars');
+            error_log('[PDF Builder Dev Auth] Password stored (raw): ' . var_export($stored_password, true));
+            error_log('[PDF Builder Dev Auth] Password stored (bytes): ' . bin2hex($stored_password));
 
             // Vérifier le mot de passe (comparaison stricte)
             if (empty($password)) {
+                error_log('[PDF Builder Dev Auth] Password is empty');
                 wp_send_json_error('Veuillez entrer un mot de passe');
             }
 
-            if ($password !== $stored_password) {
-                error_log('[PDF Builder Dev Auth] Passwords do not match: "' . $password . '" !== "' . $stored_password . '"');
+            // Comparaison avec trim() pour enlever les espaces
+            $password_trimmed = trim($password);
+            $stored_password_trimmed = trim($stored_password);
+            
+            error_log('[PDF Builder Dev Auth] Password trimmed: ' . var_export($password_trimmed, true));
+            error_log('[PDF Builder Dev Auth] Stored trimmed: ' . var_export($stored_password_trimmed, true));
+
+            if ($password_trimmed !== $stored_password_trimmed) {
+                error_log('[PDF Builder Dev Auth] Passwords do not match after trim');
+                error_log('[PDF Builder Dev Auth] Comparison: "' . $password_trimmed . '" !== "' . $stored_password_trimmed . '"');
                 wp_send_json_error('Mot de passe incorrect');
             }
 
@@ -247,9 +276,11 @@ class PDF_Builder_Predefined_Templates_Manager
             ];
             update_option($dev_auth_key, $auth_data);
             error_log('[PDF Builder Dev Auth] User ' . $user_id . ' authenticated successfully');
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (SUCCESS) =====');
             wp_send_json_success(['message' => 'Authentification réussie']);
         } catch (Exception $e) {
             error_log('[PDF Builder Dev Auth] Exception: ' . $e->getMessage());
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (EXCEPTION) =====');
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
