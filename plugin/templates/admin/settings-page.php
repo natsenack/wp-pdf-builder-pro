@@ -5729,7 +5729,7 @@
                 });
 
                 // Supprimer une sauvegarde
-                jQuery('.delete-backup-btn').off('click').on('click', function() {
+                jQuery(document).off('click', '.delete-backup-btn').on('click', '.delete-backup-btn', function() {
                     const filename = jQuery(this).data('filename');
 
                     if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
