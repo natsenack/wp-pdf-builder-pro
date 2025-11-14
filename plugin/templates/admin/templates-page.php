@@ -24,46 +24,6 @@ var pdfBuilderTemplatesNonce = '<?php echo esc_js($templates_nonce); ?>';
 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 </script>
 
-<style>
-/* Styles pour les modals */
-.pdf-builder-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.modal-content {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-}
-.modal-header h3 { margin: 0; }
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-}
-.modal-body { padding: 20px; }
-</style>
-
 <div class="wrap">
     <h1><?php _e('[DOC] Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
 
@@ -79,7 +39,6 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
-        </div>
 
         <!-- Section de filtrage -->
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
@@ -1122,93 +1081,22 @@ document.addEventListener('keydown', function(e) {
 </style>
 
 <?php if ($show_first_visit_modal) : ?>
-<!-- Modale de première visite -->
-<div id="first-visit-modal" class="pdf-builder-modal" style="display: none;">
-    <div class="modal-content" style="max-width: 900px;">
-        <div class="modal-header">
-            <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
-            <button class="close-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h4><?php _e('Bienvenue dans la Galerie de Modèles Prédéfinis !', 'pdf-builder-pro'); ?></h4>
-                <p><?php _e('Découvrez nos modèles prêts à l\'emploi pour créer vos documents PDF professionnels.', 'pdf-builder-pro'); ?></p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <!-- Modèle Facture -->
-                <div class="template-showcase" style="border: 2px solid #007cba; border-radius: 8px; padding: 15px; background: #f8f9ff;">
-                    <div style="text-align: center; margin-bottom: 10px;">
-                        <span style="font-size: 2em;">🧾</span>
-                    </div>
-                    <h4 style="margin: 0 0 5px 0; color: #007cba;">Facture Moderne</h4>
-                    <p style="margin: 0; font-size: 13px; color: #666;">Modèle professionnel avec en-tête, tableau des produits et mentions légales.</p>
-                </div>
-
-                <!-- Modèle Devis -->
-                <div class="template-showcase" style="border: 2px solid #28a745; border-radius: 8px; padding: 15px; background: #f8fff8;">
-                    <div style="text-align: center; margin-bottom: 10px;">
-                        <span style="font-size: 2em;">📋</span>
-                    </div>
-                    <h4 style="margin: 0 0 5px 0; color: #28a745;">Devis Complet</h4>
-                    <p style="margin: 0; font-size: 13px; color: #666;">Présentation claire des prestations avec conditions et validité.</p>
-                </div>
-
-                <!-- Modèle Personnalisé -->
-                <div class="template-showcase" style="border: 2px solid #ffc107; border-radius: 8px; padding: 15px; background: #fffef8;">
-                    <div style="text-align: center; margin-bottom: 10px;">
-                        <span style="font-size: 2em;">🎨</span>
-                    </div>
-                    <h4 style="margin: 0 0 5px 0; color: #ffc107;">Modèle Personnalisé</h4>
-                    <p style="margin: 0; font-size: 13px; color: #666;">Créez votre propre modèle adapté à vos besoins spécifiques.</p>
-                </div>
-            </div>
-
-            <div style="background: #e8f4fd; border: 1px solid #007cba; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h4 style="margin: 0 0 10px 0; color: #007cba;">💡 Comment utiliser les modèles :</h4>
-                <ul style="margin: 0; padding-left: 20px; color: #333;">
-                    <li><strong>Parcourir :</strong> Explorez la galerie ci-dessous pour voir tous les modèles disponibles</li>
-                    <li><strong>Modifier :</strong> Cliquez sur "Éditer" pour personnaliser un modèle existant</li>
-                    <li><strong>Créer :</strong> Utilisez "Nouveau Modèle" pour partir d'une base vierge</li>
-                    <li><strong>Exporter :</strong> Sauvegardez vos créations pour les réutiliser</li>
-                </ul>
-            </div>
-
-            <div style="text-align: center;">
-                <button id="start-exploring-btn" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 30px;">
-                    🚀 <?php _e('Commencer l\'exploration', 'pdf-builder-pro'); ?>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
 jQuery(document).ready(function($) {
-    console.log('PDF Builder: Tentative d\'affichage du modal de première visite');
-    console.log('Modal element:', $("#first-visit-modal"));
-    $("#first-visit-modal").fadeIn();
-    console.log('Modal affiché');
-
-    // Fermeture du modal
-    $(".close-modal, #start-exploring-btn").on("click", function() {
-        $("#first-visit-modal").fadeOut();
-        // Marquer la première visite comme terminée
-        $.ajax({
-            url: ajaxurl,
-            type: "POST",
-            data: {
-                action: "pdf_builder_mark_first_visit_complete",
-                nonce: pdfBuilderTemplatesNonce
-            },
-            success: function(response) {
-                console.log('Première visite marquée comme terminée');
-            }
-        });
-    });
+    // Rediriger automatiquement vers la page des modèles prédéfinis pour la première visite
+    window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
 });
 </script>
 <?php endif; ?>
+
+<script>
+jQuery(document).ready(function($) {
+    // Gestionnaire pour le bouton "Parcourir les Modèles"
+    $('#open-template-gallery').on('click', function() {
+        window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
+    });
+});
+</script>
 
 
 
