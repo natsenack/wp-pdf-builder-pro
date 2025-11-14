@@ -33,11 +33,6 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
-// DEBUG temporaire : Afficher les valeurs pour vérifier
-if (current_user_can('manage_options')) {
-    echo '<!-- DEBUG TEMPLATES: count=' . esc_html($templates_count) . ' can_create=' . ($user_can_create ? 'TRUE' : 'FALSE') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
-}
-
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
@@ -82,6 +77,9 @@ var pdfBuilderAjax = {
 
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+                <span style="background: #007cba; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">
+                    <?php echo $templates_count; ?> template<?php echo $templates_count > 1 ? 's' : ''; ?>
+                </span>
             </button>
         </div>
 
