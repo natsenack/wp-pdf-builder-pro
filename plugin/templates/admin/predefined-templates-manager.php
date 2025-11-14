@@ -198,15 +198,39 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxDeveloperAuth()
     {
         try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+                wp_send_json_error('Vérification de sécurité échouée');
+            }
+
             $settings = get_option('pdf_builder_settings', []);
             if (empty($settings['developer_enabled'])) {
                 wp_send_json_error('Mode développeur désactivé');
             }
-            $password = sanitize_text_field($_POST['password'] ?? '');
-            $stored_password = $settings['developer_password'] ?? '';
-            if (empty($password) || $password !== $stored_password) {
+
+            // Récupérer et sanitizer le mot de passe
+            $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
+            $stored_password = isset($settings['developer_password']) ? $settings['developer_password'] : '';
+
+            // Debug: log pour troubleshooting (à enlever après)
+            error_log('[PDF Builder Dev Auth] Password received: ' . strlen($password) . ' chars');
+            error_log('[PDF Builder Dev Auth] Password stored: ' . strlen($stored_password) . ' chars');
+
+            // Vérifier le mot de passe (comparaison stricte)
+            if (empty($password)) {
+                wp_send_json_error('Veuillez entrer un mot de passe');
+            }
+
+            if ($password !== $stored_password) {
+                error_log('[PDF Builder Dev Auth] Passwords do not match');
                 wp_send_json_error('Mot de passe incorrect');
             }
+
             // Sauvegarder l'authentification en option WordPress
             $user_id = get_current_user_id();
             $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
@@ -215,8 +239,10 @@ class PDF_Builder_Predefined_Templates_Manager
                 'timestamp' => time()
             ];
             update_option($dev_auth_key, $auth_data);
+            error_log('[PDF Builder Dev Auth] User ' . $user_id . ' authenticated successfully');
             wp_send_json_success(['message' => 'Authentification réussie']);
         } catch (Exception $e) {
+            error_log('[PDF Builder Dev Auth] Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
@@ -630,6 +656,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     <?php _e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
                 </p>
                 <form id="developer-login-form" class="developer-login-form">
+                    <?php wp_nonce_field('pdf_builder_developer_auth', 'nonce'); ?>
                     <!-- Champ username caché pour l'accessibilité des gestionnaires de mots de passe -->
                     <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
                     <div class="form-row">
@@ -669,30 +696,37 @@ class PDF_Builder_Predefined_Templates_Manager
             $('#developer-login-form').on('submit', function(e) {
                 e.preventDefault();
                 const password = $('#developer-password').val();
+                const nonce = $('input[name="nonce"]').val();
                 const $message = $('#login-message');
-                const $button = $(this).find('button');
+                const $button = $(this).find('button[type="submit"]');
                 const originalText = $button.text();
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
+
+                console.log('Sending developer auth request with password length:', password.length, 'nonce:', nonce);
+
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_developer_auth',
-                        password: password
+                        password: password,
+                        nonce: nonce
                     },
                     success: function(response) {
+                        console.log('Developer auth response:', response);
                         if (response.success) {
                             $message.removeClass('error').addClass('success').text(response.data.message).show();
                             setTimeout(function() {
                                 location.reload();
                             }, 1000);
                         } else {
-                            $message.removeClass('success').addClass('error').text(response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
+                            $message.removeClass('success').addClass('error').text(response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
                             $button.prop('disabled', false).text(originalText);
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('Developer auth error:', error, xhr.responseText);
                         $message.removeClass('success').addClass('error').text('<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
                         $button.prop('disabled', false).text(originalText);
                     }
