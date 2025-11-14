@@ -68,6 +68,7 @@ class PdfBuilderBackupRestoreManager
         add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'ajaxRestoreBackup']);
         add_action('wp_ajax_pdf_builder_list_backups', [$this, 'ajaxListBackups']);
         add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'ajaxDeleteBackup']);
+        add_action('wp_ajax_pdf_builder_download_backup', [$this, 'ajaxDownloadBackup']);
     }
 
     /**
@@ -806,5 +807,39 @@ class PdfBuilderBackupRestoreManager
         } else {
             wp_send_json_error(['message' => $result['message']]);
         }
+    }
+
+    /**
+     * Télécharger une sauvegarde
+     */
+    public function ajaxDownloadBackup()
+    {
+        check_ajax_referer('pdf_builder_backup', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+        }
+
+        $filename = $_POST['filename'] ?? '';
+
+        if (empty($filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
+        }
+
+        $filepath = $this->backup_dir . $filename;
+
+        if (!file_exists($filepath)) {
+            wp_send_json_error(['message' => __('Fichier de sauvegarde introuvable.', 'pdf-builder-pro')]);
+        }
+
+        // Générer l'URL de téléchargement
+        $upload_dir = wp_upload_dir();
+        $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
+        $download_url = $upload_dir['baseurl'] . $relative_path;
+
+        wp_send_json_success([
+            'download_url' => $download_url,
+            'filename' => $filename
+        ]);
     }
 }

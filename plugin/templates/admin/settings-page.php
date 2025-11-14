@@ -5653,6 +5653,7 @@
                                     '<td style="padding: 12px;">' + backup.modified_human + '</td>',
                                     '<td style="padding: 12px;">',
                                     '<button class="button button-small restore-backup-btn" value="' + decodedFilename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
+                                    '<button class="button button-small download-backup-btn" value="' + decodedFilename + '" style="margin-right: 5px;">📥 <?php _e('Télécharger', 'pdf-builder-pro'); ?></button>',
                                     '<button class="button button-small button-link-delete delete-backup-btn" value="' + decodedFilename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
                                     '</td>',
                                     '</tr>'
@@ -5708,7 +5709,7 @@
                             type: 'POST',
                             data: {
                                 action: 'pdf_builder_restore_backup',
-                                nonce: jQuery('#restore_nonce').val(),
+                                nonce: jQuery('#backup_nonce').val(),
                                 filename: filename,
                                 overwrite: '1'
                             },
@@ -5755,6 +5756,40 @@
                             }
                         });
                     }
+                });
+
+                // Télécharger une sauvegarde
+                jQuery(document).off('click', '.download-backup-btn').on('click', '.download-backup-btn', function() {
+                    const filename = jQuery(this).val();
+
+                    jQuery.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_download_backup',
+                            nonce: jQuery('#backup_nonce').val(),
+                            filename: filename
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Créer un lien temporaire et déclencher le téléchargement
+                                const link = document.createElement('a');
+                                link.href = response.data.download_url;
+                                link.download = response.data.filename;
+                                link.style.display = 'none';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+
+                                showBackupNotification('<?php _e('Téléchargement démarré.', 'pdf-builder-pro'); ?>', 'success');
+                            } else {
+                                showBackupNotification(response.data.message || '<?php _e('Erreur lors du téléchargement.', 'pdf-builder-pro'); ?>', 'error');
+                            }
+                        },
+                        error: function() {
+                            showBackupNotification('<?php _e('Erreur AJAX lors du téléchargement.', 'pdf-builder-pro'); ?>', 'error');
+                        }
+                    });
                 });
             }
 
