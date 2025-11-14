@@ -10,6 +10,9 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
+// Log pour déboguer le chargement
+error_log('PDF Builder: bootstrap.php loaded, is_admin: ' . (is_admin() ? 'true' : 'false') . ', doing_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', action: ' . (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'none'));
+
 // ============================================================================
 // ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
 // ============================================================================
@@ -147,12 +150,15 @@ add_action('wp_ajax_pdf_builder_auto_save_template', function() {
 
 // Test AJAX simple pour l'intégration du cache
 add_action('wp_ajax_pdf_builder_simple_test', function() {
+    error_log('PDF Builder: pdf_builder_simple_test action called');
     try {
         // Vérifier que WordPress est chargé
         if (!function_exists('wp_send_json_success')) {
+            error_log('PDF Builder: wp_send_json_success not available');
             throw new Exception('wp_send_json_success function not available');
         }
 
+        error_log('PDF Builder: Sending success response');
         wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
     } catch (Exception $e) {
         error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
@@ -160,12 +166,15 @@ add_action('wp_ajax_pdf_builder_simple_test', function() {
     }
 });
 add_action('wp_ajax_nopriv_pdf_builder_simple_test', function() {
+    error_log('PDF Builder: pdf_builder_simple_test nopriv action called');
     try {
         // Vérifier que WordPress est chargé
         if (!function_exists('wp_send_json_success')) {
+            error_log('PDF Builder: wp_send_json_success not available (nopriv)');
             throw new Exception('wp_send_json_success function not available');
         }
 
+        error_log('PDF Builder: Sending success response (nopriv)');
         wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
     } catch (Exception $e) {
         error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
