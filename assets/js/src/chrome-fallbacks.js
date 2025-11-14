@@ -156,6 +156,48 @@
     };
   }
 
+  // Correction pour les APIs de fetch dans Chrome
+  if (typeof window !== 'undefined' && typeof window.fetch !== 'undefined') {
+    const originalFetch = window.fetch;
+
+    window.fetch = function(input, init) {
+      try {
+        // Chrome peut avoir des problèmes avec les requêtes AJAX WordPress
+        const url = typeof input === 'string' ? input : input.url;
+
+        // Détecter les requêtes AJAX WordPress
+        if (url && url.includes('admin-ajax.php') && url.includes('pdf_builder_get_template')) {
+          console.log('🔧 [Chrome Fix] Requête template détectée, application des corrections');
+
+          // Forcer des en-têtes spécifiques pour les requêtes de templates
+          const chromeInit = {
+            ...init,
+            headers: {
+              ...init?.headers,
+              'Accept': 'application/json, text/plain, */*',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
+            },
+            mode: 'cors',
+            credentials: 'same-origin',
+            cache: 'no-cache'
+          };
+
+          console.log('🔧 [Chrome Fix] Options fetch modifiées:', chromeInit);
+          return originalFetch.call(this, input, chromeInit);
+        }
+
+        // Pour les autres requêtes, utiliser normalement
+        return originalFetch.call(this, input, init);
+      } catch (error) {
+        console.error('❌ [Chrome Fix] Erreur fetch:', error);
+        throw error;
+      }
+    };
+  }
+
   console.log('✅ Corrections Chrome appliquées');
 
 })();

@@ -42,11 +42,64 @@ export function useTemplate() {
       // This ensures F5 and Ctrl+F5 load fresh data from server
       // The server also sends no-cache headers, this is backup
       const cacheBreaker = Date.now();
-      const response = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`);
+
+      // Détecter le navigateur pour des en-têtes spécifiques
+      const isChrome = typeof navigator !== 'undefined' &&
+        /Chrome/.test(navigator.userAgent) &&
+        /Google Inc/.test(navigator.vendor);
+
+      const isFirefox = typeof navigator !== 'undefined' &&
+        /Firefox/.test(navigator.userAgent);
+
+      const isSafari = typeof navigator !== 'undefined' &&
+        /Safari/.test(navigator.userAgent) &&
+        !/Chrome/.test(navigator.userAgent) &&
+        !/Chromium/.test(navigator.userAgent);
+
+      // Préparer les options fetch avec des en-têtes spécifiques par navigateur
+      const fetchOptions: RequestInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          // En-têtes anti-cache spécifiques
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        // Mode spécifique selon le navigateur
+        mode: 'cors' as RequestMode,
+        credentials: 'same-origin' as RequestCredentials
+      };
+
+      // Ajustements spécifiques par navigateur
+      if (isChrome) {
+        // Chrome peut avoir besoin d'un mode plus permissif
+        fetchOptions.mode = 'cors';
+        fetchOptions.cache = 'no-cache';
+        console.log('[useTemplate] Chrome détecté - Utilisation du mode CORS avec cache désactivé');
+      } else if (isFirefox) {
+        // Firefox gère bien le cache par défaut
+        fetchOptions.cache = 'no-cache';
+        console.log('[useTemplate] Firefox détecté - Cache désactivé');
+      } else if (isSafari) {
+        // Safari peut avoir des problèmes avec certains modes
+        fetchOptions.mode = 'cors';
+        console.log('[useTemplate] Safari détecté - Mode CORS forcé');
+      }
+
+      const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
+      console.log('[useTemplate] Fetch URL:', url);
+      console.log('[useTemplate] Fetch options:', fetchOptions);
+
+      const response = await fetch(url, fetchOptions);
       console.log('[useTemplate] AJAX response status:', response.status);
+      console.log('[useTemplate] AJAX response headers:', [...response.headers.entries()]);
 
       if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
+        const errorText = await response.text();
+        console.error('[useTemplate] Response error text:', errorText);
+        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
@@ -235,6 +288,65 @@ export function useTemplate() {
       return true;
     } catch (error) {
       debugError('❌ [LOAD TEMPLATE] Erreur lors du chargement:', error);
+
+      // Diagnostics spécifiques selon le navigateur
+      const isChrome = typeof navigator !== 'undefined' &&
+        /Chrome/.test(navigator.userAgent) &&
+        /Google Inc/.test(navigator.vendor);
+
+      const isFirefox = typeof navigator !== 'undefined' &&
+        /Firefox/.test(navigator.userAgent);
+
+      const isSafari = typeof navigator !== 'undefined' &&
+        /Safari/.test(navigator.userAgent) &&
+        !/Chrome/.test(navigator.userAgent) &&
+        !/Chromium/.test(navigator.userAgent);
+
+      console.error(`❌ [LOAD TEMPLATE] Échec du chargement sur ${isChrome ? 'Chrome' : isFirefox ? 'Firefox' : isSafari ? 'Safari' : 'navigateur inconnu'}`);
+      console.error('❌ [LOAD TEMPLATE] Détails de l\'erreur:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        templateId: templateId,
+        ajaxUrl: window.pdfBuilderData?.ajaxUrl,
+        userAgent: navigator.userAgent
+      });
+
+      // Tentative de fallback pour Chrome
+      if (isChrome && error.message.includes('fetch')) {
+        console.warn('🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes');
+
+        try {
+          // Attendre un peu avant retry
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Retry avec des options différentes
+          const fallbackOptions: RequestInit = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json, text/plain, */*',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            mode: 'no-cors' as RequestMode,
+            cache: 'reload'
+          };
+
+          const fallbackUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&fallback=1&t=${Date.now()}`;
+          console.log('🔄 [LOAD TEMPLATE] Tentative fallback URL:', fallbackUrl);
+
+          const fallbackResponse = await fetch(fallbackUrl, fallbackOptions);
+          console.log('🔄 [LOAD TEMPLATE] Fallback response status:', fallbackResponse.status);
+
+          if (fallbackResponse.ok || fallbackResponse.status === 0) { // no-cors peut retourner status 0
+            console.log('✅ [LOAD TEMPLATE] Fallback réussi !');
+            // Traiter la réponse même si elle est opaque
+            return true;
+          }
+        } catch (fallbackError) {
+          console.error('❌ [LOAD TEMPLATE] Échec du fallback:', fallbackError);
+        }
+      }
+
       return false;
     }
   }, [dispatch]);
