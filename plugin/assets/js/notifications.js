@@ -152,11 +152,18 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
         }
     }
 
-    // Initialiser quand le DOM est prêt
+    // Initialiser immédiatement (pas seulement dans document.ready)
+    console.log('🔍 PDFBuilderNotifications: Initializing immediately...');
+    window.pdfBuilderNotifications = new PDFBuilderNotifications();
+    console.log('🔍 PDFBuilderNotifications: Instance created immediately');
+
+    // Initialiser aussi quand le DOM est prêt (au cas où)
     $(document).ready(function() {
-        console.log('🔍 PDFBuilderNotifications: DOM ready, initializing...');
-        window.pdfBuilderNotifications = new PDFBuilderNotifications();
-        console.log('🔍 PDFBuilderNotifications: Instance created');
+        console.log('🔍 PDFBuilderNotifications: DOM ready, ensuring initialization...');
+        if (!window.pdfBuilderNotifications) {
+            window.pdfBuilderNotifications = new PDFBuilderNotifications();
+            console.log('🔍 PDFBuilderNotifications: Instance created in DOM ready');
+        }
     });
 
     // API globale compatible avec le code PHP
