@@ -39,6 +39,40 @@ class TemplateDefaults {
     }
 
     /**
+     * Retourne la liste des templates premium disponibles
+     *
+     * @return array
+     */
+    public static function get_premium_templates() {
+        return [
+            'invoice_pro' => [
+                'name' => 'Invoice Pro',
+                'description' => 'Template professionnel avancé avec en-têtes personnalisables',
+                'category' => 'invoice',
+                'is_free' => false,
+                'is_premium' => true,
+                'elements' => self::get_modern_template_elements() // Utilise les mêmes éléments pour l'instant
+            ],
+            'quote_advanced' => [
+                'name' => 'Quote Advanced',
+                'description' => 'Template de devis professionnel avec calculs automatiques',
+                'category' => 'quote',
+                'is_free' => false,
+                'is_premium' => true,
+                'elements' => self::get_classic_template_elements() // Utilise les mêmes éléments pour l'instant
+            ],
+            'contract_legal' => [
+                'name' => 'Contract Legal',
+                'description' => 'Template de contrat juridique avec clauses standard',
+                'category' => 'contract',
+                'is_free' => false,
+                'is_premium' => true,
+                'elements' => self::get_corporate_template_elements() // Utilise les mêmes éléments pour l'instant
+            ]
+        ];
+    }
+
+    /**
      * Crée les templates par défaut pour un utilisateur
      *
      * @param int $user_id

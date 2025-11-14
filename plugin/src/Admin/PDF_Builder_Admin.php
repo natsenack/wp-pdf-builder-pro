@@ -206,31 +206,36 @@ class PdfBuilderAdmin
             return true; // Pas de limitation pour premium
         }
 
-        // Compter templates globaux disponibles
-        $templates_count = self::count_user_templates();
+        // Compter templates existants de l'utilisateur
+        $user_id = get_current_user_id();
+        $templates_count = self::count_user_templates($user_id);
 
-        // Limite : 1 template gratuit (mais comme c'est global, cette logique peut être à revoir)
+        // Limite : 1 template gratuit
         return $templates_count < 1;
     }
 
     /**
-     * Compte le nombre de templates disponibles globalement
+     * Compte le nombre de templates créés par un utilisateur
      *
+     * @param int $user_id
      * @return int
      */
-    public static function count_user_templates($user_id = null) {
+    public static function count_user_templates($user_id) {
         global $wpdb;
-
-        // Compter depuis la table custom pdf_builder_templates (templates globaux)
+        
+        // Compter depuis la table custom pdf_builder_templates
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        // Récupérer le nombre total de templates globaux (tous sauf les templates par défaut)
-        $count = $wpdb->get_var(
-            "SELECT COUNT(*) FROM `$table_templates` WHERE (is_default IS NULL OR is_default = 0)"
-        );
-
+        
+        // Récupérer le nombre de templates pour cet utilisateur
+        $count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d AND is_default = 0",
+            $user_id
+        ));
+        
         return (int)$count;
-    }    /**
+    }
+
+    /**
      * Vérifie si l'utilisateur est premium
      *
      * @return bool
@@ -5908,12 +5913,10 @@ class PdfBuilderAdmin
                         'id' => $template_id,
                         'name' => $default_template['name'],
                         'template_data' => wp_json_encode($default_template),
-                        'user_id' => get_current_user_id(),
                         'created_at' => current_time('mysql'),
-                        'updated_at' => current_time('mysql'),
-                        'is_default' => 0
+                        'updated_at' => current_time('mysql')
                     ],
-                    ['%d', '%s', '%s', '%d', '%s', '%s', '%d']
+                    ['%d', '%s', '%s', '%s', '%s']
                 );
             }
         } catch (Exception $e) {
@@ -6125,7 +6128,7 @@ class PdfBuilderAdmin
 
         wp_send_json_success([
             'can_create' => $can_create,
-            'current_count' => self::count_user_templates(),
+            'current_count' => self::count_user_templates(get_current_user_id()),
             'limit' => 1
         ]);
     }

@@ -393,6 +393,11 @@ class PdfBuilderPdfGenerator
         try {
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
+            // Ajouter watermark pour utilisateurs gratuits
+            if (!$this->isUserPremium()) {
+                $html_content = $this->addFreeWatermark($html_content);
+            }
+
             $dompdf = new Dompdf\Dompdf();
             $dompdf->set_option('isRemoteEnabled', true);
             $dompdf->set_option('isHtml5ParserEnabled', true);
@@ -517,5 +522,44 @@ class PdfBuilderPdfGenerator
         $content = str_replace('{{customer_email}}', $order->get_billing_email(), $content);
 
         return $content;
+    }
+
+    /**
+     * Vérifier si l'utilisateur actuel est premium
+     *
+     * @return bool
+     */
+    private function isUserPremium()
+    {
+        if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+            return false;
+        }
+        return \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+    }
+
+    /**
+     * Ajouter un watermark pour les utilisateurs gratuits
+     *
+     * @param string $html_content
+     * @return string
+     */
+    private function addFreeWatermark($html_content)
+    {
+        $watermark_html = '
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
+                    font-size: 72px; color: rgba(200, 200, 200, 0.3); font-weight: bold; z-index: 9999;
+                    pointer-events: none; user-select: none;">
+            WP PDF Builder Free
+        </div>';
+
+        // Insérer le watermark dans le body du HTML
+        if (preg_match('/<\/body>/i', $html_content)) {
+            $html_content = preg_replace('/<\/body>/i', $watermark_html . '</body>', $html_content);
+        } else {
+            // Fallback: ajouter à la fin du HTML
+            $html_content .= $watermark_html;
+        }
+
+        return $html_content;
     }
 }

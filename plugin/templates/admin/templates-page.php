@@ -30,18 +30,15 @@ $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
 // Vérifications freemium
 $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
-$templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates();
+$templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
-    // Recharger la page pour afficher les templates UNIQUEMENT si des templates ont été créés
-    $new_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates();
-    if ($new_count > 0) {
-        wp_redirect(admin_url('admin.php?page=pdf-builder-templates'));
-        exit;
-    }
+    // Recharger la page pour afficher les templates
+    wp_redirect(admin_url('admin.php?page=pdf-builder-templates'));
+    exit;
 }
 ?>
 
@@ -84,7 +81,7 @@ var pdfBuilderAjax = {
 
             <!-- DEBUG: Affichage temporaire du nombre de templates -->
             <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
-                📊 Templates disponibles: <strong><?php echo $templates_count; ?></strong>
+                📊 Templates créés: <strong><?php echo $templates_count; ?></strong>
                 <?php if (!$is_premium): ?>
                     (limite: 1)
                 <?php else: ?>
@@ -102,7 +99,7 @@ var pdfBuilderAjax = {
                 </h4>
                 <p style="margin: 0 0 10px 0; color: #0c5460;">
                     <?php printf(
-                        __('Le système dispose de %d template(s) gratuit(s). Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
                     ); ?>
                 </p>
@@ -118,10 +115,10 @@ var pdfBuilderAjax = {
             <div class="notice notice-success" style="margin: 15px 0; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #155724;">
                     <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-                    <?php _e('Templates en cours de création', 'pdf-builder-pro'); ?>
+                    <?php _e('Créez Votre Premier Template', 'pdf-builder-pro'); ?>
                 </h4>
                 <p style="margin: 0; color: #155724;">
-                    <?php _e('Les templates par défaut sont en cours de création. Passez en Premium pour créer vos propres templates personnalisés !', 'pdf-builder-pro'); ?>
+                    <?php _e('Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !', 'pdf-builder-pro'); ?>
                 </p>
             </div>
         <?php endif; ?>
@@ -295,40 +292,34 @@ var pdfBuilderAjax = {
                     <div id="predefined-templates-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
 
                         <?php
-                        // Charger les modèles prédéfinis depuis le dossier
-                        $predefined_dir = plugin_dir_path(__FILE__) . '../predefined/';
-
-                        // Créer le dossier s'il n'existe pas
-                        if (!file_exists($predefined_dir)) {
-                            wp_mkdir_p($predefined_dir);
-                        }
-
+                        // Charger les modèles prédéfinis depuis TemplateDefaults
                         $templates = [];
 
-                        if (is_dir($predefined_dir)) {
-                            $files = glob($predefined_dir . '*.json');
-                            foreach ($files as $file) {
-                                $slug = basename($file, '.json');
-                                $content = file_get_contents($file);
-                                $data = json_decode($content, true);
+                        // Templates gratuits (toujours disponibles)
+                        $free_templates = \PDF_Builder\TemplateDefaults::get_free_templates();
+                        foreach ($free_templates as $slug => $template_data) {
+                            $templates[] = [
+                                'slug' => $slug,
+                                'name' => $template_data['name'],
+                                'category' => $template_data['category'],
+                                'description' => $template_data['description'] ?? '',
+                                'icon' => '📄', // Default icon
+                                'is_premium' => false
+                            ];
+                        }
 
-                                if ($data && isset($data['name'])) {
-                                    $category = $data['category'] ?? 'autre';
-
-                                    // Désactiver les modèles qui ne sont pas des devis ou factures
-                                    if (!in_array($category, ['devis', 'facture'])) {
-                                        continue;
-                                    }
-
-                                    $templates[] = [
-                                        'slug' => $slug,
-                                        'name' => $data['name'],
-                                        'category' => $category,
-                                        'description' => $data['description'] ?? '',
-                                        'icon' => $data['icon'] ?? '📄',
-                                        'preview_svg' => $data['preview_svg'] ?? ''
-                                    ];
-                                }
+                        // Templates premium (seulement pour utilisateurs premium)
+                        if ($is_premium) {
+                            $premium_templates = \PDF_Builder\TemplateDefaults::get_premium_templates();
+                            foreach ($premium_templates as $slug => $template_data) {
+                                $templates[] = [
+                                    'slug' => $slug,
+                                    'name' => $template_data['name'],
+                                    'category' => $template_data['category'],
+                                    'description' => $template_data['description'] ?? '',
+                                    'icon' => '⭐', // Premium icon
+                                    'is_premium' => true
+                                ];
                             }
                         }
 
@@ -351,6 +342,9 @@ var pdfBuilderAjax = {
                                     <div style="height: 160px; background: linear-gradient(135deg, <?php echo $template['category'] === 'facture' ? '#667eea 0%, #764ba2 100%' : ($template['category'] === 'devis' ? '#28a745 0%, #20c997 100%' : '#6c757d 0%, #495057 100%'); ?>); display: flex; align-items: center; justify-content: center; position: relative;">
                                         <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"><?php echo esc_html($template['icon']); ?></div>
                                         <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: <?php echo $type_color; ?>; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;"><?php echo esc_html(strtoupper($template['category'])); ?></div>
+                                        <?php if ($template['is_premium']): ?>
+                                        <div style="position: absolute; top: 15px; right: 15px; background: #ffd700; color: #000; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">PREMIUM</div>
+                                        <?php endif; ?>
                                     </div>
                                     <div style="padding: 20px;">
                                         <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;"><?php echo esc_html($template['name']); ?></h3>
