@@ -141,9 +141,9 @@ class LicenseTestHandler
 
         try {
 // Générer une nouvelle clé
-            $new_key = $this->generate_test_key();
+            $new_key = $this->generateTestKey();
 // Sauvegarder la clé
-            $saved = $this->save_test_key($new_key);
+            $saved = $this->saveTestKey($new_key);
             if (!$saved) {
                 wp_send_json_error([
                     'message' => 'Impossible de sauvegarder la clé de test'
