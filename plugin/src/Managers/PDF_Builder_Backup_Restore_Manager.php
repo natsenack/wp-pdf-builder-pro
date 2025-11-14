@@ -482,29 +482,62 @@ class PdfBuilderBackupRestoreManager
     {
         $backups = [];
 
-        if (!file_exists($this->backup_dir)) {
+        try {
+            if (!file_exists($this->backup_dir)) {
+                // Créer le répertoire s'il n'existe pas
+                if (!wp_mkdir_p($this->backup_dir)) {
+                    error_log('PDF Builder: Impossible de créer le répertoire de sauvegarde: ' . $this->backup_dir);
+                    return $backups;
+                }
+            }
+
+            if (!is_readable($this->backup_dir)) {
+                error_log('PDF Builder: Répertoire de sauvegarde non lisible: ' . $this->backup_dir);
+                return $backups;
+            }
+
+            $files = glob($this->backup_dir . '*.{json,zip}', GLOB_BRACE);
+
+            if ($files === false) {
+                error_log('PDF Builder: Erreur lors de la lecture du répertoire de sauvegarde: ' . $this->backup_dir);
+                return $backups;
+            }
+
+            foreach ($files as $file) {
+                if (!is_readable($file)) {
+                    error_log('PDF Builder: Fichier de sauvegarde non lisible: ' . $file);
+                    continue;
+                }
+
+                $filename = basename($file);
+                $size = @filesize($file);
+                $modified = @filemtime($file);
+
+                if ($size === false || $modified === false) {
+                    error_log('PDF Builder: Impossible de lire les informations du fichier: ' . $file);
+                    continue;
+                }
+
+                $backups[] = [
+                    'filename' => $filename,
+                    'filepath' => $file,
+                    'size' => $size,
+                    'size_human' => size_format($size),
+                    'modified' => $modified,
+                    'modified_human' => date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $modified),
+                    'type' => pathinfo($file, PATHINFO_EXTENSION)
+                ];
+            }
+
+            // Trier par date de modification (plus récent en premier)
+            usort($backups, function($a, $b) {
+                return $b['modified'] - $a['modified'];
+            });
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception dans listBackups(): ' . $e->getMessage());
             return $backups;
         }
-
-        $files = glob($this->backup_dir . '*.{json,zip}', GLOB_BRACE);
-
-        foreach ($files as $file) {
-            $filename = basename($file);
-            $backups[] = [
-                'filename' => $filename,
-                'filepath' => $file,
-                'size' => filesize($file),
-                'size_human' => size_format(filesize($file)),
-                'modified' => filemtime($file),
-                'modified_human' => date_i18n(get_option('date_format') . ' ' . get_option('time_format'), filemtime($file)),
-                'type' => pathinfo($file, PATHINFO_EXTENSION)
-            ];
-        }
-
-        // Trier par date de modification (plus récent en premier)
-        usort($backups, function($a, $b) {
-            return $b['modified'] - $a['modified'];
-        });
 
         return $backups;
     }
@@ -720,15 +753,22 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxListBackups()
     {
-        check_ajax_referer('pdf_builder_backup', 'nonce');
+        try {
+            check_ajax_referer('pdf_builder_backup', 'nonce');
 
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+                return;
+            }
+
+            $backups = $this->listBackups();
+
+            wp_send_json_success(['backups' => $backups]);
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Erreur AJAX listBackups: ' . $e->getMessage());
+            wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
         }
-
-        $backups = $this->listBackups();
-
-        wp_send_json_success(['backups' => $backups]);
     }
 
     /**
