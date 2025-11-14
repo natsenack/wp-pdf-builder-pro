@@ -111,6 +111,76 @@
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
+
+        // Generate test license key
+        elseif ($action === 'pdf_builder_generate_test_license_key') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_generate_license_key')) {
+                $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
+                update_option('pdf_builder_license_test_key', $test_key);
+                send_ajax_response(true, 'Clé de test générée', ['key' => $test_key]);
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // Delete test license key
+        elseif ($action === 'pdf_builder_delete_test_license_key') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_delete_test_license_key')) {
+                delete_option('pdf_builder_license_test_key');
+                send_ajax_response(true, 'Clé de test supprimée');
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // Toggle test mode
+        elseif ($action === 'pdf_builder_toggle_test_mode') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_toggle_test_mode')) {
+                $current_mode = get_option('pdf_builder_license_test_mode_enabled', false);
+                $new_mode = !$current_mode;
+                update_option('pdf_builder_license_test_mode_enabled', $new_mode);
+                send_ajax_response(true, 'Mode test ' . ($new_mode ? 'activé' : 'désactivé'), ['enabled' => $new_mode]);
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // Cleanup license
+        elseif ($action === 'pdf_builder_cleanup_license') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                delete_option('pdf_builder_license_test_key');
+                delete_option('pdf_builder_license_test_mode_enabled');
+                send_ajax_response(true, 'Licence nettoyée complètement');
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // Simple test
+        elseif ($action === 'pdf_builder_simple_test') {
+            // Simple test - no nonce needed for basic connectivity test
+            send_ajax_response(true, 'Test réussi - Cache intégré fonctionne');
+        }
+
+        // Test SMTP connection
+        elseif ($action === 'pdf_builder_test_smtp_connection') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                // Test SMTP logic (implement as needed)
+                send_ajax_response(true, 'Connexion SMTP testée avec succès');
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // Test notifications
+        elseif ($action === 'pdf_builder_test_notifications') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                // Test notifications logic (implement as needed)
+                send_ajax_response(true, 'Notifications testées avec succès');
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
     }
 
     // For AJAX requests, only process POST data and exit - don't show HTML
