@@ -45,7 +45,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 'pdf-builder-pro',
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
-                'manage_options',
+                'pdf_builder_access',
                 'pdf-builder-predefined-templates',
                 [$this, 'renderAdminPage']
             );
@@ -138,14 +138,12 @@ class PDF_Builder_Predefined_Templates_Manager
                 });
                 
                 // Gestion du modal de première visite
-                console.log("Tentative d'affichage du modal de première visite");
-                console.log("Modal element:", $("#first-visit-modal"));
+                <?php if ($show_first_visit_modal) : ?>
                 $("#first-visit-modal").fadeIn();
-                console.log("Modal affiché"); // Version corrigée
+                <?php endif; ?>
                 
                 // Fermeture des modals
                 $(".close-modal, #start-exploring-btn").on("click", function() {
-                    console.log("Fermeture du modal");
                     $("#first-visit-modal").fadeOut();
                     // Marquer la première visite comme terminée
                     $.ajax({
