@@ -9,10 +9,13 @@
     right: 20px;
     z-index: 10000;
     pointer-events: none;
+    width: auto;
+    height: auto;
 }
 
 /* Notifications Toast (petites notifications en haut à droite) */
 .pdf-builder-notification {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -26,6 +29,8 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.2);
     transition: all 0.3s ease;
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .pdf-builder-notification-success {
