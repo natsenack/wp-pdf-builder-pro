@@ -141,7 +141,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 console.log("Tentative d'affichage du modal de première visite");
                 console.log("Modal element:", $("#first-visit-modal"));
                 $("#first-visit-modal").fadeIn();
-                console.log("Modal affiché");
+                console.log("Modal affiché"); // Version corrigée
                 
                 // Fermeture des modals
                 $(".close-modal, #start-exploring-btn").on("click", function() {
