@@ -310,7 +310,7 @@ class PdfBuilderAdmin
         }
 
         // Hook AJAX pour sauvegarder les paramètres
-        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
+        // add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']); // Fonction inexistante
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
         // add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajax_save_general_settings']); // Fonction inexistante
         // add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajax_save_performance_settings']); // Fonction inexistante
