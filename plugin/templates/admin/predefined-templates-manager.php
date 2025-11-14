@@ -137,13 +137,15 @@ class PDF_Builder_Predefined_Templates_Manager
                     }
                 });
                 
-                // Gestion du modal de première visite
-                <?php if ($show_first_visit_modal) : ?>
+                // Gestion du modal de première visite - AFFICHAGE FORCE POUR TEST
+                console.log("Tentative d'affichage du modal de première visite");
+                console.log("Modal element:", $("#first-visit-modal"));
                 $("#first-visit-modal").fadeIn();
-                <?php endif; ?>
+                console.log("Modal affiché");
                 
                 // Fermeture des modals
                 $(".close-modal, #start-exploring-btn").on("click", function() {
+                    console.log("Fermeture du modal");
                     $("#first-visit-modal").fadeOut();
                     // Marquer la première visite comme terminée
                     $.ajax({
