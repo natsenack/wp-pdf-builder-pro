@@ -9,11 +9,6 @@
     right: 20px;
     z-index: 10000;
     pointer-events: none;
-    /* DEBUG: Styles temporaires pour voir le container */
-    background: rgba(255, 0, 0, 0.1) !important;
-    border: 2px solid red !important;
-    min-width: 300px !important;
-    min-height: 50px !important;
 }
 
 /* Notifications Toast (petites notifications en haut à droite) */
@@ -31,11 +26,6 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.2);
     transition: all 0.3s ease;
-    /* DEBUG: Styles temporaires pour voir les notifications */
-    background: #ff6b6b !important;
-    color: white !important;
-    border: 2px solid #ff0000 !important;
-    pointer-events: auto !important;
 }
 
 .pdf-builder-notification-success {

@@ -2,34 +2,27 @@
  * JavaScript pour le système de notifications unifié de PDF Builder Pro
  */
 
-console.log('🔍 PDF Builder Notifications: Script loaded');
-
 (function($) {
     'use strict';
 
     class PDFBuilderNotifications {
         constructor() {
-            console.log('🔍 PDFBuilderNotifications: Constructor called');
             this.toastContainer = null;
             this.init();
         }
 
         init() {
-            console.log('🔍 PDFBuilderNotifications: init() called');
             this.createToastContainer();
             this.bindEvents();
             this.showQueuedToasts();
         }
 
         createToastContainer() {
-            console.log('🔍 PDFBuilderNotifications: createToastContainer() called');
             if (!$('#pdf-builder-toast-container').length) {
                 this.toastContainer = $('<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>');
                 $('body').append(this.toastContainer);
-                console.log('🔍 PDFBuilderNotifications: Toast container created and appended');
             } else {
                 this.toastContainer = $('#pdf-builder-toast-container');
-                console.log('🔍 PDFBuilderNotifications: Toast container already exists');
             }
         }
 
@@ -153,16 +146,12 @@ console.log('🔍 PDF Builder Notifications: Script loaded');
     }
 
     // Initialiser immédiatement (pas seulement dans document.ready)
-    console.log('🔍 PDFBuilderNotifications: Initializing immediately...');
     window.pdfBuilderNotifications = new PDFBuilderNotifications();
-    console.log('🔍 PDFBuilderNotifications: Instance created immediately');
 
     // Initialiser aussi quand le DOM est prêt (au cas où)
     $(document).ready(function() {
-        console.log('🔍 PDFBuilderNotifications: DOM ready, ensuring initialization...');
         if (!window.pdfBuilderNotifications) {
             window.pdfBuilderNotifications = new PDFBuilderNotifications();
-            console.log('🔍 PDFBuilderNotifications: Instance created in DOM ready');
         }
     });
 
