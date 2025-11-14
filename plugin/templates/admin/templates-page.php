@@ -75,7 +75,7 @@ var pdfBuilderAjax = {
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px; <?php echo (!$is_premium ? 'display: none;' : ''); ?>">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
         </div>
@@ -1071,16 +1071,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listener pour ouvrir la galerie de modèles
     const openGalleryBtn = document.getElementById('open-template-gallery');
     if (openGalleryBtn) {
-        openGalleryBtn.addEventListener('click', openTemplateGallery);
+        // Supprimé - géré plus bas avec logique freemium
+        // openGalleryBtn.addEventListener('click', openTemplateGallery);
     }
 });
 
-// Fermer les modales en cliquant en dehors
-document.getElementById('template-settings-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeTemplateSettings();
+// Fonction pour afficher les modals d'upgrade
+function showUpgradeModal(type) {
+    if (type === 'gallery') {
+        document.getElementById('upgrade-modal-gallery').style.display = 'flex';
+    } else if (type === 'template' || type === 'template_limit') {
+        document.getElementById('upgrade-modal-template').style.display = 'flex';
     }
-});
+}
 
 // Fermer la galerie de modèles en cliquant en dehors
 document.getElementById('template-gallery-modal').addEventListener('click', function(e) {
