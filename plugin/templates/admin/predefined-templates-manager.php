@@ -28,7 +28,6 @@ class PDF_Builder_Predefined_Templates_Manager
 // Paramètres développeur
         add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajaxDeveloperAuth']);
         add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajaxDeveloperLogout']);
-        add_action('wp_ajax_pdf_builder_mark_first_visit_complete', [$this, 'ajaxMarkFirstVisitComplete']);
     }
     /**
      * Ajouter le menu admin pour les modèles prédéfinis
@@ -45,7 +44,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 'pdf-builder-pro',
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
                 __('Modèles Prédéfinis', 'pdf-builder-pro'),
-                'pdf_builder_access',
+                'manage_options',
                 'pdf-builder-predefined-templates',
                 [$this, 'renderAdminPage']
             );
@@ -199,25 +198,35 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxDeveloperAuth()
     {
         try {
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST START =====');
+            
             // Vérifier les permissions
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
+                error_log('[PDF Builder Dev Auth] Permission check failed');
                 wp_send_json_error('Permissions insuffisantes');
             }
+            error_log('[PDF Builder Dev Auth] Permission check passed');
 
             // Vérifier le nonce
             if (!isset($_POST['nonce'])) {
+                error_log('[PDF Builder Dev Auth] Nonce not provided');
                 wp_send_json_error('Nonce manquant');
             }
             
             if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+                error_log('[PDF Builder Dev Auth] Nonce verification failed');
                 wp_send_json_error('Vérification de sécurité échouée');
             }
+            error_log('[PDF Builder Dev Auth] Nonce verification passed');
 
             $settings = get_option('pdf_builder_settings', []);
+            error_log('[PDF Builder Dev Auth] Settings retrieved: ' . print_r($settings, true));
             
             if (empty($settings['developer_enabled'])) {
+                error_log('[PDF Builder Dev Auth] Developer mode not enabled');
                 wp_send_json_error('Mode développeur désactivé');
             }
+            error_log('[PDF Builder Dev Auth] Developer mode is enabled');
 
             // Récupérer et sanitizer le mot de passe
             $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
@@ -226,19 +235,35 @@ class PDF_Builder_Predefined_Templates_Manager
             // Fallback: si aucun mot de passe n'est stocké, utiliser une clé par défaut
             if (empty($stored_password)) {
                 $default_password = '03T17h#20X!20@02_@31/?';
+                error_log('[PDF Builder Dev Auth] No stored password, using default key');
                 $stored_password = $default_password;
             }
 
+            // Debug: log DÉTAILLÉ pour troubleshooting
+            error_log('[PDF Builder Dev Auth] Password received: ' . strlen($password) . ' chars');
+            error_log('[PDF Builder Dev Auth] Password received (raw): ' . var_export($password, true));
+            error_log('[PDF Builder Dev Auth] Password received (bytes): ' . bin2hex($password));
+            
+            error_log('[PDF Builder Dev Auth] Password stored: ' . strlen($stored_password) . ' chars');
+            error_log('[PDF Builder Dev Auth] Password stored (raw): ' . var_export($stored_password, true));
+            error_log('[PDF Builder Dev Auth] Password stored (bytes): ' . bin2hex($stored_password));
+
             // Vérifier le mot de passe (comparaison stricte)
             if (empty($password)) {
+                error_log('[PDF Builder Dev Auth] Password is empty');
                 wp_send_json_error('Veuillez entrer un mot de passe');
             }
 
             // Comparaison avec trim() pour enlever les espaces
             $password_trimmed = trim($password);
             $stored_password_trimmed = trim($stored_password);
+            
+            error_log('[PDF Builder Dev Auth] Password trimmed: ' . var_export($password_trimmed, true));
+            error_log('[PDF Builder Dev Auth] Stored trimmed: ' . var_export($stored_password_trimmed, true));
 
             if ($password_trimmed !== $stored_password_trimmed) {
+                error_log('[PDF Builder Dev Auth] Passwords do not match after trim');
+                error_log('[PDF Builder Dev Auth] Comparison: "' . $password_trimmed . '" !== "' . $stored_password_trimmed . '"');
                 wp_send_json_error('Mot de passe incorrect');
             }
 
@@ -250,48 +275,37 @@ class PDF_Builder_Predefined_Templates_Manager
                 'timestamp' => time()
             ];
             update_option($dev_auth_key, $auth_data);
+            error_log('[PDF Builder Dev Auth] User ' . $user_id . ' authenticated successfully');
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (SUCCESS) =====');
             wp_send_json_success(['message' => 'Authentification réussie']);
         } catch (Exception $e) {
+            error_log('[PDF Builder Dev Auth] Exception: ' . $e->getMessage());
+            error_log('[PDF Builder Dev Auth] ===== AUTH REQUEST END (EXCEPTION) =====');
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
     /**
-     * AJAX - Marquer la première visite comme terminée
+     * AJAX - Déconnexion développeur
      */
-    public function ajaxMarkFirstVisitComplete()
+    public function ajaxDeveloperLogout()
     {
         try {
-            $this->markFirstVisitComplete();
-            wp_send_json_success(['message' => 'Première visite marquée comme terminée']);
+            $user_id = get_current_user_id();
+            $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
+            delete_option($dev_auth_key);
+            wp_send_json_success(['message' => 'Déconnexion réussie']);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
-    }
-    /**
-     * Vérifier si c'est la première visite de l'utilisateur sur la page des templates
-     */
-    private function isFirstVisit()
-    {
-        $user_id = get_current_user_id();
-        $meta_key = 'pdf_builder_templates_first_visit';
-        $has_visited = get_user_meta($user_id, $meta_key, true);
-        return empty($has_visited);
-    }
-
-    /**
-     * Marquer que l'utilisateur a vu le modal de première visite
-     */
-    private function markFirstVisitComplete()
-    {
-        $user_id = get_current_user_id();
-        $meta_key = 'pdf_builder_templates_first_visit';
-        update_user_meta($user_id, $meta_key, '1');
     }
     /**
      * Rendre la page admin
      */
     public function renderAdminPage()
     {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+        }
         // Vérifier l'authentification développeur
         $settings = get_option('pdf_builder_settings', []);
         if (empty($settings['developer_enabled'])) {
@@ -310,10 +324,6 @@ class PDF_Builder_Predefined_Templates_Manager
             return;
         }
         $templates = $this->getPredefinedTemplates();
-        
-        // Vérifier si c'est la première visite pour afficher le modal
-        $show_first_visit_modal = $this->isFirstVisit();
-        
         ?>
         <style>
         /* Styles de base inline pour la page des modèles prédéfinis */
@@ -591,66 +601,6 @@ class PDF_Builder_Predefined_Templates_Manager
                 </div>
             </div>
         </div>
-        <!-- Modale de première visite -->
-        <div id="first-visit-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content" style="max-width: 900px;">
-                <div class="modal-header">
-                    <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h4><?php _e('Bienvenue dans la Galerie de Modèles Prédéfinis !', 'pdf-builder-pro'); ?></h4>
-                        <p><?php _e('Découvrez nos modèles prêts à l\'emploi pour créer vos documents PDF professionnels.', 'pdf-builder-pro'); ?></p>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                        <!-- Modèle Facture -->
-                        <div class="template-showcase" style="border: 2px solid #007cba; border-radius: 8px; padding: 15px; background: #f8f9ff;">
-                            <div style="text-align: center; margin-bottom: 10px;">
-                                <span style="font-size: 2em;">🧾</span>
-                            </div>
-                            <h4 style="margin: 0 0 5px 0; color: #007cba;">Facture Moderne</h4>
-                            <p style="margin: 0; font-size: 13px; color: #666;">Modèle professionnel avec en-tête, tableau des produits et mentions légales.</p>
-                        </div>
-                        
-                        <!-- Modèle Devis -->
-                        <div class="template-showcase" style="border: 2px solid #28a745; border-radius: 8px; padding: 15px; background: #f8fff8;">
-                            <div style="text-align: center; margin-bottom: 10px;">
-                                <span style="font-size: 2em;">📋</span>
-                            </div>
-                            <h4 style="margin: 0 0 5px 0; color: #28a745;">Devis Complet</h4>
-                            <p style="margin: 0; font-size: 13px; color: #666;">Présentation claire des prestations avec conditions et validité.</p>
-                        </div>
-                        
-                        <!-- Modèle Personnalisé -->
-                        <div class="template-showcase" style="border: 2px solid #ffc107; border-radius: 8px; padding: 15px; background: #fffef8;">
-                            <div style="text-align: center; margin-bottom: 10px;">
-                                <span style="font-size: 2em;">🎨</span>
-                            </div>
-                            <h4 style="margin: 0 0 5px 0; color: #ffc107;">Modèle Personnalisé</h4>
-                            <p style="margin: 0; font-size: 13px; color: #666;">Créez votre propre modèle adapté à vos besoins spécifiques.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #e8f4fd; border: 1px solid #007cba; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h4 style="margin: 0 0 10px 0; color: #007cba;">💡 Comment utiliser les modèles :</h4>
-                        <ul style="margin: 0; padding-left: 20px; color: #333;">
-                            <li><strong>Parcourir :</strong> Explorez la galerie ci-dessous pour voir tous les modèles disponibles</li>
-                            <li><strong>Modifier :</strong> Cliquez sur "Éditer" pour personnaliser un modèle existant</li>
-                            <li><strong>Créer :</strong> Utilisez "Nouveau Modèle" pour partir d'une base vierge</li>
-                            <li><strong>Exporter :</strong> Sauvegardez vos créations pour les réutiliser</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <button id="start-exploring-btn" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 30px;">
-                            🚀 <?php _e('Commencer l\'exploration', 'pdf-builder-pro'); ?>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Modale d'aperçu -->
         <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
             <div class="modal-content">
@@ -664,37 +614,6 @@ class PDF_Builder_Predefined_Templates_Manager
             </div>
         </div>
         <?php
-
-        // Script pour afficher le modal de première visite
-        if ($show_first_visit_modal) {
-            ?>
-            <script>
-            jQuery(document).ready(function($) {
-                console.log('PDF Builder: Tentative d\'affichage du modal de première visite');
-                console.log('Modal element:', $("#first-visit-modal"));
-                $("#first-visit-modal").fadeIn();
-                console.log('Modal affiché');
-
-                // Gestionnaire pour fermer le modal et marquer la visite comme terminée
-                $(document).on('click', '#first-visit-modal .close-modal, #first-visit-modal #start-exploring-btn', function() {
-                    $('#first-visit-modal').fadeOut();
-                    // Marquer la première visite comme terminée
-                    $.ajax({
-                        url: ajaxurl,
-                        type: "POST",
-                        data: {
-                            action: "pdf_builder_mark_first_visit_complete",
-                            nonce: '<?php echo wp_create_nonce('pdf_builder_templates'); ?>'
-                        },
-                        success: function(response) {
-                            console.log('Première visite marquée comme terminée');
-                        }
-                    });
-                });
-            });
-            </script>
-            <?php
-        }
     }
     /**
      * Rendre le formulaire de connexion développeur
@@ -974,7 +893,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         try {
 // Vérifications de sécurité
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
             // Vérifier le nonce (obligatoire pour POST, optionnel pour GET depuis URL)
@@ -1032,6 +951,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 if (!rename($old_file_path, $new_file_path)) {
                     wp_send_json_error('Erreur lors du renommage du fichier');
                 }
+                error_log('PDF Builder: Template renamed from ' . $old_slug . ' to ' . $slug);
             }
             // Sauvegarde dans le fichier
             $file_path = $this->templates_dir . $slug . '.json';
@@ -1055,7 +975,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         try {
 // Vérifications de sécurité
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
@@ -1063,12 +983,17 @@ class PDF_Builder_Predefined_Templates_Manager
             if (empty($slug)) {
                 wp_send_json_error('Slug du modèle manquant');
             }
+            error_log('PDF Builder: Loading template with slug: ' . $slug);
+            error_log('PDF Builder: Templates dir: ' . $this->templates_dir);
             $template = $this->loadTemplateFromFile($slug);
             if (!$template) {
+                error_log('PDF Builder: Template not found for slug: ' . $slug);
                 wp_send_json_error('Modèle non trouvé');
             }
+            error_log('PDF Builder: Template loaded successfully: ' . $slug);
             wp_send_json_success($template);
         } catch (Exception $e) {
+            error_log('PDF Builder: Error loading template: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
@@ -1079,7 +1004,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         try {
 // Vérifications de sécurité
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
@@ -1107,7 +1032,7 @@ class PDF_Builder_Predefined_Templates_Manager
     public function ajaxRefreshNonce()
     {
         try {
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
             $fresh_nonce = wp_create_nonce('pdf_builder_predefined_templates_' . time() . '_' . wp_rand());
@@ -1120,7 +1045,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         try {
 // Vérifications de sécurité
-            if (!current_user_can('pdf_builder_access')) {
+            if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
             }
             check_ajax_referer('pdf_builder_predefined_templates', 'nonce');

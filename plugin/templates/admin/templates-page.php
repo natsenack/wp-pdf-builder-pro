@@ -10,12 +10,6 @@ if (!defined('ABSPATH')) {
 
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
-
-// Vérifier si c'est la première visite pour afficher le modal
-$user_id = get_current_user_id();
-$meta_key = 'pdf_builder_templates_first_visit';
-$has_visited = get_user_meta($user_id, $meta_key, true);
-$show_first_visit_modal = empty($has_visited);
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
@@ -39,6 +33,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
+        </div>
 
         <!-- Section de filtrage -->
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
@@ -1072,71 +1067,10 @@ document.addEventListener('keydown', function(e) {
 
 
 
-
-<style>
 .gallery-filter-btn.active {
     box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
     font-weight: bold !important;
 }
-
-/* Styles pour les modals */
-.pdf-builder-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.modal-content {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-}
-.modal-header h3 { margin: 0; }
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-}
-.modal-body { padding: 20px; }
-</style>
-
-<?php if ($show_first_visit_modal) : ?>
-<script>
-jQuery(document).ready(function($) {
-    // Rediriger vers la page des modèles prédéfinis où le modal existant s'ouvrira
-    window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
-});
-</script>
-<?php endif; ?>
-
-<script>
-jQuery(document).ready(function($) {
-    // Gestionnaire pour le bouton "Parcourir les Modèles"
-    $('#open-template-gallery').on('click', function(e) {
-        e.preventDefault();
-        window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
-    });
-});
-</script>
-
 
 
 </style>

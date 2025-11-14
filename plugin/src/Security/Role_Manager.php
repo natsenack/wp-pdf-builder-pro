@@ -35,26 +35,23 @@ class Role_Manager
     {
         // Vérifier la capacité spécifique 'pdf_builder_access'
         if ($cap === 'pdf_builder_access' || (isset($args[0]) && $args[0] === 'pdf_builder_access')) {
-            // Les administrateurs ont toujours accès
+// Les administrateurs ont toujours accès
             if (isset($allcaps['manage_options'])) {
-                $allcaps['pdf_builder_access'] = true;
-                return $allcaps;
+                return true;
             }
 
             // Vérifier si le rôle de l'utilisateur est autorisé
-            $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+            $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
             $user_roles = isset($user->roles) ? $user->roles : [];
-            $has_access = false;
             foreach ($user_roles as $role) {
                 if (in_array($role, $allowed_roles)) {
-                    $has_access = true;
-                    break;
+        // L'utilisateur a un rôle autorisé
+                    return true;
                 }
             }
 
-            // Ajouter ou retirer la capability selon les droits
-            $allcaps['pdf_builder_access'] = $has_access;
-            return $allcaps;
+            // Pas accès
+            return false;
         }
 
         return $allcaps;
@@ -77,8 +74,8 @@ class Role_Manager
      */
     public static function getAllowedRoles()
     {
-        $allowed = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
-        return is_array($allowed) ? $allowed : ['administrator', 'editor', 'shop_manager'];
+        $allowed = get_option('pdf_builder_allowed_roles', ['administrator']);
+        return is_array($allowed) ? $allowed : ['administrator'];
     }
 
     /**

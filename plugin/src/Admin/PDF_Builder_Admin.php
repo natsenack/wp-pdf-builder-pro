@@ -7,6 +7,8 @@
 
 namespace PDF_Builder\Admin;
 
+error_log('PDF Builder: PDF_Builder_Admin.php file loaded');
+
 // Importer les types/classes
 use Exception;
 use Error;
@@ -174,10 +176,10 @@ class PdfBuilderAdmin
         // Pas de transient pour les permissions d'admin
 
         // Récupérer les rôles autorisés depuis les options
-        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
 // S'assurer que c'est un tableau
         if (!is_array($allowed_roles)) {
-            $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+            $allowed_roles = ['administrator'];
         }
 
         // Vérifier si l'utilisateur a un des rôles autorisés
@@ -348,20 +350,20 @@ class PdfBuilderAdmin
     public function addAdminMenu()
     {
         // Menu principal avec icône distinctive
-        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 65);
+        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 65);
 
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
             'pdf-builder-pro',
             __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
             __('🏠 Accueil', 'pdf-builder-pro'),
-            'pdf_builder_access',
+            'manage_options',
             'pdf-builder-pro', // Même slug que le menu principal
             [$this, 'adminPage']
         );
 
         // Éditeur React unique (accessible via lien direct, masqué du menu)
-        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
         
         // Masquer le menu de l'éditeur React avec CSS et JavaScript
         add_action('admin_enqueue_scripts', function() {
@@ -376,10 +378,10 @@ class PdfBuilderAdmin
         });
 
         // Gestion des templates
-        add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-templates', [$this, 'templatesPage']);
+        add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 
         // Paramètres et configuration
-        add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-settings', [$this, 'settings_page']);
+        add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
     }
 
 
@@ -1108,6 +1110,9 @@ class PdfBuilderAdmin
      */
     public function enqueueAdminScripts($hook)
     {
+        // DEBUG: Log le hook reçu
+        error_log('PDF_Builder_Admin::enqueueAdminScripts called with hook: ' . $hook);
+        
         // Charger seulement sur nos pages admin (diagnostic/test retirés)
         // Note: WordPress remplace les tirets par des underscores dans les hooks
         // Exemple: slug 'pdf-builder-settings' devient hook 'pdf-builder_page_pdf-builder-settings'
@@ -1123,9 +1128,12 @@ class PdfBuilderAdmin
 
         // Vérification des hooks
         if (!in_array($hook, $allowed_hooks)) {
+            error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
             return;
         }
         
+        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading assets for ' . $hook);
+
         // Charger les scripts
         $this->loadAdminScripts($hook);
     }
