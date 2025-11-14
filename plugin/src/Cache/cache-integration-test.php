@@ -86,7 +86,8 @@ class CacheIntegrationTest
     }
 }
 
-// Fonction de test AJAX simplifiée
+// Fonction de test AJAX simplifiée - DÉPLACÉE VERS PDF_Builder_Admin::ajax_simple_test()
+/*
 function pdf_builder_simple_test_ajax()
 {
     try {
@@ -101,9 +102,10 @@ function pdf_builder_simple_test_ajax()
         wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
     }
 }
-// Hook pour utilisateurs authentifiés ET non-authentifiés
-add_action('wp_ajax_pdf_builder_simple_test', 'pdf_builder_simple_test_ajax');
-add_action('wp_ajax_nopriv_pdf_builder_simple_test', 'pdf_builder_simple_test_ajax');
+// Hook pour utilisateurs authentifiés ET non-authentifiés - DÉPLACÉ VERS PDF_Builder_Admin
+// add_action('wp_ajax_pdf_builder_simple_test', 'pdf_builder_simple_test_ajax');
+// add_action('wp_ajax_nopriv_pdf_builder_simple_test', 'pdf_builder_simple_test_ajax');
+*/
 
 // Fonction pour exécuter les tests via AJAX
 function pdf_builder_cache_test_ajax()

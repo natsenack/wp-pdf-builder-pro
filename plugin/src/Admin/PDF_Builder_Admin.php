@@ -287,6 +287,10 @@ class PdfBuilderAdmin
         add_action('wp_ajax_pdf_builder_reset_settings', [$this, 'ajax_reset_settings']);
         add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajax_check_integrity']);
 
+        // Test AJAX simple pour l'intégration du cache
+        add_action('wp_ajax_pdf_builder_simple_test', [$this, 'ajax_simple_test']);
+        add_action('wp_ajax_nopriv_pdf_builder_simple_test', [$this, 'ajax_simple_test']);
+
         // Hook pour la compatibilité avec les anciens liens template_id
         add_action('admin_init', [$this, 'handle_legacy_template_links']);
     }
@@ -6059,6 +6063,24 @@ class PdfBuilderAdmin
             ]);
         } catch (Exception $e) {
             wp_send_json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Test AJAX simple pour vérifier l'intégration du cache
+     */
+    public function ajax_simple_test()
+    {
+        try {
+            // Vérifier que WordPress est chargé
+            if (!function_exists('wp_send_json_success')) {
+                throw new Exception('wp_send_json_success function not available');
+            }
+
+            wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+        } catch (Exception $e) {
+            error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
+            wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
         }
     }
 }
