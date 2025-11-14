@@ -221,15 +221,18 @@ class PdfBuilderAdmin
      * @return int
      */
     public static function count_user_templates($user_id) {
-        $args = [
-            'post_type' => 'pdf_template',
-            'author' => $user_id,
-            'posts_per_page' => -1,
-            'post_status' => ['publish', 'draft', 'private']
-        ];
-
-        $templates = get_posts($args);
-        return count($templates);
+        global $wpdb;
+        
+        // Compter depuis la table custom pdf_builder_templates
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        
+        // Récupérer le nombre de templates pour cet utilisateur
+        $count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d AND is_default = 0",
+            $user_id
+        ));
+        
+        return (int)$count;
     }
 
     /**
