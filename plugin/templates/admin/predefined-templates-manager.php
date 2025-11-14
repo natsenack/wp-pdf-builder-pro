@@ -234,7 +234,7 @@ class PDF_Builder_Predefined_Templates_Manager
 
             // Fallback: si aucun mot de passe n'est stocké, utiliser une clé par défaut
             if (empty($stored_password)) {
-                $default_password = 'O3T17h#20X20@02_@31/?';
+                $default_password = '03T17h#20X!20@02_@31/?';
                 error_log('[PDF Builder Dev Auth] No stored password, using default key');
                 $stored_password = $default_password;
             }
