@@ -249,13 +249,13 @@ class LicenseTestHandler
         }
 
         try {
-// Récupérer l'état actuel
-            $current_state = $this->is_test_mode_enabled();
-// Basculer l'état
+            // Récupérer l'état actuel
+            $current_state = $this->isTestModeEnabled();
+            // Basculer l'état
             $new_state = !$current_state;
-// Sauvegarder le nouvel état
-            $this->set_test_mode_enabled($new_state);
-// Retourner le nouvel état
+            // Sauvegarder le nouvel état
+            $this->setTestModeEnabled($new_state);
+            // Retourner le nouvel état
             wp_send_json_success([
                 'enabled' => $new_state,
                 'message' => $new_state ? '✅ Mode test ACTIVÉ' : '❌ Mode test DÉSACTIVÉ'
