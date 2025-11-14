@@ -1185,8 +1185,11 @@
                     }
 
                     function submitDeactivateForm() {
+                        console.log('submitDeactivateForm called');
                         var form = document.getElementById('deactivate_form');
+                        console.log('Form element:', form);
                         if (form) {
+                            console.log('Form found, submitting...');
                             // Ajouter le champ pour indiquer la désactivation
                             var input = document.createElement('input');
                             input.type = 'hidden';
@@ -1196,6 +1199,8 @@
                             form.submit();
                         } else {
                             console.error('Deactivate form not found');
+                            console.log('All forms on page:', document.forms);
+                            console.log('Element with id deactivate_form:', document.getElementById('deactivate_form'));
                             alert('Erreur: Formulaire de désactivation introuvable. Veuillez rafraîchir la page.');
                         }
                     }
