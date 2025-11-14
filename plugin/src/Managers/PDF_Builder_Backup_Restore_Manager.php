@@ -503,8 +503,6 @@ class PdfBuilderBackupRestoreManager
                 return $backups;
             }
 
-            error_log('PDF Builder: glob found ' . count($files) . ' files: ' . implode(', ', $files));
-
             foreach ($files as $file) {
                 if (!file_exists($file)) {
                     error_log('PDF Builder: Fichier de sauvegarde inexistant: ' . $file);
@@ -557,14 +555,10 @@ class PdfBuilderBackupRestoreManager
      */
     public function deleteBackup($filename)
     {
-        error_log('PDF Builder: deleteBackup called with: ' . $filename);
-
         try {
             $filepath = $this->backup_dir . $filename;
-            error_log('PDF Builder: filepath: ' . $filepath);
 
             if (!file_exists($filepath)) {
-                error_log('PDF Builder: file does not exist, returning success');
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
@@ -572,17 +566,14 @@ class PdfBuilderBackupRestoreManager
             }
 
             if (unlink($filepath)) {
-                error_log('PDF Builder: unlink success');
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
                 ];
             } else {
-                error_log('PDF Builder: unlink failed');
                 throw new \Exception(__('Erreur lors de la suppression du fichier.', 'pdf-builder-pro'));
             }
         } catch (\Exception $e) {
-            error_log('PDF Builder: deleteBackup exception: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -801,8 +792,6 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxDeleteBackup()
     {
-        error_log('PDF Builder: ajaxDeleteBackup called');
-
         check_ajax_referer('pdf_builder_backup', 'nonce');
 
         if (!current_user_can('manage_options')) {
@@ -810,14 +799,12 @@ class PdfBuilderBackupRestoreManager
         }
 
         $filename = sanitize_file_name($_POST['filename'] ?? '');
-        error_log('PDF Builder: filename to delete: ' . $filename);
 
         if (empty($filename)) {
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
         }
 
         $result = $this->deleteBackup($filename);
-        error_log('PDF Builder: delete result: ' . ($result['success'] ? 'success' : 'error') . ' - ' . $result['message']);
 
         if ($result['success']) {
             wp_send_json_success(['message' => $result['message']]);
