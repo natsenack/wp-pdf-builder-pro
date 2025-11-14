@@ -18,12 +18,17 @@
         }
 
         createToastContainer() {
+            console.log('NOTIFICATION: Creating toast container');
             if (!$('#pdf-builder-toast-container').length) {
                 this.toastContainer = $('<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>');
                 $('body').append(this.toastContainer);
+                console.log('NOTIFICATION: Container created and appended to body');
+                console.log('NOTIFICATION: Container in DOM:', $('#pdf-builder-toast-container').length);
             } else {
                 this.toastContainer = $('#pdf-builder-toast-container');
+                console.log('NOTIFICATION: Using existing container');
             }
+            console.log('NOTIFICATION: Container element:', this.toastContainer[0]);
         }
 
         bindEvents() {
@@ -47,8 +52,13 @@
         }
 
         showToast(message, type = 'success', duration = 6000) {
+            console.log('NOTIFICATION: ===== showToast called =====');
+            console.log('NOTIFICATION: Message:', message);
+            console.log('NOTIFICATION: Type:', type);
+            console.log('NOTIFICATION: Duration:', duration);
 
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            console.log('NOTIFICATION: Generated ID:', toastId);
 
             const toast = $(`
                 <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}" style="pointer-events: auto;">
@@ -58,11 +68,20 @@
                 </div>
             `);
 
+            console.log('NOTIFICATION: Toast HTML created:', toast.prop('outerHTML'));
+            console.log('NOTIFICATION: Toast has classes:', toast.hasClass('pdf-builder-notification'), toast.hasClass(`pdf-builder-notification-${type}`));
+
             if (!this.toastContainer || this.toastContainer.length === 0) {
                 this.createToastContainer();
             }
 
             this.toastContainer.append(toast);
+
+            // Vérifier immédiatement après ajout
+            console.log('NOTIFICATION: Toast added to DOM');
+            console.log('NOTIFICATION: Toast element:', toast[0]);
+            console.log('NOTIFICATION: Toast computed style:', window.getComputedStyle(toast[0]));
+            console.log('NOTIFICATION: Container computed style:', window.getComputedStyle(this.toastContainer[0]));
 
             // Animation d'entrée
             toast.css({
@@ -71,34 +90,59 @@
             }).animate({
                 'opacity': '1',
                 'transform': 'translateX(0)'
-            }, 300);
+            }, 300, function() {
+                console.log('NOTIFICATION: Animation completed for toast:', toastId);
+                console.log('NOTIFICATION: Final toast style:', window.getComputedStyle(toast[0]));
+            });
 
             let dismissTimeout;
 
             // Fonction pour démarrer le timer d'auto-dismiss
             const startDismissTimer = () => {
-                if (dismissTimeout) clearTimeout(dismissTimeout);
+                console.log('NOTIFICATION: startDismissTimer called for:', toastId);
+                if (dismissTimeout) {
+                    console.log('NOTIFICATION: Clearing existing timeout');
+                    clearTimeout(dismissTimeout);
+                }
+                console.log('NOTIFICATION: Setting timeout for', duration, 'ms');
                 dismissTimeout = setTimeout(() => {
+                    console.log('NOTIFICATION: Timeout expired, dismissing:', toastId);
                     this.dismissNotification(toast);
                 }, duration);
+                console.log('NOTIFICATION: Timeout set:', dismissTimeout);
             };
 
             // Fonction pour arrêter le timer
             const stopDismissTimer = () => {
+                console.log('NOTIFICATION: stopDismissTimer called for:', toastId);
                 if (dismissTimeout) {
+                    console.log('NOTIFICATION: Clearing timeout:', dismissTimeout);
                     clearTimeout(dismissTimeout);
                     dismissTimeout = null;
+                    console.log('NOTIFICATION: Timeout cleared');
+                } else {
+                    console.log('NOTIFICATION: No timeout to clear');
                 }
             };
 
             // Démarrer le timer initial
             if (duration > 0) {
+                console.log('NOTIFICATION: Starting timer with duration:', duration);
                 startDismissTimer();
+            } else {
+                console.log('NOTIFICATION: No timer (duration = 0)');
             }
 
             // Gérer les événements souris pour pause/reprise
-            toast.on('mouseenter', stopDismissTimer);
-            toast.on('mouseleave', startDismissTimer);
+            console.log('NOTIFICATION: Setting up mouse events');
+            toast.on('mouseenter', function() {
+                console.log('NOTIFICATION: Mouse enter - stopping timer');
+                stopDismissTimer();
+            });
+            toast.on('mouseleave', function() {
+                console.log('NOTIFICATION: Mouse leave - starting timer');
+                startDismissTimer();
+            });
 
             return toastId;
         }
@@ -122,12 +166,15 @@
         }
 
         dismissNotification($notification) {
+            console.log('NOTIFICATION: dismissNotification called for:', $notification.attr('id'));
             // Nettoyer les event listeners et timers
             $notification.off('mouseenter mouseleave');
+            console.log('NOTIFICATION: Starting dismiss animation');
             $notification.animate({
                 'opacity': '0',
                 'transform': 'translateX(100%)'
             }, 300, function() {
+                console.log('NOTIFICATION: Dismiss animation complete, removing element');
                 $(this).remove();
             });
         }
