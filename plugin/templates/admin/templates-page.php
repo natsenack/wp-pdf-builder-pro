@@ -1078,13 +1078,51 @@ document.addEventListener('keydown', function(e) {
     box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
     font-weight: bold !important;
 }
+
+/* Styles pour les modals */
+.pdf-builder-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+.modal-header h3 { margin: 0; }
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+.modal-body { padding: 20px; }
 </style>
 
 <?php if ($show_first_visit_modal) : ?>
 <script>
 jQuery(document).ready(function($) {
-    // Rediriger automatiquement vers la page des modèles prédéfinis pour la première visite
-    window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
+    // Ouvrir automatiquement le modal de galerie à la première visite
+    $('#open-template-gallery').trigger('click');
 });
 </script>
 <?php endif; ?>
@@ -1092,8 +1130,28 @@ jQuery(document).ready(function($) {
 <script>
 jQuery(document).ready(function($) {
     // Gestionnaire pour le bouton "Parcourir les Modèles"
-    $('#open-template-gallery').on('click', function() {
-        window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-predefined-templates'); ?>';
+    $('#open-template-gallery').on('click', function(e) {
+        e.preventDefault();
+        
+        // Afficher le modal existant
+        $('#template-gallery-modal').fadeIn();
+    });
+    
+    // Gestionnaire pour fermer le modal
+    $(document).on('click', '#template-gallery-modal .close-modal, #template-gallery-modal #start-exploring-btn', function() {
+        $('#template-gallery-modal').fadeOut();
+        // Marquer la première visite comme terminée
+        $.ajax({
+            url: ajaxurl,
+            type: "POST",
+            data: {
+                action: "pdf_builder_mark_first_visit_complete",
+                nonce: pdfBuilderTemplatesNonce
+            },
+            success: function(response) {
+                console.log('Première visite marquée comme terminée');
+            }
+        });
     });
 });
 </script>

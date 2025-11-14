@@ -314,11 +314,6 @@ class PDF_Builder_Predefined_Templates_Manager
         // Vérifier si c'est la première visite pour afficher le modal
         $show_first_visit_modal = $this->isFirstVisit();
         
-        // Marquer automatiquement la première visite comme terminée quand on accède à la page
-        if ($show_first_visit_modal) {
-            $this->markFirstVisitComplete();
-        }
-        
         ?>
         <style>
         /* Styles de base inline pour la page des modèles prédéfinis */
