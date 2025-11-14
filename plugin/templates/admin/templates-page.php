@@ -75,7 +75,7 @@ var pdfBuilderAjax = {
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px; <?php echo (!$is_premium ? 'display: none;' : ''); ?>">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
         </div>
@@ -105,10 +105,10 @@ var pdfBuilderAjax = {
             <div class="notice notice-success" style="margin: 15px 0; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #155724;">
                     <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-                    <?php _e('Templates Gratuits Disponibles', 'pdf-builder-pro'); ?>
+                    <?php _e('Créez Votre Premier Template', 'pdf-builder-pro'); ?>
                 </h4>
                 <p style="margin: 0; color: #155724;">
-                    <?php _e('Découvrez nos 3 templates professionnels gratuits : Modern, Classic et Corporate. Créez-en un personnalisé avec Premium !', 'pdf-builder-pro'); ?>
+                    <?php _e('Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !', 'pdf-builder-pro'); ?>
                 </p>
             </div>
         <?php endif; ?>
@@ -1219,6 +1219,40 @@ document.addEventListener('keydown', function(e) {
     </div>
 </div>
 
+<!-- Modal d'upgrade pour galerie de modèles -->
+<div id="upgrade-modal-gallery" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+    <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #23282d; font-size: 24px;">🎨 Modèles Prédéfinis Premium</h3>
+            <button class="modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 30px;">
+            <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
+                <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🖼️</div>
+                <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Galerie de Modèles Professionnels</h4>
+                <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                    Accédez à notre collection de templates professionnels prédéfinis pour factures, devis et plus encore.
+                </p>
+                <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>10+ templates professionnels</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Factures, devis, contrats</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Designs modernes et élégants</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Prêts à personnaliser</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Mises à jour régulières</strong></li>
+                </ul>
+            </div>
+            <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
+                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">69€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
+                <p style="margin: 10px 0 20px 0; opacity: 0.9;">Paiement unique, pas d'abonnement</p>
+                <a href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
+                    <span class="dashicons dashicons-cart" style="margin-right: 5px;"></span>
+                    Commander Maintenant
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
@@ -1265,6 +1299,18 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
         console.error('Erreur vérification limite:', error);
         showUpgradeModal('template');
     });
+});
+
+// Gestionnaire pour bouton galerie de modèles (uniquement premium)
+document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    <?php if ($is_premium): ?>
+        // Ouvrir la galerie pour utilisateurs premium
+        document.getElementById('template-gallery-modal').style.display = 'flex';
+    <?php else: ?>
+        // Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal('gallery');
+    <?php endif; ?>
 });
 
 // Fermer modal au clic sur overlay ou bouton close
