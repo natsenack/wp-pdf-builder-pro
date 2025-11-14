@@ -5712,9 +5712,16 @@ class PdfBuilderAdmin
     {
         try {
             error_log('PDF Builder: ajax_get_template called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            // Vérifier les permissions - permettre aux utilisateurs connectés de charger les templates
+            // Au lieu de manage_options qui est trop restrictif, on utilise read pour les utilisateurs connectés
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier que l'utilisateur a au moins les droits de lecture
+            if (!current_user_can('read')) {
+                wp_send_json_error('Permissions insuffisantes - droits de lecture requis');
                 return;
             }
 
