@@ -47,7 +47,6 @@
         }
 
         showToast(message, type = 'success', duration = 6000) {
-            console.log('🔍 showToast called with:', message, type, duration);
 
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
@@ -59,17 +58,11 @@
                 </div>
             `);
 
-            console.log('🔍 Toast element created');
-            console.log('🔍 Toast container exists:', !!this.toastContainer);
-            console.log('🔍 Toast container length:', this.toastContainer ? this.toastContainer.length : 'N/A');
-
             if (!this.toastContainer || this.toastContainer.length === 0) {
-                console.error('🔍 No toast container found, creating one...');
                 this.createToastContainer();
             }
 
             this.toastContainer.append(toast);
-            console.log('🔍 Toast appended to container');
 
             // Animation d'entrée
             toast.css({
@@ -80,15 +73,12 @@
                 'transform': 'translateX(0)'
             }, 300);
 
-            console.log('🔍 Animation started');
-
             let dismissTimeout;
 
             // Fonction pour démarrer le timer d'auto-dismiss
             const startDismissTimer = () => {
                 if (dismissTimeout) clearTimeout(dismissTimeout);
                 dismissTimeout = setTimeout(() => {
-                    console.log('🔍 Auto-dismiss triggered for toast:', toastId);
                     this.dismissNotification(toast);
                 }, duration);
             };
@@ -160,33 +150,20 @@
     }
 
     // Initialiser immédiatement (pas seulement dans document.ready)
-    console.log('🔍 Initializing PDFBuilderNotifications immediately');
     window.pdfBuilderNotifications = new PDFBuilderNotifications();
-    console.log('🔍 PDFBuilderNotifications instance created:', !!window.pdfBuilderNotifications);
 
     // Initialiser aussi quand le DOM est prêt (au cas où)
     $(document).ready(function() {
-        console.log('🔍 DOM ready, checking PDFBuilderNotifications');
         if (!window.pdfBuilderNotifications) {
-            console.log('🔍 Creating PDFBuilderNotifications in DOM ready');
             window.pdfBuilderNotifications = new PDFBuilderNotifications();
-        } else {
-            console.log('🔍 PDFBuilderNotifications already exists');
         }
     });
 
     // API globale compatible avec le code PHP
     window.PDF_Builder_Notification_Manager = {
         show_toast: function(message, type, duration) {
-            console.log('🔍 PDF_Builder_Notification_Manager.show_toast called:', message, type, duration);
-            console.log('🔍 window.pdfBuilderNotifications exists:', !!window.pdfBuilderNotifications);
             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
-                console.log('🔍 Calling showToast method');
-                const result = window.pdfBuilderNotifications.showToast(message, type, duration);
-                console.log('🔍 showToast result:', result);
-                return result;
-            } else {
-                console.error('🔍 pdfBuilderNotifications not available');
+                return window.pdfBuilderNotifications.showToast(message, type, duration);
             }
         },
         show_inline: function(message, type, target) {
