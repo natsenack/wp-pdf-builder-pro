@@ -23,7 +23,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 
     <!-- Debug section removed for production: API debug UI and tests have been stripped -->
 
-    <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
 
         <div style="margin: 20px 0;">
@@ -36,9 +36,9 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
         </div>
 
         <!-- Section de filtrage -->
-        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
                 <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
                 <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
                 <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
@@ -112,10 +112,10 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
 
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
 
                     // Conteneur pour organiser le contenu de la carte
-                    echo '<div style="display: flex; flex-direction: column; height: 100%;">';
+                    echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
 
                     // Badge du type de template en haut à gauche
 
@@ -143,7 +143,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
-                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo $type_label;
                     echo '</div>';
 
@@ -152,12 +152,12 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
                     echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
                     echo '</div>';
-                    echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1;">';
+                    echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1; -webkit-flex-grow: 1; -moz-flex-grow: 1; -ms-flex-grow: 1; -o-flex-grow: 1;">';
                     foreach ($features as $feature) {
                         echo '<div>' . $feature . '</div>';
                     }
                     echo '</div>';
-                    echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
+                    echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
@@ -176,23 +176,23 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 
         <!-- Modale de la galerie de modèles prédéfinis -->
         <div id="template-gallery-modal" class="template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-            <div class="template-modal-content" style="background: #fff; border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <div class="template-modal-header" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: space-between; -webkit-justify-content: space-between; -moz-justify-content: space-between; -ms-justify-content: space-between; -o-justify-content: space-between; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Choisissez un modèle professionnel pour commencer</p>
                     </div>
-                    <button onclick="closeTemplateGallery()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+                    <button onclick="closeTemplateGallery()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%; -o-border-radius: 50%; width: 40px; height: 40px; display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; justify-content: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center;">×</button>
                 </div>
 
                 <div style="padding: 30px; max-height: calc(90vh - 120px); overflow-y: auto;">
                     <!-- Filtres de catégorie -->
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px;">📄 Tous</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                        <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
+                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📄 Tous</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
                             <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button> -->
                             <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button> -->
@@ -303,7 +303,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                         <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
 
                         <div style="margin-bottom: 15px;">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
+                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
                                 <input type="checkbox" id="template-public" style="margin-right: 8px;">
                                 <span>Template public (visible par tous les utilisateurs)</span>
                             </label>
@@ -341,7 +341,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                     </div>
                 </div>
 
-                <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+                <div class="template-modal-footer" style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: end; -webkit-justify-content: flex-end; -moz-box-pack: end; -ms-flex-pack: end; justify-content: flex-end; -webkit-gap: 10px; -moz-gap: 10px; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
                     <button onclick="closeTemplateSettings()" class="button button-secondary">Annuler</button>
                     <button onclick="saveTemplateSettings()" class="button button-primary">💾 Enregistrer</button>
                 </div>
@@ -625,9 +625,9 @@ function deleteTemplate(templateId, templateName) {
         success: function(response) {
             if (response.success) {
                 // Succès - supprimer la carte du DOM avec animation
-                templateCard.style.transition = 'all 0.3s ease';
+                templateCard.style.transition = '-webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease';
                 templateCard.style.opacity = '0';
-                templateCard.style.transform = 'scale(0.95)';
+                templateCard.style.transform = '-webkit-transform: scale(0.95); -moz-transform: scale(0.95); -ms-transform: scale(0.95); -o-transform: scale(0.95); transform: scale(0.95)';
 
                 setTimeout(() => {
                     templateCard.remove();
@@ -750,7 +750,15 @@ function showSuccessMessage(message) {
         background: #28a745;
         color: white;
         padding: 12px 20px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
         border-radius: 4px;
+        -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -o-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         z-index: 100;
         font-weight: bold;
@@ -762,7 +770,7 @@ function showSuccessMessage(message) {
 
     // Faire disparaître le message après 3 secondes
     setTimeout(() => {
-        messageDiv.style.transition = 'opacity 0.5s';
+        messageDiv.style.transition = '-webkit-transition: opacity 0.5s; -moz-transition: opacity 0.5s; -o-transition: opacity 0.5s; transition: opacity 0.5s';
         messageDiv.style.opacity = '0';
         setTimeout(() => messageDiv.remove(), 500);
     }, 3000);
@@ -784,7 +792,15 @@ function showErrorMessage(message) {
         background: #dc3545;
         color: white;
         padding: 12px 20px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
         border-radius: 4px;
+        -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        -o-box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         z-index: 100;
         font-weight: bold;
@@ -796,7 +812,7 @@ function showErrorMessage(message) {
 
     // Faire disparaître le message après 5 secondes
     setTimeout(() => {
-        messageDiv.style.transition = 'opacity 0.5s';
+        messageDiv.style.transition = '-webkit-transition: opacity 0.5s; -moz-transition: opacity 0.5s; -o-transition: opacity 0.5s; transition: opacity 0.5s';
         messageDiv.style.opacity = '0';
         setTimeout(() => messageDiv.remove(), 500);
     }, 5000);
@@ -1027,10 +1043,18 @@ document.addEventListener('keydown', function(e) {
 @keyframes modalSlideIn {
     from {
         opacity: 0;
+        -webkit-transform: translateY(-50px) scale(0.9);
+        -moz-transform: translateY(-50px) scale(0.9);
+        -ms-transform: translateY(-50px) scale(0.9);
+        -o-transform: translateY(-50px) scale(0.9);
         transform: translateY(-50px) scale(0.9);
     }
     to {
         opacity: 1;
+        -webkit-transform: translateY(0) scale(1);
+        -moz-transform: translateY(0) scale(1);
+        -ms-transform: translateY(0) scale(1);
+        -o-transform: translateY(0) scale(1);
         transform: translateY(0) scale(1);
     }
 }
@@ -1050,6 +1074,10 @@ document.addEventListener('keydown', function(e) {
 .template-modal-content input:focus,
 .template-modal-content textarea:focus {
     border-color: #007cba;
+    -webkit-box-shadow: 0 0 0 1px #007cba;
+    -moz-box-shadow: 0 0 0 1px #007cba;
+    -ms-box-shadow: 0 0 0 1px #007cba;
+    -o-box-shadow: 0 0 0 1px #007cba;
     box-shadow: 0 0 0 1px #007cba;
     outline: none;
 }
@@ -1068,6 +1096,10 @@ document.addEventListener('keydown', function(e) {
 
 
 .gallery-filter-btn.active {
+    -webkit-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -moz-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -ms-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -o-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
     box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
     font-weight: bold !important;
 }

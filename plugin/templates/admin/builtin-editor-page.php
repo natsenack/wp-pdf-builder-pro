@@ -106,7 +106,7 @@ function pdf_builder_builtin_templates_list_page()
         <script type="text/template" id="template-list-item-template">
             <div class="template-list-item" data-template-id="<%= id %>">
                 <div class="template-thumbnail">
-                    <div class="template-preview-mini" style="width: 80px; height: 60px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <div class="template-preview-mini" style="width: 80px; height: 60px; background: #f5f5f5; border: 1px solid #ddd; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px;">
                         📄
                     </div>
                 </div>

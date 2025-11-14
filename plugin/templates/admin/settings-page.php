@@ -628,7 +628,7 @@
                                 🧪 Tester l'intégration du cache
                             </button>
                             <span id="cache-test-results" style="margin-left: 10px;"></span>
-                            <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; border-radius: 4px; color: #155724;"></div>
+                            <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
                         </td>
                     </tr>
                     <tr>
@@ -645,9 +645,9 @@
 
                 <h3 class="section-title">🏢 Informations Entreprise</h3>
 
-                <div style="padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="padding: 20px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; margin-bottom: 20px;">
                 <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
-                <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <div style="background: white; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; border-radius: 6px; margin-bottom: 20px;">
                     <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
                     <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
                     $address = get_option('woocommerce_store_address', '');
@@ -668,7 +668,7 @@
                     Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
                     </p>
 
-                    <table class="form-table" style="background: white; padding: 15px; border-radius: 6px;">
+                    <table class="form-table" style="background: white; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; border-radius: 6px;">
                         <tr>
                             <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                             <td>
@@ -783,7 +783,7 @@
                     if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
                     // Mode DÉMO : Activation de clés réelles désactivée
                         // Les clés premium réelles seront validées une fois le système de licence en production
-                        wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
+                        wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
                                 <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
                                 <p><strong>La validation des clés premium n\'est pas encore active.</strong></p>
                                 <p>Pour tester les fonctionnalités premium, veuillez :</p>
@@ -792,7 +792,7 @@
                                     <li>Cliquez sur <strong>Générer une clé de test</strong></li>
                                     <li>La clé TEST s\'activera automatiquement</li>
                                 </ol>
-                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
+                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -ms-border-radius: 5px; -o-border-radius: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 
@@ -832,12 +832,12 @@
                 ?>
 
                     <!-- Statut de la licence -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <h3 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h3>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px;">
+                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
-                            <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                            <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</div>
                                 <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
                                     <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
@@ -850,7 +850,7 @@
                             <!-- Carte Mode Test (si applicable) -->
                             <?php if (!empty($test_key)) :
                                 ?>
-                            <div style="border: 3px solid #ffc107; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); box-shadow: 0 4px 6px rgba(255,193,7,0.2); transition: transform 0.2s;">
+                            <div style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
                                 <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
                                     🧪 TEST (Dev)
@@ -865,7 +865,7 @@
                             <!-- Carte Date d'expiration -->
                             <?php if ($is_premium && $license_expires) :
                                 ?>
-                            <div style="border: 3px solid #17a2b8; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); box-shadow: 0 4px 6px rgba(23,162,184,0.2); transition: transform 0.2s;">
+                            <div style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</div>
                                 <div style="font-size: 26px; font-weight: 900; color: #0c5460; margin-bottom: 8px;">
                                     <?php echo date('d/m/Y', strtotime($license_expires)); ?>
@@ -896,8 +896,8 @@
 
                             if (!$diff->invert && $diff->days <= 30 && $diff->days > 0) {
                                 ?>
-                                <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 20px; -webkit-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -moz-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -ms-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -o-box-shadow: 0 3px 8px rgba(255,193,7,0.2); box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                                    <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
                                         <div style="font-size: 32px; flex-shrink: 0;">⏰</div>
                                         <div>
                                             <strong style="font-size: 16px; color: #856404; display: block; margin-bottom: 4px;">Votre licence expire bientôt</strong>
@@ -916,8 +916,8 @@
                         <!-- Détails de la clé -->
                         <?php if ($is_premium || !empty($test_key)) :
                             ?>
-                        <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; border-radius: 8px; padding: 20px; margin-top: 25px; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 25px; -webkit-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -moz-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -ms-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -o-box-shadow: 0 2px 4px rgba(0,123,255,0.1); box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
+                            <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 15px;">
                                 <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
                                 <?php if ($is_premium) :
                                     ?>
@@ -935,7 +935,7 @@
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
                                     <td style="padding: 8px 0; font-weight: 500; width: 150px;">Site actuel :</td>
                                     <td style="padding: 8px 0;">
-                                        <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd; color: #007bff;">
+                                        <code style="background: #f0f0f0; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ddd; color: #007bff;">
                                             <?php echo esc_html(home_url()); ?>
                                         </code>
                                     </td>
@@ -946,7 +946,7 @@
                                 <tr style="border-bottom: 2px solid #cce5ff;">
                                     <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé Premium :</td>
                                     <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd;">
+                                        <code style="background: #fff; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ddd;">
                                             <?php
                                             $key = $license_key;
                                             $visible_start = substr($key, 0, 6);
@@ -965,7 +965,7 @@
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
                                     <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé de Test :</td>
                                     <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; border: 1px solid #ffc107;">
+                                        <code style="background: #fff3cd; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ffc107;">
                                             <?php
                                             $test = $test_key;
                                             echo substr($test, 0, 6) . '••••••••••••••••' . substr($test, -6);

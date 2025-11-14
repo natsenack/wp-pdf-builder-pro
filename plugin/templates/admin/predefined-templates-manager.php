@@ -458,7 +458,7 @@ class PDF_Builder_Predefined_Templates_Manager
         .modal-body { padding: 20px; }
         </style>
         <div class="wrap">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 20px;">
                 <h1 style="margin: 0;"><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
                 <button id="developer-logout-btn" class="button button-secondary" style="background: #dc3545; border-color: #dc3545; color: white;">
                     🚪 <?php _e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
@@ -699,7 +699,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
                     <div class="form-row">
                         <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
-                        <div style="position: relative; display: flex; align-items: center;">
+                        <div style="position: relative; display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center;">
                             <input type="password" id="developer-password" name="password" required
                                    placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" style="flex: 1; padding-right: 40px;" />
                             <button type="button" id="toggle-password-visibility" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 18px; padding: 0;">
