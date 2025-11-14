@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
 // Vérifications freemium
-$user_can_create = \PdfBuilderAdmin::can_create_template();
-$templates_count = \PdfBuilderAdmin::count_user_templates(get_current_user_id());
-$is_premium = \PdfBuilderAdmin::is_premium_user();
+$user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
+$templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
+$is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
