@@ -1144,6 +1144,7 @@
                         <?php
                     endif; ?>
 
+                    <?php if ($is_premium) : ?>
                     <!-- Modal de confirmation pour désactivation -->
                     <div id="deactivate_modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
                         <div style="background: white; border-radius: 12px; padding: 40px; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
@@ -1165,15 +1166,22 @@
                             </div>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                 <script>
                     function showDeactivateModal() {
-                        document.getElementById('deactivate_modal').style.display = 'flex';
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'flex';
+                        }
                         return false;
                     }
 
                     function closeDeactivateModal() {
-                        document.getElementById('deactivate_modal').style.display = 'none';
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
                     }
 
                     function submitDeactivateForm() {
