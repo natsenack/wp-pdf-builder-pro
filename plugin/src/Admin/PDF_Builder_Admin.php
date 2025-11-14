@@ -1030,14 +1030,14 @@ class PdfBuilderAdmin
                         const x = e.pageX - guideSteps.offsetLeft;
                         const walk = (x - startX) * 2; // Vitesse de scroll
                         guideSteps.scrollLeft = scrollLeft - walk;
-                    });
+                    }, { passive: false });
 
                     // Support tactile pour mobile
                     guideSteps.addEventListener('touchstart', (e) => {
                         isDown = true;
                         startX = e.touches[0].pageX - guideSteps.offsetLeft;
                         scrollLeft = guideSteps.scrollLeft;
-                    });
+                    }, { passive: false });
 
                     guideSteps.addEventListener('touchend', () => {
                         isDown = false;
@@ -1048,7 +1048,7 @@ class PdfBuilderAdmin
                         const x = e.touches[0].pageX - guideSteps.offsetLeft;
                         const walk = (x - startX) * 2;
                         guideSteps.scrollLeft = scrollLeft - walk;
-                    });
+                    }, { passive: false });
                 });
             </script>
         </div>
