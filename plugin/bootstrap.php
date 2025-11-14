@@ -209,7 +209,8 @@ function pdf_builder_load_core()
 
     // Charger les classes Core essentielles
     $core_classes = array(
-        'PDF_Builder_Security_Validator.php'
+        'PDF_Builder_Security_Validator.php',
+        'PDF_Builder_MU_Plugin_Blocker.php'
     );
     foreach ($core_classes as $core_class) {
         $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
