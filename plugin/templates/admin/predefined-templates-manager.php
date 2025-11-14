@@ -685,6 +685,30 @@ class PDF_Builder_Predefined_Templates_Manager
         </div>
         <script>
         jQuery(document).ready(function($) {
+            // Configurer toastr si disponible
+            function setupToastr() {
+                if (typeof toastr !== 'undefined') {
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+                }
+            }
+            setupToastr();
+
             // Toggle afficher/masquer le mot de passe
             $('#toggle-password-visibility').on('click', function(e) {
                 e.preventDefault();
@@ -707,6 +731,22 @@ class PDF_Builder_Predefined_Templates_Manager
                 const $message = $('#login-message');
                 const $button = $(this).find('button[type="submit"]');
                 const originalText = $button.text();
+
+                // Validation côté client
+                if (!password) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('🔐 Veuillez entrer un mot de passe', 'Erreur');
+                    } else {
+                        $message.removeClass('success').addClass('error').text('Veuillez entrer un mot de passe').show();
+                    }
+                    return;
+                }
+
+                // Afficher notification de connexion
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('⏳ Vérification du mot de passe...', 'Connexion');
+                }
+
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
 
@@ -723,18 +763,40 @@ class PDF_Builder_Predefined_Templates_Manager
                     success: function(response) {
                         console.log('Developer auth response:', response);
                         if (response.success) {
-                            $message.removeClass('error').addClass('success').text(response.data.message).show();
+                            // Notification de succès
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success('✅ Authentification réussie ! Redirection en cours...', 'Succès');
+                            } else {
+                                $message.removeClass('error').addClass('success').text(response.data.message).show();
+                            }
+                            
                             setTimeout(function() {
                                 location.reload();
-                            }, 1000);
+                            }, 1500);
                         } else {
-                            $message.removeClass('success').addClass('error').text(response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
+                            const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
+                            
+                            // Notification d'erreur
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('❌ ' + errorMsg, 'Erreur d\'authentification');
+                            } else {
+                                $message.removeClass('success').addClass('error').text(errorMsg).show();
+                            }
+                            
                             $button.prop('disabled', false).text(originalText);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Developer auth error:', error, xhr.responseText);
-                        $message.removeClass('success').addClass('error').text('<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>').show();
+                        const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
+                        
+                        // Notification d'erreur réseau
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('🔴 ' + errorMsg, 'Erreur Réseau');
+                        } else {
+                            $message.removeClass('success').addClass('error').text(errorMsg).show();
+                        }
+                        
                         $button.prop('disabled', false).text(originalText);
                     }
                 });
