@@ -10,7 +10,7 @@ class TemplateDefaults
 {
     /**
      * Templates par défaut disponibles pour les utilisateurs gratuits
-     * NOTE: Supprimés pour le modèle freemium strict (2 templates personnalisés maximum)
+     * NOTE: Supprimés pour le modèle freemium strict (1 template personnalisé maximum)
      */
     private static $default_templates = [
         // Templates supprimés - uniquement disponibles en Premium

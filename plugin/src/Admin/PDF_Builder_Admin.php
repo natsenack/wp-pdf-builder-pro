@@ -210,8 +210,8 @@ class PdfBuilderAdmin
         $user_id = get_current_user_id();
         $templates_count = self::count_user_templates($user_id);
 
-        // Limite : 2 templates gratuits
-        return $templates_count < 2;
+        // Limite : 1 template gratuit
+        return $templates_count < 1;
     }
 
     /**
