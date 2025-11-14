@@ -77,10 +77,17 @@ var pdfBuilderAjax = {
 
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
-                <span style="background: #007cba; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">
-                    <?php echo $templates_count; ?> template<?php echo $templates_count > 1 ? 's' : ''; ?>
-                </span>
             </button>
+
+            <!-- DEBUG: Affichage temporaire du nombre de templates -->
+            <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
+                📊 Templates créés: <strong><?php echo $templates_count; ?></strong>
+                <?php if (!$is_premium): ?>
+                    (limite: 2)
+                <?php else: ?>
+                    (illimité)
+                <?php endif; ?>
+            </span>
         </div>
 
         <!-- Message limitation freemium -->
