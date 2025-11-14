@@ -3519,7 +3519,7 @@
                             <small style="color: #6c757d;"><?php _e('Remplace les templates ayant le même nom', 'pdf-builder-pro'); ?></small>
                         </div>
 
-                        <button type="button" id="restore-backup-btn" class="button button-secondary" style="padding: 10px 20px; background: #856404; border-color: #856404;">
+                        <button type="button" id="restore-backup-btn" class="button button-secondary" style="padding: 10px 20px; background: #856404; border-color: #856404; color: #ffffff; font-weight: 500;">
                             🔄 <?php _e('Restaurer la sauvegarde', 'pdf-builder-pro'); ?>
                         </button>
 
