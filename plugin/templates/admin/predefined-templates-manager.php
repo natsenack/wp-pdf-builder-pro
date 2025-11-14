@@ -136,24 +136,6 @@ class PDF_Builder_Predefined_Templates_Manager
                         });
                     }
                 });
-                
-                // Gestion du modal de première visite
-                <?php if ($show_first_visit_modal) : ?>
-                $("#first-visit-modal").fadeIn();
-                <?php endif; ?>
-                
-                // Fermeture des modals
-                $(".close-modal, #start-exploring-btn").on("click", function() {
-                    $("#first-visit-modal").fadeOut();
-                    // Marquer la première visite comme terminée
-                    $.ajax({
-                        url: ajaxurl,
-                        type: "POST",
-                        data: {
-                            action: "pdf_builder_mark_first_visit_complete"
-                        }
-                    });
-                });
             });
         ');
     }
@@ -715,6 +697,20 @@ class PDF_Builder_Predefined_Templates_Manager
             </div>
         </div>
         <?php
+
+        // Script pour afficher le modal de première visite
+        if ($show_first_visit_modal) {
+            ?>
+            <script>
+            jQuery(document).ready(function($) {
+                console.log('PDF Builder: Tentative d\'affichage du modal de première visite');
+                console.log('Modal element:', $("#first-visit-modal"));
+                $("#first-visit-modal").fadeIn();
+                console.log('Modal affiché');
+            });
+            </script>
+            <?php
+        }
     }
     /**
      * Rendre le formulaire de connexion développeur
