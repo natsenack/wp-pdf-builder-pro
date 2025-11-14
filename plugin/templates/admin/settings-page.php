@@ -5762,28 +5762,36 @@
                 loadBackupsList();
             });
 
-            // Charger la liste au chargement de l'onglet sauvegarde
-            jQuery(document).on('click', 'a[data-tab="sauvegarde"]', function() {
-                // Use postMessage to completely break the execution chain
-                window.postMessage('pdf-builder-load-backups', '*');
-            });
-
-            // Listen for the message to load backups
-            window.addEventListener('message', function(event) {
-                if (event.data === 'pdf-builder-load-backups') {
-                    setTimeout(function() {
-                        loadBackupsList();
-                    }, 100);
-                }
-            });
-
-            // Charger automatiquement la liste si l'onglet sauvegarde est actif au chargement
+            // Observer pour détecter quand l'onglet sauvegarde devient visible
             jQuery(document).ready(function() {
-                // Vérifier si l'onglet sauvegarde est actif
-                if (jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active') ||
-                    window.location.hash === '#sauvegarde' ||
-                    jQuery('#sauvegarde').hasClass('tab-content') && !jQuery('#sauvegarde').hasClass('hidden-tab')) {
-                    window.postMessage('pdf-builder-load-backups', '*');
+                const backupTab = jQuery('#sauvegarde');
+                if (backupTab.length) {
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                                const isVisible = !backupTab.hasClass('hidden-tab');
+                                const isActive = jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active');
+                                if (isVisible && isActive && !backupTab.data('backups-loaded')) {
+                                    backupTab.data('backups-loaded', true);
+                                    setTimeout(function() {
+                                        loadBackupsList();
+                                    }, 100);
+                                }
+                            }
+                        });
+                    });
+                    observer.observe(backupTab[0], {
+                        attributes: true,
+                        attributeFilter: ['class']
+                    });
+
+                    // Charger immédiatement si déjà visible
+                    if (!backupTab.hasClass('hidden-tab') && jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active')) {
+                        backupTab.data('backups-loaded', true);
+                        setTimeout(function() {
+                            loadBackupsList();
+                        }, 100);
+                    }
                 }
             });
 
