@@ -437,7 +437,7 @@ class PdfBuilderBackupRestoreManager
         $zip_filepath = $filepath . '.zip';
         $zip = new \ZipArchive();
 
-        if ($zip->open($zip_filepath, ZipArchive::CREATE) === true) {
+        if ($zip->open($zip_filepath, \ZipArchive::CREATE) === true) {
             $zip->addFile($filepath, basename($filepath));
             $zip->close();
             return $zip_filepath;
