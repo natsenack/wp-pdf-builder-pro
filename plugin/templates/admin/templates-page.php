@@ -89,7 +89,7 @@ var pdfBuilderAjax = {
                 </h4>
                 <p style="margin: 0 0 10px 0; color: #0c5460;">
                     <?php printf(
-                        __('Vous avez créé %d template gratuit. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        __('Vous avez créé %d templates gratuits sur 2. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
                     ); ?>
                 </p>
