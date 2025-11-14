@@ -196,6 +196,53 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Vérifie si l'utilisateur peut créer un nouveau template (limitation freemium)
+     *
+     * @return bool
+     */
+    public static function can_create_template() {
+        // Vérifier si utilisateur premium
+        if (self::is_premium_user()) {
+            return true; // Pas de limitation pour premium
+        }
+
+        // Compter templates existants de l'utilisateur
+        $user_id = get_current_user_id();
+        $templates_count = self::count_user_templates($user_id);
+
+        // Limite : 1 template gratuit
+        return $templates_count < 1;
+    }
+
+    /**
+     * Compte le nombre de templates créés par un utilisateur
+     *
+     * @param int $user_id
+     * @return int
+     */
+    public static function count_user_templates($user_id) {
+        $args = [
+            'post_type' => 'pdf_template',
+            'author' => $user_id,
+            'posts_per_page' => -1,
+            'post_status' => ['publish', 'draft', 'private']
+        ];
+
+        $templates = get_posts($args);
+        return count($templates);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est premium
+     *
+     * @return bool
+     */
+    public static function is_premium_user() {
+        // Utilise le filtre existant pour la vérification licence
+        return apply_filters('pdf_builder_is_premium', false);
+    }
+
+    /**
      * Enregistre le custom post type pour les templates PDF
      */
     public function registerTemplatePostType()
@@ -286,6 +333,9 @@ class PdfBuilderAdmin
         add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'ajax_repair_templates']);
         add_action('wp_ajax_pdf_builder_reset_settings', [$this, 'ajax_reset_settings']);
         add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajax_check_integrity']);
+
+        // Template limits check for freemium
+        add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajax_check_template_limit']);
 
         // Hook pour la compatibilité avec les anciens liens template_id
         add_action('admin_init', [$this, 'handle_legacy_template_links']);
@@ -6060,5 +6110,28 @@ class PdfBuilderAdmin
         } catch (Exception $e) {
             wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut créer un nouveau template (AJAX)
+     */
+    public function ajax_check_template_limit() {
+        // Vérification nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+        }
+
+        // Vérification permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+        }
+
+        $can_create = self::can_create_template();
+
+        wp_send_json_success([
+            'can_create' => $can_create,
+            'current_count' => self::count_user_templates(get_current_user_id()),
+            'limit' => 1
+        ]);
     }
 }

@@ -10,12 +10,29 @@ if (!defined('ABSPATH')) {
 
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
+
+// Vérifications freemium
+$user_can_create = \PdfBuilderAdmin::can_create_template();
+$templates_count = \PdfBuilderAdmin::count_user_templates(get_current_user_id());
+$is_premium = \PdfBuilderAdmin::is_premium_user();
+
+// Créer templates par défaut si aucun template et utilisateur gratuit
+if ($templates_count === 0 && !$is_premium) {
+    \TemplateDefaults::create_default_templates_for_user(get_current_user_id());
+    // Recharger la page pour afficher les templates
+    wp_redirect(admin_url('admin.php?page=pdf-builder-templates'));
+    exit;
+}
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
 <script>
 var pdfBuilderTemplatesNonce = '<?php echo esc_js($templates_nonce); ?>';
 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+var pdfBuilderAjax = {
+    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>',
+    editor_url: '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor')); ?>'
+};
 </script>
 
 <div class="wrap">
@@ -27,13 +44,57 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
 
         <div style="margin: 20px 0;">
-            <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor&template_id=1'); ?>" class="button button-primary">
-                🎨 <?php _e('Ouvrir l\'Éditeur PDF', 'pdf-builder-pro'); ?>
-            </a>
+            <?php if ($user_can_create): ?>
+                <a href="#" class="button button-primary" id="create-template-btn">
+                    <span class="dashicons dashicons-plus"></span>
+                    <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
+                </a>
+            <?php else: ?>
+                <button class="button button-secondary" id="upgrade-required-btn"
+                        onclick="showUpgradeModal('template_limit')"
+                        style="background-color: #dc3545; border-color: #dc3545; color: white;">
+                    <span class="dashicons dashicons-lock"></span>
+                    <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
+                </button>
+            <?php endif; ?>
+
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
         </div>
+
+        <!-- Message limitation freemium -->
+        <?php if (!$is_premium && $templates_count >= 1): ?>
+            <div class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+                <h4 style="margin: 0 0 10px 0; color: #0c5460;">
+                    <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
+                    <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
+                </h4>
+                <p style="margin: 0 0 10px 0; color: #0c5460;">
+                    <?php printf(
+                        __('Vous avez créé %d template gratuit. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        $templates_count
+                    ); ?>
+                </p>
+                <a href="#" onclick="showUpgradeModal('template_limit')" class="button button-primary">
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+
+        <!-- Message pour utilisateurs gratuits sans templates -->
+        <?php if (!$is_premium && $templates_count === 0): ?>
+            <div class="notice notice-success" style="margin: 15px 0; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
+                <h4 style="margin: 0 0 10px 0; color: #155724;">
+                    <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
+                    <?php _e('Templates Gratuits Disponibles', 'pdf-builder-pro'); ?>
+                </h4>
+                <p style="margin: 0; color: #155724;">
+                    <?php _e('Découvrez nos 3 templates professionnels gratuits : Modern, Classic et Corporate. Créez-en un personnalisé avec Premium !', 'pdf-builder-pro'); ?>
+                </p>
+            </div>
+        <?php endif; ?>
 
         <!-- Section de filtrage -->
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
@@ -1107,6 +1168,93 @@ document.addEventListener('keydown', function(e) {
 
 </style>
 
+<!-- Modal d'upgrade pour templates freemium -->
+<div id="upgrade-modal-template" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+    <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #23282d; font-size: 24px;">🚀 Débloquer la Création de Templates</h3>
+            <button class="modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 30px;">
+            <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
+                <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🎨</div>
+                <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Templates Illimités & Personnalisés</h4>
+                <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                    Créez autant de templates PDF que vous voulez avec votre propre design et branding.
+                </p>
+                <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Templates personnalisés illimités</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Import/Export de templates</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Thèmes CSS avancés</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Variables dynamiques premium</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Support prioritaire</strong></li>
+                </ul>
+            </div>
+            <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
+                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">69€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
+                <p style="margin: 10px 0 20px 0; opacity: 0.9;">Paiement unique, pas d'abonnement</p>
+                <a href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
+                    <span class="dashicons dashicons-cart" style="margin-right: 5px;"></span>
+                    Commander Maintenant
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
- 
+<script>
+// Fonction pour afficher modal upgrade
+function showUpgradeModal(reason) {
+    const modal = document.getElementById('upgrade-modal-' + reason);
+    if (modal) {
+        modal.style.display = 'flex';
+
+        // Tracking pour analytics (si disponible)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'upgrade_modal_shown', {
+                'reason': reason,
+                'user_type': 'free',
+                'page': 'templates'
+            });
+        }
+    }
+}
+
+// Gestionnaire pour bouton créer template
+document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Vérifier limite côté client (sécurité supplémentaire)
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_check_template_limit',
+            'nonce': pdfBuilderAjax.nonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.can_create) {
+            // Rediriger vers éditeur
+            window.location.href = pdfBuilderAjax.editor_url;
+        } else {
+            showUpgradeModal('template');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur vérification limite:', error);
+        showUpgradeModal('template');
+    });
+});
+
+// Fermer modal au clic sur overlay ou bouton close
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
+        e.target.closest('.modal-overlay').style.display = 'none';
+    }
+});
+</script> 
  
