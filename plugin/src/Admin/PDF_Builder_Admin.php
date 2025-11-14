@@ -222,16 +222,17 @@ class PdfBuilderAdmin
      */
     public static function count_user_templates($user_id) {
         global $wpdb;
-        
+
         // Compter depuis la table custom pdf_builder_templates
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        
+
         // Récupérer le nombre de templates pour cet utilisateur
+        // Inclure les templates avec user_id = $user_id OU user_id IS NULL/0 (pour compatibilité)
         $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d AND is_default = 0",
+            "SELECT COUNT(*) FROM $table_templates WHERE (user_id = %d OR user_id IS NULL OR user_id = 0) AND is_default = 0",
             $user_id
         ));
-        
+
         return (int)$count;
     }
 
