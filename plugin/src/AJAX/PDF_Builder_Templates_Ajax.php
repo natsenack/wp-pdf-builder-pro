@@ -120,10 +120,11 @@ class PdfBuilderTemplatesAjax
             $result = $wpdb->insert($table_templates, array(
                     'name' => $template_name,
                     'template_data' => $template_json,
+                    'user_id' => get_current_user_id(),
                     'created_at' => current_time('mysql'),
                     'updated_at' => current_time('mysql'),
                     'is_default' => 0
-                ), array('%s', '%s', '%s', '%s', '%d'));
+                ), array('%s', '%s', '%d', '%s', '%s', '%d'));
             if ($result === false) {
                 wp_send_json_error('Erreur lors de la création du template dans la base de données');
             }
@@ -197,10 +198,10 @@ class PdfBuilderTemplatesAjax
             $result = $wpdb->insert($table_templates, [
                 'name' => $template_data['name'],
                 'template_data' => wp_json_encode($template_data),
-                'status' => 'draft',
+                'user_id' => get_current_user_id(),
                 'created_at' => current_time('mysql'),
                 'updated_at' => current_time('mysql'),
-                'author_id' => get_current_user_id()
+                'is_default' => 0
             ]);
 
             if ($result === false) {
@@ -477,10 +478,12 @@ class PdfBuilderTemplatesAjax
             // Créer une copie du template
             $result = $wpdb->insert($table_templates, array(
                     'name' => $template_name,
+                    'template_data' => $existing->template_data,
+                    'user_id' => get_current_user_id(),
                     'created_at' => current_time('mysql'),
                     'updated_at' => current_time('mysql'),
                     'is_default' => 0
-                ), array('%s', '%s', '%s', '%d'));
+                ), array('%s', '%s', '%d', '%s', '%s', '%d'));
             if ($result === false) {
                 wp_send_json_error('Erreur lors de la duplication du template');
             }

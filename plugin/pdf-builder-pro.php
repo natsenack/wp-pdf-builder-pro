@@ -62,10 +62,14 @@ function pdf_builder_activate()
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             name varchar(255) NOT NULL,
             template_data longtext NOT NULL,
+            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            is_default tinyint(1) NOT NULL DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            KEY name (name)
+            KEY name (name),
+            KEY user_id (user_id),
+            KEY is_default (is_default)
         ) $charset_collate;";
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
@@ -90,13 +94,69 @@ function pdf_builder_check_tables() {
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             name varchar(255) NOT NULL,
             template_data longtext NOT NULL,
+            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            is_default tinyint(1) NOT NULL DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            KEY name (name)
+            KEY name (name),
+            KEY user_id (user_id),
+            KEY is_default (is_default)
         ) $charset_collate;";
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+    } else {
+        // Vérifier et ajouter les colonnes manquantes pour les mises à jour
+        pdf_builder_update_table_schema();
+    }
+}
+
+/**
+ * Mettre à jour le schéma des tables existantes
+ */
+function pdf_builder_update_table_schema() {
+    global $wpdb;
+    
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    
+    // Vérifier et ajouter la colonne user_id
+    $user_id_exists = $wpdb->get_results($wpdb->prepare(
+        "SHOW COLUMNS FROM %s LIKE 'user_id'", $table_templates
+    ));
+    if (empty($user_id_exists)) {
+        $wpdb->query($wpdb->prepare(
+            "ALTER TABLE %s ADD COLUMN user_id bigint(20) unsigned NOT NULL DEFAULT 0", $table_templates
+        ));
+        $wpdb->query($wpdb->prepare(
+            "ALTER TABLE %s ADD KEY user_id (user_id)", $table_templates
+        ));
+    }
+    
+    // Vérifier et ajouter la colonne is_default
+    $is_default_exists = $wpdb->get_results($wpdb->prepare(
+        "SHOW COLUMNS FROM %s LIKE 'is_default'", $table_templates
+    ));
+    if (empty($is_default_exists)) {
+        $wpdb->query($wpdb->prepare(
+            "ALTER TABLE %s ADD COLUMN is_default tinyint(1) NOT NULL DEFAULT 0", $table_templates
+        ));
+        $wpdb->query($wpdb->prepare(
+            "ALTER TABLE %s ADD KEY is_default (is_default)", $table_templates
+        ));
+    }
+}
+
+/**
+ * Vérifier les mises à jour de base de données
+ */
+function pdf_builder_check_database_updates() {
+    // Vérifier la version actuelle
+    $current_version = get_option('pdf_builder_version', '1.0.0');
+    
+    // Si la version est inférieure à 1.1.0, mettre à jour le schéma
+    if (version_compare($current_version, '1.1.0', '<')) {
+        pdf_builder_update_table_schema();
+        update_option('pdf_builder_version', '1.1.0');
     }
 }
 
@@ -183,6 +243,9 @@ function pdf_builder_init()
 
     // Enregistrer les handlers AJAX au hook init
     add_action('init', 'pdf_builder_register_ajax_handlers');
+    
+    // Vérifier les mises à jour de schéma de base de données
+    add_action('admin_init', 'pdf_builder_check_database_updates');
 
     // Tools for development/tests removed from production bootstrap
 

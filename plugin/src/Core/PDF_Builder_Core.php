@@ -492,6 +492,8 @@ class PdfBuilderCore
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             name varchar(255) NOT NULL,
             template_data longtext NOT NULL,
+            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            is_default tinyint(1) NOT NULL DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id)

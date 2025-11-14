@@ -5913,10 +5913,12 @@ class PdfBuilderAdmin
                         'id' => $template_id,
                         'name' => $default_template['name'],
                         'template_data' => wp_json_encode($default_template),
+                        'user_id' => get_current_user_id(),
                         'created_at' => current_time('mysql'),
-                        'updated_at' => current_time('mysql')
+                        'updated_at' => current_time('mysql'),
+                        'is_default' => 0
                     ],
-                    ['%d', '%s', '%s', '%s', '%s']
+                    ['%d', '%s', '%s', '%d', '%s', '%s', '%d']
                 );
             }
         } catch (Exception $e) {
