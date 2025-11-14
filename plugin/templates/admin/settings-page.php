@@ -4119,18 +4119,26 @@
                 // Boutons de test des notifications
                 const testSuccessBtn = document.getElementById('test-notifications-success');
                 if (testSuccessBtn) {
+                    console.log('🔍 Test button found: test-notifications-success');
                     testSuccessBtn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        console.log('🔍 Test success button clicked');
                         PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
                     });
+                } else {
+                    console.log('🔍 Test button NOT found: test-notifications-success');
                 }
 
                 const testErrorBtn = document.getElementById('test-notifications-error');
                 if (testErrorBtn) {
+                    console.log('🔍 Test button found: test-notifications-error');
                     testErrorBtn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        console.log('🔍 Test error button clicked');
                         PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
                     });
+                } else {
+                    console.log('🔍 Test button NOT found: test-notifications-error');
                 }
 
                 const testWarningBtn = document.getElementById('test-notifications-warning');
@@ -4143,10 +4151,14 @@
 
                 const testInfoBtn = document.getElementById('test-notifications-info');
                 if (testInfoBtn) {
+                    console.log('🔍 Test button found: test-notifications-info');
                     testInfoBtn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        console.log('🔍 Test info button clicked');
                         PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
                     });
+                } else {
+                    console.log('🔍 Test button NOT found: test-notifications-info');
                 }
 
                 // Détecte la soumission du formulaire - EMPÊCHE LE RELOAD

@@ -1200,6 +1200,8 @@ class PdfBuilderAdmin
             error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
             return;
         }
+
+        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading scripts for hook: ' . $hook);
         
         error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading assets for ' . $hook);
 
@@ -1269,8 +1271,13 @@ class PdfBuilderAdmin
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
 
         // ✅ Initialiser le système de notification unifié
+        error_log('PDF_Builder_Admin::enqueueAdminScripts: About to initialize notification manager');
         if (class_exists('PDF_Builder_Notification_Manager')) {
+            error_log('PDF_Builder_Admin::enqueueAdminScripts: PDF_Builder_Notification_Manager class exists, calling enqueue_scripts');
             \PDF_Builder_Notification_Manager::get_instance()->enqueue_scripts();
+            error_log('PDF_Builder_Admin::enqueueAdminScripts: Notification manager enqueue_scripts called');
+        } else {
+            error_log('PDF_Builder_Admin::enqueueAdminScripts: PDF_Builder_Notification_Manager class does not exist');
         }
 
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React

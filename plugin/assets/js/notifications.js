@@ -2,27 +2,34 @@
  * JavaScript pour le système de notifications unifié de PDF Builder Pro
  */
 
+console.log('🔍 PDF Builder Notifications: Script loaded');
+
 (function($) {
     'use strict';
 
     class PDFBuilderNotifications {
         constructor() {
+            console.log('🔍 PDFBuilderNotifications: Constructor called');
             this.toastContainer = null;
             this.init();
         }
 
         init() {
+            console.log('🔍 PDFBuilderNotifications: init() called');
             this.createToastContainer();
             this.bindEvents();
             this.showQueuedToasts();
         }
 
         createToastContainer() {
+            console.log('🔍 PDFBuilderNotifications: createToastContainer() called');
             if (!$('#pdf-builder-toast-container').length) {
                 this.toastContainer = $('<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>');
                 $('body').append(this.toastContainer);
+                console.log('🔍 PDFBuilderNotifications: Toast container created and appended');
             } else {
                 this.toastContainer = $('#pdf-builder-toast-container');
+                console.log('🔍 PDFBuilderNotifications: Toast container already exists');
             }
         }
 
@@ -47,6 +54,8 @@
         }
 
         showToast(message, type = 'success', duration = 4000) {
+            console.log('🔍 PDFBuilderNotifications.showToast called:', message, type, duration);
+
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
             const toast = $(`
@@ -124,14 +133,20 @@
 
     // Initialiser quand le DOM est prêt
     $(document).ready(function() {
+        console.log('🔍 PDFBuilderNotifications: DOM ready, initializing...');
         window.pdfBuilderNotifications = new PDFBuilderNotifications();
+        console.log('🔍 PDFBuilderNotifications: Instance created');
     });
 
     // API globale compatible avec le code PHP
+    console.log('🔍 PDFBuilderNotifications: Setting up global API');
     window.PDF_Builder_Notification_Manager = {
         show_toast: function(message, type, duration) {
+            console.log('🔍 PDF_Builder_Notification_Manager.show_toast called:', message, type, duration);
             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
                 return window.pdfBuilderNotifications.showToast(message, type, duration);
+            } else {
+                console.error('🔍 PDF_Builder_Notification_Manager: pdfBuilderNotifications not available');
             }
         },
         show_inline: function(message, type, target) {
