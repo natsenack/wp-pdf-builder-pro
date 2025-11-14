@@ -224,10 +224,9 @@ class PdfBuilderAdmin
         // Compter depuis la table custom pdf_builder_templates (templates globaux)
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        // Récupérer le nombre total de templates globaux (user_id = 0 ou NULL)
-        // ET exclure les templates par défaut (is_default = 1)
+        // Récupérer le nombre total de templates globaux (tous sauf les templates par défaut)
         $count = $wpdb->get_var(
-            "SELECT COUNT(*) FROM `$table_templates` WHERE (user_id IS NULL OR user_id = 0) AND (is_default IS NULL OR is_default = 0)"
+            "SELECT COUNT(*) FROM `$table_templates` WHERE (is_default IS NULL OR is_default = 0)"
         );
 
         return (int)$count;
