@@ -1187,10 +1187,16 @@
                     function submitDeactivateForm() {
                         var form = document.getElementById('deactivate_form');
                         if (form) {
+                            // Ajouter le champ pour indiquer la désactivation
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'deactivate_license';
+                            input.value = '1';
+                            form.appendChild(input);
                             form.submit();
                         } else {
                             console.error('Deactivate form not found');
-                            alert('Erreur: Formulaire de désactivation introuvable');
+                            alert('Erreur: Formulaire de désactivation introuvable. Veuillez rafraîchir la page.');
                         }
                     }
 
