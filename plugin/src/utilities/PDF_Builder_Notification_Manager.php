@@ -67,7 +67,7 @@ class PDF_Builder_Notification_Manager {
     public function enqueue_scripts() {
         wp_enqueue_script(
             'pdf-builder-notifications',
-            plugins_url('assets/js/notifications.js', dirname(__FILE__)),
+            PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
             ['jquery'],
             '1.0.0',
             true
@@ -75,7 +75,7 @@ class PDF_Builder_Notification_Manager {
 
         wp_enqueue_style(
             'pdf-builder-notifications',
-            plugins_url('assets/css/notifications.css', dirname(__FILE__)),
+            PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css',
             [],
             '1.0.0'
         );
