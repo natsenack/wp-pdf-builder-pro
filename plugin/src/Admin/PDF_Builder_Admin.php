@@ -360,20 +360,10 @@ class PdfBuilderAdmin
             [$this, 'adminPage']
         );
 
-        // Éditeur React unique (accessible via lien direct, masqué du menu)
-        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        // L'éditeur React est accessible via lien direct uniquement, pas via le menu
+        // add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
         
-        // Masquer le menu de l'éditeur React avec CSS et JavaScript
-        add_action('admin_enqueue_scripts', function() {
-            $screen = get_current_screen();
-            if ($screen && strpos($screen->id, 'pdf-builder') !== false) {
-                echo '<style>
-                    li a[href*="page=pdf-builder-react-editor"] {
-                        display: none !important;
-                    }
-                </style>';
-            }
-        });
+        // Plus besoin de masquer le menu avec CSS puisqu'il n'est plus ajouté
 
         // Gestion des templates
         add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-templates', [$this, 'templatesPage']);
