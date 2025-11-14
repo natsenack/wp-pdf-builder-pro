@@ -31,17 +31,24 @@ class PDF_Builder_Predefined_Templates_Manager
     }
     /**
      * Ajouter le menu admin pour les modèles prédéfinis
+     * Le menu n'est visible que si le Mode Développeur est activé
      */
     public function addAdminMenu()
     {
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Modèles Prédéfinis', 'pdf-builder-pro'),
-            __('Modèles Prédéfinis', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-predefined-templates',
-            [$this, 'renderAdminPage']
-        );
+        // Vérifier si le Mode Développeur est activé
+        $settings = get_option('pdf_builder_settings', []);
+        
+        // N'ajouter le menu que si le Mode Développeur est activé
+        if (!empty($settings['developer_enabled'])) {
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Modèles Prédéfinis', 'pdf-builder-pro'),
+                __('Modèles Prédéfinis', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-predefined-templates',
+                [$this, 'renderAdminPage']
+            );
+        }
     }
     /**
      * Enqueue scripts et styles pour la page admin
