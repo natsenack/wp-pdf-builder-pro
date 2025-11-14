@@ -109,7 +109,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             $("#save-template-btn").trigger("click");
                         }, 500);
                     } catch (e) {
-                        alert("Erreur lors du décodage du JSON depuis l\'URL: " + e.message);
+                        PDF_Builder_Notification_Manager.show_toast('Erreur lors du décodage du JSON depuis l\'URL: ' + e.message, 'error');
                     }
                 }
                 // Gestion de la déconnexion développeur
@@ -126,11 +126,11 @@ class PDF_Builder_Predefined_Templates_Manager
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    alert("Logout error");
+                                    PDF_Builder_Notification_Manager.show_toast('Erreur de déconnexion', 'error');
                                 }
                             },
                             error: function() {
-                                alert("Logout error");
+                                PDF_Builder_Notification_Manager.show_toast('Erreur de déconnexion', 'error');
                             }
                         });
                     }
@@ -716,30 +716,6 @@ class PDF_Builder_Predefined_Templates_Manager
         </div>
         <script>
         jQuery(document).ready(function($) {
-            // Configurer toastr si disponible
-            function setupToastr() {
-                if (typeof toastr !== 'undefined') {
-                    toastr.options = {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "5000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    };
-                }
-            }
-            setupToastr();
-
             // Toggle afficher/masquer le mot de passe
             $('#toggle-password-visibility').on('click', function(e) {
                 e.preventDefault();
@@ -765,18 +741,12 @@ class PDF_Builder_Predefined_Templates_Manager
 
                 // Validation côté client
                 if (!password) {
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error('🔐 Veuillez entrer un mot de passe', 'Erreur');
-                    } else {
-                        $message.removeClass('success').addClass('error').text('Veuillez entrer un mot de passe').show();
-                    }
+                    PDF_Builder_Notification_Manager.show_toast('🔐 Veuillez entrer un mot de passe', 'error');
                     return;
                 }
 
                 // Afficher notification de connexion
-                if (typeof toastr !== 'undefined') {
-                    toastr.info('⏳ Vérification du mot de passe...', 'Connexion');
-                }
+                PDF_Builder_Notification_Manager.show_toast('⏳ Vérification du mot de passe...', 'info');
 
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
@@ -795,11 +765,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         console.log('Developer auth response:', response);
                         if (response.success) {
                             // Notification de succès
-                            if (typeof toastr !== 'undefined') {
-                                toastr.success('✅ Authentification réussie ! Redirection en cours...', 'Succès');
-                            } else {
-                                $message.removeClass('error').addClass('success').text(response.data.message).show();
-                            }
+                            PDF_Builder_Notification_Manager.show_toast('✅ Authentification réussie ! Redirection en cours...', 'success');
                             
                             setTimeout(function() {
                                 location.reload();
@@ -808,11 +774,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
                             // Notification d'erreur
-                            if (typeof toastr !== 'undefined') {
-                                toastr.error('❌ ' + errorMsg, 'Erreur d\'authentification');
-                            } else {
-                                $message.removeClass('success').addClass('error').text(errorMsg).show();
-                            }
+                            PDF_Builder_Notification_Manager.show_toast('❌ ' + errorMsg, 'error');
                             
                             $button.prop('disabled', false).text(originalText);
                         }
@@ -822,11 +784,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
                         // Notification d'erreur réseau
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('🔴 ' + errorMsg, 'Erreur Réseau');
-                        } else {
-                            $message.removeClass('success').addClass('error').text(errorMsg).show();
-                        }
+                        PDF_Builder_Notification_Manager.show_toast('🔴 ' + errorMsg, 'error');
                         
                         $button.prop('disabled', false).text(originalText);
                     }

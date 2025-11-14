@@ -658,7 +658,7 @@ function saveTemplateSettings() {
             // Erreur
             saveButton.innerHTML = '❌ Erreur';
             saveButton.style.background = '#dc3545';
-            alert('Erreur lors de la sauvegarde: ' + ((response.data && response.data.message) || 'Erreur inconnue'));
+            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + ((response.data && response.data.message) || 'Erreur inconnue'), 'error');
 
             // Remettre le bouton normal après un délai
             setTimeout(() => {
@@ -671,7 +671,7 @@ function saveTemplateSettings() {
         // Erreur de réseau
         saveButton.innerHTML = '❌ Erreur réseau';
         saveButton.style.background = '#dc3545';
-        alert('Erreur de connexion: ' + error);
+        PDF_Builder_Notification_Manager.show_toast('Erreur de connexion: ' + error, 'error');
 
         // Remettre le bouton normal
         setTimeout(() => {
@@ -724,7 +724,7 @@ function deleteTemplate(templateId, templateName) {
                 // Erreur
                 deleteButton.innerHTML = '❌ Erreur';
                 deleteButton.style.background = '#dc3545';
-                alert('Erreur lors de la suppression: ' + (response.data.message || 'Erreur inconnue'));
+                PDF_Builder_Notification_Manager.show_toast('Erreur lors de la suppression: ' + (response.data.message || 'Erreur inconnue'), 'error');
 
                 // Remettre le bouton normal après un délai
                 setTimeout(() => {
@@ -738,7 +738,7 @@ function deleteTemplate(templateId, templateName) {
             // Erreur de connexion
             deleteButton.innerHTML = '❌ Erreur';
             deleteButton.style.background = '#dc3545';
-            alert('Erreur de connexion lors de la suppression');
+            PDF_Builder_Notification_Manager.show_toast('Erreur de connexion lors de la suppression', 'error');
 
             // Remettre le bouton normal après un délai
             setTimeout(() => {

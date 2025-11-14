@@ -299,11 +299,11 @@ class PDF_Builder_WooCommerce_Integration
                         link.click();
                         document.body.removeChild(link);
                     } else {
-                        alert('Erreur: ' + response.data);
+                        PDF_Builder_Notification_Manager.show_toast('Erreur: ' + response.data, 'error');
                     }
                 },
                 error: function() {
-                    alert('Erreur lors de la génération du PDF');
+                    PDF_Builder_Notification_Manager.show_toast('Erreur lors de la génération du PDF', 'error');
                 }
             });
         }

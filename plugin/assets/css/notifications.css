@@ -1,0 +1,153 @@
+/**
+ * Styles CSS pour le système de notifications unifié de PDF Builder Pro
+ */
+
+/* Notifications Toast (petites notifications en haut à droite) */
+.pdf-builder-notification {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 13px;
+    font-weight: 500;
+    max-width: 350px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.pdf-builder-notification-success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.pdf-builder-notification-error {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.pdf-builder-notification-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+    border-color: #ffeaa7;
+}
+
+.pdf-builder-notification-info {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+.pdf-builder-notification-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.pdf-builder-notification-message {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.pdf-builder-notification-close {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+    margin-left: 4px;
+}
+
+.pdf-builder-notification-close:hover {
+    opacity: 1;
+}
+
+/* Notifications Inline (dans le contenu) */
+.pdf-builder-notification-inline {
+    margin: 10px 0;
+    max-width: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pdf-builder-notification-inline .pdf-builder-notification-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+/* Animation d'entrée */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.pdf-builder-notification {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #pdf-builder-toast-container {
+        top: 20px !important;
+        right: 10px !important;
+        left: 10px !important;
+    }
+
+    .pdf-builder-notification {
+        max-width: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Support pour les anciens navigateurs */
+.pdf-builder-notification {
+    animation: slideInRight 0.3s ease-out;
+    -webkit-animation: slideInRight 0.3s ease-out;
+    -moz-animation: slideInRight 0.3s ease-out;
+    -o-animation: slideInRight 0.3s ease-out;
+}
+
+/* Styles pour l'accessibilité */
+.pdf-builder-notification-close:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+/* Mode sombre support */
+@media (prefers-color-scheme: dark) {
+    .pdf-builder-notification-success {
+        background: linear-gradient(135deg, #1e4620, #2d5a2d);
+        color: #a8d4a8;
+        border-color: #2d5a2d;
+    }
+
+    .pdf-builder-notification-error {
+        background: linear-gradient(135deg, #4a1c1c, #662929);
+        color: #d4a8a8;
+        border-color: #662929;
+    }
+
+    .pdf-builder-notification-warning {
+        background: linear-gradient(135deg, #4a3c1c, #665a29);
+        color: #d4c4a8;
+        border-color: #665a29;
+    }
+
+    .pdf-builder-notification-info {
+        background: linear-gradient(135deg, #1c3d4a, #295866);
+        color: #a8d4d4;
+        border-color: #295866;
+    }
+}

@@ -1099,7 +1099,7 @@
                                             echo $visible_start . '••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); alert('✅ Clé copiée !'); ">📋 Copier</span>
+                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('✅ Clé copiée !', 'success');">📋 Copier</span>
                                     </td>
                                 </tr>
                                     <?php
@@ -4073,32 +4073,14 @@
                     setTimeout(setupToastrNotifications, 100);
                     return;
                 }
-                // Configurer toastr
-                toastr.options = {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": true,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "5000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                };
                 // Bouton Test du cache
                 const testCacheBtn = document.getElementById('test-cache-btn');
                 if (testCacheBtn) {
                     testCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        toastr.info('🔍 Test du cache en cours...', 'Test');
+                        PDF_Builder_Notification_Manager.show_toast('🔍 Test du cache en cours...', 'info');
                         setTimeout(() => {
-                            toastr.success('✓ Cache fonctionne correctement !', 'Test Réussi');
+                            PDF_Builder_Notification_Manager.show_toast('✓ Cache fonctionne correctement !', 'success');
                         }, 1500);
                     });
                 }
@@ -4108,9 +4090,9 @@
                 if (clearCacheBtn) {
                     clearCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        toastr.warning('🗑️ Vidage du cache en cours...', 'Vidage');
+                        PDF_Builder_Notification_Manager.show_toast('🗑️ Vidage du cache en cours...', 'warning');
                         setTimeout(() => {
-                            toastr.success('✓ Cache vidé avec succès !', 'Cache Vide');
+                            PDF_Builder_Notification_Manager.show_toast('✓ Cache vidé avec succès !', 'success');
                         }, 1500);
                     });
                 }
@@ -4121,7 +4103,7 @@
                     settingsForm.addEventListener('submit', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement de la page
                         // Afficher la notification de sauvegarde
-                        toastr.info('💾 Enregistrement des paramètres en cours...', 'Sauvegarde');
+                        PDF_Builder_Notification_Manager.show_toast('💾 Enregistrement des paramètres en cours...', 'info');
 
                         // Récupérer les données du formulaire
                         const formData = new FormData(settingsForm);
@@ -4132,11 +4114,11 @@
                             body: formData
                         })
                         .then(response => {
-                            toastr.success('✅ Paramètres enregistrés avec succès !', 'Succès');
+                            PDF_Builder_Notification_Manager.show_toast('✅ Paramètres enregistrés avec succès !', 'success');
                         })
                         .catch(error => {
                             console.error('❌ Error submitting form:', error);
-                            toastr.error('❌ Erreur lors de l\'enregistrement', 'Erreur');
+                            PDF_Builder_Notification_Manager.show_toast('❌ Erreur lors de l\'enregistrement', 'error');
                         });
                     });
                 }
@@ -4625,10 +4607,8 @@
                             }
 
                             if (form) {
-                                // Afficher notification via Toastr
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.info('💾 Sauvegarde en cours...', 'Sauvegarde');
-                                }
+                                // Afficher notification via système unifié
+                                PDF_Builder_Notification_Manager.show_toast('💾 Sauvegarde en cours...', 'info');
 
                                 // Créer FormData à partir du formulaire
                                 const formData = new FormData(form);
@@ -4704,9 +4684,7 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        if (typeof toastr !== 'undefined') {
-                                            toastr.success('✅ Paramètres sauvegardés avec succès !', 'Succès');
-                                        }
+                                        PDF_Builder_Notification_Manager.show_toast('✅ Paramètres sauvegardés avec succès !', 'success');
                                         
                                         // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
                                         hasUnsavedChanges = false;
@@ -4719,28 +4697,20 @@
                                         globalSaveBtn.dataset.hasModifications = 'false';
                                         globalSaveBtn.removeAttribute('title');
                                     } else {
-                                        if (typeof toastr !== 'undefined') {
-                                            toastr.error('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'Erreur');
-                                        }
+                                        PDF_Builder_Notification_Manager.show_toast('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
                                     }
                                 })
                                 .catch(error => {
                                     console.error('❌ AJAX Error:', error);
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.error('❌ ' + error.message, 'Erreur');
-                                    }
+                                    PDF_Builder_Notification_Manager.show_toast('❌ ' + error.message, 'error');
                                 });
                             } else {
                                 console.error('❌ No form found in active tab:', activeTab.id);
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('❌ Aucun formulaire trouvé', 'Erreur');
-                                }
+                                PDF_Builder_Notification_Manager.show_toast('❌ Aucun formulaire trouvé', 'error');
                             }
                         } else {
                             console.error('❌ No active tab found');
-                            if (typeof toastr !== 'undefined') {
-                                toastr.error('❌ Aucun onglet actif', 'Erreur');
-                            }
+                            PDF_Builder_Notification_Manager.show_toast('❌ Aucun onglet actif', 'error');
                         }
                     });
                 }
@@ -4810,21 +4780,17 @@
                     fetch(ajaxurl, { method: 'POST', body: formData })
                         .then(r => r.json())
                         .then(data => {
-                            if (typeof toastr !== 'undefined') {
-                                if (data.success) {
-                                    toastr.success('✅ ' + data.message, 'Succès');
-                                    if (action === 'pdf_builder_reset_settings') {
-                                        setTimeout(() => location.reload(), 2000);
-                                    }
-                                } else {
-                                    toastr.error('❌ ' + data.message, 'Erreur');
+                            if (data.success) {
+                                PDF_Builder_Notification_Manager.show_toast('✅ ' + data.message, 'success');
+                                if (action === 'pdf_builder_reset_settings') {
+                                    setTimeout(() => location.reload(), 2000);
                                 }
+                            } else {
+                                PDF_Builder_Notification_Manager.show_toast('❌ ' + data.message, 'error');
                             }
                         })
                         .catch(error => {
-                            if (typeof toastr !== 'undefined') {
-                                toastr.error('❌ Erreur: ' + error.message, 'Erreur');
-                            }
+                            PDF_Builder_Notification_Manager.show_toast('❌ Erreur: ' + error.message, 'error');
                         });
                 };
 
@@ -4833,7 +4799,7 @@
                 if (removeTempFilesBtn) {
                     removeTempFilesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (typeof toastr !== 'undefined') toastr.info('📁 Suppression...', 'En cours');
+                        PDF_Builder_Notification_Manager.show_toast('📁 Suppression...', 'info');
                         sendMaintenanceAjax('pdf_builder_remove_temp_files', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
                     });
                 }                // ===== BOUTON OPTIMISER BD =====
@@ -4841,7 +4807,7 @@
                 if (optimizeDbBtn) {
                     optimizeDbBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (typeof toastr !== 'undefined') toastr.info('⚡ Optimisation...', 'En cours');
+                        PDF_Builder_Notification_Manager.show_toast('⚡ Optimisation...', 'info');
                         sendMaintenanceAjax('pdf_builder_optimize_db', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
                     });
                 }
@@ -4851,7 +4817,7 @@
                 if (repairTemplatesBtn) {
                     repairTemplatesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (typeof toastr !== 'undefined') toastr.info('✅ Réparation...', 'En cours');
+                        PDF_Builder_Notification_Manager.show_toast('✅ Réparation...', 'info');
                         sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
                     });
                 }
@@ -4862,7 +4828,7 @@
                     resetSettingsBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) return;
-                        if (typeof toastr !== 'undefined') toastr.warning('⚠️ Réinitialisation...', 'En cours');
+                        PDF_Builder_Notification_Manager.show_toast('⚠️ Réinitialisation...', 'warning');
                         sendMaintenanceAjax('pdf_builder_reset_settings', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
                     });
                 }
@@ -4872,7 +4838,7 @@
                 if (checkIntegrityBtn) {
                     checkIntegrityBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        if (typeof toastr !== 'undefined') toastr.info('🔍 Vérification...', 'En cours');
+                        PDF_Builder_Notification_Manager.show_toast('🔍 Vérification...', 'info');
                         sendMaintenanceAjax('pdf_builder_check_integrity', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
                     });
                 }
@@ -5137,7 +5103,7 @@
                             } else {
                                 const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
                                 console.error('❌ Toggle failed:', errorMsg);
-                                alert('⚠️ Erreur: ' + errorMsg);
+                                PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur: ' + errorMsg, 'error');
                                 $btn.html('🎚️ Basculer Mode Test');
                                 $btn.prop('disabled', false);
                             }
@@ -5148,7 +5114,7 @@
                             if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                                 errorMsg = xhr.responseJSON.data.message;
                             }
-                            alert('⚠️ Erreur AJAX: ' + errorMsg);
+                            PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur AJAX: ' + errorMsg, 'error');
                             $btn.html('🎚️ Basculer Mode Test');
                             $btn.prop('disabled', false);
                         }
@@ -5204,7 +5170,7 @@
                             if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                                 errorMsg = xhr.responseJSON.data.message;
                             }
-                            alert('⚠️ Erreur AJAX: ' + errorMsg);
+                            PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur AJAX: ' + errorMsg, 'error');
                             cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
                             $btn.html('🧹 Nettoyer complètement la licence');
                             $btn.prop('disabled', false);
@@ -5278,15 +5244,15 @@
                                 $testSmtpBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
-                                    alert("✅ Connexion SMTP réussie!\n\n" + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."));
+                                    PDF_Builder_Notification_Manager.show_toast("✅ Connexion SMTP réussie! " + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."), 'success');
                                 } else {
-                                    alert("❌ Erreur de connexion SMTP\n\n" + (response.data.message || "Impossible de se connecter au serveur SMTP."));
+                                    PDF_Builder_Notification_Manager.show_toast("❌ Erreur de connexion SMTP: " + (response.data.message || "Impossible de se connecter au serveur SMTP."), 'error');
                                 }
                             },
                             error: function(xhr, status, error) {
                                 console.error("❌ SMTP Test AJAX error:", status, error);
                                 $testSmtpBtn.prop("disabled", false).html(originalText);
-                                alert("⚠️ Erreur lors du test SMTP\n\nErreur: " + error);
+                                PDF_Builder_Notification_Manager.show_toast("⚠️ Erreur lors du test SMTP: " + error, 'error');
                             }
                         });
                     });
@@ -5313,15 +5279,15 @@
                                 $testNotifBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
-                                    alert("✅ Email de test envoyé!\n\n" + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."));
+                                    PDF_Builder_Notification_Manager.show_toast("✅ Email de test envoyé! " + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."), 'success');
                                 } else {
-                                    alert("❌ Erreur lors de l'envoi\n\n" + (response.data.message || "Impossible d'envoyer l'email de test."));
+                                    PDF_Builder_Notification_Manager.show_toast("❌ Erreur lors de l'envoi: " + (response.data.message || "Impossible d'envoyer l'email de test."), 'error');
                                 }
                             },
                             error: function(xhr, status, error) {
                                 console.error("❌ Notification Test AJAX error:", status, error);
                                 $testNotifBtn.prop("disabled", false).html(originalText);
-                                alert("⚠️ Erreur lors du test de notification\n\nErreur: " + error);
+                                PDF_Builder_Notification_Manager.show_toast("⚠️ Erreur lors du test de notification: " + error, 'error');
                             }
                         });
                     });
@@ -5506,54 +5472,24 @@
             // ===========================================
 
             // Fonction pour afficher les notifications
+            // ✅ Remplacement par le système de notification unifié
             function showBackupNotification(message, type = 'success') {
-                // Créer une notification plus petite et discrète
-                const notification = jQuery('<div class="backup-notification backup-notification-' + type + '">' +
-                    '<span class="backup-notification-icon">' + (type === 'success' ? '✅' : '❌') + '</span>' +
-                    '<span class="backup-notification-message">' + message + '</span>' +
-                    '<span class="backup-notification-close">×</span>' +
-                    '</div>');
-
-                // Ajouter au conteneur de notifications ou créer un conteneur dédié
-                let container = jQuery('#backup-notifications-container');
-                if (container.length === 0) {
-                    container = jQuery('<div id="backup-notifications-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000;"></div>');
-                    jQuery('body').append(container);
-                }
-
-                container.append(notification);
-
-                // Animation d'entrée
-                notification.css({
-                    'opacity': '0',
-                    'transform': 'translateX(100%)'
-                }).animate({
-                    'opacity': '1',
-                    'transform': 'translateX(0)'
-                }, 300);
-
-                // Auto-dismiss après 4 secondes
-                const dismissTimer = setTimeout(function() {
-                    dismissNotification(notification);
-                }, 4000);
-
-                // Fermeture manuelle
-                notification.find('.backup-notification-close').on('click', function() {
-                    clearTimeout(dismissTimer);
-                    dismissNotification(notification);
-                });
-
-                function dismissNotification(notif) {
-                    notif.animate({
-                        'opacity': '0',
-                        'transform': 'translateX(100%)'
-                    }, 300, function() {
-                        notif.remove();
-                        // Supprimer le conteneur s'il est vide
-                        if (container.children().length === 0) {
-                            container.remove();
+                // Utiliser le système de notification unifié
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(message, type);
+                } else {
+                    // Fallback vers toastr si le système unifié n'est pas disponible
+                    if (typeof toastr !== 'undefined') {
+                        if (type === 'success') {
+                            toastr.success(message);
+                        } else if (type === 'error') {
+                            toastr.error(message);
+                        } else if (type === 'warning') {
+                            toastr.warning(message);
+                        } else {
+                            toastr.info(message);
                         }
-                    });
+                    }
                 }
             }
 

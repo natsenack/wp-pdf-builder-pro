@@ -394,7 +394,7 @@ class PdfBuilderCore
                                     <td><?php echo esc_html($log->log_message); ?></td>
                                     <td>
                                         <button class="button button-small"
-                                                onclick="alert('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>')">
+                                                onclick="PDF_Builder_Notification_Manager.show_toast('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>', 'info')">
                                             📄 <?php _e('Détails', 'pdf-builder-pro'); ?>
                                         </button>
                                     </td>
