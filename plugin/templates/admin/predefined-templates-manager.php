@@ -361,6 +361,8 @@ class PDF_Builder_Predefined_Templates_Manager
         $user_id = get_current_user_id();
         $first_use_shown = get_user_meta($user_id, 'pdf_builder_first_use_modal_shown', true);
         $show_first_use_modal = empty($first_use_shown);
+        // TEMPORAIRE : Forcer l'affichage pour test
+        $show_first_use_modal = true;
         // Localize script
         wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
