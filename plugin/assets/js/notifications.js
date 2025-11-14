@@ -79,21 +79,29 @@
 
             // Vérifier immédiatement après ajout
             console.log('NOTIFICATION: Toast added to DOM');
-            console.log('NOTIFICATION: Toast element:', toast[0]);
-            console.log('NOTIFICATION: Toast computed style:', window.getComputedStyle(toast[0]));
-            console.log('NOTIFICATION: Container computed style:', window.getComputedStyle(this.toastContainer[0]));
-
-            // Animation d'entrée
-            toast.css({
-                'opacity': '0',
-                'transform': 'translateX(100%)'
-            }).animate({
-                'opacity': '1',
-                'transform': 'translateX(0)'
-            }, 300, function() {
-                console.log('NOTIFICATION: Animation completed for toast:', toastId);
-                console.log('NOTIFICATION: Final toast style:', window.getComputedStyle(toast[0]));
+            console.log('NOTIFICATION: Initial toast style before animation:', {
+                display: toast.css('display'),
+                opacity: toast.css('opacity'),
+                transform: toast.css('transform'),
+                visibility: toast.css('visibility')
             });
+
+            // Animation d'entrée avec CSS transitions
+            console.log('NOTIFICATION: Starting CSS transition animation');
+            toast[0].style.opacity = '0';
+            toast[0].style.transform = 'translateX(100%)';
+
+            // Forcer un reflow pour que les styles soient appliqués
+            toast[0].offsetHeight;
+
+            toast[0].style.transition = 'all 0.3s ease';
+            toast[0].style.opacity = '1';
+            toast[0].style.transform = 'translateX(0)';
+
+            // Attendre la fin de l'animation
+            setTimeout(() => {
+                console.log('NOTIFICATION: CSS animation completed');
+            }, 300);
 
             let dismissTimeout;
 
@@ -167,16 +175,16 @@
 
         dismissNotification($notification) {
             console.log('NOTIFICATION: dismissNotification called for:', $notification.attr('id'));
-            // Nettoyer les event listeners et timers
-            $notification.off('mouseenter mouseleave');
-            console.log('NOTIFICATION: Starting dismiss animation');
-            $notification.animate({
-                'opacity': '0',
-                'transform': 'translateX(100%)'
-            }, 300, function() {
-                console.log('NOTIFICATION: Dismiss animation complete, removing element');
-                $(this).remove();
-            });
+
+            // Animation de sortie avec CSS transitions
+            $notification[0].style.transition = 'all 0.3s ease';
+            $notification[0].style.opacity = '0';
+            $notification[0].style.transform = 'translateX(100%)';
+
+            setTimeout(() => {
+                console.log('NOTIFICATION: CSS dismiss animation complete, removing element');
+                $notification.remove();
+            }, 300);
         }
 
         getIcon(type) {
