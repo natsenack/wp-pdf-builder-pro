@@ -132,6 +132,17 @@ function pdf_builder_update_table_schema() {
         $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN is_default tinyint(1) NOT NULL DEFAULT 0");
         $wpdb->query("ALTER TABLE `$table_templates` ADD KEY is_default (is_default)");
     }
+    
+    // Mettre à jour les templates existants pour leur assigner un user_id par défaut
+    // Pour les templates sans user_id ou avec user_id = 0, on les assigne à l'utilisateur actuel
+    // (en production, il faudrait une logique plus sophistiquée)
+    $current_user_id = get_current_user_id();
+    if ($current_user_id > 0) {
+        $wpdb->query($wpdb->prepare(
+            "UPDATE `$table_templates` SET user_id = %d WHERE user_id IS NULL OR user_id = 0",
+            $current_user_id
+        ));
+    }
 }
 
 /**
