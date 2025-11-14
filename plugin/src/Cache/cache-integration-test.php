@@ -89,8 +89,17 @@ class CacheIntegrationTest
 // Fonction de test AJAX simplifiée
 function pdf_builder_simple_test_ajax()
 {
+    try {
+        // Vérifier que WordPress est chargé
+        if (!function_exists('wp_send_json_success')) {
+            throw new Exception('wp_send_json_success function not available');
+        }
 
-    wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+        wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+    } catch (Exception $e) {
+        error_log('PDF Builder Simple Test Error: ' . $e->getMessage());
+        wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
+    }
 }
 // Hook pour utilisateurs authentifiés ET non-authentifiés
 add_action('wp_ajax_pdf_builder_simple_test', 'pdf_builder_simple_test_ajax');
