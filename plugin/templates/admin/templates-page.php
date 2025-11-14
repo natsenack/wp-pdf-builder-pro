@@ -84,7 +84,7 @@ var pdfBuilderAjax = {
 
             <!-- DEBUG: Affichage temporaire du nombre de templates -->
             <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
-                📊 Templates créés: <strong><?php echo $templates_count; ?></strong>
+                📊 Templates disponibles: <strong><?php echo $templates_count; ?></strong>
                 <?php if (!$is_premium): ?>
                     (limite: 1)
                 <?php else: ?>
@@ -102,7 +102,7 @@ var pdfBuilderAjax = {
                 </h4>
                 <p style="margin: 0 0 10px 0; color: #0c5460;">
                     <?php printf(
-                        __('Vous avez créé %d templates gratuits sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        __('Le système dispose de %d template(s) gratuit(s). Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
                     ); ?>
                 </p>
@@ -118,10 +118,10 @@ var pdfBuilderAjax = {
             <div class="notice notice-success" style="margin: 15px 0; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #155724;">
                     <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-                    <?php _e('Créez Votre Premier Template', 'pdf-builder-pro'); ?>
+                    <?php _e('Templates en cours de création', 'pdf-builder-pro'); ?>
                 </h4>
                 <p style="margin: 0; color: #155724;">
-                    <?php _e('Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !', 'pdf-builder-pro'); ?>
+                    <?php _e('Les templates par défaut sont en cours de création. Passez en Premium pour créer vos propres templates personnalisés !', 'pdf-builder-pro'); ?>
                 </p>
             </div>
         <?php endif; ?>
