@@ -172,20 +172,20 @@ class PdfBuilderAdmin
      */
     private function checkAdminPermissions()
     {
-        // ✅ Vérifier la capacité manage_options (nécessaire pour les menus admin)
-        if (current_user_can('manage_options')) {
+        // ✅ Vérifier la capacité pdf_builder_access (gérée par Role_Manager)
+        if (current_user_can('pdf_builder_access')) {
             return true;
         }
 
-        // ✅ Fallback: vérifier les rôles autorisés depuis les options
-        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+        // ✅ Fallback: vérifier les rôles autorisés depuis les options (pour compatibilité)
+        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
         if (!is_array($allowed_roles)) {
-            $allowed_roles = ['administrator'];
+            $allowed_roles = ['administrator', 'editor', 'shop_manager'];
         }
 
         $user = wp_get_current_user();
         $user_roles = $user ? $user->roles : [];
-        
+
         foreach ($user_roles as $role) {
             if (in_array($role, $allowed_roles)) {
                 return true;

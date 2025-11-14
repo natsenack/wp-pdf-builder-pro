@@ -41,7 +41,7 @@ class Role_Manager
             }
 
             // Vérifier si le rôle de l'utilisateur est autorisé
-            $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+            $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
             $user_roles = isset($user->roles) ? $user->roles : [];
             foreach ($user_roles as $role) {
                 if (in_array($role, $allowed_roles)) {
@@ -74,8 +74,8 @@ class Role_Manager
      */
     public static function getAllowedRoles()
     {
-        $allowed = get_option('pdf_builder_allowed_roles', ['administrator']);
-        return is_array($allowed) ? $allowed : ['administrator'];
+        $allowed = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+        return is_array($allowed) ? $allowed : ['administrator', 'editor', 'shop_manager'];
     }
 
     /**
