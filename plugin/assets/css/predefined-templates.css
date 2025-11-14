@@ -2,6 +2,10 @@
 
 .pdf-builder-predefined-container {
     display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
     gap: 30px;
     margin-top: 20px;
 }
@@ -9,9 +13,21 @@
 .templates-list-section,
 .template-editor-section {
     flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    -o-flex: 1;
     background: #fff;
     border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     padding: 20px;
 }
 
@@ -26,6 +42,10 @@
 /* Templates List */
 .templates-actions {
     display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
     gap: 10px;
     margin-bottom: 20px;
 }
@@ -38,15 +58,30 @@
 .template-item {
     border: 1px solid #ddd;
     border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
     padding: 15px;
     margin-bottom: 15px;
     background: #fafafa;
     transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
 }
 
 .template-item:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    -ms-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    -o-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transform: translateY(-2px);
+    -webkit-transform: translateY(-2px);
+    -moz-transform: translateY(-2px);
+    -ms-transform: translateY(-2px);
+    -o-transform: translateY(-2px);
 }
 
 .template-header {
