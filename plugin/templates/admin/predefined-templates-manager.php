@@ -28,6 +28,7 @@ class PDF_Builder_Predefined_Templates_Manager
 // Paramètres développeur
         add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajaxDeveloperAuth']);
         add_action('wp_ajax_pdf_builder_developer_logout', [$this, 'ajaxDeveloperLogout']);
+        add_action('wp_ajax_pdf_builder_mark_first_use_modal_shown', [$this, 'ajaxMarkFirstUseModalShown']);
     }
     /**
      * Ajouter le menu admin pour les modèles prédéfinis
@@ -67,21 +68,7 @@ class PDF_Builder_Predefined_Templates_Manager
         wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'js/predefined-templates.js', ['jquery', 'codemirror'], '1.0.0', true);
         // Styles personnalisés
         wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'css/predefined-templates.css', [], '1.0.0');
-        // Localize script
-        wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
-            'strings' => [
-                'confirmDelete' => __('Êtes-vous sûr de vouloir supprimer ce modèle ?', 'pdf-builder-pro'),
-                'saveSuccess' => __('Modèle sauvegardé avec succès !', 'pdf-builder-pro'),
-                'deleteSuccess' => __('Modèle supprimé avec succès !', 'pdf-builder-pro'),
-                'loadError' => __('Erreur lors du chargement du modèle.', 'pdf-builder-pro'),
-                'saveError' => __('Erreur lors de la sauvegarde.', 'pdf-builder-pro'),
-                'deleteError' => __('Erreur lors de la suppression.', 'pdf-builder-pro'),
-                'invalidJson' => __('JSON invalide. Veuillez vérifier la syntaxe.', 'pdf-builder-pro'),
-                'previewError' => __('Erreur lors de la génération de l\'aperçu.', 'pdf-builder-pro')
-            ]
-        ]);
+        // Localize script will be done in renderAdminPage after variables are set
 // Script pour gérer les paramètres URL (pour création automatique de template)
         wp_add_inline_script('pdf-builder-predefined-templates', '
             jQuery(document).ready(function($) {
@@ -134,6 +121,39 @@ class PDF_Builder_Predefined_Templates_Manager
                             }
                         });
                     }
+                });
+                // Gestion de la modale de première utilisation
+                if (pdfBuilderPredefined.showFirstUseModal) {
+                    $("#first-use-modal").show();
+                }
+                // Fermer la modale de première utilisation
+                $("#first-use-modal .close-modal").on("click", function() {
+                    $("#first-use-modal").hide();
+                    // Marquer comme vu
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        data: {
+                            action: "pdf_builder_mark_first_use_modal_shown",
+                            nonce: pdfBuilderPredefined.nonce
+                        }
+                    });
+                });
+                // Utiliser un modèle depuis la modale
+                $("#first-use-modal .use-template-btn").on("click", function() {
+                    const slug = $(this).data("slug");
+                    // Charger le modèle
+                    loadTemplate(slug);
+                    $("#first-use-modal").hide();
+                    // Marquer comme vu
+                    $.ajax({
+                        url: ajaxurl,
+                        type: "POST",
+                        data: {
+                            action: "pdf_builder_mark_first_use_modal_shown",
+                            nonce: pdfBuilderPredefined.nonce
+                        }
+                    });
                 });
             });
         ');
@@ -299,6 +319,19 @@ class PDF_Builder_Predefined_Templates_Manager
         }
     }
     /**
+     * AJAX - Marquer la modale de première utilisation comme vue
+     */
+    public function ajaxMarkFirstUseModalShown()
+    {
+        try {
+            $user_id = get_current_user_id();
+            update_user_meta($user_id, 'pdf_builder_first_use_modal_shown', '1');
+            wp_send_json_success(['message' => 'Modal marked as shown']);
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+    /**
      * Rendre la page admin
      */
     public function renderAdminPage()
@@ -324,359 +357,26 @@ class PDF_Builder_Predefined_Templates_Manager
             return;
         }
         $templates = $this->getPredefinedTemplates();
-        ?>
-        <style>
-        /* Styles de base inline pour la page des modèles prédéfinis */
-        .pdf-builder-predefined-container {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .templates-list-section, .template-editor-section {
-            flex: 1;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        .templates-list-section { max-width: 400px; }
-        .template-editor-section { max-width: 600px; }
-        .templates-actions { display: flex; gap: 10px; margin-bottom: 20px; }
-        .templates-list { max-height: 600px; overflow-y: auto; }
-        .template-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-            transition: all 0.3s ease;
-        }
-        .template-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-        .template-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .template-header h3 { margin: 0; font-size: 16px; color: #23282d; }
-        .template-actions { display: flex; gap: 5px; }
-        .template-meta { margin-bottom: 10px; }
-        .category {
-            display: inline-block;
-            background: #007cba;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        .description { display: block; color: #666; font-size: 13px; line-height: 1.4; }
-        .template-preview { text-align: center; margin-top: 10px; }
-        .template-preview img { max-width: 100%; height: auto; border-radius: 4px; }
-        .no-preview {
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            color: #666;
-            font-style: italic;
-        }
-        .form-row { margin-bottom: 20px; }
-        .form-row label { display: block; font-weight: bold; margin-bottom: 5px; color: #23282d; }
-        .form-row input, .form-row select, .form-row textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .json-editor-container {
-            position: relative;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .json-editor-container textarea {
-            border: none;
-            border-radius: 0;
-            margin: 0;
-            padding: 12px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            resize: none;
-            width: 100%;
-            min-height: 300px;
-        }
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        .no-templates {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-style: italic;
-        }
-        .pdf-builder-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background: #fff;
-            border-radius: 8px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .modal-header h3 { margin: 0; }
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-        .modal-body { padding: 20px; }
-        </style>
-        <div class="wrap">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="margin: 0;"><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
-                <button id="developer-logout-btn" class="button button-secondary" style="background: #dc3545; border-color: #dc3545; color: white;">
-                    🚪 <?php _e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
-                </button>
-            </div>
-            <div class="pdf-builder-predefined-container">
-                <!-- Liste des modèles -->
-                <div class="templates-list-section">
-                    <h2><?php _e('🎨 Galerie de Modèles Prédéfinis', 'pdf-builder-pro'); ?></h2>
-                    <div class="templates-actions">
-                        <button id="new-template-btn" class="button button-primary">
-                            ➕ <?php _e('Nouveau Modèle', 'pdf-builder-pro'); ?>
-                        </button>
-                        <button id="refresh-templates-btn" class="button button-secondary">
-                            🔄 <?php _e('Actualiser', 'pdf-builder-pro'); ?>
-                        </button>
-                    </div>
-                    <div id="templates-list" class="templates-list">
-                        <?php if (empty($templates)) :
-                            ?>
-                            <div class="no-templates">
-                                <p><?php _e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
-                                <p><?php _e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
-                            </div>
-                            <?php
-                        else :
-                            ?>
-                            <?php foreach ($templates as $template) :
-                                ?>
-                                <div class="template-item" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                    <div class="template-header">
-                                        <h3><?php echo esc_html($template['name']); ?></h3>
-                                        <div class="template-actions">
-                                            <button class="button button-small edit-template" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                ✏️ <?php _e('Éditer', 'pdf-builder-pro'); ?>
-                                            </button>
-                                            <button class="button button-small button-danger delete-template" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="template-meta">
-                                        <span class="category"><?php echo esc_html($template['category']); ?></span>
-                                        <span class="description"><?php echo esc_html($template['description']); ?></span>
-                                    </div>
-                                    <div class="template-json">
-                                        <details>
-                                            <summary><?php _e('📄 Voir le JSON', 'pdf-builder-pro'); ?></summary>
-                                            <pre><?php echo esc_html(wp_json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
-                                        </details>
-                                    </div>
-                                    <div class="template-preview">
-                                        <?php if (!empty($template['preview_svg'])) :
-                                            ?>
-                                            <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
-                                            <div class="preview-actions">
-                                                <button class="regenerate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                    🔄 <?php _e('Régénérer Aperçu', 'pdf-builder-pro'); ?>
-                                                </button>
-                                            </div>
-                                            <?php
-                                        else :
-                                            ?>
-                                            <div class="no-preview">
-                                                <button class="generate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                    🎨 <?php _e('Générer Aperçu', 'pdf-builder-pro'); ?>
-                                                </button>
-                                            </div>
-                                            <?php
-                                        endif; ?>
-                                    </div>
-                                </div>
-                                <?php
-                            endforeach; ?>
-                            <?php
-                        endif; ?>
-                    </div>
-                </div>
-                <!-- Éditeur de modèle -->
-                <div class="template-editor-section">
-                    <h2 id="editor-title"><?php _e('Éditeur de Modèle', 'pdf-builder-pro'); ?></h2>
-                    <form id="template-form">
-                        <div class="form-row">
-                            <label for="template-slug"><?php _e('Slug du modèle', 'pdf-builder-pro'); ?> *</label>
-                            <input type="text" id="template-slug" name="slug" required
-                                   placeholder="ex: facture-moderne" />
-                            <small><?php _e('Identifiant unique (lettres minuscules, tirets)', 'pdf-builder-pro'); ?></small>
-                        </div>
-                        <div class="form-row">
-                            <label for="template-name"><?php _e('Nom du modèle', 'pdf-builder-pro'); ?> *</label>
-                            <input type="text" id="template-name" name="name" required
-                                   placeholder="ex: Facture Moderne" />
-                        </div>
-                        <div class="form-row">
-                            <label for="template-category"><?php _e('Catégorie', 'pdf-builder-pro'); ?> *</label>
-                            <select id="template-category" name="category" required>
-                                <option value="facture"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
-                                <option value="devis"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
-                                <!-- Catégories désactivées temporairement -->
-                                <!-- <option value="commande"><?php _e('Bon de commande', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="contrat"><?php _e('Contrat', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="newsletter"><?php _e('Newsletter', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="autre"><?php _e('Autre', 'pdf-builder-pro'); ?></option> -->
-                            </select>
-                        </div>
-                        <div class="form-row">
-                            <label for="template-description"><?php _e('Description', 'pdf-builder-pro'); ?> *</label>
-                            <textarea id="template-description" name="description" rows="3" required
-                                      placeholder="Description du modèle..."></textarea>
-                        </div>
-                        <div class="form-row">
-                            <label for="template-icon"><?php _e('Icône (emoji)', 'pdf-builder-pro'); ?></label>
-                            <input type="text" id="template-icon" name="icon" placeholder="ex: 🧾" />
-                        </div>
-                        <div class="form-row">
-                            <label for="template-json"><?php _e('Configuration JSON', 'pdf-builder-pro'); ?> *</label>
-                            <div class="json-editor-container">
-                                <textarea id="template-json" name="json" rows="20" required
-                                          placeholder='{
-  "elements": [],
-  "canvasWidth": 794,
-  "canvasHeight": 1123,
-  "version": "1.0"
-}'></textarea>
-                            </div>
-                            <small><?php _e('Collez ici le JSON exporté depuis l\'éditeur de templates', 'pdf-builder-pro'); ?></small>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" id="save-template-btn" class="button button-primary">
-                                💾 <?php _e('Sauvegarder', 'pdf-builder-pro'); ?>
-                            </button>
-                            <button type="button" id="cancel-edit-btn" class="button button-secondary">
-                                🚪 <?php _e('Fermer', 'pdf-builder-pro'); ?>
-                            </button>
-                            <button type="button" id="validate-json-btn" class="button button-secondary">
-                                ✅ <?php _e('Valider JSON', 'pdf-builder-pro'); ?>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Modale d'aperçu -->
-        <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><?php _e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div id="preview-container"></div>
-                </div>
-            </div>
-        </div>
-        <!-- Modale de première utilisation -->
-        <div id="first-use-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><?php _e('🎨 Parcourir les Modèles', 'pdf-builder-pro'); ?></h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; padding: 20px;">
-                        <h2><?php _e('Bienvenue dans la Galerie de Modèles Prédéfinis !', 'pdf-builder-pro'); ?></h2>
-                        <p><?php _e('Découvrez comment créer et gérer vos modèles de documents PDF personnalisés.', 'pdf-builder-pro'); ?></p>
-                        <div style="margin: 30px 0;">
-                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                                <h3><?php _e('🚀 Pour commencer :', 'pdf-builder-pro'); ?></h3>
-                                <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
-                                    <li><?php _e('Cliquez sur "➕ Nouveau Modèle" pour créer votre premier modèle', 'pdf-builder-pro'); ?></li>
-                                    <li><?php _e('Importez un JSON depuis l\'éditeur de templates', 'pdf-builder-pro'); ?></li>
-                                    <li><?php _e('Générez des aperçus pour visualiser vos modèles', 'pdf-builder-pro'); ?></li>
-                                    <li><?php _e('Organisez vos modèles par catégories', 'pdf-builder-pro'); ?></li>
-                                </ul>
-                            </div>
-                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
-                                <p style="margin: 0; color: #1565c0;">
-                                    <strong><?php _e('💡 Conseil :', 'pdf-builder-pro'); ?></strong> <?php _e('Commencez par explorer les modèles existants ou créez-en un nouveau pour vos factures et devis.', 'pdf-builder-pro'); ?>
-                                </p>
-                            </div>
-                        </div>
-                        <button id="start-exploring-btn" class="button button-primary" style="font-size: 16px; padding: 12px 24px;">
-                            <?php _e('🎯 Commencer l\'exploration', 'pdf-builder-pro'); ?>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
-        // Vérifier si c'est la première visite
+        // Vérifier si c'est la première visite pour afficher la modale
         $user_id = get_current_user_id();
-        $has_visited = get_user_meta($user_id, 'pdf_builder_templates_first_visit', true);
-        if (empty($has_visited)) {
-            // Marquer comme visité et afficher la modale
-            update_user_meta($user_id, 'pdf_builder_templates_first_visit', '1');
-            ?>
-            <script>
-            jQuery(document).ready(function($) {
-                // Afficher la modale de première utilisation
-                $('#first-use-modal').fadeIn();
-                
-                // Fermer la modale
-                $('#first-use-modal .close-modal, #start-exploring-btn').on('click', function() {
-                    $('#first-use-modal').fadeOut();
-                });
-                
-                // Fermer en cliquant en dehors
-                $('#first-use-modal').on('click', function(e) {
-                    if (e.target === this) {
-                        $(this).fadeOut();
-                    }
-                });
-            });
-            </script>
-            <?php
-        }
-        ?>
-        <?php
+        $first_use_shown = get_user_meta($user_id, 'pdf_builder_first_use_modal_shown', true);
+        $show_first_use_modal = empty($first_use_shown);
+        // Localize script
+        wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
+            'showFirstUseModal' => $show_first_use_modal,
+            'strings' => [
+                'confirmDelete' => __('Êtes-vous sûr de vouloir supprimer ce modèle ?', 'pdf-builder-pro'),
+                'saveSuccess' => __('Modèle sauvegardé avec succès !', 'pdf-builder-pro'),
+                'deleteSuccess' => __('Modèle supprimé avec succès !', 'pdf-builder-pro'),
+                'loadError' => __('Erreur lors du chargement du modèle.', 'pdf-builder-pro'),
+                'saveError' => __('Erreur lors de la sauvegarde.', 'pdf-builder-pro'),
+                'deleteError' => __('Erreur lors de la suppression.', 'pdf-builder-pro'),
+                'invalidJson' => __('JSON invalide. Veuillez vérifier la syntaxe.', 'pdf-builder-pro'),
+                'previewError' => __('Erreur lors de la génération de l\'aperçu.', 'pdf-builder-pro')
+            ]
+        ]);
     }
     /**
      * Rendre le formulaire de connexion développeur
