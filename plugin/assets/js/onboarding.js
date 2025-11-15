@@ -568,8 +568,24 @@
                         currentUrl.searchParams.set('pdf_onboarding_step', step);
                         window.history.replaceState({}, '', currentUrl.toString());
 
+                        // Mettre à jour la visibilité du bouton précédent
+                        const $prevButton = $('.button-previous');
+                        if (step > 1) {
+                            if ($prevButton.length === 0) {
+                                // Créer le bouton précédent s'il n'existe pas
+                                const $header = $('.modal-header');
+                                $header.prepend(`
+                                    <button class="button button-previous" data-tooltip="Étape précédente">
+                                        <span class="dashicons dashicons-arrow-left-alt"></span>
+                                    </button>
+                                `);
+                            }
+                        } else {
+                            $prevButton.remove();
+                        }
+
                         // Réactiver les boutons de navigation
-                        $('.button-previous, .button-next').prop('disabled', false);
+                        $('.button-previous, .complete-step').prop('disabled', false);
 
                         // Animation d'entrée pour le nouveau contenu
                         $content.find('.onboarding-step-content').hide().fadeIn(300);
