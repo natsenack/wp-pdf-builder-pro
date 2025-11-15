@@ -89,6 +89,22 @@ class PDF_Builder_Onboarding_Manager {
             return;
         }
 
+        // Enqueue les scripts et styles d'onboarding
+        wp_enqueue_script('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_style('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
+
+        // Localize le script avec les données AJAX
+        wp_localize_script('pdf-builder-onboarding', 'pdfBuilderOnboarding', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_onboarding'),
+            'current_step' => $this->get_current_step(),
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro')
+            ]
+        ]);
+
         // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
         if (!$this->is_onboarding_completed() && !$this->is_onboarding_skipped()) {
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
