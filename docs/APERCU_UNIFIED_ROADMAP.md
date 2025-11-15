@@ -345,9 +345,9 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - [x] **Date création** : Format localisé selon paramètres WordPress
 - [x] **Compteurs résultats** : Templates importés/ignorés lors restauration
 - [x] **Logs opérations** : Messages détaillés succès/échec avec contexte
-- [ ] **Sanitisation données** : Nettoyage avant restauration
-- [ ] **Permissions contrôlées** : Droits d'import/export par rôle
-- [ ] **Logs opérations** : Audit trail sauvegardes/restaurations
+- [x] **Sanitisation données** : Nettoyage avant restauration
+- [x] **Permissions contrôlées** : Droits d'import/export par rôle
+- [x] **Logs opérations** : Audit trail sauvegardes/restaurations
 
 ### 🎯 **Étape 1.6.10 : Onboarding & Tutoriels**
 **Priorité** : 🟡 **RECOMMANDÉ** - Adoption utilisateur
