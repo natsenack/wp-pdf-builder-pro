@@ -14,6 +14,7 @@
             this.interactions = [];
             this.tooltips = {};
             this.stepCache = {}; // Cache pour les étapes chargées
+            this.eventsBound = false; // Pour éviter la liaison multiple des événements
             this.init();
         }
 
@@ -27,6 +28,14 @@
         }
 
         bindEvents() {
+            // Éviter la liaison multiple des événements
+            if (this.eventsBound) {
+                console.log('PDF Builder Onboarding: Events already bound, skipping');
+                return;
+            }
+            this.eventsBound = true;
+
+            console.log('PDF Builder Onboarding: Binding events (first time only)');
             // Événements des boutons principaux
             $(document).on('click', '.complete-step', (e) => {
                 console.log('PDF Builder Onboarding: Complete step button clicked');
@@ -35,10 +44,17 @@
                 const actionType = $button.data('action-type');
                 const isDisabled = $button.prop('disabled');
 
-                console.log(`PDF Builder Onboarding: Button details - step: ${step}, actionType: ${actionType}, disabled: ${isDisabled}`);
+                console.log(`PDF Builder Onboarding: Button details - step: ${step}, actionType: ${actionType}, disabled: ${isDisabled}, currentStep: ${this.currentStep}`);
 
                 if (isDisabled) {
                     console.log('PDF Builder Onboarding: Button is disabled, preventing action');
+                    e.preventDefault();
+                    return;
+                }
+
+                // Vérifier si le bouton appartient à l'étape courante
+                if (step !== this.currentStep) {
+                    console.log(`PDF Builder Onboarding: Button from step ${step} clicked but current step is ${this.currentStep}, ignoring`);
                     e.preventDefault();
                     return;
                 }
@@ -596,11 +612,20 @@
          * Appliquer les données d'une étape chargée
          */
         applyStepData(step, data) {
+            console.log('PDF Builder Onboarding: Applying step data for step', step);
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
+            // Vérifier les boutons existants avant remplacement
+            const existingButtons = $content.find('.complete-step');
+            console.log('PDF Builder Onboarding: Existing buttons before replacement:', existingButtons.length);
+
             // Mettre à jour le contenu de la modal
             $content.html(data.content);
+
+            // Vérifier les boutons après remplacement
+            const newButtons = $content.find('.complete-step');
+            console.log('PDF Builder Onboarding: New buttons after replacement:', newButtons.length);
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
