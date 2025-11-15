@@ -191,9 +191,35 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button:hover {
-    background: #f8fafc;
-    border-color: rgba(30, 64, 175, 0.2);
+    background: #f9fafb;
+    border-color: #d1d5db;
     color: #111827;
+    transform: translateY(-1px);
+    -webkit-transform: translateY(-1px);
+    -moz-transform: translateY(-1px);
+    -ms-transform: translateY(-1px);
+    -o-transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-primary {
+    background: #ffffff;
+    color: #111827;
+    border-color: #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
+    background: #f8fafc;
+    border-color: #d1d5db;
     transform: translateY(-1px);
     -webkit-transform: translateY(-1px);
     -moz-transform: translateY(-1px);
@@ -204,32 +230,6 @@
     -moz-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     -ms-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     -o-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-primary {
-    background: #1e40af;
-    color: white;
-    border-color: #1e40af;
-    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
-    -webkit-box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
-    -moz-box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
-    -ms-box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
-    -o-box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-    transform: translateY(-1px);
-    -webkit-transform: translateY(-1px);
-    -moz-transform: translateY(-1px);
-    -ms-transform: translateY(-1px);
-    -o-transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-    -webkit-box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-    -moz-box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-    -ms-box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-    -o-box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
 }
 
 /* Styles pour le contenu des étapes */
@@ -271,18 +271,18 @@
 }
 
 .feature-item:hover {
-    background: #f8fafc;
-    border-color: rgba(30, 64, 175, 0.2);
+    background: #f9fafb;
+    border-color: #d1d5db;
     transform: translateY(-2px);
     -webkit-transform: translateY(-2px);
     -moz-transform: translateY(-2px);
     -ms-transform: translateY(-2px);
     -o-transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .feature-item h4 {
@@ -348,18 +348,18 @@
 }
 
 .check-item:hover {
-    background: #f8fafc;
-    border-color: rgba(5, 150, 105, 0.2);
+    background: #f9fafb;
+    border-color: #d1d5db;
     transform: translateY(-2px);
     -webkit-transform: translateY(-2px);
     -moz-transform: translateY(-2px);
     -ms-transform: translateY(-2px);
     -o-transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .check-item.success {
@@ -434,28 +434,28 @@
 }
 
 .template-card:hover {
-    border-color: rgba(30, 64, 175, 0.2);
-    background: #f8fafc;
+    border-color: #d1d5db;
+    background: #f9fafb;
     transform: translateY(-2px);
     -webkit-transform: translateY(-2px);
     -moz-transform: translateY(-2px);
     -ms-transform: translateY(-2px);
     -o-transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .template-card.selected {
-    border-color: #1e40af;
-    background: rgba(30, 64, 175, 0.05);
-    box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-    -webkit-box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-    -moz-box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-    -ms-box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-    -o-box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
+    border-color: #9ca3af;
+    background: #f3f4f6;
+    box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
+    -webkit-box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
+    -moz-box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
+    -ms-box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
+    -o-box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
 }
 
 .template-preview {
@@ -532,13 +532,13 @@
 }
 
 .setup-notice.success {
-    background: rgba(5, 150, 105, 0.08);
-    border-color: rgba(5, 150, 105, 0.3);
+    background: #f0fdf4;
+    border-color: #d1fae5;
 }
 
 .setup-notice.info {
-    background: rgba(30, 64, 175, 0.08);
-    border-color: rgba(30, 64, 175, 0.3);
+    background: #eff6ff;
+    border-color: #dbeafe;
 }
 
 .setup-notice .notice-icon {
@@ -599,18 +599,18 @@
 }
 
 .option-item:hover {
-    background: #f8fafc;
-    border-color: rgba(30, 64, 175, 0.2);
+    background: #f9fafb;
+    border-color: #d1d5db;
     transform: translateY(-2px);
     -webkit-transform: translateY(-2px);
     -moz-transform: translateY(-2px);
     -ms-transform: translateY(-2px);
     -o-transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -ms-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .option-item input[type="checkbox"] {
