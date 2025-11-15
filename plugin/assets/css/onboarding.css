@@ -58,7 +58,7 @@
 
 .pdf-builder-onboarding-modal .modal-header {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-    color: #334155;
+    color: #64748b;
     padding: 32px 32px 24px;
     position: relative;
     border-bottom: 1px solid rgba(226, 232, 240, 0.6);
@@ -69,14 +69,14 @@
     margin: 0 0 8px 0;
     font-size: 24px;
     font-weight: 700;
-    color: #1e293b;
+    color: #334155;
     letter-spacing: -0.025em;
     line-height: 1.2;
 }
 
 .pdf-builder-onboarding-modal .modal-header p {
     margin: 0;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 16px;
     line-height: 1.5;
     font-weight: 400;
@@ -91,7 +91,7 @@
     cursor: pointer;
     padding: 10px;
     border-radius: 12px;
-    color: #94a3b8;
+    color: #cbd5e1;
     font-size: 16px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(4px);
@@ -99,7 +99,7 @@
 
 .pdf-builder-onboarding-modal .modal-close:hover {
     background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    color: #fca5a5;
     transform: scale(1.05);
 }
 
@@ -147,26 +147,26 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
     color: white;
     box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-secondary {
     background: rgba(241, 245, 249, 0.8);
-    color: #64748b;
+    color: #94a3b8;
     border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-secondary:hover {
     background: rgba(226, 232, 240, 0.9);
-    color: #475569;
+    color: #64748b;
 }
 
 /* Styles pour le contenu des étapes */
@@ -195,14 +195,14 @@
 
 .feature-item h4 {
     margin: 12px 0 8px 0;
-    color: #1e293b;
+    color: #334155;
     font-size: 16px;
     font-weight: 600;
 }
 
 .feature-item p {
     margin: 0;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -211,7 +211,7 @@
     font-size: 32px;
     display: block;
     margin-bottom: 12px;
-    color: #3b82f6;
+    color: #60a5fa;
 }
 
 .environment-checks {
@@ -256,13 +256,13 @@
     margin: 0 0 4px 0;
     font-size: 14px;
     font-weight: 600;
-    color: #1e293b;
+    color: #334155;
 }
 
 .check-content p {
     margin: 0;
     font-size: 13px;
-    color: #64748b;
+    color: #94a3b8;
     line-height: 1.4;
 }
 
@@ -315,13 +315,13 @@
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: #334155;
 }
 
 .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #64748b;
+    color: #94a3b8;
     line-height: 1.4;
 }
 
@@ -355,13 +355,13 @@
     margin: 0 0 4px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: #334155;
 }
 
 .setup-notice .notice-content p {
     margin: 0;
     font-size: 14px;
-    color: #64748b;
+    color: #94a3b8;
     line-height: 1.5;
 }
 
@@ -373,7 +373,7 @@
     margin: 0 0 12px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: #334155;
 }
 
 .option-item {
@@ -382,7 +382,7 @@
     gap: 12px;
     margin-bottom: 12px;
     font-size: 14px;
-    color: #475569;
+    color: #64748b;
     padding: 12px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 250, 252, 0.4) 100%);
     border-radius: 8px;
@@ -430,12 +430,12 @@
     margin: 12px 0 8px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: #334155;
 }
 
 .summary-item p {
     margin: 0 0 16px 0;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -444,7 +444,7 @@
     font-size: 32px;
     display: block;
     margin-bottom: 12px;
-    color: #3b82f6;
+    color: #60a5fa;
 }
 
 .completion-tips {
@@ -474,9 +474,9 @@
 }
 
 .progress-indicator .step-dot.active {
-    background: #3b82f6;
+    background: #60a5fa;
     transform: scale(1.2);
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
 }
 
 .progress-indicator .step-dot.completed {
