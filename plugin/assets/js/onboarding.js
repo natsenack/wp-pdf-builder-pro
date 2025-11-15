@@ -1025,7 +1025,8 @@
                 $primaryButton.attr('data-action-type', stepData.action_type || 'next');
                 
                 // Gérer l'état disabled selon requires_selection
-                if (stepData.requires_selection) {
+                // Exception pour les étapes 3 et 4 qui ne nécessitent jamais de sélection
+                if (stepData.requires_selection && stepData.step !== 3 && stepData.step !== 4) {
                     $primaryButton.prop('disabled', true);
                 } else {
                     $primaryButton.prop('disabled', false);
@@ -1183,8 +1184,8 @@
                             $('.complete-step').prop('disabled', false);
                         }
 
-                        // Pour l'étape 3 spécifiquement, s'assurer que le bouton est toujours activé
-                        if (step === 3) {
+                        // Pour les étapes 3 et 4 spécifiquement, s'assurer que le bouton est toujours activé
+                        if (step === 3 || step === 4) {
                             $('.complete-step').prop('disabled', false);
                         }
 

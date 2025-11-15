@@ -649,6 +649,7 @@ class PDF_Builder_Onboarding_Manager {
                 return null;
 
             case 3: // WooCommerce setup - toujours valide (optionnel)
+                error_log('PDF_Builder_Onboarding: Validating step 3 with action: ' . $action);
                 return null;
 
             case 4: // Completed - toujours valide
