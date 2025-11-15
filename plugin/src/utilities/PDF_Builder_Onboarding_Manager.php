@@ -593,6 +593,27 @@ class PDF_Builder_Onboarding_Manager {
     }
 
     /**
+     * Reset l'onboarding (méthode publique pour usage externe)
+     */
+    public function reset_onboarding() {
+        if (!current_user_can('manage_options')) {
+            return false;
+        }
+
+        $this->onboarding_options = [
+            'completed' => false,
+            'current_step' => 0,
+            'steps_completed' => [],
+            'skipped' => false,
+            'first_login' => current_time('timestamp'),
+            'last_activity' => current_time('timestamp'),
+            'reset_at' => current_time('timestamp')
+        ];
+        $this->save_onboarding_options();
+        return true;
+    }
+
+    /**
      * Obtenir les statistiques d'onboarding
      */
     public function get_onboarding_stats() {
