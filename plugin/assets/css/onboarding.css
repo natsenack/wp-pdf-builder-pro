@@ -65,7 +65,7 @@
 .pdf-builder-onboarding-modal .modal-header {
     padding: 32px 40px 24px;
     border-bottom: 1px solid rgba(59, 130, 246, 0.12);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(239, 246, 255, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(219, 234, 254, 0.9) 100%);
     position: relative;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -83,7 +83,7 @@
 
 .pdf-builder-onboarding-modal .modal-header p {
     margin: 0;
-    color: #475569;
+    color: #334155;
     font-size: 16px;
     line-height: 1.5;
 }
@@ -147,7 +147,7 @@
 .pdf-builder-onboarding-modal .modal-footer {
     padding: 32px 40px;
     border-top: 1px solid rgba(59, 130, 246, 0.12);
-    background: linear-gradient(135deg, rgba(239, 246, 255, 0.8) 0%, rgba(219, 234, 254, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.9) 0%, rgba(219, 234, 254, 0.8) 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
@@ -161,7 +161,7 @@
     font-weight: 600;
     font-size: 14px;
     border: 1px solid rgba(59, 130, 246, 0.2);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(239, 246, 255, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(219, 234, 254, 0.9) 100%);
     color: #3b82f6;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -264,7 +264,7 @@
 
 .feature-item p {
     margin: 0;
-    color: #475569;
+    color: #334155;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -318,7 +318,7 @@
 }
 
 .check-item:hover {
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border-color: rgba(59, 130, 246, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
@@ -353,7 +353,7 @@
 .check-content p {
     margin: 0;
     font-size: 13px;
-    color: #475569;
+    color: #334155;
     line-height: 1.4;
 }
 
@@ -397,7 +397,7 @@
 
 .template-card:hover {
     border-color: rgba(59, 130, 246, 0.3);
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
 }
@@ -447,7 +447,7 @@
 .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #475569;
+    color: #334155;
     line-height: 1.4;
 }
 
@@ -505,7 +505,7 @@
 .setup-notice .notice-content p {
     margin: 0;
     font-size: 14px;
-    color: #475569;
+    color: #334155;
 }
 
 .setup-options {
@@ -533,7 +533,7 @@
     gap: 8px;
     margin-bottom: 8px;
     font-size: 14px;
-    color: #475569;
+    color: #334155;
     padding: 12px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -617,7 +617,7 @@
 
 .summary-item p {
     margin: 0 0 16px 0;
-    color: #475569;
+    color: #334155;
     font-size: 14px;
     line-height: 1.4;
 }
@@ -757,7 +757,7 @@
 
 .completion-tips li {
     margin-bottom: 4px;
-    color: #475569;
+    color: #334155;
     font-size: 14px;
 }
 
@@ -873,7 +873,7 @@
 
 .pdf-builder-onboarding-modal .template-card.selected {
     border-color: #46b450;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
 }
 
 .pdf-builder-onboarding-modal .template-card h4 {
@@ -886,11 +886,11 @@
 .pdf-builder-onboarding-modal .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #475569;
+    color: #334155;
 }
 
 .pdf-builder-onboarding-modal .woocommerce-setup {
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border: 1px solid #c3c4c7;
     border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -934,13 +934,13 @@
 
 .pdf-builder-onboarding-modal .woocommerce-setup label {
     font-size: 14px;
-    color: #475569;
+    color: #334155;
     cursor: pointer;
 }
 
 .pdf-builder-onboarding-modal .modal-footer {
     padding: 20px;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border-top: 1px solid #c3c4c7;
     display: flex;
     display: -webkit-flex;
@@ -960,7 +960,7 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer .skip-link {
-    color: #475569;
+    color: #334155;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.2s ease;
@@ -1008,8 +1008,8 @@
 }
 
 .pdf-builder-onboarding-modal .btn-secondary {
-    background: rgba(239, 246, 255, 0.8);
-    color: #475569;
+    background: rgba(219, 234, 254, 0.9);
+    color: #334155;
     border-color: #c3c4c7;
 }
 
@@ -1193,14 +1193,14 @@
 
 /* Raccourcis clavier */
 kbd {
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border: 1px solid #c3c4c7;
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -ms-border-radius: 3px;
     -o-border-radius: 3px;
-    color: #475569;
+    color: #334155;
     display: inline-block;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 11px;
@@ -1381,11 +1381,11 @@ kbd {
 
     .pdf-builder-onboarding-modal .modal-footer {
         background: #373d41;
-        border-top-color: #475569;
+        border-top-color: #334155;
     }
 
     .pdf-builder-onboarding-modal .btn-secondary {
-        background: #475569;
+        background: #334155;
         color: #e2e8f0;
     }
 
@@ -1414,3 +1414,6 @@ kbd {
     white-space: nowrap;
     border: 0;
 }
+
+
+

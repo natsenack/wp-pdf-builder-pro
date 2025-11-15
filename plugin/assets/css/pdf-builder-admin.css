@@ -175,7 +175,7 @@
   -o-align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid #e1e1e1;
-  background: rgba(239, 246, 255, 0.8);
+  background: rgba(219, 234, 254, 0.9);
 }
 
 .pdf-preview-modal-title {
@@ -359,3 +359,6 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 #wp-pdf-builder-pro-metabox .error {
   display: none !important;
 }
+
+
+

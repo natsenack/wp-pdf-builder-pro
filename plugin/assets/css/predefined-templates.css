@@ -152,7 +152,7 @@
 .template-json details {
     border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
 }
 
 .template-json summary {
@@ -170,7 +170,7 @@
 .template-json pre {
     margin: 0;
     padding: 12px;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border-radius: 0 0 4px 4px;
     font-family: 'Courier New', monospace;
     font-size: 11px;
@@ -209,7 +209,7 @@
 
 .no-preview {
     padding: 20px;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border-radius: 4px;
     color: #4b5563;
 }
@@ -339,7 +339,7 @@
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid rgba(59, 130, 246, 0.15);
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
 }
 
 .modal-header h3 {
@@ -488,3 +488,6 @@
         max-height: 95%;
     }
 }
+
+
+

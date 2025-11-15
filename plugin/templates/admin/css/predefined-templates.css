@@ -44,7 +44,7 @@
     border-radius: 12px;
     padding: 18px;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(239, 246, 255, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(219, 234, 254, 0.9) 100%);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -131,7 +131,7 @@
 .template-json pre {
     margin: 0;
     padding: 14px;
-    background: rgba(239, 246, 255, 0.8);
+    background: rgba(219, 234, 254, 0.9);
     border-radius: 0 0 6px 6px;
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
     font-size: 12px;
@@ -316,7 +316,7 @@
     align-items: center;
     padding: 24px 32px;
     border-bottom: 1px solid rgba(59, 130, 246, 0.12);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(239, 246, 255, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(219, 234, 254, 0.9) 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
@@ -475,3 +475,5 @@
         max-height: 95%;
     }
 }
+
+
