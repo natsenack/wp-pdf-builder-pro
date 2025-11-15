@@ -1034,6 +1034,14 @@
 
         goToPreviousStep() {
             if (this.currentStep > 1) {
+                const $button = $('.button-previous');
+                
+                // Désactiver le bouton pendant le chargement
+                $button.prop('disabled', true);
+                const originalHTML = $button.html();
+                $button.html('<span class="dashicons dashicons-update spin"></span>');
+                
+                // Les boutons seront réactivés dans loadStep() après le chargement réussi
                 this.loadStep(this.currentStep - 1);
             }
         }
@@ -1119,8 +1127,8 @@
                                 $prevButton.show().prop('disabled', false);
                             }
                         } else {
-                            // Masquer le bouton précédent pour la première étape
-                            $prevButton.hide();
+                            // Supprimer complètement le bouton précédent pour la première étape
+                            $prevButton.remove();
                         }
 
                         // Mettre à jour les boutons du footer selon l'étape
@@ -1143,6 +1151,9 @@
 
                         // Tracker l'événement
                         this.trackAnalytics('step_loaded', { step: step });
+
+                        // Réactiver tous les boutons après le chargement réussi
+                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
 
                     } else {
                         // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
