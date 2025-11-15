@@ -212,6 +212,7 @@
             console.log('PDF Builder Onboarding: Modal current display:', $modal.css('display'));
             console.log('PDF Builder Onboarding: Modal HTML:', $modal.prop('outerHTML').substring(0, 200) + '...');
             // Le modal est déjà affiché via CSS, juste ajouter l'animation
+            const self = this; // Sauvegarder la référence this
             $modal.fadeIn(400, () => {
                 console.log('PDF Builder Onboarding: Modal fadeIn complete');
                 console.log('PDF Builder Onboarding: Modal display after fadeIn:', $modal.css('display'));
@@ -220,14 +221,211 @@
                 console.log('PDF Builder Onboarding: Modal z-index:', $modal.css('z-index'));
                 // Animation d'entrée améliorée
                 $modal.find('.modal-content').addClass('modal-entrance-animation');
-                this.announceStep();
-                this.focusFirstElement();
+                self.announceStep();
+                self.focusFirstElement();
             });
 
             // Overlay click to close (avec confirmation)
             $modal.on('click', (e) => {
                 if (e.target === $modal[0]) {
                     this.showExitConfirmation();
+                }
+            });
+        }
+
+        announceStep() {
+            // Annonce pour les lecteurs d'écran
+            const stepTitle = $(`.onboarding-step-content[data-step-id] h2`).text();
+            if (stepTitle) {
+                this.announceToScreenReader(`Étape ${this.currentStep} sur 4: ${stepTitle}`);
+            } else {
+                this.announceToScreenReader(`Étape ${this.currentStep} sur 4`);
+            }
+        }
+
+        announceToScreenReader(message) {
+            // Créer un élément temporaire pour les annonces d'accessibilité
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.style.width = '1px';
+            announcement.style.height = '1px';
+            announcement.style.overflow = 'hidden';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            // Supprimer après un délai
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+
+        focusFirstElement() {
+            // Mettre le focus sur le premier élément focusable de l'étape actuelle
+            const $stepContent = $(`.onboarding-step-content[data-step-id="${this.currentStep}"]`);
+            const $focusableElements = $stepContent.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if ($focusableElements.length > 0) {
+                $focusableElements.first().focus();
+            } else {
+                // Si aucun élément focusable, mettre le focus sur le titre de l'étape
+                $stepContent.find('h2').attr('tabindex', '-1').focus();
+            }
+        }
+
+        showExitConfirmation() {
+            // Afficher une confirmation avant de quitter l'onboarding
+            if (confirm('Êtes-vous sûr de vouloir quitter l\'assistant de configuration ? Votre progression sera perdue.')) {
+                this.hideModal();
+                // Marquer l'onboarding comme terminé pour éviter de le réafficher
+                this.markOnboardingComplete();
+            }
+        }
+
+        markOnboardingComplete() {
+            // Marquer l'onboarding comme terminé via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_mark_onboarding_complete',
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Onboarding marked as complete');
+                    } else {
+                        console.error('PDF Builder Onboarding: Failed to mark onboarding complete:', response.data);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: AJAX error marking onboarding complete:', error);
+                }
+            });
+        }
+
+        hideModal() {
+            // Cacher le modal avec animation
+            const $modal = $('#pdf-builder-onboarding-modal');
+            $modal.fadeOut(300, () => {
+                // Supprimer l'animation d'entrée
+                $modal.find('.modal-content').removeClass('modal-entrance-animation');
+                // Restaurer le focus à l'élément qui avait le focus avant
+                if (this.previousFocus) {
+                    this.previousFocus.focus();
+                }
+            });
+        }
+
+        updateProgress() {
+            // Mettre à jour l'indicateur de progression
+            const $progressIndicator = $('.onboarding-progress-indicator');
+            if ($progressIndicator.length > 0) {
+                // Calculer le pourcentage de progression (étape actuelle / nombre total d'étapes)
+                const progressPercent = (this.currentStep / 4) * 100;
+                $progressIndicator.css('width', progressPercent + '%');
+                $progressIndicator.attr('aria-valuenow', this.currentStep);
+                $progressIndicator.attr('aria-valuemax', 4);
+            }
+            // Mettre à jour le texte de progression
+            const $progressText = $('.onboarding-progress-text');
+            if ($progressText.length > 0) {
+                $progressText.text(`Étape ${this.currentStep} sur 4`);
+            }
+        }
+
+        selectTemplate(templateId) {
+            // Sauvegarder le template sélectionné
+            this.selectedTemplate = templateId;
+            console.log('PDF Builder Onboarding: Template selected:', templateId);
+            
+            // Mettre à jour l'interface utilisateur
+            $('.template-option').removeClass('selected');
+            $(`.template-option[data-template-id="${templateId}"]`).addClass('selected');
+            
+            // Activer le bouton suivant si un template est sélectionné
+            const $nextButton = $('.button-next');
+            if ($nextButton.length > 0) {
+                $nextButton.prop('disabled', false);
+            }
+        }
+
+        completeStep() {
+            // Sauvegarder les données de l'étape actuelle si nécessaire
+            if (this.currentStep === 2 && this.selectedTemplate) {
+                // Sauvegarder la sélection du template
+                this.saveTemplateSelection();
+            }
+            
+            // Passer à l'étape suivante
+            if (this.currentStep < 4) {
+                this.loadStep(this.currentStep + 1);
+            } else {
+                // Onboarding terminé
+                this.finishOnboarding();
+            }
+        }
+
+        saveTemplateSelection() {
+            // Sauvegarder la sélection du template via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_selection',
+                    template_id: this.selectedTemplate,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Template selection saved successfully');
+                    } else {
+                        console.error('PDF Builder Onboarding: Failed to save template selection:', response.data);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: AJAX error saving template selection:', error);
+                }
+            });
+        }
+
+        finishOnboarding() {
+            // Finaliser l'onboarding
+            console.log('PDF Builder Onboarding: Finishing onboarding...');
+            
+            // Marquer comme terminé
+            this.markOnboardingComplete();
+            
+            // Cacher le modal
+            this.hideModal();
+            
+            // Rediriger ou afficher un message de succès
+            // Pour l'instant, juste afficher un message
+            alert('Configuration terminée ! Vous pouvez maintenant utiliser PDF Builder Pro.');
+        }
+
+        loadStep(stepNumber) {
+            // Charger une étape spécifique via AJAX
+            console.log('PDF Builder Onboarding: Loading step', stepNumber);
+            
+            $.ajax({
+                url: pdfBuilderOnboarding.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_load_onboarding_step',
+                    step: stepNumber,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Step loaded successfully');
+                        this.applyStepData(stepNumber, response.data);
+                    } else {
+                        console.error('PDF Builder Onboarding: Failed to load step:', response.data);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: AJAX error loading step:', error);
                 }
             });
         }
