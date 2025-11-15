@@ -149,30 +149,31 @@ class PDF_Builder_Onboarding_Manager {
                 'content' => $this->get_step_content('welcome'),
                 'action' => __('Commencer', 'pdf-builder-pro')
             ],
-            2 => [
+            // Étape 2 supprimée - vérification d'environnement automatique
+            /* 2 => [
                 'id' => 'environment_check',
                 'title' => __('Vérification de l\'environnement', 'pdf-builder-pro'),
                 'description' => __('Nous analysons votre installation pour optimiser l\'expérience.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('environment_check'),
                 'action' => null, // Pas de bouton pour cette étape
-                'auto_advance' => true, // Avancer automatiquement après un délai
-                'auto_advance_delay' => 3000 // 3 secondes
-            ],
-            3 => [
+                'auto_advance' => false, // Pas d'auto-advance
+                'auto_advance_delay' => 2000
+            ], */
+            2 => [
                 'id' => 'first_template',
                 'title' => __('Créez votre premier template', 'pdf-builder-pro'),
                 'description' => __('Lancez-vous avec un template professionnel prêt à l\'emploi.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('first_template'),
                 'action' => __('Créer un template', 'pdf-builder-pro')
             ],
-            4 => [
+            3 => [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
                 'description' => __('Intégrez vos PDFs dans vos commandes WooCommerce.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('woocommerce_setup'),
                 'action' => __('Configurer', 'pdf-builder-pro')
             ],
-            5 => [
+            4 => [
                 'id' => 'completed',
                 'title' => __('Configuration terminée !', 'pdf-builder-pro'),
                 'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
@@ -529,21 +530,21 @@ class PDF_Builder_Onboarding_Manager {
 
         // Actions spécifiques selon l'étape
         switch ($step) {
-            case 3: // First template
+            case 2: // First template
                 if ($action === 'create_template') {
                     // Rediriger vers l'éditeur
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                 }
                 break;
 
-            case 4: // WooCommerce setup
+            case 3: // WooCommerce setup
                 // Sauvegarder les préférences WooCommerce
                 if (isset($_POST['woocommerce_options'])) {
                     update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
                 }
                 break;
 
-            case 5: // Completed
+            case 4: // Completed
                 $this->onboarding_options['completed'] = true;
                 $this->onboarding_options['completed_at'] = current_time('timestamp');
                 break;

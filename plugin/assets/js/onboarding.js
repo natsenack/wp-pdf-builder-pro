@@ -499,9 +499,9 @@
 
         getStepAction(step) {
             switch (step) {
-                case 3:
+                case 2:
                     return this.selectedTemplate ? 'create_template' : null;
-                case 4:
+                case 3:
                     return 'configure_woocommerce';
                 default:
                     return null;
@@ -528,7 +528,7 @@
 
         skipWoocommerceSetup() {
             // Passer directement à l'étape suivante
-            this.completeStep(4);
+            this.completeStep(3);
         }
 
         loadStepContent(step) {
