@@ -41,7 +41,6 @@
     transition: all 0.3s ease;
     animation: modalSlideIn 0.4s ease;
     display: block;
-    padding-bottom: 100px; /* Espace pour le footer */
 }
 
 @keyframes modalSlideIn {
@@ -163,7 +162,7 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(239, 246, 255, 0.5) 100%);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    height: calc(70vh - 80px); /* 70vh total - header 80px (footer est en absolute) */
+    height: calc(70vh - 80px); /* 70vh total - header 80px */
     min-height: 200px;
 }
 
@@ -196,11 +195,10 @@
     justify-content: space-between;
     gap: 16px;
     height: 100px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
+    max-width: 900px;
+    width: 95%;
+    margin: 0 auto;
+    border-radius: 0 0 8px 8px;
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button {
