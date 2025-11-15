@@ -900,7 +900,7 @@
 }
 
 .pdf-builder-onboarding-modal .step-content p {
-    color: #6b7280;
+    color: #334155;
     font-size: 16px;
     line-height: 1.6;
     margin: 0 0 24px 0;
@@ -1508,7 +1508,7 @@ flex-direction: column;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.cs
 }
 
 .auto-advance-notice em {
-    color: #64748b;
+    color: #334155;
     font-style: italic;
 }
 
