@@ -1414,22 +1414,6 @@ kbd {
         color: #d1fae5 !important;
     }
 
-    .pdf-builder-onboarding-modal .step-content p {
-        color: #e2e8f0;
-    }
-
-    .pdf-builder-onboarding-modal .template-card {
-        background: #4b5563;
-        border-color: #6b7280;
-        color: #ffffff;
-    }
-
-    .pdf-builder-onboarding-modal .template-card:hover {
-        border-color: #3b82f6;
-        background: #374151;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    }
-
     /* Cartes de templates générales en mode sombre */
     .template-card {
         background: #4b5563;
@@ -1454,6 +1438,22 @@ kbd {
 
     .template-card p {
         color: #e2e8f0;
+    }
+
+    .pdf-builder-onboarding-modal .step-content p {
+        color: #e2e8f0;
+    }
+
+    .pdf-builder-onboarding-modal .template-card {
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .template-card:hover {
+        border-color: #3b82f6;
+        background: #374151;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
     }
 
     .pdf-builder-onboarding-modal .template-card.selected {
