@@ -964,9 +964,9 @@
             // Sauvegarder la sélection côté serveur
             this.saveTemplateSelection();
 
-            // Mettre à jour le texte du bouton pour "Commencer" et l'activer
+            // Mettre à jour le texte du bouton pour "Continuer" et l'activer
             const $button = $('.complete-step');
-            $button.text('Commencer').prop('disabled', false);
+            $button.text('Continuer').prop('disabled', false);
         }
 
         skipWoocommerceSetup() {
@@ -1046,6 +1046,11 @@
 
                         // Réactiver les boutons de navigation
                         $('.button-previous, .complete-step').prop('disabled', false);
+
+                        // Pour l'étape 2, désactiver le bouton jusqu'à ce qu'un template soit sélectionné
+                        if (step === 2) {
+                            $('.complete-step').prop('disabled', true);
+                        }
 
                         // Animation d'entrée pour le nouveau contenu
                         $content.find('.onboarding-step-content').hide().fadeIn(300);

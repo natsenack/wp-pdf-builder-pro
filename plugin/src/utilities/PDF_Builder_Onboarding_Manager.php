@@ -156,7 +156,7 @@ class PDF_Builder_Onboarding_Manager {
                 'title' => __('Créez votre premier template', 'pdf-builder-pro'),
                 'description' => __('Lancez-vous avec un template professionnel prêt à l\'emploi.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('first_template'),
-                'action' => __('Créer un template', 'pdf-builder-pro')
+                'action' => __('Continuer', 'pdf-builder-pro')
             ],
             3 => [
                 'id' => 'woocommerce_setup',
