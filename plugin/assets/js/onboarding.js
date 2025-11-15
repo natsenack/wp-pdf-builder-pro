@@ -1077,13 +1077,16 @@
             if (this.currentStep === 2) {
                 // Pour l'étape 2, passer à l'étape 3 sans sélection de template
                 this.selectedTemplate = null; // Aucun template sélectionné
+                this.updateServerStep(3); // Mettre à jour côté serveur
                 this.loadStep(3);
             } else if (this.currentStep === 3) {
                 // Pour l'étape 3, sauter la configuration WooCommerce
                 this.skipWoocommerceSetup();
             } else {
                 // Pour les autres étapes, passer simplement à la suivante
-                this.loadStep(this.currentStep + 1);
+                const nextStep = this.currentStep + 1;
+                this.updateServerStep(nextStep);
+                this.loadStep(nextStep);
             }
         }
 
@@ -1334,6 +1337,29 @@
 
             // Focus initial
             firstElement.focus();
+        }
+
+        updateServerStep(step) {
+            // Mettre à jour l'étape côté serveur
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_update_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: step
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Step updated on server to', step);
+                    } else {
+                        console.error('PDF Builder Onboarding: Failed to update step on server');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: AJAX error updating step:', error);
+                }
+            });
         }
     }
 

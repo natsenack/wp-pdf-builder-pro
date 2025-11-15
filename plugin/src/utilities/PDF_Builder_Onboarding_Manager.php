@@ -55,6 +55,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_reset_onboarding', [$this, 'ajax_reset_onboarding']);
         add_action('wp_ajax_pdf_builder_load_onboarding_step', [$this, 'ajax_load_onboarding_step']);
         add_action('wp_ajax_pdf_builder_save_template_selection', [$this, 'ajax_save_template_selection']);
+        add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
     }
 
     /**
@@ -604,6 +605,25 @@ class PDF_Builder_Onboarding_Manager {
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
 
         $this->onboarding_options['selected_template'] = $selected_template;
+        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->save_onboarding_options();
+
+        wp_send_json_success();
+    }
+
+    /**
+     * AJAX - Mettre à jour l'étape actuelle
+     */
+    public function ajax_update_onboarding_step() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $step = intval($_POST['step']);
+
+        $this->onboarding_options['current_step'] = $step;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
         $this->save_onboarding_options();
 
