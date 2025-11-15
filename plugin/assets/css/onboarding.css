@@ -32,8 +32,8 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 90%;
+    max-width: 900px; /* Élargi de 600px à 900px */
+    width: 95%; /* Augmenté de 90% à 95% pour utiliser plus d'espace */
     height: 80vh;
     position: relative;
     transform: translateY(0);
@@ -54,7 +54,7 @@
 }
 
 .pdf-builder-onboarding-modal .modal-header {
-    padding: 24px 30px 20px;
+    padding: 24px 40px 20px; /* Augmenté le padding horizontal de 30px à 40px */
     border-bottom: 1px solid #e1e5e9;
     background: #f8f9fa;
     position: relative;
@@ -156,7 +156,7 @@
 }
 
 .pdf-builder-onboarding-modal .modal-body {
-    padding: 32px 40px;
+    padding: 32px 50px; /* Augmenté le padding horizontal de 40px à 50px */
     overflow-y: auto;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(239, 246, 255, 0.5) 100%);
     backdrop-filter: blur(5px);
@@ -185,7 +185,7 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer {
-    padding: 32px 40px;
+    padding: 32px 50px; /* Augmenté le padding horizontal de 40px à 50px */
     border-top: 1px solid rgba(59, 130, 246, 0.12);
     background: linear-gradient(135deg, rgba(219, 234, 254, 0.9) 0%, rgba(219, 234, 254, 0.8) 100%);
     backdrop-filter: blur(10px);
