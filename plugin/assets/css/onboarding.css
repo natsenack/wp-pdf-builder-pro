@@ -12,25 +12,22 @@
     background-color: rgba(255, 255, 255, 0.95);
     z-index: 999999;
     animation: fadeIn 0.3s ease-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
 .pdf-builder-onboarding-modal .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     max-width: 500px;
-    width: 100%;
-    max-height: calc(100vh - 40px);
+    width: 90%;
+    max-height: 80vh;
     overflow: hidden;
     animation: slideIn 0.3s ease-out;
-    position: relative;
     border: 1px solid #f8fafc;
-    margin: auto;
 }
 
 .pdf-builder-onboarding-modal .modal-header {
