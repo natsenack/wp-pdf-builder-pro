@@ -425,8 +425,8 @@ class PDF_Builder_Onboarding_Manager {
 
         error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Current step: ' . $current_step);
         ?>
-        <div id="pdf-builder-onboarding-modal" class="pdf-builder-modal-overlay" style="display: block;">
-            <div class="pdf-builder-modal pdf-builder-onboarding-modal">
+        <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal show" style="display: flex;">
+            <div class="modal-content pdf-builder-modal">
                 <div class="modal-header">
                     <div class="progress-container">
                         <div class="step-indicators">

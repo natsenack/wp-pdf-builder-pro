@@ -81,7 +81,7 @@
 
         setupKeyboardNavigation() {
             $(document).on('keydown', (e) => {
-                if (!$('#pdf-builder-onboarding-modal').is(':visible')) return;
+                if (!$('#pdf-builder-onboarding-modal').hasClass('show') || $('#pdf-builder-onboarding-modal').css('display') === 'none') return;
 
                 switch(e.key) {
                     case 'ArrowRight':
@@ -163,6 +163,7 @@
             console.log('PDF Builder Onboarding: Modal element found:', $modal.length);
             console.log('PDF Builder Onboarding: Modal current display:', $modal.css('display'));
             console.log('PDF Builder Onboarding: Modal HTML:', $modal.prop('outerHTML').substring(0, 200) + '...');
+            // Le modal est déjà affiché via CSS, juste ajouter l'animation
             $modal.fadeIn(400, () => {
                 console.log('PDF Builder Onboarding: Modal fadeIn complete');
                 console.log('PDF Builder Onboarding: Modal display after fadeIn:', $modal.css('display'));
