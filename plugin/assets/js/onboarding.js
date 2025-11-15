@@ -338,6 +338,22 @@
             return isValid;
         }
 
+        getWoocommerceOptions() {
+            // Récupérer les options WooCommerce sélectionnées
+            const options = {};
+            $('.woocommerce-setup input[type="checkbox"]').each(function() {
+                options[$(this).attr('name')] = $(this).is(':checked');
+            });
+            return options;
+        }
+
+        showCompletionMessage() {
+            // Afficher un message de completion et fermer le modal
+            alert('Configuration terminée ! Vous pouvez maintenant utiliser PDF Builder Pro.');
+            this.hideModal();
+            this.markOnboardingComplete();
+        }
+
         showExitConfirmation() {
             if (confirm('Êtes-vous sûr de vouloir quitter l\'assistant de configuration ?\n\nVotre progression sera sauvegardée.')) {
                 this.hideModal();
@@ -820,7 +836,7 @@
 
             setTimeout(() => {
                 // Simuler le chargement du contenu de la nouvelle étape
-                this.loadStepContent(stepNumber);
+                this.loadStep(stepNumber);
                 $currentStep.removeClass(`slide-out-left slide-out-right`);
 
                 const $newStep = $('.onboarding-step');
@@ -846,7 +862,6 @@
 
         completeStep(step) {
             const $button = $(`.complete-step[data-step="${step}"]`);
-            const stepAction = this.getStepAction(step);
 
             // Sauvegarder le texte original
             const originalText = $button.text();
@@ -875,15 +890,20 @@
                     action: 'pdf_builder_complete_onboarding_step',
                     nonce: pdfBuilderOnboarding.nonce,
                     step: step,
-                    step_action: stepAction,
                     selected_template: this.selectedTemplate,
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
                     clearTimeout(timeoutId);
                     if (response.success) {
-                        // Feedback de succès rapide
-                        $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
+                        // Feedback de succès différent selon l'étape
+                        if (step >= 4) {
+                            // Dernière étape - afficher "Terminé !"
+                            $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
+                        } else {
+                            // Étape intermédiaire - afficher "Étape terminée"
+                            $button.html('<span class="dashicons dashicons-yes"></span> Étape terminée');
+                        }
 
                         setTimeout(() => {
                             if (response.data.completed) {
