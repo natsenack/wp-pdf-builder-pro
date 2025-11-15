@@ -149,28 +149,38 @@ class PDF_Builder_Onboarding_Manager {
                 'title' => __('Bienvenue dans PDF Builder Pro', 'pdf-builder-pro'),
                 'description' => __('Découvrez le constructeur de PDF professionnel le plus avancé pour WordPress.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('welcome'),
-                'action' => __('Commencer', 'pdf-builder-pro')
+                'action' => __('Suivant', 'pdf-builder-pro'),
+                'action_type' => 'next', // Type d'action pour la logique JavaScript
+                'can_skip' => false // Ne peut pas être ignorée
             ],
             2 => [
                 'id' => 'first_template',
-                'title' => __('Créez votre premier template', 'pdf-builder-pro'),
-                'description' => __('Lancez-vous avec un template professionnel prêt à l\'emploi.', 'pdf-builder-pro'),
+                'title' => __('Choisissez votre template de départ', 'pdf-builder-pro'),
+                'description' => __('Sélectionnez un template professionnel pour commencer.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('first_template'),
-                'action' => __('Continuer', 'pdf-builder-pro')
+                'action' => __('Continuer', 'pdf-builder-pro'),
+                'action_type' => 'next',
+                'can_skip' => false, // Nécessite une sélection
+                'requires_selection' => true // Nécessite une sélection avant activation
             ],
             3 => [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
                 'description' => __('Intégrez vos PDFs dans vos commandes WooCommerce.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('woocommerce_setup'),
-                'action' => __('Configurer', 'pdf-builder-pro')
+                'action' => __('Suivant', 'pdf-builder-pro'),
+                'action_type' => 'next',
+                'can_skip' => true, // Peut être ignorée
+                'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro')
             ],
             4 => [
                 'id' => 'completed',
                 'title' => __('Configuration terminée !', 'pdf-builder-pro'),
                 'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('completed'),
-                'action' => __('Commencer à créer', 'pdf-builder-pro')
+                'action' => __('Commencer à créer', 'pdf-builder-pro'),
+                'action_type' => 'finish',
+                'can_skip' => false // Dernière étape, ne peut pas être ignorée
             ]
         ];
     }
@@ -448,11 +458,20 @@ class PDF_Builder_Onboarding_Manager {
                 </div>
 
                 <div class="modal-footer">
-                    <button class="button button-secondary" data-action="skip-onboarding">
-                        <?php _e('Ignorer', 'pdf-builder-pro'); ?>
+                    <?php if ($current_step_data['can_skip']): ?>
+                    <button class="button button-secondary" data-action="skip-step">
+                        <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer', 'pdf-builder-pro')); ?>
                     </button>
+                    <?php else: ?>
+                    <button class="button button-secondary" data-action="skip-onboarding">
+                        <?php _e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
+                    </button>
+                    <?php endif; ?>
                     <?php if ($current_step_data['action']): ?>
-                    <button class="button button-primary complete-step" data-step="<?php echo $current_step; ?>">
+                    <button class="button button-primary complete-step" 
+                            data-step="<?php echo $current_step; ?>" 
+                            data-action-type="<?php echo $current_step_data['action_type']; ?>"
+                            <?php echo ($current_step_data['requires_selection'] ?? false) ? 'disabled' : ''; ?>>
                         <?php echo esc_html($current_step_data['action']); ?>
                     </button>
                     <?php endif; ?>
@@ -695,6 +714,10 @@ class PDF_Builder_Onboarding_Manager {
             'description' => $step_data['description'],
             'content' => $html,
             'action' => $step_data['action'],
+            'action_type' => $step_data['action_type'] ?? 'next',
+            'can_skip' => $step_data['can_skip'] ?? false,
+            'skip_text' => $step_data['skip_text'] ?? __('Ignorer', 'pdf-builder-pro'),
+            'requires_selection' => $step_data['requires_selection'] ?? false,
             'auto_advance' => $step_data['auto_advance'] ?? false,
             'auto_advance_delay' => $step_data['auto_advance_delay'] ?? 3000
         ]);

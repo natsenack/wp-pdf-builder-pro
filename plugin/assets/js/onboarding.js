@@ -27,23 +27,39 @@
         }
 
         bindEvents() {
-            // Événements existants
+            // Événements des boutons principaux
             $(document).on('click', '.complete-step', (e) => {
                 e.preventDefault();
                 const step = $(e.currentTarget).data('step');
-                this.completeStep(step);
+                const actionType = $(e.currentTarget).data('action-type');
+                this.completeStep(step, actionType);
             });
 
+            // Bouton pour ignorer l'étape courante
+            $(document).on('click', '[data-action="skip-step"]', (e) => {
+                e.preventDefault();
+                this.skipCurrentStep();
+            });
+
+            // Bouton pour ignorer complètement l'onboarding
             $(document).on('click', '[data-action="skip-onboarding"]', (e) => {
                 e.preventDefault();
                 this.skipOnboarding();
             });
 
+            // Bouton précédent
+            $(document).on('click', '.button-previous', (e) => {
+                e.preventDefault();
+                this.goToPreviousStep();
+            });
+
+            // Sélection de template
             $(document).on('click', '.template-card', (e) => {
                 e.preventDefault();
                 this.selectTemplate($(e.currentTarget));
             });
 
+            // Bouton pour sauter la configuration WooCommerce
             $(document).on('click', '.skip-woocommerce', (e) => {
                 e.preventDefault();
                 this.skipWoocommerceSetup();
@@ -860,16 +876,19 @@
             });
         }
 
-        completeStep(step) {
+        completeStep(step, actionType = 'next') {
             const $button = $(`.complete-step[data-step="${step}"]`);
 
             // Sauvegarder le texte original
             const originalText = $button.text();
             $button.data('original-text', originalText);
 
-            // Désactiver le bouton avec feedback visuel amélioré
-            $button.prop('disabled', true)
-                   .html('<span class="dashicons dashicons-update spin"></span> Sauvegarde...');
+            // Désactiver le bouton avec feedback visuel
+            $button.prop('disabled', true);
+
+            // Texte de chargement selon le type d'action
+            const loadingText = actionType === 'finish' ? 'Finalisation...' : 'Chargement...';
+            $button.html('<span class="dashicons dashicons-update spin"></span> ' + loadingText);
 
             if (typeof pdfBuilderOnboarding === 'undefined') {
                 console.error('pdfBuilderOnboarding object not found');
@@ -890,18 +909,17 @@
                     action: 'pdf_builder_complete_onboarding_step',
                     nonce: pdfBuilderOnboarding.nonce,
                     step: step,
+                    action_type: actionType,
                     selected_template: this.selectedTemplate,
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
                     clearTimeout(timeoutId);
                     if (response.success) {
-                        // Feedback de succès différent selon l'étape
-                        if (step >= 4) {
-                            // Dernière étape - afficher "Terminé !"
+                        // Feedback de succès selon le type d'action
+                        if (actionType === 'finish') {
                             $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
                         } else {
-                            // Étape intermédiaire - afficher "Étape terminée"
                             $button.html('<span class="dashicons dashicons-yes"></span> Étape terminée');
                         }
 
@@ -917,7 +935,7 @@
                         }, 500);
                     } else {
                         // En cas d'erreur, réactiver tous les boutons
-                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                        $('.button-previous, .complete-step, [data-action]').prop('disabled', false);
                         $button.html(originalText);
                         this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
                     }
@@ -925,7 +943,7 @@
                 error: (xhr, status, error) => {
                     clearTimeout(timeoutId);
                     // En cas d'erreur AJAX, réactiver tous les boutons
-                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                    $('.button-previous, .complete-step, [data-action]').prop('disabled', false);
                     $button.html(originalText);
 
                     if (status === 'timeout') {
@@ -969,9 +987,20 @@
             $button.text('Continuer').prop('disabled', false);
         }
 
-        skipWoocommerceSetup() {
-            // Passer directement à l'étape suivante
-            this.completeStep(3);
+        skipCurrentStep() {
+            // Pour l'étape 3 (WooCommerce), on peut la sauter
+            if (this.currentStep === 3) {
+                this.skipWoocommerceSetup();
+            } else {
+                // Pour les autres étapes, passer simplement à la suivante
+                this.loadStep(this.currentStep + 1);
+            }
+        }
+
+        goToPreviousStep() {
+            if (this.currentStep > 1) {
+                this.loadStep(this.currentStep - 1);
+            }
         }
 
         loadStepContent(step) {
@@ -1047,8 +1076,8 @@
                         // Réactiver les boutons de navigation
                         $('.button-previous, .complete-step').prop('disabled', false);
 
-                        // Pour l'étape 2, désactiver le bouton jusqu'à ce qu'un template soit sélectionné
-                        if (step === 2) {
+                        // Gérer les étapes qui nécessitent une sélection
+                        if (response.data.requires_selection) {
                             $('.complete-step').prop('disabled', true);
                         }
 
