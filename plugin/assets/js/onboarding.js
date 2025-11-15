@@ -108,7 +108,9 @@
 
             // Initialiser l'état du wizard
             this.currentStep = forcedStep ? parseInt(forcedStep) : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1);
+            this.selectedTemplate = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null;
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
+            console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
             this.showModal();
             this.announceStep();
@@ -280,6 +282,15 @@
             // Mettre à jour le texte du bouton principal si nécessaire
             if (data.action) {
                 $('.complete-step').text(data.action);
+                // Pour l'étape 2, désactiver le bouton tant qu'aucun template n'est sélectionné
+                if (step === 2) {
+                    $('.complete-step').prop('disabled', !this.selectedTemplate);
+                    // Restaurer la sélection visuelle si un template est déjà sélectionné
+                    if (this.selectedTemplate) {
+                        $(`.template-card[data-template="${this.selectedTemplate}"]`).addClass('selected');
+                        $('.complete-step').text('Commencer');
+                    }
+                }
             }
 
             // Gérer les étapes automatiques
@@ -527,6 +538,7 @@
                     nonce: pdfBuilderOnboarding.nonce,
                     step: step,
                     step_action: stepAction,
+                    selected_template: this.selectedTemplate,
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
@@ -591,9 +603,12 @@
             $card.addClass('selected');
             this.selectedTemplate = $card.data('template');
 
-            // Mettre à jour le texte du bouton pour "Commencer"
+            // Sauvegarder la sélection côté serveur
+            this.saveTemplateSelection();
+
+            // Mettre à jour le texte du bouton pour "Commencer" et l'activer
             const $button = $('.complete-step');
-            $button.text('Commencer');
+            $button.text('Commencer').prop('disabled', false);
         }
 
         skipWoocommerceSetup() {
@@ -787,6 +802,27 @@
                 // Fallback avec alert
                 alert(message);
             }
+        }
+
+        saveTemplateSelection() {
+            // Sauvegarder la sélection de template via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_selection',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    selected_template: this.selectedTemplate
+                },
+                success: (response) => {
+                    if (!response.success) {
+                        console.warn('Failed to save template selection:', response.data);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.warn('Error saving template selection:', error);
+                }
+            });
         }
 
         trapFocus($container) {

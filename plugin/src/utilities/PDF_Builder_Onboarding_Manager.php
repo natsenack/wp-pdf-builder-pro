@@ -54,6 +54,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_skip_onboarding', [$this, 'ajax_skip_onboarding']);
         add_action('wp_ajax_pdf_builder_reset_onboarding', [$this, 'ajax_reset_onboarding']);
         add_action('wp_ajax_pdf_builder_load_onboarding_step', [$this, 'ajax_load_onboarding_step']);
+        add_action('wp_ajax_pdf_builder_save_template_selection', [$this, 'ajax_save_template_selection']);
     }
 
     /**
@@ -99,6 +100,7 @@ class PDF_Builder_Onboarding_Manager {
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_onboarding'),
             'current_step' => $this->get_current_step(),
+            'selected_template' => $this->onboarding_options['selected_template'] ?? null,
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -149,16 +151,6 @@ class PDF_Builder_Onboarding_Manager {
                 'content' => $this->get_step_content('welcome'),
                 'action' => __('Commencer', 'pdf-builder-pro')
             ],
-            // Étape 2 supprimée - vérification d'environnement automatique
-            /* 2 => [
-                'id' => 'environment_check',
-                'title' => __('Vérification de l\'environnement', 'pdf-builder-pro'),
-                'description' => __('Nous analysons votre installation pour optimiser l\'expérience.', 'pdf-builder-pro'),
-                'content' => $this->get_step_content('environment_check'),
-                'action' => null, // Pas de bouton pour cette étape
-                'auto_advance' => false, // Pas d'auto-advance
-                'auto_advance_delay' => 2000
-            ], */
             2 => [
                 'id' => 'first_template',
                 'title' => __('Créez votre premier template', 'pdf-builder-pro'),
@@ -524,6 +516,13 @@ class PDF_Builder_Onboarding_Manager {
         $step = intval($_POST['step']);
         $action = sanitize_text_field($_POST['step_action'] ?? '');
 
+        // Validation des étapes avant de passer à la suivante
+        $validation_error = $this->validate_step_completion($step, $action);
+        if ($validation_error) {
+            wp_send_json_error(['message' => $validation_error]);
+            return;
+        }
+
         $this->onboarding_options['steps_completed'][] = $step;
         $this->onboarding_options['current_step'] = $step + 1;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
@@ -532,6 +531,8 @@ class PDF_Builder_Onboarding_Manager {
         switch ($step) {
             case 2: // First template
                 if ($action === 'create_template') {
+                    // Sauvegarder le template sélectionné
+                    $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template'] ?? '');
                     // Rediriger vers l'éditeur
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                 }
@@ -557,6 +558,53 @@ class PDF_Builder_Onboarding_Manager {
             'completed' => $this->onboarding_options['completed'],
             'redirect_to' => $this->onboarding_options['redirect_to'] ?? null
         ]);
+    }
+
+    /**
+     * AJAX - Sauvegarder la sélection de template
+     */
+    public function ajax_save_template_selection() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
+
+        $this->onboarding_options['selected_template'] = $selected_template;
+        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->save_onboarding_options();
+
+        wp_send_json_success();
+    }
+
+    /**
+     * Valider la completion d'une étape
+     */
+    private function validate_step_completion($step, $action) {
+        switch ($step) {
+            case 1: // Welcome - toujours valide
+                return null;
+
+            case 2: // First template - doit avoir sélectionné un template
+                if ($action !== 'create_template') {
+                    return __('Veuillez sélectionner un template avant de continuer.', 'pdf-builder-pro');
+                }
+                if (empty($_POST['selected_template'])) {
+                    return __('Aucun template sélectionné.', 'pdf-builder-pro');
+                }
+                return null;
+
+            case 3: // WooCommerce setup - toujours valide (optionnel)
+                return null;
+
+            case 4: // Completed - toujours valide
+                return null;
+
+            default:
+                return __('Étape inconnue.', 'pdf-builder-pro');
+        }
     }
 
     /**
