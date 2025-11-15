@@ -420,7 +420,19 @@ class PDF_Builder_Onboarding_Manager {
     public function render_onboarding_wizard() {
         error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Starting render');
         $steps = $this->get_onboarding_steps();
-        $current_step = $this->get_current_step() ?: 1;
+
+        // Vérifier si une étape spécifique est demandée via URL
+        $forced_step = isset($_GET['pdf_onboarding_step']) ? intval($_GET['pdf_onboarding_step']) : null;
+        if ($forced_step && $forced_step >= 1 && $forced_step <= count($steps)) {
+            // Forcer l'étape et sauvegarder
+            $this->onboarding_options['current_step'] = $forced_step;
+            $this->save_onboarding_options();
+            $current_step = $forced_step;
+            error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Forced step: ' . $current_step);
+        } else {
+            $current_step = $this->get_current_step() ?: 1;
+        }
+
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
 
         error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Current step: ' . $current_step);

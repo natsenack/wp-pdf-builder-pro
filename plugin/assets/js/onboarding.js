@@ -51,8 +51,26 @@
             // Navigation avec les boutons précédent/suivant
             $(document).on('click', '.button-previous', (e) => {
                 e.preventDefault();
-                this.navigateStep('prev');
-                this.trackAnalytics('step_navigation', { from: this.currentStep, method: 'button_previous' });
+
+                const $button = $(e.currentTarget);
+                const originalText = $button.html();
+
+                // Feedback visuel immédiat
+                $button.prop('disabled', true)
+                       .html('<span class="dashicons dashicons-update spin"></span> Chargement...');
+
+                // Pour la navigation précédente, on recharge la page avec l'étape précédente
+                // pour s'assurer que le contenu PHP est correct
+                const prevStep = this.currentStep - 1;
+                if (prevStep >= 1) {
+                    // Ajouter un paramètre d'URL pour forcer l'étape
+                    const currentUrl = new URL(window.location);
+                    currentUrl.searchParams.set('pdf_onboarding_step', prevStep);
+                    window.location.href = currentUrl.toString();
+                } else {
+                    // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
+                    $button.prop('disabled', false).html(originalText);
+                }
             });
 
             // Nouveaux événements pour l'UX améliorée
