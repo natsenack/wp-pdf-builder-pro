@@ -34,13 +34,12 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 90%;
-    height: 80vh; /* Hauteur fixe pour garantir que le footer reste visible */
+    height: 80vh;
     position: relative;
     transform: translateY(0);
     transition: all 0.3s ease;
     animation: modalSlideIn 0.4s ease;
-    display: flex;
-    flex-direction: column;
+    display: block; /* Changement: utiliser block au lieu de flex */
 }
 
 @keyframes modalSlideIn {
@@ -62,6 +61,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 80px; /* Hauteur fixe pour le header */
     flex-shrink: 0;
 }
 
@@ -161,8 +161,8 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(239, 246, 255, 0.5) 100%);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    flex: 1;
-    min-height: 200px; /* Hauteur minimale pour éviter que le footer remonte trop */
+    height: calc(80vh - 80px - 100px); /* 80vh total - header 80px - footer 100px */
+    min-height: 200px;
 }
 
 .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar {
@@ -193,6 +193,7 @@
     display: flex;
     justify-content: space-between;
     gap: 16px;
+    height: 100px; /* Hauteur fixe pour le footer */
     flex-shrink: 0;
 }
 
