@@ -418,12 +418,118 @@ class PDF_Builder_Onboarding_Manager {
      * Rendre le wizard d'onboarding
      */
     public function render_onboarding_wizard() {
+        error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Starting render');
         $steps = $this->get_onboarding_steps();
         $current_step = $this->get_current_step() ?: 1;
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
 
+        error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Current step: ' . $current_step);
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-modal-overlay" style="display: block;">
+            <div class="pdf-builder-modal pdf-builder-onboarding-modal">
+                <div class="modal-header">
+                    <div class="progress-container">
+                        <div class="step-indicators">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <div class="step-indicator <?php echo $i < $current_step ? 'completed' : ($i === $current_step ? 'active' : ''); ?>"
+                                     data-step="<?php echo $i; ?>"
+                                     data-tooltip="Étape <?php echo $i; ?>">
+                                </div>
+                            <?php endfor; ?>
+                        </div>
+                        <div class="onboarding-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: <?php echo (min($current_step, 5) / 5) * 100; ?>%"></div>
+                            </div>
+                            <span class="progress-text">
+                                <?php printf(__('Étape %d sur %d', 'pdf-builder-pro'), $current_step, count($steps)); ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <button class="onboarding-help-btn" data-tooltip="Aide et raccourcis clavier (Ctrl+H)">
+                        <span class="dashicons dashicons-editor-help"></span>
+                    </button>
+
+                    <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
+                        <span class="dashicons dashicons-no"></span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="onboarding-step" data-step="<?php echo $current_step; ?>">
+                        <div class="step-header">
+                            <h2><?php echo esc_html($current_step_data['title']); ?></h2>
+                            <p><?php echo esc_html($current_step_data['description']); ?></p>
+                        </div>
+
+                        <div class="step-content">
+                            <?php echo $current_step_data['content']; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="button button-secondary" data-action="skip-onboarding" data-tooltip="Ignorer l'assistant et aller directement à PDF Builder">
+                        <?php _e('Ignorer', 'pdf-builder-pro'); ?>
+                    </button>
+                    <button class="button button-primary" data-action="next-step" data-step="<?php echo $current_step; ?>" data-tooltip="<?php echo esc_attr($current_step_data['action']); ?>">
+                        <?php echo esc_html($current_step_data['action']); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .pdf-builder-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 100000;
+                display: none;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .pdf-builder-modal {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow: hidden;
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -60%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .modal-header {
+                padding: 20px 24px;
+                border-bottom: 1px solid #e1e1e1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             <div class="pdf-builder-modal pdf-builder-onboarding-modal">
                 <div class="modal-header">
                     <div class="progress-container">
