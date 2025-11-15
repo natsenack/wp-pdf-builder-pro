@@ -11,17 +11,15 @@
   --surface-color: #ffffff;       /* Blanc pur */
   --surface-secondary: #f8fafc;   /* Bleu très très clair */
   --border-color: #e2e8f0;        /* Bordure bleue très subtile */
-  --text-primary: #1e293b;        /* Bleu très foncé pour le texte */
-  --text-secondary: #475569;      /* Bleu-gris pour le texte secondaire */
-  --text-muted: #64748b;          /* Bleu-gris clair pour le texte muted */
+  --text-primary: #1e293b;        /* Bleu très foncé pour le texte principal */
+  --text-secondary: #334155;      /* Bleu-gris foncé pour le texte secondaire */
+  --text-muted: #475569;          /* Bleu-gris moyen pour le texte muted */
   --shadow-light: rgba(59, 130, 246, 0.02);  /* Ombre bleue ultra-légère */
   --shadow-medium: rgba(59, 130, 246, 0.04); /* Ombre bleue très légère */
   --shadow-heavy: rgba(59, 130, 246, 0.06);  /* Ombre bleue légère */
-  --text-muted: #64748b;          /* Bleu-gris pour le texte muted */
   --shadow: 0 1px 2px rgba(59, 130, 246, 0.05);
   --shadow-hover: 0 2px 4px rgba(59, 130, 246, 0.08);
   --radius: 8px;
-  --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
 }
@@ -1541,7 +1539,7 @@
     --surface-color: #ffffff;       /* Blanc pur */
     --border-color: #f1f5f9;        /* Gris bordure très clair */
     --text-primary: #1e293b;        /* Gris foncé très clair */
-    --text-secondary: #64748b;      /* Gris moyen clair */
+    --text-secondary: #475569;      /* Gris moyen clair */
     --text-muted: #94a3b8;          /* Gris clair */
   }
 }

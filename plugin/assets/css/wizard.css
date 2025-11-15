@@ -56,7 +56,7 @@
     border: 2px solid rgba(59, 130, 246, 0.15);
     font-size: 12px;
     font-weight: 500;
-    color: #64748b;
+    color: #4b5563;
     position: relative;
     z-index: 2;
     transition: all 0.3s ease;
@@ -172,7 +172,7 @@
 }
 
 .dependency-item small {
-    color: #64748b;
+    color: #4b5563;
     margin-left: auto;
     font-style: italic;
 }
@@ -461,7 +461,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: #64748b;
+    color: #4b5563;
 }
 
 .wizard-loading .spinner {

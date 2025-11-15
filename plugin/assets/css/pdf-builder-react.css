@@ -268,7 +268,7 @@ input:focus, select:focus, textarea:focus {
 
 .loading-text {
   margin-left: 12px;
-  color: #64748b;
+  color: #4b5563;
   font-weight: 500;
 }
 
@@ -459,7 +459,7 @@ body.pdf-builder-active #wpadminbar {
 
 .editor-header h2 {
   margin: 0;
-  color: #1e293b;
+  color: #0f172a;
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -818,7 +818,7 @@ body.pdf-builder-active #wpadminbar {
   border: 1px solid rgba(239, 246, 255, 0.8);
   border-radius: 6px;
   background: #ffffff;
-  color: #64748b;
+  color: #4b5563;
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
@@ -851,8 +851,8 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .btn-secondary:hover {
-  background: #64748b;
-  border-color: #64748b;
+  background: #4b5563;
+  border-color: #4b5563;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
@@ -1775,7 +1775,7 @@ body.pdf-builder-active #wpadminbar {
 .library-subtitle {
   margin: 0;
   font-size: 12px;
-  color: #64748b;
+  color: #4b5563;
   font-style: italic;
 }
 
@@ -1923,7 +1923,7 @@ body.pdf-builder-active #wpadminbar {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #64748b;
+  color: #4b5563;
   padding: 0;
   width: 30px;
   height: 30px;
@@ -2047,7 +2047,7 @@ body.pdf-builder-active #wpadminbar {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #64748b;
+  color: #4b5563;
   font-size: 12px;
   font-weight: bold;
   pointer-events: none;
@@ -2164,13 +2164,13 @@ body.pdf-builder-active #wpadminbar {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
 }
 
 .element-info {
   margin-top: 8px;
   font-size: 12px;
-  color: #64748b;
+  color: #4b5563;
 }
 
 .element-type {
@@ -2229,7 +2229,7 @@ body.pdf-builder-active #wpadminbar {
   padding: 8px 4px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: #4b5563;
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
@@ -2274,7 +2274,7 @@ body.pdf-builder-active #wpadminbar {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2473,7 +2473,7 @@ body.pdf-builder-active #wpadminbar {
 .no-selection {
   text-align: center;
   padding: 40px 20px;
-  color: #64748b;
+  color: #4b5563;
 }
 
 .no-selection-icon {
@@ -2549,7 +2549,7 @@ body.pdf-builder-active #wpadminbar {
 
 .unit {
   font-size: 11px;
-  color: #64748b;
+  color: #4b5563;
   min-width: 20px;
   text-align: center;
 }

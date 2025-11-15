@@ -83,7 +83,7 @@
 
 .pdf-builder-onboarding-modal .modal-header p {
     margin: 0;
-    color: #64748b;
+    color: #475569;
     font-size: 16px;
     line-height: 1.5;
 }
@@ -264,7 +264,7 @@
 
 .feature-item p {
     margin: 0;
-    color: #64748b;
+    color: #475569;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -353,7 +353,7 @@
 .check-content p {
     margin: 0;
     font-size: 13px;
-    color: #64748b;
+    color: #475569;
     line-height: 1.4;
 }
 
@@ -447,7 +447,7 @@
 .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #64748b;
+    color: #475569;
     line-height: 1.4;
 }
 
@@ -505,7 +505,7 @@
 .setup-notice .notice-content p {
     margin: 0;
     font-size: 14px;
-    color: #64748b;
+    color: #475569;
 }
 
 .setup-options {
@@ -533,7 +533,7 @@
     gap: 8px;
     margin-bottom: 8px;
     font-size: 14px;
-    color: #64748b;
+    color: #475569;
     padding: 12px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -617,7 +617,7 @@
 
 .summary-item p {
     margin: 0 0 16px 0;
-    color: #64748b;
+    color: #475569;
     font-size: 14px;
     line-height: 1.4;
 }
@@ -757,7 +757,7 @@
 
 .completion-tips li {
     margin-bottom: 4px;
-    color: #64748b;
+    color: #475569;
     font-size: 14px;
 }
 
@@ -886,7 +886,7 @@
 .pdf-builder-onboarding-modal .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #64748b;
+    color: #475569;
 }
 
 .pdf-builder-onboarding-modal .woocommerce-setup {
@@ -934,7 +934,7 @@
 
 .pdf-builder-onboarding-modal .woocommerce-setup label {
     font-size: 14px;
-    color: #64748b;
+    color: #475569;
     cursor: pointer;
 }
 
@@ -960,7 +960,7 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer .skip-link {
-    color: #64748b;
+    color: #475569;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.2s ease;
@@ -1009,7 +1009,7 @@
 
 .pdf-builder-onboarding-modal .btn-secondary {
     background: rgba(239, 246, 255, 0.8);
-    color: #64748b;
+    color: #475569;
     border-color: #c3c4c7;
 }
 
@@ -1200,7 +1200,7 @@ kbd {
     -moz-border-radius: 3px;
     -ms-border-radius: 3px;
     -o-border-radius: 3px;
-    color: #64748b;
+    color: #475569;
     display: inline-block;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 11px;
@@ -1381,11 +1381,11 @@ kbd {
 
     .pdf-builder-onboarding-modal .modal-footer {
         background: #373d41;
-        border-top-color: #64748b;
+        border-top-color: #475569;
     }
 
     .pdf-builder-onboarding-modal .btn-secondary {
-        background: #64748b;
+        background: #475569;
         color: #e2e8f0;
     }
 
