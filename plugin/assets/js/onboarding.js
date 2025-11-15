@@ -55,6 +55,12 @@
                 this.trackAnalytics('step_navigation', { from: this.currentStep, method: 'button_previous' });
             });
 
+            $(document).on('click', '.button-next', (e) => {
+                e.preventDefault();
+                this.navigateStep('next');
+                this.trackAnalytics('step_navigation', { from: this.currentStep, method: 'button_next' });
+            });
+
             // Nouveaux événements pour l'UX améliorée
             $(document).on('mouseenter', '[data-tooltip]', (e) => {
                 this.showTooltip($(e.currentTarget));
