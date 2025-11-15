@@ -462,7 +462,11 @@
                             } else if (response.data.redirect_to) {
                                 window.location.href = response.data.redirect_to;
                             } else {
-                                this.goToNextStep(response.data.next_step);
+                                // Pour la navigation suivante, on recharge la page avec l'étape suivante
+                                // pour s'assurer que le contenu PHP est correct
+                                const currentUrl = new URL(window.location);
+                                currentUrl.searchParams.set('pdf_onboarding_step', response.data.next_step);
+                                window.location.href = currentUrl.toString();
                             }
                         }, 500);
                     } else {
@@ -516,19 +520,6 @@
         skipWoocommerceSetup() {
             // Passer directement à l'étape suivante
             this.completeStep(4);
-        }
-
-        goToNextStep(nextStep) {
-            // Animation de transition
-            const $currentStep = $('.onboarding-step');
-            $currentStep.fadeOut(200, () => {
-                // Mettre à jour le contenu pour la nouvelle étape
-                this.loadStepContent(nextStep);
-                $currentStep.fadeIn(300);
-            });
-
-            this.currentStep = nextStep;
-            this.updateProgress();
         }
 
         loadStepContent(step) {
