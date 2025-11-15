@@ -29,9 +29,20 @@
         bindEvents() {
             // Événements des boutons principaux
             $(document).on('click', '.complete-step', (e) => {
-                e.preventDefault();
-                const step = $(e.currentTarget).data('step');
-                const actionType = $(e.currentTarget).data('action-type');
+                console.log('PDF Builder Onboarding: Complete step button clicked');
+                const $button = $(e.currentTarget);
+                const step = $button.data('step');
+                const actionType = $button.data('action-type');
+                const isDisabled = $button.prop('disabled');
+
+                console.log(`PDF Builder Onboarding: Button details - step: ${step}, actionType: ${actionType}, disabled: ${isDisabled}`);
+
+                if (isDisabled) {
+                    console.log('PDF Builder Onboarding: Button is disabled, preventing action');
+                    e.preventDefault();
+                    return;
+                }
+
                 this.completeStep(step, actionType);
             });
 
@@ -856,7 +867,10 @@
         }
 
         completeStep(step, actionType = 'next') {
+            console.log(`PDF Builder Onboarding: completeStep called - step: ${step}, actionType: ${actionType}`);
+
             const $button = $(`.complete-step[data-step="${step}"]`);
+            console.log(`PDF Builder Onboarding: Button found:`, $button.length > 0 ? 'yes' : 'no');
 
             // Sauvegarder le texte original
             const originalText = $button.text();
@@ -864,6 +878,7 @@
 
             // Désactiver le bouton avec feedback visuel
             $button.prop('disabled', true);
+            console.log(`PDF Builder Onboarding: Button disabled for loading`);
 
             // Texte de chargement selon le type d'action
             const loadingText = actionType === 'finish' ? 'Finalisation...' : 'Chargement...';
@@ -894,7 +909,11 @@
                 },
                 success: (response) => {
                     clearTimeout(timeoutId);
+                    console.log('PDF Builder Onboarding: AJAX success - response:', response);
+
                     if (response.success) {
+                        console.log(`PDF Builder Onboarding: Step ${step} completed successfully, next_step: ${response.data.next_step}`);
+
                         // Feedback de succès selon le type d'action
                         if (actionType === 'finish') {
                             $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
@@ -917,6 +936,7 @@
                             }
                         }, 500);
                     } else {
+                        console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
                         // En cas d'erreur, réactiver tous les boutons
                         this.resetButtonStates();
                         $button.html(originalText);
@@ -925,6 +945,8 @@
                 },
                 error: (xhr, status, error) => {
                     clearTimeout(timeoutId);
+                    console.error('PDF Builder Onboarding: AJAX error:', status, error);
+
                     // En cas d'erreur AJAX, réactiver tous les boutons
                     this.resetButtonStates();
                     $button.html(originalText);
@@ -950,6 +972,7 @@
         }
 
         showError(message) {
+            console.log('PDF Builder Onboarding: Showing error message:', message);
             // Afficher un message d'erreur dans le modal
             const $modal = $('#pdf-builder-onboarding-modal');
             const $body = $modal.find('.modal-body');
@@ -989,6 +1012,7 @@
         }
 
         resetButtonStates() {
+            console.log('PDF Builder Onboarding: Resetting button states');
             // Réactiver tous les boutons et restaurer leur état normal
             $('.button-previous, .complete-step, [data-action]').each(function() {
                 const $btn = $(this);
@@ -1003,6 +1027,7 @@
         }
 
         selectTemplate($card) {
+            console.log('PDF Builder Onboarding: Template selected', $card.data('template'));
             $('.template-card').removeClass('selected');
             $card.addClass('selected');
             this.selectedTemplate = $card.data('template');
@@ -1012,7 +1037,9 @@
 
             // Mettre à jour le texte du bouton pour "Continuer" et l'activer
             const $button = $('.complete-step');
+            console.log(`PDF Builder Onboarding: Activating button after template selection - was disabled: ${$button.prop('disabled')}`);
             $button.text('Continuer').prop('disabled', false);
+            console.log(`PDF Builder Onboarding: Button activated - text: "${$button.text()}", disabled: ${$button.prop('disabled')}`);
         }
 
         updateFooterButtons(stepData) {
