@@ -438,9 +438,12 @@ class PDF_Builder_Onboarding_Manager {
                         <span class="dashicons dashicons-arrow-left-alt"></span>
                     </button>
                     <?php endif; ?>
-                    <div class="header-content">
-                        <h2><?php echo esc_html($current_step_data['title']); ?></h2>
-                        <p><?php echo esc_html($current_step_data['description']); ?></p>
+
+                    <div class="progress-indicator">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: <?php echo (($current_step / count($steps)) * 100); ?>%"></div>
+                        </div>
+                        <div class="progress-text">Étape <?php echo $current_step; ?> sur <?php echo count($steps); ?></div>
                     </div>
 
                     <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Styles CSS pour le système d'onboarding de PDF Builder Pro
  * Design moderne avec contraste amélioré pour l'accessibilité WCAG AA
  */
@@ -71,7 +71,7 @@
     -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
 }
 
 .pdf-builder-onboarding-modal .modal-header .button-previous {
@@ -1486,29 +1486,62 @@ kbd {
 
 
 
-. o n b o a r d i n g - l o a d i n g 
- 
- > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           d i s p l a y :   f l e x ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           
- 
- f l e x - d i r e c t i o n :   c o l u m n ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           a l i g n - i t e m s :   c e n t e r ; > >   
- 
- " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           j u s t i f y - c o n t e n t :   c e n t e r ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o       
- 
-     p a d d i n g :   6 0 p x   2 0 p x ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           t e x t - a l i g n :   c e n t e r ; > >   
- 
- " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o   
- 
- . a u t o - a d v a n c e - n o t i c e   { 
-         m a r g i n - t o p :   2 0 p x ; 
-         p a d d i n g :   1 5 p x ; 
-         b a c k g r o u n d :   r g b a ( 5 9 ,   1 3 0 ,   2 4 6 ,   0 . 1 ) ; 
-         b o r d e r :   1 p x   s o l i d   r g b a ( 5 9 ,   1 3 0 ,   2 4 6 ,   0 . 2 ) ; 
-         b o r d e r - r a d i u s :   8 p x ; 
-         t e x t - a l i g n :   c e n t e r ; 
- } 
- 
- . a u t o - a d v a n c e - n o t i c e   e m   { 
-         c o l o r :   # 6 4 7 4 8 b ; 
-         f o n t - s t y l e :   i t a l i c ; 
- }  
- 
+.onboarding-loading
+
+>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     display: flex;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     
+
+flex-direction: column;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     align-items: center;>> 
+
+"i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     justify-content: center;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo   
+
+  padding: 60px 20px;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     text-align: center;>> 
+
+"i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo 
+
+.auto-advance-notice {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.auto-advance-notice em {
+    color: #64748b;
+    font-style: italic;
+}
+
+.progress-indicator {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    max-width: 200px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+
