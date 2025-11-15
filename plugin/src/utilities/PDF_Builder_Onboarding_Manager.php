@@ -439,9 +439,9 @@ class PDF_Builder_Onboarding_Manager {
 
                     <div class="progress-indicator">
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: <?php echo (($current_step / count($steps)) * 100); ?>%"></div>
+                            <div class="progress-fill" style="width: <?php echo (($current_step / 4) * 100); ?>%"></div>
                         </div>
-                        <div class="progress-text">Étape <?php echo $current_step; ?> sur <?php echo count($steps); ?></div>
+                        <div class="progress-text">Étape <?php echo $current_step; ?> sur 4</div>
                     </div>
 
                     <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
@@ -451,7 +451,7 @@ class PDF_Builder_Onboarding_Manager {
 
                 <div class="modal-body">
                     <div class="step-content">
-                        <?php echo $current_step_data['content']; ?>
+                        <?php echo $this->render_step_content($current_step_data, $current_step); ?>
                     </div>
                 </div>
 
@@ -613,13 +613,6 @@ class PDF_Builder_Onboarding_Manager {
             </div>
             <div class="step-body">
                 <?php echo $step_data['content']; ?>
-            </div>
-            <div class="step-footer">
-                <?php if ($step_data['action']): ?>
-                <button type="button" class="button button-primary complete-step" data-step="<?php echo $step_number; ?>">
-                    <?php echo esc_html($step_data['action']); ?>
-                </button>
-                <?php endif; ?>
             </div>
         </div>
         <?php

@@ -13,6 +13,7 @@
             this.startTime = Date.now();
             this.interactions = [];
             this.tooltips = {};
+            this.stepCache = {}; // Cache pour les étapes chargées
             this.init();
         }
 
@@ -229,12 +230,70 @@
             });
         }
 
-        announceStep() {
-            // Annonce pour les lecteurs d'écran
-            const stepTitle = $(`.onboarding-step[data-step="${this.currentStep}"] h3`).text();
-            if (stepTitle) {
-                this.announceToScreenReader(`Étape ${this.currentStep} sur 5: ${stepTitle}`);
+        /**
+         * Appliquer les données d'une étape chargée
+         */
+        applyStepData(step, data) {
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $content = $modal.find('.modal-body .step-content');
+
+            // Mettre à jour le contenu de la modal
+            $content.html(data.content);
+
+            // Mettre à jour l'étape courante
+            this.currentStep = step;
+
+            // Mettre à jour la progression
+            this.updateProgress();
+
+            // Mettre à jour l'URL sans recharger la page
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('pdf_onboarding_step', step);
+            window.history.replaceState({}, '', currentUrl.toString());
+
+            // Mettre à jour la visibilité du bouton précédent
+            const $prevButton = $('.button-previous');
+            if (step > 1) {
+                if ($prevButton.length === 0) {
+                    // Créer le bouton précédent s'il n'existe pas
+                    const $header = $('.modal-header');
+                    $header.prepend(`
+                        <button class="button button-previous" data-tooltip="Étape précédente">
+                            <span class="dashicons dashicons-arrow-left-alt"></span>
+                        </button>
+                    `);
+                } else {
+                    // S'assurer que le bouton est visible et activé
+                    $prevButton.show().prop('disabled', false);
+                }
+            } else {
+                // Masquer le bouton précédent pour la première étape
+                $prevButton.hide();
             }
+
+            // Réactiver les boutons de navigation
+            $('.button-previous, .complete-step').prop('disabled', false);
+
+            // Animation d'entrée pour le nouveau contenu
+            $content.find('.onboarding-step-content').hide().fadeIn(300);
+
+            // Mettre à jour le texte du bouton principal si nécessaire
+            if (data.action) {
+                $('.complete-step').text(data.action);
+            }
+
+            // Gérer les étapes automatiques
+            if (data.auto_advance) {
+                setTimeout(() => {
+                    this.completeStep(step);
+                }, data.auto_advance_delay || 3000);
+            }
+
+            // Tracker l'événement
+            this.trackAnalytics('step_loaded', { step: step });
+
+            // Annoncer l'étape pour l'accessibilité
+            this.announceStep();
         }
 
         announceToScreenReader(message) {
@@ -559,7 +618,10 @@
             $content.html(`
                 <div class="onboarding-loading">
                     <div class="loading-spinner"></div>
-                    <p>Chargement de l'étape...</p>
+                    <p>Chargement de l'étape ${step}...</p>
+                    <div class="loading-progress">
+                        <div class="loading-bar" style="animation: loadingProgress 2s ease-in-out infinite;"></div>
+                    </div>
                 </div>
             `);
 
