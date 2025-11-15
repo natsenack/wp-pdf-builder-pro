@@ -214,27 +214,30 @@ class PDF_Builder_Onboarding_Manager {
                     <div class="first-template-setup">
                         <p>' . __('Choisissez un template de départ pour commencer votre premier PDF :', 'pdf-builder-pro') . '</p>
                         <div class="template-suggestions">
-                            <div class="template-card" data-template="invoice">
+                            <div class="template-card" data-template="invoice" data-tooltip="Template professionnel avec en-têtes, tableau des articles et calculs automatiques">
                                 <div class="template-preview">
                                     <span class="template-icon">📄</span>
                                 </div>
                                 <h4>' . __('Facture', 'pdf-builder-pro') . '</h4>
                                 <p>' . __('Template professionnel pour factures', 'pdf-builder-pro') . '</p>
                             </div>
-                            <div class="template-card" data-template="quote">
+                            <div class="template-card" data-template="quote" data-tooltip="Template élégant avec conditions, validité et signature électronique">
                                 <div class="template-preview">
                                     <span class="template-icon">📋</span>
                                 </div>
                                 <h4>' . __('Devis', 'pdf-builder-pro') . '</h4>
                                 <p>' . __('Template élégant pour devis', 'pdf-builder-pro') . '</p>
                             </div>
-                            <div class="template-card" data-template="blank">
+                            <div class="template-card" data-template="blank" data-tooltip="Canvas vierge pour créer votre propre design personnalisé">
                                 <div class="template-preview">
                                     <span class="template-icon">✨</span>
                                 </div>
                                 <h4>' . __('Template Vierge', 'pdf-builder-pro') . '</h4>
                                 <p>' . __('Commencez depuis zéro', 'pdf-builder-pro') . '</p>
                             </div>
+                        </div>
+                        <div class="template-tip" style="margin-top:16px;padding:12px;background:#f0f9ff;border-left:4px solid #3b82f6;border-radius:4px;">
+                            <strong>💡 Conseil :</strong> Vous pourrez personnaliser complètement ce template plus tard dans l\'éditeur.
                         </div>
                     </div>
                 ';
@@ -252,15 +255,18 @@ class PDF_Builder_Onboarding_Manager {
                             </div>
                             <div class="setup-options">
                                 <h5>' . __('Options d\'intégration :', 'pdf-builder-pro') . '</h5>
-                                <label class="option-item">
-                                    <input type="checkbox" checked> ' . __('Ajouter les PDFs aux emails de commande', 'pdf-builder-pro') . '
+                                <label class="option-item" data-tooltip="Les clients recevront automatiquement leurs PDFs avec leurs emails de confirmation">
+                                    <input type="checkbox" name="woocommerce_emails" checked> ' . __('Ajouter les PDFs aux emails de commande', 'pdf-builder-pro') . '
                                 </label>
-                                <label class="option-item">
-                                    <input type="checkbox" checked> ' . __('Afficher l\'aperçu PDF dans l\'admin', 'pdf-builder-pro') . '
+                                <label class="option-item" data-tooltip="Aperçu rapide des PDFs générés directement dans l\'interface admin">
+                                    <input type="checkbox" name="admin_preview" checked> ' . __('Afficher l\'aperçu PDF dans l\'admin', 'pdf-builder-pro') . '
                                 </label>
-                                <label class="option-item">
-                                    <input type="checkbox"> ' . __('Activer les variables WooCommerce', 'pdf-builder-pro') . '
+                                <label class="option-item" data-tooltip="Utiliser automatiquement les données de commande (prix, produits, client...)">
+                                    <input type="checkbox" name="variables" checked> ' . __('Activer les variables WooCommerce', 'pdf-builder-pro') . '
                                 </label>
+                            </div>
+                            <div class="woocommerce-tip" style="margin-top:16px;padding:12px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;">
+                                <strong>🚀 Avantage :</strong> Vos clients recevront leurs factures automatiquement avec chaque commande !
                             </div>
                         </div>
                     ';
@@ -390,15 +396,30 @@ class PDF_Builder_Onboarding_Manager {
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-modal-overlay" style="display: block;">
             <div class="pdf-builder-modal pdf-builder-onboarding-modal">
                 <div class="modal-header">
-                    <div class="onboarding-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: <?php echo (min($current_step, 5) / 5) * 100; ?>%"></div>
+                    <div class="progress-container">
+                        <div class="step-indicators">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <div class="step-indicator <?php echo $i < $current_step ? 'completed' : ($i === $current_step ? 'active' : ''); ?>"
+                                     data-step="<?php echo $i; ?>"
+                                     data-tooltip="Étape <?php echo $i; ?>">
+                                </div>
+                            <?php endfor; ?>
                         </div>
-                        <span class="progress-text">
-                            <?php printf(__('Étape %d sur %d', 'pdf-builder-pro'), $current_step, count($steps)); ?>
-                        </span>
+                        <div class="onboarding-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: <?php echo (min($current_step, 5) / 5) * 100; ?>%"></div>
+                            </div>
+                            <span class="progress-text">
+                                <?php printf(__('Étape %d sur %d', 'pdf-builder-pro'), $current_step, count($steps)); ?>
+                            </span>
+                        </div>
                     </div>
-                    <button class="modal-close" data-action="skip-onboarding">
+
+                    <button class="onboarding-help-btn" data-tooltip="Aide et raccourcis clavier (Ctrl+H)">
+                        <span class="dashicons dashicons-editor-help"></span>
+                    </button>
+
+                    <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
                         <span class="dashicons dashicons-no"></span>
                     </button>
                 </div>
@@ -417,10 +438,10 @@ class PDF_Builder_Onboarding_Manager {
                 </div>
 
                 <div class="modal-footer">
-                    <button class="button button-secondary" data-action="skip-onboarding">
+                    <button class="button button-secondary" data-action="skip-onboarding" data-tooltip="Ignorer l'assistant et aller directement à PDF Builder">
                         <?php _e('Ignorer', 'pdf-builder-pro'); ?>
                     </button>
-                    <button class="button button-primary" data-action="next-step" data-step="<?php echo $current_step; ?>">
+                    <button class="button button-primary" data-action="next-step" data-step="<?php echo $current_step; ?>" data-tooltip="<?php echo esc_attr($current_step_data['action']); ?>">
                         <?php echo esc_html($current_step_data['action']); ?>
                     </button>
                 </div>
