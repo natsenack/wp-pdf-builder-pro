@@ -105,6 +105,7 @@
 .pdf-builder-onboarding-modal .modal-header .header-content {
     flex: 1;
     min-width: 0;
+    text-align: center;
 }
 
 .pdf-builder-onboarding-modal .modal-header .header-content h2 {

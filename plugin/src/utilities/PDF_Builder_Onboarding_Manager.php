@@ -428,9 +428,11 @@ class PDF_Builder_Onboarding_Manager {
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
             <div class="modal-content">
                 <div class="modal-header">
+                    <?php if ($current_step > 1) : ?>
                     <button class="button button-previous" data-tooltip="Étape précédente">
                         <span class="dashicons dashicons-arrow-left-alt"></span>
                     </button>
+                    <?php endif; ?>
                     <div class="header-content">
                         <h2><?php echo esc_html($current_step_data['title']); ?></h2>
                         <p><?php echo esc_html($current_step_data['description']); ?></p>
