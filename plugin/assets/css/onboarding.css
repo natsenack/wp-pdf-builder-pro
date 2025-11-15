@@ -1456,6 +1456,60 @@ kbd {
         color: #e2e8f0;
     }
 
+    /* Checkboxes et labels en mode sombre */
+    .pdf-builder-onboarding-modal input[type="checkbox"] {
+        accent-color: #3b82f6;
+    }
+
+    .pdf-builder-onboarding-modal label {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .option-item {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .option-item:hover {
+        background: #4b5563;
+    }
+
+    /* Notices de configuration en mode sombre */
+    .pdf-builder-onboarding-modal .setup-notice {
+        background: #374151;
+        border-color: #4b5563;
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .setup-notice h4 {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .setup-notice p {
+        color: #e2e8f0;
+    }
+
+    /* Boutons spécifiques à WooCommerce en mode sombre */
+    .pdf-builder-onboarding-modal .setup-actions .button {
+        background: #4b5563;
+        color: #ffffff;
+        border-color: #6b7280;
+    }
+
+    .pdf-builder-onboarding-modal .setup-actions .button:hover {
+        background: #6b7280;
+        border-color: #9ca3af;
+    }
+
+    .pdf-builder-onboarding-modal .setup-actions .button-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    .pdf-builder-onboarding-modal .setup-actions .button-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
     .pdf-builder-onboarding-modal .template-card.selected {
         border-color: #46b450;
         background: #1d2327;
