@@ -1383,9 +1383,9 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .template-card {
-        background: #374151;
-        border-color: #4b5563;
-        color: #f9fafb;
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #ffffff;
     }
 
     .pdf-builder-onboarding-modal .template-card:hover {
@@ -1398,25 +1398,28 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .woocommerce-setup {
-        background: #1d2327;
+        background: #374151;
+        border-color: #4b5563;
     }
 
     .pdf-builder-onboarding-modal .woocommerce-setup label {
-        color: #e2e8f0;
+        color: #ffffff;
     }
 
     .pdf-builder-onboarding-modal .modal-footer {
-        background: #373d41;
-        border-top-color: #334155;
+        background: #2d3748;
+        border-top-color: #4b5563;
     }
 
     .pdf-builder-onboarding-modal .btn-secondary {
-        background: #334155;
-        color: #e2e8f0;
+        background: #4b5563;
+        color: #ffffff;
+        border-color: #6b7280;
     }
 
     .pdf-builder-onboarding-modal .btn-secondary:hover {
-        background: #4b5563;
+        background: #6b7280;
+        border-color: #9ca3af;
     }
 
     .pdf-builder-onboarding-modal .skip-link {
@@ -1436,6 +1439,32 @@ kbd {
     .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
         background: #2563eb;
         border-color: #2563eb;
+    }
+
+    /* Indicateurs de progression en mode sombre */
+    .pdf-builder-onboarding-modal .step-indicator {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .pdf-builder-onboarding-modal .step-indicator.active {
+        background: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .step-indicator.completed {
+        background: #10b981;
+    }
+
+    /* Messages en mode sombre */
+    .pdf-builder-onboarding-modal .success-message {
+        background: #064e3b;
+        border-color: #10b981;
+        color: #d1fae5;
+    }
+
+    .pdf-builder-onboarding-modal .error-message {
+        background: #7f1d1d;
+        border-color: #ef4444;
+        color: #fecaca;
     }
 }
 
