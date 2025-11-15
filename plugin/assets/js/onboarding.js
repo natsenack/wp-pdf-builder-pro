@@ -1025,12 +1025,10 @@
                 $primaryButton.attr('data-action-type', stepData.action_type || 'next');
                 
                 // Gérer l'état disabled selon requires_selection
-                // Exception pour les étapes 3 et 4 qui ne nécessitent jamais de sélection
-                if (stepData.requires_selection && stepData.step !== 3 && stepData.step !== 4) {
-                    $primaryButton.prop('disabled', true);
-                } else {
-                    $primaryButton.prop('disabled', false);
-                }
+                // Exception pour les étapes avec action_type 'next' qui ne nécessitent jamais de sélection
+                const shouldDisable = stepData.requires_selection && stepData.action_type !== 'next';
+                $primaryButton.prop('disabled', shouldDisable);
+                console.log('PDF Builder Onboarding: Button disabled state for step', stepData.step, ':', shouldDisable);
             }
             
             // Mettre à jour ou créer le bouton secondaire
