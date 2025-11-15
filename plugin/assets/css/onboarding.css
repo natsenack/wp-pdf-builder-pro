@@ -69,9 +69,45 @@
     position: relative;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.pdf-builder-onboarding-modal .modal-header h2 {
+.pdf-builder-onboarding-modal .modal-header .button-previous {
+    flex-shrink: 0;
+    background: rgba(219, 234, 254, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-previous:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #2563eb;
+    transform: translateX(-2px);
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-previous .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.pdf-builder-onboarding-modal .modal-header .header-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.pdf-builder-onboarding-modal .modal-header .header-content h2 {
     margin: 0 0 8px 0;
     font-size: 28px;
     font-weight: 700;
@@ -81,7 +117,7 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.pdf-builder-onboarding-modal .modal-header p {
+.pdf-builder-onboarding-modal .modal-header .header-content p {
     margin: 0;
     color: #334155;
     font-size: 16px;
@@ -200,30 +236,6 @@
     box-shadow:
         0 12px 32px rgba(59, 130, 246, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* Bouton précédent avec icône */
-.pdf-builder-onboarding-modal .modal-footer .button.button-previous {
-    position: relative;
-    padding-left: 44px;
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-previous::before {
-    content: '←';
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    font-weight: bold;
-    color: #3b82f6;
-    transition: all 0.2s ease;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-previous:hover::before {
-    transform: translateY(-50%) translateX(-3px);
-    color: #2563eb;
 }
 
 /* Bouton suivant avec icône */
