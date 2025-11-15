@@ -1,23 +1,23 @@
 /* Styles unifiés pour l'éditeur PDF Canvas - Design très clair */
 
 :root {
-  /* Palette de couleurs professionnelles et sophistiquées */
-  --primary-color: #1e40af;        /* Bleu navy professionnel */
-  --primary-hover: #1d4ed8;       /* Bleu navy plus foncé au hover */
-  --secondary-color: #64748b;     /* Gris professionnel */
-  --success-color: #059669;       /* Vert forêt sophistiqué */
-  --success-hover: #047857;       /* Vert forêt plus foncé */
-  --background-color: #f8fafc;    /* Fond très clair professionnel */
+  /* Palette minimaliste et épurée */
+  --primary-color: #1e40af;        /* Bleu navy subtil */
+  --primary-hover: #1d4ed8;       /* Bleu navy légèrement plus foncé */
+  --secondary-color: #64748b;     /* Gris subtil */
+  --success-color: #059669;       /* Vert discret */
+  --success-hover: #047857;       /* Vert légèrement plus foncé */
+  --background-color: #ffffff;    /* Blanc pur */
   --surface-color: #ffffff;       /* Blanc pur */
-  --surface-secondary: #f1f5f9;   /* Surface secondaire élégante */
-  --border-color: #e2e8f0;        /* Bordure subtile */
-  --text-primary: #0f172a;        /* Texte principal sombre */
-  --text-secondary: #475569;      /* Texte secondaire */
-  --text-muted: #64748b;          /* Texte atténué */
-  --shadow-light: rgba(15, 23, 42, 0.08);  /* Ombre légère */
-  --shadow-medium: rgba(15, 23, 42, 0.12); /* Ombre moyenne */
-  --shadow-heavy: rgba(15, 23, 42, 0.16);  /* Ombre lourde */
-  --text-secondary: #64748b;      /* Gris moyen clair */
+  --surface-secondary: #f8fafc;   /* Blanc très légèrement teinté */
+  --border-color: #e5e7eb;        /* Gris très subtil */
+  --text-primary: #111827;        /* Noir presque pur */
+  --text-secondary: #6b7280;      /* Gris moyen subtil */
+  --text-muted: #9ca3af;          /* Gris clair subtil */
+  --shadow-light: rgba(0, 0, 0, 0.04);  /* Ombre très légère */
+  --shadow-medium: rgba(0, 0, 0, 0.08); /* Ombre légère */
+  --shadow-heavy: rgba(0, 0, 0, 0.12);  /* Ombre moyenne */
+}
   --text-muted: #94a3b8;          /* Gris clair */
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.08);
