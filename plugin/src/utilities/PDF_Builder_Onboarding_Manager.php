@@ -173,7 +173,8 @@ class PDF_Builder_Onboarding_Manager {
                 'action' => __('Suivant', 'pdf-builder-pro'),
                 'action_type' => 'next',
                 'can_skip' => true, // Peut être ignorée
-                'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro')
+                'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro'),
+                'requires_selection' => false // Ne nécessite pas de sélection
             ],
             4 => [
                 'id' => 'completed',

@@ -1166,6 +1166,14 @@
                         // Gérer les étapes qui nécessitent une sélection
                         if (response.data.requires_selection) {
                             $('.complete-step').prop('disabled', true);
+                        } else {
+                            // Pour les étapes qui ne nécessitent pas de sélection, s'assurer que le bouton est activé
+                            $('.complete-step').prop('disabled', false);
+                        }
+
+                        // Pour l'étape 3 spécifiquement, s'assurer que le bouton est toujours activé
+                        if (step === 3) {
+                            $('.complete-step').prop('disabled', false);
                         }
 
                         // Animation d'entrée pour le nouveau contenu
