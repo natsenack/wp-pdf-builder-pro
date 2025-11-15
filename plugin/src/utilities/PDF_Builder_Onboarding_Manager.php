@@ -446,9 +446,6 @@ class PDF_Builder_Onboarding_Manager {
                     <button class="button button-secondary" data-action="skip-onboarding">
                         <?php _e('Ignorer', 'pdf-builder-pro'); ?>
                     </button>
-                    <button class="button button-primary" data-action="next-step" data-step="<?php echo $current_step; ?>">
-                        <?php echo esc_html($current_step_data['action']); ?>
-                    </button>
                 </div>
             </div>
         </div>

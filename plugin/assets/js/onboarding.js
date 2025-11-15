@@ -48,6 +48,13 @@
                 this.skipWoocommerceSetup();
             });
 
+            // Navigation avec les boutons précédent/suivant
+            $(document).on('click', '.button-previous', (e) => {
+                e.preventDefault();
+                this.navigateStep('prev');
+                this.trackAnalytics('step_navigation', { from: this.currentStep, method: 'button_previous' });
+            });
+
             // Nouveaux événements pour l'UX améliorée
             $(document).on('mouseenter', '[data-tooltip]', (e) => {
                 this.showTooltip($(e.currentTarget));
