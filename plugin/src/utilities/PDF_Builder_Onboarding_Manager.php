@@ -449,6 +449,9 @@ class PDF_Builder_Onboarding_Manager {
         // DEBUG: Afficher les données de l'étape actuelle
         error_log('PDF_Builder_Onboarding_Manager: Current step: ' . $current_step);
         error_log('PDF_Builder_Onboarding_Manager: Step data: ' . print_r($current_step_data, true));
+        
+        // DEBUG: Forcer l'affichage du footer
+        echo "<!-- DEBUG: Rendering onboarding wizard for step $current_step -->";
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
             <div class="modal-content">
@@ -477,6 +480,7 @@ class PDF_Builder_Onboarding_Manager {
                     </div>
                 </div>
 
+                <!-- DEBUG: About to render footer for step <?php echo $current_step; ?> -->
                 <div class="modal-footer">
                     <button class="button button-secondary" data-action="skip-step">
                         <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer cette étape', 'pdf-builder-pro')); ?>
