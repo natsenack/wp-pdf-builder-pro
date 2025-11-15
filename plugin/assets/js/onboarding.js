@@ -988,8 +988,13 @@
         }
 
         skipCurrentStep() {
-            // Pour l'étape 3 (WooCommerce), on peut la sauter
-            if (this.currentStep === 3) {
+            // Gérer l'ignorance selon l'étape courante
+            if (this.currentStep === 2) {
+                // Pour l'étape 2, passer à l'étape 3 sans sélection de template
+                this.selectedTemplate = null; // Aucun template sélectionné
+                this.loadStep(3);
+            } else if (this.currentStep === 3) {
+                // Pour l'étape 3, sauter la configuration WooCommerce
                 this.skipWoocommerceSetup();
             } else {
                 // Pour les autres étapes, passer simplement à la suivante

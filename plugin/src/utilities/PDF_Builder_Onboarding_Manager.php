@@ -160,7 +160,8 @@ class PDF_Builder_Onboarding_Manager {
                 'content' => $this->get_step_content('first_template'),
                 'action' => __('Continuer', 'pdf-builder-pro'),
                 'action_type' => 'next',
-                'can_skip' => false, // Nécessite une sélection
+                'can_skip' => true,
+                'skip_text' => __('Ignorer l\'étape', 'pdf-builder-pro'),
                 'requires_selection' => true // Nécessite une sélection avant activation
             ],
             3 => [
