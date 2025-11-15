@@ -1393,6 +1393,27 @@ kbd {
         color: #f9fafb;
     }
 
+    .pdf-builder-onboarding-modal .step-header h2 {
+        color: #f9fafb;
+    }
+
+    .pdf-builder-onboarding-modal .step-description {
+        color: #e2e8f0;
+    }
+
+    /* Conseils et tips en mode sombre */
+    .pdf-builder-onboarding-modal .template-tip {
+        background: #1e3a5f !important;
+        border-left-color: #3b82f6 !important;
+        color: #e2e8f0 !important;
+    }
+
+    .pdf-builder-onboarding-modal .woocommerce-tip {
+        background: #064e3b !important;
+        border-left-color: #10b981 !important;
+        color: #d1fae5 !important;
+    }
+
     .pdf-builder-onboarding-modal .step-content p {
         color: #e2e8f0;
     }
