@@ -239,29 +239,6 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* Bouton suivant avec icône */
-.pdf-builder-onboarding-modal .modal-footer .button.button-next {
-    position: relative;
-    padding-right: 44px;
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-next::after {
-    content: '→';
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    font-weight: bold;
-    color: #3b82f6;
-    transition: all 0.2s ease;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.pdf-builder-onboarding-modal .modal-footer .button.button-next:hover::after {
-    transform: translateY(-50%) translateX(3px);
-    color: #2563eb;
-}
 
 /* Styles pour le contenu des étapes */
 .welcome-features {
