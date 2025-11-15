@@ -471,28 +471,27 @@ class PDF_Builder_Onboarding_Manager {
                     <div class="step-content">
                         <?php echo $this->render_step_content($current_step_data, $current_step); ?>
                     </div>
-
-                    <div class="modal-footer">
-                        <?php if ($current_step_data['can_skip']): ?>
-                        <button class="button button-secondary" data-action="skip-step">
-                            <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer', 'pdf-builder-pro')); ?>
-                        </button>
-                        <?php else: ?>
-                        <button class="button button-secondary" data-action="skip-onboarding">
-                            <?php _e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
-                        </button>
-                        <?php endif; ?>
-                        <?php if ($current_step_data['action']): ?>
-                        <button class="button button-primary complete-step" 
-                                data-step="<?php echo $current_step; ?>" 
-                                data-action-type="<?php echo $current_step_data['action_type']; ?>"
-                                <?php echo ($current_step_data['requires_selection'] ?? false) ? 'disabled' : ''; ?>>
-                            <?php echo esc_html($current_step_data['action']); ?>
-                        </button>
-                        <?php endif; ?>
-                    </div>
-
                 </div>
+                <div class="modal-footer">
+                    <?php if ($current_step_data['can_skip']): ?>
+                    <button class="button button-secondary" data-action="skip-step">
+                        <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer', 'pdf-builder-pro')); ?>
+                    </button>
+                    <?php else: ?>
+                    <button class="button button-secondary" data-action="skip-onboarding">
+                        <?php _e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
+                    </button>
+                    <?php endif; ?>
+                    <?php if ($current_step_data['action']): ?>
+                    <button class="button button-primary complete-step" 
+                            data-step="<?php echo $current_step; ?>" 
+                            data-action-type="<?php echo $current_step_data['action_type']; ?>"
+                            <?php echo ($current_step_data['requires_selection'] ?? false) ? 'disabled' : ''; ?>>
+                        <?php echo esc_html($current_step_data['action']); ?>
+                    </button>
+                    <?php endif; ?>
+                </div>
+
             </div>
         </div>
 
