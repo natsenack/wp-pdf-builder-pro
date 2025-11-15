@@ -104,6 +104,23 @@
 
             this.showModal();
             this.announceStep();
+
+            // Vérifier si l'étape actuelle doit avancer automatiquement
+            this.checkAutoAdvance();
+        }
+
+        /**
+         * Vérifier si l'étape actuelle doit avancer automatiquement
+         */
+        checkAutoAdvance() {
+            // Pour les étapes chargées via AJAX, c'est géré dans loadStep
+            // Pour l'étape initiale, on vérifie via une requête AJAX
+            if (this.currentStep === 2) { // Étape de vérification d'environnement
+                console.log('PDF Builder Onboarding: Auto-advancing step 2 after 3 seconds');
+                setTimeout(() => {
+                    this.completeStep(2);
+                }, 3000);
+            }
         }
 
         setupKeyboardNavigation() {
@@ -593,6 +610,14 @@
 
                         // Animation d'entrée pour le nouveau contenu
                         $content.find('.onboarding-step-content').hide().fadeIn(300);
+
+                        // Gérer les étapes automatiques
+                        if (response.data.auto_advance) {
+                            console.log('PDF Builder Onboarding: Auto-advancing step after', response.data.auto_advance_delay, 'ms');
+                            setTimeout(() => {
+                                this.completeStep(step);
+                            }, response.data.auto_advance_delay || 3000);
+                        }
 
                         // Tracker l'événement
                         this.trackAnalytics('step_loaded', { step: step });

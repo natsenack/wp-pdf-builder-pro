@@ -164,7 +164,9 @@ class PDF_Builder_Onboarding_Manager {
                 'title' => __('Vérification de l\'environnement', 'pdf-builder-pro'),
                 'description' => __('Nous analysons votre installation pour optimiser l\'expérience.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('environment_check'),
-                'action' => __('Continuer', 'pdf-builder-pro')
+                'action' => null, // Pas de bouton pour cette étape - automatique
+                'auto_advance' => true, // Avancer automatiquement après un délai
+                'auto_advance_delay' => 3000 // 3 secondes
             ],
             3 => [
                 'id' => 'first_template',
@@ -466,9 +468,11 @@ class PDF_Builder_Onboarding_Manager {
                     <button class="button button-secondary" data-action="skip-onboarding">
                         <?php _e('Ignorer', 'pdf-builder-pro'); ?>
                     </button>
+                    <?php if ($current_step_data['action']): ?>
                     <button class="button button-primary complete-step" data-step="<?php echo $current_step; ?>">
                         <?php echo esc_html($current_step_data['action']); ?>
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -620,9 +624,11 @@ class PDF_Builder_Onboarding_Manager {
                 <?php echo $step_data['content']; ?>
             </div>
             <div class="step-footer">
-                <button type="button" class="button button-primary complete-step" data-step="<?php echo $step; ?>">
+                <?php if ($step_data['action']): ?>
+                <button type="button" class="button button-primary complete-step" data-step="<?php echo $step_number; ?>">
                     <?php echo esc_html($step_data['action']); ?>
                 </button>
+                <?php endif; ?>
             </div>
         </div>
         <?php
@@ -660,7 +666,9 @@ class PDF_Builder_Onboarding_Manager {
             'title' => $step_data['title'],
             'description' => $step_data['description'],
             'content' => $html,
-            'action' => $step_data['action']
+            'action' => $step_data['action'],
+            'auto_advance' => $step_data['auto_advance'] ?? false,
+            'auto_advance_delay' => $step_data['auto_advance_delay'] ?? 3000
         ]);
     }
 
