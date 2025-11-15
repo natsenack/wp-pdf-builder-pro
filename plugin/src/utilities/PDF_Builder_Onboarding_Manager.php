@@ -381,8 +381,8 @@ class PDF_Builder_Onboarding_Manager {
             return;
         }
 
-        // Afficher le wizard si ce n'est pas terminé
-        if (!$this->is_onboarding_completed()) {
+        // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
+        if (!$this->is_onboarding_completed() && !$this->is_onboarding_skipped()) {
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
         }
     }
