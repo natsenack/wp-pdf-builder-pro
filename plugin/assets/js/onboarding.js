@@ -113,14 +113,8 @@
          * Vérifier si l'étape actuelle doit avancer automatiquement
          */
         checkAutoAdvance() {
-            // Pour les étapes chargées via AJAX, c'est géré dans loadStep
-            // Pour l'étape initiale, on vérifie via une requête AJAX
-            if (this.currentStep === 2) { // Étape de vérification d'environnement
-                console.log('PDF Builder Onboarding: Auto-advancing step 2 after 3 seconds');
-                setTimeout(() => {
-                    this.completeStep(2);
-                }, 3000);
-            }
+            // Cette fonction est maintenant gérée dans loadStep pour toutes les étapes
+            // Rien à faire ici pour l'initialisation
         }
 
         setupKeyboardNavigation() {
@@ -548,10 +542,8 @@
          * Charger une étape via AJAX
          */
         loadStep(step) {
-            console.log('PDF Builder Onboarding: loadStep called with step:', step);
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
-            console.log('PDF Builder Onboarding: modal found:', $modal.length, 'content found:', $content.length);
 
             // Afficher un indicateur de chargement
             $content.html(`
@@ -562,7 +554,6 @@
             `);
 
             // Faire la requête AJAX pour charger l'étape
-            console.log('PDF Builder Onboarding: Making AJAX request for step:', step);
             $.ajax({
                 url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
@@ -573,7 +564,6 @@
                     step: step
                 },
                 success: (response) => {
-                    console.log('PDF Builder Onboarding: AJAX success, response:', response);
                     if (response.success) {
                         // Mettre à jour le contenu de la modal
                         $content.html(response.data.content);
@@ -613,7 +603,6 @@
 
                         // Gérer les étapes automatiques
                         if (response.data.auto_advance) {
-                            console.log('PDF Builder Onboarding: Auto-advancing step after', response.data.auto_advance_delay, 'ms');
                             setTimeout(() => {
                                 this.completeStep(step);
                             }, response.data.auto_advance_delay || 3000);
@@ -623,14 +612,12 @@
                         this.trackAnalytics('step_loaded', { step: step });
 
                     } else {
-                        console.error('PDF Builder Onboarding: AJAX response not successful:', response);
                         this.showError('Erreur lors du chargement de l\'étape');
                         // Recharger la page en cas d'erreur pour revenir à un état stable
                         window.location.reload();
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error:', status, error, xhr);
                     this.showError('Erreur de connexion lors du chargement de l\'étape');
                     // Recharger la page en cas d'erreur pour revenir à un état stable
                     window.location.reload();

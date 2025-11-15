@@ -81,20 +81,14 @@ class PDF_Builder_Onboarding_Manager {
      * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)
      */
     public function check_onboarding_status($hook) {
-        // DEBUG: Log pour vérifier que la méthode est appelée
-        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status called with hook: ' . $hook);
-        
         // Afficher seulement sur les pages PDF Builder
         if (!in_array($hook, [
             'toplevel_page_pdf-builder-pro',
             'pdf-builder_page_pdf-builder-templates',
             'pdf-builder_page_pdf-builder-settings'
         ])) {
-            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Hook not allowed: ' . $hook);
             return;
         }
-
-        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Hook allowed, proceeding');
 
         // Enqueue les scripts et styles d'onboarding
         wp_enqueue_script('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
@@ -115,14 +109,10 @@ class PDF_Builder_Onboarding_Manager {
         // Vérifier le statut d'onboarding
         $completed = $this->is_onboarding_completed();
         $skipped = $this->is_onboarding_skipped();
-        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: completed=' . ($completed ? 'true' : 'false') . ', skipped=' . ($skipped ? 'true' : 'false'));
 
         // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
         if (!$completed && !$skipped) {
-            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Adding render action');
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
-        } else {
-            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Onboarding completed or skipped, not showing');
         }
     }
 
@@ -239,6 +229,9 @@ class PDF_Builder_Onboarding_Manager {
                     ';
                 }
 
+                $content .= '<div class="auto-advance-notice">
+                    <p><em>Cette étape va passer automatiquement à la suivante dans quelques secondes...</em></p>
+                </div>';
                 $content .= '</div>';
                 return $content;
 
@@ -431,14 +424,11 @@ class PDF_Builder_Onboarding_Manager {
             $this->onboarding_options['current_step'] = $forced_step;
             $this->save_onboarding_options();
             $current_step = $forced_step;
-            error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Forced step: ' . $current_step);
         } else {
             $current_step = $this->get_current_step() ?: 1;
         }
 
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
-
-        error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Current step: ' . $current_step);
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
             <div class="modal-content">
@@ -639,16 +629,13 @@ class PDF_Builder_Onboarding_Manager {
      * AJAX - Charger le contenu d'une étape d'onboarding
      */
     public function ajax_load_onboarding_step() {
-        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Starting AJAX request');
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Insufficient permissions');
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         $step = intval($_POST['step']);
-        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Requested step: ' . $step);
         $steps = $this->get_onboarding_steps();
 
         if (!isset($steps[$step])) {
@@ -660,7 +647,6 @@ class PDF_Builder_Onboarding_Manager {
         // Générer le contenu HTML de l'étape
         $html = $this->render_step_content($step_data, $step);
 
-        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Generated HTML length: ' . strlen($html));
         wp_send_json_success([
             'step' => $step,
             'title' => $step_data['title'],
