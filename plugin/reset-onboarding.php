@@ -1,12 +1,31 @@
 <?php
 /**
- * Script simple pour reset l'onboarding de PDF Builder Pro
+ * Script pour reset l'onboarding de PDF Builder Pro
  * À exécuter via une URL WordPress
  */
 
-// Empêcher l'accès direct
+// Définir ABSPATH si ce n'est pas déjà fait (pour accès direct)
 if (!defined('ABSPATH')) {
-    die('Accès direct non autorisé');
+    // Essayer de trouver le chemin vers WordPress
+    $wp_paths = [
+        dirname(__FILE__, 3) . '/wp-load.php',
+        dirname(__FILE__, 4) . '/wp-load.php',
+        '../../../wp-load.php',
+        '../../../../wp-load.php',
+    ];
+
+    $wp_load_found = false;
+    foreach ($wp_paths as $wp_path) {
+        if (file_exists($wp_path)) {
+            require_once($wp_path);
+            $wp_load_found = true;
+            break;
+        }
+    }
+
+    if (!$wp_load_found) {
+        die('Erreur : Impossible de trouver WordPress. Vérifiez l\'installation.');
+    }
 }
 
 // Vérifier les permissions
