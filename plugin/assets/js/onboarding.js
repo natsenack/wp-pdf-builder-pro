@@ -27,7 +27,7 @@
 
         bindEvents() {
             // Événements existants
-            $(document).on('click', '[data-action="next-step"]', (e) => {
+            $(document).on('click', '.complete-step', (e) => {
                 e.preventDefault();
                 const step = $(e.currentTarget).data('step');
                 this.completeStep(step);
@@ -63,26 +63,6 @@
                 const prevStep = this.currentStep - 1;
                 if (prevStep >= 1) {
                     this.loadStep(prevStep);
-                } else {
-                    // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
-                    $button.prop('disabled', false).html(originalText);
-                }
-            });
-
-            $(document).on('click', '.button-next', (e) => {
-                e.preventDefault();
-
-                const $button = $(e.currentTarget);
-                const originalText = $button.html();
-
-                // Feedback visuel immédiat
-                $button.prop('disabled', true)
-                       .html('<span class="dashicons dashicons-update spin"></span> Chargement...');
-
-                // Charger l'étape suivante via AJAX
-                const nextStep = this.currentStep + 1;
-                if (nextStep <= 5) { // Supposant qu'il y a 5 étapes maximum
-                    this.loadStep(nextStep);
                 } else {
                     // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
                     $button.prop('disabled', false).html(originalText);
@@ -191,7 +171,7 @@
         }
 
         completeCurrentStep() {
-            const $currentBtn = $(`[data-action="next-step"][data-step="${this.currentStep}"]`);
+            const $currentBtn = $(`.complete-step[data-step="${this.currentStep}"]`);
             if ($currentBtn.length && !$currentBtn.prop('disabled')) {
                 $currentBtn.click();
             }
@@ -439,7 +419,7 @@
         }
 
         completeStep(step) {
-            const $button = $(`[data-action="next-step"][data-step="${step}"]`);
+            const $button = $(`.complete-step[data-step="${step}"]`);
             const stepAction = this.getStepAction(step);
 
             // Sauvegarder le texte original
@@ -531,7 +511,7 @@
             this.selectedTemplate = $card.data('template');
 
             // Mettre à jour le texte du bouton
-            const $button = $('[data-action="next-step"]');
+            const $button = $('.complete-step');
             const templateName = $card.find('h4').text();
             $button.text(`Créer ${templateName}`);
         }
