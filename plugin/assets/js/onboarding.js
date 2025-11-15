@@ -128,11 +128,8 @@
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
             console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
-            this.showModal();
-            this.announceStep();
-
-            // Vérifier si l'étape actuelle doit avancer automatiquement
-            this.checkAutoAdvance();
+            // Charger l'étape actuelle via AJAX pour s'assurer que les boutons sont corrects
+            this.loadStep(this.currentStep);
         }
 
         /**
@@ -987,18 +984,50 @@
             $button.text('Continuer').prop('disabled', false);
         }
 
-        skipCurrentStep() {
-            // Gérer l'ignorance selon l'étape courante
-            if (this.currentStep === 2) {
-                // Pour l'étape 2, passer à l'étape 3 sans sélection de template
-                this.selectedTemplate = null; // Aucun template sélectionné
-                this.loadStep(3);
-            } else if (this.currentStep === 3) {
-                // Pour l'étape 3, sauter la configuration WooCommerce
-                this.skipWoocommerceSetup();
+        updateFooterButtons(stepData) {
+            const $footer = $('.modal-footer');
+            
+            // Mettre à jour le bouton principal
+            const $primaryButton = $footer.find('.complete-step');
+            if ($primaryButton.length > 0) {
+                $primaryButton.text(stepData.action || 'Continuer');
+                $primaryButton.attr('data-action-type', stepData.action_type || 'next');
+                
+                // Gérer l'état disabled selon requires_selection
+                if (stepData.requires_selection) {
+                    $primaryButton.prop('disabled', true);
+                } else {
+                    $primaryButton.prop('disabled', false);
+                }
+            }
+            
+            // Mettre à jour ou créer le bouton secondaire
+            let $secondaryButton = $footer.find('.button-secondary');
+            
+            if (stepData.can_skip) {
+                // L'étape peut être ignorée - afficher le bouton skip-step
+                const skipText = stepData.skip_text || 'Ignorer l\'étape';
+                if ($secondaryButton.length === 0) {
+                    $secondaryButton = $('<button>')
+                        .addClass('button button-secondary')
+                        .attr('data-action', 'skip-step')
+                        .text(skipText);
+                    $footer.prepend($secondaryButton);
+                } else {
+                    $secondaryButton.attr('data-action', 'skip-step').text(skipText);
+                }
             } else {
-                // Pour les autres étapes, passer simplement à la suivante
-                this.loadStep(this.currentStep + 1);
+                // L'étape ne peut pas être ignorée - afficher le bouton skip-onboarding
+                const skipText = 'Ignorer l\'assistant';
+                if ($secondaryButton.length === 0) {
+                    $secondaryButton = $('<button>')
+                        .addClass('button button-secondary')
+                        .attr('data-action', 'skip-onboarding')
+                        .text(skipText);
+                    $footer.prepend($secondaryButton);
+                } else {
+                    $secondaryButton.attr('data-action', 'skip-onboarding').text(skipText);
+                }
             }
         }
 
@@ -1078,8 +1107,8 @@
                             $prevButton.hide();
                         }
 
-                        // Réactiver les boutons de navigation
-                        $('.button-previous, .complete-step').prop('disabled', false);
+                        // Mettre à jour les boutons du footer selon l'étape
+                        this.updateFooterButtons(response.data.step_data);
 
                         // Gérer les étapes qui nécessitent une sélection
                         if (response.data.requires_selection) {
