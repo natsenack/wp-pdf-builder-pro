@@ -717,9 +717,6 @@
                     // Recharger la page en cas d'erreur pour revenir à un état stable
                     setTimeout(() => window.location.reload(), 2000);
                 }
-                    // Recharger la page en cas d'erreur pour revenir à un état stable
-                    window.location.reload();
-                }
             });
         }
 
