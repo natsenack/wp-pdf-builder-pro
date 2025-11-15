@@ -1,27 +1,26 @@
 /* Styles unifiés pour l'éditeur PDF Canvas - Design très clair */
 
 :root {
-  /* Palette ultra-minimaliste - Blanc dominant */
-  --primary-color: #6b7280;        /* Gris subtil pour les accents */
-  --primary-hover: #4b5563;       /* Gris légèrement plus foncé */
-  --secondary-color: #9ca3af;     /* Gris très subtil */
-  --success-color: #10b981;       /* Gardé pour les success mais très subtil */
-  --success-hover: #059669;       /* Vert très discret */
+  /* Palette unifiée du plugin PDF Builder Pro */
+  --primary-color: #3b82f6;        /* Bleu principal du plugin */
+  --primary-hover: #2563eb;       /* Bleu plus foncé pour les hovers */
+  --secondary-color: #60a5fa;     /* Bleu plus clair pour les accents */
+  --success-color: #10b981;       /* Vert pour les succès */
+  --success-hover: #059669;       /* Vert plus foncé */
   --background-color: #ffffff;    /* Blanc pur partout */
   --surface-color: #ffffff;       /* Blanc pur */
-  --surface-secondary: #f9fafb;   /* Blanc très légèrement teinté */
-  --border-color: #f3f4f6;        /* Bordure très subtile */
-  --text-primary: #111827;        /* Noir presque pur */
-  --text-secondary: #6b7280;      /* Gris moyen subtil */
-  --text-muted: #9ca3af;          /* Gris clair subtil */
-  --shadow-light: rgba(0, 0, 0, 0.02);  /* Ombre ultra-légère */
-  --shadow-medium: rgba(0, 0, 0, 0.04); /* Ombre très légère */
-  --shadow-heavy: rgba(0, 0, 0, 0.06);  /* Ombre légère */
-}
-  --text-muted: #94a3b8;          /* Gris clair */
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --radius: 6px;
+  --surface-secondary: #f8fafc;   /* Bleu très très clair */
+  --border-color: #e2e8f0;        /* Bordure bleue très subtile */
+  --text-primary: #1e293b;        /* Bleu très foncé pour le texte */
+  --text-secondary: #475569;      /* Bleu-gris pour le texte secondaire */
+  --text-muted: #64748b;          /* Bleu-gris clair pour le texte muted */
+  --shadow-light: rgba(59, 130, 246, 0.02);  /* Ombre bleue ultra-légère */
+  --shadow-medium: rgba(59, 130, 246, 0.04); /* Ombre bleue très légère */
+  --shadow-heavy: rgba(59, 130, 246, 0.06);  /* Ombre bleue légère */
+  --text-muted: #64748b;          /* Bleu-gris pour le texte muted */
+  --shadow: 0 1px 2px rgba(59, 130, 246, 0.05);
+  --shadow-hover: 0 2px 4px rgba(59, 130, 246, 0.08);
+  --radius: 8px;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
@@ -440,7 +439,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  background: linear-gradient(135deg, #ffffff, rgba(239, 246, 255, 0.8));
   border: 2px solid #e9ecef;
   border-radius: 8px;
   padding: 6px 8px;
@@ -498,7 +497,7 @@
 .ribbon-toolbar {
   flex-direction: column !important;
   padding: 0 !important;
-  background: #f8f9fa !important;
+  background: rgba(239, 246, 255, 0.8) !important;
   border-bottom: 1px solid #dee2e6 !important;
 }
 
@@ -688,7 +687,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  background: #f8f9fa;
+  background: rgba(239, 246, 255, 0.8);
   border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 2px;
@@ -1706,7 +1705,7 @@
 .modal-footer {
   padding: 20px 24px;
   border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
+  background: rgba(239, 246, 255, 0.8);
   border-radius: 0 0 8px 8px;
 }
 

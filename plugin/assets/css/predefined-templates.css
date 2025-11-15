@@ -60,7 +60,7 @@
 }
 
 .template-item {
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 8px;
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
@@ -108,7 +108,7 @@
 .template-header h3 {
     margin: 0;
     font-size: 16px;
-    color: #23282d;
+    color: #1e293b;
 }
 
 .template-actions {
@@ -128,7 +128,7 @@
 
 .category {
     display: inline-block;
-    background: #007cba;
+    background: #3b82f6;
     color: white;
     padding: 2px 8px;
     border-radius: 12px;
@@ -140,7 +140,7 @@
 
 .description {
     display: block;
-    color: #666;
+    color: #64748b;
     font-size: 13px;
     line-height: 1.4;
 }
@@ -150,16 +150,16 @@
 }
 
 .template-json details {
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
-    background: #f8f9fa;
+    background: rgba(239, 246, 255, 0.8);
 }
 
 .template-json summary {
     padding: 8px 12px;
     cursor: pointer;
     font-weight: bold;
-    color: #23282d;
+    color: #1e293b;
     user-select: none;
 }
 
@@ -170,7 +170,7 @@
 .template-json pre {
     margin: 0;
     padding: 12px;
-    background: #f8f9fa;
+    background: rgba(239, 246, 255, 0.8);
     border-radius: 0 0 4px 4px;
     font-family: 'Courier New', monospace;
     font-size: 11px;
@@ -179,7 +179,7 @@
     overflow-x: auto;
     max-height: 200px;
     overflow-y: auto;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 .template-preview {
@@ -192,7 +192,7 @@
     max-height: 200px;
     width: auto;
     height: auto;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
     object-fit: contain;
 }
@@ -209,15 +209,15 @@
 
 .no-preview {
     padding: 20px;
-    background: #f8f9fa;
+    background: rgba(239, 246, 255, 0.8);
     border-radius: 4px;
-    color: #666;
+    color: #64748b;
 }
 
 .no-templates {
     text-align: center;
     padding: 40px;
-    color: #666;
+    color: #64748b;
 }
 
 /* Form Styles */
@@ -229,7 +229,7 @@
     display: block;
     font-weight: 600;
     margin-bottom: 5px;
-    color: #23282d;
+    color: #1e293b;
 }
 
 .form-row input[type="text"],
@@ -237,7 +237,7 @@
 .form-row textarea {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
     font-size: 14px;
     line-height: 1.4;
@@ -250,14 +250,14 @@
 
 .form-row small {
     display: block;
-    color: #666;
+    color: #64748b;
     font-size: 12px;
     margin-top: 3px;
 }
 
 .json-editor-container {
     position: relative;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -284,7 +284,7 @@
     -moz-gap: 10px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 /* CodeMirror Override */
@@ -296,8 +296,8 @@
 }
 
 .CodeMirror-focused {
-    border-color: #007cba;
-    box-shadow: 0 0 0 1px #007cba;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
 }
 
 /* Modal Styles */
@@ -338,13 +338,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid #ddd;
-    background: #f8f9fa;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+    background: rgba(239, 246, 255, 0.8);
 }
 
 .modal-header h3 {
     margin: 0;
-    color: #23282d;
+    color: #1e293b;
 }
 
 .close-modal {
@@ -352,7 +352,7 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: #64748b;
     padding: 0;
     width: 30px;
     height: 30px;
@@ -379,7 +379,7 @@
 #preview-container svg {
     max-width: 100%;
     height: auto;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 4px;
 }
 
@@ -398,7 +398,7 @@
     width: 20px;
     height: 20px;
     margin: -10px 0 0 -10px;
-    border: 2px solid #007cba;
+    border: 2px solid #3b82f6;
     border-top: 2px solid transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;

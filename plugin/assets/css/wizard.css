@@ -41,7 +41,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: #ddd;
+    background: rgba(59, 130, 246, 0.15);
     z-index: 1;
 }
 
@@ -53,10 +53,10 @@
     -moz-border-radius: 20px;
     -ms-border-radius: 20px;
     -o-border-radius: 20px;
-    border: 2px solid #ddd;
+    border: 2px solid rgba(59, 130, 246, 0.15);
     font-size: 12px;
     font-weight: 500;
-    color: #666;
+    color: #64748b;
     position: relative;
     z-index: 2;
     transition: all 0.3s ease;
@@ -66,9 +66,9 @@
 }
 
 .wizard-progress .step.active {
-    background: #007cba;
+    background: #3b82f6;
     color: white;
-    border-color: #007cba;
+    border-color: #3b82f6;
 }
 
 .wizard-progress .step.completed {
@@ -147,7 +147,7 @@
 
 .dependency-item:hover {
     background: #fff;
-    border-color: #007cba;
+    border-color: #3b82f6;
 }
 
 .dependency-item .status {
@@ -172,7 +172,7 @@
 }
 
 .dependency-item small {
-    color: #666;
+    color: #64748b;
     margin-left: auto;
     font-style: italic;
 }
@@ -206,8 +206,8 @@
 
 .form-table input:focus,
 .form-table textarea:focus {
-    border-color: #007cba;
-    box-shadow: 0 0 0 1px #007cba;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
     outline: none;
 }
 
@@ -286,7 +286,7 @@
 }
 
 .next-steps li a {
-    color: #007cba;
+    color: #3b82f6;
     text-decoration: none;
     font-weight: 500;
 }
@@ -312,14 +312,14 @@
 }
 
 .wizard-footer .button-primary {
-    background: #007cba;
-    border-color: #007cba;
+    background: #3b82f6;
+    border-color: #3b82f6;
     color: white;
 }
 
 .wizard-footer .button-primary:hover {
-    background: #005a87;
-    border-color: #005a87;
+    background: #2563eb;
+    border-color: #2563eb;
 }
 
 .wizard-footer .button-secondary {
@@ -374,7 +374,7 @@
 .logo-preview img {
     max-width: 200px;
     max-height: 100px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(59, 130, 246, 0.15);
     padding: 5px;
     background: #fff;
     border-radius: 3px;
@@ -413,8 +413,8 @@
 
 .wizard-message-info {
     background: #f0f7ff;
-    border-left-color: #007cba;
-    color: #007cba;
+    border-left-color: #3b82f6;
+    color: #3b82f6;
 }
 
 .wizard-message-icon {
@@ -461,7 +461,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: #666;
+    color: #64748b;
 }
 
 .wizard-loading .spinner {
