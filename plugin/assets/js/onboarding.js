@@ -1155,6 +1155,9 @@
                         // Réactiver tous les boutons après le chargement réussi
                         $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
 
+                        // Remettre le HTML original du bouton précédent
+                        $('.button-previous').html('<span class="dashicons dashicons-arrow-left-alt"></span>');
+
                     } else {
                         // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
                         $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
