@@ -88,14 +88,17 @@
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.pdf-builder-onboarding-modal .modal-header .button-previous:hover {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    color: #2563eb;
-    transform: translateX(-2px);
-}
+    .pdf-builder-onboarding-modal .modal-header .button-previous {
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #ffffff;
+    }
 
-.pdf-builder-onboarding-modal .modal-header .button-previous .dashicons {
+    .pdf-builder-onboarding-modal .modal-header .button-previous:hover {
+        background: #6b7280;
+        border-color: #9ca3af;
+        color: #ffffff;
+    }.pdf-builder-onboarding-modal .modal-header .button-previous .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
@@ -1374,6 +1377,18 @@ kbd {
         background: #1f2937;
     }
 
+    .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar-track {
+        background: rgba(107, 114, 128, 0.3);
+    }
+
+    .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.6);
+    }
+
+    .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: rgba(156, 163, 175, 0.8);
+    }
+
     .pdf-builder-onboarding-modal .step-content h3 {
         color: #f9fafb;
     }
@@ -1439,6 +1454,87 @@ kbd {
     .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
         background: #2563eb;
         border-color: #2563eb;
+    }
+
+    /* Boutons secondaires en mode sombre */
+    .pdf-builder-onboarding-modal .modal-footer .button:not(.button-primary) {
+        background: #4b5563;
+        color: #ffffff;
+        border-color: #6b7280;
+    }
+
+    .pdf-builder-onboarding-modal .modal-footer .button:not(.button-primary):hover {
+        background: #6b7280;
+        border-color: #9ca3af;
+    }
+
+    /* Éléments de fonctionnalités en mode sombre */
+    .pdf-builder-onboarding-modal .feature-item {
+        background: #374151;
+        border-color: #4b5563;
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .feature-item:hover {
+        background: #4b5563;
+        border-color: #6b7280;
+    }
+
+    .pdf-builder-onboarding-modal .feature-item h4 {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .feature-item p {
+        color: #e2e8f0;
+    }
+
+    /* Éléments de vérification en mode sombre */
+    .pdf-builder-onboarding-modal .check-item {
+        background: #374151;
+        border-color: #4b5563;
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .check-item:hover {
+        background: #4b5563;
+        border-color: #6b7280;
+    }
+
+    .pdf-builder-onboarding-modal .check-item.success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .pdf-builder-onboarding-modal .check-item.warning {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .pdf-builder-onboarding-modal .check-content h5 {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .check-content p {
+        color: #e2e8f0;
+    }
+
+    /* Notices de configuration en mode sombre */
+    .pdf-builder-onboarding-modal .setup-notice {
+        background: #374151;
+        border-color: #4b5563;
+        color: #ffffff;
+    }
+
+    /* Éléments d'option en mode sombre */
+    .pdf-builder-onboarding-modal .option-item {
+        background: #374151;
+        border-color: #4b5563;
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .option-item:hover {
+        background: #4b5563;
+        border-color: #6b7280;
     }
 
     /* Indicateurs de progression en mode sombre */
