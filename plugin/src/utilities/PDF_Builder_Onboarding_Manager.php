@@ -445,13 +445,6 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
-        
-        // DEBUG: Afficher les données de l'étape actuelle
-        error_log('PDF_Builder_Onboarding_Manager: Current step: ' . $current_step);
-        error_log('PDF_Builder_Onboarding_Manager: Step data: ' . print_r($current_step_data, true));
-        
-        // DEBUG: Forcer l'affichage du footer
-        echo "<!-- DEBUG: Rendering onboarding wizard for step $current_step -->";
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
             <div class="modal-content">
@@ -480,20 +473,25 @@ class PDF_Builder_Onboarding_Manager {
                     </div>
                 </div>
 
-                <!-- DEBUG: About to render footer for step <?php echo $current_step; ?> -->
-                <?php echo "<div style='background: red; color: white; padding: 20px; margin: 10px; border: 3px solid yellow; font-size: 18px; font-weight: bold;'>DEBUG: PHP Footer Rendering Started for step $current_step</div>"; ?>
-                <div class="modal-footer" style="background: red; padding: 20px; border: 2px solid yellow;">
-                    <div style="color: white; font-weight: bold; margin-bottom: 10px;">DEBUG: Footer is rendering for step <?php echo $current_step; ?></div>
+                <div class="modal-footer">
+                    <?php if ($current_step_data['can_skip']): ?>
                     <button class="button button-secondary" data-action="skip-step">
-                        <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer cette étape', 'pdf-builder-pro')); ?>
+                        <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer', 'pdf-builder-pro')); ?>
                     </button>
-                    <button class="button button-primary complete-step"
-                            data-step="<?php echo $current_step; ?>"
-                            data-action-type="<?php echo $current_step_data['action_type'] ?? 'next'; ?>">
-                        <?php echo esc_html($current_step_data['action'] ?? __('Continuer', 'pdf-builder-pro')); ?>
+                    <?php else: ?>
+                    <button class="button button-secondary" data-action="skip-onboarding">
+                        <?php _e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
                     </button>
+                    <?php endif; ?>
+                    <?php if ($current_step_data['action']): ?>
+                    <button class="button button-primary complete-step" 
+                            data-step="<?php echo $current_step; ?>" 
+                            data-action-type="<?php echo $current_step_data['action_type']; ?>"
+                            <?php echo ($current_step_data['requires_selection'] ?? false) ? 'disabled' : ''; ?>>
+                        <?php echo esc_html($current_step_data['action']); ?>
+                    </button>
+                    <?php endif; ?>
                 </div>
-                <?php echo "<div style='background: blue; color: white; padding: 20px; margin: 10px; border: 3px solid cyan; font-size: 18px; font-weight: bold;'>DEBUG: PHP Footer Rendering Completed for step $current_step</div>"; ?>
             </div>
         </div>
 
