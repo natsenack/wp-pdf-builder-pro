@@ -608,7 +608,7 @@ class PDF_Builder_Onboarding_Manager {
     /**
      * Générer le contenu HTML d'une étape
      */
-    private function render_step_content($step_data) {
+    private function render_step_content($step_data, $step_number) {
         ob_start();
         ?>
         <div class="onboarding-step-content" data-step-id="<?php echo esc_attr($step_data['id']); ?>">
@@ -620,7 +620,7 @@ class PDF_Builder_Onboarding_Manager {
                 <?php echo $step_data['content']; ?>
             </div>
             <div class="step-footer">
-                <button type="button" class="button button-primary complete-step" data-step="<?php echo esc_attr($step_data['id']); ?>">
+                <button type="button" class="button button-primary complete-step" data-step="<?php echo $step; ?>">
                     <?php echo esc_html($step_data['action']); ?>
                 </button>
             </div>
@@ -633,13 +633,16 @@ class PDF_Builder_Onboarding_Manager {
      * AJAX - Charger le contenu d'une étape d'onboarding
      */
     public function ajax_load_onboarding_step() {
+        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Starting AJAX request');
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
 
         if (!current_user_can('manage_options')) {
+            error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Insufficient permissions');
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         $step = intval($_POST['step']);
+        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Requested step: ' . $step);
         $steps = $this->get_onboarding_steps();
 
         if (!isset($steps[$step])) {
@@ -649,8 +652,9 @@ class PDF_Builder_Onboarding_Manager {
         $step_data = $steps[$step];
 
         // Générer le contenu HTML de l'étape
-        $html = $this->render_step_content($step_data);
+        $html = $this->render_step_content($step_data, $step);
 
+        error_log('PDF_Builder_Onboarding_Manager::ajax_load_onboarding_step: Generated HTML length: ' . strlen($html));
         wp_send_json_success([
             'step' => $step,
             'title' => $step_data['title'],
