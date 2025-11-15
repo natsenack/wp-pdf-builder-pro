@@ -585,7 +585,7 @@
         loadStep(stepNumber) {
             // Charger une étape spécifique via AJAX
             console.log('PDF Builder Onboarding: Loading step', stepNumber);
-            
+
             $.ajax({
                 url: pdfBuilderOnboarding.ajaxUrl,
                 type: 'POST',
@@ -597,6 +597,7 @@
                 success: (response) => {
                     if (response.success) {
                         console.log('PDF Builder Onboarding: Step loaded successfully');
+                        console.log('PDF Builder Onboarding: Response data content length:', response.data.content ? response.data.content.length : 'no content');
                         this.applyStepData(stepNumber, response.data);
                     } else {
                         console.error('PDF Builder Onboarding: Failed to load step:', response.data);
@@ -620,12 +621,20 @@
             const existingButtons = $content.find('.complete-step');
             console.log('PDF Builder Onboarding: Existing buttons before replacement:', existingButtons.length);
 
+            // Vérifier aussi tous les boutons dans la modal
+            const allButtonsInModal = $modal.find('.complete-step');
+            console.log('PDF Builder Onboarding: All buttons in modal before replacement:', allButtonsInModal.length);
+
             // Mettre à jour le contenu de la modal
             $content.html(data.content);
 
             // Vérifier les boutons après remplacement
             const newButtons = $content.find('.complete-step');
             console.log('PDF Builder Onboarding: New buttons after replacement:', newButtons.length);
+
+            // Vérifier aussi tous les boutons dans la modal après
+            const allButtonsInModalAfter = $modal.find('.complete-step');
+            console.log('PDF Builder Onboarding: All buttons in modal after replacement:', allButtonsInModalAfter.length);
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
