@@ -48,8 +48,8 @@ class PDF_Builder_Onboarding_Manager {
      * Initialiser les hooks
      */
     private function init_hooks() {
-        add_action('admin_init', [$this, 'check_onboarding_status']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_onboarding_scripts']);
+        // Utiliser admin_enqueue_scripts au lieu de admin_init pour une meilleure synchronisation
+        add_action('admin_enqueue_scripts', [$this, 'check_onboarding_status']);
         add_action('wp_ajax_pdf_builder_complete_onboarding_step', [$this, 'ajax_complete_onboarding_step']);
         add_action('wp_ajax_pdf_builder_skip_onboarding', [$this, 'ajax_skip_onboarding']);
         add_action('wp_ajax_pdf_builder_reset_onboarding', [$this, 'ajax_reset_onboarding']);
@@ -77,12 +77,21 @@ class PDF_Builder_Onboarding_Manager {
     }
 
     /**
-     * Vérifier le statut d'onboarding
+     * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)
      */
-    public function check_onboarding_status() {
-        // Vérifier si c'est la première visite
+    public function check_onboarding_status($hook) {
+        // Afficher seulement sur les pages PDF Builder
+        if (!in_array($hook, [
+            'toplevel_page_pdf-builder-pro',
+            'pdf-builder_page_pdf-builder-templates',
+            'pdf-builder_page_pdf-builder-settings'
+        ])) {
+            return;
+        }
+
+        // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
         if (!$this->is_onboarding_completed() && !$this->is_onboarding_skipped()) {
-            $this->maybe_show_onboarding_wizard();
+            add_action('admin_footer', [$this, 'render_onboarding_wizard']);
         }
     }
 
@@ -367,25 +376,7 @@ class PDF_Builder_Onboarding_Manager {
         return $checks;
     }
 
-    /**
-     * Afficher potentiellement le wizard d'onboarding
-     */
-    private function maybe_show_onboarding_wizard() {
-        // Afficher seulement sur les pages PDF Builder
-        $current_screen = get_current_screen();
-        if (!$current_screen || !in_array($current_screen->id, [
-            'toplevel_page_pdf-builder-pro',
-            'pdf-builder_page_pdf-builder-templates',
-            'pdf-builder_page_pdf-builder-settings'
-        ])) {
-            return;
-        }
 
-        // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
-        if (!$this->is_onboarding_completed() && !$this->is_onboarding_skipped()) {
-            add_action('admin_footer', [$this, 'render_onboarding_wizard']);
-        }
-    }
 
     /**
      * Rendre le wizard d'onboarding
