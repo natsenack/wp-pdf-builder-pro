@@ -16,6 +16,7 @@
     z-index: 10000;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     animation: modalFadeIn 0.3s ease-out;
+    overflow: hidden; /* Empêche le contenu de déborder */
 }
 
 @keyframes modalFadeIn {
@@ -34,7 +35,7 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     max-width: 900px; /* Élargi de 600px à 900px */
     width: 95%; /* Augmenté de 90% à 95% pour utiliser plus d'espace */
-    height: 80vh;
+    height: 70vh; /* Réduit de 80vh à 70vh pour plus de marge */
     position: relative;
     transform: translateY(0);
     transition: all 0.3s ease;
@@ -162,7 +163,7 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(239, 246, 255, 0.5) 100%);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    height: calc(80vh - 80px); /* 80vh total - header 80px (footer est en absolute) */
+    height: calc(70vh - 80px); /* 70vh total - header 80px (footer est en absolute) */
     min-height: 200px;
 }
 
