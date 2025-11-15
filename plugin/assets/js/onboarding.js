@@ -908,6 +908,10 @@
                             } else if (response.data.redirect_to) {
                                 window.location.href = response.data.redirect_to;
                             } else {
+                                // Mettre à jour l'étape côté client avant de charger la suivante
+                                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                                    pdfBuilderOnboarding.current_step = response.data.next_step;
+                                }
                                 // Charger l'étape suivante via AJAX au lieu de recharger la page
                                 this.loadStep(response.data.next_step);
                             }
@@ -1077,6 +1081,10 @@
             if (this.currentStep === 2) {
                 // Pour l'étape 2, passer à l'étape 3 sans sélection de template
                 this.selectedTemplate = null; // Aucun template sélectionné
+                // Mettre à jour côté client immédiatement
+                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                    pdfBuilderOnboarding.current_step = 3;
+                }
                 this.updateServerStep(3); // Mettre à jour côté serveur
                 this.loadStep(3);
             } else if (this.currentStep === 3) {
@@ -1085,6 +1093,10 @@
             } else {
                 // Pour les autres étapes, passer simplement à la suivante
                 const nextStep = this.currentStep + 1;
+                // Mettre à jour côté client immédiatement
+                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                    pdfBuilderOnboarding.current_step = nextStep;
+                }
                 this.updateServerStep(nextStep);
                 this.loadStep(nextStep);
             }
@@ -1360,6 +1372,10 @@
                 success: (response) => {
                     if (response.success) {
                         console.log('PDF Builder Onboarding: Step updated on server to', step);
+                        // Mettre à jour aussi côté client pour cohérence
+                        if (typeof pdfBuilderOnboarding !== 'undefined') {
+                            pdfBuilderOnboarding.current_step = step;
+                        }
                     } else {
                         console.error('PDF Builder Onboarding: Failed to update step on server');
                     }
