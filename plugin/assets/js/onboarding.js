@@ -909,8 +909,7 @@
                     step: step,
                     action_type: actionType,
                     selected_template: this.selectedTemplate,
-                    // N'envoyer woocommerce_options que si on est à l'étape 3
-                    ...(step === 3 && { woocommerce_options: this.getWoocommerceOptions() })
+                    woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
                     clearTimeout(timeoutId);
