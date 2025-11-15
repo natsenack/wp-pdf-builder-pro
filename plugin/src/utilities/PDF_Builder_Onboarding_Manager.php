@@ -282,14 +282,29 @@ class PDF_Builder_Onboarding_Manager {
                             </div>
                             <div class="setup-options">
                                 <h5>' . __('Options d\'intégration :', 'pdf-builder-pro') . '</h5>
-                                <label class="option-item" data-tooltip="Les clients recevront automatiquement leurs PDFs avec leurs emails de confirmation">
-                                    <input type="checkbox" name="woocommerce_emails" checked> ' . __('Ajouter les PDFs aux emails de commande', 'pdf-builder-pro') . '
+                                <div class="option-description" style="margin-bottom:16px;color:#666;font-size:13px;">
+                                    ' . __('Configurez comment PDF Builder Pro s\'intègre avec votre boutique WooCommerce.', 'pdf-builder-pro') . '
+                                </div>
+                                <label class="option-item" data-tooltip="Les clients recevront automatiquement leurs PDFs (factures, bons de commande...) joints aux emails de confirmation de commande WooCommerce">
+                                    <input type="checkbox" name="woocommerce_emails" checked>
+                                    <div class="option-content">
+                                        <strong>' . __('📧 PDFs dans les emails de commande', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Vos clients recevront automatiquement leurs documents PDF (factures, bons de livraison...) directement dans leurs emails de confirmation de commande.', 'pdf-builder-pro') . '</div>
+                                    </div>
                                 </label>
-                                <label class="option-item" data-tooltip="Aperçu rapide des PDFs générés directement dans l\'interface admin">
-                                    <input type="checkbox" name="admin_preview" checked> ' . __('Afficher l\'aperçu PDF dans l\'admin', 'pdf-builder-pro') . '
+                                <label class="option-item" data-tooltip="Aperçu rapide des PDFs générés directement dans l\'interface d\'administration WooCommerce pour chaque commande">
+                                    <input type="checkbox" name="admin_preview" checked>
+                                    <div class="option-content">
+                                        <strong>' . __('👁️ Aperçu PDF dans l\'admin', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Affichez un bouton d\'aperçu rapide dans l\'interface d\'administration pour visualiser les PDFs générés sans quitter la page de commande.', 'pdf-builder-pro') . '</div>
+                                    </div>
                                 </label>
-                                <label class="option-item" data-tooltip="Utiliser automatiquement les données de commande (prix, produits, client...)">
-                                    <input type="checkbox" name="variables" checked> ' . __('Activer les variables WooCommerce', 'pdf-builder-pro') . '
+                                <label class="option-item" data-tooltip="Utiliser automatiquement les données de commande WooCommerce (prix, produits, informations client...) dans vos templates PDF">
+                                    <input type="checkbox" name="variables" checked>
+                                    <div class="option-content">
+                                        <strong>' . __('🔧 Variables WooCommerce', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Activez l\'utilisation automatique des données WooCommerce (prix, produits, adresse client, numéro de commande...) dans vos templates PDF.', 'pdf-builder-pro') . '</div>
+                                    </div>
                                 </label>
                             </div>
                             <div class="woocommerce-tip" style="margin-top:16px;padding:12px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;">
