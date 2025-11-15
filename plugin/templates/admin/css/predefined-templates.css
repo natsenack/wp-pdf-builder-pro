@@ -352,6 +352,52 @@
     transform: scale(1.05);
 }
 
+/* Boutons de navigation avec icônes */
+.button-previous, .button-next {
+    position: relative;
+    font-weight: 600;
+}
+
+.button-previous {
+    padding-left: 40px;
+}
+
+.button-previous::before {
+    content: '←';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.button-previous:hover::before {
+    transform: translateY(-50%) translateX(-2px);
+}
+
+.button-next {
+    padding-right: 40px;
+}
+
+.button-next::after {
+    content: '→';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.button-next:hover::after {
+    transform: translateY(-50%) translateX(2px);
+}
+
 .modal-body {
     padding: 20px;
     max-height: 70vh;

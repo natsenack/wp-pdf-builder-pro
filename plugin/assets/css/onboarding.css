@@ -202,6 +202,50 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+/* Bouton précédent avec icône */
+.pdf-builder-onboarding-modal .modal-footer .button.button-previous {
+    position: relative;
+    padding-left: 44px;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-previous::before {
+    content: '←';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-previous:hover::before {
+    transform: translateY(-50%) translateX(-2px);
+}
+
+/* Bouton suivant avec icône */
+.pdf-builder-onboarding-modal .modal-footer .button.button-next {
+    position: relative;
+    padding-right: 44px;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-next::after {
+    content: '→';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-next:hover::after {
+    transform: translateY(-50%) translateX(2px);
+}
+
 /* Styles pour le contenu des étapes */
 .welcome-features {
     display: flex;
