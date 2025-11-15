@@ -1,6 +1,6 @@
 ﻿/**
  * Styles CSS pour le système d'onboarding de PDF Builder Pro
- * Design moderne avec contraste amélioré pour l'accessibilité WCAG AA
+ * Design classique avec les couleurs du plugin
  */
 
 .pdf-builder-onboarding-modal {
@@ -9,9 +9,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,52 +21,43 @@
 @keyframes modalFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
     }
 }
 
 .pdf-builder-onboarding-modal .modal-content {
-    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 24px;
-    border: 2px solid rgba(15, 23, 42, 0.15);
-    box-shadow:
-        0 25px 50px -12px rgba(15, 23, 42, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 90%;
     max-height: 90vh;
     overflow: hidden;
     position: relative;
     transform: translateY(0);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
+    animation: modalSlideIn 0.4s ease;
 }
 
 @keyframes modalSlideIn {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.95);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
 .pdf-builder-onboarding-modal .modal-header {
-    padding: 32px 40px 24px;
-    border-bottom: 1px solid rgba(59, 130, 246, 0.12);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(219, 234, 254, 0.9) 100%);
+    padding: 24px 30px 20px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
     position: relative;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -120,12 +109,10 @@
 
 .pdf-builder-onboarding-modal .modal-header .header-content h2 {
     margin: 0 0 8px 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
     line-height: 1.2;
-    letter-spacing: -0.025em;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .pdf-builder-onboarding-modal .modal-header .header-content p {
@@ -203,46 +190,34 @@
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button {
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 500;
     font-size: 14px;
-    border: 2px solid #cbd5e1;
-    background: #ffffff;
-    color: #334155;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    color: #333;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
-    color: #1e293b;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #333;
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: #3b82f6;
     color: #ffffff;
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow:
-        0 4px 12px rgba(59, 130, 246, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    font-weight: 700;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+    font-weight: 600;
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    border-color: rgba(37, 99, 235, 0.4);
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 32px rgba(59, 130, 246, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    background: #2563eb;
+    border-color: #2563eb;
 }
 
 /* Animation de chargement pour les boutons */
@@ -443,38 +418,24 @@
 
 .template-card {
     flex: 1;
-    -webkit-flex: 1;
-    -moz-flex: 1;
-    -ms-flex: 1;
-    -o-flex: 1;
     min-width: 140px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    -ms-border-radius: 12px;
-    -o-border-radius: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     padding: 16px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -moz-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -o-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     background: #ffffff;
 }
 
 .template-card:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    background: rgba(219, 234, 254, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
+    border-color: #3b82f6;
+    background: #f8f9fa;
 }
 
 .template-card.selected {
     border-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.02);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    background: #e3f2fd;
 }
 
 .template-preview {
@@ -933,23 +894,19 @@
 
 .pdf-builder-onboarding-modal .template-card:hover {
     border-color: #3b82f6;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    -ms-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    -o-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
 }
 
 .pdf-builder-onboarding-modal .template-card.selected {
-    border-color: #46b450;
-    background: rgba(219, 234, 254, 0.9);
+    border-color: #3b82f6;
+    background: #e3f2fd;
 }
 
 .pdf-builder-onboarding-modal .template-card h4 {
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1d2327;
+    color: #333;
 }
 
 .pdf-builder-onboarding-modal .template-card p {
@@ -1484,19 +1441,14 @@ kbd {
     border: 0;
 }
 
-
-
-.onboarding-loading
-
->> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     display: flex;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     
-
-flex-direction: column;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     align-items: center;>> 
-
-"i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     justify-content: center;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo   
-
-  padding: 60px 20px;>> "i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo     text-align: center;>> 
-
-"i:\wp-pdf-builder-pro\plugin\assets\css\onboarding.css" ; echo 
+.onboarding-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+} 
 
 .auto-advance-notice {
     margin-top: 20px;
