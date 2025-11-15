@@ -17,6 +17,7 @@
         }
 
         init() {
+            console.log('PDF Builder Onboarding: Initializing...');
             this.bindEvents();
             this.initializeWizard();
             this.setupKeyboardNavigation();
@@ -66,8 +67,10 @@
         }
 
         initializeWizard() {
+            console.log('PDF Builder Onboarding: Initializing wizard...');
             // Initialiser l'état du wizard
             this.currentStep = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1;
+            console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
             this.showModal();
             this.announceStep();
         }
@@ -151,8 +154,11 @@
         }
 
         showModal() {
+            console.log('PDF Builder Onboarding: Showing modal...');
             const $modal = $('#pdf-builder-onboarding-modal');
+            console.log('PDF Builder Onboarding: Modal element found:', $modal.length);
             $modal.fadeIn(400, () => {
+                console.log('PDF Builder Onboarding: Modal fadeIn complete');
                 // Animation d'entrée améliorée
                 $modal.find('.modal-content').addClass('modal-entrance-animation');
                 this.announceStep();
