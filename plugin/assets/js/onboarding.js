@@ -1038,6 +1038,21 @@
             }
         }
 
+        skipCurrentStep() {
+            // Gérer l'ignorance selon l'étape courante
+            if (this.currentStep === 2) {
+                // Pour l'étape 2, passer à l'étape 3 sans sélection de template
+                this.selectedTemplate = null; // Aucun template sélectionné
+                this.loadStep(3);
+            } else if (this.currentStep === 3) {
+                // Pour l'étape 3, sauter la configuration WooCommerce
+                this.skipWoocommerceSetup();
+            } else {
+                // Pour les autres étapes, passer simplement à la suivante
+                this.loadStep(this.currentStep + 1);
+            }
+        }
+
         loadStepContent(step) {
             // Cette fonction serait appelée depuis PHP pour charger le contenu dynamique
             // Pour l'instant, on simule avec les données existantes
