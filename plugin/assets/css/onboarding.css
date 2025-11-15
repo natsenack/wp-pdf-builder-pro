@@ -112,6 +112,45 @@
     height: 16px;
 }
 
+.pdf-builder-onboarding-modal .modal-header .button-next {
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 2px solid #3b82f6;
+    color: #1e40af;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next:hover {
+    background: #3b82f6;
+    border-color: #2563eb;
+    color: #ffffff;
+    transform: translateX(2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next:disabled {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #2563eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
 .pdf-builder-onboarding-modal .modal-header .header-content {
     flex: 1;
     min-width: 0;
@@ -1486,10 +1525,91 @@ kbd {
 
 
 
-. o n b o a r d i n g - l o a d i n g  
- > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           d i s p l a y :   f l e x ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o            
- f l e x - d i r e c t i o n :   c o l u m n ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           a l i g n - i t e m s :   c e n t e r ; > >    
- " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           j u s t i f y - c o n t e n t :   c e n t e r ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o        
-     p a d d i n g :   6 0 p x   2 0 p x ; > >   " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o           t e x t - a l i g n :   c e n t e r ; > >    
- " i : \ w p - p d f - b u i l d e r - p r o \ p l u g i n \ a s s e t s \ c s s \ o n b o a r d i n g . c s s "   ;   e c h o    
- 
+
+/* Styles pour le chargement AJAX */
+.onboarding-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-left: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.onboarding-loading p {
+    color: #64748b;
+    font-size: 16px;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Animation d'entrée pour le contenu chargé */
+.onboarding-step-content {
+    animation: contentFadeIn 0.3s ease-out;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styles pour le bouton suivant */
+.pdf-builder-onboarding-modal .modal-header .button-next {
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 2px solid #3b82f6;
+    color: #1e40af;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next:hover {
+    background: #3b82f6;
+    border-color: #2563eb;
+    color: #ffffff;
+    transform: translateX(2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next:disabled {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #2563eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pdf-builder-onboarding-modal .modal-header .button-next .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}

@@ -450,6 +450,11 @@ class PDF_Builder_Onboarding_Manager {
                         <h2><?php echo esc_html($current_step_data['title']); ?></h2>
                         <p><?php echo esc_html($current_step_data['description']); ?></p>
                     </div>
+                    <?php if ($current_step < 5) : ?>
+                    <button class="button button-next" data-tooltip="Étape suivante">
+                        <span class="dashicons dashicons-arrow-right-alt"></span>
+                    </button>
+                    <?php endif; ?>
 
                     <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
                         <span class="dashicons dashicons-no"></span>

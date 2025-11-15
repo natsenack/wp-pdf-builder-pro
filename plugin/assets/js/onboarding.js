@@ -69,6 +69,26 @@
                 }
             });
 
+            $(document).on('click', '.button-next', (e) => {
+                e.preventDefault();
+
+                const $button = $(e.currentTarget);
+                const originalText = $button.html();
+
+                // Feedback visuel immédiat
+                $button.prop('disabled', true)
+                       .html('<span class="dashicons dashicons-update spin"></span> Chargement...');
+
+                // Charger l'étape suivante via AJAX
+                const nextStep = this.currentStep + 1;
+                if (nextStep <= 5) { // Supposant qu'il y a 5 étapes maximum
+                    this.loadStep(nextStep);
+                } else {
+                    // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
+                    $button.prop('disabled', false).html(originalText);
+                }
+            });
+
             // Nouveaux événements pour l'UX améliorée
             $(document).on('mouseenter', '[data-tooltip]', (e) => {
                 this.showTooltip($(e.currentTarget));
