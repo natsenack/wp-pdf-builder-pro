@@ -65,35 +65,6 @@
                 this.skipWoocommerceSetup();
             });
 
-            // Navigation avec les boutons précédent/suivant
-            $(document).on('click', '.button-previous', (e) => {
-                e.preventDefault();
-
-                const $button = $(e.currentTarget);
-                const originalText = $button.html();
-
-                // Désactiver tous les boutons de navigation pendant le chargement
-                $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', true);
-
-                // Feedback visuel immédiat
-                $button.html('<span class="dashicons dashicons-update spin"></span>');
-
-                // Charger l'étape précédente via AJAX
-                const prevStep = this.currentStep - 1;
-                if (prevStep >= 1) {
-                    // Désactiver le bouton pendant le chargement
-                    $button.prop('disabled', true);
-                    $button.html('<span class="dashicons dashicons-update spin"></span> Chargement...');
-                    
-                    this.loadStep(prevStep);
-                    // Note: Les boutons seront réactivés dans loadStep() après le chargement réussi
-                } else {
-                    // Si on ne peut pas aller plus loin, remettre les boutons à l'état normal
-                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
-                    $button.html(originalText);
-                }
-            });
-
             // Nouveaux événements pour l'UX améliorée
             $(document).on('mouseenter', '[data-tooltip]', (e) => {
                 this.showTooltip($(e.currentTarget));
@@ -128,6 +99,9 @@
             this.selectedTemplate = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null;
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
             console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
+
+            // S'assurer que tous les boutons sont dans un état cohérent
+            this.resetButtonStates();
 
             // Charger l'étape actuelle via AJAX pour s'assurer que les boutons sont corrects
             this.loadStep(this.currentStep);
@@ -574,6 +548,13 @@
             alert('Configuration terminée ! Vous pouvez maintenant utiliser PDF Builder Pro.');
         }
 
+        goToPreviousStep() {
+            const prevStep = this.currentStep - 1;
+            if (prevStep >= 1) {
+                this.loadStep(prevStep);
+            }
+        }
+
         loadStep(stepNumber) {
             // Charger une étape spécifique via AJAX
             console.log('PDF Builder Onboarding: Loading step', stepNumber);
@@ -933,7 +914,7 @@
                         }, 500);
                     } else {
                         // En cas d'erreur, réactiver tous les boutons
-                        $('.button-previous, .complete-step, [data-action]').prop('disabled', false);
+                        this.resetButtonStates();
                         $button.html(originalText);
                         this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
                     }
@@ -941,7 +922,7 @@
                 error: (xhr, status, error) => {
                     clearTimeout(timeoutId);
                     // En cas d'erreur AJAX, réactiver tous les boutons
-                    $('.button-previous, .complete-step, [data-action]').prop('disabled', false);
+                    this.resetButtonStates();
                     $button.html(originalText);
 
                     if (status === 'timeout') {
@@ -964,12 +945,57 @@
             }
         }
 
-        getWoocommerceOptions() {
-            const options = {};
-            $('.woocommerce-setup input[type="checkbox"]').each(function() {
-                options[$(this).attr('name')] = $(this).is(':checked');
+        showError(message) {
+            // Afficher un message d'erreur dans le modal
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $body = $modal.find('.modal-body');
+
+            // Supprimer les anciens messages d'erreur
+            $body.find('.error-message').remove();
+
+            // Ajouter le nouveau message d'erreur
+            const $error = $(`
+                <div class="error-message" style="
+                    background: #fef2f2;
+                    border: 1px solid #fecaca;
+                    color: #dc2626;
+                    padding: 12px;
+                    border-radius: 6px;
+                    margin-bottom: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                ">
+                    <span class="dashicons dashicons-warning"></span>
+                    <span>${message}</span>
+                </div>
+            `);
+
+            $body.find('.step-content').prepend($error);
+
+            // Faire défiler vers le message d'erreur
+            $error.get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Supprimer automatiquement après 5 secondes
+            setTimeout(() => {
+                $error.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+        resetButtonStates() {
+            // Réactiver tous les boutons et restaurer leur état normal
+            $('.button-previous, .complete-step, [data-action]').each(function() {
+                const $btn = $(this);
+                $btn.prop('disabled', false);
+
+                // Restaurer le texte original si sauvegardé
+                const originalText = $btn.data('original-text');
+                if (originalText) {
+                    $btn.html(originalText);
+                }
             });
-            return options;
         }
 
         selectTemplate($card) {
