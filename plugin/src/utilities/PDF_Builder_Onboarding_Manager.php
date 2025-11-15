@@ -481,7 +481,9 @@ class PDF_Builder_Onboarding_Manager {
                 </div>
 
                 <!-- DEBUG: About to render footer for step <?php echo $current_step; ?> -->
-                <div class="modal-footer">
+                <?php echo "<div style='background: red; color: white; padding: 20px; margin: 10px; border: 3px solid yellow; font-size: 18px; font-weight: bold;'>DEBUG: PHP Footer Rendering Started for step $current_step</div>"; ?>
+                <div class="modal-footer" style="background: red; padding: 20px; border: 2px solid yellow;">
+                    <div style="color: white; font-weight: bold; margin-bottom: 10px;">DEBUG: Footer is rendering for step <?php echo $current_step; ?></div>
                     <button class="button button-secondary" data-action="skip-step">
                         <?php echo esc_html($current_step_data['skip_text'] ?? __('Ignorer cette étape', 'pdf-builder-pro')); ?>
                     </button>
@@ -491,6 +493,7 @@ class PDF_Builder_Onboarding_Manager {
                         <?php echo esc_html($current_step_data['action'] ?? __('Continuer', 'pdf-builder-pro')); ?>
                     </button>
                 </div>
+                <?php echo "<div style='background: blue; color: white; padding: 20px; margin: 10px; border: 3px solid cyan; font-size: 18px; font-weight: bold;'>DEBUG: PHP Footer Rendering Completed for step $current_step</div>"; ?>
             </div>
         </div>
 
