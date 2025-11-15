@@ -9,7 +9,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -31,16 +31,17 @@
 
 .pdf-builder-onboarding-modal .modal-content {
     background: #fff;
+    border: 1px solid #c3c4c7;
     border-radius: 8px;
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     -ms-border-radius: 8px;
     -o-border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    -ms-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    -o-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    -ms-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     width: 90%;
     max-height: 90vh;
@@ -50,8 +51,8 @@
 
 .pdf-builder-onboarding-modal .modal-header {
     padding: 20px 24px;
-    border-bottom: 1px solid #e1e1e1;
-    background: #f8f9fa;
+    border-bottom: 1px solid #c3c4c7;
+    background: #fff;
     position: relative;
 }
 
@@ -154,6 +155,7 @@
     -o-justify-content: space-between;
     gap: 12px;
     background: #f8f9fa;
+    border-top: 1px solid #c3c4c7;
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button {
@@ -217,7 +219,7 @@
     min-width: 200px;
     text-align: center;
     padding: 20px;
-    background: #f8f9fa;
+    background: #fafbfc;
     border: 1px solid #e1e1e1;
     border-radius: 8px;
     -webkit-border-radius: 8px;
@@ -233,9 +235,6 @@
 .feature-item:hover {
     background: #fff;
     border-color: #007cba;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .feature-item h4 {
@@ -292,8 +291,8 @@
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
-    background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    background: #fff;
+    border: 1px solid #c3c4c7;
 }
 
 .check-item.success {
@@ -369,7 +368,7 @@
 
 .template-card:hover {
     border-color: #007cba;
-    background: #f8f9fa;
+    background: #fafbfc;
 }
 
 .template-card.selected {
@@ -495,8 +494,8 @@
     font-size: 14px;
     color: #666;
     padding: 12px;
-    background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    background: #fff;
+    border: 1px solid #c3c4c7;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -535,8 +534,8 @@
 .summary-item {
     text-align: center;
     padding: 20px 16px;
-    background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    background: #fff;
+    border: 1px solid #c3c4c7;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -830,18 +829,18 @@
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1f2937;
+    color: #1d2327;
 }
 
 .pdf-builder-onboarding-modal .template-card p {
     margin: 0;
     font-size: 14px;
-    color: #6b7280;
+    color: #666;
 }
 
 .pdf-builder-onboarding-modal .woocommerce-setup {
     background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #c3c4c7;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -855,7 +854,7 @@
     margin: 0 0 12px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1d2327;
+    color: #2c3338;
 }
 
 .pdf-builder-onboarding-modal .woocommerce-setup .option {
@@ -891,7 +890,7 @@
 .pdf-builder-onboarding-modal .modal-footer {
     padding: 20px;
     background: #f8f9fa;
-    border-top: 1px solid #e1e1e1;
+    border-top: 1px solid #c3c4c7;
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -960,7 +959,7 @@
 .pdf-builder-onboarding-modal .btn-secondary {
     background: #f8f9fa;
     color: #666;
-    border-color: #e1e1e1;
+    border-color: #c3c4c7;
 }
 
 .pdf-builder-onboarding-modal .btn-secondary:hover {
@@ -1144,7 +1143,7 @@
 /* Raccourcis clavier */
 kbd {
     background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #c3c4c7;
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -1303,7 +1302,7 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .step-content p {
-        color: #d1d5db;
+        color: #000000;
     }
 
     .pdf-builder-onboarding-modal .template-card {
