@@ -154,9 +154,9 @@ class PDF_Builder_Onboarding_Manager {
                 'title' => __('Vérification de l\'environnement', 'pdf-builder-pro'),
                 'description' => __('Nous analysons votre installation pour optimiser l\'expérience.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('environment_check'),
-                'action' => null, // Pas de bouton pour cette étape - automatique
-                'auto_advance' => true, // Avancer automatiquement après un délai
-                'auto_advance_delay' => 3000 // 3 secondes
+                'action' => __('Continuer', 'pdf-builder-pro'), // Ajouter un bouton manuel
+                'auto_advance' => false, // Désactiver l'auto-advance
+                'auto_advance_delay' => 3000
             ],
             3 => [
                 'id' => 'first_template',

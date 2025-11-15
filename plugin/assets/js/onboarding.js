@@ -521,10 +521,9 @@
             $card.addClass('selected');
             this.selectedTemplate = $card.data('template');
 
-            // Mettre à jour le texte du bouton
+            // Mettre à jour le texte du bouton pour "Terminé !"
             const $button = $('.complete-step');
-            const templateName = $card.find('h4').text();
-            $button.text(`Créer ${templateName}`);
+            $button.text('Terminé !');
         }
 
         skipWoocommerceSetup() {
