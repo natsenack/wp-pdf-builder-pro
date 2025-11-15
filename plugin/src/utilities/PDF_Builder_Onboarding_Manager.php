@@ -445,6 +445,10 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
+        
+        // DEBUG: Afficher les données de l'étape actuelle
+        error_log('PDF_Builder_Onboarding_Manager: Current step: ' . $current_step);
+        error_log('PDF_Builder_Onboarding_Manager: Step data: ' . print_r($current_step_data, true));
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
             <div class="modal-content">
