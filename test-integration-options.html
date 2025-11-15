@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Options d'intégration détaillées</title>
+    <link rel="stylesheet" href="plugin/assets/css/onboarding.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Options d'intégration détaillées - Test</h2>
+
+        <div class="setup-options">
+            <h5>Options d'intégration :</h5>
+            <div class="option-description" style="margin-bottom:16px;color:#666;font-size:13px;">
+                Configurez comment PDF Builder Pro s'intègre avec votre boutique WooCommerce.
+            </div>
+
+            <label class="option-item" data-tooltip="Les clients recevront automatiquement leurs PDFs (factures, bons de commande...) joints aux emails de confirmation de commande WooCommerce">
+                <input type="checkbox" name="woocommerce_emails" checked>
+                <div class="option-content">
+                    <strong>📧 PDFs dans les emails de commande</strong>
+                    <div class="option-details">Vos clients recevront automatiquement leurs documents PDF (factures, bons de livraison...) directement dans leurs emails de confirmation de commande.</div>
+                </div>
+            </label>
+
+            <label class="option-item" data-tooltip="Aperçu rapide des PDFs générés directement dans l'interface d'administration WooCommerce pour chaque commande">
+                <input type="checkbox" name="admin_preview" checked>
+                <div class="option-content">
+                    <strong>👁️ Aperçu PDF dans l'admin</strong>
+                    <div class="option-details">Affichez un bouton d'aperçu rapide dans l'interface d'administration pour visualiser les PDFs générés sans quitter la page de commande.</div>
+                </div>
+            </label>
+
+            <label class="option-item" data-tooltip="Utiliser automatiquement les données de commande WooCommerce (prix, produits, informations client...) dans vos templates PDF">
+                <input type="checkbox" name="variables" checked>
+                <div class="option-content">
+                    <strong>🔧 Variables WooCommerce</strong>
+                    <div class="option-details">Activez l'utilisation automatique des données WooCommerce (prix, produits, adresse client, numéro de commande...) dans vos templates PDF.</div>
+                </div>
+            </label>
+        </div>
+    </div>
+</body>
+</html>
