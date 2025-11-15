@@ -4,42 +4,40 @@
 
 /* Modal d'onboarding */
 .pdf-builder-onboarding-modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     z-index: 999999;
     animation: fadeIn 0.3s ease-out;
+    display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.pdf-builder-onboarding-modal.show {
-    display: flex;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .pdf-builder-onboarding-modal .modal-content {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    max-width: 550px;
+    width: 100%;
+    max-height: calc(100vh - 40px);
     overflow: hidden;
     animation: slideIn 0.3s ease-out;
     position: relative;
-    margin: auto;
+    border: 1px solid #f1f5f9;
 }
 
 .pdf-builder-onboarding-modal .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 28px 24px;
+    background: #ffffff;
+    color: #475569;
+    padding: 24px 28px;
     position: relative;
-    border-radius: 16px 16px 0 0;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .pdf-builder-onboarding-modal .modal-header h2 {

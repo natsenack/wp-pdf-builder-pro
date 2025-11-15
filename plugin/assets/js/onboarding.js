@@ -81,7 +81,7 @@
 
         setupKeyboardNavigation() {
             $(document).on('keydown', (e) => {
-                if (!$('#pdf-builder-onboarding-modal').hasClass('show') || $('#pdf-builder-onboarding-modal').css('display') === 'none') return;
+                if ($('#pdf-builder-onboarding-modal').css('display') === 'none') return;
 
                 switch(e.key) {
                     case 'ArrowRight':
