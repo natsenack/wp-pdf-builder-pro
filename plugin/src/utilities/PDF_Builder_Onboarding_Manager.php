@@ -53,6 +53,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_complete_onboarding_step', [$this, 'ajax_complete_onboarding_step']);
         add_action('wp_ajax_pdf_builder_skip_onboarding', [$this, 'ajax_skip_onboarding']);
         add_action('wp_ajax_pdf_builder_reset_onboarding', [$this, 'ajax_reset_onboarding']);
+        add_action('wp_ajax_pdf_builder_load_onboarding_step', [$this, 'ajax_load_onboarding_step']);
     }
 
     /**
@@ -602,6 +603,61 @@ class PDF_Builder_Onboarding_Manager {
         $this->save_onboarding_options();
 
         wp_send_json_success();
+    }
+
+    /**
+     * Générer le contenu HTML d'une étape
+     */
+    private function render_step_content($step_data) {
+        ob_start();
+        ?>
+        <div class="onboarding-step-content" data-step-id="<?php echo esc_attr($step_data['id']); ?>">
+            <div class="step-header">
+                <h2><?php echo esc_html($step_data['title']); ?></h2>
+                <p class="step-description"><?php echo esc_html($step_data['description']); ?></p>
+            </div>
+            <div class="step-body">
+                <?php echo $step_data['content']; ?>
+            </div>
+            <div class="step-footer">
+                <button type="button" class="button button-primary complete-step" data-step="<?php echo esc_attr($step_data['id']); ?>">
+                    <?php echo esc_html($step_data['action']); ?>
+                </button>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * AJAX - Charger le contenu d'une étape d'onboarding
+     */
+    public function ajax_load_onboarding_step() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $step = intval($_POST['step']);
+        $steps = $this->get_onboarding_steps();
+
+        if (!isset($steps[$step])) {
+            wp_send_json_error(__('Étape non trouvée', 'pdf-builder-pro'));
+        }
+
+        $step_data = $steps[$step];
+
+        // Générer le contenu HTML de l'étape
+        $html = $this->render_step_content($step_data);
+
+        wp_send_json_success([
+            'step' => $step,
+            'title' => $step_data['title'],
+            'description' => $step_data['description'],
+            'content' => $html,
+            'action' => $step_data['action']
+        ]);
     }
 
     /**

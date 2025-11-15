@@ -59,14 +59,10 @@
                 $button.prop('disabled', true)
                        .html('<span class="dashicons dashicons-update spin"></span> Chargement...');
 
-                // Pour la navigation précédente, on recharge la page avec l'étape précédente
-                // pour s'assurer que le contenu PHP est correct
+                // Charger l'étape précédente via AJAX
                 const prevStep = this.currentStep - 1;
                 if (prevStep >= 1) {
-                    // Ajouter un paramètre d'URL pour forcer l'étape
-                    const currentUrl = new URL(window.location);
-                    currentUrl.searchParams.set('pdf_onboarding_step', prevStep);
-                    window.location.href = currentUrl.toString();
+                    this.loadStep(prevStep);
                 } else {
                     // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
                     $button.prop('disabled', false).html(originalText);
@@ -97,9 +93,15 @@
             if (typeof pdfBuilderOnboarding !== 'undefined') {
                 console.log('PDF Builder Onboarding: pdfBuilderOnboarding.current_step:', pdfBuilderOnboarding.current_step);
             }
+
+            // Vérifier si une étape spécifique est demandée via l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const forcedStep = urlParams.get('pdf_onboarding_step');
+
             // Initialiser l'état du wizard
-            this.currentStep = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1;
+            this.currentStep = forcedStep ? parseInt(forcedStep) : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1);
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
+
             this.showModal();
             this.announceStep();
         }
@@ -462,11 +464,8 @@
                             } else if (response.data.redirect_to) {
                                 window.location.href = response.data.redirect_to;
                             } else {
-                                // Pour la navigation suivante, on recharge la page avec l'étape suivante
-                                // pour s'assurer que le contenu PHP est correct
-                                const currentUrl = new URL(window.location);
-                                currentUrl.searchParams.set('pdf_onboarding_step', response.data.next_step);
-                                window.location.href = currentUrl.toString();
+                                // Charger l'étape suivante via AJAX au lieu de recharger la page
+                                this.loadStep(response.data.next_step);
                             }
                         }, 500);
                     } else {
@@ -526,6 +525,70 @@
             // Cette fonction serait appelée depuis PHP pour charger le contenu dynamique
             // Pour l'instant, on simule avec les données existantes
             console.log('Loading step content for step:', step);
+        }
+
+        /**
+         * Charger une étape via AJAX
+         */
+        loadStep(step) {
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $content = $modal.find('.onboarding-modal-content');
+
+            // Afficher un indicateur de chargement
+            $content.html(`
+                <div class="onboarding-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Chargement de l'étape...</p>
+                </div>
+            `);
+
+            // Faire la requête AJAX pour charger l'étape
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                timeout: 10000,
+                data: {
+                    action: 'pdf_builder_load_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: step
+                },
+                success: (response) => {
+                    if (response.success) {
+                        // Mettre à jour le contenu de la modal
+                        $content.html(response.data.content);
+
+                        // Mettre à jour l'étape courante
+                        this.currentStep = step;
+
+                        // Mettre à jour la progression
+                        this.updateProgress();
+
+                        // Mettre à jour l'URL sans recharger la page
+                        const currentUrl = new URL(window.location);
+                        currentUrl.searchParams.set('pdf_onboarding_step', step);
+                        window.history.replaceState({}, '', currentUrl.toString());
+
+                        // Réactiver les boutons de navigation
+                        $('.button-previous, .button-next').prop('disabled', false);
+
+                        // Animation d'entrée pour le nouveau contenu
+                        $content.find('.onboarding-step-content').hide().fadeIn(300);
+
+                        // Tracker l'événement
+                        this.trackAnalytics('step_loaded', { step: step });
+
+                    } else {
+                        this.showError('Erreur lors du chargement de l\'étape');
+                        // Recharger la page en cas d'erreur pour revenir à un état stable
+                        window.location.reload();
+                    }
+                },
+                error: (xhr, status, error) => {
+                    this.showError('Erreur de connexion lors du chargement de l\'étape');
+                    // Recharger la page en cas d'erreur pour revenir à un état stable
+                    window.location.reload();
+                }
+            });
         }
 
         updateProgress() {
