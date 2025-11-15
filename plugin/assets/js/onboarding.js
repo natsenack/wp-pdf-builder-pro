@@ -55,17 +55,24 @@
                 const $button = $(e.currentTarget);
                 const originalText = $button.html();
 
+                // Désactiver tous les boutons de navigation pendant le chargement
+                $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', true);
+
                 // Feedback visuel immédiat
-                $button.prop('disabled', true)
-                       .html('<span class="dashicons dashicons-update spin"></span> Chargement...');
+                $button.html('<span class="dashicons dashicons-update spin"></span>');
 
                 // Charger l'étape précédente via AJAX
                 const prevStep = this.currentStep - 1;
                 if (prevStep >= 1) {
-                    this.loadStep(prevStep);
+                    this.loadStep(prevStep).always(() => {
+                        // Réactiver les boutons après le chargement
+                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                        $button.html(originalText);
+                    });
                 } else {
-                    // Si on ne peut pas aller plus loin, remettre le bouton à l'état normal
-                    $button.prop('disabled', false).html(originalText);
+                    // Si on ne peut pas aller plus loin, remettre les boutons à l'état normal
+                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                    $button.html(originalText);
                 }
             });
 
@@ -480,13 +487,17 @@
                             }
                         }, 500);
                     } else {
-                        $button.prop('disabled', false).html(originalText);
-                        this.showError('Erreur lors de la sauvegarde');
+                        // En cas d'erreur, réactiver tous les boutons
+                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                        $button.html(originalText);
+                        this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
                     }
                 },
                 error: (xhr, status, error) => {
                     clearTimeout(timeoutId);
-                    $button.prop('disabled', false).html(originalText);
+                    // En cas d'erreur AJAX, réactiver tous les boutons
+                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                    $button.html(originalText);
 
                     if (status === 'timeout') {
                         this.showError('Délai d\'attente dépassé. Réessayez.');
@@ -521,9 +532,9 @@
             $card.addClass('selected');
             this.selectedTemplate = $card.data('template');
 
-            // Mettre à jour le texte du bouton pour "Terminé !"
+            // Mettre à jour le texte du bouton pour "Commencer"
             const $button = $('.complete-step');
-            $button.text('Terminé !');
+            $button.text('Commencer');
         }
 
         skipWoocommerceSetup() {
@@ -589,9 +600,13 @@
                                         <span class="dashicons dashicons-arrow-left-alt"></span>
                                     </button>
                                 `);
+                            } else {
+                                // S'assurer que le bouton est visible et activé
+                                $prevButton.show().prop('disabled', false);
                             }
                         } else {
-                            $prevButton.remove();
+                            // Masquer le bouton précédent pour la première étape
+                            $prevButton.hide();
                         }
 
                         // Réactiver les boutons de navigation
@@ -611,13 +626,20 @@
                         this.trackAnalytics('step_loaded', { step: step });
 
                     } else {
+                        // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
+                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
                         this.showError('Erreur lors du chargement de l\'étape');
                         // Recharger la page en cas d'erreur pour revenir à un état stable
-                        window.location.reload();
+                        setTimeout(() => window.location.reload(), 2000);
                     }
                 },
                 error: (xhr, status, error) => {
+                    // En cas d'erreur AJAX, réactiver tous les boutons
+                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
                     this.showError('Erreur de connexion lors du chargement de l\'étape');
+                    // Recharger la page en cas d'erreur pour revenir à un état stable
+                    setTimeout(() => window.location.reload(), 2000);
+                }
                     // Recharger la page en cas d'erreur pour revenir à un état stable
                     window.location.reload();
                 }
@@ -625,7 +647,7 @@
         }
 
         updateProgress() {
-            const totalSteps = 5;
+            const totalSteps = 4; // Mis à jour après suppression de l'étape 2
             const progress = (Math.min(this.currentStep, totalSteps) / totalSteps) * 100;
 
             $('.progress-fill').css('width', progress + '%');
