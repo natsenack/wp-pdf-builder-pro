@@ -1017,18 +1017,18 @@
 
         updateFooterButtons(stepData) {
             const $footer = $('.modal-footer');
-            
+
             // Mettre à jour le bouton principal
             const $primaryButton = $footer.find('.complete-step');
             if ($primaryButton.length > 0) {
                 $primaryButton.text(stepData.action || 'Continuer');
                 $primaryButton.attr('data-action-type', stepData.action_type || 'next');
-                
-                // Gérer l'état disabled selon requires_selection
-                // Exception pour les étapes avec action_type 'next' qui ne nécessitent jamais de sélection
-                const shouldDisable = stepData.requires_selection && stepData.action_type !== 'next';
+
+                // Logique cohérente : désactiver seulement si requires_selection est true
+                const shouldDisable = stepData.requires_selection === true;
                 $primaryButton.prop('disabled', shouldDisable);
-                console.log('PDF Builder Onboarding: Button disabled state for step', stepData.step, ':', shouldDisable);
+
+                console.log(`PDF Builder Onboarding: Step ${stepData.step} - Button "${stepData.action}" - requires_selection: ${stepData.requires_selection} - disabled: ${shouldDisable}`);
             }
             
             // Mettre à jour ou créer le bouton secondaire
@@ -1174,18 +1174,11 @@
                         // Mettre à jour les boutons du footer selon l'étape
                         this.updateFooterButtons(response.data);
 
-                        // Gérer les étapes qui nécessitent une sélection
-                        if (response.data.requires_selection) {
-                            $('.complete-step').prop('disabled', true);
-                        } else {
-                            // Pour les étapes qui ne nécessitent pas de sélection, s'assurer que le bouton est activé
-                            $('.complete-step').prop('disabled', false);
-                        }
+                        // Appliquer la même logique que updateFooterButtons pour cohérence
+                        const shouldDisable = response.data.requires_selection === true;
+                        $('.complete-step').prop('disabled', shouldDisable);
 
-                        // Pour les étapes 3 et 4 spécifiquement, s'assurer que le bouton est toujours activé
-                        if (step === 3 || step === 4) {
-                            $('.complete-step').prop('disabled', false);
-                        }
+                        console.log(`PDF Builder Onboarding: Step ${step} loaded - requires_selection: ${response.data.requires_selection} - button disabled: ${shouldDisable}`);
 
                         // Animation d'entrée pour le nouveau contenu
                         $content.find('.onboarding-step-content').hide().fadeIn(300);
