@@ -34,13 +34,13 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 90%;
+    height: 80vh; /* Hauteur fixe pour garantir que le footer reste visible */
     position: relative;
     transform: translateY(0);
     transition: all 0.3s ease;
     animation: modalSlideIn 0.4s ease;
     display: flex;
     flex-direction: column;
-    max-height: 90vh;
 }
 
 @keyframes modalSlideIn {
@@ -162,7 +162,7 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     flex: 1;
-    max-height: calc(90vh - 120px); /* 90vh - header height - footer height approx */
+    min-height: 200px; /* Hauteur minimale pour éviter que le footer remonte trop */
 }
 
 .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar {
