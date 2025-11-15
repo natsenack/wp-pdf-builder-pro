@@ -80,14 +80,20 @@ class PDF_Builder_Onboarding_Manager {
      * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)
      */
     public function check_onboarding_status($hook) {
+        // DEBUG: Log pour vérifier que la méthode est appelée
+        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status called with hook: ' . $hook);
+        
         // Afficher seulement sur les pages PDF Builder
         if (!in_array($hook, [
             'toplevel_page_pdf-builder-pro',
             'pdf-builder_page_pdf-builder-templates',
             'pdf-builder_page_pdf-builder-settings'
         ])) {
+            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Hook not allowed: ' . $hook);
             return;
         }
+
+        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Hook allowed, proceeding');
 
         // Enqueue les scripts et styles d'onboarding
         wp_enqueue_script('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
@@ -105,9 +111,17 @@ class PDF_Builder_Onboarding_Manager {
             ]
         ]);
 
+        // Vérifier le statut d'onboarding
+        $completed = $this->is_onboarding_completed();
+        $skipped = $this->is_onboarding_skipped();
+        error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: completed=' . ($completed ? 'true' : 'false') . ', skipped=' . ($skipped ? 'true' : 'false'));
+
         // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
-        if (!$this->is_onboarding_completed() && !$this->is_onboarding_skipped()) {
+        if (!$completed && !$skipped) {
+            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Adding render action');
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
+        } else {
+            error_log('PDF_Builder_Onboarding_Manager::check_onboarding_status: Onboarding completed or skipped, not showing');
         }
     }
 
