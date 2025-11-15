@@ -1367,7 +1367,7 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .modal-header {
-        background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+        background: #2d3748;
     }
 
     .pdf-builder-onboarding-modal .modal-body {
@@ -1379,7 +1379,7 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .step-content p {
-        color: #000000;
+        color: #e2e8f0;
     }
 
     .pdf-builder-onboarding-modal .template-card {
@@ -1416,15 +1416,26 @@ kbd {
     }
 
     .pdf-builder-onboarding-modal .btn-secondary:hover {
-        background: #999;
+        background: #4b5563;
     }
 
     .pdf-builder-onboarding-modal .skip-link {
-        color: #999;
+        color: #9ca3af;
     }
 
     .pdf-builder-onboarding-modal .skip-link:hover {
         color: #e2e8f0;
+    }
+
+    .pdf-builder-onboarding-modal .modal-footer .button.button-primary {
+        background: #3b82f6;
+        color: #ffffff;
+        border-color: #3b82f6;
+    }
+
+    .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
     }
 }
 
