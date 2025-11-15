@@ -68,6 +68,10 @@
 
         initializeWizard() {
             console.log('PDF Builder Onboarding: Initializing wizard...');
+            console.log('PDF Builder Onboarding: pdfBuilderOnboarding exists:', typeof pdfBuilderOnboarding !== 'undefined');
+            if (typeof pdfBuilderOnboarding !== 'undefined') {
+                console.log('PDF Builder Onboarding: pdfBuilderOnboarding.current_step:', pdfBuilderOnboarding.current_step);
+            }
             // Initialiser l'état du wizard
             this.currentStep = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1;
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
@@ -157,8 +161,14 @@
             console.log('PDF Builder Onboarding: Showing modal...');
             const $modal = $('#pdf-builder-onboarding-modal');
             console.log('PDF Builder Onboarding: Modal element found:', $modal.length);
+            console.log('PDF Builder Onboarding: Modal current display:', $modal.css('display'));
+            console.log('PDF Builder Onboarding: Modal HTML:', $modal.prop('outerHTML').substring(0, 200) + '...');
             $modal.fadeIn(400, () => {
                 console.log('PDF Builder Onboarding: Modal fadeIn complete');
+                console.log('PDF Builder Onboarding: Modal display after fadeIn:', $modal.css('display'));
+                console.log('PDF Builder Onboarding: Modal visibility:', $modal.css('visibility'));
+                console.log('PDF Builder Onboarding: Modal opacity:', $modal.css('opacity'));
+                console.log('PDF Builder Onboarding: Modal z-index:', $modal.css('z-index'));
                 // Animation d'entrée améliorée
                 $modal.find('.modal-content').addClass('modal-entrance-animation');
                 this.announceStep();
