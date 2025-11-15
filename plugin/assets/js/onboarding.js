@@ -198,6 +198,146 @@
             }
         }
 
+        trackAnalytics(event, data = {}) {
+            // Suivre les événements d'analyse (optionnel)
+            console.log('PDF Builder Onboarding: Analytics event:', event, data);
+            
+            // Ici, vous pourriez envoyer les données à Google Analytics, etc.
+            // Pour l'instant, juste logger
+            this.interactions.push({
+                event: event,
+                data: data,
+                timestamp: Date.now()
+            });
+        }
+
+        autoSaveProgress() {
+            // Sauvegarde automatique de la progression
+            const progressData = {
+                currentStep: this.currentStep,
+                selectedTemplate: this.selectedTemplate,
+                interactions: this.interactions,
+                timeSpent: Date.now() - this.startTime
+            };
+            
+            // Sauvegarder via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_auto_save_progress',
+                    progress_data: JSON.stringify(progressData),
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Progress auto-saved');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: Auto-save failed:', error);
+                }
+            });
+        }
+
+        goToStep(stepNumber) {
+            // Aller à une étape spécifique
+            if (stepNumber >= 1 && stepNumber <= 4) {
+                this.loadStep(stepNumber);
+            }
+        }
+
+        skipOnboarding() {
+            // Sauter l'onboarding
+            if (confirm('Êtes-vous sûr de vouloir sauter l\'assistant de configuration ? Vous pourrez le relancer plus tard depuis les paramètres.')) {
+                this.markOnboardingComplete();
+                this.hideModal();
+            }
+        }
+
+        skipWoocommerceSetup() {
+            // Sauter la configuration WooCommerce
+            console.log('PDF Builder Onboarding: Skipping WooCommerce setup');
+            this.completeStep();
+        }
+
+        showTooltip($element) {
+            // Afficher une info-bulle
+            const tooltipText = $element.data('tooltip');
+            if (tooltipText) {
+                // Créer et afficher l'info-bulle
+                const $tooltip = $('<div class="onboarding-tooltip"></div>').text(tooltipText);
+                $('body').append($tooltip);
+                
+                const offset = $element.offset();
+                $tooltip.css({
+                    top: offset.top - $tooltip.outerHeight() - 10,
+                    left: offset.left + ($element.outerWidth() / 2) - ($tooltip.outerWidth() / 2)
+                });
+                
+                this.tooltips[$element.attr('id') || $element.attr('class')] = $tooltip;
+            }
+        }
+
+        hideTooltip() {
+            // Cacher toutes les info-bulles
+            $('.onboarding-tooltip').remove();
+            this.tooltips = {};
+        }
+
+        showHelpModal() {
+            // Afficher le modal d'aide
+            const helpContent = `
+                <div class="onboarding-help-modal">
+                    <h3>Aide - Assistant de configuration</h3>
+                    <p>Utilisez les flèches gauche/droite pour naviguer entre les étapes.</p>
+                    <p>Appuyez sur Entrée pour valider une étape.</p>
+                    <p>Appuyez sur Échap pour quitter l'assistant.</p>
+                    <p>Ctrl+H pour afficher cette aide.</p>
+                    <button class="button" onclick="$(this).closest('.onboarding-help-modal').remove()">Fermer</button>
+                </div>
+            `;
+            $('body').append(helpContent);
+        }
+
+        validateInput($input) {
+            // Valider un champ de saisie
+            const value = $input.val();
+            const validationType = $input.data('validation');
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            switch(validationType) {
+                case 'email':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isValid = emailRegex.test(value);
+                    errorMessage = isValid ? '' : 'Veuillez entrer une adresse email valide.';
+                    break;
+                case 'required':
+                    isValid = value.trim() !== '';
+                    errorMessage = isValid ? '' : 'Ce champ est obligatoire.';
+                    break;
+                // Ajouter d'autres types de validation si nécessaire
+            }
+            
+            // Afficher ou masquer le message d'erreur
+            const $errorElement = $input.siblings('.validation-error');
+            if (!isValid) {
+                if ($errorElement.length === 0) {
+                    $input.after(`<div class="validation-error">${errorMessage}</div>`);
+                } else {
+                    $errorElement.text(errorMessage);
+                }
+                $input.addClass('invalid');
+            } else {
+                $errorElement.remove();
+                $input.removeClass('invalid');
+            }
+            
+            return isValid;
+        }
+
         showExitConfirmation() {
             if (confirm('Êtes-vous sûr de vouloir quitter l\'assistant de configuration ?\n\nVotre progression sera sauvegardée.')) {
                 this.hideModal();
