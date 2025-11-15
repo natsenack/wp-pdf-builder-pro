@@ -65,6 +65,13 @@
             });
         }
 
+        initializeWizard() {
+            // Initialiser l'état du wizard
+            this.currentStep = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1;
+            this.showModal();
+            this.announceStep();
+        }
+
         setupKeyboardNavigation() {
             $(document).on('keydown', (e) => {
                 if (!$('#pdf-builder-onboarding-modal').is(':visible')) return;
