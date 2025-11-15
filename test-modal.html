@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Modal Footer Positioning - Élargi (900px)</title>
+    <title>Test Modal Footer Positioning - Flexbox corrigé</title>
     <link rel="stylesheet" href="plugin/assets/css/onboarding.css">
 </head>
 <body>
@@ -23,12 +23,16 @@
 
             <div class="modal-body">
                 <div class="step-content">
-                    <h2>Test de contenu avec hauteurs fixes - Modal élargie</h2>
-                    <p>Ceci est un test pour vérifier que le footer reste à l'intérieur de la modal avec des hauteurs fixes.</p>
-                    <p><strong>Nouvelles dimensions :</strong> max-width: 900px, width: 95%, padding augmenté</p>
-                    <p>Header: 80px fixe</p>
-                    <p>Body: calc(80vh - 80px - 100px) avec scroll</p>
-                    <p>Footer: 100px fixe</p>
+                    <h2>Test Flexbox - Footer contenu dans la modal</h2>
+                    <p>Cette version utilise flexbox avec overflow: hidden sur modal-content.</p>
+                    <p><strong>Structure :</strong></p>
+                    <ul>
+                        <li>modal-content: display: flex, flex-direction: column, overflow: hidden</li>
+                        <li>modal-header: flex-shrink: 0 (reste en haut)</li>
+                        <li>modal-body: flex: 1, overflow-y: auto (scroll si nécessaire)</li>
+                        <li>modal-footer: flex-shrink: 0 (reste en bas)</li>
+                    </ul>
+                    <p>Le footer devrait maintenant rester dans la modal même avec beaucoup de contenu.</p>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                     <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
