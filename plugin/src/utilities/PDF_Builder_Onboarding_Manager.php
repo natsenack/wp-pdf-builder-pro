@@ -160,9 +160,9 @@ class PDF_Builder_Onboarding_Manager {
                 'content' => $this->get_step_content('first_template'),
                 'action' => __('Continuer', 'pdf-builder-pro'),
                 'action_type' => 'next',
-                'can_skip' => false, // Ne peut pas être ignorée car nécessite une sélection
+                'can_skip' => true, // Peut être ignorée - passer à l'étape suivante sans sélection
                 'skip_text' => __('Ignorer l\'étape', 'pdf-builder-pro'),
-                'requires_selection' => true // Nécessite une sélection avant activation
+                'requires_selection' => true // Nécessite une sélection avant activation du bouton principal
             ],
             3 => [
                 'id' => 'woocommerce_setup',
