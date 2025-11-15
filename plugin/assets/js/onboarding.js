@@ -402,16 +402,29 @@
             const $button = $(`[data-action="next-step"][data-step="${step}"]`);
             const stepAction = this.getStepAction(step);
 
-            $button.prop('disabled', true).text('Sauvegarde en cours...');
+            // Sauvegarder le texte original
+            const originalText = $button.text();
+            $button.data('original-text', originalText);
+
+            // Désactiver le bouton avec feedback visuel amélioré
+            $button.prop('disabled', true)
+                   .html('<span class="dashicons dashicons-update spin"></span> Sauvegarde...');
 
             if (typeof pdfBuilderOnboarding === 'undefined') {
                 console.error('pdfBuilderOnboarding object not found');
+                $button.prop('disabled', false).html(originalText);
                 return;
             }
+
+            // Ajouter un timeout pour éviter les blocages trop longs
+            const timeoutId = setTimeout(() => {
+                $button.html('<span class="dashicons dashicons-update spin"></span> Traitement...');
+            }, 1000);
 
             $.ajax({
                 url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
+                timeout: 10000, // 10 secondes timeout
                 data: {
                     action: 'pdf_builder_complete_onboarding_step',
                     nonce: pdfBuilderOnboarding.nonce,
@@ -420,19 +433,34 @@
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
+                    clearTimeout(timeoutId);
                     if (response.success) {
-                        if (response.data.completed) {
-                            this.showCompletionMessage();
-                        } else if (response.data.redirect_to) {
-                            window.location.href = response.data.redirect_to;
-                        } else {
-                            this.goToNextStep(response.data.next_step);
-                        }
+                        // Feedback de succès rapide
+                        $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
+
+                        setTimeout(() => {
+                            if (response.data.completed) {
+                                this.showCompletionMessage();
+                            } else if (response.data.redirect_to) {
+                                window.location.href = response.data.redirect_to;
+                            } else {
+                                this.goToNextStep(response.data.next_step);
+                            }
+                        }, 500);
+                    } else {
+                        $button.prop('disabled', false).html(originalText);
+                        this.showError('Erreur lors de la sauvegarde');
                     }
                 },
-                error: () => {
-                    $button.prop('disabled', false).text($button.data('original-text') || 'Continuer');
-                    this.showError('Erreur lors de la sauvegarde de l\'étape');
+                error: (xhr, status, error) => {
+                    clearTimeout(timeoutId);
+                    $button.prop('disabled', false).html(originalText);
+
+                    if (status === 'timeout') {
+                        this.showError('Délai d\'attente dépassé. Réessayez.');
+                    } else {
+                        this.showError('Erreur de connexion. Vérifiez votre connexion internet.');
+                    }
                 }
             });
         }

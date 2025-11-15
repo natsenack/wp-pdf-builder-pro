@@ -239,6 +239,31 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+/* Animation de chargement pour les boutons */
+.pdf-builder-onboarding-modal .modal-footer .button:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button:disabled .dashicons.spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 
 /* Styles pour le contenu des étapes */
 .welcome-features {
