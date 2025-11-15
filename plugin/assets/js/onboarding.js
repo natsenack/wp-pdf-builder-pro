@@ -81,11 +81,12 @@
                 // Charger l'étape précédente via AJAX
                 const prevStep = this.currentStep - 1;
                 if (prevStep >= 1) {
-                    this.loadStep(prevStep).always(() => {
-                        // Réactiver les boutons après le chargement
-                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
-                        $button.html(originalText);
-                    });
+                    // Désactiver le bouton pendant le chargement
+                    $button.prop('disabled', true);
+                    $button.html('<span class="dashicons dashicons-update spin"></span> Chargement...');
+                    
+                    this.loadStep(prevStep);
+                    // Note: Les boutons seront réactivés dans loadStep() après le chargement réussi
                 } else {
                     // Si on ne peut pas aller plus loin, remettre les boutons à l'état normal
                     $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
@@ -1108,7 +1109,7 @@
                         }
 
                         // Mettre à jour les boutons du footer selon l'étape
-                        this.updateFooterButtons(response.data.step_data);
+                        this.updateFooterButtons(response.data);
 
                         // Gérer les étapes qui nécessitent une sélection
                         if (response.data.requires_selection) {
