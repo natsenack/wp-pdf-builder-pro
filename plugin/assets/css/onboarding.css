@@ -40,6 +40,8 @@
     transform: translateY(0);
     transition: all 0.3s ease;
     animation: modalSlideIn 0.4s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -155,11 +157,11 @@
 
 .pdf-builder-onboarding-modal .modal-body {
     padding: 32px 40px;
-    max-height: 60vh;
     overflow-y: auto;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(239, 246, 255, 0.5) 100%);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    flex: 1;
 }
 
 .pdf-builder-onboarding-modal .modal-body::-webkit-scrollbar {

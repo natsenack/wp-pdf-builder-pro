@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Footer Positioning</title>
+    <link rel="stylesheet" href="plugin/assets/css/onboarding.css">
+</head>
+<body>
+    <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="progress-indicator">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25%"></div>
+                    </div>
+                    <div class="progress-text">Étape 1 sur 4</div>
+                </div>
+                <button class="modal-close" data-action="skip-onboarding">
+                    <span class="dashicons dashicons-no"></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="step-content">
+                    <h2>Test de contenu</h2>
+                    <p>Ceci est un test pour vérifier que le footer reste à l'intérieur de la modal.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" data-action="skip-onboarding">
+                    Ignorer l'assistant
+                </button>
+                <button class="button button-primary complete-step">
+                    Continuer
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
