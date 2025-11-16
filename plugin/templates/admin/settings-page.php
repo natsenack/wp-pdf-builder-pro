@@ -1103,7 +1103,7 @@
                                             echo $visible_start . '••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('✅ Clé copiée !', 'success');">📋 Copier</span>
+                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('Clé copiée !', 'success');">📋 Copier</span>
                                     </td>
                                 </tr>
                                     <?php
@@ -4454,9 +4454,9 @@
                 if (testCacheBtn) {
                     testCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('🔍 Test du cache en cours...', 'info');
+                        PDF_Builder_Notification_Manager.show_toast('Test du cache en cours...', 'info');
                         setTimeout(() => {
-                            PDF_Builder_Notification_Manager.show_toast('✓ Cache fonctionne correctement !', 'success');
+                            PDF_Builder_Notification_Manager.show_toast('Cache fonctionne correctement !', 'success');
                         }, 1500);
                     });
                 }
@@ -4466,9 +4466,9 @@
                 if (clearCacheBtn) {
                     clearCacheBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('🗑️ Vidage du cache en cours...', 'warning');
+                        PDF_Builder_Notification_Manager.show_toast('Vidage du cache en cours...', 'warning');
                         setTimeout(() => {
-                            PDF_Builder_Notification_Manager.show_toast('✓ Cache vidé avec succès !', 'success');
+                            PDF_Builder_Notification_Manager.show_toast('Cache vidé avec succès !', 'success');
                         }, 1500);
                     });
                 }
@@ -4479,7 +4479,7 @@
                     testSuccessBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+                            PDF_Builder_Notification_Manager.show_toast('Test de notification de succès réussi !', 'success');
                         } else {
                             alert('PDF_Builder_Notification_Manager is not available');
                         }
@@ -4491,7 +4491,7 @@
                     testErrorBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+                            PDF_Builder_Notification_Manager.show_toast('Test de notification d\'erreur réussi !', 'error');
                         } else {
                             alert('PDF_Builder_Notification_Manager is not available');
                         }
@@ -4524,7 +4524,7 @@
                     settingsForm.addEventListener('submit', function(e) {
                         e.preventDefault(); // ✅ Empêche le rechargement de la page
                         // Afficher la notification de sauvegarde
-                        PDF_Builder_Notification_Manager.show_toast('💾 Enregistrement des paramètres en cours...', 'info');
+                        PDF_Builder_Notification_Manager.show_toast('Enregistrement des paramètres en cours...', 'info');
 
                         // Récupérer les données du formulaire
                         const formData = new FormData(settingsForm);
@@ -4535,11 +4535,11 @@
                             body: formData
                         })
                         .then(response => {
-                            PDF_Builder_Notification_Manager.show_toast('✅ Paramètres enregistrés avec succès !', 'success');
+                            PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès !', 'success');
                         })
                         .catch(error => {
                             console.error('❌ Error submitting form:', error);
-                            PDF_Builder_Notification_Manager.show_toast('❌ Erreur lors de l\'enregistrement', 'error');
+                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de l\'enregistrement', 'error');
                         });
                     });
                 }
@@ -5029,7 +5029,7 @@
 
                             if (form) {
                                 // Afficher notification via système unifié
-                                PDF_Builder_Notification_Manager.show_toast('💾 Sauvegarde en cours...', 'info');
+                                PDF_Builder_Notification_Manager.show_toast('Sauvegarde en cours...', 'info');
 
                                 // Créer FormData à partir du formulaire
                                 const formData = new FormData(form);
@@ -5135,7 +5135,7 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        PDF_Builder_Notification_Manager.show_toast('✅ Paramètres sauvegardés avec succès !', 'success');
+                                        PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
 
                                         // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
                                         hasUnsavedChanges = false;
@@ -5151,20 +5151,20 @@
                                             globalSaveBtn.removeAttribute('title');
                                         });
                                     } else {
-                                        PDF_Builder_Notification_Manager.show_toast('❌ Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
+                                        PDF_Builder_Notification_Manager.show_toast('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
                                     }
                                 })
                                 .catch(error => {
                                     console.error('❌ AJAX Error:', error);
-                                    PDF_Builder_Notification_Manager.show_toast('❌ ' + error.message, 'error');
+                                    PDF_Builder_Notification_Manager.show_toast(' ' + error.message, 'error');
                                 });
                             } else {
                                 console.error('❌ No form found in active tab:', activeTab.id);
-                                PDF_Builder_Notification_Manager.show_toast('❌ Aucun formulaire trouvé', 'error');
+                                PDF_Builder_Notification_Manager.show_toast('Aucun formulaire trouvé', 'error');
                             }
                         } else {
                             console.error('❌ No active tab found');
-                            PDF_Builder_Notification_Manager.show_toast('❌ Aucun onglet actif', 'error');
+                            PDF_Builder_Notification_Manager.show_toast('Aucun onglet actif', 'error');
                         }
                     });
                 }
@@ -5235,16 +5235,16 @@
                         .then(r => r.json())
                         .then(data => {
                             if (data.success) {
-                                PDF_Builder_Notification_Manager.show_toast('✅ ' + data.message, 'success');
+                                PDF_Builder_Notification_Manager.show_toast(' ' + data.message, 'success');
                                 if (action === 'pdf_builder_reset_settings') {
                                     setTimeout(() => location.reload(), 2000);
                                 }
                             } else {
-                                PDF_Builder_Notification_Manager.show_toast('❌ ' + data.message, 'error');
+                                PDF_Builder_Notification_Manager.show_toast(' ' + data.message, 'error');
                             }
                         })
                         .catch(error => {
-                            PDF_Builder_Notification_Manager.show_toast('❌ Erreur: ' + error.message, 'error');
+                            PDF_Builder_Notification_Manager.show_toast('Erreur: ' + error.message, 'error');
                         });
                 };
 
@@ -5271,7 +5271,7 @@
                 if (repairTemplatesBtn) {
                     repairTemplatesBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('✅ Réparation...', 'info');
+                        PDF_Builder_Notification_Manager.show_toast('Réparation...', 'info');
                         sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
                     });
                 }
@@ -5292,7 +5292,7 @@
                 if (checkIntegrityBtn) {
                     checkIntegrityBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('🔍 Vérification...', 'info');
+                        PDF_Builder_Notification_Manager.show_toast('Vérification...', 'info');
                         sendMaintenanceAjax('pdf_builder_check_integrity', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
                     });
                 }
@@ -5867,9 +5867,9 @@
                                 $testSmtpBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
-                                    PDF_Builder_Notification_Manager.show_toast("✅ Connexion SMTP réussie! " + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."), 'success');
+                                    PDF_Builder_Notification_Manager.show_toast("Connexion SMTP réussie! " + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."), 'success');
                                 } else {
-                                    PDF_Builder_Notification_Manager.show_toast("❌ Erreur de connexion SMTP: " + (response.data.message || "Impossible de se connecter au serveur SMTP."), 'error');
+                                    PDF_Builder_Notification_Manager.show_toast("Erreur de connexion SMTP: " + (response.data.message || "Impossible de se connecter au serveur SMTP."), 'error');
                                 }
                             },
                             error: function(xhr, status, error) {
@@ -5902,9 +5902,9 @@
                                 $testNotifBtn.prop("disabled", false).html(originalText);
 
                                 if (response.success) {
-                                    PDF_Builder_Notification_Manager.show_toast("✅ Email de test envoyé! " + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."), 'success');
+                                    PDF_Builder_Notification_Manager.show_toast("Email de test envoyé! " + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."), 'success');
                                 } else {
-                                    PDF_Builder_Notification_Manager.show_toast("❌ Erreur lors de l'envoi: " + (response.data.message || "Impossible d'envoyer l'email de test."), 'error');
+                                    PDF_Builder_Notification_Manager.show_toast("Erreur lors de l'envoi: " + (response.data.message || "Impossible d'envoyer l'email de test."), 'error');
                                 }
                             },
                             error: function(xhr, status, error) {

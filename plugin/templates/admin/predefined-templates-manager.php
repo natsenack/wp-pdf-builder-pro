@@ -741,12 +741,12 @@ class PDF_Builder_Predefined_Templates_Manager
 
                 // Validation côté client
                 if (!password) {
-                    PDF_Builder_Notification_Manager.show_toast('🔐 Veuillez entrer un mot de passe', 'error');
+                    PDF_Builder_Notification_Manager.show_toast('Veuillez entrer un mot de passe', 'error');
                     return;
                 }
 
                 // Afficher notification de connexion
-                PDF_Builder_Notification_Manager.show_toast('⏳ Vérification du mot de passe...', 'info');
+                PDF_Builder_Notification_Manager.show_toast('Vérification du mot de passe...', 'info');
 
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
@@ -765,7 +765,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         console.log('Developer auth response:', response);
                         if (response.success) {
                             // Notification de succès
-                            PDF_Builder_Notification_Manager.show_toast('✅ Authentification réussie ! Redirection en cours...', 'success');
+                            PDF_Builder_Notification_Manager.show_toast('Authentification réussie ! Redirection en cours...', 'success');
                             
                             setTimeout(function() {
                                 location.reload();
@@ -774,7 +774,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
                             // Notification d'erreur
-                            PDF_Builder_Notification_Manager.show_toast('❌ ' + errorMsg, 'error');
+                            PDF_Builder_Notification_Manager.show_toast(' ' + errorMsg, 'error');
                             
                             $button.prop('disabled', false).text(originalText);
                         }
@@ -784,7 +784,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
                         // Notification d'erreur réseau
-                        PDF_Builder_Notification_Manager.show_toast('🔴 ' + errorMsg, 'error');
+                        PDF_Builder_Notification_Manager.show_toast(' ' + errorMsg, 'error');
                         
                         $button.prop('disabled', false).text(originalText);
                     }
