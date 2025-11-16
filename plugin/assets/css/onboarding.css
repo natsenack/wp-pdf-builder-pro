@@ -2265,37 +2265,157 @@ kbd {
     font-weight: 600;
 }
 
-/* Responsive pour l'assignation de template */
-@media (max-width: 768px) {
-    .selected-template-preview {
-        padding: 20px;
-    }
+/* ===========================================
+   DARK MODE POUR L'ÉTAPE ASSIGN TEMPLATE
+   =========================================== */
 
-    .template-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 16px;
+@media (prefers-color-scheme: dark) {
+    /* Aperçu du template sélectionné */
+    .selected-template-preview {
+        background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+        border-color: #6b7280;
     }
 
     .template-info h3 {
-        font-size: 18px;
+        color: #f9fafb;
     }
 
-    .status-selection {
-        grid-template-columns: 1fr;
+    .template-info p {
+        color: #d1d5db;
     }
 
-    .action-options {
-        gap: 8px;
+    /* Personnalisation */
+    .template-customization h4,
+    .woocommerce-assignment h4,
+    .template-actions h4 {
+        color: #f9fafb;
     }
 
+    .field-group label {
+        color: #e5e7eb;
+    }
+
+    .field-group input,
+    .field-group textarea {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .field-group input:focus,
+    .field-group textarea:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+        color: #9ca3af;
+    }
+
+    /* Assignation WooCommerce */
+    .assignment-description {
+        color: #d1d5db;
+    }
+
+    .status-option {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .status-option:hover {
+        border-color: #60a5fa;
+        background: #4b5563;
+    }
+
+    .status-badge {
+        background: #6b7280;
+        color: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+    .status-badge.status-pending {
+        background: #92400e;
+        color: #fed7aa;
+        border-color: #d97706;
+    }
+
+    .status-badge.status-processing {
+        background: #1e40af;
+        color: #bfdbfe;
+        border-color: #3b82f6;
+    }
+
+    .status-badge.status-on-hold {
+        background: #92400e;
+        color: #fed7aa;
+        border-color: #d97706;
+    }
+
+    .status-badge.status-completed {
+        background: #065f46;
+        color: #a7f3d0;
+        border-color: #10b981;
+    }
+
+    .status-badge.status-cancelled,
+    .status-badge.status-failed {
+        background: #991b1b;
+        color: #fecaca;
+        border-color: #ef4444;
+    }
+
+    .status-badge.status-refunded {
+        background: #6b21a8;
+        color: #d8b4fe;
+        border-color: #8b5cf6;
+    }
+
+    .assignment-notice {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        border-color: #3b82f6;
+        color: #bfdbfe;
+    }
+
+    .assignment-notice .notice-content strong {
+        color: #dbeafe;
+    }
+
+    /* Actions disponibles */
     .action-option {
-        padding: 12px;
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
     }
 
-    .assignment-notice,
+    .action-option:hover {
+        border-color: #60a5fa;
+        background: #4b5563;
+    }
+
+    .action-option .option-content strong {
+        color: #f9fafb;
+    }
+
+    .action-option .option-content span {
+        color: #d1d5db;
+    }
+
+    .action-option input[type="checkbox"]:checked + .option-content strong,
+    .action-option input[type="checkbox"]:checked + .option-content span {
+        color: #dbeafe;
+    }
+
+    /* Notice de completion */
     .setup-complete-notice {
-        padding: 12px;
+        background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+        border-color: #16a34a;
+        color: #bbf7d0;
+    }
+
+    .setup-complete-notice .notice-content strong {
+        color: #dcfce7;
     }
 }
 
