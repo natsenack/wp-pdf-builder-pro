@@ -345,31 +345,38 @@ class PDF_Builder_Onboarding_Manager {
                 ';
 
             case 'first_template':
+                // Scanner les templates prédéfinis disponibles
+                $predefined_templates = $this->get_predefined_templates();
+
+                $template_cards = '';
+                foreach ($predefined_templates as $template) {
+                    $template_cards .= '
+                        <div class="template-card" data-template="' . esc_attr($template['id']) . '" data-tooltip="' . esc_attr($template['description']) . '">
+                            <div class="template-preview">
+                                <span class="template-icon">' . esc_html($template['icon']) . '</span>
+                            </div>
+                            <h4>' . esc_html($template['name']) . '</h4>
+                            <p>' . esc_html($template['short_description']) . '</p>
+                        </div>
+                    ';
+                }
+
+                // Ajouter l'option template vierge
+                $template_cards .= '
+                    <div class="template-card" data-template="blank" data-tooltip="Canvas vierge pour créer votre propre design personnalisé">
+                        <div class="template-preview">
+                            <span class="template-icon">✨</span>
+                        </div>
+                        <h4>' . __('Template Vierge', 'pdf-builder-pro') . '</h4>
+                        <p>' . __('Commencez depuis zéro', 'pdf-builder-pro') . '</p>
+                    </div>
+                ';
+
                 return '
                     <div class="first-template-setup">
                         <p>' . __('Choisissez un template de départ pour commencer votre premier PDF :', 'pdf-builder-pro') . '</p>
                         <div class="template-suggestions">
-                            <div class="template-card" data-template="invoice" data-tooltip="Template professionnel avec en-têtes, tableau des articles et calculs automatiques">
-                                <div class="template-preview">
-                                    <span class="template-icon">📄</span>
-                                </div>
-                                <h4>' . __('Facture', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Template professionnel pour factures', 'pdf-builder-pro') . '</p>
-                            </div>
-                            <div class="template-card" data-template="quote" data-tooltip="Template élégant avec conditions, validité et signature électronique">
-                                <div class="template-preview">
-                                    <span class="template-icon">📋</span>
-                                </div>
-                                <h4>' . __('Devis', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Template élégant pour devis', 'pdf-builder-pro') . '</p>
-                            </div>
-                            <div class="template-card" data-template="blank" data-tooltip="Canvas vierge pour créer votre propre design personnalisé">
-                                <div class="template-preview">
-                                    <span class="template-icon">✨</span>
-                                </div>
-                                <h4>' . __('Template Vierge', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Commencez depuis zéro', 'pdf-builder-pro') . '</p>
-                            </div>
+                            ' . $template_cards . '
                         </div>
                         <div class="template-tip" style="margin-top:16px;padding:12px;background:#f0f9ff;border-left:4px solid #3b82f6;border-radius:4px;">
                             <strong>💡 Conseil :</strong> Vous pourrez personnaliser complètement ce template plus tard dans l\'éditeur.
@@ -1328,5 +1335,59 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         update_option('pdf_builder_woocommerce', $wc_options);
+    }
+
+    /**
+     * Obtenir la liste des templates prédéfinis disponibles
+     */
+    private function get_predefined_templates() {
+        $templates = [];
+        $template_dir = plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/';
+
+        // Scanner les fichiers .json dans le dossier predefined
+        $template_files = glob($template_dir . '*.json');
+
+        foreach ($template_files as $file_path) {
+            $filename = basename($file_path, '.json');
+
+            // Essayer de lire le fichier JSON pour extraire les métadonnées
+            $template_data = json_decode(file_get_contents($file_path), true);
+
+            if ($template_data && isset($template_data['metadata'])) {
+                $metadata = $template_data['metadata'];
+
+                $templates[] = [
+                    'id' => $filename,
+                    'name' => $metadata['name'] ?? $this->format_template_name($filename),
+                    'description' => $metadata['description'] ?? __('Template professionnel prêt à l\'emploi', 'pdf-builder-pro'),
+                    'short_description' => $metadata['short_description'] ?? __('Template prédéfini', 'pdf-builder-pro'),
+                    'icon' => $metadata['icon'] ?? '📄',
+                    'category' => $metadata['category'] ?? 'general'
+                ];
+            } else {
+                // Fallback si pas de métadonnées
+                $templates[] = [
+                    'id' => $filename,
+                    'name' => $this->format_template_name($filename),
+                    'description' => __('Template professionnel prêt à l\'emploi', 'pdf-builder-pro'),
+                    'short_description' => __('Template prédéfini', 'pdf-builder-pro'),
+                    'icon' => '📄',
+                    'category' => 'general'
+                ];
+            }
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Formater le nom d'un template depuis son filename
+     */
+    private function format_template_name($filename) {
+        // Convertir les tirets et underscores en espaces, puis capitaliser
+        $name = str_replace(['-', '_'], ' ', $filename);
+        $name = ucwords($name);
+
+        return $name;
     }
 }
