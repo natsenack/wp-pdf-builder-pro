@@ -4142,6 +4142,8 @@
             </div>
 
             <div class="gdpr-content">
+                <?php $gdpr_manager = PDF_Builder_GDPR_Manager::get_instance(); ?>
+
                 <!-- Onglet Gestion Consentements -->
                 <div class="gdpr-tab-content active" id="consent-tab">
                     <div class="gdpr-section">
@@ -4202,7 +4204,7 @@
                             <div class="gdpr-consent-item">
                                 <label>
                                     <input type="checkbox" class="consent-toggle" data-consent-type="analytics"
-                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'analytics')); ?> />
+                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'analytics')); ?> />
                                     <strong>Analytics et statistiques d'usage</strong>
                                 </label>
                                 <p class="description">Autoriser la collecte anonyme de statistiques d'utilisation pour améliorer le service.</p>
@@ -4211,7 +4213,7 @@
                             <div class="gdpr-consent-item">
                                 <label>
                                     <input type="checkbox" class="consent-toggle" data-consent-type="templates"
-                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'templates')); ?> />
+                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'templates')); ?> />
                                     <strong>Sauvegarde des templates personnalisés</strong>
                                 </label>
                                 <p class="description">Autoriser la sauvegarde de vos templates personnalisés sur nos serveurs.</p>
@@ -4220,7 +4222,7 @@
                             <div class="gdpr-consent-item">
                                 <label>
                                     <input type="checkbox" class="consent-toggle" data-consent-type="marketing"
-                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'marketing')); ?> />
+                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'marketing')); ?> />
                                     <strong>Communications marketing</strong>
                                 </label>
                                 <p class="description">Recevoir des newsletters et offres commerciales par email.</p>
