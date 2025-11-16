@@ -392,3 +392,71 @@
     border: 8px solid transparent;
     border-right-color: #007cba;
 }
+
+/* Completion Message Styles */
+.tutorial-completion-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100001;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-completion-content {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: tutorialCompletionFadeIn 0.3s ease-out;
+}
+
+.tutorial-completion-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.tutorial-completion-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #007cba;
+}
+
+.tutorial-completion-content p {
+    margin: 0 0 24px 0;
+    color: #666;
+}
+
+.tutorial-completion-close {
+    background: #007cba;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.tutorial-completion-close:hover {
+    background: #005a87;
+}
+
+@keyframes tutorialCompletionFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

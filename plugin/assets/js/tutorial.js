@@ -309,6 +309,7 @@
         }
 
         showCompletionMessage() {
+            console.log('Tutorial: Showing completion message');
             // Afficher un message de félicitations
             const $message = $(`
                 <div class="tutorial-completion-message">
