@@ -1186,7 +1186,7 @@
                 </div>
             `);
 
-            $body.find('.step-content').prepend($error);
+            $('#pdf-builder-onboarding-modal .step-content').prepend($error);
 
             // Faire défiler vers le message d'erreur
             $error.get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1663,8 +1663,8 @@
                 </div>
             `;
 
-            // Remplacer le contenu de l'étape actuelle
-            $('.step-content').html(welcomeMessage);
+            // Remplacer le contenu de l'étape actuelle dans la modal d'onboarding uniquement
+            $('#pdf-builder-onboarding-modal .step-content').html(welcomeMessage);
 
             // Masquer les boutons de navigation
             $('.modal-footer').hide();
