@@ -947,14 +947,13 @@
                             $button.html('<span class="dashicons dashicons-yes"></span> Étape ignorée');
 
                             setTimeout(() => {
-                                if (response.data.next_step) {
-                                    // Mettre à jour l'étape côté client avant de charger la suivante
-                                    if (typeof pdfBuilderOnboarding !== 'undefined') {
-                                        pdfBuilderOnboarding.current_step = response.data.next_step;
-                                    }
-                                    // Charger l'étape suivante via AJAX
-                                    this.loadStep(response.data.next_step);
+                                const nextStep = 3; // Étape suivante après 2
+                                // Mettre à jour l'étape côté client avant de charger la suivante
+                                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                                    pdfBuilderOnboarding.current_step = nextStep;
                                 }
+                                // Charger l'étape suivante via AJAX
+                                this.loadStep(nextStep);
                             }, 500);
                         } else {
                             // En cas d'erreur normale, réactiver tous les boutons
