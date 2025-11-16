@@ -16,8 +16,6 @@
         }
 
         bindEvents() {
-            console.log('Binding GDPR events...'); // Debug log
-
             // Utiliser la délégation d'événements pour les onglets RGPD
             $(document).on('click', '.gdpr-tab', (e) => this.handleTabSwitch(e));
 
@@ -36,15 +34,12 @@
 
             // Gestion des consentements individuels
             $(document).on('change', '.consent-toggle', (e) => this.handleConsentToggle(e));
-
-            console.log('GDPR events bound successfully'); // Debug log
         }
 
         handleTabSwitch(e) {
             e.preventDefault();
 
             const tab = $(e.currentTarget).data('tab');
-            console.log('Switching to tab:', tab); // Debug log
 
             // Retirer la classe active de tous les onglets
             $('.gdpr-tab').removeClass('active');
@@ -55,8 +50,6 @@
             $('.gdpr-tab-content').removeClass('active');
             // Afficher le contenu de l'onglet sélectionné
             $('#' + tab + '-tab').addClass('active');
-
-            console.log('Tab switched to:', tab); // Debug log
         }
 
         handleConsentForm(e) {
