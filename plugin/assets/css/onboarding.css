@@ -882,6 +882,20 @@
 
 /* Style spécifique pour le bouton précédent */
 .pdf-builder-onboarding-modal .button-previous {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    min-height: 36px;
+    outline: none;
     background: #6b7280;
     color: #ffffff;
     border-color: #6b7280;
@@ -892,6 +906,11 @@
     border-color: #4b5563;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+.pdf-builder-onboarding-modal .button-previous:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
 }
 
 .pdf-builder-onboarding-modal .status-option {
