@@ -57,7 +57,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_save_template_selection', [$this, 'ajax_save_template_selection']);
         add_action('wp_ajax_pdf_builder_save_freemium_mode', [$this, 'ajax_save_freemium_mode']);
         add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
-        add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
+        add_action('wp_ajax_pdf_builder_save_template_assignment', [$this, 'ajax_save_template_assignment']);
     }
 
     /**
@@ -347,44 +347,100 @@ class PDF_Builder_Onboarding_Manager {
                 ';
 
             case 'assign_template':
+                // Récupérer les statuts WooCommerce si disponibles
+                $order_statuses = [];
+                if (function_exists('wc_get_order_statuses')) {
+                    $order_statuses = wc_get_order_statuses();
+                }
+
+                $status_options = '';
+                foreach ($order_statuses as $status_key => $status_label) {
+                    $status_options .= '<label class="status-option">
+                        <input type="checkbox" name="assigned_statuses" value="' . esc_attr($status_key) . '">
+                        <span class="status-badge status-' . esc_attr(str_replace('wc-', '', $status_key)) . '">' . esc_html($status_label) . '</span>
+                    </label>';
+                }
+
                 return '
                     <div class="assign-template-setup">
-                        <div class="selected-template-info" style="margin-bottom:20px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-                            <h4 style="margin:0 0 8px 0;color:#1e293b;">📄 Template sélectionné</h4>
-                            <p style="margin:0;color:#64748b;font-size:14px;">
-                                ' . __('Vous avez choisi le template : <strong id="selected-template-name">Aucun</strong>', 'pdf-builder-pro') . '
-                            </p>
+                        <!-- Aperçu du template sélectionné -->
+                        <div class="selected-template-preview">
+                            <div class="template-header">
+                                <div class="template-icon-large">
+                                    <span id="selected-template-icon">📄</span>
+                                </div>
+                                <div class="template-info">
+                                    <h3 id="selected-template-title">' . __('Template sélectionné', 'pdf-builder-pro') . '</h3>
+                                    <p id="selected-template-description">' . __('Aucun template sélectionné', 'pdf-builder-pro') . '</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="template-assignment">
-                            <h5>' . __('Comment souhaitez-vous utiliser ce template ?', 'pdf-builder-pro') . '</h5>
-                            <div class="assignment-options">
-                                <label class="assignment-option" data-tooltip="Créer un nouveau PDF basé sur ce template">
-                                    <input type="radio" name="template_usage" value="new_pdf" checked>
+                        <!-- Personnalisation basique -->
+                        <div class="template-customization">
+                            <h4>' . __('✨ Personnalisez votre template', 'pdf-builder-pro') . '</h4>
+                            <div class="customization-fields">
+                                <div class="field-group">
+                                    <label for="template_custom_name">' . __('Nom du template', 'pdf-builder-pro') . '</label>
+                                    <input type="text" id="template_custom_name" placeholder="' . __('Ex: Facture Pro 2025', 'pdf-builder-pro') . '" maxlength="100">
+                                </div>
+                                <div class="field-group">
+                                    <label for="template_custom_description">' . __('Description (optionnel)', 'pdf-builder-pro') . '</label>
+                                    <textarea id="template_custom_description" placeholder="' . __('Décrivez l\'usage de ce template...', 'pdf-builder-pro') . '" maxlength="255" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assignation WooCommerce -->
+                        <div class="woocommerce-assignment">
+                            <h4>' . __('🛒 Assignation WooCommerce', 'pdf-builder-pro') . '</h4>
+                            <p class="assignment-description">' . __('Sélectionnez les statuts de commande pour lesquels ce template sera automatiquement généré :', 'pdf-builder-pro') . '</p>
+
+                            <div class="status-selection">
+                                ' . $status_options . '
+                            </div>
+
+                            <div class="assignment-notice">
+                                <div class="notice-icon">💡</div>
+                                <div class="notice-content">
+                                    <strong>' . __('Configuration automatique :', 'pdf-builder-pro') . '</strong> ' . __('Le template sera généré automatiquement pour les commandes atteignant ces statuts.', 'pdf-builder-pro') . '
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions disponibles -->
+                        <div class="template-actions">
+                            <h4>' . __('🎯 Actions disponibles', 'pdf-builder-pro') . '</h4>
+                            <div class="action-options">
+                                <label class="action-option">
+                                    <input type="checkbox" name="template_actions" value="auto_generate" checked>
                                     <div class="option-content">
-                                        <strong>🆕 ' . __('Créer un nouveau PDF', 'pdf-builder-pro') . '</strong>
-                                        <div class="option-details">' . __('Utiliser ce template comme base pour créer un nouveau document PDF personnalisé.', 'pdf-builder-pro') . '</div>
+                                        <strong>' . __('Génération automatique', 'pdf-builder-pro') . '</strong>
+                                        <span>' . __('Créer le PDF automatiquement lors des changements de statut', 'pdf-builder-pro') . '</span>
                                     </div>
                                 </label>
-                                <label class="assignment-option" data-tooltip="Configurer ce template pour WooCommerce (factures, devis...)">
-                                    <input type="radio" name="template_usage" value="woocommerce">
+                                <label class="action-option">
+                                    <input type="checkbox" name="template_actions" value="email_attach" checked>
                                     <div class="option-content">
-                                        <strong>🛒 ' . __('Assigner à WooCommerce', 'pdf-builder-pro') . '</strong>
-                                        <div class="option-details">' . __('Configurer ce template pour générer automatiquement des factures ou devis WooCommerce.', 'pdf-builder-pro') . '</div>
+                                        <strong>' . __('Pièce jointe email', 'pdf-builder-pro') . '</strong>
+                                        <span>' . __('Joindre automatiquement le PDF aux emails WooCommerce', 'pdf-builder-pro') . '</span>
                                     </div>
                                 </label>
-                                <label class="assignment-option" data-tooltip="Sauvegarder ce template pour l\'utiliser plus tard">
-                                    <input type="radio" name="template_usage" value="save_only">
+                                <label class="action-option">
+                                    <input type="checkbox" name="template_actions" value="download_link">
                                     <div class="option-content">
-                                        <strong>💾 ' . __('Sauvegarder uniquement', 'pdf-builder-pro') . '</strong>
-                                        <div class="option-details">' . __('Enregistrer ce template dans votre bibliothèque pour l\'utiliser ultérieurement.', 'pdf-builder-pro') . '</div>
+                                        <strong>' . __('Lien de téléchargement', 'pdf-builder-pro') . '</strong>
+                                        <span>' . __('Ajouter un lien de téléchargement dans la commande client', 'pdf-builder-pro') . '</span>
                                     </div>
                                 </label>
                             </div>
                         </div>
 
-                        <div class="template-config-tip" style="margin-top:16px;padding:12px;background:#f0f9ff;border-left:4px solid #3b82f6;border-radius:4px;">
-                            <strong>🔧 Configuration :</strong> Vous pourrez modifier ces paramètres à tout moment depuis la page des templates.
+                        <div class="setup-complete-notice">
+                            <div class="notice-icon">✅</div>
+                            <div class="notice-content">
+                                <strong>' . __('Configuration terminée !', 'pdf-builder-pro') . '</strong> ' . __('Votre template est prêt à être utilisé. Vous pourrez le modifier à tout moment depuis l\'éditeur.', 'pdf-builder-pro') . '
+                            </div>
                         </div>
                     </div>
                 ';
@@ -989,5 +1045,82 @@ class PDF_Builder_Onboarding_Manager {
             'first_login' => $this->onboarding_options['first_login'],
             'last_activity' => $this->onboarding_options['last_activity']
         ];
+    }
+
+    /**
+     * AJAX handler pour sauvegarder l'assignation de template
+     */
+    public function ajax_save_template_assignment() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $assignment_data = json_decode(stripslashes($_POST['assignment_data']), true);
+
+        if (!$assignment_data || !isset($assignment_data['template_id'])) {
+            wp_send_json_error(__('Données d\'assignation invalides', 'pdf-builder-pro'));
+        }
+
+        // Sauvegarder les données d'assignation
+        $this->onboarding_options['template_assignment'] = [
+            'template_id' => sanitize_text_field($assignment_data['template_id']),
+            'custom_name' => sanitize_text_field($assignment_data['custom_name'] ?? ''),
+            'custom_description' => sanitize_textarea_field($assignment_data['custom_description'] ?? ''),
+            'assigned_statuses' => array_map('sanitize_text_field', $assignment_data['assigned_statuses'] ?? []),
+            'template_actions' => array_map('sanitize_text_field', $assignment_data['template_actions'] ?? []),
+            'assigned_at' => current_time('mysql')
+        ];
+
+        // Marquer l'étape 4 comme complétée
+        if (!in_array(4, $this->onboarding_options['steps_completed'])) {
+            $this->onboarding_options['steps_completed'][] = 4;
+        }
+
+        // Sauvegarder les options
+        update_option('pdf_builder_onboarding', $this->onboarding_options);
+
+        // Créer une configuration WooCommerce si nécessaire
+        if (!empty($assignment_data['assigned_statuses'])) {
+            $this->create_woocommerce_template_config($assignment_data);
+        }
+
+        wp_send_json_success([
+            'message' => __('Configuration de template sauvegardée avec succès', 'pdf-builder-pro'),
+            'assignment' => $this->onboarding_options['template_assignment']
+        ]);
+    }
+
+    /**
+     * Créer la configuration WooCommerce pour le template
+     */
+    private function create_woocommerce_template_config($assignment_data) {
+        if (!class_exists('WooCommerce')) {
+            return;
+        }
+
+        // Récupérer ou créer les options WooCommerce
+        $wc_options = get_option('pdf_builder_woocommerce', []);
+
+        // Configuration pour les statuts assignés
+        foreach ($assignment_data['assigned_statuses'] as $status) {
+            $clean_status = str_replace('wc-', '', $status);
+
+            if (!isset($wc_options[$clean_status])) {
+                $wc_options[$clean_status] = [
+                    'enabled' => true,
+                    'template_id' => $assignment_data['template_id'],
+                    'custom_name' => $assignment_data['custom_name'] ?: $assignment_data['template_id'],
+                    'auto_generate' => in_array('auto_generate', $assignment_data['template_actions']),
+                    'email_attach' => in_array('email_attach', $assignment_data['template_actions']),
+                    'download_link' => in_array('download_link', $assignment_data['template_actions']),
+                    'created_by_onboarding' => true,
+                    'created_at' => current_time('mysql')
+                ];
+            }
+        }
+
+        update_option('pdf_builder_woocommerce', $wc_options);
     }
 }

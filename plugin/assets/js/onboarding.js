@@ -183,6 +183,20 @@
             $(window).on('beforeunload', () => {
                 this.autoSaveProgress();
             });
+
+            // Gestionnaires pour l'étape d'assignation de template
+            $(document).on('input', '#template_custom_name, #template_custom_description', () => {
+                // Sauvegarde automatique lors de la saisie
+                clearTimeout(this.saveTimeout);
+                this.saveTimeout = setTimeout(() => {
+                    this.saveTemplateAssignment();
+                }, 1000);
+            });
+
+            $(document).on('change', 'input[name="assigned_statuses"], input[name="template_actions"]', () => {
+                // Sauvegarde automatique lors des changements de checkboxes
+                this.saveTemplateAssignment();
+            });
         }
 
         navigateStep(direction) {
@@ -1400,6 +1414,11 @@
                         // Mettre à jour les boutons du footer selon l'étape
                         this.applyStepData(step, response.data);
 
+                        // Mise à jour spécifique pour l'étape d'assignation de template
+                        if (step === 4) {
+                            this.updateTemplatePreview();
+                        }
+
                     } else {
                         // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
                         $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
@@ -1780,6 +1799,92 @@
                     $btn.show();
                 }
             }.bind(this));
+        }
+
+        // Gestionnaire pour l'étape d'assignation de template
+        updateTemplatePreview() {
+            const templateId = this.selectedTemplate;
+            if (!templateId) {
+                $('#selected-template-icon').text('📄');
+                $('#selected-template-title').text('Template sélectionné');
+                $('#selected-template-description').text('Aucun template sélectionné');
+                return;
+            }
+
+            const templateInfo = {
+                'invoice': {
+                    icon: '📄',
+                    title: 'Facture',
+                    description: 'Template professionnel avec en-têtes, tableau des articles et calculs automatiques'
+                },
+                'quote': {
+                    icon: '📋',
+                    title: 'Devis',
+                    description: 'Template élégant avec conditions, validité et signature électronique'
+                },
+                'blank': {
+                    icon: '✨',
+                    title: 'Template Vierge',
+                    description: 'Canvas vierge pour créer votre propre design personnalisé'
+                }
+            };
+
+            const info = templateInfo[templateId] || templateInfo['blank'];
+            $('#selected-template-icon').text(info.icon);
+            $('#selected-template-title').text(info.title);
+            $('#selected-template-description').text(info.description);
+
+            // Pré-remplir le nom personnalisé
+            const customName = $('#template_custom_name');
+            if (!customName.val()) {
+                customName.val(info.title);
+            }
+        }
+
+        saveTemplateAssignment() {
+            const assignmentData = {
+                template_id: this.selectedTemplate,
+                custom_name: $('#template_custom_name').val().trim(),
+                custom_description: $('#template_custom_description').val().trim(),
+                assigned_statuses: [],
+                template_actions: []
+            };
+
+            // Récupérer les statuts assignés
+            $('input[name="assigned_statuses"]:checked').each(function() {
+                assignmentData.assigned_statuses.push($(this).val());
+            });
+
+            // Récupérer les actions
+            $('input[name="template_actions"]:checked').each(function() {
+                assignmentData.template_actions.push($(this).val());
+            });
+
+            console.log('PDF Builder Onboarding: Saving template assignment', assignmentData);
+
+            // Sauvegarder via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_assignment',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    assignment_data: JSON.stringify(assignmentData)
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Template assignment saved successfully');
+                        this.showNotification('Configuration sauvegardée avec succès !', 'success');
+                    } else {
+                        console.error('PDF Builder Onboarding: Failed to save template assignment', response.data);
+                        this.showNotification('Erreur lors de la sauvegarde', 'error');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: AJAX error saving template assignment', error);
+                    this.showNotification('Erreur de communication', 'error');
+                }
+            });
         }
     }
 

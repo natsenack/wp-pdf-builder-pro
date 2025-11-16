@@ -1933,4 +1933,338 @@ kbd {
     }
 }
 
+/* ===========================================
+   STYLES POUR L'ÉTAPE ASSIGN TEMPLATE
+   =========================================== */
+
+.assign-template-setup {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.selected-template-preview {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.template-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.template-icon-large {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.template-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.template-info p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.template-customization {
+    margin-bottom: 32px;
+}
+
+.template-customization h4 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.customization-fields {
+    display: grid;
+    gap: 16px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.field-group input,
+.field-group textarea {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.field-group input:focus,
+.field-group textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.field-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.woocommerce-assignment {
+    margin-bottom: 32px;
+}
+
+.woocommerce-assignment h4 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.assignment-description {
+    margin: 0 0 20px 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.status-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.status-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.status-option:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.status-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.status-option input[type="checkbox"]:checked + .status-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #f3f4f6;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.assignment-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.assignment-notice .notice-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.assignment-notice .notice-content {
+    font-size: 14px;
+    color: #1e40af;
+    line-height: 1.5;
+}
+
+.assignment-notice .notice-content strong {
+    color: #1d4ed8;
+}
+
+.template-actions {
+    margin-bottom: 32px;
+}
+
+.template-actions h4 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.action-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-option:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.action-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.action-option input[type="checkbox"]:checked + .option-content {
+    color: #1d4ed8;
+}
+
+.action-option input[type="checkbox"]:checked + .option-content::before {
+    content: "☑️";
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-size: 16px;
+}
+
+.action-option .option-content {
+    flex: 1;
+    position: relative;
+    padding-left: 24px;
+}
+
+.action-option .option-content strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.action-option .option-content span {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.setup-complete-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    border-left: 4px solid #22c55e;
+}
+
+.setup-complete-notice .notice-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.setup-complete-notice .notice-content {
+    font-size: 14px;
+    color: #166534;
+    line-height: 1.5;
+}
+
+.setup-complete-notice .notice-content strong {
+    color: #15803d;
+    font-weight: 600;
+}
+
+/* Responsive pour l'assignation de template */
+@media (max-width: 768px) {
+    .selected-template-preview {
+        padding: 20px;
+    }
+
+    .template-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .template-info h3 {
+        font-size: 18px;
+    }
+
+    .status-selection {
+        grid-template-columns: 1fr;
+    }
+
+    .action-options {
+        gap: 8px;
+    }
+
+    .action-option {
+        padding: 12px;
+    }
+}
+
 
