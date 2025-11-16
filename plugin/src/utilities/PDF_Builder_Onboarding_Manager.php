@@ -160,7 +160,7 @@ class PDF_Builder_Onboarding_Manager {
                 'title' => __('Choisissez votre template de départ', 'pdf-builder-pro'),
                 'description' => __('Sélectionnez un template professionnel pour commencer.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('first_template'),
-                'action' => __('Continuer', 'pdf-builder-pro'),
+                'action' => __('Suivant', 'pdf-builder-pro'),
                 'action_type' => 'next',
                 'can_skip' => true, // Peut être ignorée - passer à l'étape suivante sans sélection
                 'skip_text' => __('Ignorer l\'étape', 'pdf-builder-pro'),
