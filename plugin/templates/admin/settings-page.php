@@ -4303,6 +4303,17 @@
                         <h3>Sécurité des Données</h3>
                         <p>Configuration de la sécurité et du chiffrement des données.</p>
 
+                        <?php
+                        $gdpr_manager = PDF_Builder_GDPR_Manager::get_instance();
+                        $encryption_available = $gdpr_manager->is_encryption_available();
+                        ?>
+
+                        <?php if (!$encryption_available): ?>
+                        <div class="notice notice-warning">
+                            <p><strong>⚠️ Chiffrement non disponible :</strong> L'extension OpenSSL n'est pas activée sur ce serveur. Le chiffrement des données sensibles ne peut pas être utilisé.</p>
+                        </div>
+                        <?php endif; ?>
+
                         <form method="post" id="gdpr-security-form">
                             <?php wp_nonce_field('pdf_builder_gdpr_security', 'security_nonce'); ?>
 
@@ -4311,17 +4322,25 @@
                                     <th scope="row">Chiffrement activé</th>
                                     <td>
                                         <label>
-                                            <input type="checkbox" name="encryption_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true); ?> />
+                                            <input type="checkbox" name="encryption_enabled" value="1"
+                                                   <?php checked(get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true); ?>
+                                                   <?php disabled(!$encryption_available); ?> />
                                             Chiffrer les données sensibles stockées
                                         </label>
+                                        <?php if ($encryption_available): ?>
+                                            <p class="description">✅ Chiffrement AES-256 disponible et sécurisé</p>
+                                        <?php else: ?>
+                                            <p class="description">❌ OpenSSL requis pour le chiffrement</p>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <th scope="row">Durée de rétention (jours)</th>
                                     <td>
-                                        <input type="number" name="data_retention_days" min="1" max="9999" value="<?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?>" />
-                                        <p class="description">Nombre de jours avant suppression automatique des données (conformément RGPD).</p>
+                                        <input type="number" name="data_retention_days" min="1" max="9999"
+                                               value="<?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?>" />
+                                        <p class="description">Nombre de jours avant suppression automatique des données (conformément RGPD). Valeur actuelle : <?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?> jours (<?php echo round((get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555) / 365, 1); ?> ans)</p>
                                     </td>
                                 </tr>
 
@@ -4332,6 +4351,46 @@
                                             <input type="checkbox" name="audit_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['audit_enabled'] ?? true); ?> />
                                             Enregistrer toutes les opérations sur les données personnelles
                                         </label>
+                                        <p class="description">Active la journalisation complète des accès aux données personnelles pour audit et conformité.</p>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">État de sécurité</th>
+                                    <td>
+                                        <div class="security-status">
+                                            <?php
+                                            $security_score = 0;
+                                            $security_checks = [];
+
+                                            if ($encryption_available && (get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true)) {
+                                                $security_score += 40;
+                                                $security_checks[] = '✅ Chiffrement AES-256 activé';
+                                            } else {
+                                                $security_checks[] = '❌ Chiffrement désactivé';
+                                            }
+
+                                            if ((get_option('pdf_builder_gdpr', [])['audit_enabled'] ?? true)) {
+                                                $security_score += 30;
+                                                $security_checks[] = '✅ Audit et traçabilité activés';
+                                            } else {
+                                                $security_checks[] = '❌ Audit désactivé';
+                                            }
+
+                                            $retention_days = get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555;
+                                            if ($retention_days <= 2555) { // 7 ans max RGPD
+                                                $security_score += 30;
+                                                $security_checks[] = '✅ Rétention conforme RGPD';
+                                            } else {
+                                                $security_checks[] = '⚠️ Durée de rétention excessive';
+                                            }
+
+                                            echo '<strong>Score de sécurité : ' . $security_score . '/100</strong><br>';
+                                            foreach ($security_checks as $check) {
+                                                echo $check . '<br>';
+                                            }
+                                            ?>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

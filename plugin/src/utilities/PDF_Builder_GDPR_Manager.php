@@ -231,12 +231,19 @@ class PDF_Builder_GDPR_Manager {
      * Sauvegarder le consentement d'un utilisateur
      */
     private function save_user_consent($user_id, $consent_type, $granted) {
-        $consent_key = 'pdf_builder_consent_' . $consent_type;
-        update_user_meta($user_id, $consent_key, [
+        $consent_data = [
             'granted' => $granted,
             'timestamp' => current_time('timestamp'),
             'ip_address' => $this->get_client_ip()
-        ]);
+        ];
+
+        // Chiffrer les données sensibles si activé
+        $data_to_store = $this->gdpr_options['encryption_enabled'] ?
+            $this->encrypt_data(json_encode($consent_data)) :
+            $consent_data;
+
+        $consent_key = 'pdf_builder_consent_' . $consent_type;
+        update_user_meta($user_id, $consent_key, $data_to_store);
     }
 
     /**
@@ -313,9 +320,24 @@ class PDF_Builder_GDPR_Manager {
      */
     public function get_user_consent_status($user_id, $consent_type) {
         $consent_key = 'pdf_builder_consent_' . $consent_type;
-        $consent_data = get_user_meta($user_id, $consent_key, true);
+        $stored_data = get_user_meta($user_id, $consent_key, true);
 
-        return $consent_data ? $consent_data['granted'] : false;
+        if (empty($stored_data)) {
+            return false;
+        }
+
+        // Déchiffrer si nécessaire
+        if ($this->gdpr_options['encryption_enabled'] && is_string($stored_data)) {
+            $decrypted = $this->decrypt_data($stored_data);
+            if ($decrypted) {
+                $consent_data = json_decode($decrypted, true);
+                return $consent_data ? $consent_data['granted'] : false;
+            }
+            return false;
+        }
+
+        // Données non chiffrées (ancien format)
+        return isset($stored_data['granted']) ? $stored_data['granted'] : false;
     }
 
     /**
@@ -328,6 +350,62 @@ class PDF_Builder_GDPR_Manager {
         }
 
         return $this->get_user_consent_status($user_id, $consent_type);
+    }
+
+    /**
+     * Obtenir la clé de chiffrement
+     */
+    private function get_encryption_key() {
+        if (!defined('PDF_BUILDER_ENCRYPTION_KEY')) {
+            // Générer une clé basée sur les salts WordPress pour la sécurité
+            $salt = wp_salt('auth') . wp_salt('secure_auth') . wp_salt('logged_in') . wp_salt('nonce');
+            define('PDF_BUILDER_ENCRYPTION_KEY', substr(hash('sha256', $salt), 0, 32));
+        }
+        return PDF_BUILDER_ENCRYPTION_KEY;
+    }
+
+    /**
+     * Chiffrer des données sensibles
+     */
+    public function encrypt_data($data) {
+        if (!$this->gdpr_options['encryption_enabled'] || empty($data)) {
+            return $data;
+        }
+
+        $key = $this->get_encryption_key();
+        $iv = openssl_random_pseudo_bytes(16);
+        $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
+
+        // Stocker l'IV avec les données chiffrées
+        return base64_encode($iv . $encrypted);
+    }
+
+    /**
+     * Déchiffrer des données sensibles
+     */
+    public function decrypt_data($encrypted_data) {
+        if (!$this->gdpr_options['encryption_enabled'] || empty($encrypted_data)) {
+            return $encrypted_data;
+        }
+
+        $key = $this->get_encryption_key();
+        $data = base64_decode($encrypted_data);
+
+        if (strlen($data) < 16) {
+            return $encrypted_data; // Données corrompues
+        }
+
+        $iv = substr($data, 0, 16);
+        $encrypted = substr($data, 16);
+
+        return openssl_decrypt($encrypted, 'AES-256-CBC', $key, 0, $iv);
+    }
+
+    /**
+     * Vérifier si le chiffrement est disponible
+     */
+    public function is_encryption_available() {
+        return function_exists('openssl_encrypt') && function_exists('openssl_decrypt');
     }
 
     /**
@@ -422,16 +500,29 @@ class PDF_Builder_GDPR_Manager {
         $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$retention_days} days"));
 
         global $wpdb;
+        $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
 
         // Supprimer les anciens logs d'audit
-        $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
-        $wpdb->query($wpdb->prepare("
-            DELETE FROM $table_audit
-            WHERE created_at < %s
-        ", $cutoff_date));
+        $deleted_audit = $wpdb->delete($table_audit, [
+            'created_at <' => $cutoff_date
+        ]);
 
-        // Anonymiser les anciennes données utilisateur
-        $this->anonymize_old_user_data($cutoff_date);
+        // Supprimer les anciens consentements expirés (optionnel - à configurer)
+        // Note: Les consentements sont conservés selon la politique de l'utilisateur
+
+        // Log de nettoyage
+        if ($this->gdpr_options['audit_enabled']) {
+            $this->log_audit_action(0, 'data_cleanup', 'system', "Audit logs deleted: {$deleted_audit}");
+        }
+    }
+
+    /**
+     * Programmer le nettoyage automatique
+     */
+    public function schedule_data_cleanup() {
+        if (!wp_next_scheduled('pdf_builder_gdpr_cleanup')) {
+            wp_schedule_event(time(), 'daily', 'pdf_builder_gdpr_cleanup');
+        }
     }
 
     /**
@@ -555,8 +646,11 @@ class PDF_Builder_GDPR_Manager {
         $consents = [];
 
         foreach (['analytics', 'templates', 'marketing'] as $type) {
-            $consent_key = 'pdf_builder_consent_' . $type;
-            $consents[$type] = get_user_meta($user_id, $consent_key, true) ?: ['granted' => false, 'timestamp' => null];
+            $consents[$type] = [
+                'granted' => $this->get_user_consent_status($user_id, $type),
+                'timestamp' => null,
+                'encrypted' => $this->gdpr_options['encryption_enabled']
+            ];
         }
 
         wp_send_json_success(['consents' => $consents]);
