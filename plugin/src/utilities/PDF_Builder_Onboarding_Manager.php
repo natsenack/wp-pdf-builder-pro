@@ -759,11 +759,10 @@ class PDF_Builder_Onboarding_Manager {
             case 3: // First template
                 error_log('PDF_Builder_Onboarding: Processing step 3 - Template selection');
                 if (!empty($_POST['selected_template'])) {
-                    error_log('PDF_Builder_Onboarding: Template selected, setting redirect to editor');
+                    error_log('PDF_Builder_Onboarding: Template selected for step 3');
                     // Sauvegarder le template sélectionné
                     $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
-                    // Rediriger vers l'éditeur
-                    $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
+                    // NE PAS rediriger vers l'éditeur - passer à l'étape 4
                 } else {
                     error_log('PDF_Builder_Onboarding: No template selected for step 3');
                 }
