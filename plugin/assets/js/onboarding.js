@@ -616,7 +616,7 @@
          * Appliquer les données d'une étape chargée
          */
         applyStepData(step, data) {
-            console.log('PDF Builder Onboarding: Applying step data for step', step);
+            console.log('=== PDF Builder Onboarding: APPLYING STEP DATA FOR STEP', step, '===');
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
@@ -640,16 +640,7 @@
             console.log('PDF Builder Onboarding: All buttons in modal after replacement:', allButtonsInModalAfter.length);
 
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
-            $modal.find('.complete-step').each(function() {
-                const $btn = $(this);
-                const buttonStep = $btn.data('step');
-                if (buttonStep !== step) {
-                    console.log('PDF Builder Onboarding: Hiding button from step', buttonStep, 'current step is', step);
-                    $btn.hide();
-                } else {
-                    $btn.show();
-                }
-            });
+            this.hideInactiveStepButtons();
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
