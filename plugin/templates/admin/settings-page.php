@@ -5293,7 +5293,7 @@
                 const allTabs = document.querySelectorAll('.tab-content');
                 allTabs.forEach(tab => {
                     tab.classList.add('hidden-tab');
-                    console.log('📦 Masquage onglet:', tab.id);
+                    tab.classList.remove('active');
                 });
 
                 // Désactiver tous les liens d'onglets
@@ -5305,6 +5305,7 @@
                 const targetTabContent = document.getElementById(targetTab);
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
+                    targetTabContent.classList.add('active');
                 } else {
                     console.error('❌ Onglet non trouvé:', targetTab);
                 }
@@ -5409,6 +5410,7 @@
                     const generalTabLink = document.querySelector('.nav-tab[data-tab="general"]');
                     if (generalTab && generalTabLink) {
                         generalTab.classList.remove('hidden-tab');
+                        generalTab.classList.add('active');
                         generalTabLink.classList.add('nav-tab-active');
                         console.log('🏠 Onglet général activé par défaut');
                     }
