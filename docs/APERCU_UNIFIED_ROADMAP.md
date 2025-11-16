@@ -45,8 +45,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 7. ~~Phase 1.6.7 - Intégration webhooks et automation~~ ⏭️ **REPORTÉ** - Non prioritaire pour v1.0
 8. ~~Phase 1.6.8 - Support i18n et localisation complète~~ ✅ TERMINÉE - Extraction auto + localisation avancée déployée
 9. ~~Phase 1.6.9 - Système sauvegarde et restauration~~ ✅ TERMINÉE - Gestionnaire complet + interface admin déployés
-10. **SUIVANT** : Phase 1.6.10 - Onboarding et tutoriels intégrés
-10. Phase 1.6.10 - Onboarding et tutoriels intégrés
+10. **SUIVANT** : Phase 1.6.10 - Onboarding intégré
+10. Phase 1.6.10 - Onboarding intégré
 11. Phase 1.6.11 - Conformité RGPD complète
 12. Puis: Tests complets et validation finale
 
@@ -349,27 +349,17 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - [x] **Permissions contrôlées** : Droits d'import/export par rôle
 - [x] **Logs opérations** : Audit trail sauvegardes/restaurations
 
-### 🎯 **Étape 1.6.10 : Onboarding & Tutoriels**
+### 🎯 **Étape 1.6.10 : Onboarding**
 **Priorité** : 🟡 **RECOMMANDÉ** - Adoption utilisateur
 **Objectif** : Expérience d'accueil et apprentissage intégrée
 
 **🚀 Assistant Première Utilisation** :
-- [ ] **Wizard configuration** : Étapes guidées setup initial
-- [ ] **Détection environnement** : Auto-configuration WooCommerce
-- [ ] **Templates suggérés** : Recommandations selon usage
-- [ ] **Checklist progression** : Suivi complétion onboarding
+- [x] **Wizard configuration** : Étapes guidées setup initial
+- [x] **Détection environnement** : Auto-configuration WooCommerce
+- [x] **Templates suggérés** : Recommandations selon usage
+- [x] **Checklist progression** : Suivi complétion onboarding
 
-**📚 Système Tutoriels** :
-- [ ] **Tooltips contextuels** : Aide intégrée interface
-- [ ] **Centre d'aide intégré** : Base connaissances in-app
-- [ ] **Vidéos tutoriels** : Bibliothèque vidéos intégrée
-- [ ] **Recherche intelligente** : Aide contextuelle par fonctionnalité
-
-**🎯 Learning Path** :
-- [ ] **Parcours débutant** : Tutoriels séquencés progressifs
-- [ ] **Templates exemples** : Guides pas-à-pas avec templates
-- [ ] **Success metrics** : Suivi complétion tutoriels
-- [ ] **Feedback intégré** : Notation et commentaires tutoriels
+**⚠️ Note Production** : L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Penser à vérifier qu'il s'active correctement en production (WP_DEBUG=false) avant le déploiement final.
 
 ### 🎯 **Étape 1.6.11 : Conformité RGPD**
 **Priorité** : 🔴 **OBLIGATOIRE** - Conformité légale européenne
@@ -420,7 +410,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne uni
 - **1.6.3** 📊 Analytics & métriques (Optimisation)
 - **1.6.4** 🔌 API REST (Extensibilité)
 - **1.6.5** 🎯 Shortcodes & Gutenberg (UX)
-- **1.6.10** 🚀 Onboarding & tutoriels (Adoption)
+- **1.6.10** 🚀 Onboarding (Adoption)
 
 **🟢 OPTIONNEL (1 étape)** - Fonctionnalités avancées différables :
 - **1.6.7** ⚙️ Webhooks & automation (Premium features)

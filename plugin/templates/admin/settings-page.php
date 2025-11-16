@@ -3700,6 +3700,10 @@
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
+            <div class="notice notice-info" style="margin-bottom: 20px;">
+                <p><strong>ℹ️ Rappel Onboarding :</strong> L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Il sera automatiquement activé en production (WP_DEBUG=false). Pensez à le tester avant le déploiement final.</p>
+            </div>
+
          <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
