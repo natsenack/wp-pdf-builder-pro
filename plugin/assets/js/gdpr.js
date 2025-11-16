@@ -16,24 +16,28 @@
         }
 
         bindEvents() {
-            // Gestion des onglets RGPD
-            $('.gdpr-tab').on('click', (e) => this.handleTabSwitch(e));
+            console.log('Binding GDPR events...'); // Debug log
+
+            // Utiliser la délégation d'événements pour les onglets RGPD
+            $(document).on('click', '.gdpr-tab', (e) => this.handleTabSwitch(e));
 
             // Gestion des formulaires
-            $('#gdpr-consent-form').on('submit', (e) => this.handleConsentForm(e));
-            $('#gdpr-security-form').on('submit', (e) => this.handleSecurityForm(e));
+            $(document).on('submit', '#gdpr-consent-form', (e) => this.handleConsentForm(e));
+            $(document).on('submit', '#gdpr-security-form', (e) => this.handleSecurityForm(e));
 
             // Boutons d'actions utilisateur
-            $('#export-data-btn').on('click', () => this.handleExportData());
-            $('#delete-data-btn').on('click', () => this.handleDeleteData());
-            $('#portability-btn').on('click', () => this.handleDataPortability());
+            $(document).on('click', '#export-data-btn', () => this.handleExportData());
+            $(document).on('click', '#delete-data-btn', () => this.handleDeleteData());
+            $(document).on('click', '#portability-btn', () => this.handleDataPortability());
 
             // Boutons d'audit
-            $('#refresh-audit').on('click', () => this.refreshAuditLog());
-            $('#export-audit').on('click', () => this.exportAuditLog());
+            $(document).on('click', '#refresh-audit', () => this.refreshAuditLog());
+            $(document).on('click', '#export-audit', () => this.exportAuditLog());
 
             // Gestion des consentements individuels
-            $('.consent-toggle').on('change', (e) => this.handleConsentToggle(e));
+            $(document).on('change', '.consent-toggle', (e) => this.handleConsentToggle(e));
+
+            console.log('GDPR events bound successfully'); // Debug log
         }
 
         handleTabSwitch(e) {
