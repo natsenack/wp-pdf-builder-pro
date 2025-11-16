@@ -5305,11 +5305,8 @@
                 const targetTabContent = document.getElementById(targetTab);
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
-                    console.log('✅ Affichage onglet:', targetTab, '- Élément trouvé:', targetTabContent);
                 } else {
                     console.error('❌ Onglet non trouvé:', targetTab);
-                    console.log('🔍 Onglets disponibles:', Array.from(document.querySelectorAll('.tab-content')).map(tab => tab.id));
-                    return;
                 }
 
                 // Activer le lien d'onglet
@@ -5359,13 +5356,11 @@
 
                 const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
                 console.log('📋 Onglets principaux trouvés:', tabLinks.length);
-                console.log('🔍 Onglets disponibles:', Array.from(tabLinks).map(link => link.getAttribute('data-tab')));
 
                 tabLinks.forEach(link => {
                     // Supprimer les anciens event listeners et en ajouter de nouveaux
                     link.removeEventListener('click', mainTabClickHandler);
                     link.addEventListener('click', mainTabClickHandler);
-                    console.log('🔗 Event listener attaché à:', link.getAttribute('data-tab'));
                 });
 
                 // Vérifier s'il y a un paramètre tab dans l'URL et l'activer (méthode compatible)
