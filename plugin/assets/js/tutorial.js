@@ -74,6 +74,7 @@
         }
 
         showTutorialSelectionModal() {
+            console.log('Tutorial: showTutorialSelectionModal called');
             const $modal = $(`
                 <div id="pdf-builder-tutorial-menu" class="pdf-builder-modal">
                     <div class="pdf-builder-modal-backdrop"></div>
@@ -92,26 +93,35 @@
                 </div>
             `);
 
+            console.log('Tutorial: Modal HTML created');
             $('body').append($modal);
+            console.log('Tutorial: Modal appended to body');
             $modal.fadeIn();
+            console.log('Tutorial: Modal faded in');
 
             // Bind events
             $modal.find('.tutorial-option').on('click', (e) => {
+                console.log('Tutorial: Tutorial option clicked');
                 const tutorialId = $(e.currentTarget).data('tutorial');
+                console.log('Tutorial: Starting tutorial:', tutorialId);
                 $modal.fadeOut(() => $modal.remove());
                 this.startTutorial(tutorialId);
             });
 
             $modal.find('#close-tutorial-menu').on('click', () => {
+                console.log('Tutorial: Close menu clicked');
                 $modal.fadeOut(() => $modal.remove());
             });
         }
 
         generateTutorialOptions() {
+            console.log('Tutorial: generateTutorialOptions called');
             const tutorials = window.pdfBuilderTutorial.tutorials;
+            console.log('Tutorial: tutorials object:', tutorials);
             let options = '';
 
             for (const [id, tutorial] of Object.entries(tutorials)) {
+                console.log('Tutorial: Processing tutorial:', id, tutorial);
                 options += `
                     <div class="tutorial-option" data-tutorial="${id}">
                         <div class="tutorial-option-icon">📚</div>
@@ -123,6 +133,7 @@
                 `;
             }
 
+            console.log('Tutorial: Generated options HTML:', options);
             return options;
         }
 
