@@ -6532,9 +6532,5 @@
         .tab-content:not(.active):not(.hidden-tab) {
             display: none !important;
         }
-        /* Correction pour l'onglet général spécifiquement */
-        #general.tab-content {
-            display: block !important;
-        }
     </style>
 
