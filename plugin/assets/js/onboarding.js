@@ -1186,7 +1186,7 @@
             // Mettre à jour le bouton principal
             const $primaryButton = $footer.find('.complete-step');
             if ($primaryButton.length > 0) {
-                $primaryButton.text(stepData.action || 'Continuer');
+                $primaryButton.text(stepData.action || 'Suivant');
                 $primaryButton.attr('data-action-type', stepData.action_type || 'next');
 
                 // Logique cohérente : désactiver seulement si requires_selection est true
@@ -1529,7 +1529,7 @@
             const stepData = this.getStepData(step);
             if (!stepData) return '';
 
-            const buttonText = stepData.action_text || 'Continuer';
+            const buttonText = stepData.action_text || 'Suivant';
             const buttonClass = stepData.requires_selection ? 'button-secondary' : 'button-primary';
             // Pour l'étape 2, permettre de continuer même sans sélection (optionnel)
             const isDisabled = (step === 2) ? false : (stepData.requires_selection && !this.selectedTemplate);
@@ -1650,7 +1650,7 @@
             // Données des étapes (devrait correspondre au PHP)
             const steps = {
                 1: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
-                2: { action_text: 'Continuer', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
+                2: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
                 3: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Ignorer cette étape' },
                 4: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
                 5: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' }
