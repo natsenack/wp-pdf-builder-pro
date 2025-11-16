@@ -5278,8 +5278,67 @@
             try {
                 console.log('🚀 PDF Builder Settings JavaScript loaded');
 
-                // Gestion de la navigation des onglets
+            // Configuration des onglets principaux
+            let mainTabsInitialized = false; // Flag pour éviter les initialisations multiples
+
+            // Gestionnaire de clic pour les onglets principaux (défini globalement pour removeEventListener)
+            function mainTabClickHandler(e) {
+                e.preventDefault();
+
+                const targetTab = this.getAttribute('data-tab');
+
+                // Masquer tous les onglets
+                const allTabs = document.querySelectorAll('.tab-content');
+                allTabs.forEach(tab => {
+                    tab.classList.add('hidden-tab');
+                });
+
+                // Désactiver tous les liens d'onglets
+                document.querySelectorAll('.nav-tab').forEach(tabLink => {
+                    tabLink.classList.remove('nav-tab-active');
+                });
+
+                // Afficher l'onglet cible
+                const targetTabContent = document.getElementById(targetTab);
+                if (targetTabContent) {
+                    targetTabContent.classList.remove('hidden-tab');
+                } else {
+                    console.error('❌ TAB NOT FOUND:', targetTab);
+                }
+
+                // Activer le lien d'onglet
+                this.classList.add('nav-tab-active');
+
+                // Gérer la visibilité du bouton de sauvegarde global
+                const globalSaveBtn = document.getElementById('global-save-btn');
+                if (globalSaveBtn) {
+                    if (targetTab === 'maintenance') {
+                        globalSaveBtn.style.display = 'none';
+                    } else {
+                        globalSaveBtn.style.display = '';
+                    }
+                }
+
+                // Sauvegarder l'onglet actif dans localStorage
+                localStorage.setItem('pdf_builder_active_tab', targetTab);
+
+                // Initialiser les sous-onglets RGPD si l'onglet RGPD est activé
+                if (targetTab === 'rgpd' && !gdprTabsInitialized) {
+                    console.log('🎯 Onglet RGPD activé, initialisation des sous-onglets');
+                    setTimeout(() => setupGdprTabNavigation(), 50);
+                }
+            }
+
+            // Gestion de la navigation des onglets
             function setupTabNavigation() {
+                // Éviter les initialisations multiples
+                if (mainTabsInitialized) {
+                    console.log('ℹ️ Onglets principaux déjà initialisés, ignoré');
+                    return;
+                }
+
+                console.log('🔧 Initialisation des onglets principaux');
+
                 // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
                 const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
                 const globalSaveBtn = document.getElementById('global-save-btn');
@@ -5292,53 +5351,12 @@
                 }
 
                 const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+                console.log('📋 Onglets principaux trouvés:', tabLinks.length);
+
                 tabLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-
-                        const targetTab = this.getAttribute('data-tab');
-
-                        // Masquer tous les onglets
-                        const allTabs = document.querySelectorAll('.tab-content');
-                        allTabs.forEach(tab => {
-                            tab.classList.add('hidden-tab');
-                        });
-
-                        // Désactiver tous les liens d'onglets
-                        document.querySelectorAll('.nav-tab').forEach(tabLink => {
-                            tabLink.classList.remove('nav-tab-active');
-                        });
-
-                        // Afficher l'onglet cible
-                        const targetTabContent = document.getElementById(targetTab);
-                        if (targetTabContent) {
-                            targetTabContent.classList.remove('hidden-tab');
-                        } else {
-                            console.error('❌ TAB NOT FOUND:', targetTab);
-                        }
-
-                        // Activer le lien d'onglet
-                        this.classList.add('nav-tab-active');
-
-                        // Gérer la visibilité du bouton de sauvegarde global
-                        const globalSaveBtn = document.getElementById('global-save-btn');
-                        if (globalSaveBtn) {
-                            if (targetTab === 'maintenance') {
-                                globalSaveBtn.style.display = 'none';
-                            } else {
-                                globalSaveBtn.style.display = '';
-                            }
-                        }
-
-                        // Sauvegarder l'onglet actif dans localStorage
-                        localStorage.setItem('pdf_builder_active_tab', targetTab);
-
-                        // Initialiser les sous-onglets RGPD si l'onglet RGPD est activé
-                        if (targetTab === 'rgpd' && !gdprTabsInitialized) {
-                            console.log('🎯 Onglet RGPD activé, initialisation des sous-onglets');
-                            setTimeout(() => setupGdprTabNavigation(), 50);
-                        }
-                    });
+                    // Supprimer les anciens event listeners et en ajouter de nouveaux
+                    link.removeEventListener('click', mainTabClickHandler);
+                    link.addEventListener('click', mainTabClickHandler);
                 });
 
                 // Restaurer l'onglet actif depuis localStorage
@@ -5346,14 +5364,17 @@
                 if (savedTab) {
                     const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
                     if (savedTabLink) {
+                        console.log('🔄 Restauration onglet depuis localStorage:', savedTab);
                         savedTabLink.click();
                     }
                 } else {
-                    // Par défaut, s'assurer que l'onglet général est visible
+                    // Par défaut, s'assurer que l'onglet général est visible et actif
                     const generalTab = document.getElementById('general');
-                    if (generalTab) {
+                    const generalTabLink = document.querySelector('.nav-tab[data-tab="general"]');
+                    if (generalTab && generalTabLink) {
                         generalTab.classList.remove('hidden-tab');
-                        generalTab.classList.add('active');
+                        generalTabLink.classList.add('nav-tab-active');
+                        console.log('🏠 Onglet général activé par défaut');
                     }
                 }
 
@@ -5365,6 +5386,10 @@
                         setupGdprTabNavigation();
                     }
                 }, 200);
+
+                // Marquer comme initialisé
+                mainTabsInitialized = true;
+                console.log('✅ Onglets principaux initialisés avec succès');
             }
 
             // Démarrer la navigation des onglets
