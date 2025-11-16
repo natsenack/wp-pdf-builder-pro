@@ -2523,4 +2523,38 @@ kbd {
     }
 }
 
+/* Styles pour la section fonctionnalités premium */
+.premium-features-box {
+    background: #f0fdf4;
+    border: 1px solid #10b981;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    color: #065f46;
+}
+
+.premium-features-box strong {
+    color: #065f46;
+}
+
+.premium-features-box ul li {
+    color: #065f46;
+}
+
+/* Dark mode pour la section fonctionnalités premium */
+@media (prefers-color-scheme: dark) {
+    .premium-features-box {
+        background: #064e3b;
+        border-color: #10b981;
+        color: #d1fae5;
+    }
+
+    .premium-features-box strong {
+        color: #34d399;
+    }
+
+    .premium-features-box ul li {
+        color: #d1fae5;
+    }
+}
 

@@ -1640,7 +1640,7 @@
                     <p style="font-size: 16px; margin-bottom: 20px;">
                         Vous avez choisi la version complète avec toutes les fonctionnalités avancées.
                     </p>
-                    <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <div class="premium-features-box">
                         <strong>🚀 Fonctionnalités Premium activées :</strong>
                         <ul style="text-align: left; margin-top: 10px;">
                             <li>• Templates PDF illimités</li>
