@@ -53,6 +53,8 @@ class TutorialManager
             return;
         }
 
+        error_log('PDF Builder Tutorial: Loading tutorial assets for hook: ' . $hook);
+
         wp_enqueue_style(
             'pdf-builder-tutorial',
             plugin_dir_url(__FILE__) . '../../assets/css/tutorial.css',
@@ -74,6 +76,8 @@ class TutorialManager
             'currentUserId' => get_current_user_id(),
             'tutorials' => $this->getTutorialsData()
         ]);
+
+        error_log('PDF Builder Tutorial: Assets enqueued successfully');
     }
 
     /**
@@ -248,9 +252,16 @@ class TutorialManager
      */
     public function showWelcomeWizard()
     {
-        if (!$this->shouldShowTutorial('welcome_wizard')) {
-            return;
-        }
+        // DEBUG: Forcer l'affichage pour les tests
+        error_log('PDF Builder Tutorial: showWelcomeWizard called');
+
+        // Temporairement désactiver la vérification pour forcer l'affichage
+        // if (!$this->shouldShowTutorial('welcome_wizard')) {
+        //     error_log('PDF Builder Tutorial: User already saw wizard, skipping');
+        //     return;
+        // }
+
+        error_log('PDF Builder Tutorial: Displaying welcome wizard');
 
         ?>
         <div id="pdf-builder-welcome-wizard" class="pdf-builder-modal" style="display: block;">
@@ -299,6 +310,9 @@ class TutorialManager
      */
     public function maybeShowWelcomeWizard()
     {
+        // DEBUG: Forcer l'affichage pour les tests
+        error_log('PDF Builder Tutorial: maybeShowWelcomeWizard called');
+
         // Vérifier si on est sur une page du plugin
         $pdf_builder_pages = [
             'pdf-builder-pro',
@@ -310,9 +324,13 @@ class TutorialManager
         ];
 
         $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        error_log('PDF Builder Tutorial: Current page = ' . $current_page);
 
         if (in_array($current_page, $pdf_builder_pages)) {
+            error_log('PDF Builder Tutorial: On PDF Builder page, showing wizard');
             $this->showWelcomeWizard();
+        } else {
+            error_log('PDF Builder Tutorial: Not on PDF Builder page');
         }
     }
 }
