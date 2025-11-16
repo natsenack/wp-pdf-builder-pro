@@ -1165,11 +1165,8 @@
             // Sauvegarder la sélection côté serveur
             this.saveTemplateSelection();
 
-            // Mettre à jour le texte du bouton pour "Continuer" et l'activer
-            const $button = $('.complete-step');
-            console.log(`PDF Builder Onboarding: Activating button after template selection - was disabled: ${$button.prop('disabled')}`);
-            $button.text('Continuer').prop('disabled', false);
-            console.log(`PDF Builder Onboarding: Button activated - text: "${$button.text()}", disabled: ${$button.prop('disabled')}`);
+            // Régénérer les boutons du footer pour refléter le changement d'état
+            this.updateFooterButtonsForCurrentStep();
         }
 
         updateFooterButtons(stepData) {
@@ -1600,6 +1597,27 @@
                     console.log('HEADER: Removed previous button for step', step);
                 }
             }
+        }
+
+        updateFooterButtonsForCurrentStep() {
+            // Régénérer les boutons du footer pour l'étape actuelle
+            // Cela est appelé après la sélection d'un template pour mettre à jour l'état du bouton
+            console.log('PDF Builder Onboarding: Updating footer buttons for current step', this.currentStep);
+
+            // Simuler les données de l'étape actuelle (devrait correspondre à ce qui vient du serveur)
+            const stepData = {
+                can_skip: this.currentStep !== 4, // Toutes les étapes sauf la dernière peuvent être ignorées
+                skip_text: this.currentStep === 2 ? 'Ignorer l\'étape' : 'Ignorer cette étape',
+                action: this.currentStep === 4 ? 'Terminer' : (this.currentStep === 2 ? 'Continuer' : 'Suivant'),
+                action_type: this.currentStep === 4 ? 'finish' : 'next',
+                requires_selection: this.currentStep === 2 // L'étape 2 nécessite une sélection
+            };
+
+            const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
+            const footerHtml = this.generateFooterButtons(this.currentStep, stepData);
+            $footer.html(footerHtml);
+
+            console.log('PDF Builder Onboarding: Footer buttons updated for step', this.currentStep);
         }
 
         getStepData(step) {
