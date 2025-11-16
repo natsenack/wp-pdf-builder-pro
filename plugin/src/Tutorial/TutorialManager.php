@@ -42,8 +42,14 @@ class TutorialManager
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
         add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
 
+        // DEBUG: Ajouter un tooltip de test dans le footer
+        add_action('admin_footer', [$this, 'addTestTooltip']);
+
         // Ajouter le bouton d'aide dans la barre d'admin
         add_action('admin_bar_menu', [$this, 'addTutorialHelpButton'], 100);
+
+        // DEBUG: Ajouter un bouton de test pour forcer l'affichage d'un tooltip
+        add_action('admin_bar_menu', [$this, 'addTestTooltipButton'], 101);
     }
 
     /**
@@ -64,6 +70,22 @@ class TutorialManager
             'meta' => [
                 'onclick' => 'window.pdfBuilderTutorialManager.showWelcomeWizard(); return false;',
                 'title' => __('Relancer le tutoriel d\'introduction', 'pdf-builder-pro')
+            ]
+        ]);
+    }
+
+    /**
+     * DEBUG: Ajouter un bouton de test pour afficher un tooltip
+     */
+    public function addTestTooltipButton($wp_admin_bar)
+    {
+        $wp_admin_bar->add_node([
+            'id' => 'pdf-builder-test-tooltip',
+            'title' => '<span class="ab-icon dashicons dashicons-testimonial"></span> Test Tooltip',
+            'href' => '#',
+            'meta' => [
+                'onclick' => 'window.pdfBuilderTutorialManager.showTestTooltip(); return false;',
+                'title' => 'Afficher un tooltip de test'
             ]
         ]);
     }
@@ -227,6 +249,38 @@ class TutorialManager
                 <div class="tutorial-footer-actions">
                     <button class="tutorial-close tutorial-close-small" title="<?php _e('Fermer le tutoriel', 'pdf-builder-pro'); ?>">&times;</button>
                     <button class="tutorial-start"><?php _e('Commencer', 'pdf-builder-pro'); ?></button>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * DEBUG: Ajouter un tooltip de test dans le footer
+     */
+    public function addTestTooltip()
+    {
+        // Afficher seulement sur les pages admin
+        if (!is_admin()) {
+            return;
+        }
+
+        ?>
+        <div class="tutorial-tooltip" id="debug-tooltip" style="position: fixed; top: 200px; right: 20px; z-index: 10000; display: block;">
+            <div class="tutorial-tooltip-header">
+                <h4>🔧 Tooltip de Debug</h4>
+                <button class="tutorial-close">&times;</button>
+            </div>
+            <div class="tutorial-tooltip-content">
+                <p><strong>Tooltip de test permanent.</strong></p>
+                <p>Si vous voyez ce tooltip, les événements fonctionnent.</p>
+                <p>La croix devrait fermer ce tooltip.</p>
+            </div>
+            <div class="tutorial-tooltip-footer">
+                <button class="tutorial-skip">Passer le test</button>
+                <div class="tutorial-footer-actions">
+                    <button class="tutorial-close tutorial-close-small" title="Fermer">&times;</button>
+                    <button class="tutorial-next">Tester Suivant</button>
                 </div>
             </div>
         </div>

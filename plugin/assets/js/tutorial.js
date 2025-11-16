@@ -67,6 +67,40 @@
             $('#pdf-builder-welcome-wizard').fadeIn();
         }
 
+        // DEBUG: Méthode de test pour afficher un tooltip
+        showTestTooltip() {
+            console.log('Tutorial: showTestTooltip called');
+
+            // Créer un tooltip de test
+            const testTooltip = `
+                <div class="tutorial-tooltip active" id="test-tooltip" style="position: fixed; top: 100px; left: 100px; z-index: 10000;">
+                    <div class="tutorial-tooltip-header">
+                        <h4>Tooltip de Test</h4>
+                        <button class="tutorial-close">&times;</button>
+                    </div>
+                    <div class="tutorial-tooltip-content">
+                        <p>Ceci est un tooltip de test. La croix devrait fonctionner.</p>
+                    </div>
+                    <div class="tutorial-tooltip-footer">
+                        <button class="tutorial-skip">Passer</button>
+                        <div class="tutorial-footer-actions">
+                            <button class="tutorial-close tutorial-close-small" title="Fermer">&times;</button>
+                            <button class="tutorial-next">Suivant</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Ajouter au body s'il n'existe pas déjà
+            if (!$('#test-tooltip').length) {
+                $('body').append(testTooltip);
+                console.log('Tutorial: Test tooltip added to DOM');
+            } else {
+                $('#test-tooltip').fadeIn();
+                console.log('Tutorial: Test tooltip shown');
+            }
+        }
+
         startWelcomeWizard() {
             // Fermer le modal et commencer le tutoriel étape par étape
             this.closeModal();
