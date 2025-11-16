@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Étape WooCommerce Setup - PDF Builder Pro</title>
+    <link rel="stylesheet" href="plugin/assets/css/onboarding.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .test-header {
+            background: #1e40af;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-content {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🛒 Test Étape WooCommerce Setup</h1>
+            <p>Configuration WooCommerce - Intégrez vos PDFs dans vos commandes WooCommerce</p>
+        </div>
+        <div class="test-content">
+            <!-- Contenu de l'étape WooCommerce Setup -->
+            <div class="woocommerce-setup">
+                <div class="setup-notice success">
+                    <span class="notice-icon">✅</span>
+                    <div class="notice-content">
+                        <h4>WooCommerce détecté</h4>
+                        <p>Votre boutique WooCommerce est prête pour l'intégration PDF.</p>
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <h5>Options d'intégration</h5>
+                    <p class="section-description">Configurez comment PDF Builder Pro s'intègre avec votre boutique WooCommerce.</p>
+
+                    <div class="integration-options">
+                        <div class="option-card" data-tooltip="Les clients recevront automatiquement leurs PDFs (factures, bons de commande...) joints aux emails de confirmation de commande WooCommerce">
+                            <div class="option-header">
+                                <input type="checkbox" name="woocommerce_emails" checked id="woocommerce_emails">
+                                <label for="woocommerce_emails" class="option-toggle"></label>
+                            </div>
+                            <div class="option-content">
+                                <div class="option-icon">📧</div>
+                                <div class="option-text">
+                                    <h6>PDFs dans les emails de commande</h6>
+                                    <p>Vos clients recevront automatiquement leurs documents PDF (factures, bons de livraison...) directement dans leurs emails de confirmation de commande.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="option-card" data-tooltip="Aperçu rapide des PDFs générés directement dans l'interface d'administration WooCommerce pour chaque commande">
+                            <div class="option-header">
+                                <input type="checkbox" name="admin_preview" checked id="admin_preview">
+                                <label for="admin_preview" class="option-toggle"></label>
+                            </div>
+                            <div class="option-content">
+                                <div class="option-icon">👁️</div>
+                                <div class="option-text">
+                                    <h6>Aperçu PDF dans l'admin</h6>
+                                    <p>Affichez un bouton d'aperçu rapide dans l'interface d'administration pour visualiser les PDFs générés sans quitter la page de commande.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="option-card" data-tooltip="Utiliser automatiquement les données de commande WooCommerce (prix, produits, informations client...) dans vos templates PDF">
+                            <div class="option-header">
+                                <input type="checkbox" name="variables" checked id="variables">
+                                <label for="variables" class="option-toggle"></label>
+                            </div>
+                            <div class="option-content">
+                                <div class="option-icon">🔧</div>
+                                <div class="option-text">
+                                    <h6>Variables WooCommerce</h6>
+                                    <p>Activez l'utilisation automatique des données WooCommerce (prix, produits, adresse client, numéro de commande...) dans vos templates PDF.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-benefits">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🚀</span>
+                        <span class="benefit-text">Automatisation complète des documents</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">⚡</span>
+                        <span class="benefit-text">Génération instantanée</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🎯</span>
+                        <span class="benefit-text">Expérience client améliorée</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script de test pour les interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test WooCommerce Setup chargé');
+
+            // Simuler les interactions des checkboxes
+            const checkboxes = document.querySelectorAll('.woocommerce-setup input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    console.log('Checkbox changée:', this.name, this.checked);
+                });
+            });
+
+            // Simuler les tooltips
+            const optionCards = document.querySelectorAll('.option-card');
+            optionCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    console.log('Tooltip affiché pour:', this.querySelector('h6').textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

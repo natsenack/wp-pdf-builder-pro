@@ -1073,6 +1073,10 @@
     opacity: 1;
     visibility: visible;
     pointer-events: none;
+    /* Gestion intelligente des bords */
+    min-width: 200px;
+    /* Assurer que le tooltip reste dans la viewport */
+    max-width: min(300px, calc(100vw - 40px));
 }
 
 .pdf-builder-onboarding-modal [data-tooltip]:hover::before {
@@ -1108,5 +1112,256 @@
 
 .pdf-builder-onboarding-modal .step-content {
     animation: fadeInUp 0.5s ease-out;
+}
+
+/* Styles spécifiques pour l'étape WooCommerce Setup */
+.woocommerce-setup {
+    padding: 0;
+}
+
+.woocommerce-setup .setup-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border: 1px solid #dcfce7;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.woocommerce-setup .setup-notice.success {
+    border-color: #bbf7d0;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.woocommerce-setup .notice-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.woocommerce-setup .notice-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #166534;
+}
+
+.woocommerce-setup .notice-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #15803d;
+}
+
+.woocommerce-setup .setup-section {
+    margin-bottom: 24px;
+}
+
+.woocommerce-setup .setup-section h5 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.woocommerce-setup .section-description {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.woocommerce-setup .integration-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.woocommerce-setup .option-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    border: 2px solid #f3f4f6;
+    border-radius: 12px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.woocommerce-setup .option-card:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.woocommerce-setup .option-card[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background: #1f2937;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    visibility: visible;
+    margin-right: 12px;
+    max-width: 250px;
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.4;
+}
+
+.woocommerce-setup .option-card[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: calc(100% - 6px);
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: #1f2937;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
+}
+
+.woocommerce-setup .option-header {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.woocommerce-setup .option-header input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.woocommerce-setup .option-toggle {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.woocommerce-setup .option-header input[type="checkbox"]:checked + .option-toggle {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.woocommerce-setup .option-header input[type="checkbox"]:checked + .option-toggle::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.woocommerce-setup .option-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    flex: 1;
+}
+
+.woocommerce-setup .option-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.woocommerce-setup .option-text h6 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.woocommerce-setup .option-text p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.woocommerce-setup .setup-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.woocommerce-setup .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.woocommerce-setup .benefit-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* Gestion responsive des tooltips */
+@media (max-width: 768px) {
+    .pdf-builder-onboarding-modal [data-tooltip]:hover::after {
+        max-width: calc(100vw - 80px);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .pdf-builder-onboarding-modal [data-tooltip]:hover::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Sur mobile, positionner les tooltips WooCommerce en haut */
+    .woocommerce-setup .option-card[data-tooltip]:hover::after {
+        top: -8px;
+        right: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        margin-right: 0;
+        margin-top: -8px;
+    }
+
+    .woocommerce-setup .option-card[data-tooltip]:hover::before {
+        top: -6px;
+        right: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        border-left-color: transparent;
+        border-top-color: #1f2937;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+    }
 }
 
