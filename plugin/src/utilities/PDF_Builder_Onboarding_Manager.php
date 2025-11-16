@@ -305,12 +305,12 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                                 <div class="mode-features">
                                     <ul>
-                                        <li>✅ ' . __('1 template PDF inclus', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('15 variables dynamiques de base', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Export PDF (avec watermark)', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Éditeur de base fonctionnel', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Support communautaire', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Qualité 72 DPI', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Templates PDF illimités', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Variables dynamiques avancées', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Export sans watermark', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Éditeur React professionnel', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Support prioritaire 24/7', 'pdf-builder-pro') . '</li>
+                                        <li>❌ ' . __('Exports haute qualité (300 DPI)', 'pdf-builder-pro') . '</li>
                                     </ul>
                                 </div>
                                 <div class="mode-limitations">
@@ -351,8 +351,8 @@ class PDF_Builder_Onboarding_Manager {
                                     </div>
                                 </div>
                                 <div class="mode-price">
-                                    <span class="price">29€</span>
-                                    <span class="period">' . __('/ mois', 'pdf-builder-pro') . '</span>
+                                    <span class="price">79€</span>
+                                    <span class="period">' . __('à vie', 'pdf-builder-pro') . '</span>
                                 </div>
                             </div>
                         </div>
