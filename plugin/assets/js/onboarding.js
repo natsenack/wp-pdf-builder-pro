@@ -1631,6 +1631,15 @@
         }
 
         showPremiumWelcome() {
+            // Vérifier que la modal d'onboarding existe et est visible
+            const $modal = $('#pdf-builder-onboarding-modal');
+            if ($modal.length === 0 || !$modal.is(':visible')) {
+                console.log('PDF Builder Onboarding: Modal not visible, skipping premium welcome');
+                // Rediriger directement sans afficher le message
+                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                return;
+            }
+
             // Afficher un message de bienvenue pour les utilisateurs premium
             const welcomeMessage = `
                 <div style="text-align: center; padding: 20px;">
