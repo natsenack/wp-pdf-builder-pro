@@ -247,7 +247,8 @@ function pdf_builder_load_core()
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Notification_Manager.php',
-        'PDF_Builder_Onboarding_Manager.php'
+        'PDF_Builder_Onboarding_Manager.php',
+        'PDF_Builder_GDPR_Manager.php'
     );
     foreach ($utilities as $utility) {
         $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
@@ -507,6 +508,11 @@ function pdf_builder_load_bootstrap()
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     if (class_exists('PDF_Builder_Onboarding_Manager')) {
         PDF_Builder_Onboarding_Manager::get_instance();
+    }
+
+    // INITIALISER LE GESTIONNAIRE RGPD
+    if (class_exists('PDF_Builder_GDPR_Manager')) {
+        PDF_Builder_GDPR_Manager::get_instance();
     }
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
