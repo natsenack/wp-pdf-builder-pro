@@ -246,7 +246,7 @@
             
             // Sauvegarder via AJAX
             $.ajax({
-                url: pdfBuilderOnboarding.ajaxUrl,
+                url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_auto_save_progress',
