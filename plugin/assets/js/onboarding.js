@@ -1569,7 +1569,7 @@
 
             // Bouton principal (suivant/terminer)
             if (data.action) {
-                const buttonClass = (data.requires_selection && step === 2) ? 'button-secondary' : 'button-primary';
+                const buttonClass = 'button-primary';
                 const shouldDisable = (data.requires_selection && parseInt(step) === 2 && !this.selectedTemplate);
                 const isDisabled = shouldDisable ? 'disabled' : '';
 
