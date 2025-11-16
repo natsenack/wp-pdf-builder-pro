@@ -41,6 +41,31 @@ class TutorialManager
 
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
         add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
+
+        // Ajouter le bouton d'aide dans la barre d'admin
+        add_action('admin_bar_menu', [$this, 'addTutorialHelpButton'], 100);
+    }
+
+    /**
+     * Ajouter un bouton d'aide dans la barre d'admin WordPress
+     */
+    public function addTutorialHelpButton($wp_admin_bar)
+    {
+        // Vérifier si on est sur une page du plugin
+        $current_screen = get_current_screen();
+        if (!$current_screen || (strpos($current_screen->id, 'pdf-builder') === false && strpos($current_screen->id, 'woocommerce') === false)) {
+            return;
+        }
+
+        $wp_admin_bar->add_node([
+            'id' => 'pdf-builder-tutorial-help',
+            'title' => '<span class="ab-icon dashicons dashicons-editor-help"></span> ' . __('Aide PDF Builder', 'pdf-builder-pro'),
+            'href' => '#',
+            'meta' => [
+                'onclick' => 'window.pdfBuilderTutorialManager.showWelcomeWizard(); return false;',
+                'title' => __('Relancer le tutoriel d\'introduction', 'pdf-builder-pro')
+            ]
+        ]);
     }
 
     /**

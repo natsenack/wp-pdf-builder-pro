@@ -18,6 +18,38 @@
         }
 
         bindEvents() {
+            // Événements pour le wizard de bienvenue
+            $(document).on('click', '#start-wizard', (e) => {
+                e.preventDefault();
+                this.startWelcomeWizard();
+            });
+
+            $(document).on('click', '#skip-wizard', (e) => {
+                e.preventDefault();
+                this.skipWelcomeWizard();
+            });
+
+            // Événements pour les tooltips de tutoriel
+            $(document).on('click', '.tutorial-start', (e) => {
+                e.preventDefault();
+                const $tooltip = $(e.target).closest('.tutorial-tooltip');
+                const tutorialId = $tooltip.data('tutorial');
+                this.startTutorial(tutorialId);
+            });
+
+            $(document).on('click', '.tutorial-skip', (e) => {
+                e.preventDefault();
+                const $tooltip = $(e.target).closest('.tutorial-tooltip');
+                const tutorialId = $tooltip.data('tutorial');
+                this.markTutorialAsSkipped(tutorialId);
+                $tooltip.fadeOut();
+            });
+
+            $(document).on('click', '.tutorial-close', (e) => {
+                e.preventDefault();
+                $(e.target).closest('.tutorial-tooltip').fadeOut();
+            });
+        }
 
         showWelcomeWizard() {
             // Le wizard est affiché par PHP, on l'active juste
