@@ -657,7 +657,7 @@ class PDF_Builder_Onboarding_Manager {
             <div class="modal-content">
                 <div class="modal-header">
                     <?php if ($current_step > 1) : ?>
-                    <button class="button button-previous" data-tooltip="Étape précédente">
+                    <button class="button button-previous">
                         <span class="dashicons dashicons-arrow-left-alt"></span>
                     </button>
                     <?php endif; ?>
