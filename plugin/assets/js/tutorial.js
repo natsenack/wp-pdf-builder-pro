@@ -176,14 +176,8 @@
                 return;
             }
 
-            // Vérifier si la cible existe sur la page
-            if ($(step.target).length === 0) {
-                console.log('Tutorial: Target', step.target, 'not found on page, showing modal instead of tooltip for step', this.currentStep);
-                this.showModalStep(step);
-                return;
-            }
-
-            this.showTooltip(step);
+            // Toujours afficher en modal pour éviter les problèmes de positionnement
+            this.showModalStep(step);
         }
 
         showTooltip(step) {
@@ -228,11 +222,13 @@
                     </div>
                     <div class="tutorial-tooltip-content">
                         <p>${step.content}</p>
+                        ${step.target && step.target.trim() !== '' ? `
                         <div class="tutorial-target-note">
                             <small style="color: #666; font-style: italic;">
                                 ℹ️ Cet élément n'est pas disponible sur cette page
                             </small>
                         </div>
+                        ` : ''}
                     </div>
                     <div class="tutorial-tooltip-footer">
                         <button class="tutorial-prev">${window.pdfBuilderTutorial.tutorials[this.currentTutorial].prevText || 'Précédent'}</button>
