@@ -1528,6 +1528,30 @@
                                     <td>Mises à jour transparentes et corrections de sécurité</td>
                                 </tr>
                                 <tr>
+                                    <td><strong>Formats d'export</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">PDF uniquement</td>
+                                    <td style="text-align: center; color: #46b450;">PDF, PNG, JPG</td>
+                                    <td>Export multi-formats pour différents usages</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fiabilité de génération</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">Générateur unique</td>
+                                    <td style="text-align: center; color: #46b450;">3 générateurs redondants</td>
+                                    <td>Fallback automatique en cas d'erreur</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>API REST</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>API complète pour intégrations et automatisations</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Templates prédéfinis</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">1 template de base</td>
+                                    <td style="text-align: center; color: #46b450;">4 templates professionnels</td>
+                                    <td>Factures, devis, bons de commande prêts à l'emploi</td>
+                                </tr>
+                                <tr>
                                     <td><strong>CSS personnalisé</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
