@@ -40,6 +40,7 @@
             e.preventDefault();
 
             const tab = $(e.currentTarget).data('tab');
+            console.log('Switching to tab:', tab); // Debug log
 
             // Retirer la classe active de tous les onglets
             $('.gdpr-tab').removeClass('active');
@@ -50,6 +51,8 @@
             $('.gdpr-tab-content').removeClass('active');
             // Afficher le contenu de l'onglet sélectionné
             $('#' + tab + '-tab').addClass('active');
+
+            console.log('Tab switched to:', tab); // Debug log
         }
 
         handleConsentForm(e) {
