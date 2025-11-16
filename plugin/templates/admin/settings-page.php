@@ -4864,6 +4864,9 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Variable globale pour le tracking des formulaires
+            let setupFormTracking = null;
+
             // Gestion du bouton de sauvegarde global
             function setupGlobalSaveButton() {
                 const globalSaveBtn = document.getElementById('global-save-btn');
@@ -4893,7 +4896,7 @@
                     let hasUnsavedChanges = false;
 
                     // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES (AMÉLIORÉ) =====
-                    const setupFormTracking = () => {
+                    setupFormTracking = () => {
                         const forms = document.querySelectorAll('form[id], form');
                         forms.forEach((form, formIndex) => {
                             // Récupérer les valeurs initiales de tous les inputs
@@ -5362,6 +5365,13 @@
                     console.log('🎯 Onglet RGPD activé, initialisation des sous-onglets');
                     setTimeout(() => setupGdprTabNavigation(), 50);
                 }
+
+                // Réinitialiser le tracking des changements pour le nouveau formulaire
+                setTimeout(() => {
+                    if (typeof setupFormTracking === 'function') {
+                        setupFormTracking();
+                    }
+                }, 100);
             }
 
             // Gestion de la navigation des onglets
