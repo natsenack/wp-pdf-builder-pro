@@ -393,6 +393,29 @@
     border-right-color: #007cba;
 }
 
+/* Modal Tooltip Styles */
+.tutorial-tooltip-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 100002 !important;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+}
+
+.tutorial-tooltip-modal::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100001;
+}
+
 /* Completion Message Styles */
 .tutorial-completion-message {
     position: fixed;

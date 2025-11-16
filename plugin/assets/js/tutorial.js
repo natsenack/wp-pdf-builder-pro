@@ -90,20 +90,6 @@
 
         startTutorial(tutorialId) {
             console.log('Tutorial: startTutorial called with id:', tutorialId);
-            const tutorial = window.pdfBuilderTutorial.tutorials[tutorialId];
-            if (!tutorial || !tutorial.steps) {
-                console.error('Tutorial: No tutorial data found for', tutorialId);
-                return;
-            }
-
-            // Vérifier si au moins une étape a une cible existante sur la page
-            const hasAvailableSteps = tutorial.steps.some(step => $(step.target).length > 0);
-            if (!hasAvailableSteps) {
-                console.log('Tutorial: No available steps on this page for tutorial', tutorialId);
-                this.showUnavailableMessage(tutorial);
-                return;
-            }
-
             this.currentTutorial = tutorialId;
             this.currentStep = 0;
             console.log('Tutorial: Set currentTutorial to:', this.currentTutorial);
@@ -130,8 +116,8 @@
 
             // Vérifier si la cible existe sur la page
             if ($(step.target).length === 0) {
-                console.log('Tutorial: Target', step.target, 'not found on page, skipping step', this.currentStep);
-                this.nextStep();
+                console.log('Tutorial: Target', step.target, 'not found on page, showing modal instead of tooltip for step', this.currentStep);
+                this.showModalStep(step);
                 return;
             }
 
@@ -154,6 +140,48 @@
 
             // Afficher le tooltip
             $tooltip.addClass('active').show();
+        }
+
+        showModalStep(step) {
+            // Masquer les tooltips existants
+            $('.tutorial-tooltip').removeClass('active').hide();
+
+            // Créer un tooltip modal (centré)
+            let $tooltip = $(`.tutorial-tooltip[data-tutorial="${this.currentTutorial}"][data-step="${this.currentStep}"]`);
+
+            if ($tooltip.length === 0) {
+                $tooltip = this.createModalTooltip(step);
+            }
+
+            // Afficher le tooltip modal
+            $tooltip.addClass('active').show();
+        }
+
+        createModalTooltip(step) {
+            const $tooltip = $(`
+                <div class="tutorial-tooltip tutorial-tooltip-modal" data-tutorial="${this.currentTutorial}" data-step="${this.currentStep}">
+                    <div class="tutorial-tooltip-header">
+                        <h4>${step.title}</h4>
+                        <button class="tutorial-close">&times;</button>
+                    </div>
+                    <div class="tutorial-tooltip-content">
+                        <p>${step.content}</p>
+                        <div class="tutorial-target-note">
+                            <small style="color: #666; font-style: italic;">
+                                ℹ️ Cet élément n'est pas disponible sur cette page
+                            </small>
+                        </div>
+                    </div>
+                    <div class="tutorial-tooltip-footer">
+                        <button class="tutorial-prev">${window.pdfBuilderTutorial.tutorials[this.currentTutorial].prevText || 'Précédent'}</button>
+                        <span class="tutorial-progress">${this.currentStep + 1} / ${window.pdfBuilderTutorial.tutorials[this.currentTutorial].steps.length}</span>
+                        <button class="tutorial-next">${window.pdfBuilderTutorial.tutorials[this.currentTutorial].nextText || 'Suivant'}</button>
+                    </div>
+                </div>
+            `);
+
+            $('body').append($tooltip);
+            return $tooltip;
         }
 
         createTooltip(step) {
