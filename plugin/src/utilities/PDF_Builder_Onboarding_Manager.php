@@ -898,16 +898,22 @@ class PDF_Builder_Onboarding_Manager {
             case 1: // Welcome - toujours valide
                 return null;
 
-            case 2: // First template - doit avoir sélectionné un template si fourni
-                // Pour l'étape 2, on permet de continuer même sans template sélectionné
-                // Le template peut être sélectionné plus tard
+            case 2: // Freemium mode - doit avoir sélectionné un mode
+                if (empty($_POST['selected_mode'])) {
+                    return __('Veuillez sélectionner un mode d\'utilisation.', 'pdf-builder-pro');
+                }
                 return null;
 
-            case 3: // WooCommerce setup - toujours valide (optionnel)
-                error_log('PDF_Builder_Onboarding: Validating step 3 with action: ' . $action);
+            case 3: // First template - doit avoir sélectionné un template
+                if (empty($_POST['selected_template'])) {
+                    return __('Veuillez sélectionner un template.', 'pdf-builder-pro');
+                }
                 return null;
 
-            case 4: // Completed - toujours valide
+            case 4: // Template assignment - toujours valide
+                return null;
+
+            case 5: // WooCommerce setup - toujours valide (optionnel)
                 return null;
 
             default:
