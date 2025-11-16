@@ -164,7 +164,7 @@ class PDF_Builder_Onboarding_Manager {
         $steps = [
             1 => [
                 'id' => 'welcome',
-                'title' => __('Bienvenue dans PDF Builder Pro', 'pdf-builder-pro'),
+                'title' => __('🎉 Bienvenue dans PDF Builder Pro Premium !', 'pdf-builder-pro'),
                 'description' => __('Découvrez le constructeur de PDF professionnel le plus avancé pour WordPress.', 'pdf-builder-pro'),
                 'content' => $this->get_step_content('welcome'),
                 'action' => __('Suivant', 'pdf-builder-pro'),
@@ -251,11 +251,14 @@ class PDF_Builder_Onboarding_Manager {
             case 'welcome':
                 return '
                     <div class="onboarding-welcome">
+                        <div class="welcome-message">
+                            <p>' . __('Vous avez activé PDF Builder Pro Premium ! Cette version vous donne accès à toutes les fonctionnalités avancées pour créer des PDFs professionnels.', 'pdf-builder-pro') . '</p>
+                        </div>
                         <div class="welcome-features">
                             <div class="feature-item">
                                 <span class="feature-icon">🎨</span>
                                 <h4>' . __('Éditeur Visuel Avancé', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Interface drag & drop intuitive avec canvas interactif', 'pdf-builder-pro') . '</p>
+                                <p>' . __('Interface drag & drop intuitive avec canvas interactif et grille d\'aimantation', 'pdf-builder-pro') . '</p>
                             </div>
                             <div class="feature-item">
                                 <span class="feature-icon">🛒</span>
@@ -266,6 +269,11 @@ class PDF_Builder_Onboarding_Manager {
                                 <span class="feature-icon">⚡</span>
                                 <h4>' . __('Performance Optimisée', 'pdf-builder-pro') . '</h4>
                                 <p>' . __('Rendu rapide et fiable avec aperçu temps réel', 'pdf-builder-pro') . '</p>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🚀</span>
+                                <h4>' . __('Guide de démarrage rapide', 'pdf-builder-pro') . '</h4>
+                                <p>' . __('Suivez notre guide étape par étape pour créer votre premier PDF', 'pdf-builder-pro') . '</p>
                             </div>
                         </div>
                     </div>

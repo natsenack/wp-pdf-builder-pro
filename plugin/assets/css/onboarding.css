@@ -179,6 +179,66 @@
     margin: 0 0 16px 0;
 }
 
+/* Styles spécifiques pour l'étape de bienvenue */
+.pdf-builder-onboarding-modal .onboarding-welcome {
+    text-align: center;
+}
+
+.pdf-builder-onboarding-modal .welcome-message {
+    margin-bottom: 32px;
+}
+
+.pdf-builder-onboarding-modal .welcome-message p {
+    font-size: 16px;
+    color: #6b7280;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pdf-builder-onboarding-modal .welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.pdf-builder-onboarding-modal .feature-item {
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.pdf-builder-onboarding-modal .feature-item:hover {
+    background: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
+.pdf-builder-onboarding-modal .feature-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.pdf-builder-onboarding-modal .feature-item h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.pdf-builder-onboarding-modal .feature-item p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
 /* Indicateur de progression */
 .pdf-builder-onboarding-modal .progress-indicator {
     display: flex;
@@ -648,6 +708,184 @@
     gap: 12px;
 }
 
+/* Configuration d'assignation de template - Styles manquants */
+.pdf-builder-onboarding-modal .template-customization {
+    margin-bottom: 32px;
+}
+
+.pdf-builder-onboarding-modal .template-customization h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-onboarding-modal .customization-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pdf-builder-onboarding-modal .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pdf-builder-onboarding-modal .field-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.pdf-builder-onboarding-modal .field-group input,
+.pdf-builder-onboarding-modal .field-group textarea {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.pdf-builder-onboarding-modal .field-group input:focus,
+.pdf-builder-onboarding-modal .field-group textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdf-builder-onboarding-modal .woocommerce-assignment {
+    margin-bottom: 32px;
+}
+
+.pdf-builder-onboarding-modal .woocommerce-assignment h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-onboarding-modal .assignment-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.pdf-builder-onboarding-modal .status-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pdf-builder-onboarding-modal .assignment-notice {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #f0f9ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    align-items: flex-start;
+}
+
+.pdf-builder-onboarding-modal .notice-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.pdf-builder-onboarding-modal .notice-content strong {
+    display: block;
+    color: #1e40af;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.pdf-builder-onboarding-modal .notice-content {
+    font-size: 14px;
+    color: #1d4ed8;
+    line-height: 1.5;
+}
+
+.pdf-builder-onboarding-modal .template-actions {
+    margin-bottom: 24px;
+}
+
+.pdf-builder-onboarding-modal .template-actions h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-onboarding-modal .action-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pdf-builder-onboarding-modal .action-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pdf-builder-onboarding-modal .action-option:hover {
+    background: #ffffff;
+    border-color: #3b82f6;
+}
+
+.pdf-builder-onboarding-modal .action-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.pdf-builder-onboarding-modal .option-content strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.pdf-builder-onboarding-modal .option-content span {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Style spécifique pour le bouton précédent */
+.pdf-builder-onboarding-modal .button-previous {
+    background: #6b7280;
+    color: #ffffff;
+    border-color: #6b7280;
+}
+
+.pdf-builder-onboarding-modal .button-previous:hover:not(:disabled) {
+    background: #4b5563;
+    border-color: #4b5563;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
 .pdf-builder-onboarding-modal .status-option {
     display: flex;
     align-items: center;
@@ -793,15 +1031,20 @@
     transform: translateX(-50%);
     background: #374151;
     color: #ffffff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
     white-space: nowrap;
     z-index: 10001;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    max-width: 250px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
     word-wrap: break-word;
     white-space: normal;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    opacity: 1;
+    visibility: visible;
 }
 
 .pdf-builder-onboarding-modal [data-tooltip]:hover::before {
@@ -810,9 +1053,11 @@
     bottom: calc(100% - 4px);
     left: 50%;
     transform: translateX(-50%);
-    border: 4px solid transparent;
+    border: 6px solid transparent;
     border-top-color: #374151;
     z-index: 10001;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Animations */
