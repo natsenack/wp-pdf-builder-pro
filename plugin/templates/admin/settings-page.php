@@ -1533,12 +1533,6 @@
                                     <td style="text-align: center; color: #46b450;">Prioritaire 24/7</td>
                                     <td>Support par email/ticket avec SLA garanti</td>
                                 </tr>
-                                <tr>
-                                    <td><strong>Formation & Documentation</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">Basique</td>
-                                    <td style="text-align: center; color: #46b450;">Complète</td>
-                                    <td>Vidéos tutorielles, guides avancés, webinaires</td>
-                                </tr>
                             </tbody>
                         </table>
 
