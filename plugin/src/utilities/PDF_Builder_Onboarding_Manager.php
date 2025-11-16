@@ -148,7 +148,7 @@ class PDF_Builder_Onboarding_Manager {
      * Obtenir toutes les étapes d'onboarding
      */
     public function get_onboarding_steps() {
-        return [
+        $steps = [
             1 => [
                 'id' => 'welcome',
                 'title' => __('Bienvenue dans PDF Builder Pro', 'pdf-builder-pro'),
@@ -189,8 +189,12 @@ class PDF_Builder_Onboarding_Manager {
                 'can_skip' => true, // Peut être configuré plus tard
                 'skip_text' => __('Configurer plus tard', 'pdf-builder-pro'),
                 'requires_selection' => true // Template doit être sélectionné pour continuer
-            ],
-            5 => [
+            ]
+        ];
+
+        // Ajouter l'étape WooCommerce seulement si WooCommerce est installé
+        if (class_exists('WooCommerce')) {
+            $steps[5] = [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
                 'description' => __('Intégrez vos PDFs dans vos commandes WooCommerce.', 'pdf-builder-pro'),
@@ -200,8 +204,8 @@ class PDF_Builder_Onboarding_Manager {
                 'can_skip' => true, // Peut être ignorée
                 'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro'),
                 'requires_selection' => false // Ne nécessite pas de sélection
-            ],
-            6 => [
+            ];
+            $steps[6] = [
                 'id' => 'completed',
                 'title' => __('Configuration terminée !', 'pdf-builder-pro'),
                 'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
@@ -209,8 +213,21 @@ class PDF_Builder_Onboarding_Manager {
                 'action' => __('Commencer à créer', 'pdf-builder-pro'),
                 'action_type' => 'finish',
                 'can_skip' => false // Dernière étape, ne peut pas être ignorée
-            ]
-        ];
+            ];
+        } else {
+            // Si WooCommerce n'est pas installé, l'étape 5 devient l'étape finale
+            $steps[5] = [
+                'id' => 'completed',
+                'title' => __('Configuration terminée !', 'pdf-builder-pro'),
+                'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
+                'content' => $this->get_step_content('completed'),
+                'action' => __('Commencer à créer', 'pdf-builder-pro'),
+                'action_type' => 'finish',
+                'can_skip' => false // Dernière étape, ne peut pas être ignorée
+            ];
+        }
+
+        return $steps;
     }
 
     /**
@@ -740,8 +757,12 @@ class PDF_Builder_Onboarding_Manager {
 
         $this->onboarding_options['steps_completed'][] = $step;
         
-        // Ne pas incrémenter pour l'étape 6 (dernière étape)
-        if ($step < 6) {
+        // Calculer la prochaine étape en fonction des étapes disponibles
+        $all_steps = $this->get_onboarding_steps();
+        $max_step = max(array_keys($all_steps));
+        
+        // Ne pas incrémenter au-delà de la dernière étape disponible
+        if ($step < $max_step) {
             $this->onboarding_options['current_step'] = $step + 1;
         }
         
@@ -900,6 +921,13 @@ class PDF_Builder_Onboarding_Manager {
      * Valider la completion d'une étape
      */
     private function validate_step_completion($step, $action) {
+        $all_steps = $this->get_onboarding_steps();
+        
+        // Vérifier si l'étape existe
+        if (!isset($all_steps[$step])) {
+            return __('Étape inconnue.', 'pdf-builder-pro');
+        }
+
         switch ($step) {
             case 1: // Welcome - toujours valide
                 return null;
@@ -919,13 +947,13 @@ class PDF_Builder_Onboarding_Manager {
             case 4: // Template assignment - toujours valide
                 return null;
 
-            case 5: // WooCommerce setup - toujours valide (optionnel)
-                return null;
-
-            case 6: // Completed - toujours valide
-                return null;
-
             default:
+                // Pour les étapes WooCommerce (si elle existe) et terminaison
+                if (isset($all_steps[$step]) && $all_steps[$step]['id'] === 'woocommerce_setup') {
+                    return null; // Étape WooCommerce toujours valide
+                } elseif (isset($all_steps[$step]) && $all_steps[$step]['id'] === 'completed') {
+                    return null; // Étape terminaison toujours valide
+                }
                 return __('Étape inconnue.', 'pdf-builder-pro');
         }
     }

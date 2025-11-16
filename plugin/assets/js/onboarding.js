@@ -1599,9 +1599,9 @@
                             },
                             success: (completeResponse) => {
                                 if (completeResponse.success) {
-                                    console.log('PDF Builder Onboarding: Onboarding marked as complete, redirecting to license page');
-                                    // Rediriger vers la page des paramètres de licence
-                                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                                    console.log('PDF Builder Onboarding: Onboarding marked as complete, showing premium welcome before redirect');
+                                    // Afficher un message de bienvenue premium avant la redirection
+                                    this.showPremiumWelcome();
                                 } else {
                                     console.warn('Failed to mark onboarding as complete:', completeResponse.data);
                                     // Rediriger quand même
@@ -1626,6 +1626,42 @@
                     window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                 }
             });
+        }
+
+        showPremiumWelcome() {
+            // Afficher un message de bienvenue pour les utilisateurs premium
+            const welcomeMessage = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #10b981; margin-bottom: 16px;">🎉 Bienvenue dans PDF Builder Pro Premium !</h3>
+                    <p style="font-size: 16px; margin-bottom: 20px;">
+                        Vous avez choisi la version complète avec toutes les fonctionnalités avancées.
+                    </p>
+                    <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <strong>🚀 Fonctionnalités Premium activées :</strong>
+                        <ul style="text-align: left; margin-top: 10px;">
+                            <li>• Templates PDF illimités</li>
+                            <li>• Éditeur React avancé</li>
+                            <li>• Support prioritaire</li>
+                            <li>• Variables dynamiques</li>
+                            <li>• Intégration WooCommerce complète</li>
+                        </ul>
+                    </div>
+                    <p style="font-size: 14px; color: #6b7280;">
+                        Redirection vers la page de gestion des licences...
+                    </p>
+                </div>
+            `;
+
+            // Remplacer le contenu de l'étape actuelle
+            $('.step-content').html(welcomeMessage);
+
+            // Masquer les boutons de navigation
+            $('.modal-footer').hide();
+
+            // Rediriger après 3 secondes
+            setTimeout(() => {
+                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+            }, 3000);
         }
 
         trapFocus($container) {
